@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.api.releases;
 
+import android.text.Html;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -37,7 +38,7 @@ public class ReleaseParser {
             item.setLink(jsonItem.getString("link"));
             item.setImage(jsonItem.getString("image"));
             item.setEpisodes(jsonItem.getString("episode"));
-            item.setDescription(jsonItem.getString("description"));
+            item.setDescription(Html.fromHtml(jsonItem.getString("description")).toString());
 
             JSONArray jsonSeasons = jsonItem.getJSONArray("season");
             for (int j = 0; j < jsonSeasons.length(); j++) {

@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.api.releases;
 
 import android.text.Html;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +30,7 @@ public class ReleaseParser {
                 for (int j = 0; j < titles.length; j++) {
                     title = titles[j];
                 }
-                item.setTitle(title);
+                item.setTitle(Html.fromHtml(title).toString());
             }
 
             item.setTorrentLink(jsonItem.getString("torrent_link"));
@@ -79,5 +78,11 @@ public class ReleaseParser {
                 callback.onResponse(resItems);
             }
         });
+    }
+
+    public static ArrayList<ReleaseItem> releaseItemsSync(int page) throws Exception {
+        String url = "http://www.anilibria.tv/api/api.php?PAGEN_1=" + page;
+        String response = Client.get().get(url);
+        return parseItems(response);
     }
 }

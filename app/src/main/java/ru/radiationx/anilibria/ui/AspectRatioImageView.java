@@ -1,8 +1,10 @@
-package ru.radiationx.anilibria;
+package ru.radiationx.anilibria.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+
+import ru.radiationx.anilibria.R;
 
 /**
  * Created by radiationx on 26.08.17.

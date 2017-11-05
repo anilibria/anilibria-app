@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria;
+package ru.radiationx.anilibria.ui.releases;
 
 import android.util.Log;
 import android.view.View;
@@ -12,6 +12,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
+import ru.radiationx.anilibria.BaseAdapter;
+import ru.radiationx.anilibria.BaseViewHolder;
+import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.api.releases.ReleaseItem;
 
 /**
@@ -66,8 +69,10 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     }
 
     public void insertMore(List<ReleaseItem> list) {
+        int prevItems = getItemCount();
         this.items.addAll(list);
-        notifyItemRangeInserted(items.size(), list.size());
+        Log.d("SUKA", "insertMore " + prevItems + " : " + getItemCount());
+        notifyItemRangeInserted(prevItems, getItemCount());
     }
 
     class DeviceItemHolder extends BaseViewHolder<ReleaseItem> {
@@ -112,7 +117,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         }
     }
 
-    public interface ItemListener extends BaseAdapter.OnItemClickListener<ReleaseItem> {
+    public interface ItemListener {
         void onLoadMore();
     }
 }

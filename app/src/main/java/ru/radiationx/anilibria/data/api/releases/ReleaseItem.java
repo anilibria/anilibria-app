@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.api.releases;
+package ru.radiationx.anilibria.data.api.releases;
 
 import java.util.ArrayList;
 

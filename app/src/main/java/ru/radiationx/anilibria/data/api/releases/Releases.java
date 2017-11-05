@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.api.releases;
+package ru.radiationx.anilibria.data.api.releases;
 
 import android.text.Html;
 
@@ -6,17 +6,27 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
-import ru.radiationx.anilibria.api.Api;
-import ru.radiationx.anilibria.api.Client;
+import io.reactivex.Observable;
+import ru.radiationx.anilibria.data.api.Api;
+import ru.radiationx.anilibria.data.Client;
 
 /**
  * Created by radiationx on 31.10.17.
  */
 
-public class ReleaseParser {
+public class Releases {
 
-    private static ArrayList<ReleaseItem> parseItems(String responseText) throws Exception {
+    public Observable<ArrayList<ReleaseItem>> getItems(int page) {
+        return Observable.fromCallable(() -> {
+            String url = "https://www.anilibria.tv/api/api.php?PAGEN_1=" + page;
+            String response = Client.get().get(url);
+            return parseItems(response);
+        });
+    }
+
+    private ArrayList<ReleaseItem> parseItems(String responseText) throws Exception {
         ArrayList<ReleaseItem> resItems = new ArrayList<>();
         final JSONObject responseJson = new JSONObject(responseText);
         final JSONArray jsonItems = responseJson.getJSONArray("items");
@@ -24,14 +34,13 @@ public class ReleaseParser {
             ReleaseItem item = new ReleaseItem();
             JSONObject jsonItem = jsonItems.getJSONObject(i);
             item.setId(jsonItem.getInt("id"));
-            {
-                String title = jsonItem.getString("title");
-                String[] titles = title.split(" / ");
-                for (int j = 0; j < titles.length; j++) {
-                    title = titles[j];
-                }
-                item.setTitle(Html.fromHtml(title).toString());
+
+            String title = jsonItem.getString("title");
+            String[] titles = title.split(" / ");
+            for (int j = 0; j < titles.length; j++) {
+                title = titles[j];
             }
+            item.setTitle(Html.fromHtml(title).toString());
 
             item.setTorrentLink(jsonItem.getString("torrent_link"));
             item.setLink(jsonItem.getString("link"));
@@ -62,27 +71,5 @@ public class ReleaseParser {
             resItems.add(item);
         }
         return resItems;
-    }
-
-    public static void releaseItemsAsync(int page, final Api.ApiCallback<ArrayList<ReleaseItem>> callback) {
-        String url = "http://www.anilibria.tv/api/api.php?PAGEN_1=" + page;
-        Client.get().get(url, new Client.ClientCallback() {
-            @Override
-            public void onError(Exception e) {
-                callback.onError(e);
-            }
-
-            @Override
-            public void onResponse(String responseText) throws Exception {
-                ArrayList<ReleaseItem> resItems = parseItems(responseText);
-                callback.onResponse(resItems);
-            }
-        });
-    }
-
-    public static ArrayList<ReleaseItem> releaseItemsSync(int page) throws Exception {
-        String url = "http://www.anilibria.tv/api/api.php?PAGEN_1=" + page;
-        String response = Client.get().get(url);
-        return parseItems(response);
     }
 }

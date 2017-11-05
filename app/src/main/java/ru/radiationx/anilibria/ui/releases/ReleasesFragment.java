@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
 /**
  * Created by radiationx on 05.11.17.
@@ -44,6 +44,7 @@ public class ReleasesFragment extends Fragment implements ReleasesContract.View,
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        presenter.onCreate(this);
         adapter = new ReleaseAdapter();
         adapter.setListener(this);
         recyclerView.setAdapter(adapter);
@@ -59,13 +60,13 @@ public class ReleasesFragment extends Fragment implements ReleasesContract.View,
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onResume(this);
+        presenter.onCreate(this);
     }
 
     @Override
-    public void onPause() {
-        presenter.onPause();
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 
     @Override

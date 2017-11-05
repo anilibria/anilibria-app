@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.api;
+package ru.radiationx.anilibria.data;
 
 import android.support.annotation.NonNull;
 
@@ -16,12 +16,12 @@ import okhttp3.ResponseBody;
  */
 
 public class Client {
-    private static Client INSTANCE = null;
+    private static Client instance = null;
     private final OkHttpClient client = new OkHttpClient();
 
-    public static Client get() {
-        if (INSTANCE == null) INSTANCE = new Client();
-        return INSTANCE;
+    public synchronized static Client get() {
+        if (instance == null) instance = new Client();
+        return instance;
     }
 
 

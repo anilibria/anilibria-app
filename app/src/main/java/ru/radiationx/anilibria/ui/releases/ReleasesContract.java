@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.releases;
 
 import java.util.ArrayList;
 
-import ru.radiationx.anilibria.api.releases.ReleaseItem;
-import ru.radiationx.anilibria.mvp.IBasePresenter;
-import ru.radiationx.anilibria.mvp.IBaseView;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.utils.mvp.IBasePresenter;
+import ru.radiationx.anilibria.utils.mvp.IBaseView;
 
 /**
  * Created by radiationx on 05.11.17.

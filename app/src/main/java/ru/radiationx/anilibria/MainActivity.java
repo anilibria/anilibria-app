@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         if (!more) {
             refreshLayout.setRefreshing(true);
         }
-        ReleaseParser.releaseItemsAsync(page, new Api.ApiCallback<ArrayList<ReleaseItem>>() {
+        Releases.releaseItemsAsync(page, new Api.ApiCallback<ArrayList<ReleaseItem>>() {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();

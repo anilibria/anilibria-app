@@ -15,7 +15,7 @@ import java.util.List;
 import ru.radiationx.anilibria.BaseAdapter;
 import ru.radiationx.anilibria.BaseViewHolder;
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
 /**
  * Created by radiationx on 31.10.17.

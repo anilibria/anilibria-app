@@ -96,14 +96,14 @@ public class ReleaseItem {
     }
 
     public void addVoice(String data) {
-        seasons.add(data);
+        voices.add(data);
     }
 
     public void addGenre(String data) {
-        seasons.add(data);
+        genres.add(data);
     }
 
     public void addType(String data) {
-        seasons.add(data);
+        types.add(data);
     }
 }

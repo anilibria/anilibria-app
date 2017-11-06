@@ -34,7 +34,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case RELEASE_LAYOUT:
-                return new DeviceItemHolder(inflateLayout(parent, R.layout.item_release));
+                return new ReleaseItemHolder(inflateLayout(parent, R.layout.item_release));
             case LOAD_MORE_LAYOUT:
                 return new LoadMoreHolder(inflateLayout(parent, R.layout.item_load_more));
         }
@@ -45,7 +45,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         int itemType = getItemViewType(position);
         if (itemType == RELEASE_LAYOUT) {
-            ((DeviceItemHolder) holder).bind(getItem(position), position);
+            ((ReleaseItemHolder) holder).bind(getItem(position), position);
         } else if (itemType == LOAD_MORE_LAYOUT) {
             holder.bind(position);
         }
@@ -75,16 +75,21 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         notifyItemRangeInserted(prevItems, getItemCount());
     }
 
-    class DeviceItemHolder extends BaseViewHolder<ReleaseItem> {
+    class ReleaseItemHolder extends BaseViewHolder<ReleaseItem> {
         ImageView image;
         TextView title;
         TextView desc;
 
-        DeviceItemHolder(View itemView) {
+        ReleaseItemHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.item_image);
             title = itemView.findViewById(R.id.item_title);
             desc = itemView.findViewById(R.id.item_desc);
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(getItem(getLayoutPosition()));
+                }
+            });
         }
 
         @Override
@@ -117,7 +122,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         }
     }
 
-    public interface ItemListener {
+    public interface ItemListener extends OnItemClickListener<ReleaseItem> {
         void onLoadMore();
     }
 }

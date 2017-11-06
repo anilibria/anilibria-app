@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria.ui.releases;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import ru.radiationx.anilibria.R;
+import ru.radiationx.anilibria.ReleaseActivity;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
 /**
@@ -87,5 +90,16 @@ public class ReleasesFragment extends Fragment implements ReleasesContract.View,
     @Override
     public void setRefreshing(boolean refreshing) {
         refreshLayout.setRefreshing(refreshing);
+    }
+
+    @Override
+    public void onItemClick(ReleaseItem item) {
+        Log.d("SUKA", "ON ITEM CLICK");
+        startActivity(new Intent(getContext(), ReleaseActivity.class).putExtra("release_id", item.getId()));
+    }
+
+    @Override
+    public boolean onItemLongClick(ReleaseItem item) {
+        return false;
     }
 }

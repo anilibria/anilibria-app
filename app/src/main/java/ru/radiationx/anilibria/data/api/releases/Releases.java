@@ -6,10 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
-import ru.radiationx.anilibria.data.api.Api;
 import ru.radiationx.anilibria.data.Client;
 
 /**
@@ -53,17 +51,17 @@ public class Releases {
                 item.addSeason(jsonSeasons.getString(j));
             }
 
-            JSONArray jsonVoices = jsonItem.getJSONArray("season");
+            JSONArray jsonVoices = jsonItem.getJSONArray("voices");
             for (int j = 0; j < jsonVoices.length(); j++) {
                 item.addVoice(jsonVoices.getString(j));
             }
 
-            JSONArray jsonGenres = jsonItem.getJSONArray("season");
+            JSONArray jsonGenres = jsonItem.getJSONArray("genres");
             for (int j = 0; j < jsonGenres.length(); j++) {
                 item.addGenre(jsonGenres.getString(j));
             }
 
-            JSONArray jsonTypes = jsonItem.getJSONArray("season");
+            JSONArray jsonTypes = jsonItem.getJSONArray("types");
             for (int j = 0; j < jsonTypes.length(); j++) {
                 item.addType(jsonTypes.getString(j));
             }

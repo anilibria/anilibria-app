@@ -33,12 +33,13 @@ public class Releases {
             JSONObject jsonItem = jsonItems.getJSONObject(i);
             item.setId(jsonItem.getInt("id"));
 
-            String title = jsonItem.getString("title");
-            String[] titles = title.split(" / ");
-            for (int j = 0; j < titles.length; j++) {
-                title = titles[j];
+            String[] titles = jsonItem.getString("title").split(" / ");
+            if (titles.length > 0) {
+                item.setOriginalTitle(Html.fromHtml(titles[0]).toString());
+                if (titles.length > 1) {
+                    item.setTitle(Html.fromHtml(titles[1]).toString());
+                }
             }
-            item.setTitle(Html.fromHtml(title).toString());
 
             item.setTorrentLink(jsonItem.getString("torrent_link"));
             item.setLink(jsonItem.getString("link"));

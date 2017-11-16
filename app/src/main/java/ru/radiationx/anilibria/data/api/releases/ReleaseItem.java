@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class ReleaseItem {
     private int id;
     private String title;
+    private String originalTitle;
     private String torrentLink;
     private String link;
     private String image;
@@ -33,6 +34,14 @@ public class ReleaseItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
     public String getTorrentLink() {

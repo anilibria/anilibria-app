@@ -12,16 +12,38 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
+import ru.terrakok.cicerone.Cicerone;
+import ru.terrakok.cicerone.NavigatorHolder;
+import ru.terrakok.cicerone.Router;
+
 /**
  * Created by radiationx on 05.11.17.
  */
 
 public class App extends Application {
+    private static App instance;
+    private Cicerone<Router> cicerone;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
+        cicerone = Cicerone.create();
         initImageLoader(this);
     }
+
+    public static App get() {
+        return instance;
+    }
+
+    public NavigatorHolder getNavigatorHolder() {
+        return cicerone.getNavigatorHolder();
+    }
+
+    public Router getRouter() {
+        return cicerone.getRouter();
+    }
+
 
     private static DisplayImageOptions.Builder options = new DisplayImageOptions.Builder()
             .cacheInMemory(true)

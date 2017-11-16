@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpDelegate;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
@@ -25,6 +26,10 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private static final int RELEASE_LAYOUT = 1;
     private static final int LOAD_MORE_LAYOUT = 2;
     private ItemListener listener;
+
+    public ReleaseAdapter(MvpDelegate<?> parentDelegate) {
+        super(parentDelegate, String.valueOf(0));
+    }
 
     public void setListener(ItemListener listener) {
         this.listener = listener;

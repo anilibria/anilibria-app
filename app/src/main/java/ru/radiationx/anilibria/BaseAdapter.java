@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arellomobile.mvp.MvpDelegate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,8 +15,12 @@ import java.util.Collection;
  * Created by radiationx on 14.09.17.
  */
 
-public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends MvpBaseAdapter<VH> {
     protected ArrayList<E> items = new ArrayList<>();
+
+    public BaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
+        super(parentDelegate, childId);
+    }
 
     public void setItems(ArrayList<E> items) {
         clear();

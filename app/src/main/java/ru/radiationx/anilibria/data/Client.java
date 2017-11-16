@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.data;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -32,6 +33,7 @@ public class Client {
         Response okHttpResponse = null;
         String responseText = null;
         try {
+            Log.e("SUKA", "Client get: " + url);
             okHttpResponse = client.newCall(request).execute();
             if (!okHttpResponse.isSuccessful())
                 throw new IOException("Unexpected code " + okHttpResponse);

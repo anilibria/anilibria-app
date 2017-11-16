@@ -28,12 +28,13 @@ public class Release {
         final JSONObject responseJson = new JSONObject(responseText);
         //item.setId(responseJson.getInt("id"));
 
-        String title = responseJson.getString("title");
-        String[] titles = title.split(" / ");
-        for (int j = 0; j < titles.length; j++) {
-            title = titles[j];
+        String[] titles = responseJson.getString("title").split(" / ");
+        if (titles.length > 0) {
+            release.setOriginalTitle(Html.fromHtml(titles[0]).toString());
+            if (titles.length > 1) {
+                release.setTitle(Html.fromHtml(titles[1]).toString());
+            }
         }
-        release.setTitle(Html.fromHtml(title).toString());
 
         release.setTorrentLink(responseJson.getString("torrent_link"));
         //item.setLink(responseJson.getString("link"));

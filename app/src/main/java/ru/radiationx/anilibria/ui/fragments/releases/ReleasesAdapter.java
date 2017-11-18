@@ -20,12 +20,12 @@ import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
 /* Created by radiationx on 31.10.17. */
 
-public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
+public class ReleasesAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private static final int RELEASE_LAYOUT = 1;
     private static final int LOAD_MORE_LAYOUT = 2;
     private ItemListener listener;
 
-    ReleaseAdapter(MvpDelegate<?> parentDelegate) {
+    ReleasesAdapter(MvpDelegate<?> parentDelegate) {
         super(parentDelegate, String.valueOf(0));
     }
 
@@ -97,7 +97,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
 
         @Override
         public void bind(ReleaseItem item, int position) {
-            title.setText(String.format("%s (%s)", item.getTitle(), item.getEpisodes()));
+            title.setText(String.format("%s (%s)", item.getTitle(), item.getEpisodesCount()));
             desc.setText(item.getDescription());
             ImageLoader.getInstance().displayImage(item.getImage(), image);
         }

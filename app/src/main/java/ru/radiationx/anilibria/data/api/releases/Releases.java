@@ -45,7 +45,7 @@ public class Releases {
             item.setTorrentLink(Api.BASE_URL + jsonItem.getString("torrent_link"));
             item.setLink(Api.BASE_URL + jsonItem.getString("link"));
             item.setImage(Api.BASE_URL + jsonItem.getString("image"));
-            item.setEpisodes(jsonItem.getString("episode"));
+            item.setEpisodesCount(jsonItem.getString("episode"));
             item.setDescription(Html.fromHtml(jsonItem.getString("description")).toString());
 
             JSONArray jsonSeasons = jsonItem.getJSONArray("season");

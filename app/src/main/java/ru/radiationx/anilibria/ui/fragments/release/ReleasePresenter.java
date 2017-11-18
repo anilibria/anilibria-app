@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release;
 
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Pair;
 
 import com.arellomobile.mvp.InjectViewState;
 
@@ -22,22 +20,13 @@ public class ReleasePresenter extends BasePresenter<ReleaseView> {
 
     void loadRelease(int id) {
         Disposable disposable = Api.get().Release().getRelease(id)
-                .map(release -> {
-                    String original = release.getOriginalTitle();
-                    String seasonsHtml = "<b>Сезон:</b> " + TextUtils.join(", ", release.getSeasons());
-                    String voicesHtml = "<b>Голоса:</b> " + TextUtils.join(", ", release.getVoices());
-                    String typesHtml = "<b>Тип:</b> " + TextUtils.join(", ", release.getTypes());
-                    String[] arrHtml = {original, seasonsHtml, voicesHtml, typesHtml};
-                    String html = TextUtils.join("<br>", arrHtml);
-                    return new Pair<>(release, html);
-                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pair -> {
+                .subscribe(release -> {
                     Log.d("SUKA", "subscribe call show");
                     getViewState().setRefreshing(false);
-                    getViewState().showRelease(pair.first, pair.second);
-                    currentData = pair.first;
+                    getViewState().showRelease(release);
+                    currentData = release;
                 }, throwable -> {
                     getViewState().setRefreshing(false);
                     Log.d("SUKA", "SAS");

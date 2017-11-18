@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
@@ -20,10 +21,10 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment;
 
 /* Created by radiationx on 05.11.17. */
 
-public class ReleasesFragment extends BaseFragment implements ReleasesView, ReleaseAdapter.ItemListener {
+public class ReleasesFragment extends BaseFragment implements ReleasesView, ReleasesAdapter.ItemListener {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
-    private ReleaseAdapter adapter;
+    private ReleasesAdapter adapter;
     @InjectPresenter/*(tag = "ReleasesTag", type = PresenterType.GLOBAL)*/
             ReleasesPresenter presenter;
 
@@ -51,7 +52,7 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
         Log.e("SUKA", "onViewCreated title " + toolbar.getTitle());
         refreshLayout = view.findViewById(R.id.swipe_refresh);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new ReleaseAdapter(getMvpDelegate());
+        adapter = new ReleasesAdapter(getMvpDelegate());
         adapter.setListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
@@ -62,6 +63,10 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
         });
         toolbar.getMenu().add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
+                .setOnMenuItemClickListener(item -> {
+                    Toast.makeText(getContext(), "Временно не поддерживается", Toast.LENGTH_SHORT).show();
+                    return false;
+                })
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 

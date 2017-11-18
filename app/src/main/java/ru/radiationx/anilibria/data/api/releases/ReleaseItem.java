@@ -13,7 +13,7 @@ public class ReleaseItem {
     private String torrentLink;
     private String link;
     private String image;
-    private String episodes;
+    private String episodesCount;
     private String description;
     private ArrayList<String> seasons = new ArrayList<>();
     private ArrayList<String> voices = new ArrayList<>();
@@ -68,12 +68,12 @@ public class ReleaseItem {
         this.image = image;
     }
 
-    public String getEpisodes() {
-        return episodes;
+    public String getEpisodesCount() {
+        return episodesCount;
     }
 
-    public void setEpisodes(String episodes) {
-        this.episodes = episodes;
+    public void setEpisodesCount(String episodesCount) {
+        this.episodesCount = episodesCount;
     }
 
     public String getDescription() {

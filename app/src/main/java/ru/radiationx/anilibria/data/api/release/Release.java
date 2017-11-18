@@ -40,7 +40,7 @@ public class Release {
         release.setTorrentLink(Api.BASE_URL + responseJson.getString("torrent_link"));
         //item.setLink(responseJson.getString("link"));
         release.setImage(Api.BASE_URL + responseJson.getString("image"));
-        //release.setEpisodes(responseJson.getString("episode"));
+        //release.setEpisodesCount(responseJson.getString("episode"));
         release.setDescription(Html.fromHtml(responseJson.getString("description")).toString());
 
         JSONArray jsonSeasons = responseJson.getJSONArray("season");
@@ -61,6 +61,16 @@ public class Release {
         JSONArray jsonTypes = responseJson.getJSONArray("types");
         for (int j = 0; j < jsonTypes.length(); j++) {
             release.addType(jsonTypes.getString(j));
+        }
+
+        JSONArray jsonEpisodes = responseJson.getJSONArray("Uppod");
+        for (int j = 0; j < jsonEpisodes.length(); j++) {
+            JSONObject jsonEpisode = jsonEpisodes.getJSONObject(j);
+            FullRelease.Episode episode = new FullRelease.Episode();
+            episode.setTitle(jsonEpisode.getString("comment"));
+            episode.setUrlSd(jsonEpisode.getString("file"));
+            episode.setUrlHd(jsonEpisode.getString("filehd"));
+            release.addEpisode(episode);
         }
 
         return release;

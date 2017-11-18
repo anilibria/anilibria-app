@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.data.api.releases.Releases;
  */
 
 public class Api {
+    public final static String BASE_URL = "https://www.anilibria.tv/";
     private static Api instance = null;
     private Releases releases = null;
     private Release release = null;

@@ -10,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.radiationx.anilibria.data.api.Api;
+import ru.radiationx.anilibria.data.api.release.FullRelease;
 import ru.radiationx.anilibria.utils.mvp.BasePresenter;
 
 /**
@@ -17,6 +18,7 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter;
  */
 @InjectViewState
 public class ReleasePresenter extends BasePresenter<ReleaseView> {
+    private FullRelease currentData = null;
 
     void loadRelease(int id) {
         Disposable disposable = Api.get().Release().getRelease(id)
@@ -35,6 +37,7 @@ public class ReleasePresenter extends BasePresenter<ReleaseView> {
                     Log.d("SUKA", "subscribe call show");
                     getViewState().setRefreshing(false);
                     getViewState().showRelease(pair.first, pair.second);
+                    currentData = pair.first;
                 }, throwable -> {
                     getViewState().setRefreshing(false);
                     Log.d("SUKA", "SAS");
@@ -42,4 +45,11 @@ public class ReleasePresenter extends BasePresenter<ReleaseView> {
                 });
         addDisposable(disposable);
     }
+
+    void onTorrentButtonClick() {
+        if (currentData != null) {
+            getViewState().startLoadTorrent(currentData.getTorrentLink());
+        }
+    }
+
 }

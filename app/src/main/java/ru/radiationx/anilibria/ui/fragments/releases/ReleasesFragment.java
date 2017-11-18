@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
 
 import java.util.ArrayList;
 
@@ -62,7 +61,7 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
             presenter.refreshReleases();
         });
         toolbar.getMenu().add("Поиск")
-                .setIcon(R.drawable.ic_search)
+                .setIcon(R.drawable.ic_toolbar_search)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 

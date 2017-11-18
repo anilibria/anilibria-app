@@ -5,4 +5,6 @@
     <string name="fragment_title_videos">Видео</string>
     <string name="fragment_title_blogs">Блоги</string>
     <string name="fragment_title_other">Прочее</string>
+    <string name="fragment_title_release">Релиз</string>
+    <string name="download_torrent">Скачать торрент</string>
 </resources>

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import io.reactivex.Observable;
 import ru.radiationx.anilibria.data.Client;
+import ru.radiationx.anilibria.data.api.Api;
 
 /**
  * Created by radiationx on 31.10.17.
@@ -41,9 +42,9 @@ public class Releases {
                 }
             }
 
-            item.setTorrentLink(jsonItem.getString("torrent_link"));
-            item.setLink(jsonItem.getString("link"));
-            item.setImage("https://www.anilibria.tv/" +jsonItem.getString("image"));
+            item.setTorrentLink(Api.BASE_URL + jsonItem.getString("torrent_link"));
+            item.setLink(Api.BASE_URL + jsonItem.getString("link"));
+            item.setImage(Api.BASE_URL + jsonItem.getString("image"));
             item.setEpisodes(jsonItem.getString("episode"));
             item.setDescription(Html.fromHtml(jsonItem.getString("description")).toString());
 

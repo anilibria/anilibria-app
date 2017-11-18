@@ -2,11 +2,43 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <!-- Base color settings-->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/windows</item>
+
+        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="alertDialogTheme">@style/AppTheme.Dialog</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorBackground">@color/cardBackground</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- OTHER -->
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/toolbar_icon</item>
+    </style>
+
+    <style name="actionModeCloseButtonStyle" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
+        <item name="android:tint">@color/toolbar_icon</item>
     </style>
 
 </resources>

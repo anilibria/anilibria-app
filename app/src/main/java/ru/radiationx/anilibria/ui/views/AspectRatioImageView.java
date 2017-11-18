@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui;
+package ru.radiationx.anilibria.ui.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;

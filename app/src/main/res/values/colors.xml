@@ -3,9 +3,11 @@
     <color name="colorPrimary">#c40304</color>
     <color name="colorPrimaryDark">#ac0304</color>
     <color name="colorAccent">@color/colorPrimary</color>
-    <color name="windows">#eee</color>
+    <color name="windowBackground">#eee</color>
     <color name="white">#fff</color>
+    <color name="cardBackground">#fff</color>
     <color name="abg">#282828</color>
     <color name="tab_color_checked">@color/colorAccent</color>
     <color name="tab_color_unchecked">#757575</color>
+    <color name="toolbar_icon">#757575</color>
 </resources>

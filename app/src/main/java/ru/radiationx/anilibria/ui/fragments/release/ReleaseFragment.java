@@ -1,10 +1,8 @@
-package ru.radiationx.anilibria.ui.release;
+package ru.radiationx.anilibria.ui.fragments.release;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +14,7 @@ import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.data.api.Api;
 import ru.radiationx.anilibria.data.api.release.FullRelease;
 
 /**

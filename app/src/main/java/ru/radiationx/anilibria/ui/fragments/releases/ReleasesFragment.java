@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.releases;
+package ru.radiationx.anilibria.ui.fragments.releases;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,9 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
@@ -18,12 +16,11 @@ import java.util.ArrayList;
 
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.ui.fragments.BaseFragment;
 
-/**
- * Created by radiationx on 05.11.17.
- */
+/* Created by radiationx on 05.11.17. */
 
-public class ReleasesFragment extends MvpAppCompatFragment implements ReleasesView, ReleaseAdapter.ItemListener {
+public class ReleasesFragment extends BaseFragment implements ReleasesView, ReleaseAdapter.ItemListener {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private ReleaseAdapter adapter;
@@ -33,23 +30,23 @@ public class ReleasesFragment extends MvpAppCompatFragment implements ReleasesVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("SUKA", "onCreate: "+this);
+        Log.e("SUKA", "onCreate: " + this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("SUKA", "onDestroy: "+this);
+        Log.e("SUKA", "onDestroy: " + this);
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_releases, container, false);
+    public void onCreateView(LayoutInflater inflater, @Nullable Bundle savedInstanceState) {
+        baseInflateFragment(inflater, R.layout.fragment_releases);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        toolbar.setTitle(R.string.fragment_title_releases);
         refreshLayout = view.findViewById(R.id.swipe_refresh);
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new ReleaseAdapter(getMvpDelegate());

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.release;
+package ru.radiationx.anilibria.ui.fragments.release;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,11 +8,8 @@ import com.arellomobile.mvp.InjectViewState;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import ru.radiationx.anilibria.data.api.Api;
-import ru.radiationx.anilibria.data.api.release.FullRelease;
 import ru.radiationx.anilibria.utils.mvp.BasePresenter;
 
 /**

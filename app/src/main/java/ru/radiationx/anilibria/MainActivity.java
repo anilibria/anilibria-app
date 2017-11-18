@@ -2,12 +2,10 @@ package ru.radiationx.anilibria;
 
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,11 +13,10 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.List;
 
-import ru.radiationx.anilibria.ui.release.ReleaseFragment;
-import ru.radiationx.anilibria.ui.releases.ReleasesFragment;
+import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment;
+import ru.radiationx.anilibria.ui.fragments.releases.ReleasesFragment;
 import ru.terrakok.cicerone.Navigator;
 import ru.terrakok.cicerone.android.SupportFragmentNavigator;
-import ru.terrakok.cicerone.commands.Back;
 import ru.terrakok.cicerone.commands.BackTo;
 import ru.terrakok.cicerone.commands.Command;
 
@@ -38,27 +35,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        addMenuToBottom("Релизы", R.drawable.ic_releases)
+        addMenuToBottom(R.string.fragment_title_releases, R.drawable.ic_releases)
                 .setOnMenuItemClickListener(item -> {
                     navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
                     return false;
                 });
-        addMenuToBottom("Новости", R.drawable.ic_news)
+        addMenuToBottom(R.string.fragment_title_news, R.drawable.ic_news)
                 .setOnMenuItemClickListener(item -> {
                     navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
                     return false;
                 });
-        addMenuToBottom("Видео", R.drawable.ic_videos)
+        addMenuToBottom(R.string.fragment_title_videos, R.drawable.ic_videos)
                 .setOnMenuItemClickListener(item -> {
                     navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
                     return false;
                 });
-        addMenuToBottom("Блоги", R.drawable.ic_blogs)
+        addMenuToBottom(R.string.fragment_title_blogs, R.drawable.ic_blogs)
                 .setOnMenuItemClickListener(item -> {
                     navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
                     return false;
                 });
-        addMenuToBottom("Прочее", R.drawable.ic_other)
+        addMenuToBottom(R.string.fragment_title_other, R.drawable.ic_other)
                 .setOnMenuItemClickListener(item -> {
                     navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
                     return false;
@@ -81,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     private MenuItem addMenuToBottom(String title, @DrawableRes int iconId) {
         return bottomTabs.getMenu().add(title).setIcon(iconId);
+    }
+
+    private MenuItem addMenuToBottom(@StringRes int titleId, @DrawableRes int iconId) {
+        return bottomTabs.getMenu().add(titleId).setIcon(iconId);
     }
 
     private void setTitle(String title) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                             return fragment;
                         }
                         default:
-                            throw new RuntimeException("Unknown screen key: "+screenKey);
+                            throw new RuntimeException("Unknown screen key: " + screenKey);
                     }
                 }
 

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.releases;
+package ru.radiationx.anilibria.ui.fragments.releases;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.App;
 import ru.radiationx.anilibria.Screens;
 import ru.radiationx.anilibria.data.api.Api;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
-import ru.radiationx.anilibria.ui.release.ReleaseFragment;
+import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment;
 import ru.radiationx.anilibria.utils.mvp.BasePresenter;
 
 /**

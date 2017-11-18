@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.releases;
+package ru.radiationx.anilibria.ui.fragments.releases;
 
 import android.util.Log;
 import android.view.View;
@@ -18,20 +18,18 @@ import ru.radiationx.anilibria.BaseViewHolder;
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
-/**
- * Created by radiationx on 31.10.17.
- */
+/* Created by radiationx on 31.10.17. */
 
 public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private static final int RELEASE_LAYOUT = 1;
     private static final int LOAD_MORE_LAYOUT = 2;
     private ItemListener listener;
 
-    public ReleaseAdapter(MvpDelegate<?> parentDelegate) {
+    ReleaseAdapter(MvpDelegate<?> parentDelegate) {
         super(parentDelegate, String.valueOf(0));
     }
 
-    public void setListener(ItemListener listener) {
+    void setListener(ItemListener listener) {
         this.listener = listener;
     }
 
@@ -73,7 +71,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         return RELEASE_LAYOUT;
     }
 
-    public void insertMore(List<ReleaseItem> list) {
+    void insertMore(List<ReleaseItem> list) {
         int prevItems = getItemCount();
         this.items.addAll(list);
         Log.d("SUKA", "insertMore " + prevItems + " : " + getItemCount());
@@ -99,7 +97,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
 
         @Override
         public void bind(ReleaseItem item, int position) {
-            title.setText(item.getTitle() + " (" + item.getEpisodes() + ")");
+            title.setText(String.format("%s (%s)", item.getTitle(), item.getEpisodes()));
             desc.setText(item.getDescription());
             ImageLoader.getInstance().displayImage(item.getImage(), image);
         }

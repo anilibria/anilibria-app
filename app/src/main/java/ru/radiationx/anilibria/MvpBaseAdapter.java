@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria;
 
 import android.support.v7.widget.RecyclerView;
-import android.widget.BaseAdapter;
 
 import com.arellomobile.mvp.MvpDelegate;
 

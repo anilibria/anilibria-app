@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ru.radiationx.anilibria.ui.AspectRatioImageView
+            <ru.radiationx.anilibria.ui.views.AspectRatioImageView
                 android:id="@+id/full_image"
                 android:layout_width="96dp"
                 android:layout_height="wrap_content"

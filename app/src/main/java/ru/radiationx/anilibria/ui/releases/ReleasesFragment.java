@@ -16,7 +16,6 @@ import com.arellomobile.mvp.presenter.PresenterType;
 
 import java.util.ArrayList;
 
-import ru.radiationx.anilibria.App;
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
@@ -24,9 +23,7 @@ import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
  * Created by radiationx on 05.11.17.
  */
 
-public class ReleasesFragment extends MvpAppCompatFragment implements ReleaseView, ReleaseAdapter.ItemListener {
-    private final static int START_PAGE = 1;
-    private int currentPage = START_PAGE;
+public class ReleasesFragment extends MvpAppCompatFragment implements ReleasesView, ReleaseAdapter.ItemListener {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private ReleaseAdapter adapter;
@@ -48,14 +45,13 @@ public class ReleasesFragment extends MvpAppCompatFragment implements ReleaseVie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_releases, container, false);
-        refreshLayout = view.findViewById(R.id.swipe_refresh);
-        recyclerView = view.findViewById(R.id.recycler_view);
-        return view;
+        return inflater.inflate(R.layout.fragment_releases, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        refreshLayout = view.findViewById(R.id.swipe_refresh);
+        recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new ReleaseAdapter(getMvpDelegate());
         adapter.setListener(this);
         recyclerView.setAdapter(adapter);
@@ -63,26 +59,26 @@ public class ReleasesFragment extends MvpAppCompatFragment implements ReleaseVie
 
         refreshLayout.setOnRefreshListener(() -> {
             Log.e("SUKA", "setOnRefreshListener");
-            currentPage = START_PAGE;
-            presenter.getReleases(currentPage);
+            presenter.refreshReleases();
         });
     }
 
     @Override
     public void showReleases(ArrayList<ReleaseItem> releases) {
         Log.e("SUKA", "showReleases");
-        if (currentPage == START_PAGE) {
-            adapter.addAll(releases);
-        } else {
-            adapter.insertMore(releases);
-        }
+        adapter.bindItems(releases);
+    }
+
+    @Override
+    public void insertMore(ArrayList<ReleaseItem> releases) {
+        Log.e("SUKA", "insertMore");
+        adapter.insertMore(releases);
     }
 
     @Override
     public void onLoadMore() {
         Log.e("SUKA", "onLoadMore");
-        currentPage++;
-        presenter.getReleases(currentPage);
+        presenter.loadMore();
     }
 
     @Override
@@ -92,14 +88,11 @@ public class ReleasesFragment extends MvpAppCompatFragment implements ReleaseVie
 
     @Override
     public void onItemClick(ReleaseItem item) {
-        Log.d("SUKA", "ON ITEM CLICK");
-        Bundle args = new Bundle();
-        args.putInt("release_id", item.getId());
-        App.get().getRouter().navigateTo("ReleaseFragment", args);
+        presenter.onItemClick(item);
     }
 
     @Override
     public boolean onItemLongClick(ReleaseItem item) {
-        return false;
+        return presenter.onItemLongClick(item);
     }
 }

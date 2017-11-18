@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria;
 
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +26,11 @@ public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends MvpBaseA
         this.items = items;
     }
 
-    public void addAll(Collection<? extends E> items) {
-        addAll(items, true);
+    public void bindItems(Collection<? extends E> items) {
+        bindItems(items, true);
     }
 
-    public void addAll(Collection<? extends E> items, boolean clearList) {
+    public void bindItems(Collection<? extends E> items, boolean clearList) {
         if (clearList)
             clear();
         this.items.addAll(items);

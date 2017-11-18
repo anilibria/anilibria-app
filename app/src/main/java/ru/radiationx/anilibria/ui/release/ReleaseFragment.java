@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,12 +26,16 @@ import ru.radiationx.anilibria.data.api.release.FullRelease;
  * Created by radiationx on 16.11.17.
  */
 
-public class ReleaseFragment extends Fragment {
-    ImageView image;
-    TextView title;
-    TextView desc;
-    TextView info;
-    int id = 5207;
+public class ReleaseFragment extends MvpAppCompatFragment implements ReleaseView {
+    public final static String ARG_ID = "release_id";
+    private ImageView image;
+    private TextView title;
+    private TextView desc;
+    private TextView info;
+    private int id = -1;
+
+    @InjectPresenter
+    ReleasePresenter presenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +43,7 @@ public class ReleaseFragment extends Fragment {
         Log.e("SUKA", "onCreate: " + this);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            id = arguments.getInt("release_id");
+            id = arguments.getInt(ARG_ID, id);
         }
     }
 
@@ -60,25 +66,25 @@ public class ReleaseFragment extends Fragment {
         title = view.findViewById(R.id.full_title);
         desc = view.findViewById(R.id.full_description);
         info = view.findViewById(R.id.full_info);
-        Api.get().Release().getRelease(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onload);
+        presenter.loadRelease(id);
     }
 
-    private void onload(FullRelease release) {
-        String imageUrl = "https://www.anilibria.tv/" + release.getImage();
-        ImageLoader.getInstance().displayImage(imageUrl, image);
+
+    @Override
+    public void setRefreshing(boolean refreshing) {
+
+    }
+
+    @Override
+    public void showRelease(FullRelease release) {
+        ImageLoader.getInstance().displayImage(release.getImage(), image);
         title.setText(release.getTitle());
         desc.setText(release.getDescription());
-        info.setText("palehchi paren'");
+    }
 
-        String original = release.getOriginalTitle();
-        String seasonsHtml = "<b>Сезон:</b> " + TextUtils.join(", ", release.getSeasons());
-        String voicesHtml = "<b>Голоса:</b> " + TextUtils.join(", ", release.getVoices());
-        String typesHtml = "<b>Тип:</b> " + TextUtils.join(", ", release.getTypes());
-        String[] arrHtml = {original, seasonsHtml, voicesHtml, typesHtml};
-        String html = TextUtils.join("<br>", arrHtml);
-        info.setText(Html.fromHtml(html));
+    @Override
+    public void showRelease(FullRelease release, String infoText) {
+        showRelease(release);
+        info.setText(Html.fromHtml(infoText));
     }
 }

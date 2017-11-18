@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import ru.terrakok.cicerone.Navigator;
 import ru.terrakok.cicerone.android.SupportFragmentNavigator;
 import ru.terrakok.cicerone.commands.Back;
 import ru.terrakok.cicerone.commands.BackTo;
+import ru.terrakok.cicerone.commands.Command;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationViewEx bottomTabs;
@@ -29,106 +32,99 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomTabs = findViewById(R.id.bottom_tabs);
 
-        bottomTabs.getMenu()
-                .add("Releases")
-                .setIcon(R.drawable.ic_releases)
-                .setOnMenuItemClickListener(item -> {
-                    navigator.applyCommand(new BackTo("ReleasesFragment"));
-                    return false;
-                });
-        bottomTabs.getMenu()
-                .add("News")
-                .setIcon(R.drawable.ic_news)
-                .setOnMenuItemClickListener(item -> {
-                    navigator.applyCommand(new BackTo("ReleasesFragment"));
-                    return false;
-                });
-
-        bottomTabs.getMenu()
-                .add("Videos")
-                .setIcon(R.drawable.ic_videos)
-                .setOnMenuItemClickListener(item -> {
-                    navigator.applyCommand(new BackTo("ReleasesFragment"));
-                    return false;
-                });
-
-        bottomTabs.getMenu()
-                .add("Blogs")
-                .setIcon(R.drawable.ic_blogs)
-                .setOnMenuItemClickListener(item -> {
-                    navigator.applyCommand(new BackTo("ReleasesFragment"));
-                    return false;
-                });
-
-        bottomTabs.getMenu()
-                .add("Other")
-                .setIcon(R.drawable.ic_other)
-                .setOnMenuItemClickListener(item -> {
-                    navigator.applyCommand(new BackTo("ReleasesFragment"));
-                    return false;
-                });
-        bottomTabs.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle(item.getTitle());
-                }
-                return true;
-            }
+        bottomTabs.setOnNavigationItemSelectedListener(item -> {
+            setTitle(item.getTitle());
+            return true;
         });
+
+
+        addMenuToBottom("Релизы", R.drawable.ic_releases)
+                .setOnMenuItemClickListener(item -> {
+                    navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
+                    return false;
+                });
+        addMenuToBottom("Новости", R.drawable.ic_news)
+                .setOnMenuItemClickListener(item -> {
+                    navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
+                    return false;
+                });
+        addMenuToBottom("Видео", R.drawable.ic_videos)
+                .setOnMenuItemClickListener(item -> {
+                    navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
+                    return false;
+                });
+        addMenuToBottom("Блоги", R.drawable.ic_blogs)
+                .setOnMenuItemClickListener(item -> {
+                    navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
+                    return false;
+                });
+        addMenuToBottom("Прочее", R.drawable.ic_other)
+                .setOnMenuItemClickListener(item -> {
+                    navigator.applyCommand(new BackTo(Screens.RELEASES_LIST));
+                    return false;
+                });
+
         bottomTabs.enableItemShiftingMode(false);
         bottomTabs.enableShiftingMode(false);
         bottomTabs.setTextVisibility(false);
         bottomTabs.enableAnimation(false);
+
         Log.e("SUKA", "" + getSupportFragmentManager().getFragments().size());
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {
             Log.e("SUKA", "Old fragments: " + fragment);
         }
         if (savedInstanceState == null) {
-            App.get().getRouter().replaceScreen("ReleasesFragment");
-
+            App.get().getRouter().newRootScreen(Screens.RELEASES_LIST);
         }
-        /*if (fragments.size() == 0) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragments_container, new ReleasesFragment())
-                    .commit();
-        }*/
+    }
 
+    private MenuItem addMenuToBottom(String title, @DrawableRes int iconId) {
+        return bottomTabs.getMenu().add(title).setIcon(iconId);
+    }
 
+    private void setTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    private MenuItem getCurrentTab() {
+        return bottomTabs.getMenu().getItem(bottomTabs.getCurrentItem());
     }
 
     private Navigator navigator =
             new SupportFragmentNavigator(getSupportFragmentManager(), R.id.fragments_container) {
+
+                @Override
+                public void applyCommand(Command command) {
+                    super.applyCommand(command);
+                    MenuItem item = getCurrentTab();
+                    setTitle(item.getTitle());
+                }
+
                 @Override
                 protected Fragment createFragment(String screenKey, Object data) {
                     switch (screenKey) {
-                        case "ReleaseFragment": {
+                        case Screens.RELEASE_DETAILS: {
                             ReleaseFragment f = new ReleaseFragment();
                             if (data instanceof Bundle) {
                                 f.setArguments((Bundle) data);
                             }
                             return f;
                         }
-                        case "ReleasesFragment": {
+                        case Screens.RELEASES_LIST: {
                             ReleasesFragment fragment = new ReleasesFragment();
                             return fragment;
                         }
                         default:
-                            throw new RuntimeException("Unknown screen key!");
+                            throw new RuntimeException("Unknown screen key: "+screenKey);
                     }
                 }
 
                 @Override
                 protected void showSystemMessage(String message) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                protected void backToUnexisting() {
-                    super.backToUnexisting();
-                    Log.e("SUKA", "backToUnexisting");
                 }
 
                 @Override

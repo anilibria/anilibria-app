@@ -13,7 +13,9 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView;
 /**
  * Created by radiationx on 16.11.17.
  */
-@StateStrategyType(AddToEndStrategy.class)
-public interface ReleaseView extends IBaseView {
+@StateStrategyType(AddToEndSingleStrategy.class)
+public interface ReleasesView extends IBaseView {
     void showReleases(ArrayList<ReleaseItem> releases);
+
+    void insertMore(ArrayList<ReleaseItem> releases);
 }

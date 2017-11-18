@@ -13,14 +13,19 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_tabs"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@+id/bottom_tabs"
+        android:background="@drawable/pref_shadow_bottom"/>
+
     <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
         android:id="@+id/bottom_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:foreground="@android:color/transparent"
-        app:elevation="16dp"
+        app:elevation="0dp"
         app:itemIconTint="@drawable/tab_item_state"
         app:itemTextColor="@drawable/tab_item_state"/>
 </RelativeLayout>

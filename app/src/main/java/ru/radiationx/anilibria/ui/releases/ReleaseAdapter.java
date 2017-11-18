@@ -101,8 +101,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         public void bind(ReleaseItem item, int position) {
             title.setText(item.getTitle() + " (" + item.getEpisodes() + ")");
             desc.setText(item.getDescription());
-            String imageUrl = "https://www.anilibria.tv/" + item.getImage();
-            ImageLoader.getInstance().displayImage(imageUrl, image);
+            ImageLoader.getInstance().displayImage(item.getImage(), image);
         }
     }
 

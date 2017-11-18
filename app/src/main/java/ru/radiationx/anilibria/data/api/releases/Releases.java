@@ -43,7 +43,7 @@ public class Releases {
 
             item.setTorrentLink(jsonItem.getString("torrent_link"));
             item.setLink(jsonItem.getString("link"));
-            item.setImage(jsonItem.getString("image"));
+            item.setImage("https://www.anilibria.tv/" +jsonItem.getString("image"));
             item.setEpisodes(jsonItem.getString("episode"));
             item.setDescription(Html.fromHtml(jsonItem.getString("description")).toString());
 

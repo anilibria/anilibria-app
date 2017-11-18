@@ -19,5 +19,11 @@ public interface ReleaseView extends IBaseView {
     void showRelease(FullRelease release, String infoText);
 
     @StateStrategyType(SkipStrategy.class)
-    void startLoadTorrent(String url);
+    void loadTorrent(String url);
+
+    @StateStrategyType(SkipStrategy.class)
+    void shareRelease(String text);
+
+    @StateStrategyType(SkipStrategy.class)
+    void copyLink(String url);
 }

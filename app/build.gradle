@@ -51,4 +51,6 @@ dependencies {
     implementation 'ru.terrakok.cicerone:cicerone:2.1.0'
 
     implementation 'com.github.ittianyu:BottomNavigationViewEx:1.2.4'
+
+    implementation 'com.github.Cutta:TagView:1.3'
 }

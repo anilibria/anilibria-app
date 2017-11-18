@@ -46,9 +46,21 @@ public class ReleasePresenter extends BasePresenter<ReleaseView> {
         addDisposable(disposable);
     }
 
-    void onTorrentButtonClick() {
+    void onTorrentClick() {
         if (currentData != null) {
-            getViewState().startLoadTorrent(currentData.getTorrentLink());
+            getViewState().loadTorrent(currentData.getTorrentLink());
+        }
+    }
+
+    void onShareClick() {
+        if (currentData != null) {
+            getViewState().loadTorrent(currentData.getLink());
+        }
+    }
+
+    void onCopyLinkClick() {
+        if (currentData != null) {
+            getViewState().loadTorrent(currentData.getLink());
         }
     }
 

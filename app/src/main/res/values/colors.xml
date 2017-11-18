@@ -9,5 +9,5 @@
     <color name="abg">#282828</color>
     <color name="tab_color_checked">@color/colorAccent</color>
     <color name="tab_color_unchecked">#757575</color>
-    <color name="toolbar_icon">#757575</color>
+    <color name="toolbar_icon">#ffffff</color>
 </resources>

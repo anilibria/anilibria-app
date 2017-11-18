@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -24,8 +25,8 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
     private ReleaseAdapter adapter;
-    @InjectPresenter(tag = "ReleasesTag", type = PresenterType.GLOBAL)
-    ReleasesPresenter presenter;
+    @InjectPresenter/*(tag = "ReleasesTag", type = PresenterType.GLOBAL)*/
+            ReleasesPresenter presenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,9 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.e("SUKA", "onViewCreated");
         toolbar.setTitle(R.string.fragment_title_releases);
+        Log.e("SUKA", "onViewCreated title " + toolbar.getTitle());
         refreshLayout = view.findViewById(R.id.swipe_refresh);
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new ReleaseAdapter(getMvpDelegate());
@@ -58,6 +61,9 @@ public class ReleasesFragment extends BaseFragment implements ReleasesView, Rele
             Log.e("SUKA", "setOnRefreshListener");
             presenter.refreshReleases();
         });
+        toolbar.getMenu().add("Поиск")
+                .setIcon(R.drawable.ic_search)
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override

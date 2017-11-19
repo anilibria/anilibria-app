@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#c40304</color>
-    <color name="colorPrimaryDark">#ac0304</color>
-    <color name="colorAccent">@color/colorPrimary</color>
-    <color name="windowBackground">#eee</color>
+    <color name="a_red">#c40304</color>
+    <color name="a_red_dark">#ac0304</color>
+    <color name="a_gray">#383838</color>
+    <color name="a_gray_dark">#282828</color>
     <color name="white">#fff</color>
+
+
+    <color name="colorPrimary">@color/a_red</color>
+    <color name="colorPrimaryDark">@color/a_red_dark</color>
+    <color name="colorAccent">@color/a_red</color>
+    <color name="windowBackground">#eee</color>
     <color name="cardBackground">#fff</color>
-    <color name="abg">#282828</color>
+
     <color name="tab_color_checked">@color/colorAccent</color>
     <color name="tab_color_unchecked">#757575</color>
-    <color name="toolbar_icon">#ffffff</color>
+
+    <color name="toolbar_icon">@color/white</color>
+
+    <color name="release_tag_color">@color/a_red</color>
+    <color name="release_tag_color_press">@color/a_red_dark</color>
+
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="toolbar_icon" extension="reference" format="color"/>
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float"/>
     </declare-styleable>

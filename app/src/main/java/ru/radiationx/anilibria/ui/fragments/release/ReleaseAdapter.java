@@ -51,8 +51,8 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        tagColor = ContextCompat.getColor(recyclerView.getContext(), R.color.colorPrimary);
-        tagColorPress = ContextCompat.getColor(recyclerView.getContext(), R.color.colorPrimaryDark);
+        tagColor = ContextCompat.getColor(recyclerView.getContext(), R.color.release_tag_color);
+        tagColorPress = ContextCompat.getColor(recyclerView.getContext(), R.color.release_tag_color_press);
         tagColorText = ContextCompat.getColor(recyclerView.getContext(), R.color.white);
         tagRadius = 2 * recyclerView.getContext().getResources().getDisplayMetrics().density;
         accentColor = ContextCompat.getColor(recyclerView.getContext(), R.color.colorAccent);

@@ -12,6 +12,8 @@
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/AppTheme.Dialog</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+
+        <item name="toolbar_icon">@color/toolbar_icon</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 import ru.radiationx.anilibria.utils.mvp.IBaseView;
 
-/**
- * Created by radiationx on 16.11.17.
- */
-@StateStrategyType(AddToEndSingleStrategy.class)
-public interface ReleasesView extends IBaseView {
-    @StateStrategyType(AddToEndStrategy.class)
-    void showReleases(ArrayList<ReleaseItem> releases);
+/* Created by radiationx on 16.11.17. */
 
-    @StateStrategyType(AddToEndStrategy.class)
-    void insertMore(ArrayList<ReleaseItem> releases);
+@StateStrategyType(AddToEndSingleStrategy::class)
+interface ReleasesView : IBaseView {
+    @StateStrategyType(AddToEndStrategy::class)
+    fun showReleases(releases: ArrayList<ReleaseItem>);
+
+    @StateStrategyType(AddToEndStrategy::class)
+    fun insertMore(releases: ArrayList<ReleaseItem>);
 }

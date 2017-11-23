@@ -15,6 +15,7 @@
         android:layout_height="56dp"
         android:layout_alignParentStart="true"
         android:layout_marginStart="16dp"
+        android:textColor="@color/textDefault"
         android:layout_toStartOf="@+id/quality_sd"
         android:gravity="center_vertical"
         android:textSize="16sp"

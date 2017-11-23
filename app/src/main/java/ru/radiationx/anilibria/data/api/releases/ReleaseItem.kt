@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.data.api.releases
 
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 

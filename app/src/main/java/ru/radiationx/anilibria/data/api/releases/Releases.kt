@@ -1,15 +1,11 @@
 package ru.radiationx.anilibria.data.api.releases;
 
-import android.text.Html;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import io.reactivex.Observable;
-import ru.radiationx.anilibria.data.Client;
-import ru.radiationx.anilibria.data.api.Api;
+import android.text.Html
+import io.reactivex.Observable
+import org.json.JSONObject
+import ru.radiationx.anilibria.data.Client
+import ru.radiationx.anilibria.data.api.Api
+import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 

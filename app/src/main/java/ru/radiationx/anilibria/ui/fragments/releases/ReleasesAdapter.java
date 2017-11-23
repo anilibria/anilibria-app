@@ -13,10 +13,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-import ru.radiationx.anilibria.BaseAdapter;
-import ru.radiationx.anilibria.BaseViewHolder;
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.ui.adapters.BaseAdapter;
+import ru.radiationx.anilibria.ui.adapters.BaseViewHolder;
 
 /* Created by radiationx on 31.10.17. */
 

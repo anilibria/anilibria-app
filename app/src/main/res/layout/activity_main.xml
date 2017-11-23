@@ -5,22 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.radiationx.anilibria.MainActivity">
+    tools:context="ru.radiationx.anilibria.ui.activities.MainActivity">
 
     <RelativeLayout
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_tabs"/>
+        android:layout_above="@+id/bottomTabs"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_above="@+id/bottom_tabs"
+        android:layout_above="@+id/bottomTabs"
         android:background="@drawable/pref_shadow_bottom"/>
 
     <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
-        android:id="@+id/bottom_tabs"
+        android:id="@+id/bottomTabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"

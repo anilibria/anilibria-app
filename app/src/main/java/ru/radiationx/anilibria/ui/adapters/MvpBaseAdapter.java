@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria;
+package ru.radiationx.anilibria.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 

@@ -4,6 +4,7 @@
     <color name="a_red_dark">#ac0304</color>
     <color name="a_gray">#383838</color>
     <color name="a_gray_dark">#282828</color>
+    <color name="a_red_launcher">@color/a_red</color>
     <color name="white">#fff</color>
 
 
@@ -20,5 +21,9 @@
 
     <color name="release_tag_color">@color/a_red</color>
     <color name="release_tag_color_press">@color/a_red_dark</color>
+
+    <color name="textDefault">#212121</color>
+    <color name="textSecond">#757575</color>
+    <color name="textColoredButton">@color/white</color>
 
 </resources>

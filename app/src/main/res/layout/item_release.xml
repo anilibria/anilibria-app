@@ -43,7 +43,6 @@
                 android:id="@+id/item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#212121"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Title release long title lol"/>
@@ -54,7 +53,6 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="6"
-                android:textColor="#212121"
                 android:textSize="14sp"
                 tools:text="Title release long title lol Title release long title lol Title release long title lol Title release long title lol Title release long title lol Title release long title lol Title release long title lol "/>
 

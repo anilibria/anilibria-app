@@ -14,7 +14,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import ru.radiationx.anilibria.App;
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.Screens;
-import ru.radiationx.anilibria.data.api.release.FullRelease;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 import ru.radiationx.anilibria.ui.fragments.BaseFragment;
 import ru.radiationx.anilibria.utils.Utils;
 
@@ -24,6 +24,15 @@ import ru.radiationx.anilibria.utils.Utils;
 
 public class ReleaseFragment extends BaseFragment implements ReleaseView, ReleaseAdapter.ReleaseListener {
     public final static String ARG_ID = "release_id";
+    public final static String ARG_ITEM = "release_item";
+    public final static String ARG_TITLE = "release_id";
+    public final static String ARG_TITLE_ORIG = "release_id";
+    public final static String ARG_SEASONS = "release_id";
+    public final static String ARG_VOICES = "release_id";
+    public final static String ARG_TYPES = "release_id";
+    public final static String ARG_GENRES = "release_id";
+    public final static String ARG_DESC = "release_id";
+
     private RecyclerView recyclerView;
     private ReleaseAdapter adapter;
     private int id = -1;
@@ -38,6 +47,11 @@ public class ReleaseFragment extends BaseFragment implements ReleaseView, Releas
         Bundle arguments = getArguments();
         if (arguments != null) {
             id = arguments.getInt(ARG_ID, id);
+            ReleaseItem item = (ReleaseItem) arguments.getSerializable(ARG_ITEM);
+            if (item != null) {
+                presenter.setCurrentData(item);
+            }
+            Log.e("SUKA", "ITEM " + item + " : " + (item == null ? "null" : item.getTitle()));
         }
     }
 
@@ -87,7 +101,7 @@ public class ReleaseFragment extends BaseFragment implements ReleaseView, Releas
     }
 
     @Override
-    public void showRelease(FullRelease release) {
+    public void showRelease(ReleaseItem release) {
         toolbar.setTitle(String.format("%s / %s", release.getTitle(), release.getOriginalTitle()));
         adapter.setRelease(release);
         adapter.notifyDataSetChanged();

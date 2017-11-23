@@ -76,6 +76,7 @@ public class ReleasesPresenter extends BasePresenter<ReleasesView> {
     void onItemClick(ReleaseItem item) {
         Bundle args = new Bundle();
         args.putInt(ReleaseFragment.ARG_ID, item.getId());
+        args.putSerializable(ReleaseFragment.ARG_ITEM, item);
         App.get().getRouter().navigateTo(Screens.RELEASE_DETAILS, args);
     }
 

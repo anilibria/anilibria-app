@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,13 +27,13 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import ru.radiationx.anilibria.BaseAdapter;
 import ru.radiationx.anilibria.BaseViewHolder;
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.data.api.release.FullRelease;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 
-public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
+public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private static final int RELEASE_HEAD_LAYOUT = 1;
     private static final int RELEASE_EPISODE_LAYOUT = 2;
     private ReleaseListener releaseListener;
-    private FullRelease release;
+    private ReleaseItem release;
     private ColorFilter accentFilter;
     private int accentColor = 0;
     private int tagColor = 0;
@@ -59,7 +60,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
         accentFilter = new PorterDuffColorFilter(accentColor, PorterDuff.Mode.SRC_IN);
     }
 
-    public void setRelease(FullRelease release) {
+    public void setRelease(ReleaseItem release) {
         this.release = release;
     }
 
@@ -80,7 +81,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
     }
 
     @Override
-    public FullRelease getItem(int position) {
+    public ReleaseItem getItem(int position) {
         return release;
     }
 
@@ -114,7 +115,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
 
     }
 
-    class ReleaseItemHolder extends BaseViewHolder<FullRelease> {
+    class ReleaseItemHolder extends BaseViewHolder<ReleaseItem> {
         ImageView image;
         TextView title;
         TextView desc;
@@ -145,7 +146,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
         }
 
         @Override
-        public void bind(FullRelease release) {
+        public void bind(ReleaseItem release) {
             ImageLoader.getInstance().displayImage(release.getImage(), image, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
@@ -181,7 +182,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
         }
     }
 
-    class EpisodeItemHolder extends BaseViewHolder<FullRelease.Episode> {
+    class EpisodeItemHolder extends BaseViewHolder<ReleaseItem.Episode> {
         TextView title;
         ImageButton qualitySd;
         ImageButton qualityHd;
@@ -206,7 +207,7 @@ public class ReleaseAdapter extends BaseAdapter<FullRelease, BaseViewHolder> {
         }
 
         @Override
-        public void bind(FullRelease.Episode item) {
+        public void bind(ReleaseItem.Episode item) {
             title.setText(item.getTitle());
         }
     }

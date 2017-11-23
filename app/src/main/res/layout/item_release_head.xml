@@ -44,7 +44,6 @@
                 android:id="@+id/full_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#212121"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="Title release long title lol\njslad;kfjasdf"/>
@@ -95,8 +94,8 @@
         android:layout_gravity="end"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:text="@string/download_torrent"
-        android:textColor="@color/white"/>
+        android:textColor="@color/textSecond"
+        android:text="@string/download_torrent"/>
 
     <View
         android:layout_width="match_parent"
@@ -111,11 +110,10 @@
         android:id="@+id/full_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:textColor="#212121"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp"
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk "/>
 
     <View
@@ -126,5 +124,34 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:background="@color/windowBackground"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/full_view_all"
+            style="@style/Base.Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:text="Смотреть все"
+            android:textColor="@color/textColoredButton"/>
+
+        <TextView
+            android:id="@+id/full_download_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:text="Скачать"
+            android:textColor="@color/textSecond"
+            android:textSize="16sp"/>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -3,9 +3,7 @@ package ru.radiationx.anilibria.data.api;
 import ru.radiationx.anilibria.data.api.release.Release;
 import ru.radiationx.anilibria.data.api.releases.Releases;
 
-/**
- * Created by radiationx on 31.10.17.
- */
+/* Created by radiationx on 31.10.17. */
 
 public class Api {
     public final static String BASE_URL = "https://www.anilibria.tv/";

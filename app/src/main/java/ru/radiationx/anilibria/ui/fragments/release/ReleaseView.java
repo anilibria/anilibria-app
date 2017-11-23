@@ -4,7 +4,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
-import ru.radiationx.anilibria.data.api.release.FullRelease;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 import ru.radiationx.anilibria.utils.mvp.IBaseView;
 
 /**
@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView;
 
 @StateStrategyType(AddToEndStrategy.class)
 public interface ReleaseView extends IBaseView {
-    void showRelease(FullRelease release);
+    void showRelease(ReleaseItem release);
 
     @StateStrategyType(SkipStrategy.class)
     void loadTorrent(String url);

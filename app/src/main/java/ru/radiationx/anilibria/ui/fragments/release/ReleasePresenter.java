@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.radiationx.anilibria.data.api.Api;
-import ru.radiationx.anilibria.data.api.release.FullRelease;
+import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
 import ru.radiationx.anilibria.utils.mvp.BasePresenter;
 
 /**
@@ -16,7 +16,19 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter;
  */
 @InjectViewState
 public class ReleasePresenter extends BasePresenter<ReleaseView> {
-    private FullRelease currentData = null;
+    private ReleaseItem currentData = null;
+
+    public void setCurrentData(ReleaseItem item) {
+        currentData = item;
+    }
+
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+        if (currentData != null) {
+            getViewState().showRelease(currentData);
+        }
+    }
 
     void loadRelease(int id) {
         Disposable disposable = Api.get().Release().getRelease(id)

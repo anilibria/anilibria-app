@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         return bottomTabs.menu.getItem(bottomTabs.currentItem)
     }
 
-    private val navigator = object : SupportFragmentNavigator(supportFragmentManager, R.id.fragments_container) {
+    private val navigator  = object : SupportFragmentNavigator(supportFragmentManager, R.id.fragments_container) {
 
         override fun applyCommand(command: Command?) {
             super.applyCommand(command)
@@ -94,15 +94,15 @@ class MainActivity : AppCompatActivity() {
             title = item.title
         }
 
-        override fun createFragment(screenKey: String, data: Any): Fragment {
+        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
             Log.e("SUKA", "Create fragment $screenKey : $data")
             return when (screenKey) {
                 Screens.RELEASE_DETAILS -> {
-                    val f = ReleaseFragment()
+                    val fragment = ReleaseFragment()
                     if (data is Bundle) {
-                        f.arguments = data
+                        fragment.arguments = data
                     }
-                    f
+                    fragment
                 }
                 Screens.RELEASES_LIST -> {
                     ReleasesFragment()
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        override fun showSystemMessage(message: String) {
+        override fun showSystemMessage(message: String?) {
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
         }
 

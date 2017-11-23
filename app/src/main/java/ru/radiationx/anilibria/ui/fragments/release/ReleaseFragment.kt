@@ -75,10 +75,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
                         false
                     }
         }
-        toolbar.let {
-            fixToolbarInsets(it)
-            setMarqueeTitle(it)
-        }
+
+        fixToolbarInsets(toolbar)
+        setMarqueeTitle(toolbar)
     }
 
 

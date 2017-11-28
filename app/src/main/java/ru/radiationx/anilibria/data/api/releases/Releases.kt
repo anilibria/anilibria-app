@@ -6,14 +6,36 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.Api
 import java.util.*
+import kotlin.collections.ArrayList
 
 /* Created by radiationx on 31.10.17. */
 
 class Releases {
+    fun getGenres(): Observable<List<String>> {
+        return Observable.fromCallable {
+            val url = "https://www.anilibria.tv/api/api.php?action=tags"
+            val response = Client.instance.get(url)
+            val result: MutableList<String> = mutableListOf()
+            val jsonItems = JSONObject(response).getJSONArray("data")
+            result.add("none")
+            for (i in 0 until jsonItems.length()) {
+                result.add(jsonItems.getString(i))
+            }
+            result
+        }
+    }
+
+    fun search(name: String, genre: String, page: Int): Observable<ArrayList<ReleaseItem>> {
+        return Observable.fromCallable {
+            val url = "https://www.anilibria.tv/api/api.php?action=search&genre=$genre&name=$name&PAGEN_1=$page"
+            val response = Client.instance.get(url)
+            parseItems(response)
+        }
+    }
 
     fun getItems(page: Int): Observable<ArrayList<ReleaseItem>> {
         return Observable.fromCallable {
-            val url = "https://www.anilibria.tv/api/api.php?PAGEN_1=" + page
+            val url = "https://www.anilibria.tv/api/api.php?PAGEN_1=$page"
             val response = Client.instance.get(url)
             parseItems(response)
         }
@@ -41,7 +63,7 @@ class Releases {
             item.link = Api.BASE_URL + jsonItem.getString("link")
             item.image = Api.BASE_URL + jsonItem.getString("image")
             item.episodesCount = jsonItem.getString("episode")
-            item.description = Html.fromHtml(jsonItem.getString("description")).toString()
+            item.description = Html.fromHtml(jsonItem.getString("description")).toString().trim()
 
             val jsonSeasons = jsonItem.getJSONArray("season")
             for (j in 0 until jsonSeasons.length()) {

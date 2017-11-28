@@ -38,7 +38,7 @@ class Release {
         //item.setLink(responseJson.getString("link"));
         release.image = Api.BASE_URL + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
-        release.description = Html.fromHtml(responseJson.getString("description")).toString()
+        release.description = Html.fromHtml(responseJson.getString("description")).toString().trim()
 
         val jsonSeasons = responseJson.getJSONArray("season")
         for (j in 0 until jsonSeasons.length()) {

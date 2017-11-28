@@ -7,4 +7,5 @@ package ru.radiationx.anilibria;
 public class Screens {
     public final static String RELEASE_DETAILS = "RELEASE_DETAILS";
     public final static String RELEASES_LIST = "RELEASES_LIST";
+    public final static String RELEASES_SEARCH = "RELEASES_SEARCH";
 }

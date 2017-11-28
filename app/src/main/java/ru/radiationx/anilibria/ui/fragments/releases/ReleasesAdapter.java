@@ -25,11 +25,11 @@ public class ReleasesAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private static final int LOAD_MORE_LAYOUT = 2;
     private ItemListener listener;
 
-    ReleasesAdapter(MvpDelegate<?> parentDelegate) {
+    public ReleasesAdapter(MvpDelegate<?> parentDelegate) {
         super(parentDelegate, String.valueOf(0));
     }
 
-    void setListener(ItemListener listener) {
+    public void setListener(ItemListener listener) {
         this.listener = listener;
     }
 
@@ -71,7 +71,7 @@ public class ReleasesAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         return RELEASE_LAYOUT;
     }
 
-    void insertMore(List<ReleaseItem> list) {
+    public void insertMore(List<ReleaseItem> list) {
         int prevItems = getItemCount();
         this.items.addAll(list);
         Log.d("SUKA", "insertMore " + prevItems + " : " + getItemCount());

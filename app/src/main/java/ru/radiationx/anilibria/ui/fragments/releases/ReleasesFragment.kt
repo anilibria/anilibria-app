@@ -9,7 +9,9 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import java.util.*
@@ -37,7 +39,8 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
             menu.add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener({
-                        Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
+                        App.get().router.navigateTo(Screens.RELEASES_SEARCH)
+                        //Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
                         false
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

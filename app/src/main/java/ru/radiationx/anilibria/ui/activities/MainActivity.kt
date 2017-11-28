@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.R.id.bottomTabs
 import ru.radiationx.anilibria.Screens;
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment;
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesFragment;
+import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.terrakok.cicerone.android.SupportFragmentNavigator;
 import ru.terrakok.cicerone.commands.BackTo;
 import ru.terrakok.cicerone.commands.Command;
@@ -70,7 +71,8 @@ class MainActivity : AppCompatActivity() {
             Log.e("SUKA", "Old fragments: " + fragment)
         }
         if (savedInstanceState == null) {
-            App.get().router.newRootScreen(Screens.RELEASES_LIST)
+            //App.get().router.newRootScreen(Screens.RELEASES_LIST)
+            App.get().router.newRootScreen(Screens.RELEASES_SEARCH)
         }
     }
 
@@ -86,12 +88,17 @@ class MainActivity : AppCompatActivity() {
         return bottomTabs.menu.getItem(bottomTabs.currentItem)
     }
 
-    private val navigator  = object : SupportFragmentNavigator(supportFragmentManager, R.id.fragments_container) {
+    private val navigator = object : SupportFragmentNavigator(supportFragmentManager, R.id.fragments_container) {
 
         override fun applyCommand(command: Command?) {
             super.applyCommand(command)
             val item = getCurrentTab()
             title = item.title
+            Log.e("SUKA", "Fragments size: " + supportFragmentManager.fragments.size)
+            val fragments = supportFragmentManager.fragments
+            for (fragment in fragments) {
+                Log.e("SUKA", "Fragment: " + fragment)
+            }
         }
 
         override fun createFragment(screenKey: String?, data: Any?): Fragment? {
@@ -106,6 +113,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 Screens.RELEASES_LIST -> {
                     ReleasesFragment()
+                }
+                Screens.RELEASES_SEARCH -> {
+                    SearchFragment()
                 }
                 else -> throw RuntimeException("Unknown screen key: " + screenKey)
             }

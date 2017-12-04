@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import org.json.JSONObject
 import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.Api
-import java.util.*
+import ru.radiationx.anilibria.data.api.Paginated
 import kotlin.collections.ArrayList
 
 /* Created by radiationx on 31.10.17. */
@@ -25,7 +25,8 @@ class Releases {
         }
     }
 
-    fun search(name: String, genre: String, page: Int): Observable<ArrayList<ReleaseItem>> {
+    fun search(name: String, genre: String, page: Int):
+            Observable<Paginated<ArrayList<ReleaseItem>>> {
         return Observable.fromCallable {
             val url = "https://www.anilibria.tv/api/api.php?action=search&genre=$genre&name=$name&PAGEN_1=$page"
             val response = Client.instance.get(url)
@@ -33,7 +34,7 @@ class Releases {
         }
     }
 
-    fun getItems(page: Int): Observable<ArrayList<ReleaseItem>> {
+    fun getItems(page: Int): Observable<Paginated<ArrayList<ReleaseItem>>> {
         return Observable.fromCallable {
             val url = "https://www.anilibria.tv/api/api.php?PAGEN_1=$page"
             val response = Client.instance.get(url)
@@ -42,7 +43,7 @@ class Releases {
     }
 
     @Throws(Exception::class)
-    private fun parseItems(responseText: String?): ArrayList<ReleaseItem> {
+    private fun parseItems(responseText: String?): Paginated<ArrayList<ReleaseItem>> {
         val resItems = ArrayList<ReleaseItem>()
         val responseJson = JSONObject(responseText)
         val jsonItems = responseJson.getJSONArray("items")
@@ -52,7 +53,7 @@ class Releases {
             item.id = jsonItem.getInt("id")
 
             val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (titles.size > 0) {
+            if (titles.isNotEmpty()) {
                 item.originalTitle = Html.fromHtml(titles[0]).toString()
                 if (titles.size > 1) {
                     item.title = Html.fromHtml(titles[1]).toString()
@@ -87,6 +88,12 @@ class Releases {
 
             resItems.add(item)
         }
-        return resItems
+        val pagination = Paginated(resItems)
+        val jsonNav = responseJson.getJSONObject("navigation")
+        pagination.total = jsonNav.get("total").toString().toInt()
+        pagination.current = jsonNav.get("page").toString().toInt()
+        pagination.allPages = jsonNav.get("total_pages").toString().toInt()
+        return pagination
     }
+
 }

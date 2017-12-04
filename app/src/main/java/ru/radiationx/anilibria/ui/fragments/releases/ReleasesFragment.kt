@@ -47,6 +47,10 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
         }
     }
 
+    override fun setEndless(enable: Boolean) {
+        adapter.endless = enable
+    }
+
     override fun showReleases(releases: ArrayList<ReleaseItem>) {
         Log.e("SUKA", "showReleases")
         adapter.bindItems(releases)

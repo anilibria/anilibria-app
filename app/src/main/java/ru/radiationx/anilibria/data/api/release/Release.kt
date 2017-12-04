@@ -6,6 +6,7 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import java.util.regex.Pattern
 
 /* Created by radiationx on 05.11.17. */
 
@@ -68,6 +69,14 @@ class Release {
             episode.urlSd = jsonEpisode.getString("file")
             episode.urlHd = jsonEpisode.getString("filehd")
             release.episodes.add(episode)
+        }
+
+        val jsonMoonwalk = responseJson.getString("Moonwalk")
+        jsonMoonwalk?.let {
+            val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
+            if(matcher.find()){
+                release.moonwalkLink = "https:${matcher.group(1)}"
+            }
         }
 
         return release

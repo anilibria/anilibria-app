@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpDelegate;
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -116,8 +115,10 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         TextView desc;
         TextView info;
         Button torrentButton;
+        Button watchAllButton;
         ProgressBar imageProgress;
         TagView tagContainer;
+
 
         ReleaseItemHolder(View itemView) {
             super(itemView);
@@ -126,6 +127,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             desc = itemView.findViewById(R.id.full_description);
             info = itemView.findViewById(R.id.full_info);
             torrentButton = itemView.findViewById(R.id.full_button_torrent);
+            watchAllButton = itemView.findViewById(R.id.full_button_watch_all);
             imageProgress = itemView.findViewById(R.id.full_image_progress);
             tagContainer = itemView.findViewById(R.id.full_tags);
             torrentButton.setOnClickListener(v -> {
@@ -136,6 +138,11 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             tagContainer.setOnTagClickListener((tag, i) -> {
                 if (releaseListener != null) {
                     releaseListener.onClickTag(tag.text);
+                }
+            });
+            watchAllButton.setOnClickListener(view -> {
+                if (releaseListener != null) {
+                    releaseListener.onClickWatchAll();
                 }
             });
         }
@@ -174,6 +181,9 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             String[] arrHtml = {original, seasonsHtml, voicesHtml, typesHtml};
             String html = TextUtils.join("<br>", arrHtml);
             info.setText(Html.fromHtml(html));
+
+            boolean haveAnyEpisode = !release.getEpisodes().isEmpty() || release.getMoonwalkLink() != null;
+            watchAllButton.setEnabled(haveAnyEpisode);
         }
     }
 
@@ -215,5 +225,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         void onClickTorrent(String url);
 
         void onClickTag(String text);
+
+        void onClickWatchAll();
     }
 }

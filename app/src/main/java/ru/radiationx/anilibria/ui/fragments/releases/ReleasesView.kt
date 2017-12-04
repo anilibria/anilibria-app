@@ -18,4 +18,6 @@ interface ReleasesView : IBaseView {
 
     @StateStrategyType(AddToEndStrategy::class)
     fun insertMore(releases: ArrayList<ReleaseItem>);
+
+    fun setEndless(enable: Boolean)
 }

@@ -70,4 +70,13 @@ class ReleasePresenter : BasePresenter<ReleaseView>() {
         }
     }
 
+    internal fun onWatchAllClick() {
+        currentData?.let {
+            if (it.episodes.isEmpty()) {
+                it.moonwalkLink?.let { viewState.watchMoonwalk(it) }
+            } else {
+                viewState.watchEpisodes(it.episodes)
+            }
+        }
+    }
 }

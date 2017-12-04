@@ -67,6 +67,7 @@ public class Utils {
     }
 
     public static void externalLink(String url) {
+        Log.e("SUKA", "externalLink "+url);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK);
         App.get().startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK));
     }

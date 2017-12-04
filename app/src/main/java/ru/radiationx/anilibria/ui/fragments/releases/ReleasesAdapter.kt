@@ -38,7 +38,6 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-        Log.e("SUKA", "onBindViewHolder " + position)
         val itemType = getItemViewType(position)
         if (itemType == RELEASE_LAYOUT) {
             (holder as ReleaseItemHolder).bind(getItem(position), position)

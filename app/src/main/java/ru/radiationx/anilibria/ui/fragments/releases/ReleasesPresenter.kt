@@ -48,11 +48,12 @@ class ReleasesPresenter : BasePresenter<ReleasesView> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     Log.d("SUKA", "subscribe call show")
+                    viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
                         viewState.setRefreshing(false)
-                        viewState.showReleases(releaseItems)
+                        viewState.showReleases(releaseItems.data)
                     } else {
-                        viewState.insertMore(releaseItems)
+                        viewState.insertMore(releaseItems.data)
                     }
                 }) { throwable ->
                     viewState.setRefreshing(false)

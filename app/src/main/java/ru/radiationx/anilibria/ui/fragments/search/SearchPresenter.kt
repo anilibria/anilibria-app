@@ -49,10 +49,12 @@ class SearchPresenter : BasePresenter<SearchView>() {
         addDisposable(disposable)
     }
 
+    fun isEmpty():Boolean = currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()
+
     private fun loadReleases(pageNum: Int) {
         Log.e("SUKA", "loadReleases")
 
-        if (currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()) {
+        if (isEmpty()) {
             viewState.setRefreshing(false)
             return
         }
@@ -66,12 +68,12 @@ class SearchPresenter : BasePresenter<SearchView>() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     Log.d("SUKA", "subscribe call show")
-                    viewState.setEndless(releaseItems.size >= 10)
+                    viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
                         viewState.setRefreshing(false)
-                        viewState.showReleases(releaseItems)
+                        viewState.showReleases(releaseItems.data)
                     } else {
-                        viewState.insertMore(releaseItems)
+                        viewState.insertMore(releaseItems.data)
                     }
                 }) { throwable ->
                     viewState.setRefreshing(false)

@@ -116,10 +116,22 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
         presenter.onTorrentClick()
     }
 
+    override fun onClickWatchAll() {
+        presenter.onWatchAllClick()
+    }
+
     override fun onClickTag(text: String) {
-        val args:Bundle = Bundle().apply {
+        val args: Bundle = Bundle().apply {
             putString(SearchFragment.GENRE, text)
         }
         App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
+    }
+
+    override fun watchEpisodes(episodes: List<ReleaseItem.Episode>) {
+        Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun watchMoonwalk(link: String) {
+        Utils.externalLink(link)
     }
 }

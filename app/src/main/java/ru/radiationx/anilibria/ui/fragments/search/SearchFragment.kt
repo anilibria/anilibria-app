@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -29,11 +30,11 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.currentQuery = it.getString(QUERY_TEXT)
-            presenter.currentGenre = it.getString(GENRE)
+            presenter.currentQuery = it.getString(QUERY_TEXT, null)
+            presenter.currentGenre = it.getString(GENRE, null)
         }
     }
 
@@ -47,7 +48,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
         adapter.setListener(this)
         fixToolbarInsets(toolbar)
-        toolbar.apply {
+        with(toolbar) {
             title = currentTitle
             setNavigationOnClickListener({
                 App.get().router.exit()
@@ -62,15 +63,15 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
                     searchMenuItem.isVisible = false
-                    toolbar.navigationIcon = null
-                    toolbar.title = null
+                    toolbar?.navigationIcon = null
+                    toolbar?.title = null
                     return false
                 }
 
                 override fun onClose(): Boolean {
                     searchMenuItem.isVisible = true
-                    toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-                    toolbar.title = currentTitle
+                    toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+                    toolbar?.title = currentTitle
                     return false
                 }
 
@@ -79,10 +80,11 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
             setShadow(false)
             version = com.lapism.searchview.SearchView.Version.MENU_ITEM
             versionMargins = com.lapism.searchview.SearchView.VersionMargins.MENU_ITEM
-            open(true)
             setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    presenter.currentQuery = query.orEmpty()
+                    query?.let {
+                        presenter.currentQuery = it
+                    }
                     presenter.refreshReleases()
                     return true
                 }
@@ -93,6 +95,9 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
             })
             hint = "Поиск"
+            if (presenter.isEmpty()) {
+                open(true)
+            }
         }
 
         with(toolbar.menu) {

@@ -21,6 +21,7 @@ class ReleaseItem : Serializable {
 
     /* Full Item */
     val episodes = ArrayList<Episode>()
+    var moonwalkLink: String? = null
 
     class Episode {
         var title: String? = null

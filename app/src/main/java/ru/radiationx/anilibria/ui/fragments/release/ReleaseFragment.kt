@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.MainActivity
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.Utils
 
 /* Created by radiationx on 16.11.17. */
@@ -29,7 +30,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
     }
 
 
-    private var adapter: ReleaseAdapter = ReleaseAdapter(mvpDelegate, "0")
+    private var adapter: ReleaseAdapter = ReleaseAdapter()
 
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
@@ -116,6 +117,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
     }
 
     override fun onClickTag(text: String) {
-        Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
+        val args:Bundle = Bundle().apply {
+            putString(SearchFragment.GENRE, text)
+        }
+        App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
     }
 }

@@ -20,7 +20,7 @@ import java.util.*
 
 class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListener {
     override val layoutRes: Int = R.layout.fragment_releases
-    private var adapter: ReleasesAdapter = ReleasesAdapter(mvpDelegate)
+    private var adapter: ReleasesAdapter = ReleasesAdapter()
 
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter

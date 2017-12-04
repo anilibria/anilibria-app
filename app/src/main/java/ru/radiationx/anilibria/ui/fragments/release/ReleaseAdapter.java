@@ -40,10 +40,6 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     private int tagColorText = 0;
     private float tagRadius = 0;
 
-    public ReleaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
-        super(parentDelegate, childId);
-    }
-
     public void setReleaseListener(ReleaseListener releaseListener) {
         this.releaseListener = releaseListener;
     }

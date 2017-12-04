@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters;
 
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,8 @@ import java.util.Collection;
  * Created by radiationx on 14.09.17.
  */
 
-public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends MvpBaseAdapter<VH> {
+public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
     protected ArrayList<E> items = new ArrayList<>();
-
-    public BaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
-        super(parentDelegate, childId);
-    }
 
     public void setItems(ArrayList<E> items) {
         clear();

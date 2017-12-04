@@ -71,8 +71,8 @@ class MainActivity : AppCompatActivity() {
             Log.e("SUKA", "Old fragments: " + fragment)
         }
         if (savedInstanceState == null) {
-            //App.get().router.newRootScreen(Screens.RELEASES_LIST)
-            App.get().router.newRootScreen(Screens.RELEASES_SEARCH)
+            App.get().router.newRootScreen(Screens.RELEASES_LIST)
+            //App.get().router.newRootScreen(Screens.RELEASES_SEARCH)
         }
     }
 
@@ -115,7 +115,11 @@ class MainActivity : AppCompatActivity() {
                     ReleasesFragment()
                 }
                 Screens.RELEASES_SEARCH -> {
-                    SearchFragment()
+                    val fragment = SearchFragment()
+                    if (data is Bundle) {
+                        fragment.arguments = data
+                    }
+                    fragment
                 }
                 else -> throw RuntimeException("Unknown screen key: " + screenKey)
             }

@@ -24,7 +24,8 @@ class SearchPresenter : BasePresenter<SearchView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
-        loadGenres()
+        //loadGenres()
+        loadReleases(START_PAGE)
     }
 
     private fun isFirstPage(): Boolean {
@@ -50,6 +51,12 @@ class SearchPresenter : BasePresenter<SearchView>() {
 
     private fun loadReleases(pageNum: Int) {
         Log.e("SUKA", "loadReleases")
+
+        if (currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()) {
+            viewState.setRefreshing(false)
+            return
+        }
+
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -59,6 +66,7 @@ class SearchPresenter : BasePresenter<SearchView>() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     Log.d("SUKA", "subscribe call show")
+                    viewState.setEndless(releaseItems.size >= 10)
                     if (isFirstPage()) {
                         viewState.setRefreshing(false)
                         viewState.showReleases(releaseItems)

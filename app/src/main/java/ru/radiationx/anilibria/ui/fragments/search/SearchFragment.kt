@@ -15,12 +15,27 @@ import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
 import java.util.ArrayList
 
 class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
+
+    companion object {
+        const val QUERY_TEXT: String = "query"
+        const val GENRE: String = "genre"
+    }
+
     override val layoutRes: Int = R.layout.fragment_releases
-    private var adapter: ReleasesAdapter = ReleasesAdapter(mvpDelegate)
+    private var adapter: ReleasesAdapter = ReleasesAdapter()
     private lateinit var searchMenuItem: MenuItem
+    private var currentTitle: String? = "Поиск"
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        arguments?.let {
+            presenter.currentQuery = it.getString(QUERY_TEXT)
+            presenter.currentGenre = it.getString(GENRE)
+        }
+    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
@@ -33,7 +48,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         adapter.setListener(this)
         fixToolbarInsets(toolbar)
         toolbar.apply {
-            title = "Поиск"
+            title = currentTitle
             setNavigationOnClickListener({
                 App.get().router.exit()
             })
@@ -48,12 +63,14 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
                 override fun onOpen(): Boolean {
                     searchMenuItem.isVisible = false
                     toolbar.navigationIcon = null
+                    toolbar.title = null
                     return false
                 }
 
                 override fun onClose(): Boolean {
                     searchMenuItem.isVisible = true
                     toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+                    toolbar.title = currentTitle
                     return false
                 }
 
@@ -97,15 +114,20 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
     }
 
+    override fun setEndless(enable: Boolean) {
+        adapter.endless = enable
+    }
+
     override fun showGenres(genres: List<String>) {
     }
 
     override fun showReleases(releases: ArrayList<ReleaseItem>) {
         if (presenter.currentQuery.orEmpty().isEmpty()) {
-            toolbar.title = "Поиск"
+            currentTitle = "Поиск"
         } else {
-            toolbar.title = "Поиск: " + presenter.currentQuery
+            currentTitle = "Поиск: " + presenter.currentQuery
         }
+        toolbar.title = currentTitle
         adapter.bindItems(releases)
     }
 

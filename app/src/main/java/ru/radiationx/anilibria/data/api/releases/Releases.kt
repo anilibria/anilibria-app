@@ -17,7 +17,11 @@ class Releases {
             val response = Client.instance.get(url)
             val result: MutableList<String> = mutableListOf()
             val jsonItems = JSONObject(response).getJSONArray("data")
-            result.add("none")
+            //result.add("none")
+            /*for (i in 0 until jsonItems.length()) {
+                val genre = jsonItems.getString(i)
+                result.add(genre.replaceRange(0..1, genre[0].toUpperCase().toString()))
+            }*/
             for (i in 0 until jsonItems.length()) {
                 result.add(jsonItems.getString(i))
             }

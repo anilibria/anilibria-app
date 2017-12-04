@@ -12,9 +12,7 @@ import ru.radiationx.anilibria.App
 
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
-import ru.radiationx.anilibria.ui.activities.MainActivity
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.Utils
@@ -122,7 +120,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
 
     override fun onClickTag(text: String) {
         val args: Bundle = Bundle().apply {
-            putString(SearchFragment.GENRE, text)
+            putString(SearchFragment.ARG_GENRE, text)
         }
         App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
     }

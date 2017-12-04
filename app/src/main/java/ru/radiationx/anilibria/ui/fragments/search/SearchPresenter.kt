@@ -24,7 +24,7 @@ class SearchPresenter : BasePresenter<SearchView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
-        //loadGenres()
+        loadGenres()
         loadReleases(START_PAGE)
     }
 

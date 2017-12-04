@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -18,14 +17,15 @@ import java.util.ArrayList
 class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
 
     companion object {
-        const val QUERY_TEXT: String = "query"
-        const val GENRE: String = "genre"
+        const val ARG_QUERY_TEXT: String = "query"
+        const val ARG_GENRE: String = "genre"
     }
 
     override val layoutRes: Int = R.layout.fragment_releases
     private var adapter: ReleasesAdapter = ReleasesAdapter()
     private lateinit var searchMenuItem: MenuItem
     private var currentTitle: String? = "Поиск"
+    private lateinit var genresDialog: GenresDialog
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -33,12 +33,19 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.currentQuery = it.getString(QUERY_TEXT, null)
-            presenter.currentGenre = it.getString(GENRE, null)
+            presenter.currentQuery = it.getString(ARG_QUERY_TEXT, null)
+            presenter.currentGenre = it.getString(ARG_GENRE, null)
         }
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        genresDialog = GenresDialog(context, object : GenresDialog.ClickListener{
+            override fun onItemClick(item: String) {
+                presenter.currentGenre = item
+                presenter.refreshReleases()
+            }
+        })
+
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
@@ -112,10 +119,12 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
             add("Settings")
                     .setIcon(R.drawable.ic_toolbar_settings)
                     .setOnMenuItemClickListener {
+                        genresDialog.showDialog()
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
+
 
     }
 
@@ -124,13 +133,14 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
     }
 
     override fun showGenres(genres: List<String>) {
+        genresDialog.setItems(genres)
     }
 
     override fun showReleases(releases: ArrayList<ReleaseItem>) {
-        if (presenter.currentQuery.orEmpty().isEmpty()) {
-            currentTitle = "Поиск"
+        currentTitle = if (presenter.currentQuery.orEmpty().isEmpty()) {
+            "Поиск"
         } else {
-            currentTitle = "Поиск: " + presenter.currentQuery
+            "Поиск: " + presenter.currentQuery
         }
         toolbar.title = currentTitle
         adapter.bindItems(releases)

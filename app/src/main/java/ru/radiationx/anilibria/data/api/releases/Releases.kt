@@ -5,25 +5,30 @@ import io.reactivex.Observable
 import org.json.JSONObject
 import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.Api
+import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.data.api.Paginated
 import kotlin.collections.ArrayList
 
 /* Created by radiationx on 31.10.17. */
 
 class Releases {
-    fun getGenres(): Observable<List<String>> {
+    fun getGenres(): Observable<List<GenreItem>> {
         return Observable.fromCallable {
             val url = "https://www.anilibria.tv/api/api.php?action=tags"
             val response = Client.instance.get(url)
-            val result: MutableList<String> = mutableListOf()
+            val result: MutableList<GenreItem> = mutableListOf()
             val jsonItems = JSONObject(response).getJSONArray("data")
-            //result.add("none")
-            /*for (i in 0 until jsonItems.length()) {
-                val genre = jsonItems.getString(i)
-                result.add(genre.replaceRange(0..1, genre[0].toUpperCase().toString()))
-            }*/
+            result.add(GenreItem().apply {
+                title = "Все"
+                value = ""
+            })
             for (i in 0 until jsonItems.length()) {
-                result.add(jsonItems.getString(i))
+                val genreText = jsonItems.getString(i)
+                val genreItem = GenreItem().apply {
+                    title = genreText.substring(0, 1).toUpperCase() + genreText.substring(1);
+                    value = genreText
+                }
+                result.add(genreItem)
             }
             result
         }

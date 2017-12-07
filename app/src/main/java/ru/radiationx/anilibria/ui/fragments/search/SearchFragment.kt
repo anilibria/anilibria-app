@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
@@ -40,8 +41,8 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         genresDialog = GenresDialog(context, object : GenresDialog.ClickListener{
-            override fun onItemClick(item: String) {
-                presenter.currentGenre = item
+            override fun onItemClick(item: GenreItem) {
+                presenter.currentGenre = item.value
                 presenter.refreshReleases()
             }
         })
@@ -132,7 +133,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         adapter.endless = enable
     }
 
-    override fun showGenres(genres: List<String>) {
+    override fun showGenres(genres: List<GenreItem>) {
         genresDialog.setItems(genres)
     }
 

@@ -6,24 +6,30 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckedTextView
 import android.widget.TextView
+import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
 
-/**
- * Created by mintrocket on 04.12.2017.
- */
 class GenresDialog(context: Context, private val listener: ClickListener) {
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
     private val adapter: ReleasesAdapter = ReleasesAdapter()
     private val recyclerView: RecyclerView = RecyclerView(context).apply {
         setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this.context)
-        adapter = adapter
+        adapter = this@GenresDialog.adapter
+    }
+    private var checkedGenre: String = ""
+
+    fun setItems(items: List<GenreItem>) {
+        adapter.bindItems(items)
+        adapter.notifyDataSetChanged()
     }
 
-    fun setItems(items: List<String>) {
-        adapter.bindItems(items)
+    fun setChecked(genreValue: String) {
+        checkedGenre = genreValue
         adapter.notifyDataSetChanged()
     }
 
@@ -36,27 +42,33 @@ class GenresDialog(context: Context, private val listener: ClickListener) {
     }
 
     interface ClickListener {
-        fun onItemClick(item: String)
+        fun onItemClick(item: GenreItem)
     }
 
-    inner class ReleasesAdapter : BaseAdapter<String, ReleasesAdapter.GenreHolder>() {
+    inner class ReleasesAdapter : BaseAdapter<GenreItem, ReleasesAdapter.GenreHolder>() {
         override fun onBindViewHolder(holder: ReleasesAdapter.GenreHolder?, position: Int) {
             holder?.bind(items[position])
         }
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ReleasesAdapter.GenreHolder {
-            return GenreHolder(inflateLayout(parent, android.R.layout.simple_selectable_list_item))
+            return GenreHolder(inflateLayout(parent, R.layout.item_genre))
         }
 
-        inner class GenreHolder internal constructor(itemView: View) : BaseViewHolder<String>(itemView) {
+        inner class GenreHolder internal constructor(itemView: View) : BaseViewHolder<GenreItem>(itemView) {
+            private var textView: CheckedTextView = itemView.findViewById<CheckedTextView>(R.id.item_title)
+
             init {
                 itemView.setOnClickListener {
+                    val item = items[layoutPosition]
+                    setChecked(item.value)
                     listener.onItemClick(items[layoutPosition])
+                    dialog.dismiss()
                 }
             }
 
-            override fun bind(item: String) {
-                itemView.findViewById<TextView>(android.R.id.text1).text = item
+            override fun bind(item: GenreItem) {
+                textView.text = item.title
+                textView.isChecked = item.value.equals(checkedGenre)
             }
         }
     }

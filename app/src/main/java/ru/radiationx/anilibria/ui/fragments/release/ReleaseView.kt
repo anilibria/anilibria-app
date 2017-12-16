@@ -6,7 +6,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView
-import java.util.ArrayList
 
 /* Created by radiationx on 18.11.17. */
 
@@ -24,8 +23,11 @@ interface ReleaseView : IBaseView {
     fun copyLink(url: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun watchEpisodes(episodes: List<ReleaseItem.Episode>)
+    fun playEpisodes(release: ReleaseItem)
 
     @StateStrategyType(SkipStrategy::class)
-    fun watchMoonwalk(link: String)
+    fun playMoonwalk(link: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun playEpisode(release: ReleaseItem, position: Int, quality: Int)
 }

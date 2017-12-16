@@ -29,9 +29,9 @@ abstract class BaseFragment : MvpAppCompatFragment() {
     abstract val layoutRes: Int
 
     @Deprecated("Pls no override")
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val newView: View? = inflater?.inflate(R.layout.fragment_main_base, container, false)
-        inflater?.inflate(layoutRes, newView?.findViewById(R.id.fragment_content), true)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val newView: View? = inflater.inflate(R.layout.fragment_main_base, container, false)
+        inflater.inflate(layoutRes, newView?.findViewById(R.id.fragment_content), true)
         return newView
     }
 

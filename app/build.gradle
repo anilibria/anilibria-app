@@ -4,11 +4,11 @@ apply plugin: 'kotlin-android-extensions'
 
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -40,7 +40,7 @@ android {
     }
 }
 ext {
-    supportLibVersion = '26.1.0'
+    supportLibVersion = '27.0.2'
     okHttpVersion = '3.9.0'
 }
 dependencies {
@@ -56,7 +56,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     implementation 'com.arello-mobile:moxy:1.5.3'
     implementation 'com.arello-mobile:moxy-app-compat:1.5.3'
@@ -68,5 +68,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.lapism:searchview:5.0.0-alpha7'
     implementation 'com.google.android:flexbox:0.3.1'
+    implementation 'com.devbrackets.android:exomedia:4.1.0'
 }
 

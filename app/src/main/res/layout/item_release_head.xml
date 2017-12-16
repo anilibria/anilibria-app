@@ -46,7 +46,7 @@
                 android:textColor="@color/textDefault"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                tools:text="Title release long title lol\njslad;kfjasdf" />
+                tools:text="Title releaseData long title lol\njslad;kfjasdf" />
 
             <TextView
                 android:id="@+id/full_info"

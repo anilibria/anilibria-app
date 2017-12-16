@@ -201,12 +201,17 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             qualityHd.setColorFilter(accentFilter);
             qualitySd.setOnClickListener(v -> {
                 if (releaseListener != null) {
-                    releaseListener.onClickSd(release.getEpisodes().get(getLayoutPosition() - 1).getUrlSd());
+                    releaseListener.onClickSd(release.getEpisodes().get(getLayoutPosition() - 1), getLayoutPosition() - 1);
                 }
             });
             qualityHd.setOnClickListener(v -> {
                 if (releaseListener != null) {
-                    releaseListener.onClickHd(release.getEpisodes().get(getLayoutPosition() - 1).getUrlHd());
+                    releaseListener.onClickHd(release.getEpisodes().get(getLayoutPosition() - 1), getLayoutPosition() - 1);
+                }
+            });
+            itemView.setOnClickListener(view -> {
+                if (releaseListener != null) {
+                    releaseListener.onClickEpisode(release.getEpisodes().get(getLayoutPosition() - 1), getLayoutPosition() - 1);
                 }
             });
         }
@@ -218,9 +223,11 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     }
 
     interface ReleaseListener {
-        void onClickSd(String url);
+        void onClickSd(ReleaseItem.Episode episode, int position);
 
-        void onClickHd(String url);
+        void onClickHd(ReleaseItem.Episode episode, int position);
+
+        void onClickEpisode(ReleaseItem.Episode episode, int position);
 
         void onClickTorrent(String url);
 

@@ -39,13 +39,15 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        genresDialog = GenresDialog(context, object : GenresDialog.ClickListener{
-            override fun onItemClick(item: GenreItem) {
-                presenter.currentGenre = item.value
-                presenter.refreshReleases()
-            }
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        genresDialog = context?.let {
+            GenresDialog(it, object : GenresDialog.ClickListener {
+                override fun onItemClick(item: GenreItem) {
+                    presenter.currentGenre = item.value
+                    presenter.refreshReleases()
+                }
+            })
+        } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 

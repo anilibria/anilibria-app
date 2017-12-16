@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 
 import com.arellomobile.mvp.presenter.InjectPresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -16,10 +18,12 @@ import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
+
 
 /* Created by radiationx on 16.11.17. */
 
-open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.ReleaseListener {
+open class ReleaseFragment : BaseFragment(), ReleaseView {
     override val layoutRes: Int = R.layout.fragment_release
 
     companion object {
@@ -46,10 +50,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
     }
 
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter.setReleaseListener(this)
+        adapter.setReleaseListener(releaseListener)
         recyclerView.apply {
             setHasFixedSize(true)
             adapter = this@ReleaseFragment.adapter
@@ -102,34 +106,67 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, ReleaseAdapter.Release
         Utils.externalLink(url)
     }
 
-    override fun onClickSd(url: String) {
-        Utils.externalLink(url)
-    }
-
-    override fun onClickHd(url: String) {
-        Utils.externalLink(url)
-    }
-
-    override fun onClickTorrent(url: String) {
-        presenter.onTorrentClick()
-    }
-
-    override fun onClickWatchAll() {
-        presenter.onWatchAllClick()
-    }
-
-    override fun onClickTag(text: String) {
-        val args: Bundle = Bundle().apply {
-            putString(SearchFragment.ARG_GENRE, text)
+    private val releaseListener = object : ReleaseAdapter.ReleaseListener {
+        override fun onClickSd(episode: ReleaseItem.Episode, position: Int) {
+            presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_SD)
         }
-        App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
+
+        override fun onClickHd(episode: ReleaseItem.Episode, position: Int) {
+            presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_HD)
+        }
+
+        override fun onClickEpisode(episode: ReleaseItem.Episode, position: Int) {
+            context?.let {
+                AlertDialog.Builder(it)
+                        .setTitle("Качество")
+                        .setItems(arrayOf("SD", "HD")) { p0, p1 ->
+                            val quality: Int = when (p1) {
+                                0 -> MyPlayerActivity.VAL_QUALITY_SD
+                                1 -> MyPlayerActivity.VAL_QUALITY_HD
+                                else -> -1
+                            }
+                            if (quality != -1) {
+                                presenter.onPlayEpisodeClick(position, quality)
+                            }
+                        }
+                        .show()
+            }
+        }
+
+        override fun onClickTorrent(url: String) {
+            presenter.onTorrentClick()
+        }
+
+        override fun onClickWatchAll() {
+            presenter.onPlayAllClick()
+        }
+
+        override fun onClickTag(text: String) {
+            val args: Bundle = Bundle().apply {
+                putString(SearchFragment.ARG_GENRE, text)
+            }
+            App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
+        }
     }
 
-    override fun watchEpisodes(episodes: List<ReleaseItem.Episode>) {
-        Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
+    override fun playEpisodes(release: ReleaseItem) {
+        (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(1, 0)
+        appbar_layout.setExpanded(false, false)
+        /*startActivity(Intent(context, MyPlayerActivity::class.java).apply {
+            putExtra(MyPlayerActivity.ARG_RELEASE, release)
+            putExtra(MyPlayerActivity.ARG_CURRENT, 0)
+        })*/
     }
 
-    override fun watchMoonwalk(link: String) {
+    override fun playEpisode(release: ReleaseItem, position: Int, quality: Int) {
+        startActivity(Intent(context, MyPlayerActivity::class.java).apply {
+            putExtra(MyPlayerActivity.ARG_RELEASE, release)
+            putExtra(MyPlayerActivity.ARG_CURRENT, position)
+            putExtra(MyPlayerActivity.ARG_QUALITY, quality)
+        })
+    }
+
+    override fun playMoonwalk(link: String) {
         Utils.externalLink(link)
     }
 }

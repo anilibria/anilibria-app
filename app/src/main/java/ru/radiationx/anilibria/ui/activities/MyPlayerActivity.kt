@@ -1,26 +1,21 @@
 package ru.radiationx.anilibria.ui.activities
 
+import android.annotation.TargetApi
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import com.devbrackets.android.exomedia.listener.OnCompletionListener
-import com.devbrackets.android.exomedia.listener.OnErrorListener
-import com.devbrackets.android.exomedia.listener.OnPreparedListener
-import com.devbrackets.android.exomedia.listener.VideoControlsButtonListener
+import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
 import java.lang.Exception
-import com.devbrackets.android.exomedia.listener.VideoControlsVisibilityListener
-import android.os.Build
-import android.annotation.TargetApi
-import android.view.Menu
-import android.support.v4.app.NavUtils
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.view.MenuItem
 
 
 class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionListener, OnErrorListener, VideoControlsButtonListener {

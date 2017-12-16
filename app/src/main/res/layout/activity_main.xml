@@ -8,7 +8,7 @@
     tools:context="ru.radiationx.anilibria.ui.activities.MainActivity">
 
     <RelativeLayout
-        android:id="@+id/fragments_container"
+        android:id="@+id/root_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomTabs"/>

@@ -1,24 +1,20 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
-import ru.radiationx.anilibria.App
-
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
+import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.utils.Utils
 
 
 /* Created by radiationx on 16.11.17. */
@@ -31,11 +27,15 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         const val ARG_ITEM: String = "release_item"
     }
 
-
     private var adapter: ReleaseAdapter = ReleaseAdapter()
 
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
+
+    @ProvidePresenter
+    fun provideReleasePresenter(): ReleasePresenter {
+        return ReleasePresenter((parentFragment as RouterProvider).router)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +63,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         toolbar.apply {
             title = getString(R.string.fragment_title_release)
             setNavigationOnClickListener({
-                App.get().router.backTo(Screens.RELEASES_LIST)
+                presenter.onBackPressed()
             })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             menu.add("Копировать ссылку")
@@ -83,6 +83,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         setMarqueeTitle(toolbar)
     }
 
+    override fun onBackPressed(): Boolean {
+        presenter.onBackPressed()
+        return true
+    }
 
     override fun setRefreshing(refreshing: Boolean) {
 
@@ -142,10 +146,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         }
 
         override fun onClickTag(text: String) {
-            val args: Bundle = Bundle().apply {
-                putString(SearchFragment.ARG_GENRE, text)
-            }
-            App.get().router.navigateTo(Screens.RELEASES_SEARCH, args)
+            presenter.openSearch(text)
         }
     }
 

@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
-import android.widget.TextView
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter

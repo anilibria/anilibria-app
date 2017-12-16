@@ -5,15 +5,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
-import java.util.ArrayList
+import java.util.*
 
 class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
 
@@ -30,6 +31,11 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
+
+    @ProvidePresenter
+    fun provideSearchPresenter(): SearchPresenter {
+        return SearchPresenter((parentFragment as RouterProvider).router)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +67,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         with(toolbar) {
             title = currentTitle
             setNavigationOnClickListener({
-                App.get().router.exit()
+                presenter.onBackPressed()
             })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
@@ -127,8 +133,11 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
+    }
 
-
+    override fun onBackPressed(): Boolean {
+        presenter.onBackPressed()
+        return true
     }
 
     override fun setEndless(enable: Boolean) {

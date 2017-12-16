@@ -5,14 +5,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import java.util.*
 
@@ -24,6 +23,11 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
 
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter
+
+    @ProvidePresenter
+    fun provideReleasesPresenter(): ReleasesPresenter {
+        return ReleasesPresenter((parentFragment as RouterProvider).router)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
@@ -39,12 +43,17 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
             menu.add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener({
-                        App.get().router.navigateTo(Screens.RELEASES_SEARCH)
+                        presenter.openSearch()
                         //Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
                         false
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        presenter.onBackPressed()
+        return true
     }
 
     override fun setEndless(enable: Boolean) {

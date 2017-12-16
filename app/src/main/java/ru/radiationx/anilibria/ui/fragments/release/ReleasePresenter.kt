@@ -1,18 +1,22 @@
 package ru.radiationx.anilibria.ui.fragments.release;
 
+import android.os.Bundle
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.data.api.Api;
 import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter;
+import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
-class ReleasePresenter : BasePresenter<ReleaseView>() {
+class ReleasePresenter(private val router: Router) : BasePresenter<ReleaseView>(router) {
     private var currentData: ReleaseItem? = null
     private var releaseId = -1
 
@@ -51,25 +55,25 @@ class ReleasePresenter : BasePresenter<ReleaseView>() {
         addDisposable(disposable)
     }
 
-    internal fun onTorrentClick() {
+    fun onTorrentClick() {
         currentData?.torrentLink?.let {
             viewState.loadTorrent(it)
         }
     }
 
-    internal fun onShareClick() {
+    fun onShareClick() {
         currentData?.link?.let {
             viewState.loadTorrent(it)
         }
     }
 
-    internal fun onCopyLinkClick() {
+    fun onCopyLinkClick() {
         currentData?.link?.let {
             viewState.loadTorrent(it)
         }
     }
 
-    internal fun onPlayAllClick() {
+    fun onPlayAllClick() {
         currentData?.let {
             if (it.episodes.isEmpty()) {
                 it.moonwalkLink?.let { viewState.playMoonwalk(it) }
@@ -79,9 +83,16 @@ class ReleasePresenter : BasePresenter<ReleaseView>() {
         }
     }
 
-    internal fun onPlayEpisodeClick(position: Int, quality: Int) {
+    fun onPlayEpisodeClick(position: Int, quality: Int) {
         currentData?.let {
             viewState.playEpisode(it, position, quality)
         }
+    }
+
+    fun openSearch(genre: String) {
+        val args: Bundle = Bundle().apply {
+            putString(SearchFragment.ARG_GENRE, genre)
+        }
+        router.navigateTo(Screens.RELEASES_SEARCH, args)
     }
 }

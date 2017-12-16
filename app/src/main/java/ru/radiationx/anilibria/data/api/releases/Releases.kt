@@ -7,7 +7,6 @@ import ru.radiationx.anilibria.data.Client
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.GenreItem
 import ru.radiationx.anilibria.data.api.Paginated
-import kotlin.collections.ArrayList
 
 /* Created by radiationx on 31.10.17. */
 

@@ -1,147 +1,126 @@
-package ru.radiationx.anilibria.ui.activities;
+package ru.radiationx.anilibria.ui.activities
 
-import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.radiationx.anilibria.App
+import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.fragments.TabFragment
+import ru.terrakok.cicerone.Navigator
+import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.commands.Back
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Replace
+import ru.terrakok.cicerone.commands.SystemMessage
 
-import ru.radiationx.anilibria.App;
-import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.R.id.bottomTabs
-import ru.radiationx.anilibria.Screens;
-import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment;
-import ru.radiationx.anilibria.ui.fragments.releases.ReleasesFragment;
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.terrakok.cicerone.android.SupportFragmentNavigator;
-import ru.terrakok.cicerone.commands.BackTo;
-import ru.terrakok.cicerone.commands.Command;
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RouterProvider {
+
+    override val router: Router = App.navigation.root.router
+    private val navigationHolder = App.navigation.root.holder
+
+    private val tabs = arrayOf(
+            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.RELEASES_LIST),
+            Tab(R.string.fragment_title_news, R.drawable.ic_news, Screens.ARTICLES_LIST),
+            Tab(R.string.fragment_title_videos, R.drawable.ic_videos, Screens.VIDEOS_LIST),
+            Tab(R.string.fragment_title_blogs, R.drawable.ic_blogs, Screens.BLOGS_LIST),
+            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.OTHER_LIST)
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottomTabs.setOnNavigationItemSelectedListener { item ->
-            title = item.title
-            true
-        }
-
-        addMenuToBottom(R.string.fragment_title_releases, R.drawable.ic_releases)
-                .setOnMenuItemClickListener {
-                    navigator.applyCommand(BackTo(Screens.RELEASES_LIST))
-                    false
-                }
-        addMenuToBottom(R.string.fragment_title_news, R.drawable.ic_news)
-                .setOnMenuItemClickListener {
-                    navigator.applyCommand(BackTo(Screens.RELEASES_LIST))
-                    false
-                }
-        addMenuToBottom(R.string.fragment_title_videos, R.drawable.ic_videos)
-                .setOnMenuItemClickListener {
-                    navigator.applyCommand(BackTo(Screens.RELEASES_LIST))
-                    false
-                }
-        addMenuToBottom(R.string.fragment_title_blogs, R.drawable.ic_blogs)
-                .setOnMenuItemClickListener {
-                    navigator.applyCommand(BackTo(Screens.RELEASES_LIST))
-                    false
-                }
-        addMenuToBottom(R.string.fragment_title_other, R.drawable.ic_other)
-                .setOnMenuItemClickListener {
-                    navigator.applyCommand(BackTo(Screens.RELEASES_LIST))
-                    false
-                }
+        initContainers()
+        initBottomMenu()
 
         bottomTabs.enableItemShiftingMode(false)
         bottomTabs.enableShiftingMode(false)
         bottomTabs.setTextVisibility(false)
         bottomTabs.enableAnimation(false)
 
-        Log.e("SUKA", "" + supportFragmentManager.fragments.size)
-        val fragments = supportFragmentManager.fragments
-        for (fragment in fragments) {
-            Log.e("SUKA", "Old fragments: " + fragment)
-        }
         if (savedInstanceState == null) {
-            App.get().router.newRootScreen(Screens.RELEASES_LIST)
-            //App.get().router.newRootScreen(Screens.RELEASES_SEARCH)
+            bottomTabs.currentItem = 0
+            router.newRootScreen(Screens.RELEASES_LIST)
         }
     }
-
-    private fun addMenuToBottom(title: String, @DrawableRes iconId: Int): MenuItem {
-        return bottomTabs.menu.add(title).setIcon(iconId)
-    }
-
-    private fun addMenuToBottom(@StringRes titleId: Int, @DrawableRes iconId: Int): MenuItem {
-        return bottomTabs.menu.add(titleId).setIcon(iconId)
-    }
-
-    private fun getCurrentTab(): MenuItem {
-        return bottomTabs.menu.getItem(bottomTabs.currentItem)
-    }
-
-    private val navigator = object : SupportFragmentNavigator(supportFragmentManager, R.id.fragments_container) {
-
-        override fun applyCommand(command: Command?) {
-            super.applyCommand(command)
-            val item = getCurrentTab()
-            title = item.title
-            Log.e("SUKA", "Fragments size: " + supportFragmentManager.fragments.size)
-            val fragments = supportFragmentManager.fragments
-            for (fragment in fragments) {
-                Log.e("SUKA", "Fragment: " + fragment)
-            }
-        }
-
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            Log.e("SUKA", "Create fragment $screenKey : $data")
-            return when (screenKey) {
-                Screens.RELEASE_DETAILS -> {
-                    val fragment = ReleaseFragment()
-                    if (data is Bundle) {
-                        fragment.arguments = data
-                    }
-                    fragment
-                }
-                Screens.RELEASES_LIST -> {
-                    ReleasesFragment()
-                }
-                Screens.RELEASES_SEARCH -> {
-                    val fragment = SearchFragment()
-                    if (data is Bundle) {
-                        fragment.arguments = data
-                    }
-                    fragment
-                }
-                else -> throw RuntimeException("Unknown screen key: " + screenKey)
-            }
-        }
-
-        override fun showSystemMessage(message: String?) {
-            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-        }
-
-        override fun exit() {
-            finish()
-        }
-    }
-
 
     override fun onResume() {
         super.onResume()
-        App.get().navigatorHolder.setNavigator(navigator)
+        navigationHolder.setNavigator(navigatorNew)
     }
 
     override fun onPause() {
         super.onPause()
-        App.get().navigatorHolder.removeNavigator()
+        navigationHolder.removeNavigator()
     }
+
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.root_container)
+        if (fragment != null
+                && fragment is BackButtonListener
+                && (fragment as BackButtonListener).onBackPressed()) {
+            return
+        } else {
+            router.exit()
+        }
+    }
+
+    private fun initContainers() {
+        val fm = supportFragmentManager
+        val ta = fm.beginTransaction()
+        tabs.forEach { tab ->
+            var fragment: Fragment? = fm.findFragmentByTag(tab.screenKey)
+            if (fragment == null) {
+                fragment = TabFragment.newInstance(tab.screenKey)
+                ta.add(R.id.root_container, fragment, tab.screenKey)
+                        .detach(fragment)
+            }
+        }
+        ta.commitNow()
+    }
+
+    private fun initBottomMenu() {
+        tabs.forEachIndexed { _, tab ->
+            bottomTabs.menu
+                    .add(tab.title)
+                    .setIcon(tab.icon)
+                    .setOnMenuItemClickListener {
+                        router.replaceScreen(tab.screenKey)
+                        false
+                    }
+        }
+    }
+
+    private val navigatorNew = object : Navigator {
+        override fun applyCommand(command: Command) {
+            Log.e("SUKA", "ApplyCommand " + command)
+            if (command is Back) {
+                finish()
+            } else if (command is SystemMessage) {
+                Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
+            } else if (command is Replace) {
+                Log.e("SUKA", "Replace " + command.screenKey)
+                val fm = supportFragmentManager
+                val ta = fm.beginTransaction()
+                tabs.forEach {
+                    val fragment = fm.findFragmentByTag(it.screenKey)
+                    if (it.screenKey == command.screenKey) {
+                        ta.attach(fragment)
+                    } else {
+                        ta.detach(fragment)
+                    }
+                }
+                ta.commitNow()
+            }
+        }
+    }
+
+    class Tab(val title: Int, val icon: Int, val screenKey: String)
 }

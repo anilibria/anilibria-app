@@ -11,6 +11,10 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import ru.radiationx.anilibria.data.api.Api
+import ru.radiationx.anilibria.data.client.Client
+import ru.radiationx.anilibria.data.client.IClient
+import ru.radiationx.anilibria.data.repository.ReleasesRepository
 
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
@@ -23,12 +27,13 @@ class App : Application() {
             private set
 
         lateinit var navigation: Navigation
+        lateinit var injections: Injections
     }
-
 
     override fun onCreate() {
         super.onCreate()
         instance = this
+        injections = Injections()
         navigation = Navigation()
         initImageLoader(this)
     }
@@ -38,24 +43,13 @@ class App : Application() {
         val local = LocalCiceroneHolder()
     }
 
-    class NavigationRoot {
-        private val cicerone: Cicerone<Router> = Cicerone.create()
+    /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
+    class Injections {
+        val client: IClient = Client()
+        val api: Api = Api(client)
 
-        val router: Router = cicerone.router
-        val holder: NavigatorHolder = cicerone.navigatorHolder
+        val releasesRepository = ReleasesRepository(api)
     }
-
-    class LocalCiceroneHolder {
-        private val containers: MutableMap<String, Cicerone<Router>> = mutableMapOf()
-
-        fun getCicerone(containerTag: String): Cicerone<Router> {
-            if (!containers.containsKey(containerTag)) {
-                containers.put(containerTag, Cicerone.create())
-            }
-            return containers.getValue(containerTag)
-        }
-    }
-
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
@@ -76,4 +70,27 @@ class App : Application() {
                 .build()
         ImageLoader.getInstance().init(config)
     }
+
+    /* Cicerone навигация
+    * root - для активити
+    * local - для табов, типа как в семпле cicerone
+    * */
+    class NavigationRoot {
+        private val cicerone: Cicerone<Router> = Cicerone.create()
+
+        val router: Router = cicerone.router
+        val holder: NavigatorHolder = cicerone.navigatorHolder
+    }
+
+    class LocalCiceroneHolder {
+        private val containers: MutableMap<String, Cicerone<Router>> = mutableMapOf()
+
+        fun getCicerone(containerTag: String): Cicerone<Router> {
+            if (!containers.containsKey(containerTag)) {
+                containers.put(containerTag, Cicerone.create())
+            }
+            return containers.getValue(containerTag)
+        }
+    }
+
 }

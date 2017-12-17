@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.data.api
+package ru.radiationx.anilibria.data.api.models
 
 /**
  * Created by mintrocket on 04.12.2017.

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.data.api.releases
+package ru.radiationx.anilibria.data.api.models
 
 import java.io.Serializable
 import java.util.*

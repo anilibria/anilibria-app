@@ -9,8 +9,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -34,7 +35,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter {
-        return ReleasePresenter((parentFragment as RouterProvider).router)
+        return ReleasePresenter(App.injections.releasesRepository,
+                (parentFragment as RouterProvider).router)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

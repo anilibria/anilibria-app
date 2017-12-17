@@ -8,9 +8,10 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.GenreItem
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.GenreItem
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
@@ -34,7 +35,8 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
-        return SearchPresenter((parentFragment as RouterProvider).router)
+        return SearchPresenter(App.injections.releasesRepository,
+                (parentFragment as RouterProvider).router)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

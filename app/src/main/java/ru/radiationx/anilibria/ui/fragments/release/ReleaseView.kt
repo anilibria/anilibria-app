@@ -4,7 +4,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /* Created by radiationx on 18.11.17. */

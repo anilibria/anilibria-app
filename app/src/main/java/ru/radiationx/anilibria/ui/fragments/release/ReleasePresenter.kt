@@ -1,22 +1,21 @@
 package ru.radiationx.anilibria.ui.fragments.release;
 
 import android.os.Bundle
-import android.util.Log;
-
-import com.arellomobile.mvp.InjectViewState;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import android.util.Log
+import com.arellomobile.mvp.InjectViewState
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.api.Api;
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.repository.ReleasesRepository
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.radiationx.anilibria.utils.mvp.BasePresenter;
+import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
-class ReleasePresenter(private val router: Router) : BasePresenter<ReleaseView>(router) {
+class ReleasePresenter(private val releasesRepository: ReleasesRepository,
+                       private val router: Router) : BasePresenter<ReleaseView>(router) {
     private var currentData: ReleaseItem? = null
     private var releaseId = -1
 
@@ -39,7 +38,7 @@ class ReleasePresenter(private val router: Router) : BasePresenter<ReleaseView>(
     }
 
     private fun loadRelease() {
-        val disposable = Api.get().Release().getRelease(releaseId)
+        val disposable = releasesRepository.getRelease(releaseId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ release ->

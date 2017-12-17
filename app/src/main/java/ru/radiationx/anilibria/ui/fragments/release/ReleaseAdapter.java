@@ -23,7 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem;
+import ru.radiationx.anilibria.data.api.models.ReleaseItem;
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter;
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder;
 

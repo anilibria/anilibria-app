@@ -6,14 +6,15 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.repository.ReleasesRepository
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
 @InjectViewState
-class SearchPresenter(private val router: Router) : BasePresenter<SearchView>(router) {
+class SearchPresenter(private val releasesRepository: ReleasesRepository,
+                      private val router: Router) : BasePresenter<SearchView>(router) {
 
     private val START_PAGE = 1
     private var currentPage = START_PAGE
@@ -32,7 +33,7 @@ class SearchPresenter(private val router: Router) : BasePresenter<SearchView>(ro
     }
 
     private fun loadGenres() {
-        val disposable = Api.get().Releases().getGenres()
+        val disposable = releasesRepository.getGenres()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
@@ -61,7 +62,7 @@ class SearchPresenter(private val router: Router) : BasePresenter<SearchView>(ro
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = Api.get().Releases().search(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+        val disposable = releasesRepository.searchRelease(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->

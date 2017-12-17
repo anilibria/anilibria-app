@@ -14,7 +14,7 @@ import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.releases.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import java.lang.Exception
 
 

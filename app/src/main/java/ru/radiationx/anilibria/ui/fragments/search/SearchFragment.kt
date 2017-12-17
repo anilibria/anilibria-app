@@ -158,6 +158,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         }
         toolbar.title = currentTitle
         adapter.bindItems(releases)
+        genresDialog.setChecked(presenter.currentGenre.orEmpty())
     }
 
     override fun insertMore(releases: ArrayList<ReleaseItem>) {

@@ -182,8 +182,17 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             String html = TextUtils.join("<br>", arrHtml);
             info.setText(Html.fromHtml(html));
 
-            boolean haveAnyEpisode = !release.getEpisodes().isEmpty() || release.getMoonwalkLink() != null;
-            watchAllButton.setEnabled(haveAnyEpisode);
+            boolean hasEpisodes = !release.getEpisodes().isEmpty();
+            boolean hasMoonwalk = release.getMoonwalkLink() != null;
+            watchAllButton.setEnabled(hasEpisodes || hasMoonwalk);
+
+            if (release.isFull()) {
+                watchAllButton.setVisibility(hasEpisodes || hasMoonwalk ? View.VISIBLE : View.GONE);
+            } else {
+                watchAllButton.setVisibility(View.VISIBLE);
+            }
+
+
         }
     }
 

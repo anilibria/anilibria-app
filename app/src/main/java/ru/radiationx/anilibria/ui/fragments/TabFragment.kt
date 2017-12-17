@@ -99,11 +99,11 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
                 override fun createFragment(screenKey: String?, data: Any?): Fragment? {
                     return when (screenKey) {
-                        Screens.RELEASES_LIST -> ReleasesFragment()
-                        Screens.ARTICLES_LIST -> ArticlesFragment()
-                        Screens.VIDEOS_LIST -> VideosFragment()
-                        Screens.BLOGS_LIST -> BlogsFragment()
-                        Screens.OTHER_LIST -> OtherFragment()
+                        Screens.MAIN_RELEASES -> ReleasesFragment()
+                        Screens.MAIN_ARTICLES -> ArticlesFragment()
+                        Screens.MAIN_VIDEOS -> VideosFragment()
+                        Screens.MAIN_BLOGS -> BlogsFragment()
+                        Screens.MAIN_OTHER -> OtherFragment()
                         Screens.RELEASE_DETAILS -> {
                             val fragment = ReleaseFragment()
                             if (data is Bundle) {

@@ -20,6 +20,7 @@ class ReleaseItem : Serializable {
     val types: ArrayList<String> = ArrayList()
 
     /* Full Item */
+    var isFull: Boolean = false
     val episodes = ArrayList<Episode>()
     var moonwalkLink: String? = null
 

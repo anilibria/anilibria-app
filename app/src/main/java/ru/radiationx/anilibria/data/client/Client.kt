@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.data.client
 
+import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import java.io.IOException
@@ -45,6 +46,8 @@ class Client : IClient {
                 .get()
                 .method(method, if (method == "GET") null else body)
                 .build()
+
+        Log.e("SUKA", "REQUEST "+httpUrl.toString())
 
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null

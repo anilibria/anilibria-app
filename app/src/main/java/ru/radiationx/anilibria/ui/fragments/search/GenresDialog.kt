@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
@@ -29,6 +30,14 @@ class GenresDialog(context: Context, private val listener: ClickListener) {
 
     fun setChecked(genreValue: String) {
         checkedGenre = genreValue
+        adapter.items.forEachIndexed { index, genreItem ->
+            if (checkedGenre == genreItem.value) {
+                (recyclerView.layoutManager as LinearLayoutManager)
+                        .scrollToPositionWithOffset(index, 0)
+                return@forEachIndexed
+            }
+        }
+
         adapter.notifyDataSetChanged()
     }
 

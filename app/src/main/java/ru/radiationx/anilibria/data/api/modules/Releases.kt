@@ -176,6 +176,8 @@ class Releases(private val client: IClient) {
             }
         }
 
+        release.isFull = true
+
         return release
     }
 }

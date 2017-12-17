@@ -1,10 +1,13 @@
-package ru.radiationx.anilibria.ui.activities
+package ru.radiationx.anilibria.ui.activities.main
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
 import android.widget.Toast
+import com.arellomobile.mvp.MvpAppCompatActivity
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -20,34 +23,36 @@ import ru.terrakok.cicerone.commands.Replace
 import ru.terrakok.cicerone.commands.SystemMessage
 
 
-class MainActivity : AppCompatActivity(), RouterProvider {
+class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     override val router: Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
     private val tabs = arrayOf(
-            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.RELEASES_LIST),
-            Tab(R.string.fragment_title_news, R.drawable.ic_news, Screens.ARTICLES_LIST),
-            Tab(R.string.fragment_title_videos, R.drawable.ic_videos, Screens.VIDEOS_LIST),
-            Tab(R.string.fragment_title_blogs, R.drawable.ic_blogs, Screens.BLOGS_LIST),
-            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.OTHER_LIST)
+            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MAIN_RELEASES),
+            Tab(R.string.fragment_title_news, R.drawable.ic_news, Screens.MAIN_ARTICLES),
+            Tab(R.string.fragment_title_videos, R.drawable.ic_videos, Screens.MAIN_VIDEOS),
+            Tab(R.string.fragment_title_blogs, R.drawable.ic_blogs, Screens.MAIN_BLOGS),
+            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
     )
+
+    @InjectPresenter
+    lateinit var presenter: MainPresenter
+
+    @ProvidePresenter
+    fun provideMainPresenter(): MainPresenter {
+        return MainPresenter(router)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initContainers()
-        initBottomMenu()
-
-        bottomTabs.enableItemShiftingMode(false)
-        bottomTabs.enableShiftingMode(false)
-        bottomTabs.setTextVisibility(false)
-        bottomTabs.enableAnimation(false)
+        initBottomTabs()
 
         if (savedInstanceState == null) {
-            bottomTabs.currentItem = 0
-            router.newRootScreen(Screens.RELEASES_LIST)
+            presenter.selectTab(Screens.MAIN_RELEASES)
         }
     }
 
@@ -68,7 +73,7 @@ class MainActivity : AppCompatActivity(), RouterProvider {
                 && (fragment as BackButtonListener).onBackPressed()) {
             return
         } else {
-            router.exit()
+            presenter.onBackPressed()
         }
     }
 
@@ -86,15 +91,32 @@ class MainActivity : AppCompatActivity(), RouterProvider {
         ta.commitNow()
     }
 
-    private fun initBottomMenu() {
-        tabs.forEachIndexed { _, tab ->
+    private fun initBottomTabs() {
+        tabs.forEachIndexed { index, tab ->
             bottomTabs.menu
-                    .add(tab.title)
+                    .add(Menu.NONE, index + 1, Menu.NONE, tab.title)
                     .setIcon(tab.icon)
                     .setOnMenuItemClickListener {
-                        router.replaceScreen(tab.screenKey)
+                        presenter.selectTab(tab.screenKey)
                         false
                     }
+        }
+
+        bottomTabs.enableItemShiftingMode(false)
+        bottomTabs.enableShiftingMode(false)
+        bottomTabs.setTextVisibility(false)
+        bottomTabs.enableAnimation(false)
+    }
+
+    override fun highlightTab(screenKey: String) {
+        tabs.forEachIndexed { index, tab ->
+            if (tab.screenKey == screenKey) {
+                val menuItem = bottomTabs.menu.findItem(index + 1)
+                //Так не вызывается событие onclick. Позволяет избежать рекурсии при выборе таба
+                menuItem.isEnabled = false
+                menuItem.isChecked = true
+                menuItem.isEnabled = true
+            }
         }
     }
 
@@ -122,5 +144,7 @@ class MainActivity : AppCompatActivity(), RouterProvider {
         }
     }
 
-    class Tab(val title: Int, val icon: Int, val screenKey: String)
+    class Tab(val title: Int,
+              val icon: Int,
+              val screenKey: String)
 }

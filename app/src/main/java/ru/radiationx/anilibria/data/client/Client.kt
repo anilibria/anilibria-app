@@ -34,12 +34,12 @@ class Client : IClient {
     private fun request(method: String, url: String, args: Map<String, String>): String {
         val body = RequestBody.create(MediaType.parse("text/plain; charset=utf-8"), "")
 
-        val httpUrl: HttpUrl = HttpUrl.parse(url)?.newBuilder(url)?.let { builder ->
-            args.forEach {
-                builder.addQueryParameter(it.key, it.value)
+        val httpUrl: HttpUrl = HttpUrl.parse(url)?.let {
+            it.newBuilder().let { builder ->
+                args.forEach { builder.addQueryParameter(it.key, it.value) }
+                builder.build()
             }
-            builder.build()
-        }!!
+        } ?: throw Exception("URL incorrect")
 
         val request = Request.Builder()
                 .url(httpUrl)
@@ -47,7 +47,7 @@ class Client : IClient {
                 .method(method, if (method == "GET") null else body)
                 .build()
 
-        Log.e("SUKA", "REQUEST "+httpUrl.toString())
+        Log.e("SUKA", "REQUEST " + httpUrl.toString())
 
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null

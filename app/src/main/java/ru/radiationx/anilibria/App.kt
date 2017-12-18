@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.client.Client
 import ru.radiationx.anilibria.data.client.IClient
+import ru.radiationx.anilibria.data.repository.ArticlesRepository
 import ru.radiationx.anilibria.data.repository.ReleasesRepository
 
 import ru.terrakok.cicerone.Cicerone
@@ -49,6 +50,7 @@ class App : Application() {
         val api: Api = Api(client)
 
         val releasesRepository = ReleasesRepository(api)
+        val articlesRepository = ArticlesRepository(api)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

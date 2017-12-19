@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.data.api.mappers
 
+import android.text.Html
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.ArticleFull
 import ru.radiationx.anilibria.data.api.models.ArticleItem
@@ -34,11 +35,11 @@ object ArticlesMapper {
     * */
     private val paginationPatternSource = "<div[^>]*?class=\"[^\"]*?bx_pagination_page[^\"]*?\"[^>]*?>[\\s\\S]*?<li[^>]*?class=\"bx_active\"[^>]*?>(\\d+)<\\/li>[\\s\\S]*?<li><a[^>]*?>(\\d+)<\\/a><\\/li>[^<]*?<li><a[^>]*?>&#8594;<\\/a>"
 
-    val listPattern: Pattern by lazy {
+    private val listPattern: Pattern by lazy {
         Pattern.compile(listPatternSource, Pattern.CASE_INSENSITIVE)
     }
 
-    val paginationPattern: Pattern by lazy {
+    private val paginationPattern: Pattern by lazy {
         Pattern.compile(paginationPatternSource, Pattern.CASE_INSENSITIVE)
     }
 
@@ -49,9 +50,9 @@ object ArticlesMapper {
             items.add(ArticleItem().apply {
                 elementId = matcher.group(1).toInt()
                 url = matcher.group(2)
-                title = matcher.group(3)
+                title = Html.fromHtml(matcher.group(3)).toString()
                 userId = matcher.group(4).toInt()
-                userNick = matcher.group(5)
+                userNick = Html.fromHtml(matcher.group(5)).toString()
                 imageUrl = Api.Companion.BASE_URL +matcher.group(6)
                 imageWidth = matcher.group(7).toInt()
                 imageHeight = matcher.group(8).toInt()

@@ -84,12 +84,13 @@ class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
         override fun bind(item: ArticleItem, position: Int) {
             title.text = item.title
 
-            if (item.content.isBlank()) {
+            content.visibility = View.GONE
+            /*if (item.content.isBlank()) {
                 content.visibility = View.GONE
             } else {
                 content.visibility = View.VISIBLE
                 content.text = item.content
-            }
+            }*/
 
             nick.text = item.userNick
 

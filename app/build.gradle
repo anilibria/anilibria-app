@@ -38,6 +38,7 @@ android {
         disable 'RestrictedApi'
         checkReleaseBuilds false
     }
+    buildToolsVersion '27.0.1'
 }
 ext {
     supportLibVersion = '27.0.2'

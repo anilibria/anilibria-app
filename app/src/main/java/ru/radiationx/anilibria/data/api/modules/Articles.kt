@@ -15,17 +15,21 @@ class Articles(private val client: IClient) {
 
     fun getArticle(articleId: String): Single<ArticleFull> {
         val args: MutableMap<String, String> = mutableMapOf()
-        val url = Api.BASE_URL + articleId
+        val url = "${Api.BASE_URL}$articleId"
         return client.get(url, args)
                 .map { ArticlesMapper.article(it) }
     }
 
-    fun getArticles(page: Int): Single<Paginated<List<ArticleItem>>> {
+    fun getArticles(name: String, page: Int): Single<Paginated<List<ArticleItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "PAGEN_1" to page.toString(),
                 "SIZEN_1" to "6"
         )
-        return client.get(Api.ARTICLES_URL, args)
+        var url = Api.BASE_URL
+        if (name.isNotEmpty()) {
+            url += "$name/"
+        }
+        return client.get(url, args)
                 .map { ArticlesMapper.articles(it) }
     }
 

@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.ui.widgets.AspectRatioImageView
 
 /* Created by radiationx on 31.10.17. */
 
-class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
+open class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
     private var listener: ItemListener? = null
     var endless: Boolean = false
         set(enable) {

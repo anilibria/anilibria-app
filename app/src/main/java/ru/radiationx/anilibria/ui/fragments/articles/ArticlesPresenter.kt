@@ -4,8 +4,8 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.ArticleItem
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.data.repository.ArticlesRepository
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -14,13 +14,14 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 18.12.17.
  */
 @InjectViewState
-class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
+open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
                         private val router: Router) : BasePresenter<ArticlesView>(router) {
     companion object {
         private const val START_PAGE = 1
     }
 
     private var currentPage = START_PAGE
+    open var categoryName = Api.Companion.CATEGORY_NEWS
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -38,11 +39,11 @@ class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = articlesRepository.getArticles(page)
+        val disposable = articlesRepository.getArticles(categoryName, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
-                    Log.d("SUKA", "subscribe call show "+releaseItems.current+" : "+releaseItems.allPages+" : "+releaseItems.data.size)
+                    Log.d("SUKA", "subscribe call show " + releaseItems.current + " : " + releaseItems.allPages + " : " + releaseItems.data.size)
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
                         viewState.setRefreshing(false)

@@ -10,7 +10,9 @@ class Api(client: IClient) {
     companion object {
         val BASE_URL = "http://www.anilibria.tv/"
         val API_URL = BASE_URL + "api/api.php"
-        val ARTICLES_URL = BASE_URL + "novosti/"
+        val CATEGORY_NEWS = "novosti/"
+        val CATEGORY_BLOGS = "blog/"
+        val CATEGORY_VIDEOS = "video/"
     }
 
     private var releases: Releases = Releases(client)
@@ -31,6 +33,6 @@ class Api(client: IClient) {
 
     fun getArticle(articleId: String) = articles.getArticle(articleId)
 
-    fun getArticles(page: Int) = articles.getArticles(page)
+    fun getArticles(name: String, page: Int) = articles.getArticles(name, page)
 
 }

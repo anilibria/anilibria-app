@@ -15,7 +15,7 @@ class ArticlesRepository(private val api: Api) {
         api.getArticle(articleId)
     }
 
-    fun getArticles(page: Int): Single<Paginated<List<ArticleItem>>> = Single.defer {
-        api.getArticles(page)
+    fun getArticles(name: String, page: Int): Single<Paginated<List<ArticleItem>>> = Single.defer {
+        api.getArticles(name, page)
     }
 }

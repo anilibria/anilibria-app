@@ -1,0 +1,19 @@
+<script src="main2.js" type="text/javascript"></script>
+
+<div id="suka">
+    <a href="#">sasai masalay kudasay</a>
+</div>
+<script>
+    function resize(){
+        console.log("SUKA RESIZE");
+        ALibApp.resize(document.body.getBoundingClientRect().height);
+    }
+    resize()
+
+    document.addEventListener("DOMContentLoaded", function(){
+        resize();
+        //addResizeListener(document.getElementById("suka"), resize);
+        document.body.addEventListener('onresize', resize);
+        document.getElementById("suka").style.height = "10000px";
+    });
+</script>

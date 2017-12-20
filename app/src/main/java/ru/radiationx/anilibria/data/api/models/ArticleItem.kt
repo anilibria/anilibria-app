@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.data.api.models
 
+import java.io.Serializable
+
 /**
  * Created by radiationx on 18.12.17.
  */
-class ArticleItem {
+class ArticleItem : Serializable {
     var elementId: Int = 0
 
     lateinit var url: String

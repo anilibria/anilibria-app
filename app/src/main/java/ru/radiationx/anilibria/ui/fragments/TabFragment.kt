@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.fragments.article.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.articles.ArticlesFragment
 import ru.radiationx.anilibria.ui.fragments.blogs.BlogsFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
@@ -91,8 +92,6 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         }
     }
 
-
-
     private fun getNavigator(): Navigator {
         if (navigator == null) {
             navigator = object : SupportFragmentNavigator(childFragmentManager, R.id.fragments_container) {
@@ -103,7 +102,14 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                         Screens.MAIN_ARTICLES -> ArticlesFragment()
                         Screens.MAIN_VIDEOS -> VideosFragment()
                         Screens.MAIN_BLOGS -> BlogsFragment()
-                        Screens.MAIN_OTHER -> OtherFragment()
+                        Screens.MAIN_OTHER -> ArticleFragment()
+                        Screens.ARTICLE_DETAILS -> {
+                            val fragment = ArticleFragment()
+                            if (data is Bundle) {
+                                fragment.arguments = data
+                            }
+                            fragment
+                        }
                         Screens.RELEASE_DETAILS -> {
                             val fragment = ReleaseFragment()
                             if (data is Bundle) {

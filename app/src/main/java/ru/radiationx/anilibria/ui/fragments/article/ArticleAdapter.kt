@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.webkit.WebView
-import kotlinx.android.synthetic.main.fragment_test.*
+import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.item_article_content.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter

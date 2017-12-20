@@ -12,4 +12,6 @@ object Screens {
     val MAIN_VIDEOS = "MAIN_VIDEOS"
     val MAIN_BLOGS = "MAIN_BLOGS"
     val MAIN_OTHER = "MAIN_OTHER"
+
+    val ARTICLE_DETAILS = "ARTICLE_DETAILS"
 }

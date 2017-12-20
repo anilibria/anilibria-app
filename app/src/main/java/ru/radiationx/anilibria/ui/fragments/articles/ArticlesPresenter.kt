@@ -1,12 +1,15 @@
 package ru.radiationx.anilibria.ui.fragments.articles
 
+import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.data.repository.ArticlesRepository
+import ru.radiationx.anilibria.ui.fragments.article.ArticleFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -68,7 +71,9 @@ open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
     }
 
     fun onItemClick(item: ArticleItem) {
-
+        val args = Bundle()
+        args.putSerializable(ArticleFragment.ARG_ITEM, item)
+        router.navigateTo(Screens.ARTICLE_DETAILS, args)
     }
 
     fun onItemLongClick(item: ArticleItem): Boolean {

@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
+import android.widget.Toast
+import biz.source_code.miniTemplator.MiniTemplator
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
@@ -20,6 +22,9 @@ import ru.radiationx.anilibria.data.repository.ReleasesRepository
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -31,12 +36,33 @@ class App : Application() {
         lateinit var injections: Injections
     }
 
+    lateinit var articleTemplate: MiniTemplator
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         injections = Injections()
         navigation = Navigation()
+        findTemplate("article")?.let { articleTemplate = it }
         initImageLoader(this)
+    }
+
+
+    private fun findTemplate(name: String): MiniTemplator? {
+        var template: MiniTemplator? = null
+        try {
+            val stream = assets.open("templates/$name.html")
+            val charset: Charset = Charset.forName("utf-8")
+            template = try {
+                MiniTemplator.Builder().build(stream, charset)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                MiniTemplator.Builder().build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return template
     }
 
     class Navigation {

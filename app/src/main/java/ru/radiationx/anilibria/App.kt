@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
 
@@ -13,6 +14,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.client.Client
 import ru.radiationx.anilibria.data.client.IClient
@@ -41,6 +43,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        RxJavaPlugins.setErrorHandler { throwable ->
+            Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable)
+            throwable.printStackTrace()
+        }
         injections = Injections()
         navigation = Navigation()
         findTemplate("article")?.let { articleTemplate = it }

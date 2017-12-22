@@ -83,7 +83,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case RELEASE_HEAD_LAYOUT: {
-                return new ReleaseItemHolder(inflateLayout(parent, R.layout.item_release_head));
+                return new ReleaseItemHolder(inflateLayout(parent, R.layout.item_release_head_new));
             }
             case RELEASE_EPISODE_LAYOUT: {
                 return new EpisodeItemHolder(inflateLayout(parent, R.layout.item_release_episode));
@@ -149,7 +149,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
 
         @Override
         public void bind(ReleaseItem release) {
-            ImageLoader.getInstance().displayImage(release.getImage(), image, new SimpleImageLoadingListener() {
+            /*ImageLoader.getInstance().displayImage(release.getImage(), image, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     imageProgress.setVisibility(View.VISIBLE);
@@ -159,7 +159,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     imageProgress.setVisibility(View.GONE);
                 }
-            });
+            });*/
             title.setText(release.getTitle());
             desc.setText(release.getDescription());
             torrentButton.setEnabled(true);

@@ -32,6 +32,7 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fitSystemWindow()
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {

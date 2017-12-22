@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.widgets
 
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
+import android.util.Log
 
 /**
  * Created by radiationx on 26.08.17.

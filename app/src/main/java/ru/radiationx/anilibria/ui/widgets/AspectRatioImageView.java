@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.R;
 
 public class AspectRatioImageView extends android.support.v7.widget.AppCompatImageView {
     private float aspectRatio = 1.0f;
+    private boolean enabledAspectRation = true;
 
     public AspectRatioImageView(Context context) {
         super(context);
@@ -36,12 +37,19 @@ public class AspectRatioImageView extends android.support.v7.widget.AppCompatIma
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        float height = Math.min(getMeasuredWidth() * aspectRatio, getMaxHeight());
-        setMeasuredDimension(widthMeasureSpec, (int) (height));
+        if (enabledAspectRation) {
+            float height = Math.min(getMeasuredWidth() * aspectRatio, getMaxHeight());
+            setMeasuredDimension(widthMeasureSpec, (int) (height));
+        }
     }
 
     public void setAspectRatio(float aspectRatio) {
         this.aspectRatio = aspectRatio;
         requestLayout();
+    }
+
+    public void setEnabledAspectRation(boolean enabled) {
+        enabledAspectRation = enabled;
+        //requestLayout();
     }
 }

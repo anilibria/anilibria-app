@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/full_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/full_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textDefault"
+                android:textSize="20sp"
+                tools:text="Title releaseData long title lol\njslad;kfjasdf" />
+
+            <TextView
+                android:id="@+id/full_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="6"
+                android:textColor="#444"
+                android:textSize="14sp"
+                tools:text="season: blablablabla\nvoices:blablabla,blebleble\ntypes:lanneblablaalbalba" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <com.cunoraz.tagview.TagView xmlns:tagview="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/full_tags"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        tagview:lineMargin="8dp"
+        tagview:tagMargin="8dp"
+        tagview:textPaddingBottom="5dp"
+        tagview:textPaddingLeft="6dp"
+        tagview:textPaddingRight="6dp"
+        tagview:textPaddingTop="4dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/windowBackground" />
+
+    <TextView
+        android:id="@+id/full_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/textDefault"
+        android:textSize="16sp"
+        tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/windowBackground" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/full_button_torrent"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/download_torrent"
+        android:textColor="@color/textColoredButton" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/full_button_watch_all"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/watch_all" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/windowBackground" />
+
+</LinearLayout>

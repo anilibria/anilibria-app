@@ -16,7 +16,9 @@
         <item name="toolbar_icon">@color/toolbar_icon</item>
     </style>
 
-    <style name="AppTheme" parent="BaseAppTheme" />
+    <style name="AppTheme" parent="BaseAppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>

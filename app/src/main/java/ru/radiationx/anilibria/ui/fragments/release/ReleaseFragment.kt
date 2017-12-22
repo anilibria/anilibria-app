@@ -1,12 +1,21 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.nostra13.universalimageloader.core.DisplayImageOptions
+import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
 import ru.radiationx.anilibria.App
@@ -15,7 +24,13 @@ import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.Utils
+import android.util.DisplayMetrics
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.toolbar_content_release.*
 
 
 /* Created by radiationx on 16.11.17. */
@@ -51,9 +66,51 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         }
     }
 
+    var currentTitle: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+        toolbarLayout.layoutParams = params
+        toolbarInsetShadow.visibility = View.VISIBLE
+        toolbarContent.visibility = View.VISIBLE
+
+        View.inflate(toolbarContent.context, R.layout.toolbar_content_release, toolbarContent)
+
+        toolbarImage.post {
+
+            val metrics = DisplayMetrics()
+            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+
+            val height = metrics.heightPixels
+            val width = metrics.widthPixels
+
+            toolbarImage.maxHeight = (height * 0.75f).toInt()
+        }
+
+
+        val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
+        scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
+            override fun onScrimChanged(scrim: Boolean) {
+                if (scrim) {
+                    toolbar.navigationIcon?.clearColorFilter()
+                    toolbar.overflowIcon?.clearColorFilter()
+                    toolbar.title = currentTitle
+                    //toolbarTitleView.setVisibility(View.VISIBLE)
+
+                    toolbarInsetShadow.visibility = View.GONE
+                } else {
+                    toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    toolbar.title = null
+                    //toolbarTitleView.setVisibility(View.GONE)
+
+                    toolbarInsetShadow.visibility = View.VISIBLE
+                }
+            }
+        })
 
         adapter.setReleaseListener(releaseListener)
         recyclerView.apply {
@@ -63,7 +120,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         }
 
         toolbar.apply {
-            title = getString(R.string.fragment_title_release)
+            currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener({
                 presenter.onBackPressed()
             })
@@ -94,8 +151,41 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
     }
 
+    var currentColor: Int = Color.TRANSPARENT
+    private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .resetViewBeforeLoading(false)
+            .cacheOnDisk(true)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .handler(Handler())
+
     override fun showRelease(release: ReleaseItem) {
-        toolbar.title = String.format("%s / %s", release.title, release.originalTitle)
+        //toolbarImage.adjustViewBounds = true
+
+        ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
+            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
+                super.onLoadingComplete(imageUri, view, loadedImage)
+                Single.defer {
+                    Single.just(isDarkImage(loadedImage))
+                }
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ isDark ->
+                            toolbar?.let {
+                                Log.e("SUKA", "LOADED IMAGE TYPE " + isDark)
+                                if (isDark) {
+                                    currentColor = Color.WHITE
+                                } else {
+                                    currentColor = Color.BLACK
+                                }
+                                toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                                toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                            }
+                        })
+            }
+        })
+
+        currentTitle = String.format("%s / %s", release.title, release.originalTitle)
         adapter.setRelease(release)
         adapter.notifyDataSetChanged()
     }

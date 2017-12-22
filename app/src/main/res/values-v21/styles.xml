@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="AppTheme" parent="BaseAppTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">#33000000</item>
+    </style>
+
     <style name="PlayerTheme" parent="AppTheme">
         <item name="colorPrimary">@color/playerColorPrimary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

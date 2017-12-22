@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.article
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.util.Log
@@ -11,8 +9,12 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.android.synthetic.main.toolbar_content_article.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.Api
@@ -65,10 +67,13 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        fitSystemWindow()
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
         toolbarLayout.layoutParams = params
+        toolbarContent.visibility = View.VISIBLE
+        View.inflate(toolbarContent.context, R.layout.toolbar_content_article, toolbarContent)
+        //toolbarImage.setEnabledAspectRation(false)
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
@@ -145,43 +150,34 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
         ImageLoader.getInstance().displayImage(imageUrl, toolbarImage, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                val targetImage = Bitmap.createBitmap(loadedImage, 0, 0, loadedImage.width / 2, loadedImage.height)
-                val isDark = isDarkImage(targetImage)
-                Log.e("SUKA", "LOADED IMAGE TYPE " + isDark)
-                if (isDark) {
-                    currentColor = Color.WHITE
-                } else {
-                    currentColor = Color.BLACK
+                Single.defer {
+                    Single.just(isDarkImage(loadedImage))
                 }
-                toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ isDark ->
+                            toolbar?.let {
+                                Log.e("SUKA", "LOADED IMAGE TYPE " + isDark)
+                                if (isDark) {
+                                    currentColor = Color.WHITE
+                                } else {
+                                    currentColor = Color.BLACK
+                                }
+                                toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                                toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                            }
+                        })
+
             }
         })
-        toolbarImage.visibility = View.VISIBLE
+
+
+
         webView.evalJs("ViewModel.setText('title','$title');")
         webView.evalJs("ViewModel.setText('nick','$nick');")
         webView.evalJs("ViewModel.setText('comments_count','$comments');")
         webView.evalJs("ViewModel.setText('views_count','$views');")
     }
 
-    fun isDarkImage(bitmap: Bitmap): Boolean {
-        val histogram = IntArray(256, { i: Int -> 0 })
 
-        for (x in 0 until bitmap.width) {
-            for (y in 0 until bitmap.height) {
-                //val color = bitmap.getRGB(x, y)
-
-                val pixel = bitmap.getPixel(x, y)
-                val r = Color.red(pixel)
-                val g = Color.green(pixel)
-                val b = Color.blue(pixel)
-
-                val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
-                histogram[brightness]++;
-            }
-        }
-
-        val allPixelsCount = bitmap.width * bitmap.height;
-        val darkPixelCount = (0 until 64).sumBy { histogram[it] }
-        return darkPixelCount > allPixelsCount * 0.25
-    }
 }

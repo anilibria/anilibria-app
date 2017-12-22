@@ -100,6 +100,7 @@ var nativeEvents = new NativeEvents();
 function ViewModelClass() {
     this.setText = function (id, text) {
         document.getElementById(id).innerHTML = text;
+        onAnyLoad();
     }
 }
 

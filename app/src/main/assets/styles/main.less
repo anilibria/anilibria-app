@@ -1,7 +1,6 @@
 @textDefault: #212121;
 @textSecond: #757575;
 @linkColor: red;
-
 HTML {
     font-size: 1rem;
 }
@@ -24,7 +23,6 @@ a {
 * {
     box-sizing: border-box;
 }
-
 .wrapper {
     .header {
         padding: 12/16rem 16/16rem;
@@ -52,6 +50,33 @@ a {
                 display: table;
                 clear: both;
             }
+        }
+    }
+    .content {
+        padding: 16/16rem;
+        
+        .divider{
+            height: 1/16rem;
+            background: #ddd;
+        }
+        
+        >p:first-of-type {
+            margin-top: 0;
+        }
+        img,
+        iframe {
+            max-width: 100%;
+            width: auto!important;
+            height: auto!important;
+            margin: 0.5em auto;
+        }
+        /*>img,
+        >p img {
+            margin-left: -16/16rem;
+            margin-right: -16/16rem;
+        }*/
+        iframe {
+            background: gray;
         }
     }
 }

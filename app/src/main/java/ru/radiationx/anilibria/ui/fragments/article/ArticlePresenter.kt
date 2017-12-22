@@ -20,13 +20,13 @@ class ArticlePresenter(private val articlesRepository: ArticlesRepository,
 
     fun setDataFromItem(item: ArticleItem) {
         item.run {
-            viewState.preShow(title, userNick, commentsCount, viewsCount)
+            viewState.preShow(imageUrl, title, userNick, commentsCount, viewsCount)
         }
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        //loadArticle(url)
+        loadArticle(url)
     }
 
     fun loadArticle(articleUrl: String) {

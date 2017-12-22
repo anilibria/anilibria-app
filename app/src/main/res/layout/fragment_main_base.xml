@@ -11,14 +11,27 @@
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:scrimAnimationDuration="335"
+            app:scrimVisibleHeightTrigger="56dp"
+            app:contentScrim="@color/a_red"
             app:layout_scrollFlags="scroll|enterAlways"
             app:titleEnabled="false">
+
+            <ImageView
+                android:id="@+id/toolbarImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="144dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:visibility="gone"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -26,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                app:elevation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>

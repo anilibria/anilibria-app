@@ -154,7 +154,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
     override fun playEpisodes(release: ReleaseItem) {
         (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(1, 0)
-        appbar_layout.setExpanded(false, false)
+        appbarLayout.setExpanded(false, false)
         /*startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_CURRENT, 0)

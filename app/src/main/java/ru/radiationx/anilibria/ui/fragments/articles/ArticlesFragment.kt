@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.terrakok.cicerone.Router
 import java.util.ArrayList
 
 /**
@@ -25,6 +26,7 @@ class ArticlesFragment : BaseFragment(), ArticlesView, ArticlesAdapter.ItemListe
 
     @InjectPresenter
     lateinit var presenter: ArticlesPresenter
+    lateinit var router: Router
 
     @ProvidePresenter
     fun provideArticlesPresenter(): ArticlesPresenter {

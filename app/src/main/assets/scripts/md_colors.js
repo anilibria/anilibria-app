@@ -469,7 +469,6 @@ function parseRgb(rgbStr) {
     var hex;
     while (match = rgbRegex.exec(rgbStr)) {
         hex = match[4];
-        console.log("hex: "+hex);
         if (!hex) {
             hex = rgbToHex(Number(match[1]), Number(match[2]), Number(match[3]));
         }
@@ -502,7 +501,6 @@ function onAnyLoad() {
             cacheColor[rgbColor] = hexColor;
             cached = hexColor;
         }
-         console.log("color: " + rgbColor + " : " + cached);
         elem.style.color = cached;
     }
 }

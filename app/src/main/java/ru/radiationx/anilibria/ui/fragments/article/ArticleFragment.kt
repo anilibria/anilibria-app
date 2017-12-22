@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -23,6 +24,7 @@ import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import java.util.ArrayList
 import org.json.JSONException
 import org.json.JSONObject
+import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 
 
 /**
@@ -36,6 +38,9 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     }
 
     override val layoutRes: Int = R.layout.fragment_article
+
+    var currentColor: Int = Color.TRANSPARENT
+    var currentTitle: String? = null
 
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
@@ -60,6 +65,27 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        toolbarLayout.layoutParams = params
+
+        val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
+        scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
+            override fun onScrimChanged(scrim: Boolean) {
+                if (scrim) {
+                    toolbar.navigationIcon?.clearColorFilter()
+                    toolbar.overflowIcon?.clearColorFilter()
+                    toolbar.title = currentTitle
+                    //toolbarTitleView.setVisibility(View.VISIBLE)
+                } else {
+                    toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    toolbar.title = null
+                    //toolbarTitleView.setVisibility(View.GONE)
+                }
+            }
+        })
 
         toolbar.apply {
             //title = getString(R.string.fragment_title_release)
@@ -95,7 +121,7 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     }
 
     override fun showArticle(article: ArticleFull) {
-        //toolbar.title = article.title
+        currentTitle = article.title
         webView.evalJs("ViewModel.setText('content','${transformMessageSrc(article.content)}');")
     }
 
@@ -115,18 +141,19 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     }
 
     override fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
-        //toolbar.title = title
+        currentTitle = title
         ImageLoader.getInstance().displayImage(imageUrl, toolbarImage, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                val targetImage = Bitmap.createBitmap(loadedImage, 0, 0, loadedImage.width/2, loadedImage.height)
-                val isDark =  isDarkImage(targetImage)
+                val targetImage = Bitmap.createBitmap(loadedImage, 0, 0, loadedImage.width / 2, loadedImage.height)
+                val isDark = isDarkImage(targetImage)
                 Log.e("SUKA", "LOADED IMAGE TYPE " + isDark)
-                if(isDark){
-                    toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-                }else{
-                    toolbar.navigationIcon?.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
+                if (isDark) {
+                    currentColor = Color.WHITE
+                } else {
+                    currentColor = Color.BLACK
                 }
+                toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
             }
         })
         toolbarImage.visibility = View.VISIBLE

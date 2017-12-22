@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -35,8 +36,8 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
     private lateinit var cicerone: Cicerone<Router>
     private var navigator: Navigator? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         arguments?.let {
             localScreen = it.getString(LOCAL_ROOT_SCREEN, null) ?: throw NullPointerException()
         }
@@ -52,7 +53,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         super.onActivityCreated(savedInstanceState)
 
         if (childFragmentManager.findFragmentById(R.id.fragments_container) == null) {
-            cicerone.router.newRootScreen(localScreen, 0)
+            router.newRootScreen(localScreen, 0)
         }
     }
 

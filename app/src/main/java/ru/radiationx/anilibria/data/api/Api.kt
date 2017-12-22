@@ -31,7 +31,7 @@ class Api(client: IClient) {
 
     /* Articles */
 
-    fun getArticle(articleId: String) = articles.getArticle(articleId)
+    fun getArticle(articleUrl: String) = articles.getArticle(articleUrl)
 
     fun getArticles(name: String, page: Int) = articles.getArticles(name, page)
 

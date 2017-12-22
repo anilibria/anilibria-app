@@ -16,16 +16,23 @@ import ru.terrakok.cicerone.Router
 class ArticlePresenter(private val articlesRepository: ArticlesRepository,
                        private val router: Router) : BasePresenter<ArticleView>(router) {
 
+    var url: String = ""
+
     fun setDataFromItem(item: ArticleItem) {
         item.run {
             viewState.preShow(title, userNick, commentsCount, viewsCount)
         }
     }
 
-    fun loadArticle(articleId: String) {
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        //loadArticle(url)
+    }
+
+    fun loadArticle(articleUrl: String) {
         Log.e("SUKA", "loadArticle")
         viewState.setRefreshing(true)
-        val disposable = articlesRepository.getArticle(articleId)
+        val disposable = articlesRepository.getArticle(articleUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ article ->

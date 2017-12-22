@@ -11,8 +11,8 @@ import ru.radiationx.anilibria.data.api.models.Paginated
  */
 class ArticlesRepository(private val api: Api) {
 
-    fun getArticle(articleId: String): Single<ArticleFull> = Single.defer {
-        api.getArticle(articleId)
+    fun getArticle(articleUrl: String): Single<ArticleFull> = Single.defer {
+        api.getArticle(articleUrl)
     }
 
     fun getArticles(name: String, page: Int): Single<Paginated<List<ArticleItem>>> = Single.defer {

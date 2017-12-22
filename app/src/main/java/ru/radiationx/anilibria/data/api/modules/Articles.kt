@@ -13,9 +13,9 @@ import ru.radiationx.anilibria.data.client.IClient
  */
 class Articles(private val client: IClient) {
 
-    fun getArticle(articleId: String): Single<ArticleFull> {
+    fun getArticle(articleUrl: String): Single<ArticleFull> {
         val args: MutableMap<String, String> = mutableMapOf()
-        val url = "${Api.BASE_URL}$articleId"
+        val url = "${Api.BASE_URL}$articleUrl"
         return client.get(url, args)
                 .map { ArticlesMapper.article(it) }
     }

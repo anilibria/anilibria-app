@@ -35,12 +35,18 @@ object ArticlesMapper {
     * */
     private val paginationPatternSource = "<div[^>]*?class=\"[^\"]*?bx_pagination_page[^\"]*?\"[^>]*?>[\\s\\S]*?<li[^>]*?class=\"bx_active\"[^>]*?>(\\d+)<\\/li>[\\s\\S]*?<li><a[^>]*?>(\\d+)<\\/a><\\/li>[^<]*?<li><a[^>]*?>&#8594;<\\/a>"
 
+    private val fullArticlePatternSource = "<div[^>]*?class=\"[^\"]*?news-detail-header[^\"]*?\"[^>]*?>[^<]*?<h1[^>]*?>([\\s\\S]*?)<\\/h1>[^<]*?<\\/div>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?news-detail-content[^\"]*?\"[^>]*?>([\\s\\S]*?)(?:<a[^>]*?id=\"back-to-list\"[^>]*?>[\\s\\S]*?<\\/a>[^<]*?)?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?news-detail-footer[^\"]*?\"[^>]*?>[^<]*?<span[^>]*?>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?(\\d+)[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/span>[\\s\\S]*?<span[^>]*?>[^<]*?<i[^>]*?>([\\s\\S]*?)<\\/i>[\\s\\S]*?<\\/span>"
+
     private val listPattern: Pattern by lazy {
         Pattern.compile(listPatternSource, Pattern.CASE_INSENSITIVE)
     }
 
     private val paginationPattern: Pattern by lazy {
         Pattern.compile(paginationPatternSource, Pattern.CASE_INSENSITIVE)
+    }
+
+    private val fullPattern: Pattern by lazy {
+        Pattern.compile(fullArticlePatternSource, Pattern.CASE_INSENSITIVE)
     }
 
     fun articles(httpResponse: String): Paginated<List<ArticleItem>> {
@@ -53,7 +59,7 @@ object ArticlesMapper {
                 title = Html.fromHtml(matcher.group(3)).toString()
                 userId = matcher.group(4).toInt()
                 userNick = Html.fromHtml(matcher.group(5)).toString()
-                imageUrl = Api.Companion.BASE_URL +matcher.group(6)
+                imageUrl = Api.Companion.BASE_URL + matcher.group(6)
                 imageWidth = matcher.group(7).toInt()
                 imageHeight = matcher.group(8).toInt()
                 content = matcher.group(9).trim()
@@ -75,7 +81,17 @@ object ArticlesMapper {
     }
 
     fun article(httpResponse: String): ArticleFull {
-
-        return ArticleFull()
+        val result = ArticleFull()
+        val matcher: Matcher = fullPattern.matcher(httpResponse)
+        if (matcher.find()) {
+            result.apply {
+                title = Html.fromHtml(matcher.group(1)).toString()
+                content = matcher.group(2).trim()
+                userId = matcher.group(3).toInt()
+                userNick = Html.fromHtml(matcher.group(4)).toString()
+                date = matcher.group(5)
+            }
+        }
+        return result
     }
 }

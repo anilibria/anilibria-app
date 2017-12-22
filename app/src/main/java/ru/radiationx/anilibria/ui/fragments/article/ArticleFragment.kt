@@ -10,13 +10,14 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.ArticleFull
 import ru.radiationx.anilibria.data.api.models.ArticleItem
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
-import ru.radiationx.anilibria.ui.widgets.IBase
 import java.util.ArrayList
+import org.json.JSONException
+import org.json.JSONObject
+
+
 
 /**
  * Created by radiationx on 20.12.17.
@@ -24,6 +25,7 @@ import java.util.ArrayList
 class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycleListener {
 
     companion object {
+        const val ARG_URL: String = "article_url"
         const val ARG_ITEM: String = "article_item"
     }
 
@@ -42,8 +44,10 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
         super.onCreate(savedInstanceState)
         //presenter.loadArticle("novosti/17-12-2017-otchyet-komandy-po-relizam-za-nedelyu/")
         arguments?.let {
+            presenter.url = it.getString(ARG_URL, "")
             (it.getSerializable(ARG_ITEM) as ArticleItem).let {
                 presenter.setDataFromItem(it)
+                presenter.url = it.url
             }
         }
     }
@@ -73,7 +77,22 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     }
 
     override fun showArticle(article: ArticleFull) {
+        webView.evalJs("ViewModel.setText('content','${transformMessageSrc(article.content)}');")
+    }
 
+    fun transformMessageSrc(inSrc: String): String {
+        var outSrc = inSrc
+        outSrc = outSrc.replace("\n".toRegex(), "").replace("'".toRegex(), "&apos;")
+        outSrc = JSONObject.quote(outSrc)
+        outSrc = outSrc.substring(1, outSrc.length - 1)
+        val jsonObject = JSONObject()
+        try {
+            jsonObject.put("src", outSrc)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        return outSrc
     }
 
     override fun preShow(title: String, nick: String, comments: Int, views: Int) {

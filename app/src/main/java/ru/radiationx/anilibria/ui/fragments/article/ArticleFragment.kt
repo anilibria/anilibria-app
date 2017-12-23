@@ -13,7 +13,6 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.toolbar_content_article.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.Api
@@ -81,8 +80,8 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        toolbarContent.visibility = View.VISIBLE
-        View.inflate(toolbarContent.context, R.layout.toolbar_content_article, toolbarContent)
+        toolbarImage.setAspectRatio(0.5f)
+
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {

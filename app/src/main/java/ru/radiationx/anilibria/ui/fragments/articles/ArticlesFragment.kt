@@ -14,7 +14,6 @@ import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.terrakok.cicerone.Router
-import java.util.ArrayList
 
 /**
  * Created by radiationx on 16.12.17.
@@ -74,7 +73,7 @@ class ArticlesFragment : BaseFragment(), ArticlesView, ArticlesAdapter.ItemListe
         refreshLayout.isRefreshing = refreshing
     }
 
-    override fun onItemClick(item: ArticleItem) {
+    override fun onItemClick(item: ArticleItem, position: Int) {
         presenter.onItemClick(item)
     }
 

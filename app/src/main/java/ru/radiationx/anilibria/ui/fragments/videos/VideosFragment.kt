@@ -72,7 +72,7 @@ class VideosFragment : BaseFragment(), VideosView, ArticlesAdapter.ItemListener 
         refreshLayout.isRefreshing = refreshing
     }
 
-    override fun onItemClick(item: ArticleItem) {
+    override fun onItemClick(item: ArticleItem, position: Int) {
         presenter.onItemClick(item)
     }
 

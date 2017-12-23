@@ -50,7 +50,7 @@ public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends Recycler
     }
 
     public interface OnItemClickListener<T> {
-        void onItemClick(T item);
+        void onItemClick(T item, int position);
 
         boolean onItemLongClick(T item);
     }

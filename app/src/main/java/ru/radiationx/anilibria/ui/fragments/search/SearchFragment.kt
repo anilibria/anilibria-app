@@ -19,6 +19,9 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.util.*
 
 class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
+    override fun onItemClick(position: Int, view: View) {
+
+    }
 
     companion object {
         const val ARG_QUERY_TEXT: String = "query"
@@ -174,7 +177,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         refreshLayout.isRefreshing = refreshing
     }
 
-    override fun onItemClick(item: ReleaseItem) {
+    override fun onItemClick(item: ReleaseItem, position: Int) {
         presenter.onItemClick(item)
     }
 

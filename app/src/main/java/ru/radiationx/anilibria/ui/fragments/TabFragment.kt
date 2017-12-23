@@ -2,10 +2,16 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.support.transition.*
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.transition.ChangeBounds
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -15,7 +21,6 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.article.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.articles.ArticlesFragment
 import ru.radiationx.anilibria.ui.fragments.blogs.BlogsFragment
-import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
@@ -26,6 +31,8 @@ import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportFragmentNavigator
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Forward
 
 class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
@@ -53,7 +60,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         super.onActivityCreated(savedInstanceState)
 
         if (childFragmentManager.findFragmentById(R.id.fragments_container) == null) {
-            router.newRootScreen(localScreen, 0)
+            cicerone.router.replaceScreen(localScreen)
         }
     }
 
@@ -97,6 +104,19 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         if (navigator == null) {
             navigator = object : SupportFragmentNavigator(childFragmentManager, R.id.fragments_container) {
 
+                override fun setupFragmentTransactionAnimation(command: Command?, currentFragment: Fragment?, nextFragment: Fragment?, fragmentTransaction: FragmentTransaction) {
+                    Log.e("SUKA", "tranim $command\n$currentFragment\n$nextFragment")
+                    if (command is Forward
+                            && currentFragment is ReleasesFragment
+                            && nextFragment is ReleaseFragment) {
+                        setupSharedElementForProfileToSelectPhoto(
+                                currentFragment,
+                                nextFragment,
+                                fragmentTransaction
+                        )
+                    }
+                }
+
                 override fun createFragment(screenKey: String?, data: Any?): Fragment? {
                     return when (screenKey) {
                         Screens.MAIN_RELEASES -> ReleasesFragment()
@@ -139,5 +159,81 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
             }
         }
         return navigator as Navigator
+    }
+
+    private val MOVE_DEFAULT_TIME: Long = 375
+    private val FADE_DEFAULT_TIME: Long = 225
+
+    private fun setupSharedElementForProfileToSelectPhoto(
+            currentFragment: ReleasesFragment,
+            nextFragment: ReleaseFragment,
+            fragmentTransaction: FragmentTransaction) {
+
+
+        val exitFade = Fade()
+        exitFade.duration = FADE_DEFAULT_TIME
+
+        val enterFade = Fade()
+        //enterFade.startDelay = MOVE_DEFAULT_TIME
+        enterFade.duration = FADE_DEFAULT_TIME
+
+
+
+        val enterTransitionSet = TransitionSet()
+        enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
+        enterTransitionSet.interpolator = FastOutSlowInInterpolator()
+        enterTransitionSet.duration = MOVE_DEFAULT_TIME
+        //enterTransitionSet.startDelay = FADE_DEFAULT_TIME
+        nextFragment.sharedElementEnterTransition = enterTransitionSet
+
+        currentFragment.exitTransition = enterFade
+        nextFragment.enterTransition = enterFade
+
+        enterTransitionSet.addListener(object : Transition.TransitionListener {
+            override fun onTransitionEnd(transition: Transition) {
+                Log.e("SUKA", "TRANSITION onTransitionEnd")
+                if (nextFragment.enterTransition == enterFade) {
+                    Log.e("SUKA", "TRANSITION SET EXIT")
+                    nextFragment.enterTransition = exitFade
+                    //currentFragment.exitTransition = enterFade
+                } else {
+                    Log.e("SUKA", "TRANSITION SET ENTER")
+                    nextFragment.enterTransition = enterFade
+                    //currentFragment.exitTransition = exitFade
+                }
+            }
+
+            override fun onTransitionResume(transition: Transition) {
+                Log.e("SUKA", "TRANSITION onTransitionResume")
+            }
+
+            override fun onTransitionPause(transition: Transition) {
+                Log.e("SUKA", "TRANSITION onTransitionPause")
+            }
+
+            override fun onTransitionCancel(transition: Transition) {
+                Log.e("SUKA", "TRANSITION onTransitionCancel")
+            }
+
+            override fun onTransitionStart(transition: Transition) {
+                Log.e("SUKA", "TRANSITION onTransitionStart")
+            }
+
+        })
+
+
+        /*val changeBounds = ChangeBounds()
+        nextFragment.setSharedElementEnterTransition(changeBounds)
+        nextFragment.setSharedElementReturnTransition(changeBounds)
+        currentFragment.setSharedElementEnterTransition(changeBounds)
+        currentFragment.setSharedElementReturnTransition(changeBounds)*/
+
+        val view = currentFragment.getSharedView()
+        nextFragment.transactioName = view.transitionName
+        Log.e("SUKA", "view trans " + view)
+        Log.e("SUKA", "view trans " + view.transitionName)
+        fragmentTransaction.addSharedElement(view, view.transitionName)
+
+        //nextFragment.setAnimationDestinationId(view.getTag() as Int)
     }
 }

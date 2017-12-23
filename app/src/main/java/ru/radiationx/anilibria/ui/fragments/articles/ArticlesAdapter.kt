@@ -77,7 +77,7 @@ open class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
 
         init {
             itemView.setOnClickListener {
-                listener?.onItemClick(getItem(layoutPosition))
+                listener?.onItemClick(getItem(layoutPosition), layoutPosition)
             }
         }
 

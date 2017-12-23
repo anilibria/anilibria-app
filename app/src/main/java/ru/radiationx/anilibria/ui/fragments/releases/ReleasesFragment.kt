@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.releases
 
 import android.os.Bundle
+import android.support.v4.app.SharedElementCallback
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -14,6 +16,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import java.util.*
 
 /* Created by radiationx on 05.11.17. */
@@ -21,6 +24,10 @@ import java.util.*
 class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListener {
     override val layoutRes: Int = R.layout.fragment_releases
     private var adapter: ReleasesAdapter = ReleasesAdapter()
+
+    companion object {
+        const val SUKA = "su4ara_rv"
+    }
 
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter
@@ -81,11 +88,28 @@ class ReleasesFragment : BaseFragment(), ReleasesView, ReleasesAdapter.ItemListe
         refreshLayout.isRefreshing = refreshing
     }
 
-    override fun onItemClick(item: ReleaseItem) {
+    var lsastpost = -1
+    override fun onItemClick(item: ReleaseItem, position: Int) {
+        lsastpost = position
         presenter.onItemClick(item)
+    }
+
+    lateinit var lastView: View
+
+    override fun onItemClick(position: Int, view: View) {
+        Log.e("SUKA", "ONITEMCLIC " + view)
+        this.lastView = view;
     }
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         return presenter.onItemLongClick(item)
+    }
+
+
+    fun getSharedView(): View {
+        val viewItem = recyclerView.getLayoutManager().findViewByPosition(lsastpost)
+        val icon = viewItem.findViewById<ImageView>(R.id.item_image)
+        //lastView.transitionName = ReleaseFragment.TRANSACTION
+        return lastView
     }
 }

@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
+import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 
 /* Created by radiationx on 31.10.17. */
 
@@ -73,14 +74,17 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
         var desc: TextView = itemView.findViewById(R.id.item_desc)
 
         init {
+
             itemView.setOnClickListener {
-                listener?.onItemClick(getItem(layoutPosition))
+                listener?.onItemClick(layoutPosition, image)
+                listener?.onItemClick(getItem(layoutPosition), layoutPosition)
             }
         }
 
         override fun bind(item: ReleaseItem, position: Int) {
             title.text = String.format("%s (%s)", item.title, item.episodesCount)
             desc.text = item.description
+            image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
             ImageLoader.getInstance().displayImage(item.image, image)
         }
     }
@@ -102,6 +106,7 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
 
     interface ItemListener : BaseAdapter.OnItemClickListener<ReleaseItem> {
         fun onLoadMore()
+        fun onItemClick(position: Int, view: View)
     }
 
     companion object {

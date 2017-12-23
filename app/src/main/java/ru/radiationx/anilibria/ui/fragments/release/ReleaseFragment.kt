@@ -1,12 +1,16 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
+import android.support.transition.TransitionInflater
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -26,8 +30,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.Utils
 import android.util.DisplayMetrics
+import android.util.Log
 import io.reactivex.functions.Consumer
-import kotlinx.android.synthetic.main.toolbar_content_release.*
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 
@@ -39,6 +43,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
     companion object {
         const val ARG_ID: String = "release_id"
         const val ARG_ITEM: String = "release_item"
+
+        const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
     var currentColor: Int = Color.TRANSPARENT
@@ -57,6 +63,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("SUKA", "ONCRETE $this")
         arguments?.let {
             it.getInt(ARG_ID, -1).let {
                 presenter.setReleaseId(it)
@@ -65,10 +72,23 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
                 presenter.setCurrentData(it)
             }
         }
+        //sharedElementReturnTransition = null;
+        //sharedElementEnterTransition = null
+    }
+
+    @SuppressLint("NewApi")
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.e("SUKA", "onActivityCreated $this")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("SUKA", "onViewCreated $this")
+
+        toolbar.setBackgroundColor(Color.TRANSPARENT)
+        appbarLayout.setBackgroundColor(Color.TRANSPARENT)
+        //su4ara.transitionName = TRANSACTION
         ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
         ToolbarHelper.marqueeTitle(toolbar)
@@ -91,13 +111,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
                         false
                     }
         }
-
         toolbarInsetShadow.visibility = View.VISIBLE
-        toolbarContent.visibility = View.VISIBLE
-
-        View.inflate(toolbarContent.context, R.layout.toolbar_content_release, toolbarContent)
-
-        toolbarImage.post {
+        toolbarImage.visibility = View.VISIBLE
+        Log.e("SUKA", "TOOLBAR SET TRANSACTION "+transactioName)
+        toolbarImage.setTransitionName(transactioName)
+        //toolbarImage.setTransitionName(TRANSACTION)
+        //toolbarImage.post {
             val metrics = DisplayMetrics()
             activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
 
@@ -105,7 +124,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
             val width = metrics.widthPixels
 
             toolbarImage.maxHeight = (height * 0.75f).toInt()
-        }
+        //}
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
@@ -144,6 +163,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
     override fun setRefreshing(refreshing: Boolean) {
 
     }
+
+    var transactioName = ""
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
@@ -247,5 +268,19 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
                     }
                     .show()
         }
+    }
+
+
+    private val ARG_ANIM_DESTINATION = "arg_anim_dest"
+
+
+    fun setAnimationDestinationId(resId: Int) {
+        val arguments = arguments
+        arguments!!.putInt(ARG_ANIM_DESTINATION, resId)
+        setArguments(arguments)
+    }
+
+    private fun getAnimationDestionationId(): Int {
+        return arguments!!.getInt(ARG_ANIM_DESTINATION)
     }
 }

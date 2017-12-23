@@ -15,8 +15,8 @@ body {
   background: #ffffff;
 }
 a {
-  color: red;
-  -webkit-tap-highlight-color: rgba(255, 0, 0, 0.25);
+  color: #c40304;
+  -webkit-tap-highlight-color: rgba(196, 3, 4, 0.25);
 }
 * {
   box-sizing: border-box;
@@ -47,28 +47,100 @@ a {
   display: table;
   clear: both;
 }
+.wrapper .news-detail-content,
 .wrapper .content {
   padding: 1rem;
-  /*>img,
-        >p img {
-            margin-left: -16/16rem;
-            margin-right: -16/16rem;
-        }*/
+  /* OVERRIDES */
 }
+.wrapper .news-detail-content .divider,
 .wrapper .content .divider {
   height: 0.0625rem;
   background: #ddd;
 }
+.wrapper .news-detail-content > p:first-of-type,
 .wrapper .content > p:first-of-type {
   margin-top: 0;
 }
+.wrapper .news-detail-content img,
 .wrapper .content img,
+.wrapper .news-detail-content iframe,
 .wrapper .content iframe {
   max-width: 100%;
-  width: auto!important;
-  height: auto!important;
   margin: 0.5em auto;
 }
-.wrapper .content iframe {
-  background: gray;
+.wrapper .news-detail-content img,
+.wrapper .content img,
+.wrapper .news-detail-content iframe[src*="youtu"],
+.wrapper .content iframe[src*="youtu"] {
+  width: auto!important;
+  height: auto!important;
+}
+.wrapper .news-detail-content .alib_yt_button,
+.wrapper .content .alib_yt_button {
+  text-align: center;
+  margin: 0.5rem auto;
+}
+.wrapper .news-detail-content .alib_yt_button a,
+.wrapper .content .alib_yt_button a {
+  background: #c40304;
+  color: white;
+  display: inline-block;
+  margin: 0 auto;
+  padding: 0.875rem 1rem;
+  padding-top: 0.9375rem;
+  padding-bottom: 0.8125rem;
+  padding-left: 3rem;
+  text-decoration: none;
+  font-size: 0.875em;
+  font-weight: bold;
+  vertical-align: baseline;
+  text-transform: uppercase;
+  border-radius: 0.125rem;
+  background-image: url(../res/youtube-play.svg);
+  background-position: 0.75rem center;
+  background-size: 1.5rem 1.5rem;
+  background-repeat: no-repeat;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+.wrapper .news-detail-content .layday,
+.wrapper .content .layday {
+  height: auto!important;
+}
+.wrapper .news-detail-content .day,
+.wrapper .content .day {
+  height: auto!important;
+}
+.wrapper .news-detail-content .sharopol,
+.wrapper .content .sharopol {
+  height: auto!important;
+}
+.wrapper .news-detail-content .sharopol + img,
+.wrapper .content .sharopol + img,
+.wrapper .news-detail-content .sharopol + .spoiler + img,
+.wrapper .content .sharopol + .spoiler + img {
+  display: block!important;
+  float: none!important;
+}
+.wrapper .news-detail-content .sharopol + img + p,
+.wrapper .content .sharopol + img + p,
+.wrapper .news-detail-content .sharopol + .spoiler + img + p,
+.wrapper .content .sharopol + .spoiler + img + p {
+  text-align: justify!important;
+}
+.wrapper .news-detail-content .spoiler,
+.wrapper .content .spoiler {
+  background: transparent!important;
+  font-size: 1rem !important;
+  border: none!important;
+  border-radius: 0!important;
+}
+.wrapper .news-detail-content .spoiler .spoilerTitle,
+.wrapper .content .spoiler .spoilerTitle {
+  display: none!important;
+}
+.wrapper .news-detail-content .spoiler .spoilerBody,
+.wrapper .content .spoiler .spoilerBody {
+  display: block!important;
+  background: transparent!important;
+  border-radius: 0!important;
 }

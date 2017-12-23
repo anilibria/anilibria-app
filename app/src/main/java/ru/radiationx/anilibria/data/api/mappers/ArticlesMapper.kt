@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.data.api.mappers
 
 import android.text.Html
+import android.util.Log
 import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.ArticleFull
 import ru.radiationx.anilibria.data.api.models.ArticleItem
@@ -36,6 +37,10 @@ object ArticlesMapper {
     private val paginationPatternSource = "<div[^>]*?class=\"[^\"]*?bx_pagination_page[^\"]*?\"[^>]*?>[\\s\\S]*?<li[^>]*?class=\"bx_active\"[^>]*?>(\\d+)<\\/li>[\\s\\S]*?<li><a[^>]*?>(\\d+)<\\/a><\\/li>[^<]*?<li><a[^>]*?>&#8594;<\\/a>"
 
     private val fullArticlePatternSource = "<div[^>]*?class=\"[^\"]*?news-detail-header[^\"]*?\"[^>]*?>[^<]*?<h1[^>]*?>([\\s\\S]*?)<\\/h1>[^<]*?<\\/div>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?news-detail-content[^\"]*?\"[^>]*?>([\\s\\S]*?)(?:<a[^>]*?id=\"back-to-list\"[^>]*?>[\\s\\S]*?<\\/a>[^<]*?)?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?news-detail-footer[^\"]*?\"[^>]*?>[^<]*?<span[^>]*?>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?(\\d+)[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/span>[\\s\\S]*?<span[^>]*?>[^<]*?<i[^>]*?>([\\s\\S]*?)<\\/i>[\\s\\S]*?<\\/span>"
+
+    private val youtubeLink = "(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?"
+    private val iframeYT = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
+    private val alibBordLine = "<img[^>]*?src=\"[^\"]*?borderline\\.[^\"]*?\"[^>]*?>"
 
     private val listPattern: Pattern by lazy {
         Pattern.compile(listPatternSource, Pattern.CASE_INSENSITIVE)
@@ -92,6 +97,9 @@ object ArticlesMapper {
                 date = matcher.group(5)
             }
         }
+        result.content = result.content.replace(Regex(iframeYT), "<div class=\"alib_yt_button\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
+        result.content = result.content.replace(Regex(alibBordLine), "<div class=\"alib_borderline\">$0</div>")
+        Log.e("SUKA", "PARSED :" + result.title)
         return result
     }
 }

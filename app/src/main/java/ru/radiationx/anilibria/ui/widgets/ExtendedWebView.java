@@ -114,7 +114,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public void easyLoadData(String baseUrl, String data) {
-        loadDataWithBaseURL(baseUrl, data, "text/html", "utf-8", null);
+        loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
     }
 
     @Override

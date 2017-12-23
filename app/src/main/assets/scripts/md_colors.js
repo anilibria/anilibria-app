@@ -492,7 +492,13 @@ function onAnyLoad() {
     var cacheColor = {};
     for (var i = 0; i < allElems.length; i++) {
         var elem = allElems[i];
-        var rgbColor = getComputedStyle(elem, null).getPropertyValue('color');
+        //var rgbColor = getComputedStyle(elem, null).getPropertyValue('color');
+        var rgbColor = elem.style.color;
+        if(!rgbColor){
+            continue;
+        }
+        
+        //if(!elem.style.color) continue;
         var cached = cacheColor[rgbColor];
 
         if (!cached) {

@@ -1,6 +1,6 @@
 @textDefault: #212121;
 @textSecond: #757575;
-@linkColor: red;
+@linkColor: #c40304;
 HTML {
     font-size: 1rem;
 }
@@ -52,31 +52,83 @@ a {
             }
         }
     }
+    .news-detail-content,
     .content {
         padding: 16/16rem;
-        
-        .divider{
+        .divider {
             height: 1/16rem;
             background: #ddd;
         }
-        
         >p:first-of-type {
             margin-top: 0;
         }
         img,
         iframe {
             max-width: 100%;
-            width: auto!important;
-            height: auto!important;
             margin: 0.5em auto;
         }
-        /*>img,
-        >p img {
-            margin-left: -16/16rem;
-            margin-right: -16/16rem;
-        }*/
-        iframe {
-            background: gray;
+        img,
+        iframe[src*="youtu"] {
+            width: auto!important;
+            height: auto!important;
+        }
+        iframe[src*="vk.com"] {}
+        .alib_yt_button {
+            text-align: center;
+            margin: 8/16rem auto;
+            a {
+                background: @linkColor;
+                color: white;
+                display: inline-block;
+                margin: 0 auto;
+                padding: 14/16rem 16/16rem;
+                padding-top: 15/16rem;
+                padding-bottom: 13/16rem;
+                padding-left: 48/16rem;
+                text-decoration: none;
+                font-size: 14/16em;
+                font-weight: bold;
+                vertical-align: baseline;
+                text-transform: uppercase;
+                border-radius: 2/16rem;
+                background-image: url(../res/youtube-play.svg);
+                background-position: 12/16rem center;
+                background-size: 24/16rem 24/16rem;
+                background-repeat: no-repeat;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            }
+        }
+        .alib_borderline {}
+        /* OVERRIDES */
+        .layday {
+            height: auto!important;
+        }
+        .day {
+            height: auto!important;
+        }
+        .sharopol {
+            height: auto!important;
+            +img,+.spoiler+img {
+                display: block!important;
+                float: none!important;
+                +p{
+                    text-align: justify!important;
+                }
+            }
+        }
+        .spoiler {
+            background: transparent!important;
+            font-size: 16/16rem!important;
+            border: none!important;
+            border-radius: 0!important;
+            .spoilerTitle {
+                display: none!important;
+            }
+            .spoilerBody {
+                display: block!important;
+                background: transparent!important;
+                border-radius: 0!important;
+            }
         }
     }
 }

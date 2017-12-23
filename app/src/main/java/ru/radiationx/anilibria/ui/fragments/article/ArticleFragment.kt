@@ -2,7 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.article
 
 import android.graphics.*
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.AppBarLayout
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -27,6 +29,9 @@ import java.util.ArrayList
 import org.json.JSONException
 import org.json.JSONObject
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
+import java.io.ByteArrayOutputStream
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 
 /**
@@ -127,12 +132,12 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
 
     override fun showArticle(article: ArticleFull) {
         currentTitle = article.title
-        webView.evalJs("ViewModel.setText('content','${transformMessageSrc(article.content)}');")
+        webView.evalJs("ViewModel.setText('content','${convert(article.content)}');")
     }
 
     fun transformMessageSrc(inSrc: String): String {
         var outSrc = inSrc
-        outSrc = outSrc.replace("\n".toRegex(), "").replace("'".toRegex(), "&apos;")
+        outSrc = outSrc.replace("\n".toRegex(), "")/*.replace("'".toRegex(), "&apos;")*/
         outSrc = JSONObject.quote(outSrc)
         outSrc = outSrc.substring(1, outSrc.length - 1)
         val jsonObject = JSONObject()
@@ -141,8 +146,15 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
         } catch (e: JSONException) {
             e.printStackTrace()
         }
+        Log.e("SUKA", "outsrc " + outSrc)
 
         return outSrc
+    }
+
+    fun convert(string: String): String {
+        var result = Base64.encodeToString(string.toByteArray(Charset.forName("UTF-8")), Base64.NO_WRAP)
+        Log.e("SUKA", "converted " + result)
+        return result
     }
 
     override fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
@@ -173,10 +185,10 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
 
 
 
-        webView.evalJs("ViewModel.setText('title','$title');")
-        webView.evalJs("ViewModel.setText('nick','$nick');")
-        webView.evalJs("ViewModel.setText('comments_count','$comments');")
-        webView.evalJs("ViewModel.setText('views_count','$views');")
+        webView.evalJs("ViewModel.setText('title','${convert(title)}');")
+        webView.evalJs("ViewModel.setText('nick','${convert(nick)}');")
+        webView.evalJs("ViewModel.setText('comments_count','${convert(comments.toString())}');")
+        webView.evalJs("ViewModel.setText('views_count','${convert(views.toString())}');")
     }
 
 

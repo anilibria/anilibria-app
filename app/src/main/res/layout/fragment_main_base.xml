@@ -29,12 +29,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/a_gray"
                 android:visibility="gone"
-                app:layout_collapseMode="parallax">
-
-
-
-            </FrameLayout>
-
+                app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

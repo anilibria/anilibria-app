@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
+import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.util.*
 
 class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
@@ -65,7 +66,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
         }
 
         adapter.setListener(this)
-        fixToolbarInsets(toolbar)
+        ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
             title = currentTitle
             setNavigationOnClickListener({

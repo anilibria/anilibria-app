@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.article
 
 import android.graphics.*
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.util.Base64
 import android.util.Log
@@ -11,9 +10,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.toolbar_content_article.*
@@ -29,9 +26,8 @@ import java.util.ArrayList
 import org.json.JSONException
 import org.json.JSONObject
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
-import java.io.ByteArrayOutputStream
+import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 
 
 /**
@@ -72,13 +68,21 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fitSystemWindow()
-        val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-        toolbarLayout.layoutParams = params
+
+        ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
+        ToolbarHelper.fixInsets(toolbar)
+        ToolbarHelper.marqueeTitle(toolbar)
+
+        toolbar.apply {
+            //title = getString(R.string.fragment_title_release)
+            setNavigationOnClickListener({
+                presenter.onBackPressed()
+            })
+            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+        }
+
         toolbarContent.visibility = View.VISIBLE
         View.inflate(toolbarContent.context, R.layout.toolbar_content_article, toolbarContent)
-        //toolbarImage.setEnabledAspectRation(false)
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
@@ -96,17 +100,6 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
                 }
             }
         })
-
-        toolbar.apply {
-            //title = getString(R.string.fragment_title_release)
-            setNavigationOnClickListener({
-                presenter.onBackPressed()
-            })
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-        }
-
-        fixToolbarInsets(toolbar)
-        setMarqueeTitle(toolbar)
 
         val template = App.instance.articleTemplate
         webView.easyLoadData(Api.BASE_URL, template.generateOutput())
@@ -162,24 +155,15 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
         ImageLoader.getInstance().displayImage(imageUrl, toolbarImage, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                Single.defer {
-                    Single.just(isDarkImage(loadedImage))
-                }
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ isDark ->
-                            toolbar?.let {
-                                Log.e("SUKA", "LOADED IMAGE TYPE " + isDark)
-                                if (isDark) {
-                                    currentColor = Color.WHITE
-                                } else {
-                                    currentColor = Color.BLACK
-                                }
-                                toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                                toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                            }
-                        })
-
+                ToolbarHelper.isDarkImage(loadedImage, Consumer<Boolean> {
+                    if (it) {
+                        currentColor = Color.WHITE
+                    } else {
+                        currentColor = Color.BLACK
+                    }
+                    toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                })
             }
         })
 

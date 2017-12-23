@@ -9,8 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
-import android.support.transition.TransitionInflater
-import android.support.v4.app.ActivityCompat
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -31,13 +30,16 @@ import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.Utils
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.animation.TranslateAnimation
 import io.reactivex.functions.Consumer
+import ru.radiationx.anilibria.ui.fragments.SharedReceiver
+import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 
 /* Created by radiationx on 16.11.17. */
 
-open class ReleaseFragment : BaseFragment(), ReleaseView {
+open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override val layoutRes: Int = R.layout.fragment_release
 
     companion object {
@@ -46,6 +48,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
+
+    var transitionNameLocal = ""
 
     var currentColor: Int = Color.TRANSPARENT
     var currentTitle: String? = null
@@ -61,34 +65,29 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
                 (parentFragment as RouterProvider).router)
     }
 
+    override fun setTransitionName(name: String) {
+        transitionNameLocal = name
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("SUKA", "ONCRETE $this")
-        arguments?.let {
-            it.getInt(ARG_ID, -1).let {
-                presenter.setReleaseId(it)
-            }
-            (it.getSerializable(ARG_ITEM) as ReleaseItem).let {
-                presenter.setCurrentData(it)
+        if (savedInstanceState == null) {
+            arguments?.let {
+                it.getInt(ARG_ID, -1).let {
+                    presenter.setReleaseId(it)
+                }
+                (it.getSerializable(ARG_ITEM) as ReleaseItem).let {
+                    presenter.setCurrentData(it)
+                }
             }
         }
-        //sharedElementReturnTransition = null;
-        //sharedElementEnterTransition = null
-    }
-
-    @SuppressLint("NewApi")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Log.e("SUKA", "onActivityCreated $this")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("SUKA", "onViewCreated $this")
 
-        toolbar.setBackgroundColor(Color.TRANSPARENT)
-        appbarLayout.setBackgroundColor(Color.TRANSPARENT)
-        //su4ara.transitionName = TRANSACTION
+        ToolbarHelper.setTransparent(toolbar, appbarLayout)
         ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
         ToolbarHelper.marqueeTitle(toolbar)
@@ -113,18 +112,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         }
         toolbarInsetShadow.visibility = View.VISIBLE
         toolbarImage.visibility = View.VISIBLE
-        Log.e("SUKA", "TOOLBAR SET TRANSACTION "+transactioName)
-        toolbarImage.setTransitionName(transactioName)
-        //toolbarImage.setTransitionName(TRANSACTION)
-        //toolbarImage.post {
-            val metrics = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
 
-            val height = metrics.heightPixels
-            val width = metrics.widthPixels
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarImage.transitionName = transitionNameLocal
+        }
 
-            toolbarImage.maxHeight = (height * 0.75f).toInt()
-        //}
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+        toolbarImage.maxHeight = (metrics.heightPixels * 0.75f).toInt()
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
@@ -155,6 +150,15 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
         }
     }
 
+    private fun setupContentAnimation() {
+        val animation1 = TranslateAnimation(0f, 0f, resources.displayMetrics.density * 100, 0f);
+        animation1.duration = TabFragment.TRANSITION_MOVE_TIME;
+        animation1.interpolator = FastOutSlowInInterpolator()
+        animation1.startOffset = TabFragment.TRANSITION_OTHER_TIME;
+        animation1.isFillEnabled = true
+        recyclerView.startAnimation(animation1)
+    }
+
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
@@ -164,7 +168,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
 
     }
 
-    var transactioName = ""
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
@@ -235,12 +238,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
     }
 
     override fun playEpisodes(release: ReleaseItem) {
+
         showQualityDialog({ quality ->
             presenter.onPlayEpisodeClick(release.episodes.lastIndex, quality)
         })
     }
 
     override fun playEpisode(release: ReleaseItem, position: Int, quality: Int) {
+        Log.e("SUKA", "playEpisode " + release.episodes.size)
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_CURRENT, position)
@@ -268,19 +273,5 @@ open class ReleaseFragment : BaseFragment(), ReleaseView {
                     }
                     .show()
         }
-    }
-
-
-    private val ARG_ANIM_DESTINATION = "arg_anim_dest"
-
-
-    fun setAnimationDestinationId(resId: Int) {
-        val arguments = arguments
-        arguments!!.putInt(ARG_ANIM_DESTINATION, resId)
-        setArguments(arguments)
-    }
-
-    private fun getAnimationDestionationId(): Int {
-        return arguments!!.getInt(ARG_ANIM_DESTINATION)
     }
 }

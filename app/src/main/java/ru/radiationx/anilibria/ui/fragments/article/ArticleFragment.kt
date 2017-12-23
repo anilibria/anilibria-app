@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.article
 
 import android.graphics.*
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.util.Base64
@@ -24,6 +25,7 @@ import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import java.util.ArrayList
 import org.json.JSONException
 import org.json.JSONObject
+import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.nio.charset.Charset
@@ -32,7 +34,7 @@ import java.nio.charset.Charset
 /**
  * Created by radiationx on 20.12.17.
  */
-class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycleListener {
+class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWebView.JsLifeCycleListener {
 
     companion object {
         const val ARG_URL: String = "article_url"
@@ -44,6 +46,8 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     var currentColor: Int = Color.TRANSPARENT
     var currentTitle: String? = null
 
+    var transitionNameLocal = ""
+
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
 
@@ -51,6 +55,10 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     fun provideArticlePresenter(): ArticlePresenter {
         return ArticlePresenter(App.injections.articlesRepository,
                 (parentFragment as RouterProvider).router)
+    }
+
+    override fun setTransitionName(name: String) {
+        transitionNameLocal = name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +76,7 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ToolbarHelper.setTransparent(toolbar, appbarLayout)
         ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
         ToolbarHelper.marqueeTitle(toolbar)
@@ -80,7 +89,11 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
+        toolbarImage.visibility = View.VISIBLE
         toolbarImage.setAspectRatio(0.5f)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarImage.transitionName = transitionNameLocal
+        }
 
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
@@ -119,7 +132,7 @@ class ArticleFragment : BaseFragment(), ArticleView, ExtendedWebView.JsLifeCycle
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-
+        progressSwitcher.displayedChild = if (refreshing) 1 else 0
     }
 
     override fun showArticle(article: ArticleFull) {

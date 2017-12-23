@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.articles
 
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
+import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.ui.widgets.AspectRatioImageView
 
 /* Created by radiationx on 31.10.17. */
@@ -77,6 +79,7 @@ open class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
 
         init {
             itemView.setOnClickListener {
+                listener?.onItemClick(layoutPosition, image)
                 listener?.onItemClick(getItem(layoutPosition), layoutPosition)
             }
         }
@@ -99,6 +102,9 @@ open class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
 
             image.setAspectRatio(item.imageHeight.div(item.imageWidth.toFloat()))
             ImageLoader.getInstance().displayImage(item.imageUrl, image)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+            }
         }
     }
 
@@ -118,6 +124,7 @@ open class ArticlesAdapter : BaseAdapter<ArticleItem, BaseViewHolder<*>>() {
     }
 
     interface ItemListener : BaseAdapter.OnItemClickListener<ArticleItem> {
+        fun onItemClick(position: Int, view: View)
         fun onLoadMore()
     }
 

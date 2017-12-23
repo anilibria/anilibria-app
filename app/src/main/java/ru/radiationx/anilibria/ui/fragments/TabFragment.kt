@@ -1,17 +1,16 @@
 package ru.radiationx.anilibria.ui.fragments
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.transition.ChangeBounds
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -35,6 +34,24 @@ import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 
 class TabFragment : Fragment(), RouterProvider, BackButtonListener {
+
+    companion object {
+        val TRANSITION_MOVE_TIME: Long = 375
+        val TRANSITION_OTHER_TIME: Long = 225
+
+        private val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
+
+        fun newInstance(name: String): TabFragment {
+            val fragment = TabFragment()
+
+            val arguments = Bundle()
+            arguments.putString(LOCAL_ROOT_SCREEN, name)
+            fragment.arguments = arguments
+
+            return fragment
+        }
+    }
+
 
     override lateinit var router: Router
 
@@ -86,34 +103,18 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         }
     }
 
-    companion object {
-        private val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
-
-        fun newInstance(name: String): TabFragment {
-            val fragment = TabFragment()
-
-            val arguments = Bundle()
-            arguments.putString(LOCAL_ROOT_SCREEN, name)
-            fragment.arguments = arguments
-
-            return fragment
-        }
-    }
-
     private fun getNavigator(): Navigator {
         if (navigator == null) {
             navigator = object : SupportFragmentNavigator(childFragmentManager, R.id.fragments_container) {
 
-                override fun setupFragmentTransactionAnimation(command: Command?, currentFragment: Fragment?, nextFragment: Fragment?, fragmentTransaction: FragmentTransaction) {
-                    Log.e("SUKA", "tranim $command\n$currentFragment\n$nextFragment")
-                    if (command is Forward
-                            && currentFragment is ReleasesFragment
-                            && nextFragment is ReleaseFragment) {
-                        setupSharedElementForProfileToSelectPhoto(
-                                currentFragment,
-                                nextFragment,
-                                fragmentTransaction
-                        )
+                override fun setupFragmentTransactionAnimation(
+                        command: Command?,
+                        currentFragment: Fragment?,
+                        nextFragment: Fragment?,
+                        fragmentTransaction: FragmentTransaction) {
+
+                    if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
+                        setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
                     }
                 }
 
@@ -163,28 +164,33 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
     private val MOVE_DEFAULT_TIME: Long = 375
     private val FADE_DEFAULT_TIME: Long = 225
+    //private val TRANSITION_MOVE_TIME: Long = 750
+    //private val TRANSITION_OTHER_TIME: Long = 450
 
-    private fun setupSharedElementForProfileToSelectPhoto(
-            currentFragment: ReleasesFragment,
-            nextFragment: ReleaseFragment,
+    private fun setupSharedTransition(
+            sharedProvider: SharedProvider,
+            sharedReceiver: SharedReceiver,
             fragmentTransaction: FragmentTransaction) {
 
+        val currentFragment = sharedProvider as Fragment
+        val nextFragment = sharedReceiver as Fragment
 
         val exitFade = Fade()
         exitFade.duration = FADE_DEFAULT_TIME
 
         val enterFade = Fade()
-        //enterFade.startDelay = MOVE_DEFAULT_TIME
+        //enterFade.startDelay = TRANSITION_MOVE_TIME
         enterFade.duration = FADE_DEFAULT_TIME
-
 
 
         val enterTransitionSet = TransitionSet()
         enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
+        enterTransitionSet.setPathMotion(ArcMotion())
         enterTransitionSet.interpolator = FastOutSlowInInterpolator()
         enterTransitionSet.duration = MOVE_DEFAULT_TIME
-        //enterTransitionSet.startDelay = FADE_DEFAULT_TIME
+        //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
         nextFragment.sharedElementEnterTransition = enterTransitionSet
+
 
         currentFragment.exitTransition = enterFade
         nextFragment.enterTransition = enterFade
@@ -221,19 +227,12 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
         })
 
-
-        /*val changeBounds = ChangeBounds()
-        nextFragment.setSharedElementEnterTransition(changeBounds)
-        nextFragment.setSharedElementReturnTransition(changeBounds)
-        currentFragment.setSharedElementEnterTransition(changeBounds)
-        currentFragment.setSharedElementReturnTransition(changeBounds)*/
-
-        val view = currentFragment.getSharedView()
-        nextFragment.transactioName = view.transitionName
-        Log.e("SUKA", "view trans " + view)
-        Log.e("SUKA", "view trans " + view.transitionName)
-        fragmentTransaction.addSharedElement(view, view.transitionName)
-
-        //nextFragment.setAnimationDestinationId(view.getTag() as Int)
+        val view = sharedProvider.getSharedView()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            view?.let {
+                sharedReceiver.setTransitionName(it.transitionName)
+                fragmentTransaction.addSharedElement(it, it.transitionName)
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
@@ -9,7 +10,7 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /* Created by radiationx on 18.11.17. */
 
-@StateStrategyType(AddToEndStrategy::class)
+@StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseView : IBaseView {
     fun showRelease(release: ReleaseItem)
 

@@ -13,15 +13,19 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.articles.ArticlesAdapter
 
 /**
  * Created by radiationx on 16.12.17.
  */
-class BlogsFragment : BaseFragment(), BlogsView, ArticlesAdapter.ItemListener {
+class BlogsFragment : BaseFragment(), BlogsView, SharedProvider, ArticlesAdapter.ItemListener {
+
+
     override val layoutRes: Int = R.layout.fragment_releases
 
     private val adapter = BlogsAdapter()
+    private var sharedViewLocal: View? = null
 
     @InjectPresenter
     lateinit var presenter: BlogsPresenter
@@ -30,6 +34,12 @@ class BlogsFragment : BaseFragment(), BlogsView, ArticlesAdapter.ItemListener {
     fun provideBlogsPresenter(): BlogsPresenter {
         return BlogsPresenter(App.injections.articlesRepository,
                 (parentFragment as RouterProvider).router)
+    }
+
+    override fun getSharedView(): View? {
+        val sharedView = sharedViewLocal
+        sharedViewLocal = null
+        return sharedView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +80,10 @@ class BlogsFragment : BaseFragment(), BlogsView, ArticlesAdapter.ItemListener {
 
     override fun setRefreshing(refreshing: Boolean) {
         refreshLayout.isRefreshing = refreshing
+    }
+
+    override fun onItemClick(position: Int, view: View) {
+        sharedViewLocal = view
     }
 
     override fun onItemClick(item: ArticleItem, position: Int) {

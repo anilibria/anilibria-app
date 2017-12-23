@@ -14,15 +14,12 @@ import ru.radiationx.anilibria.data.api.models.GenreItem
 import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.util.*
 
-class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener {
-    override fun onItemClick(position: Int, view: View) {
-
-    }
-
+class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
     companion object {
         const val ARG_QUERY_TEXT: String = "query"
         const val ARG_GENRE: String = "genre"
@@ -33,6 +30,7 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
     private lateinit var searchMenuItem: MenuItem
     private var currentTitle: String? = "Поиск"
     private lateinit var genresDialog: GenresDialog
+    private var sharedViewLocal: View? = null
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -41,6 +39,12 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
     fun provideSearchPresenter(): SearchPresenter {
         return SearchPresenter(App.injections.releasesRepository,
                 (parentFragment as RouterProvider).router)
+    }
+
+    override fun getSharedView(): View? {
+        val sharedView = sharedViewLocal
+        sharedViewLocal = null
+        return sharedView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,6 +179,10 @@ class SearchFragment : BaseFragment(), SearchView, ReleasesAdapter.ItemListener 
 
     override fun setRefreshing(refreshing: Boolean) {
         refreshLayout.isRefreshing = refreshing
+    }
+
+    override fun onItemClick(position: Int, view: View) {
+        sharedViewLocal = view
     }
 
     override fun onItemClick(item: ReleaseItem, position: Int) {

@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.releases
 
+import android.os.Build
+import android.support.v4.view.ViewCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -74,7 +76,6 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
         var desc: TextView = itemView.findViewById(R.id.item_desc)
 
         init {
-
             itemView.setOnClickListener {
                 listener?.onItemClick(layoutPosition, image)
                 listener?.onItemClick(getItem(layoutPosition), layoutPosition)
@@ -84,7 +85,9 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
         override fun bind(item: ReleaseItem, position: Int) {
             title.text = String.format("%s (%s)", item.title, item.episodesCount)
             desc.text = item.description
-            image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+            }
             ImageLoader.getInstance().displayImage(item.image, image)
         }
     }

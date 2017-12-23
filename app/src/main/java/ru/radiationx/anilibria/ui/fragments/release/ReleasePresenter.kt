@@ -29,6 +29,7 @@ class ReleasePresenter(private val releasesRepository: ReleasesRepository,
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        Log.e("SUKA", "onFirstViewAttach")
         currentData?.let {
             viewState.showRelease(it)
         }

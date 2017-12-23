@@ -13,15 +13,19 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 16.12.17.
  */
-class ArticlesFragment : BaseFragment(), ArticlesView, ArticlesAdapter.ItemListener {
+class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
+
     override val layoutRes: Int = R.layout.fragment_releases
 
     private val adapter = ArticlesAdapter()
+
+    private var sharedViewLocal: View? = null
 
     @InjectPresenter
     lateinit var presenter: ArticlesPresenter
@@ -31,6 +35,12 @@ class ArticlesFragment : BaseFragment(), ArticlesView, ArticlesAdapter.ItemListe
     fun provideArticlesPresenter(): ArticlesPresenter {
         return ArticlesPresenter(App.injections.articlesRepository,
                 (parentFragment as RouterProvider).router)
+    }
+
+    override fun getSharedView(): View? {
+        val sharedView = sharedViewLocal
+        sharedViewLocal = null
+        return sharedView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,6 +81,10 @@ class ArticlesFragment : BaseFragment(), ArticlesView, ArticlesAdapter.ItemListe
 
     override fun setRefreshing(refreshing: Boolean) {
         refreshLayout.isRefreshing = refreshing
+    }
+
+    override fun onItemClick(position: Int, view: View) {
+        sharedViewLocal = view
     }
 
     override fun onItemClick(item: ArticleItem, position: Int) {

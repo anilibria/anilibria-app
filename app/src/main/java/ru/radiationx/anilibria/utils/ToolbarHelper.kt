@@ -21,6 +21,11 @@ import ru.radiationx.anilibria.App
  */
 object ToolbarHelper {
 
+    fun setTransparent(toolbar: Toolbar, appBarLayout: AppBarLayout) {
+        toolbar.setBackgroundColor(Color.TRANSPARENT)
+        appBarLayout.setBackgroundColor(Color.TRANSPARENT)
+    }
+
     fun setScrollFlag(toolbarLayout: CollapsingToolbarLayout, @AppBarLayout.LayoutParams.ScrollFlags flag: Int) {
         val params = toolbarLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or flag

@@ -179,60 +179,48 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         exitFade.duration = FADE_DEFAULT_TIME
 
         val enterFade = Fade()
-        //enterFade.startDelay = TRANSITION_MOVE_TIME
         enterFade.duration = FADE_DEFAULT_TIME
 
-
-        val enterTransitionSet = TransitionSet()
-        enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
-        enterTransitionSet.setPathMotion(ArcMotion())
-        enterTransitionSet.interpolator = FastOutSlowInInterpolator()
-        enterTransitionSet.duration = MOVE_DEFAULT_TIME
-        //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
-        nextFragment.sharedElementEnterTransition = enterTransitionSet
-
-
-        currentFragment.exitTransition = enterFade
+        //currentFragment.exitTransition = enterFade
         nextFragment.enterTransition = enterFade
-
-        enterTransitionSet.addListener(object : Transition.TransitionListener {
-            override fun onTransitionEnd(transition: Transition) {
-                Log.e("SUKA", "TRANSITION onTransitionEnd")
-                if (nextFragment.enterTransition == enterFade) {
-                    Log.e("SUKA", "TRANSITION SET EXIT")
-                    nextFragment.enterTransition = exitFade
-                    //currentFragment.exitTransition = enterFade
-                } else {
-                    Log.e("SUKA", "TRANSITION SET ENTER")
-                    nextFragment.enterTransition = enterFade
-                    //currentFragment.exitTransition = exitFade
-                }
-            }
-
-            override fun onTransitionResume(transition: Transition) {
-                Log.e("SUKA", "TRANSITION onTransitionResume")
-            }
-
-            override fun onTransitionPause(transition: Transition) {
-                Log.e("SUKA", "TRANSITION onTransitionPause")
-            }
-
-            override fun onTransitionCancel(transition: Transition) {
-                Log.e("SUKA", "TRANSITION onTransitionCancel")
-            }
-
-            override fun onTransitionStart(transition: Transition) {
-                Log.e("SUKA", "TRANSITION onTransitionStart")
-            }
-
-        })
 
         val view = sharedProvider.getSharedView()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            currentFragment.exitTransition = enterFade
+            val enterTransitionSet = TransitionSet()
+            enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
+            enterTransitionSet.setPathMotion(ArcMotion())
+            enterTransitionSet.interpolator = FastOutSlowInInterpolator()
+            enterTransitionSet.duration = MOVE_DEFAULT_TIME
+            //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
+            nextFragment.sharedElementEnterTransition = enterTransitionSet
+
+            enterTransitionSet.addListener(object : Transition.TransitionListener {
+                override fun onTransitionEnd(transition: Transition) {
+                    Log.e("SUKA", "TRANSITION onTransitionEnd")
+                    if (nextFragment.enterTransition == enterFade) {
+                        Log.e("SUKA", "TRANSITION SET EXIT")
+                        nextFragment.enterTransition = exitFade
+                        //currentFragment.exitTransition = enterFade
+                    } else {
+                        Log.e("SUKA", "TRANSITION SET ENTER")
+                        nextFragment.enterTransition = enterFade
+                        //currentFragment.exitTransition = exitFade
+                    }
+                }
+
+                override fun onTransitionResume(transition: Transition) {}
+                override fun onTransitionPause(transition: Transition) {}
+                override fun onTransitionCancel(transition: Transition) {}
+                override fun onTransitionStart(transition: Transition) {}
+            })
+
             view?.let {
                 sharedReceiver.setTransitionName(it.transitionName)
                 fragmentTransaction.addSharedElement(it, it.transitionName)
             }
+        }else{
+            currentFragment.exitTransition = exitFade
         }
     }
 }

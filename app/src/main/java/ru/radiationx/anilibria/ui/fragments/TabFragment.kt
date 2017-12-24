@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments
 
+
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -7,7 +8,6 @@ import android.support.transition.*
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,8 +24,6 @@ import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.ui.fragments.videos.VideosFragment
-
-
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
@@ -43,27 +41,26 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
         fun newInstance(name: String): TabFragment {
             val fragment = TabFragment()
-
-            val arguments = Bundle()
-            arguments.putString(LOCAL_ROOT_SCREEN, name)
-            fragment.arguments = arguments
-
+            fragment.arguments = Bundle()
+            fragment.arguments?.apply {
+                putString(LOCAL_ROOT_SCREEN, name)
+            }
             return fragment
         }
     }
 
-
     override lateinit var router: Router
 
-    private var ciceroneHolder = App.navigation.local
     private lateinit var localScreen: String
+
+    private var ciceroneHolder = App.navigation.local
     private lateinit var cicerone: Cicerone<Router>
     private var navigator: Navigator? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         arguments?.let {
-            localScreen = it.getString(LOCAL_ROOT_SCREEN, null) ?: throw NullPointerException()
+            localScreen = it.getString(LOCAL_ROOT_SCREEN, null) ?: throw NullPointerException("localScreen is null")
         }
         cicerone = ciceroneHolder.getCicerone(localScreen)
         router = cicerone.router
@@ -126,25 +123,19 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                         Screens.MAIN_BLOGS -> BlogsFragment()
                         Screens.MAIN_OTHER -> ArticleFragment()
                         Screens.ARTICLE_DETAILS -> {
-                            val fragment = ArticleFragment()
-                            if (data is Bundle) {
-                                fragment.arguments = data
+                            ArticleFragment().apply {
+                                if (data is Bundle) arguments = data
                             }
-                            fragment
                         }
                         Screens.RELEASE_DETAILS -> {
-                            val fragment = ReleaseFragment()
-                            if (data is Bundle) {
-                                fragment.arguments = data
+                            ReleaseFragment().apply {
+                                if (data is Bundle) arguments = data
                             }
-                            fragment
                         }
                         Screens.RELEASES_SEARCH -> {
-                            val fragment = SearchFragment()
-                            if (data is Bundle) {
-                                fragment.arguments = data
+                            SearchFragment().apply {
+                                if (data is Bundle) arguments = data
                             }
-                            fragment
                         }
                         else -> throw RuntimeException("Unknown screen key: " + screenKey)
                     }
@@ -162,11 +153,6 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         return navigator as Navigator
     }
 
-    private val MOVE_DEFAULT_TIME: Long = 375
-    private val FADE_DEFAULT_TIME: Long = 225
-    //private val TRANSITION_MOVE_TIME: Long = 750
-    //private val TRANSITION_OTHER_TIME: Long = 450
-
     private fun setupSharedTransition(
             sharedProvider: SharedProvider,
             sharedReceiver: SharedReceiver,
@@ -176,36 +162,28 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         val nextFragment = sharedReceiver as Fragment
 
         val exitFade = Fade()
-        exitFade.duration = FADE_DEFAULT_TIME
+        exitFade.duration = TRANSITION_OTHER_TIME
 
         val enterFade = Fade()
-        enterFade.duration = FADE_DEFAULT_TIME
+        enterFade.duration = TRANSITION_OTHER_TIME
 
-        //currentFragment.exitTransition = enterFade
         nextFragment.enterTransition = enterFade
 
-        val view = sharedProvider.getSharedView()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             currentFragment.exitTransition = enterFade
+
             val enterTransitionSet = TransitionSet()
             enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
             enterTransitionSet.setPathMotion(ArcMotion())
             enterTransitionSet.interpolator = FastOutSlowInInterpolator()
-            enterTransitionSet.duration = MOVE_DEFAULT_TIME
+            enterTransitionSet.duration = TRANSITION_MOVE_TIME
             //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
             nextFragment.sharedElementEnterTransition = enterTransitionSet
 
             enterTransitionSet.addListener(object : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition) {
-                    Log.e("SUKA", "TRANSITION onTransitionEnd")
-                    if (nextFragment.enterTransition == enterFade) {
-                        Log.e("SUKA", "TRANSITION SET EXIT")
-                        nextFragment.enterTransition = exitFade
-                        //currentFragment.exitTransition = enterFade
-                    } else {
-                        Log.e("SUKA", "TRANSITION SET ENTER")
-                        nextFragment.enterTransition = enterFade
-                        //currentFragment.exitTransition = exitFade
+                    nextFragment.apply {
+                        enterTransition = if (enterTransition == enterFade) exitFade else enterFade
                     }
                 }
 
@@ -214,13 +192,15 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                 override fun onTransitionCancel(transition: Transition) {}
                 override fun onTransitionStart(transition: Transition) {}
             })
+        } else {
+            currentFragment.exitTransition = exitFade
+        }
 
-            view?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sharedProvider.getSharedView()?.let {
                 sharedReceiver.setTransitionName(it.transitionName)
                 fragmentTransaction.addSharedElement(it, it.transitionName)
             }
-        }else{
-            currentFragment.exitTransition = exitFade
         }
     }
 }

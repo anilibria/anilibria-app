@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.videos
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -20,11 +19,8 @@ import ru.radiationx.anilibria.ui.fragments.articles.ArticlesAdapter
  * Created by radiationx on 16.12.17.
  */
 class VideosFragment : BaseFragment(), VideosView, SharedProvider, ArticlesAdapter.ItemListener {
-    override val layoutRes: Int = R.layout.fragment_releases
 
     private val adapter = VideosAdapter()
-
-    private var sharedViewLocal: View? = null
 
     @InjectPresenter
     lateinit var presenter: VideosPresenter
@@ -35,11 +31,15 @@ class VideosFragment : BaseFragment(), VideosView, SharedProvider, ArticlesAdapt
                 (parentFragment as RouterProvider).router)
     }
 
+    override var sharedViewLocal: View? = null
+
     override fun getSharedView(): View? {
         val sharedView = sharedViewLocal
         sharedViewLocal = null
         return sharedView
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         refreshLayout.setOnRefreshListener { presenter.refresh() }
@@ -73,7 +73,6 @@ class VideosFragment : BaseFragment(), VideosView, SharedProvider, ArticlesAdapt
     }
 
     override fun onLoadMore() {
-        Log.e("SUKA", "onLoadMore")
         presenter.loadMore()
     }
 

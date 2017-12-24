@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release;
 /* Created by radiationx on 18.11.17. */
 
-import android.graphics.Bitmap;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -20,8 +19,6 @@ import android.widget.TextView;
 
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.data.api.models.ReleaseItem;

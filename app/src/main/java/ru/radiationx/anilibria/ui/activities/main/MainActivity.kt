@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -22,11 +23,6 @@ import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
 import ru.terrakok.cicerone.commands.SystemMessage
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-import android.view.WindowManager
-
-
 
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {

@@ -5,9 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
-
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -20,7 +18,6 @@ import ru.radiationx.anilibria.data.client.Client
 import ru.radiationx.anilibria.data.client.IClient
 import ru.radiationx.anilibria.data.repository.ArticlesRepository
 import ru.radiationx.anilibria.data.repository.ReleasesRepository
-
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

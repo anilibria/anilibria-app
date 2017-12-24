@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.articles
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -21,15 +20,11 @@ import ru.terrakok.cicerone.Router
  */
 class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
-    override val layoutRes: Int = R.layout.fragment_releases
-
     private val adapter = ArticlesAdapter()
-
-    private var sharedViewLocal: View? = null
+    lateinit var router: Router
 
     @InjectPresenter
     lateinit var presenter: ArticlesPresenter
-    lateinit var router: Router
 
     @ProvidePresenter
     fun provideArticlesPresenter(): ArticlesPresenter {
@@ -37,11 +32,15 @@ class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesA
                 (parentFragment as RouterProvider).router)
     }
 
+    override var sharedViewLocal: View? = null
+
     override fun getSharedView(): View? {
         val sharedView = sharedViewLocal
         sharedViewLocal = null
         return sharedView
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         refreshLayout.setOnRefreshListener { presenter.refresh() }
@@ -75,7 +74,6 @@ class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesA
     }
 
     override fun onLoadMore() {
-        Log.e("SUKA", "onLoadMore")
         presenter.loadMore()
     }
 

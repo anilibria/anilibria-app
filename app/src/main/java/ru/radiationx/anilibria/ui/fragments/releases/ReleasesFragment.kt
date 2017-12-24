@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.releases
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -21,10 +20,7 @@ import java.util.*
 
 class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesAdapter.ItemListener {
 
-    override val layoutRes: Int = R.layout.fragment_releases
     private var adapter: ReleasesAdapter = ReleasesAdapter()
-
-    private var sharedViewLocal: View? = null
 
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter
@@ -35,11 +31,15 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
                 (parentFragment as RouterProvider).router)
     }
 
+    override var sharedViewLocal: View? = null
+
     override fun getSharedView(): View? {
         val sharedView = sharedViewLocal
         sharedViewLocal = null
         return sharedView
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
@@ -73,17 +73,14 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     }
 
     override fun showReleases(releases: ArrayList<ReleaseItem>) {
-        Log.e("SUKA", "showReleases")
         adapter.bindItems(releases)
     }
 
     override fun insertMore(releases: ArrayList<ReleaseItem>) {
-        Log.e("SUKA", "insertMore")
         adapter.insertMore(releases)
     }
 
     override fun onLoadMore() {
-        Log.e("SUKA", "onLoadMore")
         presenter.loadMore()
     }
 
@@ -102,5 +99,4 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         return presenter.onItemLongClick(item)
     }
-
 }

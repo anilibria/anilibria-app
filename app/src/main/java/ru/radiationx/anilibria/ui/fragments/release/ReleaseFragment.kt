@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.release
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -12,12 +11,16 @@ import android.support.design.widget.AppBarLayout
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
+import android.view.animation.TranslateAnimation
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
 import ru.radiationx.anilibria.App
@@ -26,35 +29,26 @@ import ru.radiationx.anilibria.data.api.models.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.widgets.ScrimHelper
-import ru.radiationx.anilibria.utils.Utils
-import android.util.DisplayMetrics
-import android.util.Log
-import android.view.animation.TranslateAnimation
-import io.reactivex.functions.Consumer
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.TabFragment
+import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.utils.Utils
 
 
 /* Created by radiationx on 16.11.17. */
 
 open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
-    override val layoutRes: Int = R.layout.fragment_release
 
     companion object {
         const val ARG_ID: String = "release_id"
         const val ARG_ITEM: String = "release_item"
-
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
-    var transitionNameLocal = ""
-
-    var currentColor: Int = Color.TRANSPARENT
-    var currentTitle: String? = null
-
     private var adapter: ReleaseAdapter = ReleaseAdapter()
+    private var currentColor: Int = Color.TRANSPARENT
+    private var currentTitle: String? = null
 
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
@@ -65,6 +59,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 (parentFragment as RouterProvider).router)
     }
 
+    override var transitionNameLocal = ""
+
     override fun setTransitionName(name: String) {
         transitionNameLocal = name
     }
@@ -74,15 +70,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         Log.e("SUKA", "ONCRETE $this")
         if (savedInstanceState == null) {
             arguments?.let {
-                it.getInt(ARG_ID, -1).let {
-                    presenter.setReleaseId(it)
-                }
-                (it.getSerializable(ARG_ITEM) as ReleaseItem).let {
-                    presenter.setCurrentData(it)
-                }
+                it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
+                (it.getSerializable(ARG_ITEM) as ReleaseItem).let { presenter.setCurrentData(it) }
             }
         }
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_release
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -167,7 +161,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override fun setRefreshing(refreshing: Boolean) {
 
     }
-
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)

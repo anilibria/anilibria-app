@@ -1,11 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.article
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -21,14 +22,12 @@ import ru.radiationx.anilibria.data.api.models.ArticleFull
 import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
-import java.util.ArrayList
-import org.json.JSONException
-import org.json.JSONObject
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
+import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.util.*
 
 
 /**
@@ -41,12 +40,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
         const val ARG_ITEM: String = "article_item"
     }
 
-    override val layoutRes: Int = R.layout.fragment_article
-
-    var currentColor: Int = Color.TRANSPARENT
-    var currentTitle: String? = null
-
-    var transitionNameLocal = ""
+    private var transitionNameLocal = ""
+    private var currentColor: Int = Color.TRANSPARENT
+    private var currentTitle: String? = null
 
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
@@ -63,7 +59,6 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //presenter.loadArticle("novosti/17-12-2017-otchyet-komandy-po-relizam-za-nedelyu/")
         arguments?.let {
             presenter.url = it.getString(ARG_URL, "")
             (it.getSerializable(ARG_ITEM) as ArticleItem).let {
@@ -72,6 +67,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
             }
         }
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_article
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -95,7 +92,6 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
             toolbarImage.transitionName = transitionNameLocal
         }
 
-
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
@@ -103,12 +99,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
                     toolbar.navigationIcon?.clearColorFilter()
                     toolbar.overflowIcon?.clearColorFilter()
                     toolbar.title = currentTitle
-                    //toolbarTitleView.setVisibility(View.VISIBLE)
                 } else {
                     toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                     toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                     toolbar.title = null
-                    //toolbarTitleView.setVisibility(View.GONE)
                 }
             }
         })
@@ -140,26 +134,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
         webView.evalJs("ViewModel.setText('content','${convert(article.content)}');")
     }
 
-    fun transformMessageSrc(inSrc: String): String {
-        var outSrc = inSrc
-        outSrc = outSrc.replace("\n".toRegex(), "")/*.replace("'".toRegex(), "&apos;")*/
-        outSrc = JSONObject.quote(outSrc)
-        outSrc = outSrc.substring(1, outSrc.length - 1)
-        val jsonObject = JSONObject()
-        try {
-            jsonObject.put("src", outSrc)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        Log.e("SUKA", "outsrc " + outSrc)
-
-        return outSrc
-    }
-
-    fun convert(string: String): String {
-        var result = Base64.encodeToString(string.toByteArray(Charset.forName("UTF-8")), Base64.NO_WRAP)
-        Log.e("SUKA", "converted " + result)
-        return result
+    private fun convert(string: String): String {
+        return Base64.encodeToString(string.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
     }
 
     override fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
@@ -179,13 +155,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
             }
         })
 
-
-
         webView.evalJs("ViewModel.setText('title','${convert(title)}');")
         webView.evalJs("ViewModel.setText('nick','${convert(nick)}');")
         webView.evalJs("ViewModel.setText('comments_count','${convert(comments.toString())}');")
         webView.evalJs("ViewModel.setText('views_count','${convert(views.toString())}');")
     }
-
-
 }

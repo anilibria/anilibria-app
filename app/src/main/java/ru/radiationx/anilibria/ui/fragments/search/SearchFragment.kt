@@ -25,12 +25,10 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         const val ARG_GENRE: String = "genre"
     }
 
-    override val layoutRes: Int = R.layout.fragment_releases
-    private var adapter: ReleasesAdapter = ReleasesAdapter()
-    private lateinit var searchMenuItem: MenuItem
-    private var currentTitle: String? = "Поиск"
     private lateinit var genresDialog: GenresDialog
-    private var sharedViewLocal: View? = null
+    private lateinit var searchMenuItem: MenuItem
+    private var adapter: ReleasesAdapter = ReleasesAdapter()
+    private var currentTitle: String? = "Поиск"
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -40,6 +38,8 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         return SearchPresenter(App.injections.releasesRepository,
                 (parentFragment as RouterProvider).router)
     }
+
+    override var sharedViewLocal: View? = null
 
     override fun getSharedView(): View? {
         val sharedView = sharedViewLocal
@@ -54,6 +54,8 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             presenter.currentGenre = it.getString(ARG_GENRE, null)
         }
     }
+
+    override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         genresDialog = context?.let {

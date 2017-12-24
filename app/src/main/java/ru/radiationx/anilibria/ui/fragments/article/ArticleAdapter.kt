@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.article
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -10,14 +9,11 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.webkit.WebView
-import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.item_article_content.view.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
-import android.widget.LinearLayout
-import ru.radiationx.anilibria.R.id.webView
-import ru.radiationx.anilibria.App
 
 
 /**

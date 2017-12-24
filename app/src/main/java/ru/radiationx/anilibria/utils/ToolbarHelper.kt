@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.utils
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v7.widget.Toolbar
@@ -13,7 +12,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 
 /**

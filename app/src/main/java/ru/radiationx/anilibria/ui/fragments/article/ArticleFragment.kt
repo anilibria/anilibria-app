@@ -40,7 +40,6 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
         const val ARG_ITEM: String = "article_item"
     }
 
-    private var transitionNameLocal = ""
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
@@ -52,6 +51,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
         return ArticlePresenter(App.injections.articlesRepository,
                 (parentFragment as RouterProvider).router)
     }
+
+    override var transitionNameLocal = ""
 
     override fun setTransitionName(name: String) {
         transitionNameLocal = name

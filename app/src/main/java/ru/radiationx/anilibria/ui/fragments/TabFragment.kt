@@ -112,6 +112,15 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
                     if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
                         setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+                    } else {
+                        currentFragment?.let {
+                            it.enterTransition = null
+                            it.exitTransition = null
+                        }
+                        nextFragment?.let {
+                            it.enterTransition = null
+                            it.exitTransition = null
+                        }
                     }
                 }
 

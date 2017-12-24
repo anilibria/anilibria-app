@@ -1,17 +1,37 @@
 package ru.radiationx.anilibria.data.api.mappers
 
 import android.text.Html
+import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.models.GenreItem
-import ru.radiationx.anilibria.data.api.models.Paginated
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.*
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.
  */
 object ReleasesMapper {
+
+    /**/
+    private val fastSearchPatternSource = "<a[^>]*?href=\"[^\"]*?\\/release\\/[^\"]*?\"[^>]*?>[^<]*?<img[^>]*?>([\\s\\S]*?) \\/ ([\\s\\S]*?)(?:<\\/a>[^>]*?)?<\\/td>"
+
+    private val fastSearchPattern: Pattern by lazy {
+        Pattern.compile(fastSearchPatternSource, Pattern.CASE_INSENSITIVE)
+    }
+
+    fun fastSearch(httpResponse: String): List<SearchItem> {
+        val result: MutableList<SearchItem> = mutableListOf()
+        val matcher: Matcher = fastSearchPattern.matcher(httpResponse)
+        while (matcher.find()) {
+            result.add(SearchItem().apply {
+                originalTitle = matcher.group(1)
+                title = matcher.group(2)
+            })
+        }
+        return result
+    }
+
     fun genres(httpResponse: String): List<GenreItem> {
         val result: MutableList<GenreItem> = mutableListOf()
         val jsonItems = JSONObject(httpResponse).getJSONArray("data")
@@ -49,7 +69,7 @@ object ReleasesMapper {
 
             item.torrentLink = Api.BASE_URL + jsonItem.getString("torrent_link")
             item.link = Api.BASE_URL + jsonItem.getString("link")
-            item.image = Api.BASE_URL + jsonItem.getString("image")
+            item.image = Api.BASE_URL_IMAGES + jsonItem.getString("image")
             item.episodesCount = jsonItem.getString("episode")
             item.description = Html.fromHtml(jsonItem.getString("description")).toString().trim()
 
@@ -99,7 +119,7 @@ object ReleasesMapper {
 
         release.torrentLink = Api.BASE_URL + responseJson.getString("torrent_link")
         //item.setLink(responseJson.getString("link"));
-        release.image = Api.BASE_URL + responseJson.getString("image")
+        release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
         release.description = Html.fromHtml(responseJson.getString("description")).toString().trim()
 

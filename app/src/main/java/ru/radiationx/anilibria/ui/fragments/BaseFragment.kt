@@ -17,7 +17,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     abstract protected fun getLayoutResource(): Int
 
     @LayoutRes
-    protected fun getBaseLayout(): Int = R.layout.fragment_main_base
+    open protected fun getBaseLayout(): Int = R.layout.fragment_main_base
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)

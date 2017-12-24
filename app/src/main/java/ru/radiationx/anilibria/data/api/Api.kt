@@ -8,7 +8,8 @@ import ru.radiationx.anilibria.data.client.IClient
 
 class Api(client: IClient) {
     companion object {
-        val BASE_URL = "http://www.anilibria.tv/"
+        val BASE_URL_IMAGES = "http://www.anilibria.tv/"
+        val BASE_URL = "https://www.anilibria.tv/"
         val API_URL = BASE_URL + "api/api.php"
         val CATEGORY_NEWS = "novosti/"
         val CATEGORY_BLOGS = "blog/"
@@ -23,6 +24,8 @@ class Api(client: IClient) {
     fun getRelease(releaseId: Int) = releases.getRelease(releaseId)
 
     fun getGenres() = releases.getGenres()
+
+    fun fastSearch(query: String) = releases.fastSearch(query)
 
     fun searchRelease(name: String, genre: String, page: Int) = releases.searchReleases(name, genre, page)
 

@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.data.api.Api
 import ru.radiationx.anilibria.data.api.models.GenreItem
 import ru.radiationx.anilibria.data.api.models.Paginated
 import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.SearchItem
 
 /**
  * Created by radiationx on 17.12.17.
@@ -17,6 +18,10 @@ class ReleasesRepository(private val api: Api) {
 
     fun getGenres(): Single<List<GenreItem>> = Single.defer {
         api.getGenres()
+    }
+
+    fun fastSearch(query: String): Single<List<SearchItem>> = Single.defer {
+        api.fastSearch(query)
     }
 
     fun searchRelease(name: String, genre: String, page: Int): Single<Paginated<ArrayList<ReleaseItem>>> = Single.defer {

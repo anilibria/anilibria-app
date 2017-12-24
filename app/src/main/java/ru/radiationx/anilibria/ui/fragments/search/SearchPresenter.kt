@@ -32,6 +32,22 @@ class SearchPresenter(private val releasesRepository: ReleasesRepository,
         return currentPage == START_PAGE
     }
 
+    fun fastSearch(query: String) {
+        val disposable = releasesRepository.fastSearch(query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ searchItems ->
+                    Log.d("SUKA", "subscribe call show")
+                    viewState.setRefreshing(false)
+                    viewState.showFastItems(searchItems)
+                }) { throwable ->
+                    viewState.setRefreshing(false)
+                    Log.d("SUKA", "SAS")
+                    throwable.printStackTrace()
+                }
+        addDisposable(disposable)
+    }
+
     private fun loadGenres() {
         val disposable = releasesRepository.getGenres()
                 .subscribeOn(Schedulers.io())

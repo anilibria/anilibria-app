@@ -64,7 +64,7 @@ object ArticlesMapper {
                 title = Html.fromHtml(matcher.group(3)).toString()
                 userId = matcher.group(4).toInt()
                 userNick = Html.fromHtml(matcher.group(5)).toString()
-                imageUrl = Api.Companion.BASE_URL + matcher.group(6)
+                imageUrl = Api.Companion.BASE_URL_IMAGES + matcher.group(6)
                 imageWidth = matcher.group(7).toInt()
                 imageHeight = matcher.group(8).toInt()
                 content = matcher.group(9).trim()

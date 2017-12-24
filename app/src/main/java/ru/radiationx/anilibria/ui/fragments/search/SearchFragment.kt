@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -12,6 +13,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.data.api.models.GenreItem
 import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.SearchItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -19,15 +21,19 @@ import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.util.*
 
+
 class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
+
     companion object {
         const val ARG_QUERY_TEXT: String = "query"
         const val ARG_GENRE: String = "genre"
     }
 
+    private lateinit var searchView: com.lapism.searchview.SearchView
     private lateinit var genresDialog: GenresDialog
     private lateinit var searchMenuItem: MenuItem
-    private var adapter: ReleasesAdapter = ReleasesAdapter()
+    private val adapter = ReleasesAdapter()
+    private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
 
     @InjectPresenter
@@ -84,9 +90,9 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        val card: com.lapism.searchview.SearchView = com.lapism.searchview.SearchView(toolbar.context)
-        toolbar.addView(card)
-        with(card) {
+        searchView = com.lapism.searchview.SearchView(toolbar.context)
+        toolbar.addView(searchView)
+        with(searchView) {
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
@@ -112,27 +118,29 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.let {
                         presenter.currentQuery = it
+                        presenter.refreshReleases()
                     }
-                    presenter.refreshReleases()
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
+                    //newText?.let { presenter.fastSearch(it) }
                     return false
                 }
-
             })
             hint = "Поиск"
             if (presenter.isEmpty()) {
                 open(true)
             }
+            //adapter = fastAdapter
         }
+
 
         with(toolbar.menu) {
             searchMenuItem = add("Search")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener {
-                        card.open(true)
+                        searchView.open(true)
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -154,6 +162,14 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     override fun setEndless(enable: Boolean) {
         adapter.endless = enable
+    }
+
+    override fun showFastItems(items: List<SearchItem>) {
+        searchView.showSuggestions()
+        items.forEach {
+            Log.e("SUKA", "FAST ITEM: ${it.title} : ${it.originalTitle}")
+        }
+        fastAdapter.bindItems(items)
     }
 
     override fun showGenres(genres: List<GenreItem>) {

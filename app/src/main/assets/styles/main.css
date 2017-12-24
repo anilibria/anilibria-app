@@ -75,14 +75,13 @@ a {
   width: auto!important;
   height: auto!important;
 }
-.wrapper .news-detail-content .alib_yt_button,
-.wrapper .content .alib_yt_button {
+.wrapper .news-detail-content .alib_button,
+.wrapper .content .alib_button {
   text-align: center;
   margin: 0.5rem auto;
 }
-.wrapper .news-detail-content .alib_yt_button a,
-.wrapper .content .alib_yt_button a {
-  background: #c40304;
+.wrapper .news-detail-content .alib_button a,
+.wrapper .content .alib_button a {
   color: white;
   display: inline-block;
   margin: 0 auto;
@@ -96,11 +95,20 @@ a {
   vertical-align: baseline;
   text-transform: uppercase;
   border-radius: 0.125rem;
-  background-image: url(../res/youtube-play.svg);
   background-position: 0.75rem center;
   background-size: 1.5rem 1.5rem;
   background-repeat: no-repeat;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+.wrapper .news-detail-content .alib_button.yt a,
+.wrapper .content .alib_button.yt a {
+  background-color: #ff0004;
+  background-image: url(../res/ic_youtube.svg);
+}
+.wrapper .news-detail-content .alib_button.vk a,
+.wrapper .content .alib_button.vk a {
+  background-color: #416b9e;
+  background-image: url(../res/ic_vk.svg);
 }
 .wrapper .news-detail-content .layday,
 .wrapper .content .layday {

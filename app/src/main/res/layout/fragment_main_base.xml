@@ -28,11 +28,10 @@
                 android:id="@+id/toolbarImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
                 android:minHeight="144dp"
                 android:scaleType="centerCrop"
-                app:aspectRatio="1.456"
                 android:visibility="gone"
+                app:aspectRatio="1.456"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
@@ -42,7 +41,24 @@
                 android:layout_marginTop="24dp"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <FrameLayout
+                    android:id="@+id/spinnerContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:paddingBottom="0dp"
+                    android:paddingTop="2dp"
+                    android:visibility="gone">
+
+                    <Spinner
+                        android:id="@+id/spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
+
+
+            </android.support.v7.widget.Toolbar>
 
             <View
                 android:id="@+id/toolbarInsetShadow"

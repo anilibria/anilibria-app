@@ -2,7 +2,10 @@ package ru.radiationx.anilibria.ui.fragments.articles
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -19,6 +22,11 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 16.12.17.
  */
 class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
+
+    private val spinnerItems = listOf(
+            "" to "Главная",
+            "novosti" to "Новости ¯\\_(ツ)_/¯"
+    )
 
     private val adapter = ArticlesAdapter()
     lateinit var router: Router
@@ -43,6 +51,7 @@ class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesA
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.e("SUKA", "TEST onViewCreated "+this)
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
         recyclerView.apply {
@@ -51,8 +60,29 @@ class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesA
         }
 
         adapter.setListener(this)
+
         toolbar.apply {
             title = getString(R.string.fragment_title_news)
+        }
+
+        spinner.apply {
+            spinnerContainer.visibility = View.VISIBLE
+
+            adapter = ArrayAdapter<String>(
+                    spinner.context,
+                    android.R.layout.simple_spinner_item,
+                    spinnerItems.map { it.second }
+            )
+            (adapter as ArrayAdapter<*>).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    Log.e("SUKA", "TEST onItemSelected "+p2)
+                    presenter.loadSubCategory(spinnerItems[p2].first)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
         }
     }
 

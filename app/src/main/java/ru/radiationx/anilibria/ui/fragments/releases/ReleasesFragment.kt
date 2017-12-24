@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.releases
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -20,7 +21,7 @@ import java.util.*
 
 class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesAdapter.ItemListener {
 
-    private var adapter: ReleasesAdapter = ReleasesAdapter()
+    private val adapter: ReleasesAdapter = ReleasesAdapter()
 
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter
@@ -42,6 +43,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.e("SUKA", "TEST onViewCreated "+this)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {

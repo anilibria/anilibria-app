@@ -12,5 +12,5 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class VideosPresenter(private val articlesRepository: ArticlesRepository,
                       private val router: Router) : ArticlesPresenter(articlesRepository, router) {
-    override var categoryName: String = Api.CATEGORY_VIDEOS
+    override var category: String = Api.CATEGORY_VIDEOS
 }

@@ -36,6 +36,6 @@ class Api(client: IClient) {
 
     fun getArticle(articleUrl: String) = articles.getArticle(articleUrl)
 
-    fun getArticles(name: String, page: Int) = articles.getArticles(name, page)
+    fun getArticles(category: String, subCategory: String, page: Int) = articles.getArticles(category, subCategory, page)
 
 }

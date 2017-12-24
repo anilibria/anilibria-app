@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:aspectRatio="0"
             tools:src="@android:color/holo_red_dark" />
 
         <TextView

@@ -73,11 +73,10 @@ a {
             height: auto!important;
         }
         iframe[src*="vk.com"] {}
-        .alib_yt_button {
+        .alib_button {
             text-align: center;
             margin: 8/16rem auto;
             a {
-                background: @linkColor;
                 color: white;
                 display: inline-block;
                 margin: 0 auto;
@@ -91,11 +90,22 @@ a {
                 vertical-align: baseline;
                 text-transform: uppercase;
                 border-radius: 2/16rem;
-                background-image: url(../res/youtube-play.svg);
                 background-position: 12/16rem center;
                 background-size: 24/16rem 24/16rem;
                 background-repeat: no-repeat;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            }
+            &.yt {
+                a {
+                    background-color: rgb(255, 0, 4);
+                    background-image: url(../res/ic_youtube.svg);
+                }
+            }
+            &.vk {
+                a {
+                    background-color: rgb(65, 107, 158);
+                    background-image: url(../res/ic_vk.svg);
+                }
             }
         }
         .alib_borderline {}
@@ -108,10 +118,11 @@ a {
         }
         .sharopol {
             height: auto!important;
-            +img,+.spoiler+img {
+            +img,
+            +.spoiler+img {
                 display: block!important;
                 float: none!important;
-                +p{
+                +p {
                     text-align: justify!important;
                 }
             }

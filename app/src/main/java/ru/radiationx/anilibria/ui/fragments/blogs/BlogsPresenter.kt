@@ -13,5 +13,5 @@ import ru.terrakok.cicerone.Router
 class BlogsPresenter(private val articlesRepository: ArticlesRepository,
                      private val router: Router) : ArticlesPresenter(articlesRepository, router) {
 
-    override var categoryName: String = Api.CATEGORY_BLOGS
+    override var category: String = Api.CATEGORY_BLOGS
 }

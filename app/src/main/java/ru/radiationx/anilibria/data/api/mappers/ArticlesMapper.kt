@@ -40,6 +40,7 @@ object ArticlesMapper {
 
     private val youtubeLink = "(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?"
     private val iframeYT = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
+    private val iframeVK = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?vk\\.com\\/video_ext\\.php\\?oid=([^&\"]*?)&id=([^&\"]*?)(&hash[^\"]*?)?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
     private val alibBordLine = "<img[^>]*?src=\"[^\"]*?borderline\\.[^\"]*?\"[^>]*?>"
 
     private val listPattern: Pattern by lazy {
@@ -97,7 +98,8 @@ object ArticlesMapper {
                 date = matcher.group(5)
             }
         }
-        result.content = result.content.replace(Regex(iframeYT), "<div class=\"alib_yt_button\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
+        result.content = result.content.replace(Regex(iframeYT), "<div class=\"alib_button yt\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
+        result.content = result.content.replace(Regex(iframeVK), "<div class=\"alib_button vk\"><a href=\"https://vk.com/video?z=video$1_$2$3\">Смотреть в VK</a></div>")
         result.content = result.content.replace(Regex(alibBordLine), "<div class=\"alib_borderline\">$0</div>")
         Log.e("SUKA", "PARSED :" + result.title)
         return result

@@ -18,18 +18,27 @@ import ru.terrakok.cicerone.Router
  */
 @InjectViewState
 open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
-                        private val router: Router) : BasePresenter<ArticlesView>(router) {
+                             private val router: Router) : BasePresenter<ArticlesView>(router) {
     companion object {
         private const val START_PAGE = 1
     }
 
     private var currentPage = START_PAGE
-    open var categoryName = Api.Companion.CATEGORY_NEWS
+    //open var category = Api.Companion.CATEGORY_NEWS
+    open var category = ""
+    open protected var subCategory = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
         refresh()
+    }
+
+    fun loadSubCategory(subCategory: String) {
+        if(this.subCategory != subCategory){
+            this.subCategory = subCategory
+            refresh()
+        }
     }
 
     private fun isFirstPage(): Boolean {
@@ -42,7 +51,7 @@ open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = articlesRepository.getArticles(categoryName, page)
+        val disposable = articlesRepository.getArticles(category, subCategory, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->

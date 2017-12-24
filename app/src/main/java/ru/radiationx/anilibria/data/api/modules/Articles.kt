@@ -20,15 +20,18 @@ class Articles(private val client: IClient) {
                 .map { ArticlesMapper.article(it) }
     }
 
-    fun getArticles(name: String, page: Int): Single<Paginated<List<ArticleItem>>> {
+    fun getArticles(category: String, subCategory: String, page: Int): Single<Paginated<List<ArticleItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "PAGEN_1" to page.toString(),
                 "SIZEN_1" to "6"
         )
         var url = Api.BASE_URL
-        if (name.isNotEmpty()) {
-            url += "$name/"
+        if (subCategory.isNotEmpty()) {
+            url += "$subCategory/"
+        } else if (category.isNotEmpty()) {
+            url += "$category/"
         }
+
         return client.get(url, args)
                 .map { ArticlesMapper.articles(it) }
     }

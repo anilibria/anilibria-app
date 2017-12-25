@@ -11,10 +11,13 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class MainPresenter(private val router: Router) : BasePresenter<MainView>(router) {
 
+
+
     fun selectTab(screenKey: String) {
         Log.e("SUKA", "presenter selectTab "+screenKey)
         viewState.highlightTab(screenKey)
         router.replaceScreen(screenKey)
+
     }
 
 }

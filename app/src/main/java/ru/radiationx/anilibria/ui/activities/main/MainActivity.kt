@@ -29,6 +29,8 @@ import ru.terrakok.cicerone.commands.SystemMessage
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
+    private val TABS_STACK = "TABS_STACK"
+
     override val router: Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
@@ -39,6 +41,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             Tab(R.string.fragment_title_blogs, R.drawable.ic_blogs, Screens.MAIN_BLOGS),
             Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
     )
+
+    private val tabsStack = mutableListOf<String>()
 
     @InjectPresenter
     lateinit var presenter: MainPresenter
@@ -61,6 +65,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         initContainers()
         initBottomTabs()
 
+        savedInstanceState?.let {
+            it.getStringArrayList(TABS_STACK)?.let {
+                tabsStack.addAll(it)
+            }
+        }
+
         if (savedInstanceState == null) {
             presenter.selectTab(Screens.MAIN_RELEASES)
         }
@@ -76,8 +86,19 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         navigationHolder.removeNavigator()
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+    }
+
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.root_container)
+        //Log.e("SUKA", "onBackPressed: " + supportFragmentManager.fragments.joinToString(",\n", "{\n", "\n}"))
+        //Log.e("SUKA", "onBackPressed find: " + supportFragmentManager.findFragmentById(R.id.root_container))
+        val fragment = if (tabsStack.isEmpty()) {
+            null
+        } else {
+            supportFragmentManager.findFragmentByTag(tabsStack.last())
+        }
         if (fragment != null
                 && fragment is BackButtonListener
                 && (fragment as BackButtonListener).onBackPressed()) {
@@ -95,7 +116,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             if (fragment == null) {
                 fragment = TabFragment.newInstance(tab.screenKey)
                 ta.add(R.id.root_container, fragment, tab.screenKey)
-                        .detach(fragment)
+                if (tabsStack.contains(tab.screenKey)) {
+                    ta.attach(fragment)
+                } else {
+                    ta.detach(fragment)
+                }
             }
         }
         ta.commitNow()
@@ -130,11 +155,36 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
     }
 
+
+    fun addInStack(screenKey: String) {
+        tabsStack.remove(screenKey)
+        tabsStack.add(screenKey)
+    }
+
+    fun removeFromStack(screenKey: String) {
+        tabsStack.remove(screenKey)
+    }
+
     private val navigatorNew = object : Navigator {
+
         override fun applyCommand(command: Command) {
             Log.e("SUKA", "ApplyCommand " + command)
             if (command is Back) {
-                finish()
+                if (tabsStack.isEmpty()) {
+                    finish()
+                    return
+                }
+                val fm = supportFragmentManager
+                val ta = fm.beginTransaction()
+                val fragment = fm.findFragmentByTag(tabsStack.last())
+                ta.detach(fragment)
+                removeFromStack(tabsStack.last())
+                ta.commitNow()
+                if (tabsStack.isNotEmpty()) {
+                    presenter.selectTab(tabsStack.last())
+                } else {
+                    finish()
+                }
             } else if (command is SystemMessage) {
                 Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
             } else if (command is Replace) {
@@ -144,9 +194,14 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 tabs.forEach {
                     val fragment = fm.findFragmentByTag(it.screenKey)
                     if (it.screenKey == command.screenKey) {
-                        ta.attach(fragment)
+                        if (fragment.isDetached) {
+                            ta.attach(fragment)
+                        }
+                        ta.show(fragment)
+                        addInStack(it.screenKey)
+                        Log.e("SUKA", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                     } else {
-                        ta.detach(fragment)
+                        ta.hide(fragment)
                     }
                 }
                 ta.commitNow()

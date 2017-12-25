@@ -194,9 +194,7 @@ function nodeScriptClone(node) {
 
 function ViewModelClass() {
     this.setText = function (id, text) {
-        console.log("settext in " + text)
         text = Base64Decode(text);
-        console.log("settext out " + text)
         document.getElementById(id).innerHTML = text;
         try {
             nodeScriptReplace(document.getElementById(id));

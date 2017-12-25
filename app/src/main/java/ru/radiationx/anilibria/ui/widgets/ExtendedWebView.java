@@ -144,10 +144,11 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         super.onAttachedToWindow();
         requestFocus();
         isJsReady = false;
+        /*Log.e(LOG_TAG, "onAttachedToWindow");
         for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
-        actionsForWebView.clear();
+        actionsForWebView.clear();*/
     }
 
     @Override

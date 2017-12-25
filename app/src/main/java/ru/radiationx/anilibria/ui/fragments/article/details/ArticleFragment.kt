@@ -7,7 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.util.Base64
+import android.util.Log
 import android.view.View
+import android.webkit.WebView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -40,10 +42,12 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
     companion object {
         const val ARG_URL: String = "article_url"
         const val ARG_ITEM: String = "article_item"
+        private const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
 
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
+    private var webViewScrollPos = 0
 
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
@@ -110,9 +114,30 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
             }
         })
 
+        webView.setJsLifeCycleListener(this)
+
+        savedInstanceState?.let {
+            webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
+        }
+
         val template = App.instance.articleTemplate
         webView.easyLoadData(Api.BASE_URL, template.generateOutput())
         template.reset()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webView.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(WEB_VIEW_SCROLL_Y, webView.scrollY)
     }
 
     override fun onDomContentComplete(actions: ArrayList<String>) {
@@ -120,7 +145,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
     }
 
     override fun onPageComplete(actions: ArrayList<String>) {
-
+        webView.syncWithJs {
+            webView.scrollTo(0, webViewScrollPos)
+        }
     }
 
     override fun onBackPressed(): Boolean {

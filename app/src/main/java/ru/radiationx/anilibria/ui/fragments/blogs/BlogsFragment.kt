@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.articles.ArticlesAdapter
 class BlogsFragment : BaseFragment(), BlogsView, SharedProvider, ArticlesAdapter.ItemListener {
 
     private val spinnerItems = listOf(
-            "" to "Все",
+            "" to "Все блоги",
             "audioblog_lln" to "Новости (ЛЛН)",
             "sharon" to "Шаровые диалоги",
             "newblogofitashi" to "Блоги Itashi",
@@ -62,16 +62,16 @@ class BlogsFragment : BaseFragment(), BlogsView, SharedProvider, ArticlesAdapter
         }
 
         adapter.setListener(this)
-        toolbar.apply {
+        /*toolbar.apply {
             title = getString(R.string.fragment_title_blogs)
-        }
+        }*/
 
         spinner.apply {
             spinnerContainer.visibility = View.VISIBLE
 
             adapter = ArrayAdapter<String>(
                     spinner.context,
-                    android.R.layout.simple_spinner_item,
+                    R.layout.item_view_spinner,
                     spinnerItems.map { it.second }
             )
             (adapter as ArrayAdapter<*>).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

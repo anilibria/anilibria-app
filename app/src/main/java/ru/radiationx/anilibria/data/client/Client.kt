@@ -4,8 +4,6 @@ import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import java.io.IOException
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 
 class Client : IClient {

@@ -6,14 +6,16 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
-import ru.radiationx.anilibria.data.repository.ReleasesRepository
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
+import ru.radiationx.anilibria.data.repository.ReleaseRepository
+import ru.radiationx.anilibria.data.repository.SearchRepository
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
 @InjectViewState
-class SearchPresenter(private val releasesRepository: ReleasesRepository,
+class SearchPresenter(private val releaseRepository: ReleaseRepository,
+                      private val searchRepository: SearchRepository,
                       private val router: Router) : BasePresenter<SearchView>(router) {
 
     private val START_PAGE = 1
@@ -33,7 +35,7 @@ class SearchPresenter(private val releasesRepository: ReleasesRepository,
     }
 
     fun fastSearch(query: String) {
-        val disposable = releasesRepository.fastSearch(query)
+        val disposable = searchRepository.fastSearch(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
@@ -49,7 +51,7 @@ class SearchPresenter(private val releasesRepository: ReleasesRepository,
     }
 
     private fun loadGenres() {
-        val disposable = releasesRepository.getGenres()
+        val disposable = releaseRepository.getGenres()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
@@ -78,7 +80,7 @@ class SearchPresenter(private val releasesRepository: ReleasesRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = releasesRepository.searchRelease(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+        val disposable = searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->

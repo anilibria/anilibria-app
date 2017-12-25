@@ -14,7 +14,7 @@ import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseFull
 import java.lang.Exception
 
 
@@ -30,7 +30,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
-    private lateinit var releaseData: ReleaseItem
+    private lateinit var releaseData: ReleaseFull
     private var currentEpisode = NOT_SELECTED
     private var quality = DEFAULT_QUALITY
     private lateinit var videoControls: VideoControls
@@ -42,7 +42,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         setContentView(R.layout.activity_myplayer)
 
         intent?.let {
-            val release = it.getSerializableExtra(ARG_RELEASE) as ReleaseItem?
+            val release = it.getSerializableExtra(ARG_RELEASE) as ReleaseFull?
             release?.let {
                 this.releaseData = it
             }
@@ -122,7 +122,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
 
     private fun checkIndex(index: Int): Boolean = index >= 0 && index < releaseData.episodes.size
 
-    private fun getNextEpisode(): ReleaseItem.Episode? {
+    private fun getNextEpisode(): ReleaseFull.Episode? {
         Log.e("SUKA", "CLICK NEXT " + currentEpisode)
         val nextIndex = currentEpisode - 1
         if (checkIndex(nextIndex)) {
@@ -133,7 +133,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         return null
     }
 
-    private fun getPrevEpisode(): ReleaseItem.Episode? {
+    private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevIndex = currentEpisode + 1
         if (checkIndex(prevIndex)) {
             Log.e("SUKA", "PREV INDEX " + prevIndex)
@@ -143,9 +143,9 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         return null
     }
 
-    private fun getCurrentEpisode(): ReleaseItem.Episode = releaseData.episodes[currentEpisode]
+    private fun getCurrentEpisode(): ReleaseFull.Episode = releaseData.episodes[currentEpisode]
 
-    private fun playEpisode(episode: ReleaseItem.Episode) {
+    private fun playEpisode(episode: ReleaseFull.Episode) {
         supportActionBar?.subtitle = episode.title
         if (quality == VAL_QUALITY_SD) {
             Log.e("SUKA", "playEpisode " + episode.urlSd)

@@ -5,15 +5,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.SpinnerAdapter
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ArticleItem
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -41,7 +39,7 @@ class BlogsFragment : BaseFragment(), BlogsView, SharedProvider, ArticlesAdapter
 
     @ProvidePresenter
     fun provideBlogsPresenter(): BlogsPresenter {
-        return BlogsPresenter(App.injections.articlesRepository,
+        return BlogsPresenter(App.injections.articleRepository,
                 (parentFragment as RouterProvider).router)
     }
 

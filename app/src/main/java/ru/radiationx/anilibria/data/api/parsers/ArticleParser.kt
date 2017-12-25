@@ -1,18 +1,18 @@
-package ru.radiationx.anilibria.data.api.mappers
+package ru.radiationx.anilibria.data.api.parsers
 
 import android.text.Html
 import android.util.Log
 import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.models.ArticleFull
-import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.data.api.models.Paginated
+import ru.radiationx.anilibria.data.api.models.article.ArticleFull
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.
  */
-object ArticlesMapper {
+object ArticleParser {
 
     /*
     * 1.    Int     Какой-то айдишник битриксовский
@@ -65,11 +65,11 @@ object ArticlesMapper {
                 title = Html.fromHtml(matcher.group(3)).toString()
                 userId = matcher.group(4).toInt()
                 userNick = Html.fromHtml(matcher.group(5)).toString()
-                imageUrl = Api.Companion.BASE_URL_IMAGES + matcher.group(6)
+                imageUrl = Api.BASE_URL_IMAGES + matcher.group(6)
                 imageWidth = matcher.group(7).toInt()
                 imageHeight = matcher.group(8).toInt()
                 content = matcher.group(9).trim()
-                otherUrl = Api.Companion.BASE_URL + matcher.group(10)
+                otherUrl = Api.BASE_URL + matcher.group(10)
                 viewsCount = matcher.group(11).toInt()
                 commentsCount = matcher.group(12).toInt()
             })

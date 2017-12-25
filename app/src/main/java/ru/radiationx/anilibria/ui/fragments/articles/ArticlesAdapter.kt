@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ArticleItem
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment

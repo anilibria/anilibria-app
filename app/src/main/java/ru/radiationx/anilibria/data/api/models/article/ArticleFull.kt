@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.data.api.models
+package ru.radiationx.anilibria.data.api.models.article
 
 /**
  * Created by radiationx on 18.12.17.

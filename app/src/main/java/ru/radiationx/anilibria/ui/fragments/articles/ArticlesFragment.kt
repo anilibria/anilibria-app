@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ArticleItem
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -36,7 +36,7 @@ class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesA
 
     @ProvidePresenter
     fun provideArticlesPresenter(): ArticlesPresenter {
-        return ArticlesPresenter(App.injections.articlesRepository,
+        return ArticlesPresenter(App.injections.articleRepository,
                 (parentFragment as RouterProvider).router)
     }
 

@@ -3,14 +3,14 @@ package ru.radiationx.anilibria.ui.fragments.release
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseFull
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /* Created by radiationx on 18.11.17. */
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseView : IBaseView {
-    fun showRelease(release: ReleaseItem)
+    fun showRelease(release: ReleaseFull)
 
     @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(url: String)
@@ -22,11 +22,11 @@ interface ReleaseView : IBaseView {
     fun copyLink(url: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisodes(release: ReleaseItem)
+    fun playEpisodes(release: ReleaseFull)
 
     @StateStrategyType(SkipStrategy::class)
     fun playMoonwalk(link: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisode(release: ReleaseItem, position: Int, quality: Int)
+    fun playEpisode(release: ReleaseFull, position: Int, quality: Int)
 }

@@ -4,8 +4,8 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import ru.radiationx.anilibria.data.api.models.ArticleItem
-import ru.radiationx.anilibria.data.repository.ArticlesRepository
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
+import ru.radiationx.anilibria.data.repository.ArticleRepository
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -13,7 +13,7 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 20.12.17.
  */
 @InjectViewState
-class ArticlePresenter(private val articlesRepository: ArticlesRepository,
+class ArticlePresenter(private val articleRepository: ArticleRepository,
                        private val router: Router) : BasePresenter<ArticleView>(router) {
 
     var url: String = ""
@@ -32,7 +32,7 @@ class ArticlePresenter(private val articlesRepository: ArticlesRepository,
     fun loadArticle(articleUrl: String) {
         Log.e("SUKA", "loadArticle")
         viewState.setRefreshing(true)
-        val disposable = articlesRepository.getArticle(articleUrl)
+        val disposable = articleRepository.getArticle(articleUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ article ->

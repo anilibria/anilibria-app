@@ -21,15 +21,15 @@ import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 
 import ru.radiationx.anilibria.R;
-import ru.radiationx.anilibria.data.api.models.ReleaseItem;
+import ru.radiationx.anilibria.data.api.models.release.ReleaseFull;
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter;
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder;
 
-public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
+public class ReleaseAdapter extends BaseAdapter<ReleaseFull, BaseViewHolder> {
     private static final int RELEASE_HEAD_LAYOUT = 1;
     private static final int RELEASE_EPISODE_LAYOUT = 2;
     private ReleaseListener releaseListener;
-    private ReleaseItem release;
+    private ReleaseFull release;
     private ColorFilter accentFilter;
     private int accentColor = 0;
     private int tagColor = 0;
@@ -52,7 +52,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         accentFilter = new PorterDuffColorFilter(accentColor, PorterDuff.Mode.SRC_IN);
     }
 
-    public void setRelease(ReleaseItem release) {
+    public void setRelease(ReleaseFull release) {
         Log.d("SUKA", "ADAPTER SET RELEASE " + release.getEpisodes().size());
         this.release = release;
     }
@@ -74,7 +74,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     }
 
     @Override
-    public ReleaseItem getItem(int position) {
+    public ReleaseFull getItem(int position) {
         return release;
     }
 
@@ -82,7 +82,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case RELEASE_HEAD_LAYOUT: {
-                return new ReleaseItemHolder(inflateLayout(parent, R.layout.item_release_head_new));
+                return new ReleaseHeadHolder(inflateLayout(parent, R.layout.item_release_head_new));
             }
             case RELEASE_EPISODE_LAYOUT: {
                 return new EpisodeItemHolder(inflateLayout(parent, R.layout.item_release_episode));
@@ -96,7 +96,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         int viewType = getItemViewType(position);
         switch (viewType) {
             case RELEASE_HEAD_LAYOUT: {
-                ((ReleaseItemHolder) holder).bind(release);
+                ((ReleaseHeadHolder) holder).bind(release);
                 break;
             }
             case RELEASE_EPISODE_LAYOUT: {
@@ -108,7 +108,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
 
     }
 
-    class ReleaseItemHolder extends BaseViewHolder<ReleaseItem> {
+    class ReleaseHeadHolder extends BaseViewHolder<ReleaseFull> {
         ImageView image;
         TextView title;
         TextView desc;
@@ -119,7 +119,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         TagView tagContainer;
 
 
-        ReleaseItemHolder(View itemView) {
+        ReleaseHeadHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.full_image);
             title = itemView.findViewById(R.id.full_title);
@@ -147,7 +147,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         }
 
         @Override
-        public void bind(ReleaseItem release) {
+        public void bind(ReleaseFull release) {
             /*ImageLoader.getInstance().displayImage(release.getImage(), image, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
@@ -185,17 +185,11 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
             boolean hasMoonwalk = release.getMoonwalkLink() != null;
             watchAllButton.setEnabled(hasEpisodes || hasMoonwalk);
 
-            if (release.isFull()) {
-                watchAllButton.setVisibility(hasEpisodes || hasMoonwalk ? View.VISIBLE : View.GONE);
-            } else {
-                watchAllButton.setVisibility(View.VISIBLE);
-            }
-
-
+            watchAllButton.setVisibility(hasEpisodes || hasMoonwalk ? View.VISIBLE : View.GONE);
         }
     }
 
-    class EpisodeItemHolder extends BaseViewHolder<ReleaseItem.Episode> {
+    class EpisodeItemHolder extends BaseViewHolder<ReleaseFull.Episode> {
         TextView title;
         ImageButton qualitySd;
         ImageButton qualityHd;
@@ -225,17 +219,17 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseItem, BaseViewHolder> {
         }
 
         @Override
-        public void bind(ReleaseItem.Episode item) {
+        public void bind(ReleaseFull.Episode item) {
             title.setText(item.getTitle());
         }
     }
 
     interface ReleaseListener {
-        void onClickSd(ReleaseItem.Episode episode, int position);
+        void onClickSd(ReleaseFull.Episode episode, int position);
 
-        void onClickHd(ReleaseItem.Episode episode, int position);
+        void onClickHd(ReleaseFull.Episode episode, int position);
 
-        void onClickEpisode(ReleaseItem.Episode episode, int position);
+        void onClickEpisode(ReleaseFull.Episode episode, int position);
 
         void onClickTorrent(String url);
 

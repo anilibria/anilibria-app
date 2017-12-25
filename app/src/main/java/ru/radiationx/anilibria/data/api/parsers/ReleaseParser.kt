@@ -1,19 +1,21 @@
-package ru.radiationx.anilibria.data.api.mappers
+package ru.radiationx.anilibria.data.api.parsers
 
 import android.text.Html
-import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.models.*
+import ru.radiationx.anilibria.data.api.models.Paginated
+import ru.radiationx.anilibria.data.api.models.release.GenreItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseFull
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.search.SearchItem
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.
  */
-object ReleasesMapper {
+object ReleaseParser {
 
-    /**/
     private val fastSearchPatternSource = "<a[^>]*?href=\"[^\"]*?\\/release\\/[^\"]*?\"[^>]*?>[^<]*?<img[^>]*?>([\\s\\S]*?) \\/ ([\\s\\S]*?)(?:<\\/a>[^>]*?)?<\\/td>"
 
     private val fastSearchPattern: Pattern by lazy {
@@ -50,8 +52,8 @@ object ReleasesMapper {
         return result
     }
 
-    fun releases(httpResponse: String): Paginated<ArrayList<ReleaseItem>> {
-        val resItems = ArrayList<ReleaseItem>()
+    fun releases(httpResponse: String): Paginated<List<ReleaseItem>> {
+        val resItems = mutableListOf<ReleaseItem>()
         val responseJson = JSONObject(httpResponse)
         val jsonItems = responseJson.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
@@ -103,8 +105,8 @@ object ReleasesMapper {
         return pagination
     }
 
-    fun release(httpResponse: String): ReleaseItem {
-        val release = ReleaseItem()
+    fun release(httpResponse: String): ReleaseFull {
+        val release = ReleaseFull()
 
         val responseJson = JSONObject(httpResponse)
         //item.setId(responseJson.getInt("id"));
@@ -146,7 +148,7 @@ object ReleasesMapper {
         val jsonEpisodes = responseJson.getJSONArray("Uppod")
         for (j in 0 until jsonEpisodes.length()) {
             val jsonEpisode = jsonEpisodes.getJSONObject(j)
-            val episode = ReleaseItem.Episode()
+            val episode = ReleaseFull.Episode()
             episode.title = jsonEpisode.getString("comment")
             episode.urlSd = jsonEpisode.getString("file")
             episode.urlHd = jsonEpisode.getString("filehd")
@@ -160,8 +162,6 @@ object ReleasesMapper {
                 release.moonwalkLink = "https:${matcher.group(1)}"
             }
         }
-
-        release.isFull = true
 
         return release
     }

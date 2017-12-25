@@ -11,15 +11,14 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.GenreItem
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
-import ru.radiationx.anilibria.data.api.models.SearchItem
+import ru.radiationx.anilibria.data.api.models.release.GenreItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.search.SearchItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import java.util.*
 
 
 class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
@@ -41,7 +40,8 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
-        return SearchPresenter(App.injections.releasesRepository,
+        return SearchPresenter(App.injections.releaseRepository,
+                App.injections.searchRepository,
                 (parentFragment as RouterProvider).router)
     }
 
@@ -176,7 +176,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         genresDialog.setItems(genres)
     }
 
-    override fun showReleases(releases: ArrayList<ReleaseItem>) {
+    override fun showReleases(releases: List<ReleaseItem>) {
         currentTitle = if (presenter.currentQuery.orEmpty().isEmpty()) {
             "Поиск"
         } else {
@@ -187,7 +187,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         genresDialog.setChecked(presenter.currentGenre.orEmpty())
     }
 
-    override fun insertMore(releases: ArrayList<ReleaseItem>) {
+    override fun insertMore(releases: List<ReleaseItem>) {
         adapter.insertMore(releases)
     }
 

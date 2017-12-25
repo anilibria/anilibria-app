@@ -25,7 +25,8 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseFull
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -55,7 +56,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter {
-        return ReleasePresenter(App.injections.releasesRepository,
+        return ReleasePresenter(App.injections.releaseRepository,
                 (parentFragment as RouterProvider).router)
     }
 
@@ -169,7 +170,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             .bitmapConfig(Bitmap.Config.ARGB_8888)
             .handler(Handler())
 
-    override fun showRelease(release: ReleaseItem) {
+    override fun showRelease(release: ReleaseFull) {
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
@@ -203,15 +204,15 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     private val releaseListener = object : ReleaseAdapter.ReleaseListener {
-        override fun onClickSd(episode: ReleaseItem.Episode, position: Int) {
+        override fun onClickSd(episode: ReleaseFull.Episode, position: Int) {
             presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_SD)
         }
 
-        override fun onClickHd(episode: ReleaseItem.Episode, position: Int) {
+        override fun onClickHd(episode: ReleaseFull.Episode, position: Int) {
             presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_HD)
         }
 
-        override fun onClickEpisode(episode: ReleaseItem.Episode, position: Int) {
+        override fun onClickEpisode(episode: ReleaseFull.Episode, position: Int) {
             showQualityDialog({ quality ->
                 presenter.onPlayEpisodeClick(position, quality)
             })
@@ -230,14 +231,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         }
     }
 
-    override fun playEpisodes(release: ReleaseItem) {
+    override fun playEpisodes(release: ReleaseFull) {
 
         showQualityDialog({ quality ->
             presenter.onPlayEpisodeClick(release.episodes.lastIndex, quality)
         })
     }
 
-    override fun playEpisode(release: ReleaseItem, position: Int, quality: Int) {
+    override fun playEpisode(release: ReleaseFull, position: Int, quality: Int) {
         Log.e("SUKA", "playEpisode " + release.episodes.size)
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)

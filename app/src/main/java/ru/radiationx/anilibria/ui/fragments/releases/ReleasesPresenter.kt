@@ -6,8 +6,8 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
-import ru.radiationx.anilibria.data.repository.ReleasesRepository
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
+import ru.radiationx.anilibria.data.repository.ReleaseRepository
 import ru.radiationx.anilibria.ui.fragments.release.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -15,7 +15,7 @@ import ru.terrakok.cicerone.Router
 /* Created by radiationx on 05.11.17. */
 
 @InjectViewState
-class ReleasesPresenter(private val releasesRepository: ReleasesRepository,
+class ReleasesPresenter(private val releaseRepository: ReleaseRepository,
                         private val router: Router) : BasePresenter<ReleasesView>(router) {
     companion object {
         private const val START_PAGE = 1
@@ -39,7 +39,7 @@ class ReleasesPresenter(private val releasesRepository: ReleasesRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = releasesRepository.getReleases(pageNum)
+        val disposable = releaseRepository.getReleases(pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->

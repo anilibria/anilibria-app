@@ -2,22 +2,22 @@ package ru.radiationx.anilibria.data.api.modules
 
 import io.reactivex.Single
 import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.mappers.ArticlesMapper
-import ru.radiationx.anilibria.data.api.models.ArticleFull
-import ru.radiationx.anilibria.data.api.models.ArticleItem
 import ru.radiationx.anilibria.data.api.models.Paginated
+import ru.radiationx.anilibria.data.api.models.article.ArticleFull
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
+import ru.radiationx.anilibria.data.api.parsers.ArticleParser
 import ru.radiationx.anilibria.data.client.IClient
 
 /**
  * Created by radiationx on 18.12.17.
  */
-class Articles(private val client: IClient) {
+class ArticleApi(private val client: IClient) {
 
     fun getArticle(articleUrl: String): Single<ArticleFull> {
         val args: MutableMap<String, String> = mutableMapOf()
         val url = "${Api.BASE_URL}$articleUrl"
         return client.get(url, args)
-                .map { ArticlesMapper.article(it) }
+                .map { ArticleParser.article(it) }
     }
 
     fun getArticles(category: String, subCategory: String, page: Int): Single<Paginated<List<ArticleItem>>> {
@@ -33,7 +33,7 @@ class Articles(private val client: IClient) {
         }
 
         return client.get(url, args)
-                .map { ArticlesMapper.articles(it) }
+                .map { ArticleParser.articles(it) }
     }
 
 }

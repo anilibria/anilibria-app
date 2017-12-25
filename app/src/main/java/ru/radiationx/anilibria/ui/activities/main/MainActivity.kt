@@ -60,7 +60,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         initBottomTabs()
 
         if (savedInstanceState == null) {
-            presenter.selectTab(Screens.MAIN_ARTICLES)
+            presenter.selectTab(Screens.MAIN_RELEASES)
         }
     }
 

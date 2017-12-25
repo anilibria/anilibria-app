@@ -6,9 +6,8 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.data.api.Api
-import ru.radiationx.anilibria.data.api.models.ArticleItem
-import ru.radiationx.anilibria.data.repository.ArticlesRepository
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
+import ru.radiationx.anilibria.data.repository.ArticleRepository
 import ru.radiationx.anilibria.ui.fragments.article.ArticleFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -17,14 +16,14 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 18.12.17.
  */
 @InjectViewState
-open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
+open class ArticlesPresenter(private val articleRepository: ArticleRepository,
                              private val router: Router) : BasePresenter<ArticlesView>(router) {
     companion object {
         private const val START_PAGE = 1
     }
 
     private var currentPage = START_PAGE
-    //open var category = Api.Companion.CATEGORY_NEWS
+    //open var category = Api.CATEGORY_NEWS
     open var category = ""
     open protected var subCategory = ""
 
@@ -51,7 +50,7 @@ open class ArticlesPresenter(private val articlesRepository: ArticlesRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = articlesRepository.getArticles(category, subCategory, page)
+        val disposable = articleRepository.getArticles(category, subCategory, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->

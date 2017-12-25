@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ArticleItem
+import ru.radiationx.anilibria.data.api.models.article.ArticleItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -38,7 +38,7 @@ class VideosFragment : BaseFragment(), VideosView, SharedProvider, ArticlesAdapt
 
     @ProvidePresenter
     fun provideVideosPresenter(): VideosPresenter {
-        return VideosPresenter(App.injections.articlesRepository,
+        return VideosPresenter(App.injections.articleRepository,
                 (parentFragment as RouterProvider).router)
     }
 

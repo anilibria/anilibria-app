@@ -11,11 +11,10 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.ReleaseItem
+import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
-import java.util.*
 
 /* Created by radiationx on 05.11.17. */
 
@@ -28,7 +27,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
 
     @ProvidePresenter
     fun provideReleasesPresenter(): ReleasesPresenter {
-        return ReleasesPresenter(App.injections.releasesRepository,
+        return ReleasesPresenter(App.injections.releaseRepository,
                 (parentFragment as RouterProvider).router)
     }
 
@@ -74,11 +73,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
         adapter.endless = enable
     }
 
-    override fun showReleases(releases: ArrayList<ReleaseItem>) {
+    override fun showReleases(releases: List<ReleaseItem>) {
         adapter.bindItems(releases)
     }
 
-    override fun insertMore(releases: ArrayList<ReleaseItem>) {
+    override fun insertMore(releases: List<ReleaseItem>) {
         adapter.insertMore(releases)
     }
 

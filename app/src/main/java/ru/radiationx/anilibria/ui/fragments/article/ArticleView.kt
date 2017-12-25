@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.article
 
-import ru.radiationx.anilibria.data.api.models.ArticleFull
+import ru.radiationx.anilibria.data.api.models.article.ArticleFull
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /**

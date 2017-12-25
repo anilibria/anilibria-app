@@ -8,15 +8,16 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by radiationx on 14.09.17.
  */
 
 public abstract class BaseAdapter<E, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
-    public ArrayList<E> items = new ArrayList<>();
+    public List<E> items = new ArrayList<>();
 
-    public void setItems(ArrayList<E> items) {
+    public void setItems(List<E> items) {
         clear();
         this.items = items;
     }

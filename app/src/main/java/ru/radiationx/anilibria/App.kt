@@ -13,11 +13,14 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.data.api.Api
+import ru.radiationx.anilibria.data.api.modules.ArticleApi
+import ru.radiationx.anilibria.data.api.modules.ReleaseApi
+import ru.radiationx.anilibria.data.api.modules.SearchApi
 import ru.radiationx.anilibria.data.client.Client
 import ru.radiationx.anilibria.data.client.IClient
-import ru.radiationx.anilibria.data.repository.ArticlesRepository
-import ru.radiationx.anilibria.data.repository.ReleasesRepository
+import ru.radiationx.anilibria.data.repository.ArticleRepository
+import ru.radiationx.anilibria.data.repository.ReleaseRepository
+import ru.radiationx.anilibria.data.repository.SearchRepository
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -75,11 +78,14 @@ class App : Application() {
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
     class Injections {
-        val client: IClient = Client()
-        val api: Api = Api(client)
+        private val client: IClient = Client()
+        var articleApi = ArticleApi(client)
+        var releaseApi = ReleaseApi(client)
+        var searchApi = SearchApi(client)
 
-        val releasesRepository = ReleasesRepository(api)
-        val articlesRepository = ArticlesRepository(api)
+        val articleRepository = ArticleRepository(articleApi)
+        val releaseRepository = ReleaseRepository(releaseApi)
+        val searchRepository = SearchRepository(searchApi)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

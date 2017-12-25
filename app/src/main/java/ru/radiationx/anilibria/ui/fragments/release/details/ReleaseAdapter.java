@@ -160,7 +160,7 @@ public class ReleaseAdapter extends BaseAdapter<ReleaseFull, BaseViewHolder> {
                 }
             });*/
             title.setText(release.getTitle());
-            desc.setText(release.getDescription());
+            desc.setText(Html.fromHtml(release.getDescription()));
             torrentButton.setEnabled(true);
             if (tagContainer.getTags().isEmpty()) {
                 for (String genre : release.getGenres()) {

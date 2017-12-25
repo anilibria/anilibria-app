@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
 import android.os.Build
+import android.text.Html
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -81,7 +82,7 @@ class ReleasesAdapter : BaseAdapter<ReleaseItem, BaseViewHolder<*>>() {
 
         override fun bind(item: ReleaseItem, position: Int) {
             title.text = String.format("%s (%s)", item.title, item.episodesCount)
-            desc.text = item.description
+            desc.text = Html.fromHtml(item.description)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
             }

@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.entity.app.release
 
 import java.io.Serializable
 
-class ReleaseFull() : ReleaseItem() {
+class ReleaseFull() : ReleaseItem(), Serializable {
 
     constructor(item: ReleaseItem) : this() {
         id = item.id

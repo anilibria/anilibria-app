@@ -73,7 +73,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             item.link = Api.BASE_URL + jsonItem.getString("link")
             item.image = Api.BASE_URL_IMAGES + jsonItem.getString("image")
             item.episodesCount = jsonItem.getString("episode")
-            item.description = apiUtils.toHtml(jsonItem.getString("description").trim())
+            item.description = jsonItem.getString("description").trim()
 
             val jsonSeasons = jsonItem.getJSONArray("season")
             for (j in 0 until jsonSeasons.length()) {
@@ -123,7 +123,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         //item.setLink(responseJson.getString("link"));
         release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
-        release.description = apiUtils.toHtml(responseJson.getString("description").trim())
+        release.description = responseJson.getString("description").trim()
 
         val jsonSeasons = responseJson.getJSONArray("season")
         for (j in 0 until jsonSeasons.length()) {

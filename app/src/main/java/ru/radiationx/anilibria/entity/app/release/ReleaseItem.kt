@@ -12,7 +12,7 @@ open class ReleaseItem : Serializable {
     var link: String? = null
     var image: String? = null
     var episodesCount: String? = null
-    var description: String? = null
+    var description: CharSequence? = null
     val seasons = mutableListOf<String>()
     val voices = mutableListOf<String>()
     val genres = mutableListOf<String>()

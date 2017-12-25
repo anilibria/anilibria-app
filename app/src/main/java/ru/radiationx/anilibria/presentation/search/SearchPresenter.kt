@@ -35,7 +35,7 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
     }
 
     fun fastSearch(query: String) {
-        val disposable = searchRepository.fastSearch(query)
+        searchRepository.fastSearch(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
@@ -47,11 +47,11 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     private fun loadGenres() {
-        val disposable = releaseRepository.getGenres()
+        releaseRepository.getGenres()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
@@ -63,7 +63,7 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()
@@ -80,7 +80,7 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+        searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
@@ -97,7 +97,7 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     fun refreshReleases() {

@@ -39,7 +39,7 @@ class ReleasesPresenter(private val releaseRepository: ReleaseRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        val disposable = releaseRepository.getReleases(pageNum)
+        releaseRepository.getReleases(pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
@@ -56,7 +56,7 @@ class ReleasesPresenter(private val releaseRepository: ReleaseRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     fun refreshReleases() {

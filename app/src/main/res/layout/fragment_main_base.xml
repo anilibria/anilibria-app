@@ -51,10 +51,11 @@
                     android:visibility="gone"
                     android:paddingTop="8dp">
 
-                    <Spinner
+                    <android.support.v7.widget.AppCompatSpinner
                         android:id="@+id/spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
                 </FrameLayout>
 
 

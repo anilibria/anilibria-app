@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import android.text.Html
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
@@ -8,13 +7,14 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.
  */
-object ReleaseParser {
+class ReleaseParser(private val apiUtils: IApiUtils) {
 
     private val fastSearchPatternSource = "<a[^>]*?href=\"[^\"]*?\\/release\\/[^\"]*?\"[^>]*?>[^<]*?<img[^>]*?>([\\s\\S]*?) \\/ ([\\s\\S]*?)(?:<\\/a>[^>]*?)?<\\/td>"
 
@@ -44,7 +44,7 @@ object ReleaseParser {
         for (i in 0 until jsonItems.length()) {
             val genreText = jsonItems.getString(i)
             val genreItem = GenreItem().apply {
-                title = genreText.substring(0, 1).toUpperCase() + genreText.substring(1);
+                title = genreText.substring(0, 1).toUpperCase() + genreText.substring(1)
                 value = genreText
             }
             result.add(genreItem)
@@ -63,9 +63,9 @@ object ReleaseParser {
 
             val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (titles.isNotEmpty()) {
-                item.originalTitle = Html.fromHtml(titles[0]).toString()
+                item.originalTitle = apiUtils.escapeHtml(titles[0])
                 if (titles.size > 1) {
-                    item.title = Html.fromHtml(titles[1]).toString()
+                    item.title = apiUtils.escapeHtml(titles[1])
                 }
             }
 
@@ -73,7 +73,7 @@ object ReleaseParser {
             item.link = Api.BASE_URL + jsonItem.getString("link")
             item.image = Api.BASE_URL_IMAGES + jsonItem.getString("image")
             item.episodesCount = jsonItem.getString("episode")
-            item.description = Html.fromHtml(jsonItem.getString("description")).toString().trim()
+            item.description = apiUtils.toHtml(jsonItem.getString("description").trim())
 
             val jsonSeasons = jsonItem.getJSONArray("season")
             for (j in 0 until jsonSeasons.length()) {
@@ -112,10 +112,10 @@ object ReleaseParser {
         //item.setId(responseJson.getInt("id"));
 
         val titles = responseJson.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (titles.size > 0) {
-            release.originalTitle = Html.fromHtml(titles[0]).toString()
+        if (titles.isNotEmpty()) {
+            release.originalTitle = apiUtils.escapeHtml(titles[0])
             if (titles.size > 1) {
-                release.title = Html.fromHtml(titles[1]).toString()
+                release.title = apiUtils.escapeHtml(titles[1])
             }
         }
 
@@ -123,7 +123,7 @@ object ReleaseParser {
         //item.setLink(responseJson.getString("link"));
         release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
-        release.description = Html.fromHtml(responseJson.getString("description")).toString().trim()
+        release.description = apiUtils.toHtml(responseJson.getString("description").trim())
 
         val jsonSeasons = responseJson.getJSONArray("season")
         for (j in 0 until jsonSeasons.length()) {

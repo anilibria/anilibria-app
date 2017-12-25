@@ -38,7 +38,7 @@ class ReleasePresenter(private val releaseRepository: ReleaseRepository,
     }
 
     private fun loadRelease() {
-        val disposable = releaseRepository.getRelease(releaseId)
+        releaseRepository.getRelease(releaseId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ release ->
@@ -51,7 +51,7 @@ class ReleasePresenter(private val releaseRepository: ReleaseRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     fun onTorrentClick() {

@@ -45,29 +45,25 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
     }
 
     private fun loadPage(page: Int) {
-        Log.e("SUKA", "loadPage")
         currentPage = page
-        if (isFirstPage()) {
-            viewState.setRefreshing(true)
-        }
-        val disposable = articleRepository.getArticles(category, subCategory, page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        articleRepository.getArticles(category, subCategory, page)
+                .doOnTerminate {
+                    if (isFirstPage()) {
+                        viewState.setRefreshing(true)
+                    }
+                }
+                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
-                    Log.d("SUKA", "subscribe call show " + releaseItems.current + " : " + releaseItems.allPages + " : " + releaseItems.data.size)
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
-                        viewState.setRefreshing(false)
                         viewState.showArticles(releaseItems.data)
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
                 }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 
     fun refresh() {

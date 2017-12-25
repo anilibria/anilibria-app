@@ -1,18 +1,17 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import android.text.Html
-import android.util.Log
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleFull
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.
  */
-object ArticleParser {
+class ArticleParser(private val apiUtils: IApiUtils) {
 
     /*
     * 1.    Int     Какой-то айдишник битриксовский
@@ -36,12 +35,14 @@ object ArticleParser {
     * */
     private val paginationPatternSource = "<div[^>]*?class=\"[^\"]*?bx_pagination_page[^\"]*?\"[^>]*?>[\\s\\S]*?<li[^>]*?class=\"bx_active\"[^>]*?>(\\d+)<\\/li>[\\s\\S]*?<li><a[^>]*?>(\\d+)<\\/a><\\/li>[^<]*?<li><a[^>]*?>&#8594;<\\/a>"
 
+    /*
+    * 1.    String  Заголовок
+    * 2.    String  Контент
+    * 3.    Int     Id юзера
+    * 4.    String  Ник юзера
+    * 5.    String  Дата
+    * */
     private val fullArticlePatternSource = "<div[^>]*?class=\"[^\"]*?news-detail-header[^\"]*?\"[^>]*?>[^<]*?<h1[^>]*?>([\\s\\S]*?)<\\/h1>[^<]*?<\\/div>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?news-detail-content[^\"]*?\"[^>]*?>([\\s\\S]*?)(?:<a[^>]*?id=\"back-to-list\"[^>]*?>[\\s\\S]*?<\\/a>[^<]*?)?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?news-detail-footer[^\"]*?\"[^>]*?>[^<]*?<span[^>]*?>[\\s\\S]*?<a[^>]*?href=\"[^\"]*?(\\d+)[^\"]*?\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/span>[\\s\\S]*?<span[^>]*?>[^<]*?<i[^>]*?>([\\s\\S]*?)<\\/i>[\\s\\S]*?<\\/span>"
-
-    private val youtubeLink = "(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?"
-    private val iframeYT = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/|be.com\\/embed\\/)([\\w\\-\\_]*)(&(amp;)[\\w\\=]*)?[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
-    private val iframeVK = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?vk\\.com\\/video_ext\\.php\\?oid=([^&\"]*?)&id=([^&\"]*?)(&hash[^\"]*?)?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
-    private val alibBordLine = "<img[^>]*?src=\"[^\"]*?borderline\\.[^\"]*?\"[^>]*?>"
 
     private val listPattern: Pattern by lazy {
         Pattern.compile(listPatternSource, Pattern.CASE_INSENSITIVE)
@@ -62,9 +63,9 @@ object ArticleParser {
             items.add(ArticleItem().apply {
                 elementId = matcher.group(1).toInt()
                 url = matcher.group(2)
-                title = Html.fromHtml(matcher.group(3)).toString()
+                title = apiUtils.escapeHtml(matcher.group(3)).orEmpty()
                 userId = matcher.group(4).toInt()
-                userNick = Html.fromHtml(matcher.group(5)).toString()
+                userNick = apiUtils.escapeHtml(matcher.group(5)).orEmpty()
                 imageUrl = Api.BASE_URL_IMAGES + matcher.group(6)
                 imageWidth = matcher.group(7).toInt()
                 imageHeight = matcher.group(8).toInt()
@@ -91,17 +92,13 @@ object ArticleParser {
         val matcher: Matcher = fullPattern.matcher(httpResponse)
         if (matcher.find()) {
             result.apply {
-                title = Html.fromHtml(matcher.group(1)).toString()
+                title = apiUtils.escapeHtml(matcher.group(1)).orEmpty()
                 content = matcher.group(2).trim()
                 userId = matcher.group(3).toInt()
-                userNick = Html.fromHtml(matcher.group(4)).toString()
+                userNick = apiUtils.escapeHtml(matcher.group(1)).orEmpty()
                 date = matcher.group(5)
             }
         }
-        result.content = result.content.replace(Regex(iframeYT), "<div class=\"alib_button yt\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
-        result.content = result.content.replace(Regex(iframeVK), "<div class=\"alib_button vk\"><a href=\"https://vk.com/video?z=video$1_$2$3\">Смотреть в VK</a></div>")
-        result.content = result.content.replace(Regex(alibBordLine), "<div class=\"alib_borderline\">$0</div>")
-        Log.e("SUKA", "PARSED :" + result.title)
         return result
     }
 }

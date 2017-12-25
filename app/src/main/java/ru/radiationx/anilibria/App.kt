@@ -13,6 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
 import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
@@ -20,6 +21,9 @@ import ru.radiationx.anilibria.model.data.remote.api.SearchApi
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
+import ru.radiationx.anilibria.model.system.ApiUtils
+import ru.radiationx.anilibria.model.system.AppSchedulers
+import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -77,14 +81,17 @@ class App : Application() {
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
     class Injections {
+        private val schedulers: SchedulersProvider = AppSchedulers()
         private val client: IClient = Client()
-        var articleApi = ArticleApi(client)
-        var releaseApi = ReleaseApi(client)
-        var searchApi = SearchApi(client)
+        private val apiUtils: IApiUtils = ApiUtils()
 
-        val articleRepository = ArticleRepository(articleApi)
-        val releaseRepository = ReleaseRepository(releaseApi)
-        val searchRepository = SearchRepository(searchApi)
+        var articleApi = ArticleApi(client, apiUtils)
+        var releaseApi = ReleaseApi(client, apiUtils)
+        var searchApi = SearchApi(client, apiUtils)
+
+        val articleRepository = ArticleRepository(schedulers, articleApi)
+        val releaseRepository = ReleaseRepository(schedulers, releaseApi)
+        val searchRepository = SearchRepository(schedulers, searchApi)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

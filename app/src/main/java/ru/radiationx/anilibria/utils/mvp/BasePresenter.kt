@@ -13,15 +13,15 @@ import ru.terrakok.cicerone.Router
 
 
 open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPresenter<ViewT>() {
-    private val disposables = CompositeDisposable()
+
+    private var compositeDisposable = CompositeDisposable()
 
     override fun onDestroy() {
-        if (!disposables.isDisposed)
-            disposables.dispose()
+        compositeDisposable.dispose()
     }
 
-    protected fun addDisposable(disposable: Disposable) {
-        disposables.add(disposable)
+    fun Disposable.addToDisposable() {
+        compositeDisposable.add(this)
     }
 
     fun onBackPressed() {

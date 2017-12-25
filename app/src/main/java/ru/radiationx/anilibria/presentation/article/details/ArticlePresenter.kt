@@ -32,9 +32,7 @@ class ArticlePresenter(private val articleRepository: ArticleRepository,
     fun loadArticle(articleUrl: String) {
         Log.e("SUKA", "loadArticle")
         viewState.setRefreshing(true)
-        val disposable = articleRepository.getArticle(articleUrl)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        articleRepository.getArticle(articleUrl)
                 .subscribe({ article ->
                     viewState.setRefreshing(false)
                     viewState.showArticle(article)
@@ -43,6 +41,6 @@ class ArticlePresenter(private val articleRepository: ArticleRepository,
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
-        addDisposable(disposable)
+                .addToDisposable()
     }
 }

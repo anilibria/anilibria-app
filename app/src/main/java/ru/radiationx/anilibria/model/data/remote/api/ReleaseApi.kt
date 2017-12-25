@@ -6,12 +6,16 @@ import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 
 /* Created by radiationx on 31.10.17. */
 
-class ReleaseApi(private val client: IClient) {
+class ReleaseApi(private val client: IClient,
+                 apiUtils: IApiUtils) {
+
+    private val releaseParser = ReleaseParser(apiUtils)
 
     fun getRelease(releaseId: Int): Single<ReleaseFull> {
         val args: MutableMap<String, String> = mutableMapOf(
@@ -19,19 +23,19 @@ class ReleaseApi(private val client: IClient) {
                 "ELEMENT_ID" to releaseId.toString()
         )
         return client.get(Api.API_URL, args)
-                .map { ReleaseParser.release(it) }
+                .map { releaseParser.release(it) }
     }
 
     fun getGenres(): Single<List<GenreItem>> {
         val args: MutableMap<String, String> = mutableMapOf("action" to "tags")
         return client.get(Api.API_URL, args)
-                .map { ReleaseParser.genres(it) }
+                .map { releaseParser.genres(it) }
     }
 
     fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf("PAGEN_1" to page.toString())
         return client.get(Api.API_URL, args)
-                .map { ReleaseParser.releases(it) }
+                .map { releaseParser.releases(it) }
     }
 
 }

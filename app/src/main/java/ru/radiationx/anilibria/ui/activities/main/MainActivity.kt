@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.presentation.main.MainPresenter
+import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment

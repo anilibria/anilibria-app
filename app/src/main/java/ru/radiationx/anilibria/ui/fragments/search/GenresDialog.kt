@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.release.GenreItem
+import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
 

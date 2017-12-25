@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.ui.adapters.BaseAdapter
 import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
 

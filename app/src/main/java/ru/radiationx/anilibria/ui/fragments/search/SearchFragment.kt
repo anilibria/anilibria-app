@@ -11,13 +11,15 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.data.api.models.release.GenreItem
-import ru.radiationx.anilibria.data.api.models.release.ReleaseItem
-import ru.radiationx.anilibria.data.api.models.search.SearchItem
+import ru.radiationx.anilibria.entity.app.release.GenreItem
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.presentation.search.SearchPresenter
+import ru.radiationx.anilibria.presentation.search.SearchView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
-import ru.radiationx.anilibria.ui.fragments.releases.ReleasesAdapter
+import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 

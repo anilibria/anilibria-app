@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 
 android {
@@ -62,7 +63,6 @@ dependencies {
     implementation 'com.arello-mobile:moxy:1.5.3'
     implementation 'com.arello-mobile:moxy-app-compat:1.5.3'
     kapt 'com.arello-mobile:moxy-compiler:1.5.3'
-    annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.3'
     implementation 'ru.terrakok.cicerone:cicerone:2.1.0'
     implementation 'com.github.ittianyu:BottomNavigationViewEx:1.2.4'
     implementation 'com.github.Cutta:TagView:1.3'

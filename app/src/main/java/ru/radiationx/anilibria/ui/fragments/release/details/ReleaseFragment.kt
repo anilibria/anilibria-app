@@ -147,6 +147,28 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        Log.e("SUKA", "RELEASE onDetach")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("SUKA", "RELEASE onPause")
+    }
+
+    override fun onDestroyView() {
+        //toolbarImage.alpha = 0f
+        super.onDestroyView()
+        Log.e("SUKA", "RELEASE onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("SUKA", "RELEASE onDestroy")
+    }
+
     private fun setupContentAnimation() {
         val animation1 = TranslateAnimation(0f, 0f, resources.displayMetrics.density * 100, 0f);
         animation1.duration = TabFragment.TRANSITION_MOVE_TIME;

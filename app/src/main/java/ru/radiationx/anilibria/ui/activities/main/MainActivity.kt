@@ -1,11 +1,19 @@
 package ru.radiationx.anilibria.ui.activities.main
 
 import android.os.Bundle
+import android.support.transition.Fade
+import android.support.transition.Slide
+import android.support.transition.TransitionSet
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -167,6 +175,62 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     private val navigatorNew = object : Navigator {
 
+        protected fun setupFragmentTransactionAnimation(command: Command,
+                                                        currentFragment: Fragment,
+                                                        nextFragment: Fragment,
+                                                        fragmentTransaction: FragmentTransaction) {
+            val exitFade = Fade(Fade.MODE_OUT)
+            //exitFade.startDelay = TabFragment.TRANSITION_OTHER_TIME
+
+            val enterFade = Fade(Fade.MODE_IN)
+            //enterFade.startDelay = TabFragment.TRANSITION_OTHER_TIME
+
+            val exitSlide = Slide()
+            exitSlide.slideEdge = Gravity.START
+            exitSlide.interpolator = LinearInterpolator()
+            //exitSlide.startDelay = TabFragment.TRANSITION_OTHER_TIME
+
+            val enterSlide = Slide()
+            enterSlide.slideEdge = Gravity.END
+            enterSlide.interpolator = LinearInterpolator()
+            //enterSlide.startDelay = TabFragment.TRANSITION_OTHER_TIME
+
+            val exitTransitionSet = TransitionSet()
+            exitTransitionSet.duration = TabFragment.TRANSITION_MOVE_TIME
+            exitTransitionSet.interpolator = LinearInterpolator()
+            exitTransitionSet.addTransition(exitSlide)
+            exitTransitionSet.addTransition(exitFade)
+
+            val enterTransitionSet = TransitionSet()
+            enterTransitionSet.duration = TabFragment.TRANSITION_MOVE_TIME
+            enterTransitionSet.interpolator = LinearInterpolator()
+            enterTransitionSet.addTransition(enterSlide)
+            enterTransitionSet.addTransition(enterFade)
+
+            val currentIndex: Int = tabs.indexOfLast { it.screenKey == currentFragment.tag }
+            val nextIndex: Int = tabs.indexOfLast { it.screenKey == nextFragment.tag }
+
+
+            Log.e("SUKA", "CHECK INDEXES $currentIndex < $nextIndex")
+
+            if (currentIndex < nextIndex) {
+                currentFragment.exitTransition = exitTransitionSet
+                nextFragment.enterTransition = enterTransitionSet
+
+                currentFragment.enterTransition = enterTransitionSet
+                nextFragment.exitTransition = exitTransitionSet
+
+            } else {
+                currentFragment.exitTransition = enterTransitionSet
+                nextFragment.enterTransition = exitTransitionSet
+
+                currentFragment.enterTransition = exitTransitionSet
+                nextFragment.exitTransition = enterTransitionSet
+            }
+
+
+        }
+
         override fun applyCommand(command: Command) {
             Log.e("SUKA", "ApplyCommand " + command)
             if (command is Back) {
@@ -191,6 +255,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 Log.e("SUKA", "Replace " + command.screenKey)
                 val fm = supportFragmentManager
                 val ta = fm.beginTransaction()
+                var currentFragment: Fragment? = null
+                if (tabsStack.isNotEmpty()) {
+                    currentFragment = fm.findFragmentByTag(tabsStack.last())
+                }
+
                 tabs.forEach {
                     val fragment = fm.findFragmentByTag(it.screenKey)
                     if (it.screenKey == command.screenKey) {
@@ -199,6 +268,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                         }
                         ta.show(fragment)
                         addInStack(it.screenKey)
+                        currentFragment?.let {
+                            setupFragmentTransactionAnimation(command, it, fragment, ta)
+                        }
                         Log.e("SUKA", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                     } else {
                         ta.hide(fragment)

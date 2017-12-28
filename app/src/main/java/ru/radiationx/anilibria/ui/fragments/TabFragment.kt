@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.support.transition.*
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.view.ViewCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +36,8 @@ import ru.terrakok.cicerone.commands.Forward
 class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
     companion object {
-        val TRANSITION_MOVE_TIME: Long = 375
-        val TRANSITION_OTHER_TIME: Long = 225
+        val TRANSITION_MOVE_TIME: Long = 2000
+        val TRANSITION_OTHER_TIME: Long = 1000
 
         private val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
@@ -170,39 +172,56 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         val currentFragment = sharedProvider as Fragment
         val nextFragment = sharedReceiver as Fragment
 
-        val exitFade = Fade()
-        exitFade.duration = TRANSITION_OTHER_TIME
+        //val exitFade = Fade()
+        //exitFade.duration = TRANSITION_OTHER_TIME
 
-        val enterFade = Fade()
-        enterFade.duration = TRANSITION_OTHER_TIME
+        //val enterFade = Fade()
+        //enterFade.duration = TRANSITION_OTHER_TIME
 
-        nextFragment.enterTransition = enterFade
+        //nextFragment.enterTransition = enterFade
+        //fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+
+        nextFragment.enterTransition = Slide().apply {
+            slideEdge = Gravity.BOTTOM
+            duration = TRANSITION_OTHER_TIME
+        }
+        currentFragment.exitTransition = AutoTransition().apply {
+            //slideEdge = Gravity.BOTTOM
+            duration = TRANSITION_OTHER_TIME
+            startDelay = 0
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            currentFragment.exitTransition = enterFade
+            //currentFragment.exitTransition = enterFade
 
             val enterTransitionSet = TransitionSet()
             enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
             enterTransitionSet.setPathMotion(ArcMotion())
-            enterTransitionSet.interpolator = FastOutSlowInInterpolator()
+            //enterTransitionSet.interpolator = FastOutSlowInInterpolator()
             enterTransitionSet.duration = TRANSITION_MOVE_TIME
             //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
             nextFragment.sharedElementEnterTransition = enterTransitionSet
+            nextFragment.enterTransition = enterTransitionSet
 
             enterTransitionSet.addListener(object : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition) {
-                    nextFragment.apply {
+                    /*nextFragment.apply {
                         enterTransition = if (enterTransition == enterFade) exitFade else enterFade
-                    }
+                    }*/
+                    /*currentFragment.exitTransition = Fade().apply {
+                        duration = TRANSITION_OTHER_TIME
+                    }*/
                 }
 
                 override fun onTransitionResume(transition: Transition) {}
                 override fun onTransitionPause(transition: Transition) {}
                 override fun onTransitionCancel(transition: Transition) {}
-                override fun onTransitionStart(transition: Transition) {}
+                override fun onTransitionStart(transition: Transition) {
+                    //ViewCompat.setTranslationZ(nextFragment.view, 1f)
+                }
             })
         } else {
-            currentFragment.exitTransition = exitFade
+            //currentFragment.exitTransition = exitFade
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

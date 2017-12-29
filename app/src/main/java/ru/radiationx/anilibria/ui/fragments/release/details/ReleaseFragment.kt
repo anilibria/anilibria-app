@@ -159,7 +159,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun onDestroyView() {
-        //toolbarImage.alpha = 0f
+        toolbarImage.alpha = 0f
         super.onDestroyView()
         Log.e("SUKA", "RELEASE onDestroyView")
     }

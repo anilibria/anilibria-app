@@ -65,7 +65,6 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
-        view.setBackgroundColor(Color.MAGENTA)
     }
 
     override fun onDetach() {

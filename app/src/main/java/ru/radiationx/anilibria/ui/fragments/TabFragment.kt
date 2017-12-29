@@ -181,27 +181,32 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
         //nextFragment.enterTransition = enterFade
         //fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
 
-        nextFragment.enterTransition = Slide().apply {
-            slideEdge = Gravity.BOTTOM
-            duration = TRANSITION_OTHER_TIME
-        }
-        currentFragment.exitTransition = AutoTransition().apply {
+        /*currentFragment.exitTransition = AutoTransition().apply {
             //slideEdge = Gravity.BOTTOM
+            startDelay = TRANSITION_OTHER_TIME
+        }*/
+
+        nextFragment.enterTransition = Slide().apply {
+            slideEdge = Gravity.RIGHT
             duration = TRANSITION_OTHER_TIME
-            startDelay = 0
         }
+
+        //currentFragment.allowEnterTransitionOverlap = false
+        //currentFragment.allowReturnTransitionOverlap = false
+
+        nextFragment.allowEnterTransitionOverlap = true
+        nextFragment.allowReturnTransitionOverlap = true
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //currentFragment.exitTransition = enterFade
 
             val enterTransitionSet = TransitionSet()
             enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
-            enterTransitionSet.setPathMotion(ArcMotion())
+            //enterTransitionSet.setPathMotion(ArcMotion())
             //enterTransitionSet.interpolator = FastOutSlowInInterpolator()
             enterTransitionSet.duration = TRANSITION_MOVE_TIME
             //enterTransitionSet.startDelay = TRANSITION_OTHER_TIME
             nextFragment.sharedElementEnterTransition = enterTransitionSet
-            nextFragment.enterTransition = enterTransitionSet
 
             enterTransitionSet.addListener(object : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition) {

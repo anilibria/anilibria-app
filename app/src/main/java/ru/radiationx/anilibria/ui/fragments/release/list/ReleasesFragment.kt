@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -65,27 +64,6 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.e("SUKA", "RELEASE LIST onDetach")
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("SUKA", "RELEASE LIST onPause")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e("SUKA", "RELEASE LIST onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("SUKA", "RELEASE LIST onDestroy")
     }
 
     override fun onBackPressed(): Boolean {

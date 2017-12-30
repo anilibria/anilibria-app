@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/root_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <!--
+        Эта вьюха нужна, чтобы фрагменты нормально вставлялись.
+        Если её не будет, то нулевой фрагмент не уйдёт под статусбар, а другие будут норм.
+        А с этой вьюхой получается, что она не уходит под сб, а фрагменты уходят.
+    -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true" />
+    </android.support.design.widget.CoordinatorLayout>
+    <!--
+        Эта вьюха нужна для различных измерений
+    -->
+    <View
+        android:id="@+id/view_for_measure"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</android.support.design.widget.CoordinatorLayout>
+

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -14,17 +15,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
+import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.commands.Back
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Replace
-import ru.terrakok.cicerone.commands.SystemMessage
+import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.terrakok.cicerone.commands.*
+import java.util.regex.Pattern
 
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
@@ -49,18 +51,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     @ProvidePresenter
     fun provideMainPresenter(): MainPresenter {
-        return MainPresenter(router)
+        return MainPresenter(router, App.injections.authRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val window = window
-        val winParams = window.attributes
-        winParams.flags = winParams.flags and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS.inv()
-        window.attributes = winParams
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         initContainers()
         initBottomTabs()
@@ -70,10 +66,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 tabsStack.addAll(it)
             }
         }
+        Log.e("SUKA", "main oncreate")
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             presenter.selectTab(Screens.MAIN_RELEASES)
-        }
+        }*/
     }
 
     override fun onResume() {
@@ -155,7 +152,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
     }
 
-
     fun addInStack(screenKey: String) {
         tabsStack.remove(screenKey)
         tabsStack.add(screenKey)
@@ -165,7 +161,22 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         tabsStack.remove(screenKey)
     }
 
-    private val navigatorNew = object : Navigator {
+    private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
+        override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
+            Log.e("SUKA", "Create intent " + screenKey)
+            return when (screenKey) {
+                Screens.AUTH -> {
+                    Log.e("SUKA", "REAL CREATE INTENT " + screenKey)
+                    Intent(this@MainActivity, AuthActivity::class.java)
+                }
+                else -> null
+            }
+        }
+
+        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
+            Log.e("SUKA", "Create fragment " + screenKey)
+            return null
+        }
 
         override fun applyCommand(command: Command) {
             Log.e("SUKA", "ApplyCommand " + command)
@@ -185,8 +196,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 } else {
                     finish()
                 }
+                return
             } else if (command is SystemMessage) {
                 Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
+                return
             } else if (command is Replace) {
                 Log.e("SUKA", "Replace " + command.screenKey)
                 val fm = supportFragmentManager
@@ -205,7 +218,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                     }
                 }
                 ta.commitNow()
+                return
             }
+
+            Log.e("SUKA", "sector clear")
+            super.applyCommand(command)
         }
     }
 

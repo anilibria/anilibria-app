@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
@@ -13,12 +14,18 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.model.data.holders.AuthHolder
+import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
+import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
 import ru.radiationx.anilibria.model.data.remote.api.SearchApi
+import ru.radiationx.anilibria.model.data.storage.AuthStorage
+import ru.radiationx.anilibria.model.data.storage.CookiesStorage
 import ru.radiationx.anilibria.model.repository.ArticleRepository
+import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.ApiUtils
@@ -50,7 +57,7 @@ class App : Application() {
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable)
             throwable.printStackTrace()
         }
-        injections = Injections()
+        injections = Injections(this)
         navigation = Navigation()
         findTemplate("article")?.let { articleTemplate = it }
         initImageLoader(this)
@@ -80,15 +87,22 @@ class App : Application() {
     }
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
-    class Injections {
-        private val schedulers: SchedulersProvider = AppSchedulers()
-        private val client: IClient = Client()
-        private val apiUtils: IApiUtils = ApiUtils()
+    class Injections(context: Context) {
+        val schedulers: SchedulersProvider = AppSchedulers()
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+        val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
+        val authHolder: AuthHolder = AuthStorage(sharedPreferences)
+
+        val client: IClient = Client(cookieHolder)
+        val apiUtils: IApiUtils = ApiUtils()
+
+        var authApi = AuthApi(client, apiUtils)
         var articleApi = ArticleApi(client, apiUtils)
         var releaseApi = ReleaseApi(client, apiUtils)
         var searchApi = SearchApi(client, apiUtils)
 
+        val authRepository = AuthRepository(schedulers, authApi, authHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)

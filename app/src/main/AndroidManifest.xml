@@ -20,6 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activities.auth.AuthActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"

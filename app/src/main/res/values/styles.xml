@@ -4,7 +4,8 @@
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- Чтобы не было видно статусбара -->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="actionModeBackground">@color/colorPrimary</item>

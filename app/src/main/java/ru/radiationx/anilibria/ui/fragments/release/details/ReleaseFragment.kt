@@ -147,6 +147,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         }
     }
 
+    override fun onDestroyView() {
+        //toolbarImage.alpha = 0f
+        super.onDestroyView()
+    }
+
     private fun setupContentAnimation() {
         val animation1 = TranslateAnimation(0f, 0f, resources.displayMetrics.density * 100, 0f);
         animation1.duration = TabFragment.TRANSITION_MOVE_TIME;

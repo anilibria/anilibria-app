@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.radiationx.anilibria.ui.activities.main.MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/root_container"
+    <include
+        layout="@layout/activity_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomTabs"/>
+        android:layout_above="@+id/bottomTabs" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_above="@+id/bottomTabs"
-        android:background="@drawable/pref_shadow_bottom"/>
+        android:background="@drawable/pref_shadow_bottom" />
 
     <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
         android:id="@+id/bottomTabs"
@@ -27,5 +26,5 @@
         android:background="@color/white"
         app:elevation="0dp"
         app:itemIconTint="@drawable/tab_item_state"
-        app:itemTextColor="@drawable/tab_item_state"/>
+        app:itemTextColor="@drawable/tab_item_state" />
 </RelativeLayout>

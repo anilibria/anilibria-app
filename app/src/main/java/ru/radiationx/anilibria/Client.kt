@@ -3,11 +3,13 @@ package ru.radiationx.anilibria
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
+import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
 import java.io.IOException
 
 
-class Client : IClient {
+class Client constructor(private val cookieHolder: CookieHolder) : IClient {
     companion object {
         const val METHOD_GET = "GET"
         const val METHOD_POST = "POST"
@@ -15,10 +17,28 @@ class Client : IClient {
         const val METHOD_DELETE = "DELETE"
     }
 
+    private val cookieJar = object : CookieJar {
+
+        override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+            for (cookie in cookies) {
+                if (cookie.value() == "deleted") {
+                    cookieHolder.removeCookie(cookie.name())
+                } else {
+                    cookieHolder.putCookie(url.toString(), cookie)
+                }
+            }
+        }
+
+        override fun loadForRequest(url: HttpUrl): List<Cookie> {
+            return cookieHolder.getCookies().values.map { it }
+        }
+    }
+
     private val client = OkHttpClient.Builder()
-            /*.addNetworkInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })*/
+            .addNetworkInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.HEADERS
+            })
+            .cookieJar(cookieJar)
             .build()
 
     override fun get(url: String, args: Map<String, String>): Single<String> = Single.fromCallable {
@@ -41,7 +61,7 @@ class Client : IClient {
         return when (method) {
             METHOD_POST -> {
                 val requestBody = FormBody.Builder()
-                        //.setType(MultipartBody.FORM)
+                //.setType(MultipartBody.FORM)
 
                 args.forEach {
                     Log.e("SUKA", "ADD PART " + it.key + " : " + it.value)

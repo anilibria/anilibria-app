@@ -24,10 +24,10 @@ class ArticleParser(private val apiUtils: IApiUtils) {
     * 8.    Int     Высота изображения
     * 9.    String^ Текстовый контент
     * 10.   String? Ссылка на "ВСЕ ВЫПУСКИ"
-    * 11.   Int     Просмотры
-    * 12.   Int     Комментарии
+    * 11.   Int^    Просмотры
+    * 12.   Int^    Комментарии
     * */
-    private val listPatternSource = "<div[^>]*?class=\"[^\"]*?news_block[^\"]*?\"[^>]*?id=\"bx_\\d+_(\\d+)\"[^>]*?>[\\s\\S]*?<h1[^>]*?class=\"[^\"]*?news-name[^\"]*?\"[^>]*?>[\\s\\S]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/h1>[\\s\\S]*?<span[^>]*?class=\"published\"[^>]*?>[\\s\\S]*?<a[^>]*?href=\"\\/user\\/(\\d+)\\/\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/span>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?news-content[^\"]*?\"[^>]*?>[\\s\\S]*?<a[^>]*>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?width=\"(\\d+)\"[^>]*?height=\"(\\d+)\"[^>]*?>[^<]*?<\\/a>[^<]*?<span[^>]*?class=\"news-preview-text\"[^>]*?>([\\s\\S]*?)<\\/span>[^<]*?<div[^>]*?class=\"block_fix\"[^>]*>[^<]*?<\\/div>[\\s\\S]*?<div[^>]*?class=\"news_footer\"[^>]*?>[^<]*?(?:<a[^>]*?>[\\s\\S]*?<\\/a>[^<]*?)?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<\\/a>)?[^<]*?<span[^>]*?>[^<]*?(\\d+)[^<]*?<\\/span>[^<]*?<span[^>]*?>[^<]*?(\\d+)[^<]*?<\\/span>"
+    private val listPatternSource = "<div[^>]*?class=\"[^\"]*?news_block[^\"]*?\"[^>]*?id=\"bx_\\d+_(\\d+)\"[^>]*?>[\\s\\S]*?<h1[^>]*?class=\"[^\"]*?news-name[^\"]*?\"[^>]*?>[\\s\\S]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/h1>[\\s\\S]*?<span[^>]*?class=\"published\"[^>]*?>[\\s\\S]*?<a[^>]*?href=\"\\/user\\/(\\d+)\\/\"[^>]*?>([\\s\\S]*?)<\\/a>[\\s\\S]*?<\\/span>[\\s\\S]*?<div[^>]*?class=\"[^\"]*?news-content[^\"]*?\"[^>]*?>[\\s\\S]*?<a[^>]*>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?width=\"(\\d+)\"[^>]*?height=\"(\\d+)\"[^>]*?>[^<]*?<\\/a>[^<]*?<span[^>]*?class=\"news-preview-text\"[^>]*?>([\\s\\S]*?)<\\/span>[^<]*?<div[^>]*?class=\"block_fix\"[^>]*>[^<]*?<\\/div>[\\s\\S]*?<div[^>]*?class=\"news_footer\"[^>]*?>[^<]*?(?:<a[^>]*?>[\\s\\S]*?<\\/a>[^<]*?)?(?:<a[^>]*?href=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<\\/a>)?[^<]*?<span[^>]*?>[^:]*?:\\s?([^<]*?)<\\/span>[^<]*?<span[^>]*?>[^:]*?:\\s?([^<]*?)<\\/span>"
 
     /*
     * 1.    Int     Текущая страница
@@ -56,6 +56,11 @@ class ArticleParser(private val apiUtils: IApiUtils) {
         Pattern.compile(fullArticlePatternSource, Pattern.CASE_INSENSITIVE)
     }
 
+    private fun safeNumber(value: String): String {
+        val result = value.trim()
+        return if (result.isEmpty()) "0" else result
+    }
+
     fun articles(httpResponse: String): Paginated<List<ArticleItem>> {
         val items = mutableListOf<ArticleItem>()
         val matcher: Matcher = listPattern.matcher(httpResponse)
@@ -71,8 +76,8 @@ class ArticleParser(private val apiUtils: IApiUtils) {
                 imageHeight = matcher.group(8).toInt()
                 content = matcher.group(9).trim()
                 otherUrl = Api.BASE_URL + matcher.group(10)
-                viewsCount = matcher.group(11).toInt()
-                commentsCount = matcher.group(12).toInt()
+                viewsCount = safeNumber(matcher.group(11)).toInt()
+                commentsCount = safeNumber(matcher.group(12)).toInt()
             })
         }
         val result = Paginated(items)

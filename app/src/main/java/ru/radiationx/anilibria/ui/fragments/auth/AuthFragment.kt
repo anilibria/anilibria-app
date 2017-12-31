@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -11,7 +9,6 @@ import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -41,46 +38,24 @@ class AuthFragment : BaseFragment(), AuthView {
         authSkip.setOnClickListener {
             presenter.skip()
         }
-        ImageLoader.getInstance().displayImage("drawable://" + R.mipmap.ic_launcher, auth_logo)
-        //view.setBackgroundColor(Color.BLUE)
+
+        ImageLoader.getInstance().displayImage("drawable://" + R.drawable.alib_new_or_b, auth_logo)
 
         authPatreon.isEnabled = false
         authVk.isEnabled = false
+
         authPatreon.setOnClickListener {
-            (activity as RouterProvider).router.navigateTo("patreon", patreonUrl)
-            (activity as RouterProvider).router.setResultListener(1488, {
-                val redirect = it as String
-                presenter.signIn(redirect)
-                Log.e("SUKA", "AUTH PATREON RESULT "+redirect)
-                (activity as RouterProvider).router.removeResultListener(1488)
-            })
+            presenter.socialClick(AuthPresenter.SOCIAL_PATREON)
         }
 
         authVk.setOnClickListener {
-            (activity as RouterProvider).router.navigateTo("patreon", vkUrl)
-            (activity as RouterProvider).router.setResultListener(1488, {
-                val redirect = it as String
-                presenter.signIn(redirect)
-                Log.e("SUKA", "AUTH PATREON RESULT "+redirect)
-                (activity as RouterProvider).router.removeResultListener(1488)
-            })
+            presenter.socialClick(AuthPresenter.SOCIAL_VK)
         }
     }
 
-    var patreonUrl: String = ""
-
-    var vkUrl = ""
-
-    override fun setPatreon(patr: String) {
-        Log.e("SUKA", "set patreon "+patr)
+    override fun showSocial() {
         authPatreon.isEnabled = true
-        patreonUrl = patr
-    }
-
-    override fun setVk(vk: String) {
-        Log.e("SUKA", "set vk "+vk)
         authVk.isEnabled = true
-        vkUrl = vk
     }
 
     override fun onBackPressed(): Boolean {

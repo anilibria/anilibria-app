@@ -9,6 +9,5 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface AuthView : IBaseView {
-    fun setPatreon(patr:String)
-    fun setVk(vk:String)
+    fun showSocial()
 }

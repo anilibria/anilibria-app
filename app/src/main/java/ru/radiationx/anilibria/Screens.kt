@@ -16,5 +16,6 @@ object Screens {
     val ARTICLE_DETAILS = "ARTICLE_DETAILS"
 
     val AUTH = "AUTH"
+    val AUTH_SOCIAL = "AUTH_SOCIAL"
     val MAIN = "MAIN"
 }

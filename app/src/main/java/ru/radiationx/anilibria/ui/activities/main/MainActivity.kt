@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.Menu
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -15,18 +13,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
-import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.*
-import java.util.regex.Pattern
+import ru.terrakok.cicerone.commands.Back
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Replace
+import ru.terrakok.cicerone.commands.SystemMessage
 
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {

@@ -1,8 +1,5 @@
 package ru.radiationx.anilibria.model.data.remote.interceptors
 
-import okhttp3.Interceptor
-import okhttp3.Response
-
 /**
  * Created by radiationx on 30.12.17.
  */

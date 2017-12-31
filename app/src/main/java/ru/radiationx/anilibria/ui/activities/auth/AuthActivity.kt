@@ -5,19 +5,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import kotlinx.android.synthetic.main.activity_container.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
+import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
+import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import android.support.v4.content.LocalBroadcastManager
-import android.view.*
-import kotlinx.android.synthetic.main.activity_container.*
-import ru.radiationx.anilibria.ui.fragments.auth.PatreonFragment
-import ru.radiationx.anilibria.utils.DimensionHelper
 
 
 /**
@@ -79,9 +77,9 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         override fun createFragment(screenKey: String?, data: Any?): Fragment? {
             return when (screenKey) {
                 Screens.AUTH -> AuthFragment()
-                "patreon" -> PatreonFragment().apply {
+                Screens.AUTH_SOCIAL -> AuthSocialFragment().apply {
                     arguments = Bundle().apply {
-                        putString("url", data as String)
+                        putString(AuthSocialFragment.ARG_SOCIAL_URL, data as String)
                     }
                 }
                 else -> null

@@ -28,4 +28,7 @@
 
     <color name="playerColorPrimary">#33000000</color>
 
+    <color name="brand_patreon">#F96854</color>
+    <color name="brand_vk">#45668e</color>
+
 </resources>

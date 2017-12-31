@@ -16,7 +16,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
 import org.json.JSONObject
-import org.json.JSONStringer
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -64,7 +63,7 @@ class App : Application() {
         navigation = Navigation()
         findTemplate("article")?.let { articleTemplate = it }
         initImageLoader(this)
-        val vkurl = "https://oauth.vk.com/authorize?client_id=5315207&amp;redirect_uri=https%3A%2F%2Fwww.anilibria.tv%2F%3Fauth_service_id%3DVKontakte&amp;scope=friends,notify,offline,email&amp;response_type=code&amp;state=site_id%3Ds1%26backurl%3D%252F%253Fcheck_key%253D5ef024816f25632438e9ccfbeffd0dd4%2526logout_butt%253D%2525D0%252592%2525D1%25258B%2525D0%2525B9%2525D1%252582%2525D0%2525B8%26redirect_url%3D%252F"
+        val vkurl = "https://oauth.logo_vk.com/authorize?client_id=5315207&amp;redirect_uri=https%3A%2F%2Fwww.anilibria.tv%2F%3Fauth_service_id%3DVKontakte&amp;scope=friends,notify,offline,email&amp;response_type=code&amp;state=site_id%3Ds1%26backurl%3D%252F%253Fcheck_key%253D5ef024816f25632438e9ccfbeffd0dd4%2526logout_butt%253D%2525D0%252592%2525D1%25258B%2525D0%2525B9%2525D1%252582%2525D0%2525B8%26redirect_url%3D%252F"
 
         try {
             Log.e("SUKA", "Try vk0: " + vkurl)
@@ -118,7 +117,7 @@ class App : Application() {
         var releaseApi = ReleaseApi(client, apiUtils)
         var searchApi = SearchApi(client, apiUtils)
 
-        val authRepository = AuthRepository(schedulers, apiUtils, authApi, authHolder, cookieHolder)
+        val authRepository = AuthRepository(schedulers, authApi, authHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)

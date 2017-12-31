@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.presentation.article.list
 import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository

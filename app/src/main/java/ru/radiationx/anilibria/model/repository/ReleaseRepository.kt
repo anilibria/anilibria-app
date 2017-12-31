@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
-import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull

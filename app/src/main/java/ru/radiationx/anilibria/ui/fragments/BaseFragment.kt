@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.MvpAppCompatFragment
+import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 
@@ -23,5 +24,13 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
         inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
         return newView
+    }
+
+    fun setStatusBarColor(color: Int) {
+        baseStatusBar.setBackgroundColor(color)
+    }
+
+    fun setStatusBarVisibility(isVisible: Boolean) {
+        baseStatusBar.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 }

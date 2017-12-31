@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -66,14 +67,15 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-            menu.add("Поиск")
-                    .setIcon(R.drawable.ic_eye)
+            menu.add("Выйти")
+                    .setIcon(R.drawable.ic_toolbar_logout)
                     .setOnMenuItemClickListener({
                         App.injections.authRepository.setAuthState(AuthState.NO_AUTH)
                         App.injections.authHolder.setAuthState(AuthState.NO_AUTH)
                         CookieHolder.cookieNames.forEach {
                             App.injections.cookieHolder.removeCookie(it)
                         }
+                        Toast.makeText(context, "Данные авторизации удалены", Toast.LENGTH_SHORT).show()
                         false
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

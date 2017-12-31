@@ -11,6 +11,19 @@ import ru.radiationx.anilibria.model.data.remote.IClient
 class AuthApi(private val client: IClient,
               apiUtils: IApiUtils) {
 
+
+    fun loadAuthPage(): Single<String> {
+        val args: MutableMap<String, String> = mutableMapOf()
+        val url = "${Api.BASE_URL}auth"
+        return client.get(url, args)/*.map { articleParser.article(it) }*/
+    }
+
+    fun patreonAuth(redirectUrl: String): Single<String> {
+        return client.get(redirectUrl, emptyMap())
+                .map { loadAuthPage().blockingGet() }
+                //.map { client.get(redirectUrl, emptyMap()).blockingGet() }
+    }
+
     fun testAuth(login: String, password: String): Single<String> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "backurl" to "/auth/",

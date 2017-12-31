@@ -16,6 +16,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
 import android.support.v4.content.LocalBroadcastManager
 import android.view.*
 import kotlinx.android.synthetic.main.activity_container.*
+import ru.radiationx.anilibria.ui.fragments.auth.PatreonFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 
 
@@ -78,6 +79,11 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         override fun createFragment(screenKey: String?, data: Any?): Fragment? {
             return when (screenKey) {
                 Screens.AUTH -> AuthFragment()
+                "patreon" -> PatreonFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("url", data as String)
+                    }
+                }
                 else -> null
             }
         }

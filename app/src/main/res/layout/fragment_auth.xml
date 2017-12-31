@@ -27,6 +27,18 @@
                 android:tint="@color/a_red"
                 app:srcCompat="@drawable/alib_new_or_b" />
 
+            <Button
+                android:id="@+id/authPatreon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="patreon" />
+
+            <Button
+                android:id="@+id/authVk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="vk" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,8 +110,8 @@
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
                 android:text="Пропустить" />
         </LinearLayout>
     </RelativeLayout>

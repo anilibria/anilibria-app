@@ -53,6 +53,7 @@ class AuthPresenter(private val router: Router,
                 }, { throwable ->
                     throwable.printStackTrace()
                 })
+                .addToDisposable()
     }
 
     fun signIn(redirectUrl: String) {
@@ -60,14 +61,11 @@ class AuthPresenter(private val router: Router,
         authRepository.signIn(redirectUrl)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ state ->
-                    if (state == AuthState.AUTH) {
-                        router.exit()
-                    } else {
-                        router.showSystemMessage("Что-то пошло не так")
-                    }
+                    decideWhatToDo(state)
                 }, { throwable ->
                     throwable.printStackTrace()
                 })
+                .addToDisposable()
     }
 
     fun signIn(login: String, password: String) {
@@ -75,19 +73,24 @@ class AuthPresenter(private val router: Router,
         authRepository.signIn(login, password)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ state ->
-                    if (state == AuthState.AUTH) {
-                        router.exit()
-                    } else {
-                        router.showSystemMessage("Что-то пошло не так")
-                    }
+                    decideWhatToDo(state)
                 }, { throwable ->
                     throwable.printStackTrace()
                 })
+                .addToDisposable()
+    }
+
+    private fun decideWhatToDo(state: AuthState){
+        if (state == AuthState.AUTH) {
+            router.replaceScreen(Screens.MAIN)
+        } else {
+            router.showSystemMessage("Что-то пошло не так")
+        }
     }
 
     fun skip() {
         authRepository.setAuthState(AuthState.AUTH_SKIPPED)
-        router.exit()
+        router.replaceScreen(Screens.MAIN)
     }
 
 }

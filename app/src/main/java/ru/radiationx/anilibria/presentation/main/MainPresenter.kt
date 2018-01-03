@@ -20,11 +20,11 @@ class MainPresenter(private val router: Router,
         super.onFirstViewAttach()
         Log.e("SUKA", "main onFirstViewAttach " + authRepository.getAuthState().toString())
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
-            router.navigateTo(Screens.AUTH)
-        }/* else {
+            router.replaceScreen(Screens.AUTH)
+        } else {
             selectTab(Screens.MAIN_RELEASES)
-        }*/
-        selectTab(Screens.MAIN_RELEASES)
+        }
+        //selectTab(Screens.MAIN_RELEASES)
     }
 
     fun selectTab(screenKey: String) {

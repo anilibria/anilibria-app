@@ -199,24 +199,27 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
                 return
             } else if (command is Replace) {
-                Log.e("SUKA", "Replace " + command.screenKey)
-                val fm = supportFragmentManager
-                val ta = fm.beginTransaction()
-                tabs.forEach {
-                    val fragment = fm.findFragmentByTag(it.screenKey)
-                    if (it.screenKey == command.screenKey) {
-                        if (fragment.isDetached) {
-                            ta.attach(fragment)
+                val inTabs = tabs.firstOrNull { it.screenKey == command.screenKey } != null
+                if (inTabs) {
+                    Log.e("SUKA", "Replace " + command.screenKey)
+                    val fm = supportFragmentManager
+                    val ta = fm.beginTransaction()
+                    tabs.forEach {
+                        val fragment = fm.findFragmentByTag(it.screenKey)
+                        if (it.screenKey == command.screenKey) {
+                            if (fragment.isDetached) {
+                                ta.attach(fragment)
+                            }
+                            ta.show(fragment)
+                            addInStack(it.screenKey)
+                            Log.e("SUKA", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
+                        } else {
+                            ta.hide(fragment)
                         }
-                        ta.show(fragment)
-                        addInStack(it.screenKey)
-                        Log.e("SUKA", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
-                    } else {
-                        ta.hide(fragment)
                     }
+                    ta.commitNow()
+                    return
                 }
-                ta.commitNow()
-                return
             }
 
             Log.e("SUKA", "sector clear")

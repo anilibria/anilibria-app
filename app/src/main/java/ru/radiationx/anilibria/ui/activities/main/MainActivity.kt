@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -19,6 +20,7 @@ import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
+import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
@@ -44,6 +46,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     private val tabsStack = mutableListOf<String>()
 
+    private val dimensionsProvider = App.injections.dimensionsProvider
+
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
@@ -55,6 +59,23 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
+            override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
+                Log.e("SUKA", dimensions.toString())
+                //keyboardUtil.setDimensions(dimensions)
+                /*root_container.post {
+
+                }*/
+                view_for_measure.post {
+                    root_container.setPadding(root_container.paddingLeft,
+                            root_container.paddingTop,
+                            root_container.paddingRight,
+                            dimensions.keyboardHeight)
+                }
+                dimensionsProvider.update(dimensions)
+            }
+        })
 
         initContainers()
         initBottomTabs()

@@ -48,7 +48,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="8dp"
-                    android:drawableStart="@drawable/logo_patreon"
                     android:textColor="@color/brand_patreon"
                     android:text="Patreon" />
 
@@ -59,7 +58,6 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="8dp"
                     android:textColor="@color/brand_vk"
-                    android:drawableStart="@drawable/logo_vk"
                     android:text="Вконтакте" />
 
             </LinearLayout>

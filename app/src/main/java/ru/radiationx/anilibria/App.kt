@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v7.app.AppCompatDelegate
 import android.text.Html
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
@@ -33,6 +35,7 @@ import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -43,6 +46,11 @@ import java.nio.charset.Charset
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
     companion object {
+
+        init {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        }
+
         lateinit var instance: App
             private set
 
@@ -63,19 +71,6 @@ class App : Application() {
         navigation = Navigation()
         findTemplate("article")?.let { articleTemplate = it }
         initImageLoader(this)
-        val vkurl = "https://oauth.logo_vk.com/authorize?client_id=5315207&amp;redirect_uri=https%3A%2F%2Fwww.anilibria.tv%2F%3Fauth_service_id%3DVKontakte&amp;scope=friends,notify,offline,email&amp;response_type=code&amp;state=site_id%3Ds1%26backurl%3D%252F%253Fcheck_key%253D5ef024816f25632438e9ccfbeffd0dd4%2526logout_butt%253D%2525D0%252592%2525D1%25258B%2525D0%2525B9%2525D1%252582%2525D0%2525B8%26redirect_url%3D%252F"
-
-        try {
-            Log.e("SUKA", "Try vk0: " + vkurl)
-            Log.e("SUKA", "Try vk1: " + JSONObject.quote(vkurl))
-            Log.e("SUKA", "Try vk2: " + JSONObject.wrap(vkurl))
-            Log.e("SUKA", "Try vk3: " + JSONObject("{\"url\":\"$vkurl\"}").getString("url"))
-            Log.e("SUKA", "Try vk4: " + Html.fromHtml(vkurl))
-            Log.e("SUKA", "Try vk5: " + vkurl.replace("&amp;".toRegex(), "&"))
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
 
@@ -103,6 +98,7 @@ class App : Application() {
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
     class Injections(context: Context) {
+        val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 

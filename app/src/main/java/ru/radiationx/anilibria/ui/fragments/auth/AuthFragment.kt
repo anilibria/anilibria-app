@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v7.content.res.AppCompatResources
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -31,6 +33,10 @@ class AuthFragment : BaseFragment(), AuthView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        authPatreon.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.logo_patreon), null, null, null)
+        authVk.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.logo_vk), null, null, null)
+
         appbarLayout.visibility = View.GONE
         authSubmit.setOnClickListener {
             presenter.signIn(authLogin.text.toString(), authPassword.text.toString())

@@ -2,17 +2,21 @@ package ru.radiationx.anilibria.ui.fragments;
 
 import android.os.Bundle
 import android.support.annotation.LayoutRes
+import android.support.design.widget.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.MvpAppCompatFragment
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 
 /* Created by radiationx on 18.11.17. */
 
 abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
+
+    private val dimensionsProvider = App.injections.dimensionsProvider
 
     @LayoutRes
     abstract protected fun getLayoutResource(): Int
@@ -24,6 +28,15 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
         inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
         return newView
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        dimensionsProvider.dimensions().subscribe {
+            toolbar.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
+                topMargin = it.statusBar
+            }
+        }
     }
 
     fun setStatusBarColor(color: Int) {

@@ -155,14 +155,16 @@ function NativeEvents() {
 }
 var nativeEvents = new NativeEvents();
 
-function Base64Encode(str, encoding = 'utf-8') {
-    var bytes = new(TextEncoder || TextEncoderLite)(encoding).encode(str);
+function Base64Encode(str) {
+    var encoding = 'utf-8';
+    var bytes = new TextDecoderLite(encoding).encode(str);
     return base64js.fromByteArray(bytes);
 }
 
-function Base64Decode(str, encoding = 'utf-8') {
-    var bytes = base64js.toByteArray(str)
-    return new(TextDecoder || TextDecoderLite)(encoding).decode(bytes)
+function Base64Decode(str) {
+    var encoding = 'utf-8';
+    var bytes = base64js.toByteArray(str);
+    return new TextDecoderLite(encoding).decode(bytes)
 }
 
 function nodeScriptReplace(node) {

@@ -154,17 +154,24 @@ function NativeEvents() {
     }
 }
 var nativeEvents = new NativeEvents();
+var encoding = 'utf-8';
+var textDecoder;
+try{
+    textDecoder = new TextDecoder(encoding);
+}catch(ex){
+    textDecoder = new TextDecoderLite(encoding);
+}
 
 function Base64Encode(str) {
-    var encoding = 'utf-8';
-    var bytes = new TextDecoderLite(encoding).encode(str);
+
+    var bytes = textDecoder.encode(str);
     return base64js.fromByteArray(bytes);
 }
 
 function Base64Decode(str) {
     var encoding = 'utf-8';
     var bytes = base64js.toByteArray(str);
-    return new TextDecoderLite(encoding).decode(bytes)
+    return textDecoder.decode(bytes)
 }
 
 function nodeScriptReplace(node) {

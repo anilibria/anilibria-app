@@ -3,10 +3,12 @@ package ru.radiationx.anilibria.ui.fragments;
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.MvpAppCompatFragment
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -17,6 +19,7 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     private val dimensionsProvider = App.injections.dimensionsProvider
+    private var dimensionsDisposable: Disposable? = null
 
     @LayoutRes
     abstract protected fun getLayoutResource(): Int
@@ -32,10 +35,15 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dimensionsProvider.dimensions().subscribe {
-            toolbar.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
-                topMargin = it.statusBar
+        dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
+            Log.e("SUKA", "subsc dim: "+it)
+            toolbar?.post {
+                toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
+                    topMargin = it.statusBar
+                    Log.e("SUKA", "set sb dim: "+it)
+                }
             }
+
         }
     }
 
@@ -45,5 +53,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     fun setStatusBarVisibility(isVisible: Boolean) {
         baseStatusBar.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dimensionsDisposable?.dispose()
     }
 }

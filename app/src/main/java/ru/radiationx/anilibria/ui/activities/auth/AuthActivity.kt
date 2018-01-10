@@ -29,29 +29,16 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
-        //attachKeyboardListeners()
-
         router.newRootScreen(Screens.AUTH)
-
-        //findViewById<View>(R.id.root_container).setBackgroundColor(Color.RED)
-        Log.e("SUKA", "auth oncreate")
-
-        //val keyboardUtil = KeyboardUtil(window.decorView, root_container)
 
         val dimensionHelper = DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                Log.e("SUKA", dimensions.toString())
-                //keyboardUtil.setDimensions(dimensions)
-                /*root_container.post {
-
-                }*/
                 view_for_measure.post {
                     root_container.setPadding(root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
                             dimensions.keyboardHeight)
                 }
-
             }
         })
     }

@@ -1,7 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.other.adapter
 
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import ru.radiationx.anilibria.entity.app.OtherMenuItem
+import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
+import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.ui.common.DividerShadowListItem
 import ru.radiationx.anilibria.ui.common.ListItem
 import ru.radiationx.anilibria.ui.common.MenuListItem
@@ -21,15 +22,13 @@ class OtherAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
         items.clear()
     }
 
-    fun addProfile(): OtherAdapter {
-        items.add(ProfileListItem())
+    fun addProfile(profileItem: ProfileItem) {
+        items.add(ProfileListItem(profileItem))
         items.add(DividerShadowListItem())
-        return this
     }
 
-    fun addMenu(newItems: MutableList<OtherMenuItem>): OtherAdapter {
+    fun addMenu(newItems: MutableList<OtherMenuItem>) {
         items.addAll(newItems.map { MenuListItem(it) })
         items.add(DividerShadowListItem())
-        return this
     }
 }

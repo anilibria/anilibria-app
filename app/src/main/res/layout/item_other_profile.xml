@@ -16,11 +16,11 @@
         android:paddingStart="16dp"
         android:paddingTop="12dp">
 
-        <View
+        <ImageView
             android:id="@+id/profileAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@color/a_red_dark"
+            android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

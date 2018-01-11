@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_other_menu.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.OtherMenuItem
+import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.ui.common.ListItem
 import ru.radiationx.anilibria.ui.common.MenuListItem
 

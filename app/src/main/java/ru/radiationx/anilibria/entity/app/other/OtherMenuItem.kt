@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.entity.app
+package ru.radiationx.anilibria.entity.app.other
 
 import ru.radiationx.anilibria.R
 

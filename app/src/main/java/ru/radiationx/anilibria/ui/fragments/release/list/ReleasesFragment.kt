@@ -13,8 +13,6 @@ import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -63,19 +61,6 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
                     .setOnMenuItemClickListener({
                         presenter.openSearch()
                         //Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
-                        false
-                    })
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-            menu.add("Выйти")
-                    .setIcon(R.drawable.ic_toolbar_logout)
-                    .setOnMenuItemClickListener({
-                        App.injections.authRepository.setAuthState(AuthState.NO_AUTH)
-                        App.injections.authHolder.setAuthState(AuthState.NO_AUTH)
-                        CookieHolder.cookieNames.forEach {
-                            App.injections.cookieHolder.removeCookie(it)
-                        }
-                        Toast.makeText(context, "Данные авторизации удалены", Toast.LENGTH_SHORT).show()
                         false
                     })
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

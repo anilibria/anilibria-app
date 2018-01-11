@@ -12,29 +12,51 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
-        android:paddingEnd="16dp"
+        android:paddingEnd="12dp"
         android:paddingStart="16dp"
         android:paddingTop="12dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/profileNick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/medium"
             android:text="Some fuc$kin nick"
             android:textColor="@color/textDefault"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/profileDesc"
             app:layout_constraintStart_toEndOf="@+id/profileAvatar"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/profileDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="description"
+            android:textColor="@color/textSecond"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/profileNick"
+            app:layout_constraintTop_toBottomOf="@+id/profileNick" />
+
+        <ImageButton
+            android:id="@+id/profileLogout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_logout" />
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

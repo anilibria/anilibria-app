@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.presentation.other
 
+import android.util.Log
+import android.widget.Toast
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.model.repository.AuthRepository
@@ -14,7 +17,7 @@ class OtherPresenter(
         private val authRepository: AuthRepository
 ) : BasePresenter<OtherView>(router) {
 
-    private val profileItem: ProfileItem = ProfileItem()
+    private var profileItem: ProfileItem = authRepository.getUser()
     private val mainMenu = mutableListOf<OtherMenuItem>()
     private val systemMenu = mutableListOf<OtherMenuItem>()
     private val linkMenu = mutableListOf<OtherMenuItem>()
@@ -38,5 +41,21 @@ class OtherPresenter(
         linkMenu.add(OtherMenuItem("Чат Discord", R.drawable.ic_logo_discord))
 
         viewState.showItems(profileItem, listOf(mainMenu, systemMenu, linkMenu))
+        subscribeUser()
+    }
+
+    private fun subscribeUser() {
+        authRepository.observeUser()
+                .subscribe {
+                    profileItem = it
+                    Log.e("SUKA", "updateUser ${it.nick} : ${profileItem.nick}")
+                    viewState.updateProfile()
+                }
+                .addToDisposable()
+    }
+
+    fun signOut() {
+        authRepository.signOut()
+        router.showSystemMessage("Данные авторизации удалены")
     }
 }

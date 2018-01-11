@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
 
@@ -12,16 +14,21 @@ class AuthParser(private val apiUtils: IApiUtils) {
     val vkPattern = "<div[^>]*?id=\"bx_auth_serv_formVKontakte\"[^>]*?>[^<]*?<a[^>]*?onclick=\"BX.util.popup\\(['\"]([^\"']*?)['\"]"
 
     val socialPatterns = arrayOf(patreonPattern, vkPattern)
-    val userPattern = "<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>"
+    val userPattern = "<div[^>]*?class=\"[^\"]*?useravatar[^\"]*?\"[^>]*?>[^<]*?(?:<img[^>]*?src=\"([^\"]*?)\"[^>]*?>)?[^<]*?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<p>[^<]*?<a[^>]href=\"\\/user\\/(\\d+)[^\"]*?\"[^>]*?"
 
 
-    fun authResult(responseText: String): AuthState {
-        var user: String? = null
+    fun authResult(responseText: String): ProfileItem {
+        val user = ProfileItem()
         val matcher = Pattern.compile(userPattern).matcher(responseText)
         if (matcher.find()) {
-            user = matcher.group(1)
+            user.avatarUrl = Api.BASE_URL_IMAGES + matcher.group(1)
+            user.nick = matcher.group(2)
+            user.id = matcher.group(3).toInt()
+            user.authState = AuthState.AUTH
+        } else {
+            user.authState = AuthState.NO_AUTH
         }
-        return if (user != null) AuthState.AUTH else AuthState.NO_AUTH
+        return user
     }
 
     fun getSocialLinks(responseText: String): List<String> {

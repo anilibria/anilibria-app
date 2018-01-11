@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -22,13 +23,13 @@ class AuthApi(private val client: IClient,
                 .map { authParser.getSocialLinks(it) }
     }
 
-    fun socialAuth(redirectUrl: String): Single<AuthState> {
+    fun socialAuth(redirectUrl: String): Single<ProfileItem> {
         return client.get(redirectUrl, emptyMap())
                 .map { client.get("${Api.BASE_URL}auth", emptyMap()).blockingGet() }
                 .map { authParser.authResult(it) }
     }
 
-    fun testAuth(login: String, password: String): Single<AuthState> {
+    fun testAuth(login: String, password: String): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "backurl" to "/auth/",
                 "AUTH_FORM" to "Y",

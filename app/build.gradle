@@ -10,8 +10,8 @@ android {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 6
-        versionName "0.2.3"
+        versionCode 7
+        versionName "0.2.4"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -86,5 +86,7 @@ dependencies {
     implementation 'org.bsc.util:minitemplator-repackaged:1.2'
 
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
+
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
 

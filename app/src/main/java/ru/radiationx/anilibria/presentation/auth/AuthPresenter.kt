@@ -60,8 +60,8 @@ class AuthPresenter(private val router: Router,
         viewState.setRefreshing(true)
         authRepository.signIn(redirectUrl)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ state ->
-                    decideWhatToDo(state)
+                .subscribe({ user ->
+                    decideWhatToDo(user.authState)
                 }, { throwable ->
                     throwable.printStackTrace()
                 })
@@ -72,15 +72,15 @@ class AuthPresenter(private val router: Router,
         viewState.setRefreshing(true)
         authRepository.signIn(login, password)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ state ->
-                    decideWhatToDo(state)
+                .subscribe({ user ->
+                    decideWhatToDo(user.authState)
                 }, { throwable ->
                     throwable.printStackTrace()
                 })
                 .addToDisposable()
     }
 
-    private fun decideWhatToDo(state: AuthState){
+    private fun decideWhatToDo(state: AuthState) {
         if (state == AuthState.AUTH) {
             router.replaceScreen(Screens.MAIN)
         } else {
@@ -89,7 +89,7 @@ class AuthPresenter(private val router: Router,
     }
 
     fun skip() {
-        authRepository.setAuthState(AuthState.AUTH_SKIPPED)
+        authRepository.updateUser(AuthState.AUTH_SKIPPED)
         router.replaceScreen(Screens.MAIN)
     }
 

@@ -20,6 +20,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import org.json.JSONObject
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
+import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
@@ -28,6 +29,7 @@ import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
 import ru.radiationx.anilibria.model.data.remote.api.SearchApi
 import ru.radiationx.anilibria.model.data.storage.AuthStorage
 import ru.radiationx.anilibria.model.data.storage.CookiesStorage
+import ru.radiationx.anilibria.model.data.storage.UserStorage
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
@@ -104,6 +106,7 @@ class App : Application() {
 
         val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
         val authHolder: AuthHolder = AuthStorage(sharedPreferences)
+        val userHolder: UserHolder = UserStorage(sharedPreferences)
 
         val client: IClient = Client(cookieHolder)
         val apiUtils: IApiUtils = ApiUtils()
@@ -113,7 +116,7 @@ class App : Application() {
         var releaseApi = ReleaseApi(client, apiUtils)
         var searchApi = SearchApi(client, apiUtils)
 
-        val authRepository = AuthRepository(schedulers, authApi, authHolder, cookieHolder)
+        val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)

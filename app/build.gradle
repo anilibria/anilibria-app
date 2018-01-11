@@ -84,5 +84,7 @@ dependencies {
     implementation 'com.devbrackets.android:exomedia:4.1.0'
 
     implementation 'org.bsc.util:minitemplator-repackaged:1.2'
+
+    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
 }
 

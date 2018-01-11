@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
+import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
@@ -130,7 +131,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                         Screens.MAIN_ARTICLES -> ArticlesFragment()
                         Screens.MAIN_VIDEOS -> VideosFragment()
                         Screens.MAIN_BLOGS -> BlogsFragment()
-                        Screens.MAIN_OTHER -> ArticleFragment()
+                        Screens.MAIN_OTHER -> OtherFragment()
                         Screens.ARTICLE_DETAILS -> {
                             ArticleFragment().apply {
                                 if (data is Bundle) arguments = data

@@ -4,9 +4,9 @@
     android:viewportHeight="180.0"
     android:viewportWidth="180.0">
     <path
-        android:fillColor="#f96753"
+        android:fillColor="@color/brand_patreon"
         android:pathData="M108.81,26.07c-26.47,0 -48,21.53 -48,48 0,26.39 21.53,47.85 48,47.85 26.39,0 47.85,-21.47 47.85,-47.85 0,-26.47 -21.47,-48 -47.85,-48" />
     <path
-        android:fillColor="#052a49"
+        android:fillColor="@color/brand_patreon_1"
         android:pathData="M23.33,153.93V26.07h23.47v127.87z" />
 </vector>

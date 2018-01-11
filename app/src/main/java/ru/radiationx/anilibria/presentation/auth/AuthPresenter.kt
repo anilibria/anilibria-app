@@ -17,7 +17,7 @@ class AuthPresenter(private val router: Router,
 
     companion object {
         const val SOCIAL_PATREON = "patreon"
-        const val SOCIAL_VK = "logo_vk"
+        const val SOCIAL_VK = "ic_logo_vk"
     }
 
     private var socialUrls = mutableMapOf<String, String>()

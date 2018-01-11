@@ -29,18 +29,20 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
-        inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
+        if (getLayoutResource() != View.NO_ID) {
+            inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
+        }
         return newView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            Log.e("SUKA", "subsc dim: "+it)
+            Log.e("SUKA", "subsc dim: " + it)
             toolbar?.post {
                 toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
                     topMargin = it.statusBar
-                    Log.e("SUKA", "set sb dim: "+it)
+                    Log.e("SUKA", "set sb dim: " + it)
                 }
             }
 

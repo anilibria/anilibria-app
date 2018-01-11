@@ -18,6 +18,7 @@
     <color name="tab_color_unchecked">#757575</color>
 
     <color name="toolbar_icon">@color/white</color>
+    <color name="base_icon">#757575</color>
 
     <color name="release_tag_color">@color/a_red</color>
     <color name="release_tag_color_press">@color/a_red_dark</color>
@@ -29,6 +30,12 @@
     <color name="playerColorPrimary">#33000000</color>
 
     <color name="brand_patreon">#F96854</color>
+    <color name="brand_patreon_1">#052a49</color>
     <color name="brand_vk">#45668e</color>
+    <color name="brand_youtube">#fc0d1c</color>
+    <color name="brand_discord">#7289DA</color>
+    <color name="brand_telegram">#35a6de</color>
+
+
 
 </resources>

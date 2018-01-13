@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -20,7 +21,7 @@ class OtherPresenter(
     companion object {
         val MENU_FAVORITES = 0
         val MENU_TEAM = 1
-        val MENU_BID = 2
+        //val MENU_BID = 2
         val MENU_DONATE = 3
         val MENU_ABOUT_ANILIB = 4
         val MENU_RULES = 5
@@ -36,7 +37,7 @@ class OtherPresenter(
         val GROUP_MAIN = arrayOf(
                 MENU_FAVORITES,
                 MENU_TEAM,
-                MENU_BID,
+                //MENU_BID,
                 MENU_DONATE,
                 MENU_ABOUT_ANILIB,
                 MENU_RULES
@@ -67,7 +68,7 @@ class OtherPresenter(
 
         menuMap.put(MENU_FAVORITES, OtherMenuItem(MENU_FAVORITES, "Избранное", R.drawable.ic_star))
         menuMap.put(MENU_TEAM, OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
-        menuMap.put(MENU_BID, OtherMenuItem(MENU_BID, "Подать заявку", R.drawable.ic_account_plus))
+        //menuMap.put(MENU_BID, OtherMenuItem(MENU_BID, "Подать заявку", R.drawable.ic_account_plus))
         menuMap.put(MENU_DONATE, OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
         menuMap.put(MENU_ABOUT_ANILIB, OtherMenuItem(MENU_ABOUT_ANILIB, "Об AniLibria", R.drawable.ic_information))
         menuMap.put(MENU_RULES, OtherMenuItem(MENU_RULES, "Правила", R.drawable.ic_book_open_variant))
@@ -135,6 +136,18 @@ class OtherPresenter(
         when (item.id) {
             MENU_FAVORITES -> {
                 router.navigateTo(Screens.FAVORITES)
+            }
+            MENU_TEAM -> {
+                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_TEAM)
+            }
+            MENU_DONATE -> {
+                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+            }
+            MENU_ABOUT_ANILIB -> {
+                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_ABOUT_ANILIB)
+            }
+            MENU_RULES -> {
+                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
             }
         }
     }

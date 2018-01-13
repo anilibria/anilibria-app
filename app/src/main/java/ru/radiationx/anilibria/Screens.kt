@@ -20,4 +20,5 @@ object Screens {
     val MAIN = "MAIN"
 
     val FAVORITES = "FAVORITES"
+    val STATIC_PAGE = "STATIC_PAGE"
 }

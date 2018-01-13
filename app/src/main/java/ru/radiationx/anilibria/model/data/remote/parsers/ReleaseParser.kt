@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
@@ -8,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.utils.Utils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -192,6 +194,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
     fun favorites(httpResponse: String): Paginated<List<ReleaseItem>> {
         val resItems = mutableListOf<ReleaseItem>()
         val matcher = favoritesPattern.matcher(httpResponse)
+        Utils.longLog("FAV CONTENT "+httpResponse)
         while (matcher.find()) {
             val item = ReleaseItem()
             item.description = apiUtils.escapeHtml(matcher.group(1))

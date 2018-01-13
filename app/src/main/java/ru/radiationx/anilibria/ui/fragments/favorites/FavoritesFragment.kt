@@ -67,6 +67,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun showReleases(releases: List<ReleaseItem>) {
+        Log.e("SUKA", "fav show releases "+releases.size)
         adapter.bindItems(releases)
     }
 

@@ -22,7 +22,7 @@ class AuthParser(private val apiUtils: IApiUtils) {
         val matcher = Pattern.compile(userPattern).matcher(responseText)
         if (matcher.find()) {
             user.avatarUrl = Api.BASE_URL_IMAGES + matcher.group(1)
-            user.nick = matcher.group(2)
+            user.nick = apiUtils.escapeHtml(matcher.group(2)).toString()
             user.id = matcher.group(3).toInt()
             user.authState = AuthState.AUTH
         } else {

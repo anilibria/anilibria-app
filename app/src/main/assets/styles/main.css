@@ -50,6 +50,7 @@ a {
 .wrapper .news-detail-content,
 .wrapper .content {
   padding: 1rem;
+  /* STATIC PAGE */
   /* OVERRIDES */
 }
 .wrapper .news-detail-content .divider,
@@ -102,13 +103,17 @@ a {
 }
 .wrapper .news-detail-content .alib_button.yt a,
 .wrapper .content .alib_button.yt a {
-  background-color: #ff0004;
+  background-color: #fc0d1c;
   background-image: url(../res/ic_youtube.svg);
 }
 .wrapper .news-detail-content .alib_button.vk a,
 .wrapper .content .alib_button.vk a {
   background-color: #416b9e;
   background-image: url(../res/ic_vk.svg);
+}
+.wrapper .news-detail-content .libria_static_page,
+.wrapper .content .libria_static_page {
+  margin: 0.5rem 0;
 }
 .wrapper .news-detail-content .layday,
 .wrapper .content .layday {

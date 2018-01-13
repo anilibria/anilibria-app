@@ -20,17 +20,11 @@ import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
-import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
-import ru.radiationx.anilibria.model.data.remote.api.AuthApi
-import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
-import ru.radiationx.anilibria.model.data.remote.api.SearchApi
+import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.storage.AuthStorage
 import ru.radiationx.anilibria.model.data.storage.CookiesStorage
 import ru.radiationx.anilibria.model.data.storage.UserStorage
-import ru.radiationx.anilibria.model.repository.ArticleRepository
-import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.model.repository.SearchRepository
+import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
@@ -47,7 +41,7 @@ class App : Application() {
     companion object {
 
         init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+            //AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
 
         lateinit var instance: App
@@ -58,6 +52,7 @@ class App : Application() {
     }
 
     lateinit var articleTemplate: MiniTemplator
+    lateinit var staticPageTemplate: MiniTemplator
 
     override fun onCreate() {
         super.onCreate()
@@ -69,6 +64,7 @@ class App : Application() {
         injections = Injections(this)
         navigation = Navigation()
         findTemplate("article")?.let { articleTemplate = it }
+        findTemplate("static_page")?.let { staticPageTemplate = it }
         initImageLoader(this)
     }
 
@@ -112,11 +108,13 @@ class App : Application() {
         var articleApi = ArticleApi(client, apiUtils)
         var releaseApi = ReleaseApi(client, apiUtils)
         var searchApi = SearchApi(client, apiUtils)
+        var pageApi = PageApi(client, apiUtils)
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)
+        val pageRepository = PageRepository(schedulers, pageApi)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

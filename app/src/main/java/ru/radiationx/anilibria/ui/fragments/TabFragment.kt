@@ -23,6 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
+import ru.radiationx.anilibria.ui.fragments.page.PageFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
@@ -144,6 +145,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                         }
 
                         Screens.FAVORITES -> FavoritesFragment()
+                        Screens.STATIC_PAGE -> PageFragment().apply {
+                            arguments = Bundle().apply { putString(PageFragment.ARG_ID, data as String) }
+                        }
                         else -> throw RuntimeException("Unknown screen key: " + screenKey)
                     }
                 }

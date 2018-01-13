@@ -7,8 +7,10 @@ import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.api.SearchApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
-class SearchRepository(private val schedulers: SchedulersProvider,
-                       private val searchApi: SearchApi) {
+class SearchRepository(
+        private val schedulers: SchedulersProvider,
+        private val searchApi: SearchApi
+) {
 
     fun fastSearch(query: String): Observable<List<SearchItem>>
             = searchApi.fastSearch(query)

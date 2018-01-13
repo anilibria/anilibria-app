@@ -20,6 +20,12 @@ class ReleaseRepository(private val schedulers: SchedulersProvider,
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
+    fun getRelease(releaseIdName: String): Observable<ReleaseFull>
+            = releaseApi.getRelease(releaseIdName)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
     fun getGenres(): Observable<List<GenreItem>>
             = releaseApi.getGenres()
             .toObservable()
@@ -28,6 +34,12 @@ class ReleaseRepository(private val schedulers: SchedulersProvider,
 
     fun getReleases(page: Int): Observable<Paginated<List<ReleaseItem>>>
             = releaseApi.getReleases(page)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    fun getFavorites(page: Int): Observable<Paginated<List<ReleaseItem>>>
+            = releaseApi.getFavorites(page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

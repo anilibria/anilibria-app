@@ -18,4 +18,6 @@ object Screens {
     val AUTH = "AUTH"
     val AUTH_SOCIAL = "AUTH_SOCIAL"
     val MAIN = "MAIN"
+
+    val FAVORITES = "FAVORITES"
 }

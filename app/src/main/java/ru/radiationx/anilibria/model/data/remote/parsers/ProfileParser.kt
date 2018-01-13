@@ -23,7 +23,6 @@ class ProfileParser(private val apiUtils: IApiUtils) {
     * 9.    String  Контактная информация
     * 10.   String^ Интересы
     * 11.   String^ Подпись
-    *
     * */
     private val mainPatternSrc = "<span id=\"profile-nickname\"[^>]*?><b>([\\s\\S]*?)<\\/b><\\/span>[\\s\\S]*?<div id=\"profile-avatar-wrapper\">[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<span id=\"user-status-([^\"]*?)\"[^>]*?>(?:[\\s\\S]*?<span id=\"user-offline-since\"[^>]*?>[^<]*?<b>был в сети ([^<]*?)<)?[\\s\\S]*?<span class=\"profile-left-info\"><b>(?:<font color=\"([^\"]*?)\">)?([^<]*?)(?:<\\/font>)?<\\/b>[\\s\\S]*?<span class=\"profile-left-info\">[^<]*?<font[^>]*?>(\\d+)<\\/font>[\\s\\S]*?<div id=\"profile-info-right-side\">[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content last\">[\\s\\S]*?<p class=\"data-label\">[^<]*?<span[^>]*?>([\\s\\S]+?)?<\\/span><\\/p>[\\s\\S]*?<p id=\"user-signature\">([\\s\\S]+?)?<\\/p>[^<]*?<\\/div>"
 

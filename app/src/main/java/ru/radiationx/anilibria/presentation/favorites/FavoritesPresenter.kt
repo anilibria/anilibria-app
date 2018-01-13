@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation.search
+package ru.radiationx.anilibria.presentation.favorites
 
 import android.os.Bundle
 import android.util.Log
@@ -8,79 +8,43 @@ import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
+/**
+ * Created by radiationx on 13.01.18.
+ */
 @InjectViewState
-class SearchPresenter(private val releaseRepository: ReleaseRepository,
-                      private val searchRepository: SearchRepository,
-                      private val router: Router) : BasePresenter<SearchView>(router) {
+class FavoritesPresenter(
+        private val releaseRepository: ReleaseRepository,
+        private val router: Router
+) : BasePresenter<FavoritesView>(router) {
 
-    private val START_PAGE = 1
+
+    companion object {
+        private const val START_PAGE = 1
+    }
+
     private var currentPage = START_PAGE
-    var currentGenre: String? = null
-    var currentQuery: String? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
-        loadGenres()
-        loadReleases(START_PAGE)
+        refreshReleases()
     }
 
     private fun isFirstPage(): Boolean {
         return currentPage == START_PAGE
     }
 
-    fun fastSearch(query: String) {
-        searchRepository.fastSearch(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ searchItems ->
-                    Log.d("SUKA", "subscribe call show")
-                    viewState.setRefreshing(false)
-                    viewState.showFastItems(searchItems)
-                }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
-                    throwable.printStackTrace()
-                }
-                .addToDisposable()
-    }
-
-    private fun loadGenres() {
-        releaseRepository.getGenres()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ genres ->
-                    Log.d("SUKA", "subscribe call show")
-                    viewState.setRefreshing(false)
-                    viewState.showGenres(genres)
-                }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
-                    throwable.printStackTrace()
-                }
-                .addToDisposable()
-    }
-
-    fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()
-
     private fun loadReleases(pageNum: Int) {
         Log.e("SUKA", "loadReleases")
-
-        if (isEmpty()) {
-            viewState.setRefreshing(false)
-            return
-        }
-
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+        releaseRepository.getFavorites(pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
@@ -119,4 +83,9 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }
+
+    fun openSearch() {
+        router.navigateTo(Screens.RELEASES_SEARCH)
+    }
+
 }

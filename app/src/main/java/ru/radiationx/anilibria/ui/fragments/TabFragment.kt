@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
+import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
@@ -132,21 +133,17 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                         Screens.MAIN_VIDEOS -> VideosFragment()
                         Screens.MAIN_BLOGS -> BlogsFragment()
                         Screens.MAIN_OTHER -> OtherFragment()
-                        Screens.ARTICLE_DETAILS -> {
-                            ArticleFragment().apply {
-                                if (data is Bundle) arguments = data
-                            }
+                        Screens.ARTICLE_DETAILS -> ArticleFragment().apply {
+                            if (data is Bundle) arguments = data
                         }
-                        Screens.RELEASE_DETAILS -> {
-                            ReleaseFragment().apply {
-                                if (data is Bundle) arguments = data
-                            }
+                        Screens.RELEASE_DETAILS -> ReleaseFragment().apply {
+                            if (data is Bundle) arguments = data
                         }
-                        Screens.RELEASES_SEARCH -> {
-                            SearchFragment().apply {
-                                if (data is Bundle) arguments = data
-                            }
+                        Screens.RELEASES_SEARCH -> SearchFragment().apply {
+                            if (data is Bundle) arguments = data
                         }
+
+                        Screens.FAVORITES -> FavoritesFragment()
                         else -> throw RuntimeException("Unknown screen key: " + screenKey)
                     }
                 }

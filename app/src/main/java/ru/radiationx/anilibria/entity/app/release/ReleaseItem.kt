@@ -5,7 +5,8 @@ import java.io.Serializable
 /* Created by radiationx on 31.10.17. */
 
 open class ReleaseItem : Serializable {
-    var id: Int = 0
+    var id: Int = -1
+    var idName: String? = null
     var title: String? = null
     var originalTitle: String? = null
     var torrentLink: String? = null

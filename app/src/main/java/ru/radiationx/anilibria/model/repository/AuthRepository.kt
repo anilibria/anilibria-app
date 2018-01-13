@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.model.repository
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.CookieHolder

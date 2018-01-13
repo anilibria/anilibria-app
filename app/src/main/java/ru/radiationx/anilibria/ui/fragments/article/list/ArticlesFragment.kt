@@ -30,7 +30,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
             "novosti" to "Новости"
     )
 
-    private val adapter = ArticlesAdapter()
+    private val adapter = ArticlesAdapter(this)
     lateinit var router: Router
 
     @InjectPresenter
@@ -61,7 +61,6 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
             layoutManager = LinearLayoutManager(recyclerView.context)
         }
 
-        adapter.setListener(this)
 
         /*toolbar.apply {
             title = getString(R.string.fragment_title_news)

@@ -5,9 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatDelegate
-import android.text.Html
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
@@ -17,7 +15,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
-import org.json.JSONObject
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder

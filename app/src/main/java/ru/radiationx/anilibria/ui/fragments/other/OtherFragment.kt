@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.other
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
@@ -16,11 +15,15 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
-import ru.radiationx.anilibria.ui.common.*
+import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.MenuListItem
+import ru.radiationx.anilibria.ui.adapters.ProfileListItem
+import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
+import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
+import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
+import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.other.adapter.DividerShadowItemDelegate
-import ru.radiationx.anilibria.ui.fragments.other.adapter.MenuItemDelegate
-import ru.radiationx.anilibria.ui.fragments.other.adapter.ProfileItemDelegate
 
 
 /**
@@ -84,12 +87,14 @@ class OtherFragment : BaseFragment(), OtherView {
 
         private val logoutClickListener = { presenter.signOut() }
 
+        private val menuClickListener = { item: OtherMenuItem -> presenter.onMenuClick(item) }
+
         init {
             items = mutableListOf()
             delegatesManager.run {
                 addDelegate(ProfileItemDelegate(profileClickListener, logoutClickListener))
                 addDelegate(DividerShadowItemDelegate())
-                addDelegate(MenuItemDelegate())
+                addDelegate(MenuItemDelegate(menuClickListener))
             }
         }
 
@@ -104,7 +109,9 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun addMenu(newItems: MutableList<OtherMenuItem>) {
             items.addAll(newItems.map { MenuListItem(it) })
-            items.add(DividerShadowListItem())
+            if (newItems.isNotEmpty()) {
+                items.add(DividerShadowListItem())
+            }
         }
     }
 }

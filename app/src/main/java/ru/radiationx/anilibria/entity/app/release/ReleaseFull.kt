@@ -6,6 +6,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
 
     constructor(item: ReleaseItem) : this() {
         id = item.id
+        idName = item.idName
         title = item.title
         originalTitle = item.originalTitle
         torrentLink = item.torrentLink

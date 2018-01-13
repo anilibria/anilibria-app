@@ -33,7 +33,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     private lateinit var searchView: com.lapism.searchview.SearchView
     private lateinit var genresDialog: GenresDialog
     private lateinit var searchMenuItem: MenuItem
-    private val adapter = ReleasesAdapter()
+    private val adapter = ReleasesAdapter(this)
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
 
@@ -82,7 +82,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             layoutManager = LinearLayoutManager(recyclerView.context)
         }
 
-        adapter.setListener(this)
         ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
             title = currentTitle

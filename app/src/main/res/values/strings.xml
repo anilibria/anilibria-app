@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">AniLibria</string>
+
     <string name="fragment_title_releases">Релизы</string>
     <string name="fragment_title_news">Новости</string>
     <string name="fragment_title_videos">Видео</string>
     <string name="fragment_title_blogs">Блоги</string>
     <string name="fragment_title_other">Прочее</string>
     <string name="fragment_title_release">Релиз</string>
+    <string name="fragment_title_favorites">Избранное</string>
+
     <string name="download_torrent">Скачать торрент</string>
-    <string name="title_activity_kactivity">KACTIVITY</string>
     <string name="watch_all">Смотреть онлайн</string>
 </resources>

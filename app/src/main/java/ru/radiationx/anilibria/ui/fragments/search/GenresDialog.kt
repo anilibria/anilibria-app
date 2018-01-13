@@ -4,13 +4,13 @@ import android.content.Context
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckedTextView
-import ru.radiationx.anilibria.R
+import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.ui.adapters.BaseAdapter
-import ru.radiationx.anilibria.ui.adapters.BaseViewHolder
+import ru.radiationx.anilibria.ui.adapters.BaseItemListener
+import ru.radiationx.anilibria.ui.adapters.GenreListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.search.GenreItemDelegate
 
 class GenresDialog(context: Context, private val listener: ClickListener) {
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
@@ -20,23 +20,24 @@ class GenresDialog(context: Context, private val listener: ClickListener) {
         layoutManager = LinearLayoutManager(this.context)
         adapter = this@GenresDialog.adapter
     }
-    private var checkedGenre: String = ""
+    private val items = mutableListOf<GenreItem>()
 
     fun setItems(items: List<GenreItem>) {
+        this.items.apply {
+            clear()
+            addAll(items)
+        }
         adapter.bindItems(items)
         adapter.notifyDataSetChanged()
     }
 
     fun setChecked(genreValue: String) {
-        checkedGenre = genreValue
-        adapter.items.forEachIndexed { index, genreItem ->
-            if (checkedGenre == genreItem.value) {
-                (recyclerView.layoutManager as LinearLayoutManager)
-                        .scrollToPositionWithOffset(index, 0)
+        items.forEachIndexed { index, genreItem ->
+            if (genreValue == genreItem.value) {
+                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(index, 0)
                 return@forEachIndexed
             }
         }
-
         adapter.notifyDataSetChanged()
     }
 
@@ -52,31 +53,29 @@ class GenresDialog(context: Context, private val listener: ClickListener) {
         fun onItemClick(item: GenreItem)
     }
 
-    inner class ReleasesAdapter : BaseAdapter<GenreItem, ReleasesAdapter.GenreHolder>() {
-        override fun onBindViewHolder(holder: ReleasesAdapter.GenreHolder?, position: Int) {
-            holder?.bind(items[position])
-        }
+    inner class ReleasesAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ReleasesAdapter.GenreHolder {
-            return GenreHolder(inflateLayout(parent, R.layout.item_genre))
-        }
-
-        inner class GenreHolder internal constructor(itemView: View) : BaseViewHolder<GenreItem>(itemView) {
-            private var textView: CheckedTextView = itemView.findViewById<CheckedTextView>(R.id.item_title)
-
-            init {
-                itemView.setOnClickListener {
-                    val item = items[layoutPosition]
-                    setChecked(item.value)
-                    listener.onItemClick(items[layoutPosition])
-                    dialog.dismiss()
-                }
+        private val itemListener = object : BaseItemListener<GenreItem> {
+            override fun onItemClick(item: GenreItem, position: Int) {
+                setChecked(item.value)
+                listener.onItemClick(item)
+                dialog.dismiss()
             }
 
-            override fun bind(item: GenreItem) {
-                textView.text = item.title
-                textView.isChecked = item.value.equals(checkedGenre)
+            override fun onItemLongClick(item: GenreItem): Boolean = false
+        }
+
+        init {
+            items = mutableListOf()
+            delegatesManager.run {
+                addDelegate(GenreItemDelegate(itemListener))
             }
         }
+
+        fun bindItems(newItems: List<GenreItem>) {
+            items.clear()
+            items.addAll(newItems.map { GenreListItem(it) })
+        }
+
     }
 }

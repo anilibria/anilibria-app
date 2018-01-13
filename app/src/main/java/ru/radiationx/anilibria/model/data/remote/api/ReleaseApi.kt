@@ -26,6 +26,15 @@ class ReleaseApi(private val client: IClient,
                 .map { releaseParser.release(it) }
     }
 
+    fun getRelease(releaseIdName: String): Single<ReleaseFull> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "action" to "release",
+                "ELEMENT_CODE" to releaseIdName
+        )
+        return client.get(Api.API_URL, args)
+                .map { releaseParser.release(it) }
+    }
+
     fun getGenres(): Single<List<GenreItem>> {
         val args: MutableMap<String, String> = mutableMapOf("action" to "tags")
         return client.get(Api.API_URL, args)
@@ -36,6 +45,13 @@ class ReleaseApi(private val client: IClient,
         val args: MutableMap<String, String> = mutableMapOf("PAGEN_1" to page.toString())
         return client.get(Api.API_URL, args)
                 .map { releaseParser.releases(it) }
+    }
+
+    fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> {
+        //val args: MutableMap<String, String> = mutableMapOf("PAGEN_1" to page.toString())
+        val args: MutableMap<String, String> = mutableMapOf("SHOWALL_1" to "1")
+        return client.get("${Api.BASE_URL}izbrannoe.php", args)
+                .map { releaseParser.favorites(it) }
     }
 
 }

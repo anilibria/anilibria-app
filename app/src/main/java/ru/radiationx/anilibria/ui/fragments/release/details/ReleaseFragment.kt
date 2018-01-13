@@ -41,15 +41,16 @@ import ru.radiationx.anilibria.utils.Utils
 
 /* Created by radiationx on 16.11.17. */
 
-open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
+open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, ReleaseAdapter.ItemListener {
 
     companion object {
         const val ARG_ID: String = "release_id"
+        const val ARG_ID_NAME: String = "release_id_name"
         const val ARG_ITEM: String = "release_item"
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
-    private var adapter: ReleaseAdapter = ReleaseAdapter()
+    private var adapter: ReleaseAdapter = ReleaseAdapter(this)
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
@@ -74,6 +75,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         if (savedInstanceState == null) {
             arguments?.let {
                 it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
+                it.getString(ARG_ID_NAME, null).let { presenter.setReleaseIdName(it) }
                 (it.getSerializable(ARG_ITEM) as ReleaseItem).let { presenter.setCurrentData(it) }
             }
         }
@@ -139,7 +141,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             }
         })
 
-        adapter.setReleaseListener(releaseListener)
         recyclerView.apply {
             setHasFixedSize(true)
             adapter = this@ReleaseFragment.adapter
@@ -210,38 +211,35 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         Utils.externalLink(url)
     }
 
-    private val releaseListener = object : ReleaseAdapter.ReleaseListener {
-        override fun onClickSd(episode: ReleaseFull.Episode, position: Int) {
-            presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_SD)
-        }
+    override fun onClickSd(episode: ReleaseFull.Episode) {
+        presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_SD)
+    }
 
-        override fun onClickHd(episode: ReleaseFull.Episode, position: Int) {
-            presenter.onPlayEpisodeClick(position, MyPlayerActivity.VAL_QUALITY_HD)
-        }
+    override fun onClickHd(episode: ReleaseFull.Episode) {
+        presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_HD)
+    }
 
-        override fun onClickEpisode(episode: ReleaseFull.Episode, position: Int) {
-            showQualityDialog({ quality ->
-                presenter.onPlayEpisodeClick(position, quality)
-            })
-        }
+    override fun onClickEpisode(episode: ReleaseFull.Episode) {
+        showQualityDialog({ quality ->
+            presenter.onPlayEpisodeClick(episode, quality)
+        })
+    }
 
-        override fun onClickTorrent(url: String) {
-            presenter.onTorrentClick()
-        }
+    override fun onClickTorrent(url: String?) {
+        presenter.onTorrentClick()
+    }
 
-        override fun onClickWatchAll() {
-            presenter.onPlayAllClick()
-        }
+    override fun onClickWatchAll() {
+        presenter.onPlayAllClick()
+    }
 
-        override fun onClickTag(text: String) {
-            presenter.openSearch(text)
-        }
+    override fun onClickTag(text: String) {
+        presenter.openSearch(text)
     }
 
     override fun playEpisodes(release: ReleaseFull) {
-
         showQualityDialog({ quality ->
-            presenter.onPlayEpisodeClick(release.episodes.lastIndex, quality)
+            presenter.onPlayEpisodeClick(release.episodes.last(), quality)
         })
     }
 

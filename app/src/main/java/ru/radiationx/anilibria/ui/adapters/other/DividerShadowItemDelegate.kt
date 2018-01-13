@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.other.adapter
+package ru.radiationx.anilibria.ui.adapters.other
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.ui.common.DividerShadowListItem
-import ru.radiationx.anilibria.ui.common.ListItem
+import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
 
 class DividerShadowItemDelegate : AdapterDelegate<MutableList<ListItem>>() {
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean

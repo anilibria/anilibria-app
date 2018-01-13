@@ -15,11 +15,14 @@ import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
-class ReleasePresenter(private val releaseRepository: ReleaseRepository,
-                       private val router: Router) : BasePresenter<ReleaseView>(router) {
+class ReleasePresenter(
+        private val releaseRepository: ReleaseRepository,
+        private val router: Router
+) : BasePresenter<ReleaseView>(router) {
 
     private var currentData: ReleaseFull? = null
     private var releaseId = -1
+    private var releaseIdName: String? = null
 
     fun setCurrentData(item: ReleaseItem) {
         viewState.showRelease(ReleaseFull(item))
@@ -29,17 +32,23 @@ class ReleasePresenter(private val releaseRepository: ReleaseRepository,
         this.releaseId = releaseId
     }
 
+    fun setReleaseIdName(releaseIdName: String) {
+        this.releaseIdName = releaseIdName
+    }
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
-        if (releaseId > -1) {
-            loadRelease()
-        }
+        loadRelease()
     }
 
     private fun loadRelease() {
-        releaseRepository.getRelease(releaseId)
-                .subscribeOn(Schedulers.io())
+        val source = when {
+            releaseId != -1 -> releaseRepository.getRelease(releaseId)
+            releaseIdName != null -> releaseRepository.getRelease(releaseIdName!!)
+            else -> return
+        }
+        source.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ release ->
                     Log.d("SUKA", "subscribe call show")
@@ -82,9 +91,9 @@ class ReleasePresenter(private val releaseRepository: ReleaseRepository,
         }
     }
 
-    fun onPlayEpisodeClick(position: Int, quality: Int) {
+    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int) {
         currentData?.let {
-            viewState.playEpisode(it, position, quality)
+            viewState.playEpisode(it, it.episodes.indexOf(episode), quality)
         }
     }
 

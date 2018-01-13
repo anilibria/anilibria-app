@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.other.adapter
+package ru.radiationx.anilibria.ui.adapters.other
 
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -13,8 +13,8 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.ui.common.ListItem
-import ru.radiationx.anilibria.ui.common.ProfileListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 
 class ProfileItemDelegate(
         private val clickListener: (ProfileItem) -> Unit,

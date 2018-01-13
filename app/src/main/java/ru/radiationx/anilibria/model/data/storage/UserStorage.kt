@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
-import android.os.UserHandle
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState

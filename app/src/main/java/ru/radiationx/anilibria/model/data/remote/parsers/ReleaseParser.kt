@@ -17,9 +17,27 @@ import java.util.regex.Pattern
 class ReleaseParser(private val apiUtils: IApiUtils) {
 
     private val fastSearchPatternSource = "<a[^>]*?href=\"[^\"]*?\\/release\\/[^\"]*?\"[^>]*?>[^<]*?<img[^>]*?>([\\s\\S]*?) \\/ ([\\s\\S]*?)(?:<\\/a>[^>]*?)?<\\/td>"
+    private val idNamePatternSource = "\\/release\\/([\\s\\S]*?)\\.html"
+
+    /*
+    * 1.    String  Description
+    * 2.    String  ELEMENT_CODE / idName
+    * 3.    Int     Id
+    * 4.    String  Image url
+    * 5.    String  Title
+    * */
+    private val favoritesPatternSource = "<article[^>]*?class=\"favorites_block\"[^>]*?>[^<]*?<div[^>]*?>[^<]*?<p[^>]*?class=\"favorites_description\"[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<a[^>]*?href=\"\\/release\\/([\\s\\S]*?)\\.html\"[^>]*?>[^<]*?<\\/a>[^<]*?<a[^>]*?id=\"asd_fd_(\\d+)[^\"]*?\"[^>]*?>[^<]*?<\\/a>[^<]*?<\\/div>[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[^<]*?<h2[^>]*?>([\\s\\S]*?)<\\/h2>"
 
     private val fastSearchPattern: Pattern by lazy {
         Pattern.compile(fastSearchPatternSource, Pattern.CASE_INSENSITIVE)
+    }
+
+    private val idNamePattern: Pattern by lazy {
+        Pattern.compile(idNamePatternSource, Pattern.CASE_INSENSITIVE)
+    }
+
+    private val favoritesPattern: Pattern by lazy {
+        Pattern.compile(favoritesPatternSource, Pattern.CASE_INSENSITIVE)
     }
 
     fun fastSearch(httpResponse: String): List<SearchItem> {
@@ -60,6 +78,11 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             val item = ReleaseItem()
             val jsonItem = jsonItems.getJSONObject(i)
             item.id = jsonItem.getInt("id")
+
+            val matcher = idNamePattern.matcher(jsonItem.getString("link"))
+            if (matcher.find()) {
+                item.idName = matcher.group(1)
+            }
 
             val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (titles.isNotEmpty()) {
@@ -164,5 +187,32 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         }
 
         return release
+    }
+
+    fun favorites(httpResponse: String): Paginated<List<ReleaseItem>> {
+        val resItems = mutableListOf<ReleaseItem>()
+        val matcher = favoritesPattern.matcher(httpResponse)
+        while (matcher.find()) {
+            val item = ReleaseItem()
+            item.description = apiUtils.escapeHtml(matcher.group(1))
+            item.idName = matcher.group(2)
+            item.id = matcher.group(3).toInt()
+            item.image = Api.BASE_URL_IMAGES + matcher.group(4)
+
+            val titles = matcher.group(5).split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (titles.isNotEmpty()) {
+                item.originalTitle = apiUtils.escapeHtml(titles[0])
+                if (titles.size > 1) {
+                    item.title = apiUtils.escapeHtml(titles[1])
+                }
+            }
+            resItems.add(item)
+        }
+        val pagination = Paginated(resItems)
+        /*val jsonNav = responseJson.getJSONObject("navigation")
+        pagination.total = jsonNav.get("total").toString().toInt()
+        pagination.current = jsonNav.get("page").toString().toInt()
+        pagination.allPages = jsonNav.get("total_pages").toString().toInt()*/
+        return pagination
     }
 }

@@ -1,9 +1,8 @@
-package ru.radiationx.anilibria.ui.fragments.release.list
+package ru.radiationx.anilibria.ui.fragments.favorites
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -12,24 +11,25 @@ import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
-import ru.radiationx.anilibria.presentation.release.list.ReleasesView
+import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
+import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 
-/* Created by radiationx on 05.11.17. */
-
-class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesAdapter.ItemListener {
-
+/**
+ * Created by radiationx on 13.01.18.
+ */
+class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, ReleasesAdapter.ItemListener {
     private val adapter: ReleasesAdapter = ReleasesAdapter(this)
 
     @InjectPresenter
-    lateinit var presenter: ReleasesPresenter
+    lateinit var presenter: FavoritesPresenter
 
     @ProvidePresenter
-    fun provideReleasesPresenter(): ReleasesPresenter {
-        return ReleasesPresenter(App.injections.releaseRepository,
+    fun provideFavoritesPresenter(): FavoritesPresenter {
+        return FavoritesPresenter(App.injections.releaseRepository,
                 (parentFragment as RouterProvider).router)
     }
 
@@ -48,20 +48,12 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
-            adapter = this@ReleasesFragment.adapter
+            adapter = this@FavoritesFragment.adapter
             layoutManager = LinearLayoutManager(recyclerView.context)
         }
 
         toolbar.apply {
-            title = getString(R.string.fragment_title_releases)
-            menu.add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener({
-                        presenter.openSearch()
-                        //Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
-                        false
-                    })
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            title = getString(R.string.fragment_title_favorites)
         }
     }
 

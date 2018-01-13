@@ -34,6 +34,7 @@ class OtherPresenter(
         val MENU_PATREON = 9
         val MENU_CANAL_TG = 10
         val MENU_CHAT_DSC = 11
+        val MENU_SITE_ANILIB = 12
 
         val GROUP_MAIN = arrayOf(
                 MENU_FAVORITES,
@@ -51,7 +52,8 @@ class OtherPresenter(
                 MENU_CANAL_YT,
                 MENU_PATREON,
                 MENU_CANAL_TG,
-                MENU_CHAT_DSC
+                MENU_CHAT_DSC,
+                MENU_SITE_ANILIB
         )
     }
 
@@ -81,6 +83,7 @@ class OtherPresenter(
         menuMap.put(MENU_PATREON, OtherMenuItem(MENU_PATREON, "Patreon", R.drawable.ic_logo_patreon))
         menuMap.put(MENU_CANAL_TG, OtherMenuItem(MENU_CANAL_TG, "Канал Telegram", R.drawable.ic_logo_telegram))
         menuMap.put(MENU_CHAT_DSC, OtherMenuItem(MENU_CHAT_DSC, "Чат Discord", R.drawable.ic_logo_discord))
+        menuMap.put(MENU_SITE_ANILIB, OtherMenuItem(MENU_SITE_ANILIB, "Сайт AniLibria", R.drawable.ic_anilibria))
 
         subscribeUser()
         updateMenuItems()
@@ -157,16 +160,19 @@ class OtherPresenter(
                 Utils.externalLink("https://vk.com/anilibria")
             }
             MENU_CANAL_YT -> {
-                Utils.externalLink("https://www.youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg")
+                Utils.externalLink("https://youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg")
             }
             MENU_PATREON -> {
-                Utils.externalLink("https://www.patreon.com/anilibria")
+                Utils.externalLink("https://patreon.com/anilibria")
             }
             MENU_CANAL_TG -> {
                 Utils.externalLink("https://t.me/anilibria_tv")
             }
             MENU_CHAT_DSC -> {
                 Utils.externalLink("https://discord.gg/nZvVMfp")
+            }
+            MENU_SITE_ANILIB -> {
+                Utils.externalLink("https://anilibria.tv/")
             }
         }
     }

@@ -62,19 +62,53 @@ a {
 .wrapper .content > p:first-of-type {
   margin-top: 0;
 }
+.wrapper .news-detail-content > p:last-of-type,
+.wrapper .content > p:last-of-type {
+  margin-bottom: 0;
+}
+.wrapper .news-detail-content hr,
+.wrapper .content hr {
+  max-width: 100%;
+}
+.wrapper .news-detail-content blockquote,
+.wrapper .content blockquote {
+  margin: 0;
+  padding: 1rem 0.5rem 1rem 2rem;
+  background: #f8f8f8;
+}
+.wrapper .news-detail-content blockquote > p:first-of-type,
+.wrapper .content blockquote > p:first-of-type {
+  margin-top: 0;
+}
+.wrapper .news-detail-content blockquote > p:last-of-type,
+.wrapper .content blockquote > p:last-of-type {
+  margin-bottom: 0;
+}
 .wrapper .news-detail-content img,
-.wrapper .content img,
-.wrapper .news-detail-content iframe,
-.wrapper .content iframe {
+.wrapper .content img {
+  max-width: 100%;
+  margin: 0.5em auto;
+  width: auto!important;
+  height: auto!important;
+}
+.wrapper .news-detail-content .iframe_wrapper,
+.wrapper .content .iframe_wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.wrapper .news-detail-content .iframe_wrapper iframe,
+.wrapper .content .iframe_wrapper iframe {
   max-width: 100%;
   margin: 0.5em auto;
 }
-.wrapper .news-detail-content img,
-.wrapper .content img,
-.wrapper .news-detail-content iframe[src*="youtu"],
-.wrapper .content iframe[src*="youtu"] {
+.wrapper .news-detail-content .iframe_wrapper iframe[src*="youtu"],
+.wrapper .content .iframe_wrapper iframe[src*="youtu"] {
   width: auto!important;
   height: auto!important;
+}
+.wrapper .news-detail-content .iframe_wrapper iframe[src*="yandex.ru"],
+.wrapper .content .iframe_wrapper iframe[src*="yandex.ru"] {
+  max-width: none;
 }
 .wrapper .news-detail-content .alib_button,
 .wrapper .content .alib_button {
@@ -156,4 +190,20 @@ a {
   display: block!important;
   background: transparent!important;
   border-radius: 0!important;
+}
+.wrapper .news-detail-content .join-team-link,
+.wrapper .content .join-team-link,
+.wrapper .news-detail-content #join-team-link,
+.wrapper .content #join-team-link {
+  padding: 0.75rem 1rem;
+  background: #c40304;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 2px;
+  margin: 0.5rem;
 }

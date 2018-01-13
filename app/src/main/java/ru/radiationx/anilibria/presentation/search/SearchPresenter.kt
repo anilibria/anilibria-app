@@ -40,10 +40,8 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
                     Log.d("SUKA", "subscribe call show")
-                    viewState.setRefreshing(false)
                     viewState.showFastItems(searchItems)
                 }) { throwable ->
-                    viewState.setRefreshing(false)
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
@@ -56,10 +54,8 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
                     Log.d("SUKA", "subscribe call show")
-                    viewState.setRefreshing(false)
                     viewState.showGenres(genres)
                 }) { throwable ->
-                    viewState.setRefreshing(false)
                     Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
@@ -81,20 +77,18 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
             viewState.setRefreshing(true)
         }
         searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
-                    Log.d("SUKA", "subscribe call show")
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
-                        viewState.setRefreshing(false)
+
                         viewState.showReleases(releaseItems.data)
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
                 }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()

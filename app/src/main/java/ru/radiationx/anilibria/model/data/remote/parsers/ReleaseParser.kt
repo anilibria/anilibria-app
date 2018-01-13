@@ -194,7 +194,6 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
     fun favorites(httpResponse: String): Paginated<List<ReleaseItem>> {
         val resItems = mutableListOf<ReleaseItem>()
         val matcher = favoritesPattern.matcher(httpResponse)
-        Utils.longLog("FAV CONTENT "+httpResponse)
         while (matcher.find()) {
             val item = ReleaseItem()
             item.description = apiUtils.escapeHtml(matcher.group(1))

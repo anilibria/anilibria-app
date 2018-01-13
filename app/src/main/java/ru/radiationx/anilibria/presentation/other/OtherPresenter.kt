@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -148,6 +149,24 @@ class OtherPresenter(
             }
             MENU_RULES -> {
                 router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
+            }
+            MENU_SETTINGS -> {
+                router.showSystemMessage("Кто-то спиздил настройки походу")
+            }
+            MENU_GROUP_VK -> {
+                Utils.externalLink("https://vk.com/anilibria")
+            }
+            MENU_CANAL_YT -> {
+                Utils.externalLink("https://www.youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg")
+            }
+            MENU_PATREON -> {
+                Utils.externalLink("https://www.patreon.com/anilibria")
+            }
+            MENU_CANAL_TG -> {
+                Utils.externalLink("https://t.me/anilibria_tv")
+            }
+            MENU_CHAT_DSC -> {
+                Utils.externalLink("https://discord.gg/nZvVMfp")
             }
         }
     }

@@ -28,7 +28,9 @@ class PagePresenter(
     }
 
     private fun loadPage(pageId: String) {
+        viewState.setRefreshing(true)
         pageRepository.getPage(pageId)
+                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ page ->
                     viewState.showPage(page)
                 }, { throwable ->

@@ -23,7 +23,7 @@ class ArticleRepository(private val schedulers: SchedulersProvider,
     * 2.    String  id
     * 3.    String? Какой-то хеш и всякое такое
     * */
-    private val iframeVK = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?logo_vk\\.com\\/video_ext\\.php\\?oid=([^&\"]*?)&id=([^&\"]*?)(&hash[^\"]*?)?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
+    private val iframeVK = "<iframe[^>]*?src=\"(?:http(?:s?):)?\\/\\/(?:www\\.)?vk\\.com\\/video_ext\\.php\\?oid=([^&\"]*?)&id=([^&\"]*?)(&hash[^\"]*?)?\"[^>]*?>[\\s\\S]*?<\\/iframe>"
 
     /*
     * Изображение линии, нужно чтобы было обёрнуто в див, тогда вёрстка не полетит
@@ -34,7 +34,7 @@ class ArticleRepository(private val schedulers: SchedulersProvider,
             = articleApi.getArticle(articleUrl)
             .map {
                 it.content = it.content.replace(Regex(iframeYT), "<div class=\"alib_button yt\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
-                it.content = it.content.replace(Regex(iframeVK), "<div class=\"alib_button logo_vk\"><a href=\"https://logo_vk.com/video?z=video$1_$2$3\">Смотреть в VK</a></div>")
+                it.content = it.content.replace(Regex(iframeVK), "<div class=\"alib_button vk\"><a href=\"https://vk.com/video?z=video$1_$2$3\">Смотреть в VK</a></div>")
                 it.content = it.content.replace(Regex(alibBordLine), "<div class=\"alib_borderline\">$0</div>")
                 it
             }

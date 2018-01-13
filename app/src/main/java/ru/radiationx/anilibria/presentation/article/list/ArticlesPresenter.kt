@@ -32,7 +32,7 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
     }
 
     fun loadSubCategory(subCategory: String) {
-        if(this.subCategory != subCategory){
+        if (this.subCategory != subCategory) {
             this.subCategory = subCategory
             refresh()
         }
@@ -44,12 +44,10 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
 
     private fun loadPage(page: Int) {
         currentPage = page
+        if (isFirstPage()) {
+            viewState.setRefreshing(true)
+        }
         articleRepository.getArticles(category, subCategory, page)
-                .doOnTerminate {
-                    if (isFirstPage()) {
-                        viewState.setRefreshing(true)
-                    }
-                }
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())

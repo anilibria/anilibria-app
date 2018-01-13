@@ -156,9 +156,9 @@ function NativeEvents() {
 var nativeEvents = new NativeEvents();
 var encoding = 'utf-8';
 var textDecoder;
-try{
+try {
     textDecoder = new TextDecoder(encoding);
-}catch(ex){
+} catch (ex) {
     textDecoder = new TextDecoderLite(encoding);
 }
 
@@ -201,6 +201,19 @@ function nodeScriptClone(node) {
     return script;
 }
 
+function onViewModelChanged(){
+    var allIframes = document.getElementsByTagName("IFRAME");
+    console.log("ALL IFRAMES "+allIframes.length);
+    for (var i = 0; i < allIframes.length; i++) {
+        var iframe = allIframes[i];
+        var iframeWrapper = document.createElement("DIV");
+        iframeWrapper.classList.add("iframe_wrapper");
+        iframe.parentElement.insertBefore(iframeWrapper, iframe);
+        iframe.parentElement.removeChild(iframe);
+        iframeWrapper.appendChild(iframe);
+    }
+}
+
 function ViewModelClass() {
     this.setText = function (id, text) {
         text = Base64Decode(text);
@@ -211,7 +224,7 @@ function ViewModelClass() {
             console.error(ex);
         }
         try {
-            onAnyLoad();
+            onViewModelChanged();
         } catch (ex) {
             console.error(ex);
         }
@@ -219,18 +232,3 @@ function ViewModelClass() {
 }
 
 var ViewModel = new ViewModelClass();
-
-
-
-
-/*(function (d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "//vk.com/js/api/openapi.js?151";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'vk_openapi_js'));
-(function () {
-    if (!window.VK || !VK.Widgets || !VK.Widgets.Post || !VK.Widgets.Post('vk_post_1_45616', 1, 45616, 'Zs8yZtljpQpNKslXB8Cr361kKAlt')) setTimeout(arguments.callee, 50);
-}());*/

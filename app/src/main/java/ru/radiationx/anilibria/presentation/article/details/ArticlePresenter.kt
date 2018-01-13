@@ -31,12 +31,10 @@ class ArticlePresenter(private val articleRepository: ArticleRepository,
         Log.e("SUKA", "loadArticle")
         viewState.setRefreshing(true)
         articleRepository.getArticle(articleUrl)
+                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ article ->
-                    viewState.setRefreshing(false)
                     viewState.showArticle(article)
                 }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()

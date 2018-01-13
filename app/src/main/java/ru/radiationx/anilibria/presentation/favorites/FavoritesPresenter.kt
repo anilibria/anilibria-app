@@ -45,20 +45,17 @@ class FavoritesPresenter(
             viewState.setRefreshing(true)
         }
         releaseRepository.getFavorites(pageNum)
+                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
-                    Log.d("SUKA", "subscribe call show")
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
-                        viewState.setRefreshing(false)
                         viewState.showReleases(releaseItems.data)
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
                 }) { throwable ->
-                    viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()

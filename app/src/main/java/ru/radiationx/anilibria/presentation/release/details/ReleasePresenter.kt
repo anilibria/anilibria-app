@@ -9,9 +9,11 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
+import java.util.regex.Pattern
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
@@ -38,11 +40,12 @@ class ReleasePresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach")
+        Log.e("SUKA", "onFirstViewAttach " + this)
         loadRelease()
     }
 
     private fun loadRelease() {
+        Log.e("SUKA", "load release $releaseId : $releaseIdName : $currentData")
         val source = when {
             releaseId != -1 -> releaseRepository.getRelease(releaseId)
             releaseIdName != null -> releaseRepository.getRelease(releaseIdName!!)
@@ -95,6 +98,18 @@ class ReleasePresenter(
         currentData?.let {
             viewState.playEpisode(it, it.episodes.indexOf(episode), quality)
         }
+    }
+
+    fun onClickLink(url: String): Boolean {
+        val matcher = Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html").matcher(url)
+        if (matcher.find()) {
+            val args: Bundle = Bundle().apply {
+                putString(ReleaseFragment.ARG_ID_NAME, matcher.group(1))
+            }
+            router.navigateTo(Screens.RELEASE_DETAILS, args)
+            return true
+        }
+        return false
     }
 
     fun openSearch(genre: String) {

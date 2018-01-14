@@ -24,11 +24,12 @@ class ArticlePresenter(private val articleRepository: ArticleRepository,
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        Log.e("SUKA", "onFirstViewAttach " + this)
         loadArticle(url)
     }
 
     fun loadArticle(articleUrl: String) {
-        Log.e("SUKA", "loadArticle")
+        Log.e("SUKA", "load article $articleUrl")
         viewState.setRefreshing(true)
         articleRepository.getArticle(articleUrl)
                 .doAfterTerminate { viewState.setRefreshing(false) }

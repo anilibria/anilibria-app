@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
+import ru.radiationx.anilibria.utils.LinkMovementMethod
 
 /**
  * Created by radiationx on 13.01.18.
@@ -64,6 +65,9 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
             view.run {
                 full_title.text = item.title
                 full_description.text = Html.fromHtml(item.description)
+
+                full_description.movementMethod = LinkMovementMethod({ itemListener.onClickSomeLink(it) })
+
                 full_button_torrent.isEnabled = true
                 if (full_tags.tags.isEmpty()) {
                     item.genres.forEach {
@@ -92,6 +96,8 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
     }
 
     interface Listener {
+        fun onClickSomeLink(url: String): Boolean
+
         fun onClickTorrent(url: String?)
 
         fun onClickTag(text: String)

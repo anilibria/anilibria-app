@@ -38,14 +38,11 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            Log.e("SUKA", "subsc dim: " + it)
             toolbar?.post {
                 toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
                     topMargin = it.statusBar
-                    Log.e("SUKA", "set sb dim: " + it)
                 }
             }
-
         }
     }
 

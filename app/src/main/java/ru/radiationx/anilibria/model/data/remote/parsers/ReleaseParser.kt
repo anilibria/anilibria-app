@@ -184,7 +184,11 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         jsonMoonwalk?.let {
             val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
             if (matcher.find()) {
-                release.moonwalkLink = "https:${matcher.group(1)}"
+                var mwUrl = matcher.group(1)
+                if (mwUrl.substring(0, 2) == "//") {
+                    mwUrl = "https:" + mwUrl
+                }
+                release.moonwalkLink = mwUrl
             }
         }
 

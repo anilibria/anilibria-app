@@ -69,13 +69,16 @@ class ProfileItemDelegate(
             item = profileItem
             Log.e("SUKA", "bind prfile " + profileItem)
             view.run {
-                if (profileItem.authState == AuthState.AUTH) {
+                if (profileItem.avatarUrl.isNullOrEmpty()) {
+                    ImageLoader.getInstance().displayImage("assets://res/alib_new_or_b.png", profileAvatar)
+                } else {
                     ImageLoader.getInstance().displayImage(profileItem.avatarUrl, profileAvatar)
+                }
+                if (profileItem.authState == AuthState.AUTH) {
                     profileNick.text = profileItem.nick
                     profileDesc.text = "Перейти в профиль"
                     profileLogout.visibility = View.VISIBLE
                 } else {
-                    ImageLoader.getInstance().displayImage("assets://res/alib_new_or_b.png", profileAvatar)
                     profileNick.text = "Гость"
                     profileDesc.text = "Авторизоваться"
                     profileLogout.visibility = View.GONE

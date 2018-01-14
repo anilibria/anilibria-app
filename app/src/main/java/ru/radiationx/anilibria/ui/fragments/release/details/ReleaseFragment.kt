@@ -72,12 +72,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("SUKA", "ONCRETE $this")
-        if (savedInstanceState == null) {
-            arguments?.let {
-                it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
-                it.getString(ARG_ID_NAME, null).let { presenter.setReleaseIdName(it) }
-                (it.getSerializable(ARG_ITEM) as ReleaseItem).let { presenter.setCurrentData(it) }
-            }
+        arguments?.let {
+            it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
+            it.getString(ARG_ID_NAME, null)?.let { presenter.setReleaseIdName(it) }
+            (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
         }
     }
 
@@ -236,6 +234,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     override fun onClickTag(text: String) {
         presenter.openSearch(text)
     }
+
+    override fun onClickSomeLink(url: String): Boolean = presenter.onClickLink(url)
 
     override fun playEpisodes(release: ReleaseFull) {
         showQualityDialog({ quality ->

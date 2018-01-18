@@ -29,6 +29,7 @@ import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.bbparser.BbParser
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -54,6 +55,13 @@ class App : Application() {
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
 
+    val bbsrc = "[CENTER][B][FONT=Verdana]Добавлена вторая серия. Приятного просмотра![/FONT][/B]\n" +
+            "[I](Серию озвучили: Амикири, Анзен и Адос)[/I][/CENTER]\n" +
+            "[CENTER][I]\n" +
+            "[/I][/CENTER]\n" +
+            "[CENTER][I][IMG WIDTH=1080 HEIGHT=1920]https://shikimori.org/camo?filename=violet_evergarden_1080x1920_kiyoe_428797.png&url=https://files.yande.re/image/7ae0c5d5fac05679fb8c8bf0bad97c63/yande.re%20428797%20violet_evergarden.png[/IMG]\n" +
+            "[/I][/CENTER]"
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -66,6 +74,10 @@ class App : Application() {
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         initImageLoader(this)
+
+        val parser = BbParser()
+        parser.parse(bbsrc)
+
     }
 
 

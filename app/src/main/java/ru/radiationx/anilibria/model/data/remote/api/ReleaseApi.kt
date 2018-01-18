@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api;
 
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -12,8 +13,10 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 
 /* Created by radiationx on 31.10.17. */
 
-class ReleaseApi(private val client: IClient,
-                 apiUtils: IApiUtils) {
+class ReleaseApi(
+        private val client: IClient,
+        apiUtils: IApiUtils
+) {
 
     private val releaseParser = ReleaseParser(apiUtils)
 
@@ -52,6 +55,15 @@ class ReleaseApi(private val client: IClient,
         val args: MutableMap<String, String> = mutableMapOf("SHOWALL_1" to "1")
         return client.get("${Api.BASE_URL}izbrannoe.php", args)
                 .map { releaseParser.favorites(it) }
+    }
+
+    fun getComments(id: Int): Single<Paginated<List<Comment>>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "action" to "comments",
+                "ELEMENT_ID" to id.toString()
+        )
+        return client.get("https://www.anilibria.tv/api/api_v2.php", args)
+                .map { releaseParser.comments(it) }
     }
 
 }

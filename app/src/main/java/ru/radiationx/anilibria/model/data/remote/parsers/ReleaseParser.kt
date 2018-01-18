@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -192,6 +193,10 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
+        val jsonBxFull = responseJson.getJSONObject("fulll")
+        release.id = jsonBxFull.getString("ID").toInt()
+        release.idName = jsonBxFull.getString("CODE")
+
         return release
     }
 
@@ -219,6 +224,31 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         pagination.total = jsonNav.get("total").toString().toInt()
         pagination.current = jsonNav.get("page").toString().toInt()
         pagination.allPages = jsonNav.get("total_pages").toString().toInt()*/
+        return pagination
+    }
+
+    fun comments(httpResponse: String): Paginated<List<Comment>> {
+        val resItems = mutableListOf<Comment>()
+        val responseJson = JSONObject(httpResponse)
+        val jsonItems = responseJson.getJSONArray("items")
+        for (i in 0 until jsonItems.length()) {
+            val item = Comment()
+            val jsonItem = jsonItems.getJSONObject(i)
+            item.id = jsonItem.getInt("id")
+            item.forumId = jsonItem.getInt("forumId")
+            item.topicId = jsonItem.getInt("topicId")
+            item.date = jsonItem.getString("postDate")
+            item.message = jsonItem.getString("postMessage")
+            item.authorId = jsonItem.getInt("authorId")
+            item.authorNick = jsonItem.getString("authorName")
+            item.avatar = jsonItem.getString("avatar")
+            resItems.add(item)
+        }
+        val pagination = Paginated(resItems)
+        val jsonNav = responseJson.getJSONObject("navigation")
+        pagination.total = jsonNav.get("total").toString().toInt()
+        pagination.current = jsonNav.get("page").toString().toInt()
+        pagination.allPages = jsonNav.get("total_pages").toString().toInt()
         return pagination
     }
 }

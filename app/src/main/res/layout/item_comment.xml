@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/item_nick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nick"
+        android:textColor="@color/textSecond"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/item_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:textColor="@color/textSecond"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/item_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/item_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="cjdajsjklklasdkl;kl;jjjdaskjljjgfj'jl'kfdjkj'j'sj b'dsfj  jfdj''ds"
+        android:textColor="@color/textDefault"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

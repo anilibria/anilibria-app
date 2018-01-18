@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_release.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
@@ -140,7 +141,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         })
 
         recyclerView.apply {
-            setHasFixedSize(true)
+            //setHasFixedSize(true)
             adapter = this@ReleaseFragment.adapter
             layoutManager = LinearLayoutManager(recyclerView.context)
         }
@@ -194,7 +195,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         currentTitle = String.format("%s / %s", release.title, release.originalTitle)
         adapter.setRelease(release)
-        adapter.notifyDataSetChanged()
+    }
+
+    override fun showComments(comments: List<Comment>) {
+        adapter.setComments(comments)
     }
 
     override fun loadTorrent(url: String) {

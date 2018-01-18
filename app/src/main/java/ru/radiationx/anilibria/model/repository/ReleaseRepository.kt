@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -11,37 +12,44 @@ import ru.radiationx.anilibria.model.system.SchedulersProvider
 /**
  * Created by radiationx on 17.12.17.
  */
-class ReleaseRepository(private val schedulers: SchedulersProvider,
-                        private val releaseApi: ReleaseApi) {
+class ReleaseRepository(
+        private val schedulers: SchedulersProvider,
+        private val releaseApi: ReleaseApi
+) {
 
-    fun getRelease(releaseId: Int): Observable<ReleaseFull>
-            = releaseApi.getRelease(releaseId)
+    fun getRelease(releaseId: Int): Observable<ReleaseFull> = releaseApi
+            .getRelease(releaseId)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getRelease(releaseIdName: String): Observable<ReleaseFull>
-            = releaseApi.getRelease(releaseIdName)
+    fun getRelease(releaseIdName: String): Observable<ReleaseFull> = releaseApi
+            .getRelease(releaseIdName)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getGenres(): Observable<List<GenreItem>>
-            = releaseApi.getGenres()
+    fun getGenres(): Observable<List<GenreItem>> = releaseApi
+            .getGenres()
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getReleases(page: Int): Observable<Paginated<List<ReleaseItem>>>
-            = releaseApi.getReleases(page)
+    fun getReleases(page: Int): Observable<Paginated<List<ReleaseItem>>> = releaseApi
+            .getReleases(page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getFavorites(page: Int): Observable<Paginated<List<ReleaseItem>>>
-            = releaseApi.getFavorites(page)
+    fun getFavorites(page: Int): Observable<Paginated<List<ReleaseItem>>> = releaseApi
+            .getFavorites(page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
+    fun getComments(id: Int): Observable<Paginated<List<Comment>>> = releaseApi
+            .getComments(id)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 }

@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -35,6 +36,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode) : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
+class CommentListItem(val item: Comment) : ListItem()
 
 
 /* Search screen */

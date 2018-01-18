@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.presentation.release.details
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
@@ -11,6 +12,8 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseView : IBaseView {
     fun showRelease(release: ReleaseFull)
+
+    fun showComments(comments: List<Comment>)
 
     @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(url: String)

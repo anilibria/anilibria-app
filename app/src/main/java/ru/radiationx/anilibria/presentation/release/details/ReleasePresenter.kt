@@ -54,13 +54,33 @@ class ReleasePresenter(
         source.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ release ->
+                    releaseId = release.id
+                    releaseIdName = release.idName
                     Log.d("SUKA", "subscribe call show")
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
+                    loadComments()
                     currentData = release
                 }) { throwable ->
                     viewState.setRefreshing(false)
                     Log.d("SUKA", "SAS")
+                    throwable.printStackTrace()
+                }
+                .addToDisposable()
+    }
+
+    private fun loadComments() {
+        releaseRepository
+                .getComments(releaseId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ comments ->
+                    Log.e("SUKA", "Comments loaded: " + comments.data.size)
+                    comments.data.forEach {
+                        Log.e("SUKA", "Comment: ${it.id}, ${it.authorNick}")
+                    }
+                    viewState.showComments(comments.data)
+                }) { throwable ->
                     throwable.printStackTrace()
                 }
                 .addToDisposable()

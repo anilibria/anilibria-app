@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
@@ -55,12 +54,12 @@ class App : Application() {
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
 
-    val bbsrc = "[CENTER][B][FONT=Verdana]Добавлена вторая серия. Приятного просмотра![/FONT][/B]\n" +
-            "[I](Серию озвучили: Амикири, Анзен и Адос)[/I][/CENTER]\n" +
-            "[CENTER][I]\n" +
-            "[/I][/CENTER]\n" +
-            "[CENTER][I][IMG WIDTH=1080 HEIGHT=1920]https://shikimori.org/camo?filename=violet_evergarden_1080x1920_kiyoe_428797.png&url=https://files.yande.re/image/7ae0c5d5fac05679fb8c8bf0bad97c63/yande.re%20428797%20violet_evergarden.png[/IMG]\n" +
-            "[/I][/CENTER]"
+    val bbsrc = """[CENTER][B][FONT=Verdana]Добавлена вторая серия. Приятного просмотра![/FONT][/B]
+[I](Серию озвучили: Амикири, Анзен и Адос)[/I][/CENTER]
+[CENTER][I]
+[/I][/CENTER]
+[CENTER][I][IMG WIDTH=1080 HEIGHT=1920]https://shikimori.org/camo?filename=violet_evergarden_1080x1920_kiyoe_428797.png&url=https://files.yande.re/image/7ae0c5d5fac05679fb8c8bf0bad97c63/yande.re%20428797%20violet_evergarden.png[/IMG]
+[/I][/CENTER]"""
 
     override fun onCreate() {
         super.onCreate()
@@ -76,8 +75,8 @@ class App : Application() {
         initImageLoader(this)
 
         val parser = BbParser()
-        parser.parse(bbsrc)
-
+        val node = parser.parse(bbsrc)
+        node.print()
     }
 
 

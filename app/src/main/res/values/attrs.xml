@@ -3,5 +3,6 @@
     <attr name="toolbar_icon" extension="reference" format="color"/>
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float"/>
+        <attr name="enabledAspectRatio" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -29,13 +29,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <ru.radiationx.anilibria.ui.widgets.bbwidgets.BbView
         android:id="@+id/item_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="cjdajsjklklasdkl;kl;jjjdaskjljjgfj'jl'kfdjkj'j'sj b'dsfj  jfdj''ds"
-        android:textColor="@color/textDefault"
-        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

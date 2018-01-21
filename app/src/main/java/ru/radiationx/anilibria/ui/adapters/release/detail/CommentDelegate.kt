@@ -14,6 +14,8 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.ui.adapters.CommentListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.utils.bbparser.BbParser
+import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 
 /**
  * Created by radiationx on 18.01.18.
@@ -30,16 +32,21 @@ class CommentDelegate : AdapterDelegate<MutableList<ListItem>>() {
             LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
     )
 
+    val parser = BbParser()
+
     private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(item: Comment) {
             view.run {
                 item_nick.text = item.authorNick
                 item_date.text = item.date
-                item_content.text = Html.fromHtml(item.message)
-                Log.e("SUKA", "Bind: "+item.message)
+                println("BindSRC: '${item.message}'")
+                item.message?.let {
+                    item_content.setContent(parser.parse(it).toSequence())
+                }
             }
         }
     }
+
 
 }

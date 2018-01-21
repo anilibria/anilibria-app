@@ -31,6 +31,7 @@ public class AspectRatioImageView extends android.support.v7.widget.AppCompatIma
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.AspectRatio);
         aspectRatio = typedArray.getFloat(R.styleable.AspectRatio_aspectRatio, 1);
+        enabledAspectRation = typedArray.getBoolean(R.styleable.AspectRatio_enabledAspectRatio, true);
         typedArray.recycle();
     }
 

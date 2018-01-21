@@ -21,6 +21,8 @@ class DividerShadowListItem() : ListItem()
 /* Common */
 
 class LoadMoreListItem() : ListItem()
+class CommentListItem(val item: Comment) : ListItem()
+class CommentRouteListItem : ListItem()
 
 /* Articles, blogs, etc. list screen*/
 
@@ -36,7 +38,6 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode) : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
-class CommentListItem(val item: Comment) : ListItem()
 
 
 /* Search screen */

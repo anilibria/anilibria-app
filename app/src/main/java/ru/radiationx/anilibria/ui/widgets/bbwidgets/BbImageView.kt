@@ -2,19 +2,15 @@ package ru.radiationx.anilibria.ui.widgets.bbwidgets
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.ViewSwitcher
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.widget_bb_imageview.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.ui.widgets.AspectRatioImageView
 import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 
 /**

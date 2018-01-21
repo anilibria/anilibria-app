@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets.bbwidgets
 
 import android.content.Context
-import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.TextView
@@ -29,5 +28,9 @@ class BbQuote @JvmOverloads constructor(
         val title = TextView(context)
         title.text = "Цитата"
         addView(title, 0)
+    }
+
+    override fun deleteContent() {
+        removeViews(1, childCount - 1)
     }
 }

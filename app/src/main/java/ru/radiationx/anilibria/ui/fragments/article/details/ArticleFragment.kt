@@ -6,22 +6,32 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.v4.view.PagerAdapter
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Base64
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ViewSwitcher
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import io.reactivex.functions.Consumer
-import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.fragment_article.view.*
+import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.android.synthetic.main.fragment_paged.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.article.ArticleFull
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
 import ru.radiationx.anilibria.presentation.article.details.ArticleView
+import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
@@ -35,7 +45,23 @@ import java.util.*
 /**
  * Created by radiationx on 20.12.17.
  */
-class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWebView.JsLifeCycleListener {
+class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAdapter.ItemListener {
+
+    override fun showComments(comments: List<Comment>) {
+        commentsAdapter.setComments(comments)
+    }
+
+    override fun insertMoreComments(comments: List<Comment>) {
+        commentsAdapter.addComments(comments)
+    }
+
+    override fun setEndlessComments(enable: Boolean) {
+        commentsAdapter.endless = enable
+    }
+
+    override fun onLoadMore() {
+        presenter.loadMoreComments()
+    }
 
     companion object {
         const val ARG_URL: String = "article_url"
@@ -45,7 +71,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
 
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
-    private var webViewScrollPos = 0
+
+    private val commentsAdapter = CommentsAdapter(this)
+    private val pagerAdapter: CustomPagerAdapter = CustomPagerAdapter(commentsAdapter)
 
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
@@ -73,7 +101,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_article
+    override fun getLayoutResource(): Int = R.layout.fragment_paged
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -112,41 +140,28 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
             }
         })
 
-        webView.setJsLifeCycleListener(this)
-
         savedInstanceState?.let {
-            webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
+            pagerAdapter.webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
-        val template = App.instance.articleTemplate
-        webView.easyLoadData(Api.BASE_URL, template.generateOutput())
-        template.reset()
+        viewPager.adapter = pagerAdapter
     }
 
     override fun onResume() {
         super.onResume()
-        webView.onResume()
+        pagerAdapter.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        webView.onPause()
+        pagerAdapter.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(WEB_VIEW_SCROLL_Y, webView.scrollY)
+        outState.putInt(WEB_VIEW_SCROLL_Y, pagerAdapter.getWebViewScroll())
     }
 
-    override fun onDomContentComplete(actions: ArrayList<String>) {
-
-    }
-
-    override fun onPageComplete(actions: ArrayList<String>) {
-        webView.syncWithJs {
-            webView.scrollTo(0, webViewScrollPos)
-        }
-    }
 
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
@@ -154,16 +169,12 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressSwitcher.displayedChild = if (refreshing) 1 else 0
+        pagerAdapter.setRefreshing(refreshing)
     }
 
     override fun showArticle(article: ArticleFull) {
         currentTitle = article.title
-        webView.evalJs("ViewModel.setText('content','${convert(article.content)}');")
-    }
-
-    private fun convert(string: String): String {
-        return Base64.encodeToString(string.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        pagerAdapter.showArticle(article)
     }
 
     override fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
@@ -182,10 +193,136 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, ExtendedWeb
                 })
             }
         })
+        pagerAdapter.preShow(imageUrl, title, nick, comments, views)
+    }
 
-        webView.evalJs("ViewModel.setText('title','${convert(title)}');")
-        webView.evalJs("ViewModel.setText('nick','${convert(nick)}');")
-        webView.evalJs("ViewModel.setText('comments_count','${convert(comments.toString())}');")
-        webView.evalJs("ViewModel.setText('views_count','${convert(views.toString())}');")
+    class CustomPagerAdapter(
+            val commentsAdapter: CommentsAdapter
+    ) : PagerAdapter(), ExtendedWebView.JsLifeCycleListener {
+
+        var webViewScrollPos = 0
+
+        private val views = arrayOf(R.layout.fragment_article, R.layout.fragment_comments)
+
+        private var localWebView: ExtendedWebView? = null
+        private var localProgressSwitcher: ViewSwitcher? = null
+        private val webViewCallCache = mutableListOf<Runnable>()
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            Log.e("SUKA", "instantiateItem $position")
+            val inflater: LayoutInflater = LayoutInflater.from(container.context)
+            val layout: ViewGroup = inflater.inflate(views[position], container, false) as ViewGroup
+            container.addView(layout)
+            if (position == 0) {
+                createMain(layout)
+                tryRunCache()
+            } else if (position == 1) {
+                createComments(layout)
+            }
+            return layout
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+            if (position == 0) {
+                localWebView = null
+                localProgressSwitcher = null
+            }
+            container.removeView(any as View);
+        }
+
+        override fun getCount(): Int = 2
+
+        override fun isViewFromObject(view: View, any: Any): Boolean = view == any
+
+        private fun createMain(layout: ViewGroup) {
+            layout.run {
+                localWebView = webView
+                localWebView?.let {
+                    it.setJsLifeCycleListener(this@CustomPagerAdapter)
+                    val template = App.instance.articleTemplate
+                    it.easyLoadData(Api.BASE_URL, template.generateOutput())
+                    template.reset()
+                }
+
+                localProgressSwitcher = progressSwitcher
+            }
+        }
+
+        private fun createComments(layout: ViewGroup) {
+            layout.run {
+                commentsRecyclerView.apply {
+                    adapter = this@CustomPagerAdapter.commentsAdapter
+                    layoutManager = LinearLayoutManager(this.context)
+                    addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
+                }
+            }
+        }
+
+        fun getWebViewScroll(): Int = localWebView?.scrollY ?: 0
+
+
+        fun onResume() {
+            localWebView?.onResume()
+        }
+
+        fun onPause() {
+            localWebView?.onPause()
+        }
+
+        override fun onDomContentComplete(actions: ArrayList<String>) {
+
+        }
+
+        override fun onPageComplete(actions: ArrayList<String>) {
+            localWebView?.syncWithJs {
+                localWebView?.scrollTo(0, webViewScrollPos)
+            }
+        }
+
+        fun setRefreshing(refreshing: Boolean) {
+            webViewCallCache.add(Runnable {
+                localProgressSwitcher?.displayedChild = if (refreshing) 1 else 0
+            })
+            tryRunCache()
+        }
+
+        fun showArticle(article: ArticleFull) {
+            webViewCallCache.add(Runnable {
+                localWebView?.evalJs("ViewModel.setText('content','${convert(article.content)}');")
+            })
+            tryRunCache()
+        }
+
+        fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
+            Log.e("SUKA", "preshow $localWebView")
+            webViewCallCache.add(Runnable {
+                localWebView?.evalJs("ViewModel.setText('title','${convert(title)}');")
+                localWebView?.evalJs("ViewModel.setText('nick','${convert(nick)}');")
+                localWebView?.evalJs("ViewModel.setText('comments_count','${convert(comments.toString())}');")
+                localWebView?.evalJs("ViewModel.setText('views_count','${convert(views.toString())}');")
+            })
+            tryRunCache()
+        }
+
+        private fun convert(string: String): String {
+            return Base64.encodeToString(string.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        }
+
+        private fun tryRunCache() {
+            if (localWebView != null) {
+                webViewCallCache.forEach {
+                    try {
+                        it.run()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+                webViewCallCache.clear()
+            }
+        }
+
+        fun showComments(comments: List<Comment>) {
+            commentsAdapter.setComments(comments)
+        }
     }
 }

@@ -1,39 +1,25 @@
 package ru.radiationx.anilibria.ui.fragments.page
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.article.ArticleFull
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
-import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
-import ru.radiationx.anilibria.presentation.article.details.ArticleView
 import ru.radiationx.anilibria.presentation.page.PagePresenter
 import ru.radiationx.anilibria.presentation.page.PageView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
-import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.nio.charset.StandardCharsets
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by radiationx on 13.01.18.

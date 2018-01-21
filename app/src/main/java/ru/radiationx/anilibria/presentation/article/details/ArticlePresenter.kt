@@ -11,9 +11,16 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 20.12.17.
  */
 @InjectViewState
-class ArticlePresenter(private val articleRepository: ArticleRepository,
-                       private val router: Router) : BasePresenter<ArticleView>(router) {
+class ArticlePresenter(
+        private val articleRepository: ArticleRepository,
+        private val router: Router
+) : BasePresenter<ArticleView>(router) {
 
+    companion object {
+        private const val START_PAGE = 1
+    }
+
+    private var currentPageComment = START_PAGE
     var url: String = ""
 
     fun setDataFromItem(item: ArticleItem) {
@@ -39,5 +46,36 @@ class ArticlePresenter(private val articleRepository: ArticleRepository,
                     throwable.printStackTrace()
                 }
                 .addToDisposable()
+    }
+
+    private fun loadComments(page: Int) {
+        currentPageComment = page
+        /*articleRepository
+                .getComments(releaseId, currentPageComment)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ comments ->
+                    viewState.setEndlessComments(!comments.isEnd())
+                    Log.e("SUKA", "Comments loaded: " + comments.data.size)
+                    comments.data.forEach {
+                        Log.e("SUKA", "Comment: ${it.id}, ${it.authorNick}")
+                    }
+                    if (isFirstPage()) {
+                        viewState.showComments(comments.data)
+                    } else {
+                        viewState.insertMoreComments(comments.data)
+                    }
+                }) { throwable ->
+                    throwable.printStackTrace()
+                }
+                .addToDisposable()*/
+    }
+
+    private fun isFirstPage(): Boolean {
+        return currentPageComment == START_PAGE
+    }
+
+    fun loadMoreComments() {
+        loadComments(currentPageComment + 1)
     }
 }

@@ -47,8 +47,8 @@ class ReleaseRepository(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getComments(id: Int): Observable<Paginated<List<Comment>>> = releaseApi
-            .getComments(id)
+    fun getComments(id: Int, page: Int): Observable<Paginated<List<Comment>>> = releaseApi
+            .getComments(id, page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

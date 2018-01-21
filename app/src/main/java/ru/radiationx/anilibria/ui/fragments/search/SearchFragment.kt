@@ -133,7 +133,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             if (presenter.isEmpty()) {
                 open(true)
             }
-            //adapter = fastAdapter
+            //releaseAdapter = fastAdapter
         }
 
 

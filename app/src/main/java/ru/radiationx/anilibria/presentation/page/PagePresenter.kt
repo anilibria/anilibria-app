@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.presentation.page
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.PageRepository
-import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 

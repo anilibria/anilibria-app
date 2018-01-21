@@ -57,10 +57,11 @@ class ReleaseApi(
                 .map { releaseParser.favorites(it) }
     }
 
-    fun getComments(id: Int): Single<Paginated<List<Comment>>> {
+    fun getComments(id: Int, page: Int): Single<Paginated<List<Comment>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "action" to "comments",
-                "ELEMENT_ID" to id.toString()
+                "ELEMENT_ID" to id.toString(),
+                "PAGEN_1" to page.toString()
         )
         return client.get("https://www.anilibria.tv/api/api_v2.php", args)
                 .map { releaseParser.comments(it) }

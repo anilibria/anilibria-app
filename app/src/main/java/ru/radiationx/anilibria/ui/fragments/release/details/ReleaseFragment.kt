@@ -8,21 +8,24 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
-import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v4.view.PagerAdapter
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.TranslateAnimation
+import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import io.reactivex.functions.Consumer
+import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_release.*
+import kotlinx.android.synthetic.main.fragment_paged.*
+import kotlinx.android.synthetic.main.fragment_release.view.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -31,10 +34,10 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
+import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
-import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
@@ -42,7 +45,19 @@ import ru.radiationx.anilibria.utils.Utils
 
 /* Created by radiationx on 16.11.17. */
 
-open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, ReleaseAdapter.ItemListener {
+open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, ReleaseAdapter.ItemListener, CommentsAdapter.ItemListener {
+    override fun insertMoreComments(comments: List<Comment>) {
+        commentsAdapter.addComments(comments)
+    }
+
+    override fun setEndlessComments(enable: Boolean) {
+        commentsAdapter.endless = enable
+    }
+
+    override fun onLoadMore() {
+        presenter.loadMoreComments()
+    }
+
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -51,7 +66,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
-    private var adapter: ReleaseAdapter = ReleaseAdapter(this)
+    private var releaseAdapter: ReleaseAdapter = ReleaseAdapter(this)
+    private var commentsAdapter: CommentsAdapter = CommentsAdapter(this)
+    private var viewPagerAdapter: CustomPagerAdapter = CustomPagerAdapter(releaseAdapter, commentsAdapter)
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
@@ -80,7 +97,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_release
+    override fun getLayoutResource(): Int = R.layout.fragment_paged
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -140,11 +157,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             }
         })
 
-        recyclerView.apply {
-            //setHasFixedSize(true)
-            adapter = this@ReleaseFragment.adapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
-        }
+        viewPager.adapter = viewPagerAdapter
     }
 
     override fun onDestroyView() {
@@ -152,14 +165,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         super.onDestroyView()
     }
 
-    private fun setupContentAnimation() {
+    /*private fun setupContentAnimation() {
         val animation1 = TranslateAnimation(0f, 0f, resources.displayMetrics.density * 100, 0f);
         animation1.duration = TabFragment.TRANSITION_MOVE_TIME;
         animation1.interpolator = FastOutSlowInInterpolator()
         animation1.startOffset = TabFragment.TRANSITION_OTHER_TIME;
         animation1.isFillEnabled = true
         recyclerView.startAnimation(animation1)
-    }
+    }*/
 
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
@@ -194,11 +207,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         })
 
         currentTitle = String.format("%s / %s", release.title, release.originalTitle)
-        adapter.setRelease(release)
+        viewPagerAdapter.showRelease(release)
     }
 
     override fun showComments(comments: List<Comment>) {
-        adapter.setComments(comments)
+        viewPagerAdapter.showComments(comments)
     }
 
     override fun loadTorrent(url: String) {
@@ -275,6 +288,60 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                         }
                     }
                     .show()
+        }
+    }
+
+    class CustomPagerAdapter(
+            val releaseAdapter: ReleaseAdapter,
+            val commentsAdapter: CommentsAdapter
+    ) : PagerAdapter() {
+        private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val inflater: LayoutInflater = LayoutInflater.from(container.context)
+            val layout: ViewGroup = inflater.inflate(views[position], container, false) as ViewGroup
+            container.addView(layout)
+            if (position == 0) {
+                createMain(layout)
+            } else if (position == 1) {
+                createComments(layout)
+            }
+            return layout
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+            container.removeView(any as View);
+        }
+
+        override fun getCount(): Int = 2
+
+        override fun isViewFromObject(view: View, any: Any): Boolean = view == any
+
+        private fun createMain(layout: ViewGroup) {
+            layout.run {
+                recyclerView.apply {
+                    adapter = this@CustomPagerAdapter.releaseAdapter
+                    layoutManager = LinearLayoutManager(this.context)
+                }
+            }
+        }
+
+        private fun createComments(layout: ViewGroup) {
+            layout.run {
+                commentsRecyclerView.apply {
+                    adapter = this@CustomPagerAdapter.commentsAdapter
+                    layoutManager = LinearLayoutManager(this.context)
+                    addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
+                }
+            }
+        }
+
+        fun showRelease(release: ReleaseFull) {
+            releaseAdapter.setRelease(release)
+        }
+
+        fun showComments(comments: List<Comment>) {
+            commentsAdapter.setComments(comments)
         }
     }
 }

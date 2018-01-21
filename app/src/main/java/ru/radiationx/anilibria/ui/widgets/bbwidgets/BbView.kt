@@ -7,7 +7,6 @@ import android.text.Html
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.nostra13.universalimageloader.core.ImageLoader
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.utils.bbparser.models.BbNode
 import ru.radiationx.anilibria.utils.bbparser.models.BbOp
@@ -32,8 +31,13 @@ open class BbView @JvmOverloads constructor(
         setContent(node.toSequence())
     }
 
+
+    open fun deleteContent() {
+        removeViews(0, childCount)
+    }
+
     fun setContent(ops: List<BbTypedOp>) {
-        removeAllViews()
+        deleteContent()
         ops.forEach {
             when (it.type) {
                 BbOp.Type.TEXT -> {
@@ -68,7 +72,7 @@ open class BbView @JvmOverloads constructor(
                 }
             }
         }
-        println("addTextContent: '${result}'")
+        //println("addTextContent: '${result}'")
         val newTextView = TextView(context)
         newTextView.setTextColor(ContextCompat.getColor(context, R.color.textDefault))
         newTextView.text = Html.fromHtml(result)
@@ -116,7 +120,7 @@ open class BbView @JvmOverloads constructor(
                     }
                 }
             }
-            println("addBlockContent: '${result}'")
+            //println("addBlockContent: '${result}'")
             val newTextView = TextView(context)
             newTextView.text = result
             newTextView.setBackgroundColor(Color.argb(48, 0, 255, 0))
@@ -187,7 +191,7 @@ open class BbView @JvmOverloads constructor(
         }
         var result = ""
         attributes.forEach {
-            result += " $${it.key}=\"${it.value}\""
+            result += " ${it.key}=\"${it.value}\""
         }
         return result
     }

@@ -1,21 +1,17 @@
-package ru.radiationx.anilibria.ui.adapters.release.detail
+package ru.radiationx.anilibria.ui.adapters.global
 
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_comment.view.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.ui.adapters.CommentListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.utils.bbparser.BbParser
-import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 
 /**
  * Created by radiationx on 18.01.18.
@@ -38,9 +34,9 @@ class CommentDelegate : AdapterDelegate<MutableList<ListItem>>() {
 
         fun bind(item: Comment) {
             view.run {
-                item_nick.text = item.authorNick
+                item_nick.text = Html.fromHtml(item.authorNick)
                 item_date.text = item.date
-                println("BindSRC: '${item.message}'")
+                //println("BindSRC: '${item.message}'")
                 item.message?.let {
                     item_content.setContent(parser.parse(it).toSequence())
                 }

@@ -4,8 +4,8 @@ import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.ui.adapters.ArticleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.articles.ArticleItemDelegate
+import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 
 /* Created by radiationx on 31.10.17. */
 

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.utils.bbparser
 
-import android.util.Log
 import ru.radiationx.anilibria.utils.bbparser.models.BbNode
 import java.util.regex.Matcher
 import java.util.regex.Pattern

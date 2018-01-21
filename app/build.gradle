@@ -10,8 +10,8 @@ android {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 8
-        versionName "0.2.5"
+        versionCode 9
+        versionName "0.2.6"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

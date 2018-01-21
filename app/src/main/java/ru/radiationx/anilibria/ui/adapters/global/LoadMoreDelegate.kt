@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.adapters
+package ru.radiationx.anilibria.ui.adapters.global
 
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_load_more.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 
 /**
  * Created by radiationx on 13.01.18.

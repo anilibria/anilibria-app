@@ -22,6 +22,12 @@ class ReleasePresenter(
         private val router: Router
 ) : BasePresenter<ReleaseView>(router) {
 
+    companion object {
+        private const val START_PAGE = 1
+    }
+
+    private var currentPageComment = START_PAGE
+
     private var currentData: ReleaseFull? = null
     private var releaseId = -1
     private var releaseIdName: String? = null
@@ -59,7 +65,7 @@ class ReleasePresenter(
                     Log.d("SUKA", "subscribe call show")
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
-                    loadComments()
+                    loadComments(currentPageComment)
                     currentData = release
                 }) { throwable ->
                     viewState.setRefreshing(false)
@@ -69,21 +75,35 @@ class ReleasePresenter(
                 .addToDisposable()
     }
 
-    private fun loadComments() {
+    private fun loadComments(page: Int) {
+        currentPageComment = page
         releaseRepository
-                .getComments(releaseId)
+                .getComments(releaseId, currentPageComment)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
+                    viewState.setEndlessComments(!comments.isEnd())
                     Log.e("SUKA", "Comments loaded: " + comments.data.size)
                     comments.data.forEach {
                         Log.e("SUKA", "Comment: ${it.id}, ${it.authorNick}")
                     }
-                    viewState.showComments(comments.data)
+                    if (isFirstPage()) {
+                        viewState.showComments(comments.data)
+                    } else {
+                        viewState.insertMoreComments(comments.data)
+                    }
                 }) { throwable ->
                     throwable.printStackTrace()
                 }
                 .addToDisposable()
+    }
+
+    private fun isFirstPage(): Boolean {
+        return currentPageComment == START_PAGE
+    }
+
+    fun loadMoreComments() {
+        loadComments(currentPageComment + 1)
     }
 
     fun onTorrentClick() {

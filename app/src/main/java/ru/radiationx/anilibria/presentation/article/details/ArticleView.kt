@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.presentation.article.details
 
+import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.article.ArticleFull
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /**
@@ -9,4 +12,12 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 interface ArticleView : IBaseView {
     fun showArticle(article: ArticleFull)
     fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int)
+
+    @StateStrategyType(AddToEndStrategy::class)
+    fun showComments(comments: List<Comment>)
+
+    @StateStrategyType(AddToEndStrategy::class)
+    fun insertMoreComments(comments: List<Comment>)
+
+    fun setEndlessComments(enable: Boolean)
 }

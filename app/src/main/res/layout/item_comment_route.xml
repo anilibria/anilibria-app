@@ -25,6 +25,7 @@
         android:paddingBottom="16dp"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:textSize="16sp"
         android:paddingTop="16dp"
         android:text="Сделайте свайп влево, чтобы открыть комментарии"
         android:textColor="@color/textDefault" />

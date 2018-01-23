@@ -14,7 +14,7 @@ body {
     overflow-wrap: break-word;
     word-wrap: break-word;
     font-family: "Roboto";
-    background: #ffffff;
+    background: #eee;
 }
 a {
     color: @linkColor;
@@ -24,6 +24,8 @@ a {
     box-sizing: border-box;
 }
 .wrapper {
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
     .header {
         padding: 12/16rem 16/16rem;
         .title {
@@ -187,5 +189,20 @@ a {
             border-radius: 2px;
             margin: 8/16rem;
         }
+    }
+}
+.to_comments {
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+    margin-top: 8/16rem;
+    margin-bottom: 8/16rem;
+    padding-bottom: 16/16rem;
+    .title {
+        font-size: 14/16rem;
+        font-weight: bold;
+        padding: 16/16rem 16/16rem;
+    }
+    .content {
+        padding: 0 16/16rem;
     }
 }

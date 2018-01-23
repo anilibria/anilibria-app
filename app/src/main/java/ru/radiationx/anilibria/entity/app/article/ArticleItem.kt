@@ -6,7 +6,8 @@ import java.io.Serializable
  * Created by radiationx on 18.12.17.
  */
 class ArticleItem : Serializable {
-    var elementId: Int = 0
+    var id: Int = 0
+    lateinit var code: String
 
     lateinit var url: String
     lateinit var title: String
@@ -22,4 +23,6 @@ class ArticleItem : Serializable {
     var otherUrl: String? = null
     var viewsCount: Int = 0
     var commentsCount: Int = 0;
+
+    lateinit var date: String
 }

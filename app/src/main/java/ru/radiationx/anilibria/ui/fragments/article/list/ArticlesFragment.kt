@@ -25,7 +25,7 @@ import ru.terrakok.cicerone.Router
  */
 open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
-    open protected val spinnerItems = listOf(
+    protected open val spinnerItems = listOf(
             "" to "Главная",
             "novosti" to "Новости"
     )
@@ -79,7 +79,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                     Log.e("SUKA", "TEST onItemSelected " + p2)
-                    presenter.loadSubCategory(spinnerItems[p2].first)
+                    presenter.loadCategory(spinnerItems[p2].first)
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {}

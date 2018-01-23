@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.article.ArticleFull
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
@@ -33,8 +32,8 @@ class ArticleRepository(
     * */
     private val alibBordLine = "<img[^>]*?src=\"[^\"]*?borderline\\.[^\"]*?\"[^>]*?>"
 
-    fun getArticle(articleUrl: String): Observable<ArticleFull> = articleApi
-            .getArticle(articleUrl)
+    fun getArticle(code: String): Observable<ArticleItem> = articleApi
+            .getArticle(code)
             .map {
                 it.content = it.content.replace(Regex(iframeYT), "<div class=\"alib_button yt\"><a href=\"https://youtu.be/$1\">Смотреть на YouTube</a></div>")
                 it.content = it.content.replace(Regex(iframeVK), "<div class=\"alib_button vk\"><a href=\"https://vk.com/video?z=video$1_$2$3\">Смотреть в VK</a></div>")
@@ -46,8 +45,8 @@ class ArticleRepository(
             .observeOn(schedulers.ui())
 
 
-    fun getArticles(category: String, subCategory: String, page: Int): Observable<Paginated<List<ArticleItem>>> = articleApi
-            .getArticles(category, subCategory, page)
+    fun getArticles(category: String, page: Int): Observable<Paginated<List<ArticleItem>>> = articleApi
+            .getArticles(category, page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

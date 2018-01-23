@@ -60,7 +60,8 @@ class ReleaseApi(
     fun getComments(id: Int, page: Int): Single<Paginated<List<Comment>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "action" to "comments",
-                "ELEMENT_ID" to id.toString(),
+                "id" to id.toString(),
+                "from" to "release",
                 "PAGEN_1" to page.toString()
         )
         return client.get("https://www.anilibria.tv/api/api_v2.php", args)

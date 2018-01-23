@@ -254,6 +254,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun onClickSomeLink(url: String): Boolean = presenter.onClickLink(url)
 
+    override fun onClickDonate() {
+        presenter.onClickDonate()
+    }
+
     override fun playEpisodes(release: ReleaseFull) {
         showQualityDialog({ quality ->
             presenter.onPlayEpisodeClick(release.episodes.last(), quality)

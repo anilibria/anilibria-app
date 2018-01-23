@@ -21,9 +21,7 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
     }
 
     private var currentPage = START_PAGE
-    //open var category = Api.CATEGORY_NEWS
     open var category = ""
-    open protected var subCategory = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -31,9 +29,9 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
         refresh()
     }
 
-    fun loadSubCategory(subCategory: String) {
-        if (this.subCategory != subCategory) {
-            this.subCategory = subCategory
+    fun loadCategory(category: String) {
+        if (this.category != category) {
+            this.category = category
             refresh()
         }
     }
@@ -47,7 +45,7 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        articleRepository.getArticles(category, subCategory, page)
+        articleRepository.getArticles(category, /*subCategory, */page)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())

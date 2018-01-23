@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.model.data.remote.Api
 class VideosFragment : ArticlesFragment() {
 
     override val spinnerItems = listOf(
-            "" to "Все видео",
+            "video" to "Все видео",
             "rap" to "RAP-лбзоры",
             "fisheyeplacebo" to "Fisheye Placebo",
             "anons" to "Анонсы и ТОП-10",

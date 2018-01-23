@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.model.data.remote.Api
 class BlogsFragment : ArticlesFragment() {
 
     override val spinnerItems = listOf(
-            "" to "Все блоги",
+            "blogs" to "Все блоги",
             "audioblog_lln" to "Новости (ЛЛН)",
             "sharon" to "Шаровые диалоги",
             "newblogofitashi" to "Блоги Itashi",

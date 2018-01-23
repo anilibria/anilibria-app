@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.presentation.article.details
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -21,27 +23,31 @@ class ArticlePresenter(
     }
 
     private var currentPageComment = START_PAGE
-    var url: String = ""
+    private var articleId = -1
+    var code: String = ""
 
     fun setDataFromItem(item: ArticleItem) {
         item.run {
             viewState.preShow(imageUrl, title, userNick, commentsCount, viewsCount)
         }
+        code = item.code
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach " + this)
-        loadArticle(url)
+        loadArticle(code)
     }
 
-    fun loadArticle(articleUrl: String) {
-        Log.e("SUKA", "load article $articleUrl")
+    fun loadArticle(code: String) {
+        Log.e("SUKA", "load article $code")
         viewState.setRefreshing(true)
-        articleRepository.getArticle(articleUrl)
+        articleRepository.getArticle(code)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ article ->
+                    articleId = article.id
                     viewState.showArticle(article)
+                    loadComments(currentPageComment)
                 }) { throwable ->
                     throwable.printStackTrace()
                 }
@@ -50,8 +56,8 @@ class ArticlePresenter(
 
     private fun loadComments(page: Int) {
         currentPageComment = page
-        /*articleRepository
-                .getComments(releaseId, currentPageComment)
+        articleRepository
+                .getComments(articleId, currentPageComment)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
@@ -68,7 +74,7 @@ class ArticlePresenter(
                 }) { throwable ->
                     throwable.printStackTrace()
                 }
-                .addToDisposable()*/
+                .addToDisposable()
     }
 
     private fun isFirstPage(): Boolean {

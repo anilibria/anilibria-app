@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.article.ArticleFull
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -64,7 +63,6 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     }
 
     companion object {
-        const val ARG_URL: String = "article_url"
         const val ARG_ITEM: String = "article_item"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
@@ -93,10 +91,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.url = it.getString(ARG_URL, "")
             (it.getSerializable(ARG_ITEM) as ArticleItem).let {
                 presenter.setDataFromItem(it)
-                presenter.url = it.url
             }
         }
     }
@@ -172,7 +168,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         pagerAdapter.setRefreshing(refreshing)
     }
 
-    override fun showArticle(article: ArticleFull) {
+    override fun showArticle(article: ArticleItem) {
         currentTitle = article.title
         pagerAdapter.showArticle(article)
     }
@@ -286,7 +282,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             tryRunCache()
         }
 
-        fun showArticle(article: ArticleFull) {
+        fun showArticle(article: ArticleItem) {
             webViewCallCache.add(Runnable {
                 localWebView?.evalJs("ViewModel.setText('content','${convert(article.content)}');")
             })

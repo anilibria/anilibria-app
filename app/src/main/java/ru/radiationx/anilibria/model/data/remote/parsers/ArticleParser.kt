@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.article.ArticleFull
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -66,7 +66,7 @@ class ArticleParser(private val apiUtils: IApiUtils) {
         val matcher: Matcher = listPattern.matcher(httpResponse)
         while (matcher.find()) {
             items.add(ArticleItem().apply {
-                elementId = matcher.group(1).toInt()
+                id = matcher.group(1).toInt()
                 url = matcher.group(2)
                 title = apiUtils.escapeHtml(matcher.group(3)).orEmpty()
                 userId = matcher.group(4).toInt()
@@ -92,7 +92,41 @@ class ArticleParser(private val apiUtils: IApiUtils) {
         return result
     }
 
-    fun article(httpResponse: String): ArticleFull {
+    fun articles2(httpResponse: String): Paginated<List<ArticleItem>> {
+        val resItems = mutableListOf<ArticleItem>()
+        val responseJson = JSONObject(httpResponse)
+        val jsonItems = responseJson.getJSONArray("items")
+        for (i in 0 until jsonItems.length()) {
+            val jsonItem = jsonItems.getJSONObject(i)
+            resItems.add(ArticleItem().apply {
+                id = jsonItem.getInt("id")
+                code = jsonItem.getString("code")
+                url = jsonItem.getString("url")
+                title = jsonItem.getString("title")
+                userId = jsonItem.getInt("userId")
+                userNick = jsonItem.getString("userNick")
+                imageUrl = Api.BASE_URL_IMAGES + jsonItem.getString("coverImage")
+                imageWidth = jsonItem.getInt("coverImageWidth")
+                imageHeight = jsonItem.getInt("coverImageHeight")
+                content = jsonItem.getString("content")
+                viewsCount = jsonItem.getInt("countViews")
+                commentsCount = jsonItem.getInt("countComments")
+                date = jsonItem.getString("date")
+            })
+        }
+
+        val result = Paginated(resItems)
+        val paginationMatcher = paginationPattern.matcher(httpResponse)
+        if (paginationMatcher.find()) {
+            result.current = paginationMatcher.group(1).toInt()
+            result.allPages = paginationMatcher.group(2).toInt()
+            result.itemsPerPage = 6
+        }
+
+        return result
+    }
+
+    /*fun article(httpResponse: String): ArticleFull {
         val result = ArticleFull()
         val matcher: Matcher = fullPattern.matcher(httpResponse)
         if (matcher.find()) {
@@ -105,5 +139,24 @@ class ArticleParser(private val apiUtils: IApiUtils) {
             }
         }
         return result
+    }*/
+
+    fun article2(httpResponse: String): ArticleItem {
+        val responseJson = JSONObject(httpResponse)
+        return ArticleItem().apply {
+            id = responseJson.getInt("id")
+            code = responseJson.getString("code")
+            url = responseJson.getString("url")
+            title = responseJson.getString("title")
+            userId = responseJson.getInt("userId")
+            userNick = responseJson.getString("userNick")
+            imageUrl = Api.BASE_URL_IMAGES + responseJson.getString("coverImage")
+            imageWidth = responseJson.getInt("coverImageWidth")
+            imageHeight = responseJson.getInt("coverImageHeight")
+            content = responseJson.getString("content")
+            viewsCount = responseJson.getInt("countViews")
+            commentsCount = responseJson.getInt("countComments")
+            date = responseJson.getString("date")
+        }
     }
 }

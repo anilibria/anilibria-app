@@ -4,6 +4,7 @@ import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ArticleParser
@@ -26,7 +27,7 @@ class ArticleApi(
                 "code" to code
         )
         return client
-                .get("https://www.anilibria.tv/api/api_v2.php", args)
+                .get(Api.API_V2_URL, args)
                 .map { articleParser.article2(it) }
     }
 
@@ -39,7 +40,7 @@ class ArticleApi(
         )
 
         return client
-                .get("https://www.anilibria.tv/api/api_v2.php", args)
+                .get(Api.API_V2_URL, args)
                 .map { articleParser.articles2(it) }
     }
 
@@ -51,7 +52,7 @@ class ArticleApi(
                 "PAGEN_1" to page.toString()
         )
         return client
-                .get("https://www.anilibria.tv/api/api_v2.php", args)
+                .get(Api.API_V2_URL, args)
                 .map { releaseParser.comments(it) }
     }
 

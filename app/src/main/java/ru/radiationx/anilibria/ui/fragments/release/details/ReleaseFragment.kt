@@ -252,6 +252,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.openSearch(text)
     }
 
+    override fun onClickFav() {
+        presenter.onClickFav()
+    }
+
     override fun onClickSomeLink(url: String): Boolean = presenter.onClickLink(url)
 
     override fun onClickDonate() {
@@ -293,6 +297,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     }
                     .show()
         }
+    }
+
+    override fun updateFavCounter() {
+        releaseAdapter.notifyDataSetChanged()
     }
 
     class CustomPagerAdapter(

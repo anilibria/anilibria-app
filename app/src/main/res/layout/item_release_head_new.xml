@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/full_item"
@@ -13,32 +13,79 @@
         android:layout_height="wrap_content">
 
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="8dp"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:paddingTop="12dp">
+            android:paddingTop="12dp">-->
+
+        <TextView
+            android:id="@+id/full_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/full_fav_btn"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/textDefault"
+            android:textSize="20sp"
+            tools:text="Title releaseData long title lol jsla d ;kfjasdf" />
+
+        <TextView
+            android:id="@+id/full_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_below="@id/full_title"
+            android:ellipsize="end"
+            android:maxLines="6"
+            android:textColor="#444"
+            android:textSize="14sp"
+            tools:text="season: blablablabla\nvoices:blablabla,blebleble\ntypes:lanneblablaalbalba" />
+
+        <!--</LinearLayout>-->
+
+        <LinearLayout
+            android:id="@+id/full_fav_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/bg_btn_favorite"
+            android:orientation="horizontal"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
 
             <TextView
-                android:id="@+id/full_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textDefault"
-                android:textSize="20sp"
-                tools:text="Title releaseData long title lol\njslad;kfjasdf" />
+                android:id="@+id/full_fav_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/medium"
+                android:gravity="center_vertical"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="355"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/full_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="6"
-                android:textColor="#444"
-                android:textSize="14sp"
-                tools:text="season: blablablabla\nvoices:blablabla,blebleble\ntypes:lanneblablaalbalba" />
+            <ImageView
+                android:id="@+id/full_fav_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:padding="3dp"
+                app:srcCompat="@drawable/ic_favorite_border" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -103,9 +150,9 @@
         style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
         android:text="@string/watch_all" />
 
     <!--<View

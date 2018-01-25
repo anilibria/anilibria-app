@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -19,8 +21,7 @@ import ru.radiationx.anilibria.utils.LinkMovementMethod
  * Created by radiationx on 13.01.18.
  */
 class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is ReleaseHeadListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseHeadListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ReleaseHeadListItem
@@ -48,15 +49,18 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
             }
 
             view.run {
-                full_button_torrent.setOnClickListener({
+                full_button_torrent.setOnClickListener {
                     itemListener.onClickTorrent(currentItem.torrentLink)
-                })
-                full_tags.setOnTagClickListener({ tag, i ->
+                }
+                full_tags.setOnTagClickListener { tag, i ->
                     itemListener.onClickTag(tag.text)
-                })
-                full_button_watch_all.setOnClickListener({
+                }
+                full_button_watch_all.setOnClickListener {
                     itemListener.onClickWatchAll()
-                })
+                }
+                full_fav_btn.setOnClickListener {
+                    itemListener.onClickFav()
+                }
             }
         }
 
@@ -91,6 +95,19 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                 full_button_watch_all.isEnabled = hasEpisodes || hasMoonwalk
 
                 full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
+
+                item.favoriteCount.let {
+                    full_fav_count.text = it.count.toString()
+                    val iconRes = if (it.isFaved) R.drawable.ic_favorite else R.drawable.ic_favorite_border;
+                    full_fav_icon.setImageDrawable(ContextCompat.getDrawable(full_fav_icon.context, iconRes))
+                    if (it.isFaved && !it.inProgress) {
+                        full_fav_btn.background.setColorFilter(Color.parseColor("#c40304"), PorterDuff.Mode.SRC_ATOP)
+                    } else {
+                        full_fav_btn.background.clearColorFilter()
+                    }
+                    full_fav_btn.isClickable = /*!it.isGuest && */!it.inProgress
+                }
+
             }
         }
     }
@@ -103,5 +120,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
         fun onClickTag(text: String)
 
         fun onClickWatchAll()
+
+        fun onClickFav()
     }
 }

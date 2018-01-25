@@ -58,8 +58,7 @@ class ReleasePresenter(
             releaseIdName != null -> releaseRepository.getRelease(releaseIdName!!)
             else -> return
         }
-        source.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        source
                 .subscribe({ release ->
                     releaseId = release.id
                     releaseIdName = release.idName
@@ -80,8 +79,6 @@ class ReleasePresenter(
         currentPageComment = page
         releaseRepository
                 .getComments(releaseId, currentPageComment)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
                     Log.e("SUKA", "Comments loaded: " + comments.data.size)
@@ -152,8 +149,37 @@ class ReleasePresenter(
         }
         return false
     }
+
     fun onClickDonate() {
         router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+    }
+
+    fun onClickFav() {
+        currentData?.favoriteCount?.let { fav ->
+            if (fav.isGuest) {
+                router.showSystemMessage("Для выполнения действия необходимо авторизоваться")
+                return
+            }
+            releaseRepository
+                    .sendFav(fav.id, !fav.isFaved, fav.sessId, fav.skey)
+                    .doOnSubscribe {
+                        fav.inProgress = true
+                        viewState.updateFavCounter()
+                    }
+                    .doAfterTerminate {
+                        fav.inProgress = false
+                        viewState.updateFavCounter()
+                    }
+                    .subscribe({ newCount ->
+                        fav.count = newCount
+                        fav.isFaved = !fav.isFaved
+                        viewState.updateFavCounter()
+                    }) { throwable ->
+                        throwable.printStackTrace()
+                    }
+                    .addToDisposable()
+        }
+
     }
 
     fun openSearch(genre: String) {

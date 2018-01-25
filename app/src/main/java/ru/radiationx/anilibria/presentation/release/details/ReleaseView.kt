@@ -12,6 +12,8 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseView : IBaseView {
+    fun updateFavCounter()
+
     fun showRelease(release: ReleaseFull)
 
     @StateStrategyType(AddToEndStrategy::class)

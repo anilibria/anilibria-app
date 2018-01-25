@@ -52,4 +52,10 @@ class ReleaseRepository(
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
+
+    fun sendFav(id: Int, isFaved: Boolean, sessId: String, sKey: String): Observable<Int> = releaseApi
+            .sendFav(id, isFaved, sessId, sKey)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 }

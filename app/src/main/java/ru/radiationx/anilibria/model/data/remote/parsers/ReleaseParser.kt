@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -195,6 +196,17 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         release.id = jsonBxFull.getString("ID").toInt()
         release.idName = jsonBxFull.getString("CODE")
 
+        val jsonFav = responseJson.getJSONObject("fav")
+        Log.e("SUKA", "loaded json fav "+jsonFav.toString(4))
+        release.favoriteCount.apply {
+            id = jsonFav.getInt("id")
+            count = jsonFav.getInt("count")
+            isFaved = jsonFav.getBoolean("isFaved")
+            sessId = jsonFav.getString("sessId")
+            skey = jsonFav.getString("skey")
+            isGuest = jsonFav.getBoolean("isGuest")
+        }
+
         return release
     }
 
@@ -248,5 +260,10 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         pagination.current = jsonNav.get("page").toString().toInt()
         pagination.allPages = jsonNav.get("total_pages").toString().toInt()
         return pagination
+    }
+
+    fun favXhr(httpResponse: String): Int {
+        Log.e("SUKA", "favXhr "+httpResponse)
+        return JSONObject(httpResponse).getInt("COUNT")
     }
 }

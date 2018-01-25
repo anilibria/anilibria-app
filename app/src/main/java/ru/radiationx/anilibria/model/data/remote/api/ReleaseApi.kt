@@ -25,7 +25,7 @@ class ReleaseApi(
                 "action" to "release",
                 "ELEMENT_ID" to releaseId.toString()
         )
-        return client.get(Api.API_URL, args)
+        return client.get(Api.API_V2_URL, args)
                 .map { releaseParser.release(it) }
     }
 
@@ -34,7 +34,7 @@ class ReleaseApi(
                 "action" to "release",
                 "ELEMENT_CODE" to releaseIdName
         )
-        return client.get(Api.API_URL, args)
+        return client.get(Api.API_V2_URL, args)
                 .map { releaseParser.release(it) }
     }
 
@@ -64,8 +64,26 @@ class ReleaseApi(
                 "from" to "release",
                 "PAGEN_1" to page.toString()
         )
-        return client.get("https://www.anilibria.tv/api/api_v2.php", args)
+        return client.get(Api.API_V2_URL, args)
                 .map { releaseParser.comments(it) }
     }
+
+    fun sendFav(id: Int, isFaved: Boolean, sessId: String, sKey: String): Single<Int> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "action" to if (isFaved) "like" else "unlike",
+                "id" to id.toString(),
+                "sessid" to sessId,
+                "key" to sKey,
+                "type" to "unknown"
+        )
+        return client.get("${Api.BASE_URL}bitrix/tools/asd_favorite.php", args)
+                .map { releaseParser.favXhr(it) }
+    }
+
+    /*id:5620
+    action:unlike
+    sessid:c5d7f1327a736c710cc3957d953ae06d
+    type:unknown
+    key:8313132f7b58b3424bca9d3629993929*/
 
 }

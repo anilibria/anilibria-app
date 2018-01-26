@@ -2,10 +2,7 @@ package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.*
 import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
@@ -43,6 +40,18 @@ class ReleaseRepository(
 
     fun getFavorites(page: Int): Observable<Paginated<List<ReleaseItem>>> = releaseApi
             .getFavorites(page)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    fun getFavorites2(): Observable<FavoriteData> = releaseApi
+            .getFavorites2()
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    fun deleteFavorite(id: Int, sessId: String): Observable<FavoriteData> = releaseApi
+            .deleteFavorite(id, sessId)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

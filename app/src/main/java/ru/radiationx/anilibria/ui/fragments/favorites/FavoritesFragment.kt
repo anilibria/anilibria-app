@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.favorites
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
@@ -67,7 +68,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun showReleases(releases: List<ReleaseItem>) {
-        Log.e("SUKA", "fav show releases "+releases.size)
+        Log.e("SUKA", "fav show releases " + releases.size)
         adapter.bindItems(releases)
     }
 
@@ -92,6 +93,15 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
-        return presenter.onItemLongClick(item)
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(arrayOf("Удалить"), { dialog, which ->
+                        if (which == 0) {
+                            presenter.deleteFav(item.id)
+                        }
+                    })
+                    .show()
+        }
+        return false
     }
 }

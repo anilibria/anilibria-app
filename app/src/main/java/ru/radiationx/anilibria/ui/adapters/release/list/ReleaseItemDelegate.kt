@@ -42,6 +42,9 @@ class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                     itemListener.onItemClick(layoutPosition, item_image)
                     itemListener.onItemClick(currentItem, layoutPosition)
                 }
+                setOnLongClickListener {
+                    itemListener.onItemLongClick(currentItem)
+                }
             }
         }
 

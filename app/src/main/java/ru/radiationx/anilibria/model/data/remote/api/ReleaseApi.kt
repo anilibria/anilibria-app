@@ -2,10 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api;
 
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.*
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
@@ -55,6 +52,27 @@ class ReleaseApi(
         val args: MutableMap<String, String> = mutableMapOf("SHOWALL_1" to "1")
         return client.get("${Api.BASE_URL}izbrannoe.php", args)
                 .map { releaseParser.favorites(it) }
+    }
+
+    fun getFavorites2(): Single<FavoriteData> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "SHOWALL_1" to "1",
+                "action" to "favorites"
+        )
+        return client.get(Api.API_V2_URL, args)
+                .map { releaseParser.favorites2(it) }
+    }
+
+    fun deleteFavorite(id: Int, sessId: String): Single<FavoriteData> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "SHOWALL_1" to "1",
+                "action" to "favorites",
+                "a" to "",
+                "sessid" to sessId,
+                "del" to id.toString()
+        )
+        return client.get(Api.API_V2_URL, args)
+                .map { releaseParser.favorites2(it) }
     }
 
     fun getComments(id: Int, page: Int): Single<Paginated<List<Comment>>> {

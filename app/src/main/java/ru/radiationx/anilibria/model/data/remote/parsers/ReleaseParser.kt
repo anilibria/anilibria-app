@@ -3,10 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.*
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -235,6 +232,38 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         pagination.current = jsonNav.get("page").toString().toInt()
         pagination.allPages = jsonNav.get("total_pages").toString().toInt()*/
         return pagination
+    }
+
+    fun favorites2(httpResponse: String): FavoriteData {
+        val resItems = mutableListOf<ReleaseItem>()
+        val responseJson = JSONObject(httpResponse)
+        val jsonItems = responseJson.getJSONArray("items")
+        for (i in 0 until jsonItems.length()) {
+            val item = ReleaseItem()
+            val jsonItem = jsonItems.getJSONObject(i)
+            item.id = jsonItem.getInt("id")
+
+            val matcher = idNamePattern.matcher(jsonItem.getString("link"))
+            if (matcher.find()) {
+                item.idName = matcher.group(1)
+            }
+
+            item.description = jsonItem.getString("description")
+            item.image = Api.BASE_URL_IMAGES + jsonItem.get("image")
+
+            val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (titles.isNotEmpty()) {
+                item.originalTitle = apiUtils.escapeHtml(titles[0])
+                if (titles.size > 1) {
+                    item.title = apiUtils.escapeHtml(titles[1])
+                }
+            }
+            resItems.add(item)
+        }
+        val result = FavoriteData()
+        result.sessId = responseJson.getString("sessId")
+        result.items = Paginated(resItems)
+        return result
     }
 
     fun comments(httpResponse: String): Paginated<List<Comment>> {

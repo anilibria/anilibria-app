@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.entity.app.vital
 
+import java.io.Serializable
+
 /**
  * Created by radiationx on 27.01.18.
  */
-class VitalItem {
+class VitalItem : Serializable {
     var id: Int = 0
     var name: String? = null
     var type: VitalType = VitalType.BANNER

@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -10,12 +11,19 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.repository.VitalRepository
 import java.lang.Exception
+import java.util.*
 
 
 class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionListener, OnErrorListener, VideoControlsButtonListener {
@@ -35,9 +43,18 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private var quality = DEFAULT_QUALITY
     private lateinit var videoControls: VideoControls
     private val fullScreenListener = FullScreenListener()
+    private val vitalRepository: VitalRepository = App.injections.vitalRepository
+    private val currentVitals = mutableListOf<VitalItem>()
+
+    private var compositeDisposable = CompositeDisposable()
+
+    fun Disposable.addToDisposable() {
+        compositeDisposable.add(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        loadVital()
         initUiFlags()
         setContentView(R.layout.activity_myplayer)
 
@@ -70,6 +87,26 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         supportActionBar?.title = releaseData.title
         supportActionBar?.elevation = 0f
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun loadVital() {
+        vitalRepository
+                .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
+                .subscribe {
+                    Log.e("SUKA", "VITAL load  ITEMS ${it.size}")
+                    it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }.let {
+                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
+                        if (it.isNotEmpty()) {
+                            showVitalItems(it)
+                        }
+                    }
+                }
+                .addToDisposable()
+    }
+
+    fun showVitalItems(vital: List<VitalItem>) {
+        currentVitals.clear()
+        currentVitals.addAll(vital)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -114,10 +151,26 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         player.pause()
     }
 
+
+    private val random = Random()
+
+    private fun rand(from: Int, to: Int): Int {
+        return random.nextInt(to - from) + from
+    }
+
     override fun onDestroy() {
+        compositeDisposable.dispose()
+        player.stopPlayback()
         super.onDestroy()
         exitFullscreen()
-        player.stopPlayback()
+        if (currentVitals.isNotEmpty()) {
+            val randomVital = if (currentVitals.size > 1) rand(0, currentVitals.size) else 0
+            val listItem = currentVitals[randomVital]
+            Toast.makeText(this, "show vital ${listItem.id}", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(App.instance, FullScreenActivity::class.java).apply {
+                putExtra(FullScreenActivity.VITAL_ITEM, listItem)
+            })
+        }
     }
 
     private fun checkIndex(index: Int): Boolean = index >= 0 && index < releaseData.episodes.size

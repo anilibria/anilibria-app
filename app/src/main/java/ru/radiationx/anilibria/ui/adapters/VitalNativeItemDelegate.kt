@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.item_vital_native.view.*
+import kotlinx.android.synthetic.main.item_vital_native_card.view.*
 import ru.radiationx.anilibria.utils.Utils
 
 
@@ -31,7 +32,7 @@ class VitalNativeItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<M
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_native, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_native_card, parent, false)
     )
 
     private inner class ViewHolder(val holderView: View) : RecyclerView.ViewHolder(holderView) {
@@ -52,19 +53,19 @@ class VitalNativeItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<M
             holderView.run {
                 ImageLoader.getInstance().displayImage(item.contentImage, vitalImageView, object : SimpleImageLoadingListener() {
                     override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                        progressSwitcher.displayedChild = 0
+                        imageSwitcher.displayedChild = 0
                     }
 
                     override fun onLoadingStarted(imageUri: String?, view: View?) {
-                        progressSwitcher.displayedChild = 1
+                        imageSwitcher.displayedChild = 1
                     }
 
                     override fun onLoadingCancelled(imageUri: String?, view: View?) {
-                        progressSwitcher.displayedChild = 1
+                        imageSwitcher.displayedChild = 1
                     }
 
                     override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
-                        progressSwitcher.displayedChild = 1
+                        imageSwitcher.displayedChild = 1
                     }
                 }
                 )

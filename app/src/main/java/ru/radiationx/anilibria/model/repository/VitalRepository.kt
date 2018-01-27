@@ -40,10 +40,10 @@ class VitalRepository(
       "id": 1,
       "type": "fullscreen",
       "name": "полноэкранная хуйня 1",
-      "contentType": "image",
-      "contentText": "<...>",
-      "contentImage": "...url...",
-      "contentLink": "...url...",
+      "contentType": "web",
+      "contentText": "<center><ins class=\"e5771359\" data-key=\"5552e7692053a0262bbbd7f26322a975\"></ins><script async defer src=\"//aj1433.online/001fd7b2.js\"></script></center>",
+      "contentImage": "https://www.anilibria.tv/bitrix/templates/AniLibria%20KD%20Design/images/reklama/fastanime_small42018.gif",
+      "contentLink": "https://www.anilibria.tv/bitrix/templates/AniLibria%20KD%20Design/images/reklama/fastanime_small42018.gif",
       "rules": [
         "videoPlayer"
       ],

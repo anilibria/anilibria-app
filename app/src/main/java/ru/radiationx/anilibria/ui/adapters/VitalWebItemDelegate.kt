@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.item_vital_web.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import android.webkit.WebViewClient
+import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.utils.Utils
 
 
@@ -30,7 +32,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_web, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_web_card, parent, false)
     )
 
     private inner class ViewHolder(val holderView: View) : RecyclerView.ViewHolder(holderView) {
@@ -43,19 +45,18 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
                     holderView.item_card.cardElevation = 0f
                 }
                 vitalWebView.settings.apply {
-                    //useWideViewPort = true
-                    //loadWithOverviewMode = true
-                    setRenderPriority(WebSettings.RenderPriority.LOW)
+                    layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
                 }
+                vitalWebView.setOnTouchListener(View.OnTouchListener { v, event -> event.action == MotionEvent.ACTION_MOVE })
                 vitalWebView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
-                        progressSwitcher.displayedChild = 0
+                        webSwitcher.displayedChild = 0
                     }
 
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         super.onPageStarted(view, url, favicon)
-                        progressSwitcher.displayedChild = 1
+                        webSwitcher.displayedChild = 1
                     }
 
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {

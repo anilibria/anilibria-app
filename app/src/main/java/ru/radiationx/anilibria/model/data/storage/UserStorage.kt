@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
+import com.jakewharton.rxrelay2.BehaviorRelay
+import io.reactivex.Observable
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
@@ -11,7 +13,11 @@ import ru.radiationx.anilibria.model.data.holders.UserHolder
  */
 class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder {
 
-    override fun getUser(): ProfileItem {
+    private val userRelay = BehaviorRelay.createDefault(getSavedUser())
+
+    override fun getUser(): ProfileItem = userRelay.value
+
+    private fun getSavedUser(): ProfileItem {
         val user = ProfileItem()
         val userSource = sharedPreferences.getString("saved_user", null)
         if (userSource == null) {
@@ -29,6 +35,8 @@ class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder
         return user
     }
 
+    override fun observeUser(): Observable<ProfileItem> = userRelay
+
     override fun saveUser(user: ProfileItem) {
         val userJson = JSONObject()
         userJson.put("authState", user.authState.toString())
@@ -36,6 +44,18 @@ class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder
         userJson.put("nick", user.nick)
         userJson.put("avatar", user.avatarUrl)
         sharedPreferences.edit().putString("saved_user", userJson.toString()).apply()
+        userRelay.accept(user)
+    }
+
+    override fun delete() {
+        val user = getUser()
+        user.apply {
+            authState = AuthState.AUTH_SKIPPED
+            id = ProfileItem.NO_ID
+            nick = ProfileItem.NO_VALUE
+            avatarUrl = ProfileItem.NO_VALUE
+        }
+        saveUser(user)
     }
 
 }

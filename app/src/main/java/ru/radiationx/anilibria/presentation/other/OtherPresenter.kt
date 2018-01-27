@@ -133,7 +133,11 @@ class OtherPresenter(
 
     fun signOut() {
         authRepository.signOut()
-        router.showSystemMessage("Данные авторизации удалены")
+                .subscribe({
+                    router.showSystemMessage("Данные авторизации удалены")
+                }, {
+                    router.showSystemMessage("Ошибка: ${it.message}")
+                })
     }
 
     fun onMenuClick(item: OtherMenuItem) {

@@ -25,7 +25,8 @@
                 android:layout_height="96dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="40dp"
-                android:tint="@color/a_red" />
+                android:tint="@color/a_red"
+                app:srcCompat="@drawable/ic_anilibria"/>
 
             <TextView
                 android:layout_width="wrap_content"

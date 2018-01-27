@@ -112,7 +112,7 @@ class App : Application() {
         val authHolder: AuthHolder = AuthStorage(sharedPreferences)
         val userHolder: UserHolder = UserStorage(sharedPreferences)
 
-        val client: IClient = Client(cookieHolder)
+        val client: IClient = Client(cookieHolder, userHolder)
         val apiUtils: IApiUtils = ApiUtils()
 
         var authApi = AuthApi(client, apiUtils)

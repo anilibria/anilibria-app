@@ -44,7 +44,7 @@ class AuthFragment : BaseFragment(), AuthView {
             presenter.skip()
         }
 
-        ImageLoader.getInstance().displayImage("drawable://" + R.drawable.alib_new_or_b, auth_logo)
+        //ImageLoader.getInstance().displayImage("drawable://" + R.drawable.alib_new_or_b, auth_logo)
 
         authPatreon.isEnabled = false
         authVk.isEnabled = false

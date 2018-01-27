@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -46,6 +47,11 @@ class AuthApi(private val client: IClient,
         val url = "${Api.BASE_URL}auth/?login=yes"
         return client.post(url, args)
                 .map { authParser.authResult(it) }
+    }
+
+    fun signOut(): Single<String> {
+        val args = mapOf("logout" to "yes")
+        return client.get(Api.BASE_URL, args)
     }
 
 }

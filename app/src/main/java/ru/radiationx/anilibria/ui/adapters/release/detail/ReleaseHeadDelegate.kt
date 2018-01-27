@@ -94,7 +94,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                 val hasMoonwalk = item.moonwalkLink != null
                 full_button_watch_all.isEnabled = hasEpisodes || hasMoonwalk
 
-                full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
+                //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 
                 item.favoriteCount.let {
                     full_fav_count.text = it.count.toString()

@@ -23,34 +23,34 @@ class AuthRepository constructor(
 
     var stateSite = ""
 
-    private val userRelay = BehaviorRelay.createDefault(userHolder.getUser())
+    fun observeUser(): Observable<ProfileItem> = userHolder
+            .observeUser()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 
-    fun observeUser(): Observable<ProfileItem> = userRelay
+    fun getUser() = userHolder.getUser()
 
-    fun getUser(): ProfileItem = userRelay.value
-
-    fun getAuthState(): AuthState = getUser().authState
-
-    fun updateUser(user: ProfileItem) {
-        userRelay.accept(user)
-        userHolder.saveUser(user)
-    }
+    fun getAuthState(): AuthState = userHolder.getUser().authState
 
     fun updateUser(authState: AuthState) {
-        val user = getUser()
+        val user = userHolder.getUser()
         user.authState = authState
-        updateUser(user)
+        userHolder.saveUser(user)
     }
 
     fun signIn(login: String, password: String): Single<ProfileItem> = authApi
             .testAuth(login, password)
-            .doOnSuccess { updateUser(it) }
+            .doOnSuccess {
+                userHolder.saveUser(it)
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
     fun signIn(redirectUrl: String): Single<ProfileItem> = authApi
             .socialAuth(redirectUrl + stateSite)
-            .doOnSuccess { updateUser(it) }
+            .doOnSuccess {
+                userHolder.saveUser(it)
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
@@ -70,17 +70,19 @@ class AuthRepository constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun signOut() {
-        val user = getUser()
-        user.apply {
-            authState = AuthState.NO_AUTH
-            id = ProfileItem.NO_ID
-            nick = ProfileItem.NO_VALUE
-            avatarUrl = ProfileItem.NO_VALUE
-        }
-        updateUser(user)
+    private fun hardSignOut() {
+        userHolder.delete()
         CookieHolder.cookieNames.forEach {
             cookieHolder.removeCookie(it)
         }
     }
+
+    fun signOut() = authApi
+            .signOut()
+            .doOnSuccess {
+               // hardSignOut()
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
 }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.holders
 
+import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 
 /**
@@ -7,5 +8,10 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
  */
 interface UserHolder {
     fun getUser(): ProfileItem
+
+    fun observeUser(): Observable<ProfileItem>
+
     fun saveUser(user: ProfileItem)
+
+    fun delete()
 }

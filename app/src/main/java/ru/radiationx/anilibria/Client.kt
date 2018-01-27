@@ -4,12 +4,17 @@ import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
+import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
 import java.io.IOException
 
 
-class Client constructor(private val cookieHolder: CookieHolder) : IClient {
+class Client constructor(
+        private val cookieHolder: CookieHolder,
+        private val userHolder: UserHolder
+) : IClient {
     companion object {
         const val METHOD_GET = "GET"
         const val METHOD_POST = "POST"
@@ -20,12 +25,19 @@ class Client constructor(private val cookieHolder: CookieHolder) : IClient {
     private val cookieJar = object : CookieJar {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+            var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {
+                    if (cookie.name() == CookieHolder.BITRIX_SM_UIDH || cookie.name() == CookieHolder.BITRIX_SM_UIDL) {
+                        authDestroyed = true
+                    }
                     cookieHolder.removeCookie(cookie.name())
                 } else {
                     cookieHolder.putCookie(url.toString(), cookie)
                 }
+            }
+            if (authDestroyed) {
+                userHolder.delete()
             }
         }
 

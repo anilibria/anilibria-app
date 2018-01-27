@@ -12,11 +12,13 @@ import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 
 /* Created by radiationx on 05.11.17. */
 
@@ -28,10 +30,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     lateinit var presenter: ReleasesPresenter
 
     @ProvidePresenter
-    fun provideReleasesPresenter(): ReleasesPresenter {
-        return ReleasesPresenter(App.injections.releaseRepository,
-                (parentFragment as RouterProvider).router)
-    }
+    fun provideReleasesPresenter(): ReleasesPresenter = ReleasesPresenter(
+            App.injections.releaseRepository,
+            App.injections.vitalRepository,
+            (parentFragment as RouterProvider).router
+    )
 
     override var sharedViewLocal: View? = null
 
@@ -49,7 +52,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
 
         recyclerView.apply {
             adapter = this@ReleasesFragment.adapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
+            layoutManager = LinearLayoutManager(this.context)
+            addItemDecoration(UniversalItemDecoration()
+                    .fullWidth(true)
+                    .spacingDp(8f)
+            )
         }
 
         toolbar.apply {
@@ -68,6 +75,14 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
+    }
+
+    override fun showVitalBottom(vital: VitalItem) {
+        vitalBottom.visibility = View.VISIBLE
+    }
+
+    override fun showVitalItems(vital: List<VitalItem>) {
+        adapter.setVitals(vital)
     }
 
     override fun setEndless(enable: Boolean) {

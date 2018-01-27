@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
@@ -54,13 +55,6 @@ class App : Application() {
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
 
-    val bbsrc = """[CENTER][B][FONT=Verdana]Добавлена вторая серия. Приятного просмотра![/FONT][/B]
-[I](Серию озвучили: Амикири, Анзен и Адос)[/I][/CENTER]
-[CENTER][I]
-[/I][/CENTER]
-[CENTER][I][IMG WIDTH=1080 HEIGHT=1920]https://shikimori.org/camo?filename=violet_evergarden_1080x1920_kiyoe_428797.png&url=https://files.yande.re/image/7ae0c5d5fac05679fb8c8bf0bad97c63/yande.re%20428797%20violet_evergarden.png[/IMG]
-[/I][/CENTER]"""
-
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -73,10 +67,6 @@ class App : Application() {
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         initImageLoader(this)
-
-        val parser = BbParser()
-        val node = parser.parse(bbsrc)
-        node.print()
     }
 
 
@@ -126,6 +116,7 @@ class App : Application() {
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)
         val pageRepository = PageRepository(schedulers, pageApi)
+        val vitalRepository = VitalRepository(schedulers, releaseApi)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

@@ -77,10 +77,11 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     lateinit var presenter: ArticlePresenter
 
     @ProvidePresenter
-    fun provideArticlePresenter(): ArticlePresenter {
-        return ArticlePresenter(App.injections.articleRepository,
-                (parentFragment as RouterProvider).router)
-    }
+    fun provideArticlePresenter(): ArticlePresenter = ArticlePresenter(
+            App.injections.articleRepository,
+            App.injections.vitalRepository,
+            (parentFragment as RouterProvider).router
+    )
 
     override var transitionNameLocal = ""
 

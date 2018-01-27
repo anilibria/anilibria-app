@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
+import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 
 /**
  * Created by radiationx on 13.01.18.
@@ -50,7 +51,11 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
         recyclerView.apply {
             adapter = this@FavoritesFragment.adapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
+            layoutManager = LinearLayoutManager(this.context)
+            addItemDecoration(UniversalItemDecoration()
+                    .fullWidth(true)
+                    .spacingDp(8f)
+            )
         }
 
         toolbar.apply {

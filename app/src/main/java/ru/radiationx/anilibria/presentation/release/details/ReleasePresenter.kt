@@ -3,13 +3,13 @@ package ru.radiationx.anilibria.presentation.release.details;
 import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -20,7 +20,8 @@ import java.util.regex.Pattern
 @InjectViewState
 class ReleasePresenter(
         private val releaseRepository: ReleaseRepository,
-        private val router: Router
+        private val router: Router,
+        private val vitalRepository: VitalRepository
 ) : BasePresenter<ReleaseView>(router) {
 
     companion object {
@@ -49,6 +50,22 @@ class ReleasePresenter(
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach " + this)
         loadRelease()
+        loadVital()
+    }
+
+    private fun loadVital() {
+        vitalRepository
+                .observeByRule(VitalItem.Rule.RELEASE_DETAIL)
+                .subscribe {
+                    it.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
+                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
+                        if (it.isNotEmpty()) {
+                            viewState.showVitalItems(it)
+                        }
+                    }
+                    router.showSystemMessage("Show vital in REL_LIST: ${it.size}")
+                }
+                .addToDisposable()
     }
 
     private fun loadRelease() {

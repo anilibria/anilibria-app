@@ -5,7 +5,9 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
+import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -14,8 +16,11 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 18.12.17.
  */
 @InjectViewState
-open class ArticlesPresenter(private val articleRepository: ArticleRepository,
-                             private val router: Router) : BasePresenter<ArticlesView>(router) {
+open class ArticlesPresenter(
+        private val articleRepository: ArticleRepository,
+        private val vitalRepository: VitalRepository,
+        private val router: Router
+) : BasePresenter<ArticlesView>(router) {
     companion object {
         private const val START_PAGE = 1
     }
@@ -27,6 +32,22 @@ open class ArticlesPresenter(private val articleRepository: ArticleRepository,
         super.onFirstViewAttach()
         Log.e("SUKA", "onFirstViewAttach")
         refresh()
+        loadVital()
+    }
+
+    private fun loadVital() {
+        vitalRepository
+                .observeByRule(VitalItem.Rule.ARTICLE_LIST)
+                .subscribe {
+                    it.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
+                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
+                        if (it.isNotEmpty()) {
+                            viewState.showVitalItems(it)
+                        }
+                    }
+                    router.showSystemMessage("Show vital in ART_LIST: ${it.size}")
+                }
+                .addToDisposable()
     }
 
     fun loadCategory(category: String) {

@@ -115,15 +115,13 @@ class ArticleParser(private val apiUtils: IApiUtils) {
             })
         }
 
-        val result = Paginated(resItems)
-        val paginationMatcher = paginationPattern.matcher(httpResponse)
-        if (paginationMatcher.find()) {
-            result.current = paginationMatcher.group(1).toInt()
-            result.allPages = paginationMatcher.group(2).toInt()
-            result.itemsPerPage = 6
-        }
+        val pagination = Paginated(resItems)
+        val jsonNav = responseJson.getJSONObject("navigation")
+        pagination.total = jsonNav.get("total").toString().toInt()
+        pagination.current = jsonNav.get("page").toString().toInt()
+        pagination.allPages = jsonNav.get("total_pages").toString().toInt()
 
-        return result
+        return pagination
     }
 
     /*fun article(httpResponse: String): ArticleFull {

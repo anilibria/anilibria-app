@@ -18,9 +18,9 @@ class BbQuote @JvmOverloads constructor(
     init {
         val dens = resources.displayMetrics.density
         setPadding(
-                (12 * dens).toInt(),
                 (8 * dens).toInt(),
-                (12 * dens).toInt(),
+                (8 * dens).toInt(),
+                (8 * dens).toInt(),
                 (8 * dens).toInt()
         )
         background = ContextCompat.getDrawable(context, R.drawable.bg_bb_quote)

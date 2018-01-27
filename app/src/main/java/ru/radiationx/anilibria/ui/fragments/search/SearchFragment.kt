@@ -14,12 +14,14 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
+import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 
@@ -79,7 +81,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
         recyclerView.apply {
             adapter = this@SearchFragment.adapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
+            layoutManager = LinearLayoutManager(this.context)
+            addItemDecoration(UniversalItemDecoration()
+                    .fullWidth(true)
+                    .spacingDp(8f)
+            )
         }
 
         ToolbarHelper.fixInsets(toolbar)
@@ -159,6 +165,14 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
+    }
+
+    override fun showVitalBottom(vital: VitalItem) {
+
+    }
+
+    override fun showVitalItems(vital: List<VitalItem>) {
+
     }
 
     override fun setEndless(enable: Boolean) {

@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 
 sealed class ListItem
 
@@ -23,6 +24,8 @@ class DividerShadowListItem() : ListItem()
 class LoadMoreListItem() : ListItem()
 class CommentListItem(val item: Comment) : ListItem()
 class CommentRouteListItem : ListItem()
+class VitalWebListItem(val item: VitalItem) : ListItem()
+class VitalNativeListItem(val item: VitalItem) : ListItem()
 
 /* Articles, blogs, etc. list screen*/
 

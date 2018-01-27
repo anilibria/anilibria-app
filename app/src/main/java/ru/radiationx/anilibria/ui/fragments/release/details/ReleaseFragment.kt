@@ -31,6 +31,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
@@ -76,10 +77,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter {
-        return ReleasePresenter(App.injections.releaseRepository,
-                (parentFragment as RouterProvider).router)
-    }
+    fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
+            App.injections.releaseRepository,
+            (parentFragment as RouterProvider).router,
+            App.injections.vitalRepository
+    )
+
 
     override var transitionNameLocal = ""
 
@@ -301,6 +304,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun updateFavCounter() {
         releaseAdapter.notifyDataSetChanged()
+    }
+
+    override fun showVitalItems(vital: List<VitalItem>) {
+        releaseAdapter.setVitals(vital)
     }
 
     class CustomPagerAdapter(

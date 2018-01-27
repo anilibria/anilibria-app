@@ -18,6 +18,7 @@
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
@@ -94,6 +95,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
     </android.support.design.widget.CoordinatorLayout>
 
+    <FrameLayout
+        android:id="@+id/vitalBottom"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_anilibria" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Тут какая-то реклама" />
+    </FrameLayout>
 </LinearLayout>

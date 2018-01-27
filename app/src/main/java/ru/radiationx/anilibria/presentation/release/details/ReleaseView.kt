@@ -6,12 +6,15 @@ import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
 /* Created by radiationx on 18.11.17. */
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseView : IBaseView {
+    fun showVitalItems(vital: List<VitalItem>)
+
     fun updateFavCounter()
 
     fun showRelease(release: ReleaseFull)

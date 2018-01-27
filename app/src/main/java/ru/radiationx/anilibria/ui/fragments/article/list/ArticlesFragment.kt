@@ -13,11 +13,13 @@ import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.article.list.ArticlesPresenter
 import ru.radiationx.anilibria.presentation.article.list.ArticlesView
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.terrakok.cicerone.Router
 
 /**
@@ -37,10 +39,12 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     lateinit var presenter: ArticlesPresenter
 
     @ProvidePresenter
-    fun provideArticlesPresenter(): ArticlesPresenter {
-        return ArticlesPresenter(App.injections.articleRepository,
-                (parentFragment as RouterProvider).router)
-    }
+    fun provideArticlesPresenter(): ArticlesPresenter = ArticlesPresenter(
+            App.injections.articleRepository,
+            App.injections.vitalRepository,
+            (parentFragment as RouterProvider).router
+    )
+
 
     override var sharedViewLocal: View? = null
 
@@ -59,6 +63,10 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
         recyclerView.apply {
             adapter = this@ArticlesFragment.adapter
             layoutManager = LinearLayoutManager(recyclerView.context)
+            addItemDecoration(UniversalItemDecoration()
+                    .fullWidth(true)
+                    .spacingDp(8f)
+            )
         }
 
 
@@ -90,6 +98,10 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
+    }
+
+    override fun showVitalItems(vital: List<VitalItem>) {
+        adapter.setVitals(vital)
     }
 
     override fun setEndless(enable: Boolean) {

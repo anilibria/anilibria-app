@@ -180,7 +180,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
         nextFragment.enterTransition = enterFade
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             currentFragment.exitTransition = enterFade
 
             val enterTransitionSet = TransitionSet()

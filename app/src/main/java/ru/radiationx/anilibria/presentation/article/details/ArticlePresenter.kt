@@ -47,7 +47,7 @@ class ArticlePresenter(
         vitalRepository
                 .observeByRule(VitalItem.Rule.ARTICLE_DETAIL)
                 .subscribe {
-                    router.showSystemMessage("Show vital in ART_DETAIL: ${it.size}")
+                    //router.showSystemMessage("Show vital in ART_DETAIL: ${it.size}")
                 }
                 .addToDisposable()
     }

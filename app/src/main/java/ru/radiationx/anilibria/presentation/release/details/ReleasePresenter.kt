@@ -126,14 +126,18 @@ class ReleasePresenter(
     }
 
     fun onShareClick() {
+        Log.e("SUKA", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            viewState.loadTorrent(it)
+            Log.e("SUKA", "onShareClick $it")
+            viewState.shareRelease(it)
         }
     }
 
     fun onCopyLinkClick() {
+        Log.e("SUKA", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            viewState.loadTorrent(it)
+            Log.e("SUKA", "onShareClick $it")
+            viewState.copyLink(it)
         }
     }
 

@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -43,6 +45,7 @@ import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
+import java.net.URLConnection
 
 
 /* Created by radiationx on 16.11.17. */
@@ -232,7 +235,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
     override fun copyLink(url: String) {
-        Utils.externalLink(url)
+        Utils.copyToClipBoard(url)
     }
 
     override fun onClickSd(episode: ReleaseFull.Episode) {
@@ -279,11 +282,39 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun playEpisode(release: ReleaseFull, position: Int, quality: Int) {
         Log.e("SUKA", "playEpisode " + release.episodes.size)
+        val titles = arrayOf("Внешний плеер", "Внутренний плеер")
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(titles) { dialog, which ->
+                        when (which) {
+                            0 -> playExternal(release, position, quality)
+                            1 -> playInternal(release, position, quality)
+                        }
+                    }
+                    .show()
+        }
+    }
+
+    private fun playInternal(release: ReleaseFull, position: Int, quality: Int) {
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_CURRENT, position)
             putExtra(MyPlayerActivity.ARG_QUALITY, quality)
         })
+    }
+
+    private fun playExternal(release: ReleaseFull, position: Int, quality: Int) {
+        val episode = release.episodes[position]
+        val url = when (quality) {
+            0 -> episode.urlSd
+            1 -> episode.urlHd
+            else -> episode.urlSd
+        }
+        val fileUri = Uri.parse(url)
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        intent.setDataAndType(fileUri, URLConnection.guessContentTypeFromName(fileUri.toString()))
+        startActivity(intent)
     }
 
     override fun playMoonwalk(link: String) {

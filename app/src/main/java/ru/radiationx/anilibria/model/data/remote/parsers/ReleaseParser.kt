@@ -131,7 +131,13 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         val release = ReleaseFull()
 
         val responseJson = JSONObject(httpResponse)
-        //item.setId(responseJson.getInt("id"));
+
+        release.id = responseJson.getInt("id")
+
+        val matcher = idNamePattern.matcher(responseJson.getString("link"))
+        if (matcher.find()) {
+            release.idName = matcher.group(1)
+        }
 
         val titles = responseJson.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         if (titles.isNotEmpty()) {
@@ -142,7 +148,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         }
 
         release.torrentLink = Api.BASE_URL + responseJson.getString("torrent_link")
-        //item.setLink(responseJson.getString("link"));
+        release.link = Api.BASE_URL + responseJson.getString("link")
         release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
         release.description = responseJson.getString("description").trim()

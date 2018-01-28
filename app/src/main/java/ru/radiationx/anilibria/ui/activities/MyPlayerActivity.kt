@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -56,6 +57,10 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         loadVital()
         initUiFlags()
         setContentView(R.layout.activity_myplayer)
+
+        supportActionBar?.apply {
+            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
+        }
 
         intent?.let {
             val release = it.getSerializableExtra(ARG_RELEASE) as ReleaseFull?

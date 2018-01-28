@@ -70,7 +70,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     private var releaseAdapter: ReleaseAdapter = ReleaseAdapter(this)
     private var commentsAdapter: CommentsAdapter = CommentsAdapter(this)
-    private var viewPagerAdapter: CustomPagerAdapter = CustomPagerAdapter(releaseAdapter, commentsAdapter)
+    private val viewPagerAdapter: CustomPagerAdapter by lazy {
+        CustomPagerAdapter(releaseAdapter, commentsAdapter)
+    }
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
@@ -84,7 +86,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.vitalRepository
     )
 
-
     override var transitionNameLocal = ""
 
     override fun setTransitionName(name: String) {
@@ -94,10 +95,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("SUKA", "ONCRETE $this")
-        arguments?.let {
-            it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
-            it.getString(ARG_ID_NAME, null)?.let { presenter.setReleaseIdName(it) }
-            (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
+        Log.e("SUKA", "ONCRETE REL $arguments, $savedInstanceState")
+        if (savedInstanceState == null) {
+            arguments?.let {
+                it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
+                it.getString(ARG_ID_NAME, null)?.let { presenter.setReleaseIdName(it) }
+                (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
+            }
         }
     }
 
@@ -195,6 +199,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             .handler(Handler())
 
     override fun showRelease(release: ReleaseFull) {
+        Log.e("SUKA", "showRelease")
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)

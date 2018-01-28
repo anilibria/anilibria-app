@@ -9,12 +9,14 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
+import com.crashlytics.android.Crashlytics
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import io.fabric.sdk.android.Fabric
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
@@ -58,6 +60,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        Fabric.with(this, Crashlytics())
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

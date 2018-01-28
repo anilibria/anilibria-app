@@ -82,7 +82,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
                     R.layout.item_view_spinner,
                     spinnerItems.map { it.second }
             )
-            (adapter as ArrayAdapter<*>).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            (adapter as ArrayAdapter<*>).setDropDownViewResource(R.layout.item_view_spinner_dropdown)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

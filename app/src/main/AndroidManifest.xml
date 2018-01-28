@@ -41,6 +41,11 @@
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2bfc2256dc145a09ab99f0a0d9bc1bc938bdeb2d"
+            />
     </application>
 
 </manifest>

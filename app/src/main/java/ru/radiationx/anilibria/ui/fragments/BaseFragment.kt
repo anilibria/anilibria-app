@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.utils.DimensionHelper
 
 /* Created by radiationx on 18.11.17. */
 
@@ -39,14 +40,20 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            /*toolbar?.post {
-
-            }*/
-            toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
-                topMargin = it.statusBar
+            toolbar?.post {
+                toolbar?.let { _ ->
+                    updateDimens(it)
+                }
             }
-            toolbar.requestLayout()
+            updateDimens(it)
         }
+    }
+
+    fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+        toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
+            topMargin = dimensions.statusBar
+        }
+        toolbar.requestLayout()
     }
 
     fun setStatusBarColor(color: Int) {

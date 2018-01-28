@@ -5,6 +5,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
 
 static def getDateTime() {
     DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
@@ -17,8 +19,8 @@ android {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 13
-        versionName "0.3.0"
+        versionCode 14
+        versionName "0.3.1"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -96,5 +98,9 @@ dependencies {
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true;
+    }
 }
 

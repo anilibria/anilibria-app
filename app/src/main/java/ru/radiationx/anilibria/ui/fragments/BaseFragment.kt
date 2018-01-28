@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments;
 
+import android.os.Build
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.v7.app.AppCompatDelegate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,19 +39,28 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            toolbar?.post {
-                toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
-                    topMargin = it.statusBar
-                }
+            /*toolbar?.post {
+
+            }*/
+            toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
+                topMargin = it.statusBar
             }
+            toolbar.requestLayout()
         }
     }
 
     fun setStatusBarColor(color: Int) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return
+        }
         baseStatusBar.setBackgroundColor(color)
     }
 
     fun setStatusBarVisibility(isVisible: Boolean) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            baseStatusBar.visibility = View.GONE
+            return
+        }
         baseStatusBar.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 

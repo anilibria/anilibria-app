@@ -14,8 +14,11 @@ class VitalParser(private val apiUtils: IApiUtils) {
         val responseJson = JSONObject(httpResponse)
         val jsonItems = responseJson.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
-            val item = VitalItem()
             val jsonItem = jsonItems.getJSONObject(i)
+            if (!jsonItem.optBoolean("active", false)) {
+                continue
+            }
+            val item = VitalItem()
             item.id = jsonItem.optInt("id", -1)
             item.name = jsonItem.optString("name", null)
 
@@ -31,19 +34,22 @@ class VitalParser(private val apiUtils: IApiUtils) {
             item.contentImage = jsonItem.optString("contentImage", null)
             item.contentLink = jsonItem.optString("contentLink", null)
 
-            val jsonRules = jsonItem.getJSONArray("rules")
-            for (j in 0 until jsonRules.length()) {
-                getRule(jsonRules.getString(j))?.let {
-                    item.rules.add(it)
+            jsonItem.optJSONArray("rules")?.let {
+                for (j in 0 until it.length()) {
+                    getRule(it.getString(j))?.let {
+                        item.rules.add(it)
+                    }
                 }
             }
 
-            val jsonEvents = jsonItem.getJSONArray("events")
-            for (j in 0 until jsonEvents.length()) {
-                getEvent(jsonEvents.getString(j))?.let {
-                    item.events.add(it)
+            jsonItem.optJSONArray("events")?.let {
+                for (j in 0 until it.length()) {
+                    getEvent(it.getString(j))?.let {
+                        item.events.add(it)
+                    }
                 }
             }
+
             resItems.add(item)
         }
         return resItems

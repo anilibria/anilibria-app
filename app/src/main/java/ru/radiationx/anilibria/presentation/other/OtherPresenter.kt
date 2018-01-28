@@ -158,7 +158,7 @@ class OtherPresenter(
                 router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
             }
             MENU_SETTINGS -> {
-                router.showSystemMessage("Кто-то спиздил настройки походу")
+                router.showSystemMessage("Настроек нет, это заглушка")
             }
             MENU_GROUP_VK -> {
                 Utils.externalLink("https://vk.com/anilibria")

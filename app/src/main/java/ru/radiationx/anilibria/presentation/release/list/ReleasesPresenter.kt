@@ -43,12 +43,10 @@ class ReleasesPresenter(
                         viewState.showVitalBottom(it)
                     }
                     it.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
                         if (it.isNotEmpty()) {
                             viewState.showVitalItems(it)
                         }
                     }
-                    router.showSystemMessage("Show vital in REL_LIST: ${it.size}")
                 }
                 .addToDisposable()
     }

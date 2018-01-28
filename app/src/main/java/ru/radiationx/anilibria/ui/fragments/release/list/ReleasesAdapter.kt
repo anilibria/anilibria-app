@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
-import android.util.Log
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -41,7 +40,6 @@ class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<Mutabl
     fun setVitals(vitals: List<VitalItem>) {
         vitalItems.clear()
         vitalItems.addAll(vitals)
-        //randomInsertVitals()
     }
 
     private fun removeLoadMore() {

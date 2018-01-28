@@ -41,7 +41,6 @@ class ReleaseAdapter(var itemListener: ItemListener) : ListDelegationAdapter<Mut
     fun setVitals(vitals: List<VitalItem>) {
         vitalItems.clear()
         vitalItems.addAll(vitals)
-        //randomInsertVitals()
     }
 
     private fun getVitalListItem(item: VitalItem) = when (item.contentType) {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseDonateListItem
 

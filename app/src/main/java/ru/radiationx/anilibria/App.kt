@@ -3,8 +3,10 @@ package ru.radiationx.anilibria
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
@@ -14,7 +16,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
@@ -29,7 +30,6 @@ import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.utils.bbparser.BbParser
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -58,6 +58,11 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        }
+
         RxJavaPlugins.setErrorHandler { throwable ->
             Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable)
             throwable.printStackTrace()
@@ -110,13 +115,16 @@ class App : Application() {
         var releaseApi = ReleaseApi(client, apiUtils)
         var searchApi = SearchApi(client, apiUtils)
         var pageApi = PageApi(client, apiUtils)
+        var vitalApi = VitalApi(client, apiUtils)
+        var checkerApi = CheckerApi(client, apiUtils)
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi)
         val searchRepository = SearchRepository(schedulers, searchApi)
         val pageRepository = PageRepository(schedulers, pageApi)
-        val vitalRepository = VitalRepository(schedulers, releaseApi)
+        val vitalRepository = VitalRepository(schedulers, vitalApi)
+        val checkerRepository = CheckerRepository(schedulers, checkerApi)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

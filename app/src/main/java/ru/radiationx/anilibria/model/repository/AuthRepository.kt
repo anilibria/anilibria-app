@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.repository
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
@@ -58,7 +57,7 @@ class AuthRepository constructor(
             .loadAuthPage()
             .map {
                 val newList = mutableListOf<String>()
-                it.forEachIndexed { index, s ->
+                it.forEachIndexed { _, s ->
                     val matcher = Pattern.compile("&state[\\s\\S]*").matcher(s)
                     if (matcher.find()) {
                         stateSite = matcher.group(0)

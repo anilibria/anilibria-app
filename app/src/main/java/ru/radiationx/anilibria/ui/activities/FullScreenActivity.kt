@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
-import android.annotation.TargetApi
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.*
@@ -14,11 +12,8 @@ import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.activity_vital.*
 import kotlinx.android.synthetic.main.item_vital_native.*
-import kotlinx.android.synthetic.main.item_vital_native.view.*
 import kotlinx.android.synthetic.main.item_vital_web.*
-import kotlinx.android.synthetic.main.item_vital_web.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.utils.Utils
 
@@ -83,7 +78,7 @@ class FullScreenActivity : AppCompatActivity() {
         vitalWebView.settings.apply {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
-        vitalWebView.setOnTouchListener(View.OnTouchListener { v, event -> event.action == MotionEvent.ACTION_MOVE })
+        vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
         vitalWebView.easyLoadData("https://www.anilibria.tv/", currentVital.contentText)
     }
 

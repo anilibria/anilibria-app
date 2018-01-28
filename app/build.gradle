@@ -1,8 +1,15 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+static def getDateTime() {
+    DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
+    return df.format(new Date()) + " г.";
+}
 
 android {
     compileSdkVersion 27
@@ -10,8 +17,9 @@ android {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 11
-        versionName "0.2.8"
+        versionCode 13
+        versionName "0.3.0"
+        buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

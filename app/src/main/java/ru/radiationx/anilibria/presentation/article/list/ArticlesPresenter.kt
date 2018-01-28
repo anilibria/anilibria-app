@@ -40,12 +40,10 @@ open class ArticlesPresenter(
                 .observeByRule(VitalItem.Rule.ARTICLE_LIST)
                 .subscribe {
                     it.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
                         if (it.isNotEmpty()) {
                             viewState.showVitalItems(it)
                         }
                     }
-                    router.showSystemMessage("Show vital in ART_LIST: ${it.size}")
                 }
                 .addToDisposable()
     }

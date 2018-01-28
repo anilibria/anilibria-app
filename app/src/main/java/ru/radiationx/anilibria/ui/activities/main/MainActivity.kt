@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
@@ -86,6 +87,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             }
         }
         Log.e("SUKA", "main oncreate")
+        SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
 
         /*if (savedInstanceState == null) {
             presenter.selectTab(Screens.MAIN_RELEASES)

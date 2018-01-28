@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
-import io.reactivex.Completable
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.model.data.remote.Api

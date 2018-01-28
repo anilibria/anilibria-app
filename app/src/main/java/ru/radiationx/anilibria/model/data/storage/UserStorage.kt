@@ -22,7 +22,7 @@ class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder
         val userSource = sharedPreferences.getString("saved_user", null)
         if (userSource == null) {
             user.authState = AuthState.NO_AUTH
-            saveUser(user)
+            localSaveUser(user)
         } else {
             val userJson = JSONObject(userSource)
             user.apply {
@@ -35,15 +35,19 @@ class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder
         return user
     }
 
-    override fun observeUser(): Observable<ProfileItem> = userRelay
-
-    override fun saveUser(user: ProfileItem) {
+    private fun localSaveUser(user: ProfileItem) {
         val userJson = JSONObject()
         userJson.put("authState", user.authState.toString())
         userJson.put("id", user.id)
         userJson.put("nick", user.nick)
         userJson.put("avatar", user.avatarUrl)
         sharedPreferences.edit().putString("saved_user", userJson.toString()).apply()
+    }
+
+    override fun observeUser(): Observable<ProfileItem> = userRelay
+
+    override fun saveUser(user: ProfileItem) {
+        localSaveUser(user)
         userRelay.accept(user)
     }
 

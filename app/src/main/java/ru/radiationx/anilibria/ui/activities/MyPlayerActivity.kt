@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import io.reactivex.disposables.CompositeDisposable
@@ -93,9 +92,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         vitalRepository
                 .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
                 .subscribe {
-                    Log.e("SUKA", "VITAL load  ITEMS ${it.size}")
                     it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }.let {
-                        Log.e("SUKA", "VITAL SET LIST ITEMS ${it.size}")
                         if (it.isNotEmpty()) {
                             showVitalItems(it)
                         }
@@ -166,7 +163,6 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         if (currentVitals.isNotEmpty()) {
             val randomVital = if (currentVitals.size > 1) rand(0, currentVitals.size) else 0
             val listItem = currentVitals[randomVital]
-            Toast.makeText(this, "show vital ${listItem.id}", Toast.LENGTH_SHORT).show()
             startActivity(Intent(App.instance, FullScreenActivity::class.java).apply {
                 putExtra(FullScreenActivity.VITAL_ITEM, listItem)
             })

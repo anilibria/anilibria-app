@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_vital_web.view.*
+import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.utils.Utils
 
 
@@ -47,7 +46,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
                 vitalWebView.settings.apply {
                     layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
                 }
-                vitalWebView.setOnTouchListener(View.OnTouchListener { v, event -> event.action == MotionEvent.ACTION_MOVE })
+                vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
                 vitalWebView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)

@@ -5,16 +5,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import android.webkit.WebViewClient
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.item_vital_native.view.*
 import kotlinx.android.synthetic.main.item_vital_native_card.view.*
+import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.utils.Utils
 
 

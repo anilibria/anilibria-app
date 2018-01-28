@@ -36,6 +36,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
+import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -250,7 +251,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                 commentsRecyclerView.apply {
                     adapter = this@CustomPagerAdapter.commentsAdapter
                     layoutManager = LinearLayoutManager(this.context)
-                    addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
+                    //addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
+                    addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
                 }
             }
         }

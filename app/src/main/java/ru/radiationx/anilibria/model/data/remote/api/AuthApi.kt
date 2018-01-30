@@ -24,9 +24,6 @@ class AuthApi(private val client: IClient,
 
     fun socialAuth(redirectUrl: String): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "backurl" to "/auth/",
-                "AUTH_FORM" to "Y",
-                "TYPE" to "AUTH",
                 "USER_REMEMBER" to "Y"
         )
         return client.post(redirectUrl, args)

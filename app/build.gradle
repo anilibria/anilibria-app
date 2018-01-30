@@ -99,9 +99,9 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    /*compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
-    }
+    }*/
 
     compile 'com.yandex.android:mobmetricalib:2.80'
 }

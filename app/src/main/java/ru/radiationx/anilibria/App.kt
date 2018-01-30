@@ -9,7 +9,6 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
-import com.crashlytics.android.Crashlytics
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -17,7 +16,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
-import io.fabric.sdk.android.Fabric
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
@@ -62,7 +60,7 @@ class App : Application() {
         super.onCreate()
         instance = this
 
-        Fabric.with(this, Crashlytics())
+        //Fabric.with(this, Crashlytics())
 
         YandexMetrica.activate(applicationContext, "48d49aa0-6aad-407e-a738-717a6c77d603");
         YandexMetrica.enableActivityAutoTracking(this);

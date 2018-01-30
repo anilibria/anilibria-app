@@ -101,19 +101,19 @@ class OtherPresenter(
         }
 
         GROUP_MAIN.forEach {
-            if (!blockedMenu.contains(it)) {
+            if (!blockedMenu.contains(it) && menuMap.contains(it)) {
                 mainMenu.add(menuMap.getValue(it))
             }
         }
 
         GROUP_SYSTEM.forEach {
-            if (!blockedMenu.contains(it)) {
+            if (!blockedMenu.contains(it) && menuMap.contains(it)) {
                 systemMenu.add(menuMap.getValue(it))
             }
         }
 
         GROUP_LINK.forEach {
-            if (!blockedMenu.contains(it)) {
+            if (!blockedMenu.contains(it) && menuMap.contains(it)) {
                 linkMenu.add(menuMap.getValue(it))
             }
         }
@@ -158,7 +158,7 @@ class OtherPresenter(
                 router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
             }
             MENU_SETTINGS -> {
-                router.showSystemMessage("Настроек нет, это заглушка")
+                router.showSystemMessage("В данной версии настройки отстутствуют")
             }
             MENU_GROUP_VK -> {
                 Utils.externalLink("https://vk.com/anilibria")

@@ -6,6 +6,7 @@ import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
@@ -29,6 +30,9 @@ interface ReleaseView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(url: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showTorrentDialog(torrent: List<TorrentItem>)
 
     @StateStrategyType(SkipStrategy::class)
     fun shareRelease(text: String)

@@ -33,6 +33,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
@@ -236,6 +237,17 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun copyLink(url: String) {
         Utils.copyToClipBoard(url)
+    }
+
+    override fun showTorrentDialog(torrent: List<TorrentItem>) {
+        val titles = torrent.map { "Серия ${it.episode} [${it.quality}][${it.size}]" }.toTypedArray()
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(titles) { dialog, which ->
+                        loadTorrent(torrent[which].url)
+                    }
+                    .show()
+        }
     }
 
     override fun onClickSd(episode: ReleaseFull.Episode) {

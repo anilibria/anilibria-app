@@ -20,6 +20,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         types.addAll(item.types)
     }
 
+    val torrents = mutableListOf<TorrentItem>()
     val favoriteCount = FavoriteCount()
     val episodes = mutableListOf<Episode>()
     var moonwalkLink: String? = null

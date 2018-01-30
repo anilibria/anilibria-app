@@ -195,6 +195,19 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
+        responseJson.getJSONArray("torrentList")?.let {
+            for(j in 0 until it.length()){
+                it.optJSONObject(j)?.let {
+                    release.torrents.add(TorrentItem().apply {
+                        episode = it.getString("episode")
+                        quality = it.getString("quality")
+                        size = it.getString("size")
+                        url = Api.BASE_URL +it.getString("url")
+                    })
+                }
+            }
+        }
+
         val jsonBxFull = responseJson.getJSONObject("fulll")
         release.id = jsonBxFull.getString("ID").toInt()
         release.idName = jsonBxFull.getString("CODE")

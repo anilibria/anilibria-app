@@ -120,8 +120,14 @@ class ReleasePresenter(
     }
 
     fun onTorrentClick() {
-        currentData?.torrentLink?.let {
-            viewState.loadTorrent(it)
+        currentData?.let {
+            if (it.torrents.isEmpty()) {
+                it.torrentLink?.let { url -> viewState.loadTorrent(url) }
+            } else if (it.torrents.size == 1) {
+                viewState.loadTorrent(it.torrents.last().url)
+            } else {
+                viewState.showTorrentDialog(it.torrents)
+            }
         }
     }
 

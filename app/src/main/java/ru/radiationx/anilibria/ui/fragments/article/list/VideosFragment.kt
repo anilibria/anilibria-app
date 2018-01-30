@@ -10,7 +10,7 @@ class VideosFragment : ArticlesFragment() {
 
     override val spinnerItems = listOf(
             "video" to "Все видео",
-            "rap" to "RAP-лбзоры",
+            "rap" to "RAP-обзоры",
             "fisheyeplacebo" to "Fisheye Placebo",
             "anons" to "Анонсы и ТОП-10",
             "amv" to "AMV",

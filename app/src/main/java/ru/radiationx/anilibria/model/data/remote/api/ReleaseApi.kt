@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.data.remote.api;
+package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated

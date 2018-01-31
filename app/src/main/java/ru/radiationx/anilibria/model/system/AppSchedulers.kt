@@ -1,13 +1,14 @@
 package ru.radiationx.anilibria.model.system
 
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class AppSchedulers : SchedulersProvider {
-    override fun ui() = AndroidSchedulers.mainThread()
-    override fun computation() = Schedulers.computation()
-    override fun trampoline() = Schedulers.trampoline()
-    override fun newThread() = Schedulers.newThread()
-    override fun io() = Schedulers.io()
+    override fun ui(): Scheduler = AndroidSchedulers.mainThread()
+    override fun computation(): Scheduler = Schedulers.computation()
+    override fun trampoline(): Scheduler = Schedulers.trampoline()
+    override fun newThread(): Scheduler = Schedulers.newThread()
+    override fun io(): Scheduler = Schedulers.io()
 }
 

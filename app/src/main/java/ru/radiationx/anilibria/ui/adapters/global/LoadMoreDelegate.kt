@@ -26,7 +26,7 @@ class LoadMoreDelegate(private val listener: Listener) : AdapterDelegate<Mutable
             LayoutInflater.from(parent.context).inflate(R.layout.item_load_more, parent, false)
     )
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    private inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         init {
             view.run {
@@ -36,7 +36,7 @@ class LoadMoreDelegate(private val listener: Listener) : AdapterDelegate<Mutable
         }
 
         fun bind() {
-            Log.d("SUKA", "BIND LOAD_MORE")
+            Log.d("S_DEF_LOG", "BIND LOAD_MORE")
             listener.onLoadMore()
         }
     }

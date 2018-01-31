@@ -20,7 +20,7 @@ class AuthRepository constructor(
         private val cookieHolder: CookieHolder
 ) {
 
-    var stateSite = ""
+    private var stateSite = ""
 
     fun observeUser(): Observable<ProfileItem> = userHolder
             .observeUser()
@@ -69,14 +69,7 @@ class AuthRepository constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    private fun hardSignOut() {
-        userHolder.delete()
-        CookieHolder.cookieNames.forEach {
-            cookieHolder.removeCookie(it)
-        }
-    }
-
-    fun signOut() = authApi
+    fun signOut(): Single<String> = authApi
             .signOut()
             .doOnSuccess {
                // hardSignOut()

@@ -23,7 +23,7 @@ class CheckerPresenter(
         checkUpdate()
     }
 
-    fun checkUpdate() {
+    private fun checkUpdate() {
         Log.e("CHECKER", "checkUpdate presenter")
         checkerRepository
                 .checkUpdate(BuildConfig.VERSION_CODE)

@@ -31,12 +31,12 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     public final static int DIRECTION_UP = 1;
     public final static int DIRECTION_DOWN = 2;
     private int direction = DIRECTION_NONE;
-    boolean isJsReady = false;
+    private boolean isJsReady = false;
 
     private OnDirectionListener onDirectionListener;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Thread mUiThread;
-    private Queue<Runnable> actionsForWebView = new LinkedList<>();
+    private final Queue<Runnable> actionsForWebView = new LinkedList<>();
     private JsLifeCycleListener jsLifeCycleListener;
 
     public interface OnDirectionListener {

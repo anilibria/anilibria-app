@@ -6,9 +6,11 @@ import android.view.View
 /**
  * Created by radiationx on 30.12.17.
  */
-class DimensionHelper(private val measurer: View,
-                      private val container: View,
-                      private val listener: DimensionsListener) {
+class DimensionHelper(
+        measurer: View,
+        private val container: View,
+        private val listener: DimensionsListener
+) {
 
     private val dimension = Dimensions()
 
@@ -19,7 +21,7 @@ class DimensionHelper(private val measurer: View,
 
     init {
         measurer.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.e("SUKA", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
+            Log.e("S_DEF_LOG", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
             var anyChanges = false
             if (dimension.contentHeight == 0) {
                 dimension.statusBar = v.top
@@ -53,7 +55,7 @@ class DimensionHelper(private val measurer: View,
         var keyboardHeight = 0
 
         override fun toString(): String {
-            return "Dimensions:\nto=${statusBar}\nbo=$navigationBar\nch=$contentHeight\nkh=$keyboardHeight"
+            return "Dimensions:\nto=$statusBar\nbo=$navigationBar\nch=$contentHeight\nkh=$keyboardHeight"
         }
     }
 

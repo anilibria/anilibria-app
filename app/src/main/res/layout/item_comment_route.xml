@@ -14,7 +14,7 @@
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:paddingTop="16dp"
-        android:text="Комментарии"
+        android:text="@string/comments_header"
         android:textColor="@color/textDefault"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -27,6 +27,6 @@
         android:paddingStart="16dp"
         android:textSize="16sp"
         android:paddingTop="16dp"
-        android:text="Сделайте свайп влево, чтобы открыть комментарии"
+        android:text="@string/comments_notify_text"
         android:textColor="@color/textDefault" />
 </LinearLayout>

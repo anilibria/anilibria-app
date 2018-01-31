@@ -75,12 +75,12 @@ class Client constructor(
                 //.setType(MultipartBody.FORM)
 
                 args.forEach {
-                    Log.e("SUKA", "ADD PART " + it.key + " : " + it.value)
+                    Log.e("S_DEF_LOG", "ADD PART " + it.key + " : " + it.value)
                     requestBody.add(it.key, it.value)
                 }
 
                 val suk = requestBody.build()
-                Log.e("SUKA", "CONT TYPE ${suk.contentType()}")
+                Log.e("S_DEF_LOG", "CONT TYPE ${suk.contentType()}")
                 suk
             }
             METHOD_PUT, METHOD_DELETE -> {
@@ -109,7 +109,7 @@ class Client constructor(
                 .method(method, body)
                 .build()
 
-        Log.e("SUKA", "REQUEST $httpUrl : $method : $body")
+        Log.e("S_DEF_LOG", "REQUEST $httpUrl : $method : $body")
 
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null

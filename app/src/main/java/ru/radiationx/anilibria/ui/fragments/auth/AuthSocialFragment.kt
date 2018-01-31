@@ -59,7 +59,7 @@ class AuthSocialFragment : BaseFragment() {
             var redirect = false
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Log.e("SUKA", "OverrideUrlLoading: " + url)
+                Log.e("S_DEF_LOG", "OverrideUrlLoading: " + url)
                 if (!loadingFinished) {
                     redirect = true
                 }
@@ -81,13 +81,13 @@ class AuthSocialFragment : BaseFragment() {
                 loadingFinished = false
                 progressBar.visibility = View.VISIBLE
 
-                Log.e("SUKA", "ON onPageStarted")
+                Log.e("S_DEF_LOG", "ON onPageStarted")
                 //SHOW LOADING IF IT ISNT ALREADY VISIBLE
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
 
-                Log.e("SUKA", "ON onPageFinished")
+                Log.e("S_DEF_LOG", "ON onPageFinished")
                 if (!redirect) {
                     loadingFinished = true
                 }

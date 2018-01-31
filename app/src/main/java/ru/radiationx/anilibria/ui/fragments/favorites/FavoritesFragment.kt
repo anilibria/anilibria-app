@@ -46,7 +46,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.e("SUKA", "TEST onViewCreated " + this)
+        Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
@@ -73,7 +73,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun showReleases(releases: List<ReleaseItem>) {
-        Log.e("SUKA", "fav show releases " + releases.size)
+        Log.e("S_DEF_LOG", "fav show releases " + releases.size)
         adapter.bindItems(releases)
     }
 
@@ -90,7 +90,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view;
+        this.sharedViewLocal = view
     }
 
     override fun onItemClick(item: ReleaseItem, position: Int) {

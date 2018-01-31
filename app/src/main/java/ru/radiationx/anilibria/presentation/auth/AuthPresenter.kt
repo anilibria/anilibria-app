@@ -38,7 +38,7 @@ class AuthPresenter(private val router: Router,
         }
     }
 
-    fun loadAuthPage() {
+    private fun loadAuthPage() {
         authRepository.loadAuthPage()
                 .subscribe({ urls ->
                     urls.forEachIndexed { index, s ->
@@ -56,7 +56,7 @@ class AuthPresenter(private val router: Router,
                 .addToDisposable()
     }
 
-    fun signIn(redirectUrl: String) {
+    private fun signIn(redirectUrl: String) {
         viewState.setRefreshing(true)
         authRepository.signIn(redirectUrl)
                 .doAfterTerminate { viewState.setRefreshing(false) }

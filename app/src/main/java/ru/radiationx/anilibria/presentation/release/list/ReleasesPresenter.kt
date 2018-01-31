@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation.release.list;
+package ru.radiationx.anilibria.presentation.release.list
 
 import android.os.Bundle
 import android.util.Log
@@ -30,7 +30,7 @@ class ReleasesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach")
+        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refreshReleases()
         loadVital()
     }
@@ -56,7 +56,7 @@ class ReleasesPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("SUKA", "loadReleases")
+        Log.e("S_DEF_LOG", "loadReleases")
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)

@@ -177,10 +177,10 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private fun checkIndex(index: Int): Boolean = index >= 0 && index < releaseData.episodes.size
 
     private fun getNextEpisode(): ReleaseFull.Episode? {
-        Log.e("SUKA", "CLICK NEXT " + currentEpisode)
+        Log.e("S_DEF_LOG", "CLICK NEXT " + currentEpisode)
         val nextIndex = currentEpisode - 1
         if (checkIndex(nextIndex)) {
-            Log.e("SUKA", "NEXT INDEX " + nextIndex)
+            Log.e("S_DEF_LOG", "NEXT INDEX " + nextIndex)
             currentEpisode = nextIndex
             return getCurrentEpisode()
         }
@@ -190,7 +190,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevIndex = currentEpisode + 1
         if (checkIndex(prevIndex)) {
-            Log.e("SUKA", "PREV INDEX " + prevIndex)
+            Log.e("S_DEF_LOG", "PREV INDEX " + prevIndex)
             currentEpisode = prevIndex
             return getCurrentEpisode()
         }
@@ -202,10 +202,10 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private fun playEpisode(episode: ReleaseFull.Episode) {
         supportActionBar?.subtitle = episode.title
         if (quality == VAL_QUALITY_SD) {
-            Log.e("SUKA", "playEpisode " + episode.urlSd)
+            Log.e("S_DEF_LOG", "playEpisode " + episode.urlSd)
             player.setVideoPath(episode.urlSd)
         } else if (quality == VAL_QUALITY_HD) {
-            Log.e("SUKA", "playEpisode " + episode.urlHd)
+            Log.e("S_DEF_LOG", "playEpisode " + episode.urlHd)
             player.setVideoPath(episode.urlHd)
         }
     }

@@ -47,7 +47,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.e("SUKA", "TEST onViewCreated " + this)
+        Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
@@ -106,7 +106,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     }
 
     override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view;
+        this.sharedViewLocal = view
     }
 
     override fun onItemClick(item: ReleaseItem, position: Int) {

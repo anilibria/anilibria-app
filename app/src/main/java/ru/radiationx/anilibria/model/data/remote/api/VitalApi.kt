@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.VitalParser
  */
 class VitalApi(
         private val client: IClient,
-        private val apiUtils: IApiUtils
+        apiUtils: IApiUtils
 ) {
 
     private val vitalParser = VitalParser(apiUtils)

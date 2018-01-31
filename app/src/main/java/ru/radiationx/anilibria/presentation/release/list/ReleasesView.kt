@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation.release.list;
+package ru.radiationx.anilibria.presentation.release.list
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
@@ -12,10 +12,10 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleasesView : IBaseView {
     @StateStrategyType(AddToEndStrategy::class)
-    fun showReleases(releases: List<ReleaseItem>);
+    fun showReleases(releases: List<ReleaseItem>)
 
     @StateStrategyType(AddToEndStrategy::class)
-    fun insertMore(releases: List<ReleaseItem>);
+    fun insertMore(releases: List<ReleaseItem>)
 
     fun setEndless(enable: Boolean)
 

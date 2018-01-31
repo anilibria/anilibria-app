@@ -180,12 +180,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         ImageLoader.getInstance().displayImage(imageUrl, toolbarImage, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                ToolbarHelper.isDarkImage(loadedImage, Consumer<Boolean> {
-                    if (it) {
-                        currentColor = Color.WHITE
-                    } else {
-                        currentColor = Color.BLACK
-                    }
+                ToolbarHelper.isDarkImage(loadedImage, Consumer {
+                    currentColor = if (it) Color.WHITE else Color.BLACK
+
                     toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                     toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                 })
@@ -195,7 +192,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     }
 
     class CustomPagerAdapter(
-            val commentsAdapter: CommentsAdapter
+            private val commentsAdapter: CommentsAdapter
     ) : PagerAdapter(), ExtendedWebView.JsLifeCycleListener {
 
         var webViewScrollPos = 0
@@ -207,7 +204,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private val webViewCallCache = mutableListOf<Runnable>()
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            Log.e("SUKA", "instantiateItem $position")
+            Log.e("S_DEF_LOG", "instantiateItem $position")
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
             val layout: ViewGroup = inflater.inflate(views[position], container, false) as ViewGroup
             container.addView(layout)
@@ -225,7 +222,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                 localWebView = null
                 localProgressSwitcher = null
             }
-            container.removeView(any as View);
+            container.removeView(any as View)
         }
 
         override fun getCount(): Int = 2
@@ -293,7 +290,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         }
 
         fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
-            Log.e("SUKA", "preshow $localWebView")
+            Log.e("S_DEF_LOG", "preshow $localWebView")
             webViewCallCache.add(Runnable {
                 localWebView?.evalJs("ViewModel.setText('title','${convert(title)}');")
                 localWebView?.evalJs("ViewModel.setText('nick','${convert(nick)}');")

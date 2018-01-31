@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
+    android:clipToPadding="false"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
-    android:clipToPadding="false">
+    android:paddingBottom="16dp">
 
     <RelativeLayout
         android:id="@+id/full_item"
@@ -30,10 +30,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/full_fav_btn"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:layout_toStartOf="@+id/full_fav_btn"
             android:textColor="@color/textDefault"
             android:textSize="20sp"
             tools:text="Title releaseData long title lol jsla d ;kfjasdf" />
@@ -43,10 +43,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_below="@id/full_title"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_below="@id/full_title"
             android:ellipsize="end"
             android:maxLines="6"
             android:textColor="#444"
@@ -77,7 +77,6 @@
                 android:gravity="center_vertical"
                 android:paddingEnd="4dp"
                 android:paddingStart="4dp"
-                android:text="355"
                 android:textColor="@color/white"
                 android:textSize="13sp" />
 
@@ -86,6 +85,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
                 android:padding="3dp"
                 app:srcCompat="@drawable/ic_favorite_border" />
 

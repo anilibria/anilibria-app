@@ -22,7 +22,7 @@ class ArticleItem : Serializable {
 
     var otherUrl: String? = null
     var viewsCount: Int = 0
-    var commentsCount: Int = 0;
+    var commentsCount: Int = 0
 
     lateinit var date: String
 }

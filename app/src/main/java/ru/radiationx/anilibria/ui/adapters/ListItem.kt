@@ -16,12 +16,12 @@ sealed class ListItem
 
 class ProfileListItem(val profileItem: ProfileItem) : ListItem()
 class MenuListItem(val menuItem: OtherMenuItem) : ListItem()
-class DividerShadowListItem() : ListItem()
+class DividerShadowListItem : ListItem()
 
 
 /* Common */
 
-class LoadMoreListItem() : ListItem()
+class LoadMoreListItem : ListItem()
 class CommentListItem(val item: Comment) : ListItem()
 class CommentRouteListItem : ListItem()
 class VitalWebListItem(val item: VitalItem) : ListItem()

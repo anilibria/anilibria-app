@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
+        android:contentDescription="@null"
         android:scaleType="fitCenter" />
 
     <ProgressBar

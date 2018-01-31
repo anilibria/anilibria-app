@@ -182,7 +182,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun showFastItems(items: List<SearchItem>) {
         searchView.showSuggestions()
         items.forEach {
-            Log.e("SUKA", "FAST ITEM: ${it.title} : ${it.originalTitle}")
+            Log.e("S_DEF_LOG", "FAST ITEM: ${it.title} : ${it.originalTitle}")
         }
         fastAdapter.bindItems(items)
     }

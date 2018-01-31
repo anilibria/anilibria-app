@@ -37,10 +37,10 @@ import ru.terrakok.cicerone.commands.Forward
 class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
     companion object {
-        val TRANSITION_MOVE_TIME: Long = 375
-        val TRANSITION_OTHER_TIME: Long = 225
+        const val TRANSITION_MOVE_TIME: Long = 375
+        const val TRANSITION_OTHER_TIME: Long = 225
 
-        private val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
+        private const val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
         fun newInstance(name: String): TabFragment {
             val fragment = TabFragment()

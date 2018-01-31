@@ -50,7 +50,7 @@ open class BbView @JvmOverloads constructor(
         }
     }
 
-    fun addTextContent(bbOp: List<BbOp>): String {
+    private fun addTextContent(bbOp: List<BbOp>): String {
         var result = ""
         bbOp.forEach {
             val node = it.node
@@ -81,62 +81,66 @@ open class BbView @JvmOverloads constructor(
         return result
     }
 
-    fun addBlockContent(bbOp: List<BbOp>) {
+    private fun addBlockContent(bbOp: List<BbOp>) {
 
-        if (bbOp.last().node.tag == "QUOTE") {
-            val newViewView = BbQuote(context)
-            newViewView.setContent(bbOp.last().node)
-            newViewView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
-                topMargin = (resources.displayMetrics.density * 8).toInt()
-                bottomMargin = (resources.displayMetrics.density * 8).toInt()
+        when {
+            bbOp.last().node.tag == "QUOTE" -> {
+                val newViewView = BbQuote(context)
+                newViewView.setContent(bbOp.last().node)
+                newViewView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = (resources.displayMetrics.density * 8).toInt()
+                    bottomMargin = (resources.displayMetrics.density * 8).toInt()
+                }
+                addView(newViewView)
             }
-            addView(newViewView)
-        } else if (bbOp.last().node.tag == "IMG") {
-            val newTextView = BbImageView(context)
-            newTextView.setBbImage(bbOp)
-            newTextView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
-                topMargin = (resources.displayMetrics.density * 8).toInt()
-                bottomMargin = (resources.displayMetrics.density * 8).toInt()
+            bbOp.last().node.tag == "IMG" -> {
+                val newTextView = BbImageView(context)
+                newTextView.setBbImage(bbOp)
+                newTextView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = (resources.displayMetrics.density * 8).toInt()
+                    bottomMargin = (resources.displayMetrics.density * 8).toInt()
+                }
+                addView(newTextView)
             }
-            addView(newTextView)
-        } else {
-            var result = ""
-            val styles = mutableListOf<String>()
-            bbOp.forEach {
-                val node = it.node
-                when (it.op) {
-                    BbOp.OPEN -> {
-                        if (node.tag != "IMG" && node.tag != "QUOTE") {
-                            styles.add(node.tag)
-                        } else {
-                            result += "Block ${node.tag} with {${styles.joinToString()}} and ${node.childs.joinToString { it.text }}"
+            else -> {
+                var result = ""
+                val styles = mutableListOf<String>()
+                bbOp.forEach {
+                    val node = it.node
+                    when (it.op) {
+                        BbOp.OPEN -> {
+                            if (node.tag != "IMG" && node.tag != "QUOTE") {
+                                styles.add(node.tag)
+                            } else {
+                                result += "Block ${node.tag} with {${styles.joinToString()}} and ${node.childs.joinToString { it.text }}"
+                            }
+                        }
+                        BbOp.APPEND -> {
+                            result += "!!!WTF APPEND!!!"
+                        }
+                        BbOp.CLOSE -> {
+                            result += "!!!WTF CLOSE!!!"
                         }
                     }
-                    BbOp.APPEND -> {
-                        result += "!!!WTF APPEND!!!"
-                    }
-                    BbOp.CLOSE -> {
-                        result += "!!!WTF CLOSE!!!"
-                    }
                 }
+                //println("addBlockContent: '${result}'")
+                val newTextView = TextView(context)
+                newTextView.text = result
+                newTextView.setBackgroundColor(Color.argb(48, 0, 255, 0))
+                newTextView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = (resources.displayMetrics.density * 8).toInt()
+                    bottomMargin = (resources.displayMetrics.density * 8).toInt()
+                }
+                addView(newTextView)
             }
-            //println("addBlockContent: '${result}'")
-            val newTextView = TextView(context)
-            newTextView.text = result
-            newTextView.setBackgroundColor(Color.argb(48, 0, 255, 0))
-            newTextView.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
-                topMargin = (resources.displayMetrics.density * 8).toInt()
-                bottomMargin = (resources.displayMetrics.density * 8).toInt()
-            }
-            addView(newTextView)
         }
     }
 
 
-    fun getTagName(node: BbNode): String = when (node.tag) {
+    private fun getTagName(node: BbNode): String = when (node.tag) {
         "CENTER", "LEFT", "RIGHT", "JUSTIFY" -> "div"
         "LIST" -> {
-            val attr = node.attributes.get(node.tag)
+            val attr = node.attributes[node.tag]
             if (attr == null || attr != "1") {
                 "ul"
             } else {
@@ -149,7 +153,7 @@ open class BbView @JvmOverloads constructor(
         "SIZE" -> {
             var header = "h"
             try {
-                val attr = node.attributes.get(node.tag)
+                val attr = node.attributes[node.tag]
                 if (attr == null) {
                     header = "p"
                 } else {
@@ -164,26 +168,26 @@ open class BbView @JvmOverloads constructor(
         else -> node.tag
     }
 
-    fun getAttributes(node: BbNode): String {
+    private fun getAttributes(node: BbNode): String {
         val attributes = mutableMapOf<String, String>()
         when (node.tag) {
             "LEFT", "JUSTIFY" -> appendAttr(attributes, "style", "text-align:start;")
             "RIGHT" -> appendAttr(attributes, "style", "text-align:end;")
             "CENTER" -> appendAttr(attributes, "style", "text-align:center;")
             "COLOR" -> {
-                val color = node.attributes.get(node.tag)
+                val color = node.attributes[node.tag]
                 if (color != null) {
                     appendAttr(attributes, "style", "color:$color;")
                 }
             }
             "URL" -> {
-                val href = node.attributes.get(node.tag)
+                val href = node.attributes[node.tag]
                 if (href != null) {
                     appendAttr(attributes, "href", href)
                 }
             }
             "USER" -> {
-                val href = node.attributes.get(node.tag)
+                val href = node.attributes[node.tag]
                 if (href != null) {
                     appendAttr(attributes, "href", "/user/$href/")
                 }
@@ -196,10 +200,10 @@ open class BbView @JvmOverloads constructor(
         return result
     }
 
-    fun appendAttr(attrs: MutableMap<String, String>, key: String, value: String) {
-        val attr = attrs.get(key)
+    private fun appendAttr(attrs: MutableMap<String, String>, key: String, value: String) {
+        val attr = attrs[key]
         if (attr == null) {
-            attrs.put(key, value)
+            attrs[key] = value
         } else {
             attrs[key] = "$attr $value"
         }

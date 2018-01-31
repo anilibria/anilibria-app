@@ -3,6 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <font
+        android:font="@font/roboto_medium"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+
         app:font="@font/roboto_medium"
         app:fontStyle="normal"
         app:fontWeight="500" />

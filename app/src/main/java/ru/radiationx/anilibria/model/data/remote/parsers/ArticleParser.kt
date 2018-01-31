@@ -5,7 +5,6 @@ import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -52,44 +51,9 @@ class ArticleParser(private val apiUtils: IApiUtils) {
         Pattern.compile(paginationPatternSource, Pattern.CASE_INSENSITIVE)
     }
 
-    private val fullPattern: Pattern by lazy {
-        Pattern.compile(fullArticlePatternSource, Pattern.CASE_INSENSITIVE)
-    }
-
     private fun safeNumber(value: String): String {
         val result = value.trim()
         return if (result.isEmpty()) "0" else result
-    }
-
-    fun articles(httpResponse: String): Paginated<List<ArticleItem>> {
-        val items = mutableListOf<ArticleItem>()
-        val matcher: Matcher = listPattern.matcher(httpResponse)
-        while (matcher.find()) {
-            items.add(ArticleItem().apply {
-                id = matcher.group(1).toInt()
-                url = matcher.group(2)
-                title = apiUtils.escapeHtml(matcher.group(3)).orEmpty()
-                userId = matcher.group(4).toInt()
-                userNick = apiUtils.escapeHtml(matcher.group(5)).orEmpty()
-                imageUrl = Api.BASE_URL_IMAGES + matcher.group(6)
-                imageWidth = matcher.group(7).toInt()
-                imageHeight = matcher.group(8).toInt()
-                content = matcher.group(9).trim()
-                otherUrl = Api.BASE_URL + matcher.group(10)
-                viewsCount = safeNumber(matcher.group(11)).toInt()
-                commentsCount = safeNumber(matcher.group(12)).toInt()
-            })
-        }
-        val result = Paginated(items)
-
-        val paginationMatcher = paginationPattern.matcher(httpResponse)
-        if (paginationMatcher.find()) {
-            result.current = paginationMatcher.group(1).toInt()
-            result.allPages = paginationMatcher.group(2).toInt()
-            result.itemsPerPage = 6
-        }
-
-        return result
     }
 
     fun articles2(httpResponse: String): Paginated<List<ArticleItem>> {

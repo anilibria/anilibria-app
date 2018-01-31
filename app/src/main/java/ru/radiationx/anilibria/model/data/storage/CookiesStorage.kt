@@ -45,7 +45,7 @@ class CookiesStorage constructor(private val sharedPreferences: SharedPreference
         if (!clientCookies.containsKey(cookie.name())) {
             clientCookies.remove(cookie.name())
         }
-        clientCookies.put(cookie.name(), cookie)
+        clientCookies[cookie.name()] = cookie
     }
 
     override fun removeCookie(name: String) {

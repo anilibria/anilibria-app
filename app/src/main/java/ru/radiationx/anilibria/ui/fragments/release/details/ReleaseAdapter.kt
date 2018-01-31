@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodesHeadDel
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import java.util.*
 
-class ReleaseAdapter(var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
 

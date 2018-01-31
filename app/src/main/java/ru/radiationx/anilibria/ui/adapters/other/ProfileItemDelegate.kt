@@ -44,8 +44,8 @@ class ProfileItemDelegate(
 
     inner class ViewHolder(
             val view: View,
-            val clickListener: (ProfileItem) -> Unit,
-            val logoutClickListener: () -> Unit
+            private val clickListener: (ProfileItem) -> Unit,
+            private val logoutClickListener: () -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var item: ProfileItem
@@ -67,7 +67,7 @@ class ProfileItemDelegate(
 
         fun bind(profileItem: ProfileItem) {
             item = profileItem
-            Log.e("SUKA", "bind prfile " + profileItem)
+            Log.e("S_DEF_LOG", "bind prfile " + profileItem)
             view.run {
                 if (profileItem.avatarUrl.isNullOrEmpty()) {
                     ImageLoader.getInstance().displayImage("assets://res/alib_new_or_b.png", profileAvatar)

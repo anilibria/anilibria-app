@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
-import android.util.Log
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -13,7 +12,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.CheckerParser
  */
 class CheckerApi(
         private val client: IClient,
-        private val apiUtils: IApiUtils
+        apiUtils: IApiUtils
 ) {
 
     private val checkerParser = CheckerParser(apiUtils)

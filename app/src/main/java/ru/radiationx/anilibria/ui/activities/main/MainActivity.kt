@@ -24,15 +24,14 @@ import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Back
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Replace
-import ru.terrakok.cicerone.commands.SystemMessage
+import ru.terrakok.cicerone.commands.*
 
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
-    private val TABS_STACK = "TABS_STACK"
+    companion object {
+        private const val TABS_STACK = "TABS_STACK"
+    }
 
     override val router: Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
@@ -63,7 +62,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
         DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                Log.e("SUKA", dimensions.toString())
+                Log.e("S_DEF_LOG", dimensions.toString())
                 //keyboardUtil.setDimensions(dimensions)
                 /*root_container.post {
 
@@ -86,7 +85,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 tabsStack.addAll(it)
             }
         }
-        Log.e("SUKA", "main oncreate")
+        Log.e("S_DEF_LOG", "main oncreate")
         SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
 
         /*if (savedInstanceState == null) {
@@ -110,8 +109,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     }
 
     override fun onBackPressed() {
-        //Log.e("SUKA", "onBackPressed: " + supportFragmentManager.fragments.joinToString(",\n", "{\n", "\n}"))
-        //Log.e("SUKA", "onBackPressed find: " + supportFragmentManager.findFragmentById(R.id.root_container))
         val fragment = if (tabsStack.isEmpty()) {
             null
         } else {
@@ -184,10 +181,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
         override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-            Log.e("SUKA", "Create intent " + screenKey)
+            Log.e("S_DEF_LOG", "Create intent " + screenKey)
             return when (screenKey) {
                 Screens.AUTH -> {
-                    Log.e("SUKA", "REAL CREATE INTENT " + screenKey)
+                    Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
                     Intent(this@MainActivity, AuthActivity::class.java)
                 }
                 else -> null
@@ -195,12 +192,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
 
         override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            Log.e("SUKA", "Create fragment " + screenKey)
+            Log.e("S_DEF_LOG", "Create fragment " + screenKey)
             return null
         }
 
         override fun applyCommand(command: Command) {
-            Log.e("SUKA", "ApplyCommand " + command)
+            Log.e("S_DEF_LOG", "ApplyCommand " + command)
             if (command is Back) {
                 if (tabsStack.isEmpty()) {
                     finish()
@@ -224,7 +221,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             } else if (command is Replace) {
                 val inTabs = tabs.firstOrNull { it.screenKey == command.screenKey } != null
                 if (inTabs) {
-                    Log.e("SUKA", "Replace " + command.screenKey)
+                    Log.e("S_DEF_LOG", "Replace " + command.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
                     tabs.forEach {
@@ -235,7 +232,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                             }
                             ta.show(fragment)
                             addInStack(it.screenKey)
-                            Log.e("SUKA", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
+                            Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                         } else {
                             ta.hide(fragment)
                         }
@@ -245,8 +242,18 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 }
             }
 
-            Log.e("SUKA", "sector clear")
+            Log.e("S_DEF_LOG", "sector clear")
             super.applyCommand(command)
+        }
+
+        override fun unknownScreen(command: Command?) {
+            val screenKey = when {
+                command is BackTo -> command.screenKey
+                command is Forward -> command.screenKey
+                command is Replace -> command.screenKey
+                else -> "NO_KEY"
+            }
+            throw RuntimeException("Can't create a screen for passed screenKey $command, $screenKey")
         }
     }
 

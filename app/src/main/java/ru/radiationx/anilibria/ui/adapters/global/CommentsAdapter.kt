@@ -9,8 +9,8 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 
 class CommentsAdapter(var listener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
     companion object {
-        private val COMMENT_LAYOUT = 1
-        private val LOAD_MORE_LAYOUT = 2
+        private const val COMMENT_LAYOUT = 1
+        private const val LOAD_MORE_LAYOUT = 2
     }
 
     var endless: Boolean = false

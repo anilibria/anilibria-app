@@ -18,13 +18,13 @@ import android.widget.TextView;
 
 public class LinkMovementMethod extends ScrollingMovementMethod {
 
-    private static Object FROM_BELOW = new NoCopySpan.Concrete();
+    private final static Object FROM_BELOW = new NoCopySpan.Concrete();
 
     private static final int CLICK = 1;
     private static final int UP = 2;
     private static final int DOWN = 3;
 
-    private ClickListener listener;
+    private final ClickListener listener;
 
     public LinkMovementMethod(ClickListener listener) {
         this.listener = listener;
@@ -228,7 +228,7 @@ public class LinkMovementMethod extends ScrollingMovementMethod {
     }
 
     public interface ClickListener {
-        public boolean onClick(String url);
+        boolean onClick(String url);
     }
 }
 

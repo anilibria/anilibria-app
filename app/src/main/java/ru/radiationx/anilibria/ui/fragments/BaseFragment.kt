@@ -1,10 +1,9 @@
-package ru.radiationx.anilibria.ui.fragments;
+package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v7.app.AppCompatDelegate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
         }
     }
 
-    fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
             topMargin = dimensions.statusBar
         }

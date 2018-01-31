@@ -43,7 +43,7 @@ class BbParser {
                     val newElement = BbNode(idCounter, tag.toUpperCase())
                     newElement.parent = lastElement
                     if (rootAttr != null) {
-                        newElement.attributes.put(newElement.tag, rootAttr)
+                        newElement.attributes[newElement.tag] = rootAttr
                     }
                     if (attrs != null) {
                         attrsMatcher = if (attrsMatcher == null) {
@@ -58,7 +58,7 @@ class BbParser {
                                 if (value == null) {
                                     value = it.group(3)
                                 }
-                                newElement.attributes.put(key, value)
+                                newElement.attributes[key] = value
                             }
                         }
                     }

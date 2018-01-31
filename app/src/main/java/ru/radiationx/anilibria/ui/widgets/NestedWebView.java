@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
@@ -15,7 +16,6 @@ import android.webkit.WebView;
 * Обработка событий аккуратно слизана с RecyclerView с некоторыми доработками.
 * */
 public class NestedWebView extends WebView implements NestedScrollingChild {
-    private static final String LOG_TAG = NestedWebView.class.getSimpleName();
 
     public static final int SCROLL_STATE_IDLE = 0;
     public static final int SCROLL_STATE_NESTED_SCROLL = 1;
@@ -29,7 +29,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     private final int[] mScrollConsumed = new int[2];
     private final int[] mNestedOffsets = new int[2];
 
-    private NestedScrollingChildHelper mChildHelper;
+    private final NestedScrollingChildHelper mChildHelper;
 
     public NestedWebView(Context context) {
         this(context, null);
@@ -39,7 +39,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         this(context, attrs, android.R.attr.webViewStyle);
     }
 
-    private int mTouchSlop;
+    private final int mTouchSlop;
 
     public NestedWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -49,27 +49,27 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
         mTouchSlop = vc.getScaledTouchSlop();
     }
 
-    private OnLongClickListener longClickListener = v -> true;
+    private final OnLongClickListener longClickListener = v -> true;
 
     private void changeLongClickable(boolean enable) {
-        //Log.d("SUKA", "CHANGE LONG " + enable);
         setOnLongClickListener(enable ? null : longClickListener);
         setLongClickable(enable);
         setHapticFeedbackEnabled(enable);
     }
 
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        final MotionEvent vtev = MotionEvent.obtain(e);
+        final MotionEvent ev = MotionEvent.obtain(e);
         final int action = MotionEventCompat.getActionMasked(e);
 
         if (action == MotionEvent.ACTION_DOWN) {
             mNestedOffsets[0] = mNestedOffsets[1] = 0;
         }
-        vtev.offsetLocation(mNestedOffsets[0], mNestedOffsets[1]);
+        ev.offsetLocation(mNestedOffsets[0], mNestedOffsets[1]);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                //Log.e("SUKA", "ACT DWN " + mScrollState);
                 mLastTouchX = (int) (e.getX() + 0.5f);
                 mLastTouchY = (int) (e.getY() + 0.5f);
 
@@ -92,13 +92,12 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
                         break;
                     }
                 }
-                //Log.d("SUKA", "PREMOVE " + dy + " : " + mScrollState);
                 final boolean preScrollConsumed = dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset);
 
                 if (preScrollConsumed) {
                     dx -= mScrollConsumed[0];
                     dy -= mScrollConsumed[1];
-                    vtev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
+                    ev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
                     mNestedOffsets[0] += mScrollOffset[0];
                     mNestedOffsets[1] += mScrollOffset[1];
                 }
@@ -114,7 +113,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
                         if (scrollConsumed) {
                             mLastTouchX -= mScrollOffset[0];
                             mLastTouchY -= mScrollOffset[1];
-                            vtev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
+                            ev.offsetLocation(mScrollOffset[0], mScrollOffset[1]);
                             mNestedOffsets[0] += mScrollOffset[0];
                             mNestedOffsets[1] += mScrollOffset[1];
                             setScrollState(SCROLL_STATE_NESTED_SCROLL);
@@ -131,14 +130,12 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
                         changeLongClickable(false);
                     }
                 }
-                //Log.d("SUKA", "Move " + dy + " : " + mScrollState + " : ");
             }
             break;
 
 
             case MotionEvent.ACTION_UP: {
                 //long dt = System.currentTimeMillis() - lastTouchTime;
-                //Log.e("SUKA", "ACT UP " + mScrollState + " : dt=" + dt);
                 if (mScrollState == SCROLL_STATE_NESTED_SCROLL) {
                     e.setAction(MotionEvent.ACTION_CANCEL);
                 }
@@ -149,14 +146,13 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
             break;
 
             case MotionEvent.ACTION_CANCEL: {
-                //Log.e("SUKA", "ACT CANCEL " + mScrollState);
                 super.onTouchEvent(e);
                 resetTouch();
                 changeLongClickable(true);
             }
             break;
         }
-        vtev.recycle();
+        ev.recycle();
         return true;
     }
 

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -52,18 +51,6 @@ import java.net.URLConnection
 /* Created by radiationx on 16.11.17. */
 
 open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, ReleaseAdapter.ItemListener, CommentsAdapter.ItemListener {
-    override fun insertMoreComments(comments: List<Comment>) {
-        commentsAdapter.addComments(comments)
-    }
-
-    override fun setEndlessComments(enable: Boolean) {
-        commentsAdapter.endless = enable
-    }
-
-    override fun onLoadMore() {
-        presenter.loadMoreComments()
-    }
-
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -72,11 +59,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
-    private var releaseAdapter: ReleaseAdapter = ReleaseAdapter(this)
-    private var commentsAdapter: CommentsAdapter = CommentsAdapter(this)
-    private val viewPagerAdapter: CustomPagerAdapter by lazy {
-        CustomPagerAdapter(releaseAdapter, commentsAdapter)
-    }
+    private val releaseAdapter: ReleaseAdapter by lazy { ReleaseAdapter(this) }
+    private val commentsAdapter: CommentsAdapter by lazy { CommentsAdapter(this) }
+    private val viewPagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter(releaseAdapter, commentsAdapter) }
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
@@ -98,8 +83,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("SUKA", "ONCRETE $this")
-        Log.e("SUKA", "ONCRETE REL $arguments, $savedInstanceState")
+        Log.e("S_DEF_LOG", "ONCRETE $this")
+        Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         if (savedInstanceState == null) {
             arguments?.let {
                 it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
@@ -172,11 +157,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         viewPager.adapter = viewPagerAdapter
     }
 
-    override fun onDestroyView() {
-        //toolbarImage.alpha = 0f
-        super.onDestroyView()
-    }
-
     /*private fun setupContentAnimation() {
         val animation1 = TranslateAnimation(0f, 0f, resources.displayMetrics.density * 100, 0f);
         animation1.duration = TabFragment.TRANSITION_MOVE_TIME;
@@ -203,16 +183,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             .handler(Handler())
 
     override fun showRelease(release: ReleaseFull) {
-        Log.e("SUKA", "showRelease")
+        Log.e("S_DEF_LOG", "showRelease")
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                ToolbarHelper.isDarkImage(loadedImage, Consumer<Boolean> {
-                    if (it) {
-                        currentColor = Color.WHITE
-                    } else {
-                        currentColor = Color.BLACK
-                    }
+                ToolbarHelper.isDarkImage(loadedImage, Consumer {
+                    currentColor = if (it) Color.WHITE else Color.BLACK
+
                     toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                     toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                 })
@@ -221,6 +198,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         currentTitle = String.format("%s / %s", release.title, release.originalTitle)
         viewPagerAdapter.showRelease(release)
+    }
+
+    override fun insertMoreComments(comments: List<Comment>) {
+        commentsAdapter.addComments(comments)
+    }
+
+    override fun setEndlessComments(enable: Boolean) {
+        commentsAdapter.endless = enable
+    }
+
+    override fun onLoadMore() {
+        presenter.loadMoreComments()
     }
 
     override fun showComments(comments: List<Comment>) {
@@ -293,7 +282,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
     override fun playEpisode(release: ReleaseFull, position: Int, quality: Int) {
-        Log.e("SUKA", "playEpisode " + release.episodes.size)
+        Log.e("S_DEF_LOG", "playEpisode " + release.episodes.size)
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
         context?.let {
             AlertDialog.Builder(it)
@@ -333,7 +322,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         Utils.externalLink(link)
     }
 
-    fun showQualityDialog(onSelect: (quality: Int) -> Unit) {
+    private fun showQualityDialog(onSelect: (quality: Int) -> Unit) {
         context?.let {
             AlertDialog.Builder(it)
                     .setTitle("Качество")
@@ -360,8 +349,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
     class CustomPagerAdapter(
-            val releaseAdapter: ReleaseAdapter,
-            val commentsAdapter: CommentsAdapter
+            private val releaseAdapter: ReleaseAdapter,
+            private val commentsAdapter: CommentsAdapter
     ) : PagerAdapter() {
         private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
 
@@ -378,7 +367,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
 
         override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
-            container.removeView(any as View);
+            container.removeView(any as View)
         }
 
         override fun getCount(): Int = 2

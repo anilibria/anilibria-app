@@ -13,10 +13,10 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ArticlesView : IBaseView {
     @StateStrategyType(AddToEndStrategy::class)
-    fun showArticles(articles: List<ArticleItem>);
+    fun showArticles(articles: List<ArticleItem>)
 
     @StateStrategyType(AddToEndStrategy::class)
-    fun insertMore(articles: List<ArticleItem>);
+    fun insertMore(articles: List<ArticleItem>)
 
     fun setEndless(enable: Boolean)
 

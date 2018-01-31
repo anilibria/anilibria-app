@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation.release.details;
+package ru.radiationx.anilibria.presentation.release.details
 
 import android.os.Bundle
 import android.util.Log
@@ -48,7 +48,7 @@ class ReleasePresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach " + this)
+        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadRelease()
         loadVital()
     }
@@ -67,7 +67,7 @@ class ReleasePresenter(
     }
 
     private fun loadRelease() {
-        Log.e("SUKA", "load release $releaseId : $releaseIdName : $currentData")
+        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdName : $currentData")
         val source = when {
             releaseId != -1 -> releaseRepository.getRelease(releaseId)
             releaseIdName != null -> releaseRepository.getRelease(releaseIdName!!)
@@ -77,14 +77,14 @@ class ReleasePresenter(
                 .subscribe({ release ->
                     releaseId = release.id
                     releaseIdName = release.idName
-                    Log.d("SUKA", "subscribe call show")
+                    Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
                     loadComments(currentPageComment)
                     currentData = release
                 }) { throwable ->
                     viewState.setRefreshing(false)
-                    Log.d("SUKA", "SAS")
+                    Log.d("S_DEF_LOG", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()
@@ -96,9 +96,9 @@ class ReleasePresenter(
                 .getComments(releaseId, currentPageComment)
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
-                    Log.e("SUKA", "Comments loaded: " + comments.data.size)
+                    Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)
                     comments.data.forEach {
-                        Log.e("SUKA", "Comment: ${it.id}, ${it.authorNick}")
+                        Log.e("S_DEF_LOG", "Comment: ${it.id}, ${it.authorNick}")
                     }
                     if (isFirstPage()) {
                         viewState.showComments(comments.data)
@@ -121,28 +121,26 @@ class ReleasePresenter(
 
     fun onTorrentClick() {
         currentData?.let {
-            if (it.torrents.isEmpty()) {
-                it.torrentLink?.let { url -> viewState.loadTorrent(url) }
-            } else if (it.torrents.size == 1) {
-                viewState.loadTorrent(it.torrents.last().url)
-            } else {
-                viewState.showTorrentDialog(it.torrents)
+            when {
+                it.torrents.isEmpty() -> it.torrentLink?.let { url -> viewState.loadTorrent(url) }
+                it.torrents.size == 1 -> viewState.loadTorrent(it.torrents.last().url)
+                else -> viewState.showTorrentDialog(it.torrents)
             }
         }
     }
 
     fun onShareClick() {
-        Log.e("SUKA", "onShareClick $currentData, ${currentData?.link}")
+        Log.e("S_DEF_LOG", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            Log.e("SUKA", "onShareClick $it")
+            Log.e("S_DEF_LOG", "onShareClick $it")
             viewState.shareRelease(it)
         }
     }
 
     fun onCopyLinkClick() {
-        Log.e("SUKA", "onShareClick $currentData, ${currentData?.link}")
+        Log.e("S_DEF_LOG", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            Log.e("SUKA", "onShareClick $it")
+            Log.e("S_DEF_LOG", "onShareClick $it")
             viewState.copyLink(it)
         }
     }

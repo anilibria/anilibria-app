@@ -30,7 +30,7 @@ open class ArticlesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach")
+        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refresh()
         loadVital()
     }

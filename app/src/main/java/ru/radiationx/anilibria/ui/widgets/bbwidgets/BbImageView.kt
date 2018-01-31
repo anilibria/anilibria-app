@@ -61,7 +61,7 @@ class BbImageView @JvmOverloads constructor(
         }
 
 
-        Log.e("SUKA", "BBIMAGEVIEW TRY SIZE $width $height, $src")
+        Log.e("S_DEF_LOG", "BBIMAGEVIEW TRY SIZE $width $height, $src")
         if (width != -1 && height != -1) {
             imageView.setAspectRatio(height.toFloat() / width.toFloat())
             imageView.setEnabledAspectRation(true)

@@ -4,7 +4,6 @@ import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import ru.radiationx.anilibria.App
 import java.io.UnsupportedEncodingException
@@ -15,8 +14,6 @@ import java.net.URLDecoder
  */
 
 object Utils {
-    val isMM: Boolean
-        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
     fun getFileNameFromUrl(url: String): String {
         var fileName = url
@@ -60,7 +57,7 @@ object Utils {
     }
 
     fun externalLink(url: String) {
-        Log.e("SUKA", "externalLink " + url)
+        Log.e("S_DEF_LOG", "externalLink " + url)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK)
         App.instance.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK))
     }

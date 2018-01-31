@@ -45,7 +45,7 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
 
         fun bind(item: ReleaseFull.Episode) {
             view.run {
-                item_title.text = item.title;
+                item_title.text = item.title
                 view.tag = item
             }
         }

@@ -10,11 +10,11 @@ import java.util.regex.Pattern
  * Created by radiationx on 31.12.17.
  */
 class AuthParser(private val apiUtils: IApiUtils) {
-    val patreonPattern = "<div[^>]*?id=\"bx_auth_serv_formPatreon\"[^>]*?>[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>"
-    val vkPattern = "<div[^>]*?id=\"bx_auth_serv_formVKontakte\"[^>]*?>[^<]*?<a[^>]*?onclick=\"BX.util.popup\\(['\"]([^\"']*?)['\"]"
+    private val patreonPattern = "<div[^>]*?id=\"bx_auth_serv_formPatreon\"[^>]*?>[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>"
+    private val vkPattern = "<div[^>]*?id=\"bx_auth_serv_formVKontakte\"[^>]*?>[^<]*?<a[^>]*?onclick=\"BX.util.popup\\(['\"]([^\"']*?)['\"]"
 
-    val socialPatterns = arrayOf(patreonPattern, vkPattern)
-    val userPattern = "<div[^>]*?class=\"[^\"]*?useravatar[^\"]*?\"[^>]*?>[^<]*?(?:<img[^>]*?src=\"([^\"]*?)\"[^>]*?>)?[^<]*?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<p>[^<]*?<a[^>]href=\"\\/user\\/(\\d+)[^\"]*?\"[^>]*?"
+    private val socialPatterns = arrayOf(patreonPattern, vkPattern)
+    private val userPattern = "<div[^>]*?class=\"[^\"]*?useravatar[^\"]*?\"[^>]*?>[^<]*?(?:<img[^>]*?src=\"([^\"]*?)\"[^>]*?>)?[^<]*?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<p>[^<]*?<a[^>]href=\"\\/user\\/(\\d+)[^\"]*?\"[^>]*?"
 
 
     fun authResult(responseText: String): ProfileItem {

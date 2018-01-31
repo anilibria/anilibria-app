@@ -31,8 +31,8 @@ class BbOptimizer {
                 println("NOT REMOVE IN [${bbNode.id}]")
                 println("\t\t\t\tSUKA[${bbNode.id}] = ${bbNode.tag != BbNode.NODE_TEXT && !isDoOpt(bbNode)}")
                 if (bbNode.tag != BbNode.NODE_TEXT && !isDoOpt(bbNode)) {
-                    println("\t\t\t\tTRY ACCEPT ${bbNode.id}:${suka.get(bbNode.id)?.id}")
-                    suka.get(bbNode.id)?.let {
+                    println("\t\t\t\tTRY ACCEPT ${bbNode.id}:${suka[bbNode.id]?.id}")
+                    suka[bbNode.id]?.let {
                         println("\t\t\t\tACCEPT APPEND [${bbNode.id}] <= [${it.id}]")
                         bbNode.childs.add(it)
                         //forRemove.add(it)
@@ -42,12 +42,12 @@ class BbOptimizer {
                 }
                 break
             } else {
-                println("DO REMOVE IN [${bbNode.id}], size=${bbNode.childs.size}, items={${bbNode.childs.joinToString() { "[${it.id}]" }}}")
+                println("DO REMOVE IN [${bbNode.id}], size=${bbNode.childs.size}, items={${bbNode.childs.joinToString { "[${it.id}]" }}}")
 
-                suka.get(bbNode.id)?.let {
+                suka[bbNode.id]?.let {
                     bbNode.parent?.let { it1 ->
                         println("\t\tAPPEND MAP [${it1.id}] <= [${it.id}]")
-                        suka.put(it1.id, it)
+                        suka[it1.id] = it
                         suka.remove(bbNode.id)
                     }
                     println("\t\t\t\tREMOVE MAP [${bbNode.id}]")

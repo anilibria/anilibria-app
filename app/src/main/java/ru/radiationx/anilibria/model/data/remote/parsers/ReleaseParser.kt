@@ -213,7 +213,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         release.idName = jsonBxFull.getString("CODE")
 
         val jsonFav = responseJson.getJSONObject("fav")
-        Log.e("SUKA", "loaded json fav "+jsonFav.toString(4))
+        Log.e("S_DEF_LOG", "loaded json fav "+jsonFav.toString(4))
         release.favoriteCount.apply {
             id = jsonFav.getInt("id")
             count = jsonFav.getInt("count")
@@ -245,12 +245,11 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
             resItems.add(item)
         }
-        val pagination = Paginated(resItems)
         /*val jsonNav = responseJson.getJSONObject("navigation")
         pagination.total = jsonNav.get("total").toString().toInt()
         pagination.current = jsonNav.get("page").toString().toInt()
         pagination.allPages = jsonNav.get("total_pages").toString().toInt()*/
-        return pagination
+        return Paginated(resItems)
     }
 
     fun favorites2(httpResponse: String): FavoriteData {
@@ -311,7 +310,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
     }
 
     fun favXhr(httpResponse: String): Int {
-        Log.e("SUKA", "favXhr "+httpResponse)
+        Log.e("S_DEF_LOG", "favXhr "+httpResponse)
         return JSONObject(httpResponse).getInt("COUNT")
     }
 }

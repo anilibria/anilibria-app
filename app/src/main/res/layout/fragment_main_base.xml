@@ -108,12 +108,12 @@
         <ImageView
             android:layout_width="48dp"
             android:layout_height="match_parent"
+            android:contentDescription="@null"
             app:srcCompat="@drawable/ic_anilibria" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Тут какая-то реклама" />
+            android:gravity="center"/>
     </FrameLayout>
 </LinearLayout>

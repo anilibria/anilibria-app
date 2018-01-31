@@ -32,7 +32,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
             "novosti" to "Новости"
     )
 
-    private val adapter = ArticlesAdapter(this)
+    private val adapter: ArticlesAdapter by lazy { ArticlesAdapter(this) }
     lateinit var router: Router
 
     @InjectPresenter
@@ -57,7 +57,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.e("SUKA", "TEST onViewCreated " + this)
+        Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
         recyclerView.apply {
@@ -86,7 +86,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    Log.e("SUKA", "TEST onItemSelected " + p2)
+                    Log.e("S_DEF_LOG", "TEST onItemSelected " + p2)
                     presenter.loadCategory(spinnerItems[p2].first)
                 }
 

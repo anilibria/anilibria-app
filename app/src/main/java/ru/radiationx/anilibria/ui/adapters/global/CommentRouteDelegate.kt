@@ -21,6 +21,6 @@ class CommentRouteDelegate : AdapterDelegate<MutableList<ListItem>>() {
             LayoutInflater.from(parent.context).inflate(R.layout.item_comment_route, parent, false)
     )
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    private inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 }

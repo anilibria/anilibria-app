@@ -7,7 +7,7 @@
     android:paddingStart="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
-    android:text="Эпизоды"
+    android:text="@string/episodes_header"
     android:textColor="@color/textDefault"
     android:textSize="14sp"
     android:textStyle="bold"

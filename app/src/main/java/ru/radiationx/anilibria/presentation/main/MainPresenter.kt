@@ -18,7 +18,7 @@ class MainPresenter(private val router: Router,
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "main onFirstViewAttach " + authRepository.getAuthState().toString())
+        Log.e("S_DEF_LOG", "main onFirstViewAttach " + authRepository.getAuthState().toString())
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.replaceScreen(Screens.AUTH)
         } else {
@@ -28,7 +28,7 @@ class MainPresenter(private val router: Router,
     }
 
     fun selectTab(screenKey: String) {
-        Log.e("SUKA", "presenter selectTab " + screenKey)
+        Log.e("S_DEF_LOG", "presenter selectTab " + screenKey)
         viewState.highlightTab(screenKey)
         router.replaceScreen(screenKey)
 

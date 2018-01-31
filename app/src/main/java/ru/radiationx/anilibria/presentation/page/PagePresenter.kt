@@ -12,7 +12,7 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class PagePresenter(
         private val pageRepository: PageRepository,
-        private val router: Router
+        router: Router
 ) : BasePresenter<PageView>(router) {
 
     var pageId: String? = null

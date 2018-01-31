@@ -21,6 +21,6 @@ class ReleaseEpisodesHeadDelegate : AdapterDelegate<MutableList<ListItem>>() {
             LayoutInflater.from(parent.context).inflate(R.layout.item_release_head_episodes, parent, false)
     )
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    private inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 }

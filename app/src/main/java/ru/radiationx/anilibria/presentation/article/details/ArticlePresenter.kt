@@ -18,7 +18,7 @@ import ru.terrakok.cicerone.Router
 class ArticlePresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        private val router: Router
+        router: Router
 ) : BasePresenter<ArticleView>(router) {
 
     companion object {
@@ -38,7 +38,7 @@ class ArticlePresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach " + this)
+        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadArticle(code)
         loadVital()
     }
@@ -52,8 +52,8 @@ class ArticlePresenter(
                 .addToDisposable()
     }
 
-    fun loadArticle(code: String) {
-        Log.e("SUKA", "load article $code")
+    private fun loadArticle(code: String) {
+        Log.e("S_DEF_LOG", "load article $code")
         viewState.setRefreshing(true)
         articleRepository.getArticle(code)
                 .doAfterTerminate { viewState.setRefreshing(false) }
@@ -75,9 +75,9 @@ class ArticlePresenter(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
-                    Log.e("SUKA", "Comments loaded: " + comments.data.size)
+                    Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)
                     comments.data.forEach {
-                        Log.e("SUKA", "Comment: ${it.id}, ${it.authorNick}")
+                        Log.e("S_DEF_LOG", "Comment: ${it.id}, ${it.authorNick}")
                     }
                     if (isFirstPage()) {
                         viewState.showComments(comments.data)

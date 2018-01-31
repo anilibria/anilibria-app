@@ -32,6 +32,6 @@ class PagesParser(private val apiUtils: IApiUtils) {
             result.title = matcher.group(1)
         }
         result.content = content
-        return result;
+        return result
     }
 }

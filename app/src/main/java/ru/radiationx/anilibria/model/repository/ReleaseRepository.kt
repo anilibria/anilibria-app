@@ -38,12 +38,6 @@ class ReleaseRepository(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getFavorites(page: Int): Observable<Paginated<List<ReleaseItem>>> = releaseApi
-            .getFavorites(page)
-            .toObservable()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-
     fun getFavorites2(): Observable<FavoriteData> = releaseApi
             .getFavorites2()
             .toObservable()

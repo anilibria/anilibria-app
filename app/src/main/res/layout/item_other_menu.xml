@@ -15,14 +15,14 @@
     <ImageView
         android:id="@+id/otherMenuIcon"
         android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_height="24dp"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/otherMenuTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
-        android:text="Some menu item"
         android:textColor="@color/textDefault"
         android:textSize="14sp"
         android:textStyle="bold"

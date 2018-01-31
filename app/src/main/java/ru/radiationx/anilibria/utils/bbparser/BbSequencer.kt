@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.utils.bbparser.models.BbTypedOp
 
 class BbSequencer {
 
-    val bbBlocks = arrayOf("IMG", "QUOTE", "CODE")
+    private val bbBlocks = arrayOf("IMG", "QUOTE", "CODE")
     private var type: BbOp.Type = BbOp.Type.TEXT
     private val buffer = mutableListOf<BbOp>()
     private val output = mutableListOf<BbTypedOp>()
@@ -27,7 +27,7 @@ class BbSequencer {
             val opened = mutableMapOf<Int, BbOp>()
             buffer.forEach {
                 if (it.op == BbOp.OPEN) {
-                    opened.put(it.node.id, it)
+                    opened[it.node.id] = it
                 } else {
                     opened.remove(it.node.id)
                 }

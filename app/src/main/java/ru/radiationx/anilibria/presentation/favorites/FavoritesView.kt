@@ -10,10 +10,10 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
  */
 interface FavoritesView : IBaseView {
     @StateStrategyType(AddToEndStrategy::class)
-    fun showReleases(releases: List<ReleaseItem>);
+    fun showReleases(releases: List<ReleaseItem>)
 
     @StateStrategyType(AddToEndStrategy::class)
-    fun insertMore(releases: List<ReleaseItem>);
+    fun insertMore(releases: List<ReleaseItem>)
 
     fun setEndless(enable: Boolean)
 }

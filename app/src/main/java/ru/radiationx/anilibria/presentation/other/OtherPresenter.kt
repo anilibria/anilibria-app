@@ -20,21 +20,21 @@ class OtherPresenter(
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
-        val MENU_FAVORITES = 0
-        val MENU_TEAM = 1
+        const val MENU_FAVORITES = 0
+        const val MENU_TEAM = 1
         //val MENU_BID = 2
-        val MENU_DONATE = 3
-        val MENU_ABOUT_ANILIB = 4
-        val MENU_RULES = 5
+        const val MENU_DONATE = 3
+        const val MENU_ABOUT_ANILIB = 4
+        const val MENU_RULES = 5
 
-        val MENU_SETTINGS = 6
+        const val MENU_SETTINGS = 6
 
-        val MENU_GROUP_VK = 7
-        val MENU_CANAL_YT = 8
-        val MENU_PATREON = 9
-        val MENU_CANAL_TG = 10
-        val MENU_CHAT_DSC = 11
-        val MENU_SITE_ANILIB = 12
+        const val MENU_GROUP_VK = 7
+        const val MENU_CANAL_YT = 8
+        const val MENU_PATREON = 9
+        const val MENU_CANAL_TG = 10
+        const val MENU_CHAT_DSC = 11
+        const val MENU_SITE_ANILIB = 12
 
         val GROUP_MAIN = arrayOf(
                 MENU_FAVORITES,
@@ -69,21 +69,21 @@ class OtherPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        menuMap.put(MENU_FAVORITES, OtherMenuItem(MENU_FAVORITES, "Избранное", R.drawable.ic_star))
-        menuMap.put(MENU_TEAM, OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
+        menuMap[MENU_FAVORITES] = OtherMenuItem(MENU_FAVORITES, "Избранное", R.drawable.ic_star)
+        menuMap[MENU_TEAM] = OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple)
         //menuMap.put(MENU_BID, OtherMenuItem(MENU_BID, "Подать заявку", R.drawable.ic_account_plus))
-        menuMap.put(MENU_DONATE, OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
-        menuMap.put(MENU_ABOUT_ANILIB, OtherMenuItem(MENU_ABOUT_ANILIB, "Об AniLibria", R.drawable.ic_information))
-        menuMap.put(MENU_RULES, OtherMenuItem(MENU_RULES, "Правила", R.drawable.ic_book_open_variant))
+        menuMap[MENU_DONATE] = OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift)
+        menuMap[MENU_ABOUT_ANILIB] = OtherMenuItem(MENU_ABOUT_ANILIB, "Об AniLibria", R.drawable.ic_information)
+        menuMap[MENU_RULES] = OtherMenuItem(MENU_RULES, "Правила", R.drawable.ic_book_open_variant)
 
-        menuMap.put(MENU_SETTINGS, OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
+        menuMap[MENU_SETTINGS] = OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings)
 
-        menuMap.put(MENU_GROUP_VK, OtherMenuItem(MENU_GROUP_VK, "Группа VK", R.drawable.ic_logo_vk))
-        menuMap.put(MENU_CANAL_YT, OtherMenuItem(MENU_CANAL_YT, "Канал YouTube", R.drawable.ic_logo_youtube))
-        menuMap.put(MENU_PATREON, OtherMenuItem(MENU_PATREON, "Patreon", R.drawable.ic_logo_patreon))
-        menuMap.put(MENU_CANAL_TG, OtherMenuItem(MENU_CANAL_TG, "Канал Telegram", R.drawable.ic_logo_telegram))
-        menuMap.put(MENU_CHAT_DSC, OtherMenuItem(MENU_CHAT_DSC, "Чат Discord", R.drawable.ic_logo_discord))
-        menuMap.put(MENU_SITE_ANILIB, OtherMenuItem(MENU_SITE_ANILIB, "Сайт AniLibria", R.drawable.ic_anilibria))
+        menuMap[MENU_GROUP_VK] = OtherMenuItem(MENU_GROUP_VK, "Группа VK", R.drawable.ic_logo_vk)
+        menuMap[MENU_CANAL_YT] = OtherMenuItem(MENU_CANAL_YT, "Канал YouTube", R.drawable.ic_logo_youtube)
+        menuMap[MENU_PATREON] = OtherMenuItem(MENU_PATREON, "Patreon", R.drawable.ic_logo_patreon)
+        menuMap[MENU_CANAL_TG] = OtherMenuItem(MENU_CANAL_TG, "Канал Telegram", R.drawable.ic_logo_telegram)
+        menuMap[MENU_CHAT_DSC] = OtherMenuItem(MENU_CHAT_DSC, "Чат Discord", R.drawable.ic_logo_discord)
+        menuMap[MENU_SITE_ANILIB] = OtherMenuItem(MENU_SITE_ANILIB, "Сайт AniLibria", R.drawable.ic_anilibria)
 
         subscribeUser()
         updateMenuItems()
@@ -125,7 +125,7 @@ class OtherPresenter(
         authRepository.observeUser()
                 .subscribe {
                     profileItem = it
-                    Log.e("SUKA", "updateUser ${it.nick} : ${profileItem.nick}")
+                    Log.e("S_DEF_LOG", "updateUser ${it.nick} : ${profileItem.nick}")
                     updateMenuItems()
                 }
                 .addToDisposable()

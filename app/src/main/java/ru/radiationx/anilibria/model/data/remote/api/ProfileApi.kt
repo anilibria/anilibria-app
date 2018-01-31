@@ -10,8 +10,10 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ProfileParser
 /**
  * Created by radiationx on 03.01.18.
  */
-class ProfileApi(private val client: IClient,
-                 apiUtils: IApiUtils) {
+class ProfileApi(
+        private val client: IClient,
+        apiUtils: IApiUtils
+) {
 
     private val profileParser = ProfileParser(apiUtils)
 

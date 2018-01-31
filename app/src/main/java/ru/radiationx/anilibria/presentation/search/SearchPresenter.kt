@@ -14,18 +14,23 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
 @InjectViewState
-class SearchPresenter(private val releaseRepository: ReleaseRepository,
-                      private val searchRepository: SearchRepository,
-                      private val router: Router) : BasePresenter<SearchView>(router) {
+class SearchPresenter(
+        private val releaseRepository: ReleaseRepository,
+        private val searchRepository: SearchRepository,
+        private val router: Router
+) : BasePresenter<SearchView>(router) {
 
-    private val START_PAGE = 1
+    companion object {
+        private const val START_PAGE = 1
+    }
+
     private var currentPage = START_PAGE
     var currentGenre: String? = null
     var currentQuery: String? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach")
+        Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
         loadReleases(START_PAGE)
     }
@@ -39,10 +44,10 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
-                    Log.d("SUKA", "subscribe call show")
+                    Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showFastItems(searchItems)
                 }) { throwable ->
-                    Log.d("SUKA", "SAS")
+                    Log.d("S_DEF_LOG", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()
@@ -53,10 +58,10 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
-                    Log.d("SUKA", "subscribe call show")
+                    Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showGenres(genres)
                 }) { throwable ->
-                    Log.d("SUKA", "SAS")
+                    Log.d("S_DEF_LOG", "SAS")
                     throwable.printStackTrace()
                 }
                 .addToDisposable()
@@ -65,7 +70,7 @@ class SearchPresenter(private val releaseRepository: ReleaseRepository,
     fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("SUKA", "loadReleases")
+        Log.e("S_DEF_LOG", "loadReleases")
 
         if (isEmpty()) {
             viewState.setRefreshing(false)

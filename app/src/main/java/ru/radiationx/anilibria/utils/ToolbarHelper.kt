@@ -41,7 +41,7 @@ object ToolbarHelper {
             val toolbarTitleView: TextView
             val field = target::class.java.getDeclaredField("mTitleTextView")
             field.isAccessible = true
-            Log.e("SUKA", "" + field + " : " + target + " : " + field.get(target))
+            Log.e("S_DEF_LOG", "" + field + " : " + target + " : " + field.get(target))
             toolbarTitleView = field.get(target) as TextView
 
             toolbarTitleView.ellipsize = TextUtils.TruncateAt.MARQUEE
@@ -67,11 +67,11 @@ object ToolbarHelper {
                     val b = Color.blue(pixel)
 
                     val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
-                    histogram[brightness]++;
+                    histogram[brightness]++
                 }
             }
 
-            val allPixelsCount = bitmap.width * bitmap.height;
+            val allPixelsCount = bitmap.width * bitmap.height
             val darkPixelCount = (0 until 64).sumBy { histogram[it] }
             Single.just(darkPixelCount > allPixelsCount * 0.25)
         }

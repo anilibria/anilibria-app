@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
  */
 class ArticleApi(
         private val client: IClient,
-        private val apiUtils: IApiUtils
+        apiUtils: IApiUtils
 ) {
 
     private val articleParser = ArticleParser(apiUtils)

@@ -10,7 +10,6 @@
         android:id="@+id/item_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="nick"
         android:textColor="@color/textSecond"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -22,13 +21,11 @@
         android:id="@+id/item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="date"
         android:textColor="@color/textSecond"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/item_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <ru.radiationx.anilibria.ui.widgets.bbwidgets.BbView
         android:id="@+id/item_content"

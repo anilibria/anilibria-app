@@ -5,8 +5,8 @@ import ru.radiationx.anilibria.entity.common.AuthState
 class ProfileItem {
 
     companion object {
-        val NO_ID = -1
-        val NO_VALUE = ""
+        const val NO_ID = -1
+        const val NO_VALUE = ""
     }
 
     var authState: AuthState = AuthState.NO_AUTH

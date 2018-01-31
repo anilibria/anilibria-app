@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 
 class SearchApi(
         private val client: IClient,
-        private val apiUtils: IApiUtils
+        apiUtils: IApiUtils
 ) {
 
     private val releaseParser = ReleaseParser(apiUtils)

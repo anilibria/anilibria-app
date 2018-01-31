@@ -7,14 +7,14 @@ import okhttp3.Cookie
  */
 interface CookieHolder {
     companion object {
-        const val BITRIX_SM_LOGIN = "BITRIX_SM_LOGIN"
-        const val BITRIX_SM_SOUND_LOGIN_PLAYED = "BITRIX_SM_SOUND_LOGIN_PLAYED"
-        const val BITRIX_SM_USER_AUTH = "BITRIX_SM_USER_AUTH"
+        private const val BITRIX_SM_LOGIN = "BITRIX_SM_LOGIN"
+        private const val BITRIX_SM_SOUND_LOGIN_PLAYED = "BITRIX_SM_SOUND_LOGIN_PLAYED"
+        private const val BITRIX_SM_USER_AUTH = "BITRIX_SM_USER_AUTH"
         const val BITRIX_SM_UIDH = "BITRIX_SM_UIDH"
         const val BITRIX_SM_UIDL = "BITRIX_SM_UIDL"
-        const val PHPSESSID = "PHPSESSID"
+        private const val PHPSESSID = "PHPSESSID"
         
-        val cookieNames = listOf<String>(
+        val cookieNames = listOf(
                 BITRIX_SM_LOGIN,
                 BITRIX_SM_SOUND_LOGIN_PLAYED,
                 BITRIX_SM_USER_AUTH,

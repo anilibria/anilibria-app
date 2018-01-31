@@ -33,7 +33,7 @@ class FavoritesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("SUKA", "onFirstViewAttach")
+        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refreshReleases()
     }
 
@@ -42,7 +42,7 @@ class FavoritesPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("SUKA", "loadReleases")
+        Log.e("S_DEF_LOG", "loadReleases")
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -103,10 +103,6 @@ class FavoritesPresenter(
 
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
-    }
-
-    fun openSearch() {
-        router.navigateTo(Screens.RELEASES_SEARCH)
     }
 
 }

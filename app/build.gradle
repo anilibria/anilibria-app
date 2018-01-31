@@ -9,8 +9,8 @@ apply plugin: 'io.fabric'
 
 
 static def getDateTime() {
-    DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
-    return df.format(new Date()) + " г.";
+    DateFormat df = new SimpleDateFormat("dd MMMMM yyyy")
+    return df.format(new Date()) + " г."
 }
 
 android {

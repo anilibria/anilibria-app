@@ -2,6 +2,7 @@ package ru.radiationx.anilibria
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Handler
@@ -17,13 +18,11 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
-import ru.radiationx.anilibria.model.data.storage.AuthStorage
 import ru.radiationx.anilibria.model.data.storage.CookiesStorage
 import ru.radiationx.anilibria.model.data.storage.UserStorage
 import ru.radiationx.anilibria.model.repository.*
@@ -62,15 +61,15 @@ class App : Application() {
 
         //Fabric.with(this, Crashlytics())
 
-        YandexMetrica.activate(applicationContext, "48d49aa0-6aad-407e-a738-717a6c77d603");
-        YandexMetrica.enableActivityAutoTracking(this);
+        YandexMetrica.activate(applicationContext, "48d49aa0-6aad-407e-a738-717a6c77d603")
+        YandexMetrica.enableActivityAutoTracking(this)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
 
         RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("SUKA", "RxJavaPlugins errorHandler " + throwable)
+            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler " + throwable)
             throwable.printStackTrace()
         }
         injections = Injections(this)
@@ -107,22 +106,21 @@ class App : Application() {
     class Injections(context: Context) {
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
-        val authHolder: AuthHolder = AuthStorage(sharedPreferences)
-        val userHolder: UserHolder = UserStorage(sharedPreferences)
+        private val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
+        private val userHolder: UserHolder = UserStorage(sharedPreferences)
 
         val client: IClient = Client(cookieHolder, userHolder)
         val apiUtils: IApiUtils = ApiUtils()
 
-        var authApi = AuthApi(client, apiUtils)
-        var articleApi = ArticleApi(client, apiUtils)
-        var releaseApi = ReleaseApi(client, apiUtils)
-        var searchApi = SearchApi(client, apiUtils)
-        var pageApi = PageApi(client, apiUtils)
-        var vitalApi = VitalApi(client, apiUtils)
-        var checkerApi = CheckerApi(client, apiUtils)
+        private val authApi = AuthApi(client, apiUtils)
+        private val articleApi = ArticleApi(client, apiUtils)
+        private val releaseApi = ReleaseApi(client, apiUtils)
+        private val searchApi = SearchApi(client, apiUtils)
+        private val pageApi = PageApi(client, apiUtils)
+        private val vitalApi = VitalApi(client, apiUtils)
+        private val checkerApi = CheckerApi(client, apiUtils)
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
@@ -169,7 +167,7 @@ class App : Application() {
 
         fun getCicerone(containerTag: String): Cicerone<Router> {
             if (!containers.containsKey(containerTag)) {
-                containers.put(containerTag, Cicerone.create())
+                containers[containerTag] = Cicerone.create()
             }
             return containers.getValue(containerTag)
         }

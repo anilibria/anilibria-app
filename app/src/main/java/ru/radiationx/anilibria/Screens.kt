@@ -4,21 +4,21 @@ package ru.radiationx.anilibria
  * Created by radiationx on 17.11.17.
  */
 object Screens {
-    val RELEASE_DETAILS = "RELEASE_DETAILS"
-    val RELEASES_SEARCH = "RELEASES_SEARCH"
+    const val RELEASE_DETAILS = "RELEASE_DETAILS"
+    const val RELEASES_SEARCH = "RELEASES_SEARCH"
 
-    val MAIN_RELEASES = "MAIN_RELEASES"
-    val MAIN_ARTICLES = "MAIN_ARTICLES"
-    val MAIN_VIDEOS = "MAIN_VIDEOS"
-    val MAIN_BLOGS = "MAIN_BLOGS"
-    val MAIN_OTHER = "MAIN_OTHER"
+    const val MAIN_RELEASES = "MAIN_RELEASES"
+    const val MAIN_ARTICLES = "MAIN_ARTICLES"
+    const val MAIN_VIDEOS = "MAIN_VIDEOS"
+    const val MAIN_BLOGS = "MAIN_BLOGS"
+    const val MAIN_OTHER = "MAIN_OTHER"
 
-    val ARTICLE_DETAILS = "ARTICLE_DETAILS"
+    const val ARTICLE_DETAILS = "ARTICLE_DETAILS"
 
-    val AUTH = "AUTH"
-    val AUTH_SOCIAL = "AUTH_SOCIAL"
-    val MAIN = "MAIN"
+    const val AUTH = "AUTH"
+    const val AUTH_SOCIAL = "AUTH_SOCIAL"
+    const val MAIN = "MAIN"
 
-    val FAVORITES = "FAVORITES"
-    val STATIC_PAGE = "STATIC_PAGE"
+    const val FAVORITES = "FAVORITES"
+    const val STATIC_PAGE = "STATIC_PAGE"
 }

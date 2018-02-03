@@ -42,6 +42,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode) : ListItem()
 class ReleaseEpisodesHeadListItem : ListItem()
 class ReleaseDonateListItem : ListItem()
+class ReleaseRemindListItem : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
 
 

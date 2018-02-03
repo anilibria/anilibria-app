@@ -19,11 +19,13 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.storage.CookiesStorage
+import ru.radiationx.anilibria.model.data.storage.PreferencesStorage
 import ru.radiationx.anilibria.model.data.storage.UserStorage
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
@@ -109,6 +111,8 @@ class App : Application() {
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
         private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val appPreferences: PreferencesHolder = PreferencesStorage(sharedPreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
 

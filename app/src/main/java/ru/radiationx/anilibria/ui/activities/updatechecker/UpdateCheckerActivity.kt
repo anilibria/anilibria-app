@@ -1,29 +1,40 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.Context
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_updater.*
+import permissions.dispatcher.NeedsPermission
+import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
+import ru.radiationx.anilibria.utils.MimeTypeUtil
 import ru.radiationx.anilibria.utils.Utils
 
 /**
  * Created by radiationx on 24.07.17.
  */
 
+@RuntimePermissions
 class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     @InjectPresenter
@@ -47,7 +58,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     override fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
-        if (update.code > currentVersionCode) {
+        if (update.code >= currentVersionCode) {
             updateInfo.text = generateCurrentInfo(update.name, update.date)
             addSection("Важно", update.important)
             addSection("Добавлено", update.added)
@@ -76,16 +87,55 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
             return
         }
         if (update.links.size == 1) {
-            Utils.externalLink(update.links.values.last())
+            decideDownload(update.links.last())
             return
         }
-        val titles = update.links.keys.toTypedArray()
+        val titles = update.links.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
                 .setTitle("Источник")
                 .setItems(titles) { _, which ->
-                    Utils.externalLink(update.links[titles[which]].orEmpty())
+                    //Utils.externalLink(update.links[titles[which]].orEmpty())
+                    decideDownload(update.links[which])
                 }
                 .show()
+    }
+
+    private fun decideDownload(link: UpdateData.UpdateLink) {
+        when (link.type) {
+            "file" -> {
+                systemDownloadWithPermissionCheck(link.url)
+            }
+            else -> {
+                Utils.externalLink(link.url)
+            }
+        }
+    }
+
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun systemDownload(url: String) {
+        Toast.makeText(this, "lolkekcheburek", Toast.LENGTH_SHORT).show()
+        systemDownloader(
+                Utils.getFileNameFromUrl(url),
+                url
+        )
+    }
+
+    private fun systemDownloader(fileName: String, url: String) {
+        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        dm?.let {
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            request.setMimeType(MimeTypeUtil.getType(fileName))
+            it.enqueue(request)
+        }
+    }
+
+
+    @SuppressLint("NeedOnRequestPermissionsResult")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {

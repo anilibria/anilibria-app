@@ -103,6 +103,9 @@ dependencies {
         transitive = true;
     }*/
 
+    implementation("com.github.hotchemi:permissionsdispatcher:3.1.0")
+    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.1.0"
+
     compile 'com.yandex.android:mobmetricalib:2.80'
 }
 

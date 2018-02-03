@@ -22,7 +22,11 @@ class CheckerParser(private val apiUtils: IApiUtils) {
         jsonUpdate.getJSONArray("links")?.let {
             for (i in 0 until it.length()) {
                 it.optJSONObject(i)?.let { linkJson ->
-                    resData.links.put(linkJson.optString("name"), linkJson.optString("url"))
+                    resData.links.add(UpdateData.UpdateLink().apply {
+                        name = linkJson.optString("name", "Unknown")
+                        url = linkJson.optString("url", "")
+                        type = linkJson.optString("name", "site")
+                    })
                 }
             }
         }

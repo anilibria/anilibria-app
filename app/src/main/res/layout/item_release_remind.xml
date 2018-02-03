@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_release_remind"
+    android:padding="2dp">
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/medium"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:text="Если серии всё ещё нет в плеере, воспользуйтесь торрентом или полной версией сайта"
+        android:textColor="@color/textDefault"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/remindClose"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="top|end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/ic_close" />
+</FrameLayout>

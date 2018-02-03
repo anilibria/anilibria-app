@@ -36,7 +36,7 @@ class SimpleUpdateChecker(private val checkerRepository: CheckerRepository) {
     private fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
-        if (update.code > currentVersionCode) {
+        if (update.code >= currentVersionCode) {
             val context: Context = App.instance
             val channelId = "anilibria_channel_updates"
             val channelName = "Обновления"

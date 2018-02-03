@@ -2,21 +2,30 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import android.util.Log
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseDonateDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodesHeadDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import java.util.*
 
 class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
+
+    private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
+        override fun onClickClose(position: Int) {
+            Log.e("SUKA", "onClickClose: $position")
+            items.removeAt(position)
+            items.removeAt(position)
+            notifyItemRangeRemoved(position, position + 1)
+            App.injections.appPreferences.setReleaseRemind(false)
+        }
+    }
 
     init {
         items = mutableListOf()
@@ -25,6 +34,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             addDelegate(ReleaseEpisodeDelegate(itemListener))
             addDelegate(ReleaseEpisodesHeadDelegate())
             addDelegate(ReleaseDonateDelegate(itemListener))
+            addDelegate(ReleaseRemindDelegate(remindCloseListener))
             addDelegate(CommentRouteDelegate())
             addDelegate(DividerShadowItemDelegate())
             addDelegate(VitalWebItemDelegate(true))
@@ -61,6 +71,11 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             val randomVital = if (vitalItems.size > 1) rand(0, vitalItems.size) else 0
             val listItem = getVitalListItem(vitalItems[randomVital])
             this.items.add(listItem)
+            items.add(DividerShadowListItem())
+        }
+
+        if (App.injections.appPreferences.getReleaseRemind()) {
+            items.add(ReleaseRemindListItem())
             items.add(DividerShadowListItem())
         }
         items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })

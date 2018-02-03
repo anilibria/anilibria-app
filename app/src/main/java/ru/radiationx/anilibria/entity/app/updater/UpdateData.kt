@@ -34,10 +34,16 @@ class UpdateData {
     var build: Int = 0
     var name: String? = null
     var date: String? = null
-    var links = mutableMapOf<String, String>()
+    var links = mutableListOf<UpdateLink>()
 
     var important = mutableListOf<String>()
     var added = mutableListOf<String>()
     var fixed = mutableListOf<String>()
     var changed = mutableListOf<String>()
+
+    class UpdateLink {
+        lateinit var name: String
+        lateinit var url: String
+        lateinit var type: String
+    }
 }

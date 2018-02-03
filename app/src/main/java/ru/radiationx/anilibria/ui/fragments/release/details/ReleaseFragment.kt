@@ -24,6 +24,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -56,7 +57,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     companion object {
         const val ARG_ID: String = "release_id"
-        const val ARG_ID_NAME: String = "release_id_name"
+        const val ARG_ID_CODE: String = "release_id_code"
         const val ARG_ITEM: String = "release_item"
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
@@ -67,14 +68,17 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
+    private var toolbarHelperDisposable: Disposable? = null
+
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
             App.injections.releaseRepository,
+            App.injections.vitalRepository,
             (parentFragment as RouterProvider).router,
-            App.injections.vitalRepository
+            App.injections.linkHandler
     )
 
     override var transitionNameLocal = ""
@@ -89,8 +93,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         if (savedInstanceState == null) {
             arguments?.let {
-                it.getInt(ARG_ID, -1).let { presenter.setReleaseId(it) }
-                it.getString(ARG_ID_NAME, null)?.let { presenter.setReleaseIdName(it) }
+                it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
+                it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
                 (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
             }
         }
@@ -189,7 +193,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                ToolbarHelper.isDarkImage(loadedImage, Consumer {
+                toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
                     currentColor = if (it) Color.WHITE else Color.BLACK
 
                     toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
@@ -271,7 +275,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onClickFav()
     }
 
-    override fun onClickSomeLink(url: String): Boolean = presenter.onClickLink(url)
+    override fun onClickSomeLink(url: String): Boolean {
+        val handled = presenter.onClickLink(url)
+        if (!handled) {
+            Utils.externalLink(url)
+        }
+        return true
+    }
 
     override fun onClickDonate() {
         presenter.onClickDonate()
@@ -319,7 +329,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         intent.setDataAndType(fileUri, URLConnection.guessContentTypeFromName(fileUri.toString()))
         try {
             startActivity(intent)
-        }catch (ex: ActivityNotFoundException){
+        } catch (ex: ActivityNotFoundException) {
             Toast.makeText(context, "Ничего не найдено", Toast.LENGTH_SHORT).show()
         }
 
@@ -354,6 +364,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     override fun showVitalItems(vital: List<VitalItem>) {
         releaseAdapter.setVitals(vital)
     }
+
+    override fun onDestroyView() {
+        toolbarHelperDisposable?.dispose()
+        toolbarHelperDisposable = null
+        super.onDestroyView()
+    }
+
 
     class CustomPagerAdapter(
             private val releaseAdapter: ReleaseAdapter,

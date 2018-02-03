@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.TextView
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.App
@@ -55,28 +56,28 @@ object ToolbarHelper {
         }
     }
 
-    fun isDarkImage(bitmap: Bitmap, onSuccess: Consumer<Boolean>) {
-        Single.defer {
-            val histogram = IntArray(256, { i: Int -> 0 })
+    fun isDarkImage(bitmap: Bitmap, onSuccess: Consumer<Boolean>): Disposable = Single
+            .fromCallable {
+                val histogram = IntArray(256, { i: Int -> 0 })
 
-            for (x in 0 until bitmap.width) {
-                for (y in 0 until bitmap.height) {
-                    val pixel = bitmap.getPixel(x, y)
-                    val r = Color.red(pixel)
-                    val g = Color.green(pixel)
-                    val b = Color.blue(pixel)
+                for (x in 0 until bitmap.width) {
+                    for (y in 0 until bitmap.height) {
+                        val pixel = bitmap.getPixel(x, y)
+                        val r = Color.red(pixel)
+                        val g = Color.green(pixel)
+                        val b = Color.blue(pixel)
 
-                    val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
-                    histogram[brightness]++
+                        val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
+                        histogram[brightness]++
+                    }
                 }
-            }
 
-            val allPixelsCount = bitmap.width * bitmap.height
-            val darkPixelCount = (0 until 64).sumBy { histogram[it] }
-            Single.just(darkPixelCount > allPixelsCount * 0.25)
-        }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onSuccess)
-    }
+                val allPixelsCount = bitmap.width * bitmap.height
+                val darkPixelCount = (0 until 64).sumBy { histogram[it] }
+                return@fromCallable darkPixelCount > allPixelsCount * 0.25
+            }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onSuccess)
+
 }

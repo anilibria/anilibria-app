@@ -29,6 +29,8 @@ import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.presentation.LinkHandler
+import ru.radiationx.anilibria.presentation.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
@@ -107,6 +109,8 @@ class App : Application() {
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
         private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val linkHandler: LinkHandler = LinkRouter()
 
         private val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
         private val userHolder: UserHolder = UserStorage(sharedPreferences)

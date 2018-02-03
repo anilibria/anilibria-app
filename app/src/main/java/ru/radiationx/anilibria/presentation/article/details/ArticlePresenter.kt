@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -18,7 +19,8 @@ import ru.terrakok.cicerone.Router
 class ArticlePresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        router: Router
+        private val router: Router,
+        private val linkHandler: LinkHandler
 ) : BasePresenter<ArticleView>(router) {
 
     companion object {
@@ -27,19 +29,19 @@ class ArticlePresenter(
 
     private var currentPageComment = START_PAGE
     private var articleId = -1
-    var code: String = ""
+    var articleIdCode: String = ""
 
     fun setDataFromItem(item: ArticleItem) {
         item.run {
             viewState.preShow(imageUrl, title, userNick, commentsCount, viewsCount)
         }
-        code = item.code
+        articleIdCode = item.code
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
-        loadArticle(code)
+        loadArticle(articleIdCode)
         loadVital()
     }
 
@@ -96,5 +98,9 @@ class ArticlePresenter(
 
     fun loadMoreComments() {
         loadComments(currentPageComment + 1)
+    }
+
+    fun onClickLink(url: String): Boolean {
+        return linkHandler.handle(url, router)
     }
 }

@@ -26,7 +26,7 @@ import java.util.Queue;
  */
 
 public class ExtendedWebView extends NestedWebView implements IBase {
-    private final static String LOG_TAG = ExtendedWebView.class.getSimpleName();
+    private final String LOG_TAG = ExtendedWebView.class.getSimpleName() + ": " + Integer.toHexString(System.identityHashCode(this));
     public final static int DIRECTION_NONE = 0;
     public final static int DIRECTION_UP = 1;
     public final static int DIRECTION_DOWN = 2;
@@ -154,10 +154,12 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        Log.e(LOG_TAG, "onDetachedFromWindow");
         isJsReady = false;
         for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
+        Log.e(LOG_TAG, "CLEAR ACTIONS detach");
         actionsForWebView.clear();
     }
 
@@ -189,7 +191,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @JavascriptInterface
     public void domContentLoaded() {
         runInUiThread(() -> {
-            Log.d(LOG_TAG, "domContentLoaded " + isJsReady);
+            Log.d(LOG_TAG, "domContentLoaded " + isJsReady + ", actions: " + actionsForWebView.size());
             isJsReady = true;
             for (Runnable action : actionsForWebView) {
                 try {
@@ -198,6 +200,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
                     exception.printStackTrace();
                 }
             }
+            Log.e(LOG_TAG, "CLEAR ACTIONS loaded");
             actionsForWebView.clear();
 
             ArrayList<String> actions = new ArrayList<>();
@@ -257,9 +260,11 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     public void syncWithJs(final Runnable action) {
-        //Log.d(LOG_TAG, "syncWithJs " + isJsReady);
+        Log.d(LOG_TAG, "syncWithJs " + isJsReady);
         if (!isJsReady) {
+            Log.e(LOG_TAG, "ADD ACTION");
             actionsForWebView.add(action);
+            Log.e(LOG_TAG, "ACTION ADDED: " + actionsForWebView.size());
         } else {
             try {
                 runInUiThread(action);

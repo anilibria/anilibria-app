@@ -13,11 +13,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ViewSwitcher
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_article.view.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
@@ -38,6 +42,7 @@ import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.utils.Utils
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -65,6 +70,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
     companion object {
         const val ARG_ITEM: String = "article_item"
+        const val ARG_ID_NAME: String = "article_id_name"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
 
@@ -74,6 +80,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     private val commentsAdapter = CommentsAdapter(this)
     private val pagerAdapter: CustomPagerAdapter = CustomPagerAdapter(commentsAdapter)
 
+    private var toolbarHelperDisposable: Disposable? = null
+
     @InjectPresenter
     lateinit var presenter: ArticlePresenter
 
@@ -81,7 +89,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     fun provideArticlePresenter(): ArticlePresenter = ArticlePresenter(
             App.injections.articleRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router
+            (parentFragment as RouterProvider).router,
+            App.injections.linkHandler
     )
 
     override var transitionNameLocal = ""
@@ -93,7 +102,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            (it.getSerializable(ARG_ITEM) as ArticleItem).let {
+            it.getString(ARG_ID_NAME, null)?.let { presenter.articleIdCode = it }
+            (it.getSerializable(ARG_ITEM) as ArticleItem?)?.let {
                 presenter.setDataFromItem(it)
             }
         }
@@ -155,11 +165,17 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         pagerAdapter.onPause()
     }
 
+    override fun onDestroyView() {
+        pagerAdapter.onDestroyView()
+        toolbarHelperDisposable?.dispose()
+        toolbarHelperDisposable = null
+        super.onDestroyView()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(WEB_VIEW_SCROLL_Y, pagerAdapter.getWebViewScroll())
     }
-
 
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
@@ -172,15 +188,23 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
     override fun showArticle(article: ArticleItem) {
         currentTitle = article.title
+        preShow(
+                article.imageUrl,
+                article.title,
+                article.userNick,
+                article.commentsCount,
+                article.viewsCount
+        )
         pagerAdapter.showArticle(article)
     }
+
 
     override fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
         currentTitle = title
         ImageLoader.getInstance().displayImage(imageUrl, toolbarImage, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                ToolbarHelper.isDarkImage(loadedImage, Consumer {
+                toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
                     currentColor = if (it) Color.WHITE else Color.BLACK
 
                     toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
@@ -191,7 +215,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         pagerAdapter.preShow(imageUrl, title, nick, comments, views)
     }
 
-    class CustomPagerAdapter(
+    private inner class CustomPagerAdapter(
             private val commentsAdapter: CommentsAdapter
     ) : PagerAdapter(), ExtendedWebView.JsLifeCycleListener {
 
@@ -203,8 +227,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private var localProgressSwitcher: ViewSwitcher? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
+
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             Log.e("S_DEF_LOG", "instantiateItem $position")
+            Log.e("S_DEF_LOG", "instantiateItem check $localWebView, $localProgressSwitcher")
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
             val layout: ViewGroup = inflater.inflate(views[position], container, false) as ViewGroup
             container.addView(layout)
@@ -218,6 +244,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         }
 
         override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+            Log.e("S_DEF_LOG", "destroyItem $position")
             if (position == 0) {
                 localWebView = null
                 localProgressSwitcher = null
@@ -233,6 +260,16 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             layout.run {
                 localWebView = webView
                 localWebView?.let {
+
+                    it.webViewClient = object : WebViewClient() {
+                        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                            val handled = presenter.onClickLink(url.orEmpty())
+                            if (!handled) {
+                                Utils.externalLink(url.orEmpty())
+                            }
+                            return false
+                        }
+                    }
                     it.setJsLifeCycleListener(this@CustomPagerAdapter)
                     val template = App.instance.articleTemplate
                     it.easyLoadData(Api.BASE_URL, template.generateOutput())
@@ -265,6 +302,11 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             localWebView?.onPause()
         }
 
+        fun onDestroyView() {
+            localWebView = null
+            localProgressSwitcher = null
+        }
+
         override fun onDomContentComplete(actions: ArrayList<String>) {
 
         }
@@ -291,7 +333,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         fun preShow(imageUrl: String, title: String, nick: String, comments: Int, views: Int) {
             Log.e("S_DEF_LOG", "preshow $localWebView")
+            Log.e("S_DEF_LOG", "preshow $imageUrl, $title, $nick, $comments, $views")
             webViewCallCache.add(Runnable {
+                Log.e("S_DEF_LOG", "RUNNABLE preshow $imageUrl, $title, $nick, $comments, $views")
                 localWebView?.evalJs("ViewModel.setText('title','${convert(title)}');")
                 localWebView?.evalJs("ViewModel.setText('nick','${convert(nick)}');")
                 localWebView?.evalJs("ViewModel.setText('comments_count','${convert(comments.toString())}');")
@@ -306,9 +350,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         private fun tryRunCache() {
             if (localWebView != null) {
-                webViewCallCache.forEach {
+                webViewCallCache.forEach { call ->
                     try {
-                        it.run()
+                        localWebView?.syncWithJs(call)
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }

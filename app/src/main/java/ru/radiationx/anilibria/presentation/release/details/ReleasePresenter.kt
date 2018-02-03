@@ -10,18 +10,18 @@ import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
-import java.util.regex.Pattern
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
 class ReleasePresenter(
         private val releaseRepository: ReleaseRepository,
+        private val vitalRepository: VitalRepository,
         private val router: Router,
-        private val vitalRepository: VitalRepository
+        private val linkHandler: LinkHandler
 ) : BasePresenter<ReleaseView>(router) {
 
     companion object {
@@ -31,19 +31,14 @@ class ReleasePresenter(
     private var currentPageComment = START_PAGE
 
     private var currentData: ReleaseFull? = null
-    private var releaseId = -1
-    private var releaseIdName: String? = null
+    var releaseId = -1
+    var releaseIdCode: String? = null
 
     fun setCurrentData(item: ReleaseItem) {
-        viewState.showRelease(ReleaseFull(item))
-    }
-
-    fun setReleaseId(releaseId: Int) {
-        this.releaseId = releaseId
-    }
-
-    fun setReleaseIdName(releaseIdName: String) {
-        this.releaseIdName = releaseIdName
+        currentData = ReleaseFull(item)
+        currentData?.let {
+            viewState.showRelease(it)
+        }
     }
 
     override fun onFirstViewAttach() {
@@ -67,16 +62,16 @@ class ReleasePresenter(
     }
 
     private fun loadRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdName : $currentData")
+        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         val source = when {
             releaseId != -1 -> releaseRepository.getRelease(releaseId)
-            releaseIdName != null -> releaseRepository.getRelease(releaseIdName!!)
+            releaseIdCode != null -> releaseRepository.getRelease(releaseIdCode!!)
             else -> return
         }
         source
                 .subscribe({ release ->
                     releaseId = release.id
-                    releaseIdName = release.idName
+                    releaseIdCode = release.idName
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
@@ -162,15 +157,7 @@ class ReleasePresenter(
     }
 
     fun onClickLink(url: String): Boolean {
-        val matcher = Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html").matcher(url)
-        if (matcher.find()) {
-            val args: Bundle = Bundle().apply {
-                putString(ReleaseFragment.ARG_ID_NAME, matcher.group(1))
-            }
-            router.navigateTo(Screens.RELEASE_DETAILS, args)
-            return true
-        }
-        return false
+        return linkHandler.handle(url, router)
     }
 
     fun onClickDonate() {

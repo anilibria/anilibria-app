@@ -42,8 +42,8 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResumeFragments() {
+        super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
     }
 

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -17,6 +18,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -315,7 +317,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         val intent = Intent()
         intent.action = Intent.ACTION_VIEW
         intent.setDataAndType(fileUri, URLConnection.guessContentTypeFromName(fileUri.toString()))
-        startActivity(intent)
+        try {
+            startActivity(intent)
+        }catch (ex: ActivityNotFoundException){
+            Toast.makeText(context, "Ничего не найдено", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun playMoonwalk(link: String) {

@@ -93,8 +93,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }*/
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResumeFragments() {
+        super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
     }
 

@@ -88,17 +88,19 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun onResume() {
         super.onResume()
-        webView.onResume()
+        webView?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        webView.onPause()
+        webView?.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(WEB_VIEW_SCROLL_Y, webView.scrollY)
+        webView?.let {
+            outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
+        }
     }
 
     override fun onDomContentComplete(actions: ArrayList<String>) {
@@ -106,8 +108,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     }
 
     override fun onPageComplete(actions: ArrayList<String>) {
-        webView.syncWithJs {
-            webView.scrollTo(0, webViewScrollPos)
+        webView?.syncWithJs {
+            webView?.scrollTo(0, webViewScrollPos)
         }
     }
 
@@ -122,7 +124,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun showPage(page: PageLibria) {
         //toolbar.title = page.title
-        webView.evalJs("ViewModel.setText('content','${convert(page.content)}');")
+        webView?.evalJs("ViewModel.setText('content','${convert(page.content)}');")
     }
 
     private fun convert(string: String): String {

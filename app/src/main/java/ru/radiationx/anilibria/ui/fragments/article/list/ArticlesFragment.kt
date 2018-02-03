@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.article.list
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -20,6 +22,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.Utils
 import ru.terrakok.cicerone.Router
 
 /**
@@ -133,6 +136,24 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     }
 
     override fun onItemLongClick(item: ArticleItem): Boolean {
-        return presenter.onItemLongClick(item)
+        context?.let {
+            val titles = arrayOf("Копировать ссылку", "Поделиться")
+            AlertDialog.Builder(it)
+                    .setItems(titles, { dialog, which ->
+                        when (which) {
+                            0 -> {
+                                Utils.copyToClipBoard(item.url)
+                                Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                            }
+                            1 -> Utils.shareText(item.url)
+                        }
+                    })
+                    .show()
+        }
+        return false
     }
+
+    /*override fun onItemLongClick(item: ArticleItem): Boolean {
+        return presenter.onItemLongClick(item)
+    }*/
 }

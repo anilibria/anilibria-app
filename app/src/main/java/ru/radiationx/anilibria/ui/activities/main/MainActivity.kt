@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.activities.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.Menu
@@ -86,7 +87,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             }
         }
         Log.e("S_DEF_LOG", "main oncreate")
-        SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+        if (savedInstanceState == null) {
+            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+        }
 
         /*if (savedInstanceState == null) {
             presenter.selectTab(Screens.MAIN_RELEASES)
@@ -199,8 +202,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         override fun applyCommand(command: Command) {
             Log.e("S_DEF_LOG", "ApplyCommand " + command)
             if (command is Back) {
-                if (tabsStack.isEmpty()) {
-                    finish()
+                if (tabsStack.size <= 1) {
+                    exit()
                     return
                 }
                 val fm = supportFragmentManager
@@ -212,7 +215,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 if (tabsStack.isNotEmpty()) {
                     presenter.selectTab(tabsStack.last())
                 } else {
-                    finish()
+                    exit()
                 }
                 return
             } else if (command is SystemMessage) {
@@ -254,6 +257,18 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 else -> "NO_KEY"
             }
             throw RuntimeException("Can't create a screen for passed screenKey $command, $screenKey")
+        }
+
+
+        private var exitToastShowed: Boolean = false
+        override fun exit() {
+            if (!exitToastShowed) {
+                showSystemMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
+                exitToastShowed = true
+                Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
+            } else {
+                super.exit()
+            }
         }
     }
 

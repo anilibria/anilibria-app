@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.presentation.article.details
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -20,4 +21,10 @@ interface ArticleView : IBaseView {
     fun insertMoreComments(comments: List<Comment>)
 
     fun setEndlessComments(enable: Boolean)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun share(text: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun copyLink(url: String)
 }

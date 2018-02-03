@@ -173,6 +173,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }*/
 
     override fun onBackPressed(): Boolean {
+        if (viewPager.currentItem > 0) {
+            viewPager.currentItem = viewPager.currentItem - 1
+            return true
+        }
         presenter.onBackPressed()
         return true
     }
@@ -232,6 +236,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun copyLink(url: String) {
         Utils.copyToClipBoard(url)
+        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
     }
 
     override fun showTorrentDialog(torrent: List<TorrentItem>) {

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import android.widget.ViewSwitcher
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -125,6 +126,17 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                 presenter.onBackPressed()
             })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+            menu.add("Копировать ссылку")
+                    .setOnMenuItemClickListener {
+                        presenter.onCopyLinkClick()
+                        false
+                    }
+
+            menu.add("Поделиться")
+                    .setOnMenuItemClickListener {
+                        presenter.onShareClick()
+                        false
+                    }
         }
 
         toolbarImage.visibility = View.VISIBLE
@@ -155,6 +167,15 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         viewPager.adapter = pagerAdapter
     }
 
+    override fun copyLink(url: String) {
+        Utils.copyToClipBoard(url)
+        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun share(text: String) {
+        Utils.shareText(text)
+    }
+
     override fun onResume() {
         super.onResume()
         pagerAdapter.onResume()
@@ -178,6 +199,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     }
 
     override fun onBackPressed(): Boolean {
+        if (viewPager.currentItem > 0) {
+            viewPager.currentItem = viewPager.currentItem - 1
+            return true
+        }
         presenter.onBackPressed()
         return true
     }

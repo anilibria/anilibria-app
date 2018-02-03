@@ -98,8 +98,8 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
                 && (fragment as BackButtonListener).onBackPressed()) {
             true
         } else {
-            (activity as RouterProvider).router.exit()
-            true
+            //(activity as RouterProvider).router.exit()
+            false
         }
     }
 

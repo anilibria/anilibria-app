@@ -65,7 +65,7 @@ class ArticleParser(private val apiUtils: IApiUtils) {
             resItems.add(ArticleItem().apply {
                 id = jsonItem.getInt("id")
                 code = jsonItem.getString("code")
-                url = jsonItem.getString("url")
+                url = Api.BASE_URL + jsonItem.getString("url")
                 title = jsonItem.getString("title")
                 userId = jsonItem.getInt("userId")
                 userNick = jsonItem.getString("userNick")
@@ -108,7 +108,7 @@ class ArticleParser(private val apiUtils: IApiUtils) {
         return ArticleItem().apply {
             id = responseJson.getInt("id")
             code = responseJson.getString("code")
-            url = responseJson.getString("url")
+            url = Api.BASE_URL + responseJson.getString("url")
             title = responseJson.getString("title")
             userId = responseJson.getInt("userId")
             userNick = responseJson.getString("userNick")

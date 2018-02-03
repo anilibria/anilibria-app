@@ -29,6 +29,7 @@ class ArticlePresenter(
 
     private var currentPageComment = START_PAGE
     private var articleId = -1
+    private var currentData: ArticleItem? = null
     var articleIdCode: String = ""
 
     fun setDataFromItem(item: ArticleItem) {
@@ -60,6 +61,7 @@ class ArticlePresenter(
         articleRepository.getArticle(code)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ article ->
+                    currentData = article
                     articleId = article.id
                     viewState.showArticle(article)
                     loadComments(currentPageComment)
@@ -98,6 +100,18 @@ class ArticlePresenter(
 
     fun loadMoreComments() {
         loadComments(currentPageComment + 1)
+    }
+
+    fun onShareClick() {
+        currentData?.url?.let {
+            viewState.share(it)
+        }
+    }
+
+    fun onCopyLinkClick() {
+        currentData?.url?.let {
+            viewState.copyLink(it)
+        }
     }
 
     fun onClickLink(url: String): Boolean {

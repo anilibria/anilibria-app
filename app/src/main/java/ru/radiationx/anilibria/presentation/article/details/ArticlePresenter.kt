@@ -28,9 +28,9 @@ class ArticlePresenter(
     }
 
     private var currentPageComment = START_PAGE
-    private var articleId = -1
-    private var currentData: ArticleItem? = null
+    var articleId = -1
     var articleIdCode: String = ""
+    var currentData: ArticleItem? = null
 
     fun setDataFromItem(item: ArticleItem) {
         item.run {

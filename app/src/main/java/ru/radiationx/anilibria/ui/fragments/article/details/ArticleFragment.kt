@@ -102,7 +102,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+        val args = savedInstanceState ?: arguments
+        args?.let {
             it.getString(ARG_ID_NAME, null)?.let { presenter.articleIdCode = it }
             (it.getSerializable(ARG_ITEM) as ArticleItem?)?.let {
                 presenter.setDataFromItem(it)
@@ -196,6 +197,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(WEB_VIEW_SCROLL_Y, pagerAdapter.getWebViewScroll())
+        outState.putString(ArticleFragment.ARG_ID_NAME, presenter.articleIdCode)
+        outState.putSerializable(ArticleFragment.ARG_ITEM, presenter.currentData)
     }
 
     override fun onBackPressed(): Boolean {

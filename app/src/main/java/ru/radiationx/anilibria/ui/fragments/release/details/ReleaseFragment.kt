@@ -91,12 +91,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
-        if (savedInstanceState == null) {
-            arguments?.let {
-                it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
-                it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
-                (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
-            }
+        val args = savedInstanceState ?: arguments
+        args?.let {
+            it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
+            it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
+            (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
         }
     }
 
@@ -161,6 +160,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         })
 
         viewPager.adapter = viewPagerAdapter
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(ReleaseFragment.ARG_ID, presenter.releaseId)
+        outState.putString(ReleaseFragment.ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putSerializable(ReleaseFragment.ARG_ITEM, presenter.currentData)
     }
 
     /*private fun setupContentAnimation() {

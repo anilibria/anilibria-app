@@ -83,7 +83,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
         savedInstanceState?.let {
             it.getStringArrayList(TABS_STACK)?.let {
-                tabsStack.addAll(it)
+                if(it.isNotEmpty()){
+                    tabsStack.addAll(it)
+                    presenter.defaultScreen = it.last()
+                }
             }
         }
         Log.e("S_DEF_LOG", "main oncreate")

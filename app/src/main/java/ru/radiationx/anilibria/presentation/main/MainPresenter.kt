@@ -12,9 +12,12 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 17.12.17.
  */
 @InjectViewState
-class MainPresenter(private val router: Router,
-                    private val authRepository: AuthRepository) : BasePresenter<MainView>(router) {
+class MainPresenter(
+        private val router: Router,
+        private val authRepository: AuthRepository
+) : BasePresenter<MainView>(router) {
 
+    var defaultScreen = Screens.MAIN_RELEASES
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -22,7 +25,7 @@ class MainPresenter(private val router: Router,
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.replaceScreen(Screens.AUTH)
         } else {
-            selectTab(Screens.MAIN_RELEASES)
+            selectTab(defaultScreen)
         }
         //selectTab(Screens.MAIN_RELEASES)
     }

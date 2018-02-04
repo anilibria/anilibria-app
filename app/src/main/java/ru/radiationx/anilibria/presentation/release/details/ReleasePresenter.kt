@@ -30,7 +30,7 @@ class ReleasePresenter(
 
     private var currentPageComment = START_PAGE
 
-    private var currentData: ReleaseFull? = null
+    var currentData: ReleaseFull? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 

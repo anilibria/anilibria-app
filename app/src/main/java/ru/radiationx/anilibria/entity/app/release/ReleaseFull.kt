@@ -33,5 +33,10 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var title: String? = null
         var urlSd: String? = null
         var urlHd: String? = null
+        lateinit var type: Type
+
+        enum class Type : Serializable {
+            ONLINE, SOURCE
+        }
     }
 }

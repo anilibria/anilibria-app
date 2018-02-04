@@ -12,11 +12,13 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import java.util.*
+import kotlin.math.min
 
 class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
 
+    private var currentRelease: ReleaseFull? = null
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
             Log.e("SUKA", "onClickClose: $position")
@@ -27,12 +29,52 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         }
     }
 
+    private val episodeHeadListener = object : ReleaseEpisodesHeadDelegate.Listener {
+        override fun onSelect(tabTag: String, position: Int) {
+            currentRelease?.let {
+                val lastCount = items.count { it is ReleaseEpisodeListItem }
+                items.removeAll { it is ReleaseEpisodeListItem }
+                val newItems = when (tabTag) {
+                    "online" -> it.episodes.map { ReleaseEpisodeListItem(it) }
+                    "download" -> it.episodesSource.map { ReleaseEpisodeListItem(it) }
+                    else -> emptyList()
+                }
+                val startPos = position + 1
+                items.addAll(startPos, newItems)
+
+                notifyItemRangeChanged(startPos, items.size)
+                /*val newCount = items.count { it is ReleaseEpisodeListItem }
+                val changed = min(lastCount, newCount)
+                val removed = lastCount - newCount
+                val added = newCount - lastCount
+
+                Log.e("SUKA", "CHECK COUNTS: l=$lastCount, n=$newCount, ch=$changed, rem=$removed, add=$added")
+
+                val startChanged = startPos + changed
+
+                Log.e("SUKA", "range ch: $startPos - $startChanged")
+                notifyItemRangeChanged(startPos, startChanged)
+                if (removed > 0) {
+                    Log.e("SUKA", "range rem: $startChanged - ${startChanged + removed}")
+                    notifyItemRangeRemoved(startChanged, startChanged + removed)
+                }
+                if (added > 0) {
+                    Log.e("SUKA", "range add: $startChanged - ${startChanged + added}")
+                    notifyItemRangeInserted(startChanged, startChanged + added)
+                }*/
+                //Log.e("SUKA", "changed: ${position + 1}, ${min(position + items.count { it is ReleaseEpisodeListItem }, items.size)}, max: ${items.size}")
+                //notifyItemRangeChanged(position + 1, min(position + items.count { it is ReleaseEpisodeListItem }, items.size))
+                return@let
+            }
+        }
+    }
+
     init {
         items = mutableListOf()
         delegatesManager.run {
             addDelegate(ReleaseHeadDelegate(itemListener))
             addDelegate(ReleaseEpisodeDelegate(itemListener))
-            addDelegate(ReleaseEpisodesHeadDelegate())
+            addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
             addDelegate(ReleaseDonateDelegate(itemListener))
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
             addDelegate(ReleaseBlockedDelegate())
@@ -61,6 +103,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
 
     fun setRelease(release: ReleaseFull) {
         items.clear()
+        currentRelease = release
         items.add(ReleaseHeadListItem(release))
         items.add(DividerShadowListItem())
 
@@ -86,7 +129,10 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             items.add(DividerShadowListItem())
         }
 
-        if(release.episodes.isNotEmpty()){
+        if (release.episodes.isNotEmpty()) {
+            if (release.episodesSource.isNotEmpty()) {
+                items.add(ReleaseEpisodesHeadListItem())
+            }
             items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
             items.add(DividerShadowListItem())
         }

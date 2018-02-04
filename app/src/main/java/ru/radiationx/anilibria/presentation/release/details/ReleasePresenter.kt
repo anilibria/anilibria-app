@@ -152,7 +152,7 @@ class ReleasePresenter(
 
     fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int) {
         currentData?.let {
-            viewState.playEpisode(it, it.episodes.indexOf(episode), quality)
+            viewState.playEpisode(it, episode, it.episodes.indexOf(episode), quality)
         }
     }
 

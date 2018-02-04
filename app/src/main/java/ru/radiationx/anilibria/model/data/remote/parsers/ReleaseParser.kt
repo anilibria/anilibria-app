@@ -180,6 +180,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                     episode.title = "Cерия ${jsonMp4.length() - j}"
                     episode.urlSd = it.optString("sd")
                     episode.urlHd = it.optString("hd")
+                    episode.type = ReleaseFull.Episode.Type.SOURCE
                     release.episodesSource.add(episode)
                 }
             }
@@ -192,6 +193,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                     episode.title = it.optString("comment")
                     episode.urlSd = it.optString("file")
                     episode.urlHd = it.optString("filehd")
+                    episode.type = ReleaseFull.Episode.Type.ONLINE
                     release.episodes.add(episode)
                 }
             }

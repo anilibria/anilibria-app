@@ -47,5 +47,5 @@ interface ReleaseView : IBaseView {
     fun playMoonwalk(link: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisode(release: ReleaseFull, position: Int, quality: Int)
+    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, position: Int, quality: Int)
 }

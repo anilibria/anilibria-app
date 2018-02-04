@@ -113,23 +113,8 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun systemDownload(url: String) {
-        systemDownloader(
-                Utils.getFileNameFromUrl(url),
-                url
-        )
+        Utils.systemDownloader(this, url)
     }
-
-    private fun systemDownloader(fileName: String, url: String) {
-        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-        dm?.let {
-            val request = DownloadManager.Request(Uri.parse(url))
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-            request.setMimeType(MimeTypeUtil.getType(fileName))
-            it.enqueue(request)
-        }
-    }
-
 
     @SuppressLint("NeedOnRequestPermissionsResult")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

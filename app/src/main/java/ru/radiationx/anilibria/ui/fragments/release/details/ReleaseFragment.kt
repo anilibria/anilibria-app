@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
@@ -30,6 +32,8 @@ import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
 import kotlinx.android.synthetic.main.fragment_release.view.*
+import permissions.dispatcher.NeedsPermission
+import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -49,10 +53,11 @@ import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import java.net.URLConnection
+import java.util.regex.Pattern
 
 
 /* Created by radiationx on 16.11.17. */
-
+@RuntimePermissions
 open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, ReleaseAdapter.ItemListener, CommentsAdapter.ItemListener {
 
     companion object {
@@ -304,19 +309,54 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         })
     }
 
-    override fun playEpisode(release: ReleaseFull, position: Int, quality: Int) {
-        Log.e("S_DEF_LOG", "playEpisode " + release.episodes.size)
-        val titles = arrayOf("Внешний плеер", "Внутренний плеер")
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
-                        when (which) {
-                            0 -> playExternal(release, position, quality)
-                            1 -> playInternal(release, position, quality)
+    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, position: Int, quality: Int) {
+        if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
+            val url = when (quality) {
+                0 -> episode.urlSd
+                1 -> episode.urlHd
+                else -> episode.urlSd
+            }.orEmpty()
+
+            val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
+            context?.let {
+                AlertDialog.Builder(it)
+                        .setItems(titles) { dialog, which ->
+                            when (which) {
+                                0 -> Utils.externalLink(url)
+                                1 -> systemDownloadWithPermissionCheck(url)
+                            }
                         }
-                    }
-                    .show()
+                        .show()
+            }
+        } else {
+            val titles = arrayOf("Внешний плеер", "Внутренний плеер")
+            context?.let {
+                AlertDialog.Builder(it)
+                        .setItems(titles) { dialog, which ->
+                            when (which) {
+                                0 -> playExternal(release, position, quality)
+                                1 -> playInternal(release, position, quality)
+                            }
+                        }
+                        .show()
+            }
         }
+    }
+
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun systemDownload(url: String) {
+        var fileName = Utils.getFileNameFromUrl(url)
+        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
+        if(matcher.find()){
+            fileName = matcher.group(1)
+        }
+        this.context?.let { Utils.systemDownloader(it, url, fileName) }
+    }
+
+    @SuppressLint("NeedOnRequestPermissionsResult")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun playInternal(release: ReleaseFull, position: Int, quality: Int) {
@@ -412,6 +452,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         private fun createMain(layout: ViewGroup) {
             layout.run {
                 recyclerView.apply {
+                    setHasFixedSize(true)
                     adapter = this@CustomPagerAdapter.releaseAdapter
                     layoutManager = LinearLayoutManager(this.context)
                 }

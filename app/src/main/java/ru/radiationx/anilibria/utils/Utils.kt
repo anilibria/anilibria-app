@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.utils
 
+import android.app.DownloadManager
 import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import ru.radiationx.anilibria.App
 import java.io.UnsupportedEncodingException
@@ -14,6 +16,21 @@ import java.net.URLDecoder
  */
 
 object Utils {
+
+    /* PLEASE CHECK STORAGE PERMISSION */
+    fun systemDownloader(context: Context, url: String, fileName: String = getFileNameFromUrl(url)) {
+        val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        dm?.let {
+            Log.e("SUKA", "systemDownloader $url , $fileName")
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            request.setMimeType(MimeTypeUtil.getType(fileName))
+            request.setTitle(fileName)
+            request.setDescription(fileName)
+            it.enqueue(request)
+        }
+    }
 
     fun getFileNameFromUrl(url: String): String {
         var fileName = url

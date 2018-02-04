@@ -72,7 +72,8 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
                 full_description.movementMethod = LinkMovementMethod({ itemListener.onClickSomeLink(it) })
 
-                full_button_torrent.isEnabled = true
+                full_button_torrent.isEnabled = !item.torrentLink.isNullOrEmpty() || !item.torrents.isEmpty()
+
                 if (full_tags.tags.isEmpty()) {
                     item.genres.forEach {
                         val tag = Tag(it)
@@ -87,7 +88,15 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                 val seasonsHtml = "<b>Сезон:</b> " + item.seasons.joinToString(", ")
                 val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
                 val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
-                val arrHtml = arrayOf(item.originalTitle, seasonsHtml, voicesHtml, typesHtml)
+                val releaseStatus = item.releaseStatus ?: "Не указано"
+                val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
+                val arrHtml = arrayOf(
+                        item.originalTitle,
+                        seasonsHtml,
+                        voicesHtml,
+                        typesHtml,
+                        releaseStatusHtml
+                )
                 full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
                 val hasEpisodes = !item.episodes.isEmpty()

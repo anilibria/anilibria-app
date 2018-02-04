@@ -58,7 +58,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     override fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
-        if (update.code >= currentVersionCode) {
+        if (update.code > currentVersionCode) {
             updateInfo.text = generateCurrentInfo(update.name, update.date)
             addSection("Важно", update.important)
             addSection("Добавлено", update.added)
@@ -113,7 +113,6 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun systemDownload(url: String) {
-        Toast.makeText(this, "lolkekcheburek", Toast.LENGTH_SHORT).show()
         systemDownloader(
                 Utils.getFileNameFromUrl(url),
                 url

@@ -35,6 +35,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             addDelegate(ReleaseEpisodesHeadDelegate())
             addDelegate(ReleaseDonateDelegate(itemListener))
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
+            addDelegate(ReleaseBlockedDelegate())
             addDelegate(CommentRouteDelegate())
             addDelegate(DividerShadowItemDelegate())
             addDelegate(VitalWebItemDelegate(true))
@@ -61,12 +62,18 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
     fun setRelease(release: ReleaseFull) {
         items.clear()
         items.add(ReleaseHeadListItem(release))
-        if (release.episodes.isNotEmpty()) {
+        items.add(DividerShadowListItem())
+
+        if (release.isBlocked) {
+            items.add(ReleaseBlockedListItem(release))
             items.add(DividerShadowListItem())
+        }
+
+        if (!release.isBlocked && release.episodes.isNotEmpty()) {
             items.add(ReleaseDonateListItem())
             items.add(DividerShadowListItem())
-            //items.add(ReleaseEpisodesHeadListItem())
         }
+
         if (vitalItems.isNotEmpty()) {
             val randomVital = if (vitalItems.size > 1) rand(0, vitalItems.size) else 0
             val listItem = getVitalListItem(vitalItems[randomVital])
@@ -74,14 +81,19 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             items.add(DividerShadowListItem())
         }
 
-        if (App.injections.appPreferences.getReleaseRemind()) {
+        if (!release.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem())
             items.add(DividerShadowListItem())
         }
-        items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
-        items.add(DividerShadowListItem())
+
+        if(release.episodes.isNotEmpty()){
+            items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
+            items.add(DividerShadowListItem())
+        }
+
         items.add(CommentRouteListItem())
         items.add(DividerShadowListItem())
+
         notifyDataSetChanged()
     }
 

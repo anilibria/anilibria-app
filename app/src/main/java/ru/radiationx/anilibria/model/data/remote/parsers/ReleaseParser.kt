@@ -77,11 +77,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             val item = ReleaseItem()
             val jsonItem = jsonItems.getJSONObject(i)
             item.id = jsonItem.getInt("id")
-
-            val matcher = idNamePattern.matcher(jsonItem.getString("link"))
-            if (matcher.find()) {
-                item.idName = matcher.group(1)
-            }
+            item.idName = jsonItem.getString("code")
 
             val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (titles.isNotEmpty()) {
@@ -133,11 +129,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         val responseJson = JSONObject(httpResponse)
 
         release.id = responseJson.getInt("id")
-
-        val matcher = idNamePattern.matcher(responseJson.getString("link"))
-        if (matcher.find()) {
-            release.idName = matcher.group(1)
-        }
+        release.idName = responseJson.getString("code")
 
         val titles = responseJson.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         if (titles.isNotEmpty()) {
@@ -147,44 +139,65 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
-        release.torrentLink = Api.BASE_URL + responseJson.getString("torrent_link")
+        responseJson.getString("torrent_link").let {
+            if (!it.isNullOrEmpty()) {
+                release.torrentLink = Api.BASE_URL + it
+            }
+        }
         release.link = Api.BASE_URL + responseJson.getString("link")
         release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
         release.description = responseJson.getString("description").trim()
+        release.releaseStatus = responseJson.optString("release_status")
+        release.isBlocked = responseJson.optBoolean("isBlocked", false)
+        release.contentBlocked = responseJson.optString("contentBlocked", null)
 
-        val jsonSeasons = responseJson.getJSONArray("season")
-        for (j in 0 until jsonSeasons.length()) {
-            release.seasons.add(jsonSeasons.getString(j))
+        responseJson.optJSONArray("season")?.let {
+            for (j in 0 until it.length()) {
+                release.seasons.add(it.optString(j))
+            }
+        }
+        responseJson.optJSONArray("voices")?.let {
+            for (j in 0 until it.length()) {
+                release.voices.add(it.optString(j))
+            }
+        }
+        responseJson.optJSONArray("genres")?.let {
+            for (j in 0 until it.length()) {
+                release.genres.add(it.optString(j))
+            }
+        }
+        responseJson.optJSONArray("types")?.let {
+            for (j in 0 until it.length()) {
+                release.types.add(it.optString(j))
+            }
         }
 
-        val jsonVoices = responseJson.getJSONArray("voices")
-        for (j in 0 until jsonVoices.length()) {
-            release.voices.add(jsonVoices.getString(j))
+        responseJson.optJSONArray("mp4")?.let { jsonMp4 ->
+            for (j in 0 until jsonMp4.length()) {
+                jsonMp4.optJSONObject(j)?.let {
+                    val episode = ReleaseFull.Episode()
+                    episode.title = "Cерия ${jsonMp4.length() - j}"
+                    episode.urlSd = it.optString("sd")
+                    episode.urlHd = it.optString("hd")
+                    release.episodesSource.add(episode)
+                }
+            }
         }
 
-        val jsonGenres = responseJson.getJSONArray("genres")
-        for (j in 0 until jsonGenres.length()) {
-            release.genres.add(jsonGenres.getString(j))
+        responseJson.optJSONArray("Uppod")?.let { jsonEpisodes ->
+            for (j in 0 until jsonEpisodes.length()) {
+                jsonEpisodes.optJSONObject(j)?.let {
+                    val episode = ReleaseFull.Episode()
+                    episode.title = it.optString("comment")
+                    episode.urlSd = it.optString("file")
+                    episode.urlHd = it.optString("filehd")
+                    release.episodes.add(episode)
+                }
+            }
         }
 
-        val jsonTypes = responseJson.getJSONArray("types")
-        for (j in 0 until jsonTypes.length()) {
-            release.types.add(jsonTypes.getString(j))
-        }
-
-        val jsonEpisodes = responseJson.getJSONArray("Uppod")
-        for (j in 0 until jsonEpisodes.length()) {
-            val jsonEpisode = jsonEpisodes.getJSONObject(j)
-            val episode = ReleaseFull.Episode()
-            episode.title = jsonEpisode.getString("comment")
-            episode.urlSd = jsonEpisode.getString("file")
-            episode.urlHd = jsonEpisode.getString("filehd")
-            release.episodes.add(episode)
-        }
-
-        val jsonMoonwalk = responseJson.getString("Moonwalk")
-        jsonMoonwalk?.let {
+        responseJson.optString("Moonwalk").let {
             val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
             if (matcher.find()) {
                 var mwUrl = matcher.group(1)
@@ -196,24 +209,20 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         }
 
         responseJson.getJSONArray("torrentList")?.let {
-            for(j in 0 until it.length()){
+            for (j in 0 until it.length()) {
                 it.optJSONObject(j)?.let {
                     release.torrents.add(TorrentItem().apply {
                         episode = it.getString("episode")
                         quality = it.getString("quality")
                         size = it.getString("size")
-                        url = Api.BASE_URL +it.getString("url")
+                        url = Api.BASE_URL + it.getString("url")
                     })
                 }
             }
         }
 
-        val jsonBxFull = responseJson.getJSONObject("fulll")
-        release.id = jsonBxFull.getString("ID").toInt()
-        release.idName = jsonBxFull.getString("CODE")
-
         val jsonFav = responseJson.getJSONObject("fav")
-        Log.e("S_DEF_LOG", "loaded json fav "+jsonFav.toString(4))
+        Log.e("S_DEF_LOG", "loaded json fav " + jsonFav.toString(4))
         release.favoriteCount.apply {
             id = jsonFav.getInt("id")
             count = jsonFav.getInt("count")
@@ -310,7 +319,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
     }
 
     fun favXhr(httpResponse: String): Int {
-        Log.e("S_DEF_LOG", "favXhr "+httpResponse)
+        Log.e("S_DEF_LOG", "favXhr " + httpResponse)
         return JSONObject(httpResponse).getInt("COUNT")
     }
 }

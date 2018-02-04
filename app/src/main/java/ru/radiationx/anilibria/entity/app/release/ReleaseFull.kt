@@ -20,9 +20,13 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         types.addAll(item.types)
     }
 
+    var isBlocked = false
+    var contentBlocked: String? = null
+    var releaseStatus: String? = null
     val torrents = mutableListOf<TorrentItem>()
     val favoriteCount = FavoriteCount()
     val episodes = mutableListOf<Episode>()
+    val episodesSource = mutableListOf<Episode>()
     var moonwalkLink: String? = null
 
     class Episode : Serializable {

@@ -25,7 +25,7 @@ class CheckerParser(private val apiUtils: IApiUtils) {
                     resData.links.add(UpdateData.UpdateLink().apply {
                         name = linkJson.optString("name", "Unknown")
                         url = linkJson.optString("url", "")
-                        type = linkJson.optString("name", "site")
+                        type = linkJson.optString("type", "site")
                     })
                 }
             }

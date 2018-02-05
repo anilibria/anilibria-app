@@ -102,12 +102,9 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
         when (link.type) {
-            "file" -> {
-                systemDownloadWithPermissionCheck(link.url)
-            }
-            else -> {
-                Utils.externalLink(link.url)
-            }
+            "file" -> systemDownloadWithPermissionCheck(link.url)
+            "site" -> Utils.externalLink(link.url)
+            else -> Utils.externalLink(link.url)
         }
     }
 

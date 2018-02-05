@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/a_gray"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:statusBarScrim="@color/a_gray_dark"
             app:titleEnabled="false">
 
@@ -81,7 +81,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:clipToPadding="false">
 
                 <ProgressBar
                     android:id="@+id/progressBar"

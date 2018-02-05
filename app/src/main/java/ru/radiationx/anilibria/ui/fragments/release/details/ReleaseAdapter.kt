@@ -129,11 +129,15 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             items.add(DividerShadowListItem())
         }
 
-        if (release.episodes.isNotEmpty()) {
-            if (release.episodesSource.isNotEmpty()) {
+        if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
+            if (release.episodesSource.isNotEmpty() && release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem())
             }
-            items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
+            if (release.episodes.isNotEmpty()) {
+                items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
+            } else if (release.episodesSource.isNotEmpty()) {
+                items.addAll(release.episodesSource.map { ReleaseEpisodeListItem(it) })
+            }
             items.add(DividerShadowListItem())
         }
 

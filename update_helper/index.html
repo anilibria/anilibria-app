@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Update helper</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="scripts/main.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="block">
+            <div class="title">Инициализация данных</div>
+            <input type="file" id="files" name="files[]" />
+            <div class="desc">Последний check.json</div>
+            <textarea id="text_json" rows="10"></textarea>
+            <input type="button" value="Заполнить поля" onclick="fillFields();">
+        </div>
+        <div class="block fields">
+            <div class="title">Информация</div>
+            <div class="desc">Код версии</div>
+            <input id="version_code" type="text">
+            <div class="desc">Имя версии, X.X.X.X?</div>
+            <input id="version_name" type="text">
+            <div class="desc">Версия сборки</div>
+            <input id="version_build" type="text">
+            <div class="desc">Дата сборки</div>
+            <input id="build_date" type="text">
+            <div class="desc">Ссылка на apk сайте</div>
+            <input id="link_site" type="text" class="wide">
+            <div class="desc">Ссылка на Play Market</div>
+            <input id="link_gp" type="text" class="wide">
+            <br>
+            <div class="desc">Изменения</div>
+            <div class="desc">Важное</div>
+            <textarea id="important" rows="6"></textarea>
+            <div class="desc">Добавлено</div>
+            <textarea id="added" rows="6"></textarea>
+            <div class="desc">Исправлено</div>
+            <textarea id="fixed" rows="6"></textarea>
+            <div class="desc">Изменено</div>
+            <textarea id="changed" rows="6"></textarea>
+            <input type="button" value="Оформить" onclick="makeContent();">
+        </div>
+
+        <div class="block">
+            <div class="title">Оформление</div>
+            <div class="desc">Пост обновления в теме:</div>
+            <textarea id="post_4pda" rows="10"></textarea>
+            <div class="desc">Пост обновления в Google Play:</div>
+            <textarea id="post_gp" rows="10"></textarea>
+            <div class="desc">Файл обновления check.json:</div>
+            <textarea id="result_json" rows="10"></textarea>
+        </div>
+
+    </div>
+    <div class="footer">Created by <a href="https://github.com/RadiationX">radiationx</a> / <a href="http://4pda.ru/forum/index.php?showuser=2556269">radiation15</a></div>
+</body>
+
+</html>

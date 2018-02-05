@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #eeeeee;
+    color: #212121;
+}
+* {
+    outline: none;
+}
+.wrapper {
+    .block {
+        padding: 1em;
+        margin: 2em 1em;
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.25);
+        -webkit-box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.25);
+        .title {
+            font-size: 14/16rem;
+            font-weight: bold;
+            padding-bottom: 8/16rem;
+        }
+        .desc {
+            color: #757575;
+            font-size: 14/16rem;
+            margin-left: 4/16rem;
+            margin-bottom: 4/16rem;
+            margin-top: 16/16rem;
+            &:first-child{
+                margin-top: 0;
+            }
+        }
+        textarea,
+        input[type="text"] {
+            display: block;
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0;
+            margin-bottom: 8/16rem;
+            font-family: monospace;
+            background: #fafafa;
+            border: 1px solid hsl(0, 0%, 90%);
+            border-radius: 2px;
+            box-sizing: border-box;
+            padding: 0.5em;
+            font-size: 16/16rem;
+            &:focus {
+                border: 1px solid hsl(0, 0%, 70%);
+            }
+            &.error{
+                border-color: #eb4d4d;
+                box-shadow: 0 1px 3px -1px #eb4d4d;
+            }
+        }
+        input[type="text"] {
+            width: auto;
+            &.wide{
+                width: 100%;
+            }
+        }
+        input[type="button"] {
+            background: transparent;
+            font-size: 14/16rem;
+            font-weight: bold;
+            margin: 6/16rem;
+            border: none;
+            padding: 0 8/16rem;
+            min-height: 36/16rem;
+            outline: none;
+            color: #000;
+            text-transform: uppercase;
+            border-radius: 2px;
+            background: hsl(0, 0%, 87%);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.175s ease-out;
+            &:active {
+                background: hsl(0, 0%, 83%);
+                box-shadow: 0 0 0 transparent;
+                
+            }
+        }
+    }
+}
+.footer {
+    box-shadow: 0 0px 10px -3px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 0px 10px -3px rgba(0, 0, 0, 0.15);
+    background: white;
+    padding: 1.5em;
+    font-family: monospace;
+    text-align: center;
+}

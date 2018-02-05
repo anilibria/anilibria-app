@@ -52,7 +52,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
         toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
             topMargin = dimensions.statusBar
         }
-        toolbar.requestLayout()
+        toolbar?.requestLayout()
     }
 
     fun setStatusBarColor(color: Int) {

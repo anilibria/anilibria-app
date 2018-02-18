@@ -104,10 +104,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
             it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
             it.getSerializable(ARG_ITEM)?.let {
-                if (it is ReleaseItem) {
-                    presenter.setCurrentData(it)
-                } else if (it is ReleaseFull) {
+                if (it is ReleaseFull) {
                     presenter.setLoadedData(it)
+                } else if (it is ReleaseItem) {
+                    presenter.setCurrentData(it)
                 }
             }
         }

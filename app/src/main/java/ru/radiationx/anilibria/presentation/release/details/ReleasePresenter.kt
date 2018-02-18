@@ -39,14 +39,14 @@ class ReleasePresenter(
     fun setCurrentData(item: ReleaseItem) {
         currentData = ReleaseFull(item)
         currentData?.let {
-            //viewState.showRelease(it)
+            viewState.showRelease(it)
         }
     }
 
     fun setLoadedData(data: ReleaseFull) {
         currentData = data
         currentData?.let {
-            //viewState.showRelease(it)
+            viewState.showRelease(it)
         }
     }
 

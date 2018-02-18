@@ -190,6 +190,10 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             for (j in 0 until jsonEpisodes.length()) {
                 jsonEpisodes.optJSONObject(j)?.let {
                     val episode = ReleaseFull.Episode()
+
+                    episode.releaseId = release.id
+                    episode.id = jsonEpisodes.length() - j
+
                     episode.title = it.optString("comment")
                     episode.urlSd = it.optString("file")
                     episode.urlHd = it.optString("filehd")

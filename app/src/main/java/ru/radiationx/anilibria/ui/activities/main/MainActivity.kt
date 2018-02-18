@@ -63,16 +63,13 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
         DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                Log.e("S_DEF_LOG", dimensions.toString())
-                //keyboardUtil.setDimensions(dimensions)
-                /*root_container.post {
-
-                }*/
                 view_for_measure.post {
-                    root_container.setPadding(root_container.paddingLeft,
+                    root_container.setPadding(
+                            root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
-                            dimensions.keyboardHeight)
+                            dimensions.keyboardHeight/* - bottomTabs.height*/
+                    )
                 }
                 dimensionsProvider.update(dimensions)
             }

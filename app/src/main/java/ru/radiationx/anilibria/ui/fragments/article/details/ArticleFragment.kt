@@ -295,7 +295,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                             if (!handled) {
                                 Utils.externalLink(url.orEmpty())
                             }
-                            return false
+                            return true
                         }
                     }
                     it.setJsLifeCycleListener(this@CustomPagerAdapter)

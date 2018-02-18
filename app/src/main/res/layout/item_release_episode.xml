@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    android:background="@color/white"
     android:foreground="?selectableItemBackground">
 
     <TextView
@@ -16,13 +15,22 @@
         android:layout_height="56dp"
         android:layout_alignParentStart="true"
         android:layout_marginStart="16dp"
-        android:textColor="@color/textDefault"
-        android:layout_toStartOf="@+id/quality_sd"
         android:gravity="center_vertical"
+        android:textColor="@color/textDefault"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:text="Серия 660"/>
+        tools:text="Серия 660" />
 
+    <ImageView
+        android:id="@+id/item_viewed_state"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/item_title"
+        android:padding="3dp"
+        android:layout_marginStart="4dp"
+        app:srcCompat="@drawable/ic_checkbox_marked_circle"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/quality_sd"
@@ -30,7 +38,7 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_toStartOf="@+id/quality_hd"
-        app:srcCompat="@drawable/ic_quality_sd"/>
+        app:srcCompat="@drawable/ic_quality_sd" />
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/quality_hd"
@@ -38,6 +46,6 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_alignParentEnd="true"
-        app:srcCompat="@drawable/ic_quality_hd"/>
+        app:srcCompat="@drawable/ic_quality_hd" />
 
 </RelativeLayout>

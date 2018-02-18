@@ -30,7 +30,6 @@
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-            android:screenOrientation="landscape"
             android:theme="@style/PlayerTheme" />
 
         <activity

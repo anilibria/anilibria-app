@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.LinkHandler
@@ -19,6 +20,7 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class ReleasePresenter(
         private val releaseRepository: ReleaseRepository,
+        private val releaseInteractor: ReleaseInteractor,
         private val vitalRepository: VitalRepository,
         private val router: Router,
         private val linkHandler: LinkHandler
@@ -37,7 +39,14 @@ class ReleasePresenter(
     fun setCurrentData(item: ReleaseItem) {
         currentData = ReleaseFull(item)
         currentData?.let {
-            viewState.showRelease(it)
+            //viewState.showRelease(it)
+        }
+    }
+
+    fun setLoadedData(data: ReleaseFull) {
+        currentData = data
+        currentData?.let {
+            //viewState.showRelease(it)
         }
     }
 
@@ -63,12 +72,8 @@ class ReleasePresenter(
 
     private fun loadRelease() {
         Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
-        val source = when {
-            releaseId != -1 -> releaseRepository.getRelease(releaseId)
-            releaseIdCode != null -> releaseRepository.getRelease(releaseIdCode!!)
-            else -> return
-        }
-        source
+        releaseInteractor
+                .observeRelease(releaseId, releaseIdCode)
                 .subscribe({ release ->
                     releaseId = release.id
                     releaseIdCode = release.idName
@@ -112,6 +117,11 @@ class ReleasePresenter(
 
     fun loadMoreComments() {
         loadComments(currentPageComment + 1)
+    }
+
+    fun markEpisodeViewed(episode: ReleaseFull.Episode){
+        episode.isViewed = true
+        releaseInteractor.putEpisode(episode)
     }
 
     fun onTorrentClick() {

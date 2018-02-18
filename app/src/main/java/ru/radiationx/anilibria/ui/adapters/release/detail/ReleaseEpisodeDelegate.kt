@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
  * Created by radiationx on 13.01.18.
  */
 class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is ReleaseEpisodeListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseEpisodeListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ReleaseEpisodeListItem
@@ -45,8 +45,10 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
 
         fun bind(item: ReleaseFull.Episode) {
             view.run {
-                item_title.text = item.title
                 view.tag = item
+                Log.e("SUKA", "bind item ${item.isViewed}")
+                item_title.text = item.title
+                item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
             }
         }
     }

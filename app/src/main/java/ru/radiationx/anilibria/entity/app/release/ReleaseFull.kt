@@ -30,6 +30,11 @@ class ReleaseFull() : ReleaseItem(), Serializable {
     var moonwalkLink: String? = null
 
     class Episode : Serializable {
+        var releaseId = 0
+        var id: Int = 0
+        var seek: Long = 0
+        var isViewed: Boolean = false
+
         var title: String? = null
         var urlSd: String? = null
         var urlHd: String? = null

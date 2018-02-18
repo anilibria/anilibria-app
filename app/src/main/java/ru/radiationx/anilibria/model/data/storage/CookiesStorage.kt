@@ -9,9 +9,7 @@ import ru.radiationx.anilibria.model.data.holders.CookieHolder.Companion.cookieN
 /**
  * Created by radiationx on 30.12.17.
  */
-class CookiesStorage constructor(private val sharedPreferences: SharedPreferences) : CookieHolder {
-
-
+class CookiesStorage(private val sharedPreferences: SharedPreferences) : CookieHolder {
 
     private val clientCookies = mutableMapOf<String, Cookie>()
 

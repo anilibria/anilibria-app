@@ -13,7 +13,7 @@ import java.util.regex.Pattern
 class LinkRouter : LinkHandler {
 
     private val releaseDetail by lazy {
-        Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html")
+        Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html|tracker\\/\\?ELEMENT_CODE=([^&]+)")
     }
 
     private val articleDetail by lazy {
@@ -24,7 +24,12 @@ class LinkRouter : LinkHandler {
         releaseDetail.matcher(url).let {
             if (it.find()) {
                 val args: Bundle = Bundle().apply {
-                    putString(ReleaseFragment.ARG_ID_CODE, it.group(1))
+                    it.group(1)?.let {
+                        putString(ReleaseFragment.ARG_ID_CODE, it)
+                    }
+                    it.group(2)?.let {
+                        putString(ReleaseFragment.ARG_ID_CODE, it)
+                    }
                 }
                 router.navigateTo(Screens.RELEASE_DETAILS, args)
                 return true

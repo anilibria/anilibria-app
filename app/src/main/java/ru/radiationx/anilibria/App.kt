@@ -25,8 +25,10 @@ import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.storage.CookiesStorage
+import ru.radiationx.anilibria.model.data.storage.EpisodesCheckerStorage
 import ru.radiationx.anilibria.model.data.storage.PreferencesStorage
 import ru.radiationx.anilibria.model.data.storage.UserStorage
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
@@ -113,6 +115,7 @@ class App : Application() {
         private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val appPreferences: PreferencesHolder = PreferencesStorage(sharedPreferences)
+        val episodesCheckerStorage = EpisodesCheckerStorage(sharedPreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
 
@@ -137,6 +140,8 @@ class App : Application() {
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)
         val checkerRepository = CheckerRepository(schedulers, checkerApi)
+
+        val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

@@ -44,6 +44,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private lateinit var videoControls: VideoControls
     private val fullScreenListener = FullScreenListener()
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
+    private val releaseInteractor = App.injections.releaseInteractor
     private val currentVitals = mutableListOf<VitalItem>()
 
     private var compositeDisposable = CompositeDisposable()
@@ -87,7 +88,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             //it.setNextDrawable(ContextCompat.getDrawable(this, R.drawable.ic_news))
             it.setButtonListener(this)
         }
-        playEpisode(getCurrentEpisode())
+        playEpisode(getEpisode())
         supportActionBar?.title = releaseData.title
         supportActionBar?.elevation = 0f
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -129,7 +130,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
                                 }
                                 if (quality != -1) {
                                     this.quality = quality
-                                    playEpisode(getCurrentEpisode())
+                                    saveEpisode()
+                                    playEpisode(getEpisode())
                                 }
                                 p0.dismiss()
                             })
@@ -153,6 +155,14 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         player.pause()
     }
 
+    private fun saveEpisode() {
+        releaseInteractor.putEpisode(getEpisode().apply {
+            Log.e("SUKA", "Set posistion seek: ${player.currentPosition}")
+            seek = player.currentPosition
+            isViewed = true
+        })
+    }
+
 
     private val random = Random()
 
@@ -161,6 +171,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     }
 
     override fun onDestroy() {
+        saveEpisode()
         compositeDisposable.dispose()
         player.stopPlayback()
         super.onDestroy()
@@ -181,8 +192,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         val nextIndex = currentEpisode - 1
         if (checkIndex(nextIndex)) {
             Log.e("S_DEF_LOG", "NEXT INDEX " + nextIndex)
-            currentEpisode = nextIndex
-            return getCurrentEpisode()
+            return getEpisode(nextIndex)
         }
         return null
     }
@@ -191,21 +201,42 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         val prevIndex = currentEpisode + 1
         if (checkIndex(prevIndex)) {
             Log.e("S_DEF_LOG", "PREV INDEX " + prevIndex)
-            currentEpisode = prevIndex
-            return getCurrentEpisode()
+            return getEpisode(prevIndex)
         }
         return null
     }
 
-    private fun getCurrentEpisode(): ReleaseFull.Episode = releaseData.episodes[currentEpisode]
+    private fun getEpisode(index: Int = currentEpisode): ReleaseFull.Episode = releaseData.episodes[index]
 
     private fun playEpisode(episode: ReleaseFull.Episode) {
+        if (episode.seek > 0) {
+            hardPlayEpisode(episode)
+            //player.pause()
+            val titles = arrayOf("К началу", "К последней позиции")
+            AlertDialog.Builder(this)
+                    .setTitle("Перемотать")
+                    .setItems(titles) { dialog, which ->
+                        //hardPlayEpisode(episode)
+                        if (which == 1) {
+                            player.seekTo(episode.seek)
+                        }
+                        //player.start()
+                    }
+                    .setOnCancelListener {
+                        //player.start()
+                    }
+                    .show()
+        } else {
+            hardPlayEpisode(episode)
+        }
+    }
+
+    private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
         supportActionBar?.subtitle = episode.title
+        currentEpisode = releaseData.episodes.indexOf(episode)
         if (quality == VAL_QUALITY_SD) {
-            Log.e("S_DEF_LOG", "playEpisode " + episode.urlSd)
             player.setVideoPath(episode.urlSd)
         } else if (quality == VAL_QUALITY_HD) {
-            Log.e("S_DEF_LOG", "playEpisode " + episode.urlHd)
             player.setVideoPath(episode.urlHd)
         }
     }
@@ -236,12 +267,14 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     }
 
     override fun onNextClicked(): Boolean {
+        saveEpisode()
         val episode = getNextEpisode() ?: return false
         playEpisode(episode)
         return true
     }
 
     override fun onPreviousClicked(): Boolean {
+        saveEpisode()
         val episode = getPrevEpisode() ?: return false
         playEpisode(episode)
         return true

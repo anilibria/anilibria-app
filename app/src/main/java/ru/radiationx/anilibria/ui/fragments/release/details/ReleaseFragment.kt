@@ -81,6 +81,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
             App.injections.releaseRepository,
+            App.injections.releaseInteractor,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).router,
             App.injections.linkHandler
@@ -100,7 +101,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         args?.let {
             it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
             it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
-            (it.getSerializable(ARG_ITEM) as ReleaseItem?)?.let { presenter.setCurrentData(it) }
+            it.getSerializable(ARG_ITEM)?.let {
+                if (it is ReleaseItem) {
+                    presenter.setCurrentData(it)
+                } else if (it is ReleaseFull) {
+                    presenter.setLoadedData(it)
+                }
+            }
         }
     }
 
@@ -169,9 +176,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(ReleaseFragment.ARG_ID, presenter.releaseId)
-        outState.putString(ReleaseFragment.ARG_ID_CODE, presenter.releaseIdCode)
-        outState.putSerializable(ReleaseFragment.ARG_ITEM, presenter.currentData)
+        outState.putInt(ARG_ID, presenter.releaseId)
+        outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putSerializable(ARG_ITEM, presenter.currentData)
     }
 
     /*private fun setupContentAnimation() {
@@ -347,7 +354,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     fun systemDownload(url: String) {
         var fileName = Utils.getFileNameFromUrl(url)
         val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
-        if(matcher.find()){
+        if (matcher.find()) {
             fileName = matcher.group(1)
         }
         this.context?.let { Utils.systemDownloader(it, url, fileName) }
@@ -369,6 +376,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     private fun playExternal(release: ReleaseFull, position: Int, quality: Int) {
         val episode = release.episodes[position]
+        presenter.markEpisodeViewed(episode)
         val url = when (quality) {
             0 -> episode.urlSd
             1 -> episode.urlHd

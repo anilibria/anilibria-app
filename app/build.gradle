@@ -20,14 +20,15 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 18
-        versionName "2.0.3_Beta1"
+        versionName "2.0.3_Beta2"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -107,6 +108,6 @@ dependencies {
     implementation("com.github.hotchemi:permissionsdispatcher:3.1.0")
     kapt "com.github.hotchemi:permissionsdispatcher-processor:3.1.0"
 
-    compile 'com.yandex.android:mobmetricalib:2.80'
+    implementation 'com.yandex.android:mobmetricalib:2.80'
 }
 

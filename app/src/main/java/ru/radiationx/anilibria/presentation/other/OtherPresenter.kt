@@ -27,6 +27,7 @@ class OtherPresenter(
         const val MENU_ABOUT_ANILIB = 4
         const val MENU_RULES = 5
 
+
         const val MENU_SETTINGS = 6
 
         const val MENU_GROUP_VK = 7
@@ -36,8 +37,11 @@ class OtherPresenter(
         const val MENU_CHAT_DSC = 11
         const val MENU_SITE_ANILIB = 12
 
+        const val MENU_HISTORY = 13
+
         val GROUP_MAIN = arrayOf(
                 MENU_FAVORITES,
+                MENU_HISTORY,
                 MENU_TEAM,
                 //MENU_BID,
                 MENU_DONATE,
@@ -70,6 +74,7 @@ class OtherPresenter(
         super.onFirstViewAttach()
 
         menuMap[MENU_FAVORITES] = OtherMenuItem(MENU_FAVORITES, "Избранное", R.drawable.ic_star)
+        menuMap[MENU_HISTORY] = OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history)
         menuMap[MENU_TEAM] = OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple)
         //menuMap.put(MENU_BID, OtherMenuItem(MENU_BID, "Подать заявку", R.drawable.ic_account_plus))
         menuMap[MENU_DONATE] = OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift)
@@ -144,6 +149,9 @@ class OtherPresenter(
         when (item.id) {
             MENU_FAVORITES -> {
                 router.navigateTo(Screens.FAVORITES)
+            }
+            MENU_HISTORY -> {
+                router.navigateTo(Screens.HISTORY)
             }
             MENU_TEAM -> {
                 router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_TEAM)

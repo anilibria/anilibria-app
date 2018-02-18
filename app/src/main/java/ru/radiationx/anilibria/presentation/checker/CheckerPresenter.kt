@@ -16,6 +16,8 @@ class CheckerPresenter(
         private val checkerRepository: CheckerRepository
 ) : MvpPresenter<CheckerView>() {
 
+    var forceLoad = false
+
     private var compositeDisposable = CompositeDisposable()
 
     override fun onFirstViewAttach() {
@@ -26,13 +28,14 @@ class CheckerPresenter(
     private fun checkUpdate() {
         Log.e("CHECKER", "checkUpdate presenter")
         checkerRepository
-                .checkUpdate(BuildConfig.VERSION_CODE)
+                .checkUpdate(BuildConfig.VERSION_CODE, forceLoad)
                 .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    Log.e("CHECKER", "SUBSC DATE "+it)
+                    Log.e("CHECKER", "SUBSC DATE " + it)
+                    viewState.setRefreshing(false)
                     viewState.showUpdateData(it)
                 }, {
+                    viewState.setRefreshing(false)
                     it.printStackTrace()
                 })
                 .addToDisposable()

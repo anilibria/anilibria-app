@@ -46,7 +46,6 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
         fun bind(item: ReleaseFull.Episode) {
             view.run {
                 view.tag = item
-                Log.e("SUKA", "bind item ${item.isViewed}")
                 item_title.text = item.title
                 item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
             }

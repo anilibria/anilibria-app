@@ -23,7 +23,6 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
     private var reverseEpisodes = App.injections.appPreferences.getEpisodesIsReverse()
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
-            Log.e("SUKA", "onClickClose: $position")
             items.removeAt(position)
             items.removeAt(position)
             notifyItemRangeRemoved(position, position + 1)

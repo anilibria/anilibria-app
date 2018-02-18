@@ -84,6 +84,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
             App.injections.releaseRepository,
             App.injections.releaseInteractor,
+            App.injections.historyRepository,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).router,
             App.injections.linkHandler

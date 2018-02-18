@@ -22,4 +22,6 @@ object Screens {
 
     const val FAVORITES = "FAVORITES"
     const val STATIC_PAGE = "STATIC_PAGE"
+
+    const val HISTORY = "HISTORY"
 }

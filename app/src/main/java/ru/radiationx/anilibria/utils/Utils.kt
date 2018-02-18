@@ -21,7 +21,6 @@ object Utils {
     fun systemDownloader(context: Context, url: String, fileName: String = getFileNameFromUrl(url)) {
         val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         dm?.let {
-            Log.e("SUKA", "systemDownloader $url , $fileName")
             val request = DownloadManager.Request(Uri.parse(url))
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)

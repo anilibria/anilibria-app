@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.ToolbarHelper
 
 /**
  * Created by radiationx on 13.01.18.
@@ -47,7 +48,15 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
+
+        ToolbarHelper.fixInsets(toolbar)
+
+        toolbar.apply {
+            title = getString(R.string.fragment_title_favorites)
+            setNavigationOnClickListener({ presenter.onBackPressed() })
+            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+        }
+
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
@@ -57,10 +66,6 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
                     .fullWidth(true)
                     .spacingDp(8f)
             )
-        }
-
-        toolbar.apply {
-            title = getString(R.string.fragment_title_favorites)
         }
     }
 

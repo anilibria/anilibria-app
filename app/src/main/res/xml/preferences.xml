@@ -10,7 +10,7 @@
             android:defaultValue="false"
             android:key="episodes_is_reverse"
             android:layout="@layout/preference_custom"
-            android:summary="Порядок серий при просмотре релиза"
+            android:summary="Порядок серий при просмотре страницы релиза"
             android:title="Обратный порядок серий" />
 
     </PreferenceCategory>
@@ -19,25 +19,30 @@
         android:layout="@layout/preference_category_custom"
         android:title="О программе">
 
-        <Preference
+        <!--<Preference
             android:key="about.check_update"
             android:layout="@layout/preference_custom"
-            android:title="Проверить обновления" />
+            android:title="Проверить обновления" />-->
 
         <Preference
             android:key="about.application"
             android:layout="@layout/preference_custom"
             android:title="@string/app_name" />
 
-        <!--<Preference
-            android:key="about.app_faq"
+        <Preference
+            android:key="about.app_topic_site"
             android:layout="@layout/preference_custom"
-            android:title="FAQ по программе"/>-->
+            android:title="Обсуждение на сайте" />
 
-        <!--<Preference
-            android:key="about.app_topic"
+        <Preference
+            android:key="about.app_topic_4pda"
             android:layout="@layout/preference_custom"
-            android:title="Обсуждение приложения"/>-->
+            android:title="Обсуждение на 4PDA" />
+
+        <Preference
+            android:key="about.app_play_market"
+            android:layout="@layout/preference_custom"
+            android:title="Play Market" />
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_bottom" />

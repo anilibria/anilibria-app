@@ -11,6 +11,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/playerColorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
 </resources>

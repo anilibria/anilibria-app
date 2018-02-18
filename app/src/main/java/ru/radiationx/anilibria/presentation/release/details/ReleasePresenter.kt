@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.LinkHandler
@@ -21,6 +22,7 @@ import ru.terrakok.cicerone.Router
 class ReleasePresenter(
         private val releaseRepository: ReleaseRepository,
         private val releaseInteractor: ReleaseInteractor,
+        private val historyRepository: HistoryRepository,
         private val vitalRepository: VitalRepository,
         private val router: Router,
         private val linkHandler: LinkHandler
@@ -85,6 +87,7 @@ class ReleasePresenter(
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
                     currentData = release
+                    historyRepository.putRelease(release as ReleaseItem)
                 }) { throwable ->
                     viewState.setRefreshing(false)
                     Log.d("S_DEF_LOG", "SAS")

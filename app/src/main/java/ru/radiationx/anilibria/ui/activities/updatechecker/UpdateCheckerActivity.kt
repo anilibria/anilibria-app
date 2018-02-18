@@ -37,6 +37,10 @@ import ru.radiationx.anilibria.utils.Utils
 @RuntimePermissions
 class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
+    companion object {
+        const val ARG_FORCE = "force"
+    }
+
     @InjectPresenter
     lateinit var presenter: CheckerPresenter
 
@@ -48,6 +52,10 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_updater)
+
+        intent?.let {
+            presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
+        }
 
         toolbar.setNavigationOnClickListener { finish() }
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
@@ -171,11 +179,4 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     private fun generateCurrentInfo(name: String?, date: String?): String {
         return String.format("Версия: %s\nСборка от: %s", name, date)
     }
-
-    /* override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-         App.get().onRequestPermissionsResult(requestCode, permissions, grantResults)
-     }*/
-
-
 }

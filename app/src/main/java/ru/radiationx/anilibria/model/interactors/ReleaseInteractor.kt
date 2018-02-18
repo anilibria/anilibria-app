@@ -32,33 +32,12 @@ class ReleaseInteractor(
                         source,
                         episodesCheckerStorage.observeEpisodes(),
                         BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { t1, t2 ->
-                            //Log.e("SUKA", "BiFunction: ${t1.episodes.size}, ${t2.size}")
-                            /*t1.episodes.forEach { episode ->
-                                t2.filter { it.releaseId == episode.releaseId }.firstOrNull { it.id == episode.id }?.let {
-                                    episode.apply {
-                                        isViewed = it.isViewed
-                                        seek = it.seek
-                                    }
+                            t2.filter { it.releaseId == t1.id }.forEach { localEpisode ->
+                                t1.episodes.firstOrNull { it.id == localEpisode.id }?.let {
+                                    it.isViewed = localEpisode.isViewed
+                                    it.seek = localEpisode.seek
                                 }
-                            }*/
-
-                            t2
-                                    .filter {
-                                        //Log.e("SUKA", "filter ${it.releaseId}==${t1.id}")
-                                        it.releaseId == t1.id
-                                    }
-                                    .forEach { localEpisode ->
-
-                                        t1.episodes.firstOrNull {
-                                            //Log.e("SUKA", "first ORNULL ${it.id}==${localEpisode.id}")
-                                            it.id == localEpisode.id
-                                        }
-                                                ?.let {
-                                                    it.isViewed = localEpisode.isViewed
-                                                    it.seek = localEpisode.seek
-                                                    Log.e("SUKA", "Found, Set: ${it.isViewed}, ${it.seek}")
-                                                }
-                                    }
+                            }
                             t1
                         }
                 )

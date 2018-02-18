@@ -13,6 +13,10 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
  */
 class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
 
+    companion object {
+        private const val LOCAL_EPISODES_KEY = "data.local_episodes"
+    }
+
     private val localEpisodes = mutableListOf<ReleaseFull.Episode>()
     private val localEpisodesRelay = BehaviorRelay.createDefault(localEpisodes)
 
@@ -23,7 +27,6 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
     fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
 
     fun putEpisode(episode: ReleaseFull.Episode) {
-        Log.e("SUKA", "put episode ${episode.releaseId}, ${episode.id}, ${episode.isViewed}")
         localEpisodes
                 .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
                 ?.let { localEpisodes.remove(it) }
@@ -46,16 +49,14 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
                 put("isViewed", it.isViewed)
             })
         }
-        Log.e("SUKA", "Save episodes src: ${jsonEpisodes.toString()}")
         sharedPreferences
                 .edit()
-                .putString("keklol", jsonEpisodes.toString())
+                .putString(LOCAL_EPISODES_KEY, jsonEpisodes.toString())
                 .apply()
     }
 
     private fun loadAll() {
-        val savedEpisodes = sharedPreferences.getString("keklol", null)
-        Log.e("SUKA", "Saved episodes src: $savedEpisodes")
+        val savedEpisodes = sharedPreferences.getString(LOCAL_EPISODES_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach {
@@ -65,7 +66,6 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
                         id = it.getInt("id")
                         seek = it.getLong("seek")
                         isViewed = it.getBoolean("isViewed")
-                        Log.e("SUKA", "Loaded episode: $releaseId, $id, $seek, $isViewed")
                     })
                 }
             }

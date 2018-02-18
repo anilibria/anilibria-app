@@ -34,6 +34,7 @@
 
     <style name="PlayerTheme" parent="AppTheme">
         <item name="colorPrimary">@color/playerColorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
 

@@ -6,4 +6,5 @@ package ru.radiationx.anilibria.model.data.holders
 interface PreferencesHolder {
     fun getReleaseRemind(): Boolean
     fun setReleaseRemind(state: Boolean)
+    fun getEpisodesIsReverse(): Boolean
 }

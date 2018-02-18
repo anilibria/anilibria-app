@@ -67,6 +67,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
     }
 
+    override val needToolbarShadow: Boolean = false
+
     private val releaseAdapter: ReleaseAdapter by lazy { ReleaseAdapter(this) }
     private val commentsAdapter: CommentsAdapter by lazy { CommentsAdapter(this) }
     private val viewPagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter(releaseAdapter, commentsAdapter) }
@@ -316,7 +318,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         })
     }
 
-    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, position: Int, quality: Int) {
+    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
             val url = when (quality) {
                 0 -> episode.urlSd
@@ -341,8 +343,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                 AlertDialog.Builder(it)
                         .setItems(titles) { dialog, which ->
                             when (which) {
-                                0 -> playExternal(release, position, quality)
-                                1 -> playInternal(release, position, quality)
+                                0 -> playExternal(release, episode, quality)
+                                1 -> playInternal(release, episode, quality)
                             }
                         }
                         .show()
@@ -366,16 +368,15 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         onRequestPermissionsResult(requestCode, grantResults)
     }
 
-    private fun playInternal(release: ReleaseFull, position: Int, quality: Int) {
+    private fun playInternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
-            putExtra(MyPlayerActivity.ARG_CURRENT, position)
+            putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
             putExtra(MyPlayerActivity.ARG_QUALITY, quality)
         })
     }
 
-    private fun playExternal(release: ReleaseFull, position: Int, quality: Int) {
-        val episode = release.episodes[position]
+    private fun playExternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
         presenter.markEpisodeViewed(episode)
         val url = when (quality) {
             0 -> episode.urlSd
@@ -391,7 +392,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         } catch (ex: ActivityNotFoundException) {
             Toast.makeText(context, "Ничего не найдено", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     override fun playMoonwalk(link: String) {

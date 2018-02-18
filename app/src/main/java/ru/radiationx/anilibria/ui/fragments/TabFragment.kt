@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments
 
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
@@ -15,6 +16,7 @@ import android.widget.Toast
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
@@ -30,6 +32,7 @@ import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.android.SupportFragmentNavigator
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
@@ -105,7 +108,15 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
 
     private fun getNavigator(): Navigator {
         if (navigator == null) {
-            navigator = object : SupportFragmentNavigator(childFragmentManager, R.id.fragments_container) {
+            navigator = object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+                override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
+                    return when (screenKey) {
+                        Screens.SETTINGS -> {
+                            Intent(context, SettingsActivity::class.java)
+                        }
+                        else -> null
+                    }
+                }
 
                 override fun setupFragmentTransactionAnimation(
                         command: Command?,

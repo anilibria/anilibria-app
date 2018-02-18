@@ -68,6 +68,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onItemClick(item: GenreItem) {

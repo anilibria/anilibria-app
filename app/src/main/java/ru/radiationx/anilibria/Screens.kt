@@ -18,6 +18,7 @@ object Screens {
     const val AUTH = "AUTH"
     const val AUTH_SOCIAL = "AUTH_SOCIAL"
     const val MAIN = "MAIN"
+    const val SETTINGS = "SETTINGS"
 
     const val FAVORITES = "FAVORITES"
     const val STATIC_PAGE = "STATIC_PAGE"

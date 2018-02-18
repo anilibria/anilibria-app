@@ -60,6 +60,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 

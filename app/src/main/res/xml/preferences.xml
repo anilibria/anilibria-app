@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference android:layout="@layout/preference_shadow_top" />
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="Общие">
+
+        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+            android:defaultValue="false"
+            android:key="episodes_is_reverse"
+            android:layout="@layout/preference_custom"
+            android:summary="Порядок серий при просмотре релиза"
+            android:title="Обратный порядок серий" />
+
+    </PreferenceCategory>
+    <Preference android:layout="@layout/preference_shadow_double" />
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="О программе">
+
+        <Preference
+            android:key="about.check_update"
+            android:layout="@layout/preference_custom"
+            android:title="Проверить обновления" />
+
+        <Preference
+            android:key="about.application"
+            android:layout="@layout/preference_custom"
+            android:title="@string/app_name" />
+
+        <!--<Preference
+            android:key="about.app_faq"
+            android:layout="@layout/preference_custom"
+            android:title="FAQ по программе"/>-->
+
+        <!--<Preference
+            android:key="about.app_topic"
+            android:layout="@layout/preference_custom"
+            android:title="Обсуждение приложения"/>-->
+
+    </PreferenceCategory>
+    <Preference android:layout="@layout/preference_shadow_bottom" />
+</PreferenceScreen>

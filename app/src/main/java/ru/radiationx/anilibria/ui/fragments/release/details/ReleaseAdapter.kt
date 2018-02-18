@@ -19,6 +19,8 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
     private val vitalItems = mutableListOf<VitalItem>()
 
     private var currentRelease: ReleaseFull? = null
+    private var currentTabTag = ReleaseEpisodesHeadDelegate.TAG_ONLINE
+    private var reverseEpisodes = App.injections.appPreferences.getEpisodesIsReverse()
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
             Log.e("SUKA", "onClickClose: $position")
@@ -31,39 +33,22 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
 
     private val episodeHeadListener = object : ReleaseEpisodesHeadDelegate.Listener {
         override fun onSelect(tabTag: String, position: Int) {
+            currentTabTag = tabTag
             currentRelease?.let {
-                val lastCount = items.count { it is ReleaseEpisodeListItem }
+                val startPos = items.indexOfFirst { it is ReleaseEpisodeListItem }
                 items.removeAll { it is ReleaseEpisodeListItem }
                 val newItems = when (tabTag) {
-                    "online" -> it.episodes.map { ReleaseEpisodeListItem(it) }
-                    "download" -> it.episodesSource.map { ReleaseEpisodeListItem(it) }
+                    ReleaseEpisodesHeadDelegate.TAG_ONLINE -> it.episodes.map { ReleaseEpisodeListItem(it) }
+                    ReleaseEpisodesHeadDelegate.TAG_DOWNLOAD -> it.episodesSource.map { ReleaseEpisodeListItem(it) }
                     else -> emptyList()
+                }.toMutableList()
+
+                if (reverseEpisodes) {
+                    newItems.reverse()
                 }
-                val startPos = position + 1
                 items.addAll(startPos, newItems)
 
                 notifyItemRangeChanged(startPos, items.size)
-                /*val newCount = items.count { it is ReleaseEpisodeListItem }
-                val changed = min(lastCount, newCount)
-                val removed = lastCount - newCount
-                val added = newCount - lastCount
-
-                Log.e("SUKA", "CHECK COUNTS: l=$lastCount, n=$newCount, ch=$changed, rem=$removed, add=$added")
-
-                val startChanged = startPos + changed
-
-                Log.e("SUKA", "range ch: $startPos - $startChanged")
-                notifyItemRangeChanged(startPos, startChanged)
-                if (removed > 0) {
-                    Log.e("SUKA", "range rem: $startChanged - ${startChanged + removed}")
-                    notifyItemRangeRemoved(startChanged, startChanged + removed)
-                }
-                if (added > 0) {
-                    Log.e("SUKA", "range add: $startChanged - ${startChanged + added}")
-                    notifyItemRangeInserted(startChanged, startChanged + added)
-                }*/
-                //Log.e("SUKA", "changed: ${position + 1}, ${min(position + items.count { it is ReleaseEpisodeListItem }, items.size)}, max: ${items.size}")
-                //notifyItemRangeChanged(position + 1, min(position + items.count { it is ReleaseEpisodeListItem }, items.size))
                 return@let
             }
         }
@@ -131,13 +116,17 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
             if (release.episodesSource.isNotEmpty() && release.episodesSource.isNotEmpty()) {
-                items.add(ReleaseEpisodesHeadListItem())
+                items.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
-            if (release.episodes.isNotEmpty()) {
-                items.addAll(release.episodes.map { ReleaseEpisodeListItem(it) })
-            } else if (release.episodesSource.isNotEmpty()) {
-                items.addAll(release.episodesSource.map { ReleaseEpisodeListItem(it) })
+            val newItems = when (currentTabTag) {
+                ReleaseEpisodesHeadDelegate.TAG_ONLINE -> release.episodes.map { ReleaseEpisodeListItem(it) }
+                ReleaseEpisodesHeadDelegate.TAG_DOWNLOAD -> release.episodesSource.map { ReleaseEpisodeListItem(it) }
+                else -> emptyList()
+            }.toMutableList()
+            if (reverseEpisodes) {
+                newItems.reverse()
             }
+            items.addAll(newItems)
             items.add(DividerShadowListItem())
         }
 

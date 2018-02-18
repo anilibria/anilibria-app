@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
 import android.view.LayoutInflater
@@ -22,6 +23,8 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     private val dimensionsProvider = App.injections.dimensionsProvider
     private var dimensionsDisposable: Disposable? = null
 
+    protected open val needToolbarShadow = true
+
     @LayoutRes
     protected abstract fun getLayoutResource(): Int
 
@@ -34,6 +37,14 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
             inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
         }
         return newView
+    }
+
+    @CallSuper
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && needToolbarShadow) {
+            toolbar_shadow_prelp?.visibility = View.VISIBLE
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

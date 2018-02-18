@@ -8,13 +8,15 @@ import io.reactivex.functions.Function
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.model.data.storage.EpisodesCheckerStorage
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.model.system.SchedulersProvider
 
 /**
  * Created by radiationx on 17.02.18.
  */
 class ReleaseInteractor(
         private val releaseRepository: ReleaseRepository,
-        private val episodesCheckerStorage: EpisodesCheckerStorage
+        private val episodesCheckerStorage: EpisodesCheckerStorage,
+        private val schedulers: SchedulersProvider
 ) {
 
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
@@ -60,5 +62,7 @@ class ReleaseInteractor(
                             t1
                         }
                 )
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
     }
 }

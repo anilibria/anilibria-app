@@ -54,6 +54,7 @@ class ReleasePresenter(
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadRelease()
+        loadComments(currentPageComment)
         loadVital()
     }
 
@@ -75,12 +76,14 @@ class ReleasePresenter(
         releaseInteractor
                 .observeRelease(releaseId, releaseIdCode)
                 .subscribe({ release ->
-                    releaseId = release.id
+                    if (releaseId != release.id) {
+                        releaseId = release.id
+                        loadComments(currentPageComment)
+                    }
                     releaseIdCode = release.idName
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.setRefreshing(false)
                     viewState.showRelease(release)
-                    loadComments(currentPageComment)
                     currentData = release
                 }) { throwable ->
                     viewState.setRefreshing(false)
@@ -91,6 +94,9 @@ class ReleasePresenter(
     }
 
     private fun loadComments(page: Int) {
+        if (releaseId == -1) {
+            return
+        }
         currentPageComment = page
         releaseRepository
                 .getComments(releaseId, currentPageComment)
@@ -119,7 +125,7 @@ class ReleasePresenter(
         loadComments(currentPageComment + 1)
     }
 
-    fun markEpisodeViewed(episode: ReleaseFull.Episode){
+    fun markEpisodeViewed(episode: ReleaseFull.Episode) {
         episode.isViewed = true
         releaseInteractor.putEpisode(episode)
     }
@@ -162,7 +168,7 @@ class ReleasePresenter(
 
     fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int) {
         currentData?.let {
-            viewState.playEpisode(it, episode, it.episodes.indexOf(episode), quality)
+            viewState.playEpisode(it, episode, quality)
         }
     }
 

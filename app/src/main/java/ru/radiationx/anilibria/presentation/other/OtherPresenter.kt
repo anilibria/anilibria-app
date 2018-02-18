@@ -158,7 +158,7 @@ class OtherPresenter(
                 router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
             }
             MENU_SETTINGS -> {
-                router.showSystemMessage("В данной версии настройки отстутствуют")
+                router.navigateTo(Screens.SETTINGS)
             }
             MENU_GROUP_VK -> {
                 Utils.externalLink("https://vk.com/anilibria")
@@ -173,7 +173,7 @@ class OtherPresenter(
                 Utils.externalLink("https://t.me/anilibria_tv")
             }
             MENU_CHAT_DSC -> {
-                Utils.externalLink("https://discord.gg/nZvVMfp")
+                Utils.externalLink("https://discordapp.com/invite/anilibria")
             }
             MENU_SITE_ANILIB -> {
                 Utils.externalLink("https://anilibria.tv/")

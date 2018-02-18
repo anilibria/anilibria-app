@@ -29,17 +29,23 @@ import java.util.*
 class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionListener, OnErrorListener, VideoControlsButtonListener {
 
     companion object {
-        const val ARG_RELEASE = "episodes"
-        const val ARG_CURRENT = "current"
+        const val ARG_RELEASE = "release"
+        //const val ARG_CURRENT = "current"
+        const val ARG_EPISODE_ID = "episode_id"
         const val ARG_QUALITY = "quality"
+
         const val VAL_QUALITY_SD = 0
         const val VAL_QUALITY_HD = 1
-        private const val NOT_SELECTED = -1
+
+        //private const val NOT_SELECTED = -1
+        private const val NO_ID = -1
+
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
     private lateinit var releaseData: ReleaseFull
-    private var currentEpisode = NOT_SELECTED
+    private var currentEpisodeId = NO_ID
+    //private var currentEpisode = NOT_SELECTED
     private var quality = DEFAULT_QUALITY
     private lateinit var videoControls: VideoControls
     private val fullScreenListener = FullScreenListener()
@@ -68,7 +74,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             release?.let {
                 this.releaseData = it
             }
-            currentEpisode = it.getIntExtra(ARG_CURRENT, if (releaseData.episodes.size > 0) 0 else NOT_SELECTED)
+            currentEpisodeId = it.getIntExtra(ARG_EPISODE_ID, if (releaseData.episodes.size > 0) 0 else NO_ID)
+            //currentEpisode = it.getIntExtra(ARG_CURRENT, if (releaseData.episodes.size > 0) 0 else NOT_SELECTED)
             quality = it.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
         }
 
@@ -185,45 +192,44 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         }
     }
 
-    private fun checkIndex(index: Int): Boolean = index >= 0 && index < releaseData.episodes.size
+    private fun checkIndex(id: Int): Boolean {
+        val lastId = releaseData.episodes.last().id
+        val firstId = releaseData.episodes.first().id
+        return id in lastId..firstId
+    }
 
     private fun getNextEpisode(): ReleaseFull.Episode? {
-        Log.e("S_DEF_LOG", "CLICK NEXT " + currentEpisode)
-        val nextIndex = currentEpisode - 1
-        if (checkIndex(nextIndex)) {
-            Log.e("S_DEF_LOG", "NEXT INDEX " + nextIndex)
-            return getEpisode(nextIndex)
+        val nextId = currentEpisodeId + 1
+        if (checkIndex(nextId)) {
+            Log.e("S_DEF_LOG", "NEXT INDEX " + nextId)
+            return getEpisode(nextId)
         }
         return null
     }
 
     private fun getPrevEpisode(): ReleaseFull.Episode? {
-        val prevIndex = currentEpisode + 1
-        if (checkIndex(prevIndex)) {
-            Log.e("S_DEF_LOG", "PREV INDEX " + prevIndex)
-            return getEpisode(prevIndex)
+        val prevId = currentEpisodeId - 1
+        if (checkIndex(prevId)) {
+            Log.e("S_DEF_LOG", "PREV INDEX " + prevId)
+            return getEpisode(prevId)
         }
         return null
     }
 
-    private fun getEpisode(index: Int = currentEpisode): ReleaseFull.Episode = releaseData.episodes[index]
+    private fun getEpisode(id: Int = currentEpisodeId) = releaseData.episodes.first { it.id == id }
+
+    private fun getEpisodeId(episode: ReleaseFull.Episode) = releaseData.episodes.first { it == episode }.id
 
     private fun playEpisode(episode: ReleaseFull.Episode) {
         if (episode.seek > 0) {
             hardPlayEpisode(episode)
-            //player.pause()
             val titles = arrayOf("К началу", "К последней позиции")
             AlertDialog.Builder(this)
                     .setTitle("Перемотать")
                     .setItems(titles) { dialog, which ->
-                        //hardPlayEpisode(episode)
                         if (which == 1) {
                             player.seekTo(episode.seek)
                         }
-                        //player.start()
-                    }
-                    .setOnCancelListener {
-                        //player.start()
                     }
                     .show()
         } else {
@@ -233,7 +239,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
 
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
         supportActionBar?.subtitle = episode.title
-        currentEpisode = releaseData.episodes.indexOf(episode)
+        currentEpisodeId = getEpisodeId(episode)
         if (quality == VAL_QUALITY_SD) {
             player.setVideoPath(episode.urlSd)
         } else if (quality == VAL_QUALITY_HD) {

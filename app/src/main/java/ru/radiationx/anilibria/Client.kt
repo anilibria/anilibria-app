@@ -87,7 +87,7 @@ class Client constructor(
                 RequestBody.create(MediaType.parse("text/plain; charset=utf-8"), "")
             }
             METHOD_GET -> null
-            else -> throw NullPointerException("Unknown method: $method")
+            else -> throw Exception("Unknown method: $method")
         }
     }
 

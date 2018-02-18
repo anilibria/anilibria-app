@@ -21,6 +21,12 @@
         <item name="android:windowTranslucentStatus">false</item>
     </style>
 
+    <style name="PreferencesAppTheme" parent="BaseAppTheme">
+        <item name="colorPrimary">@color/a_red</item>
+        <item name="colorPrimaryDark">@color/a_red_dark</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

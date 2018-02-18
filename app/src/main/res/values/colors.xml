@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="a_red">#c40304</color>
     <color name="a_red_dark">#ac0304</color>
     <color name="a_gray">#383838</color>
@@ -36,6 +36,5 @@
     <color name="brand_discord">#7289DA</color>
     <color name="brand_telegram">#35a6de</color>
 
-
-
+    <color name="design_bottom_navigation_shadow_color" tools:override="true">#0000</color>
 </resources>

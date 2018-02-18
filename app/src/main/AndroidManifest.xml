@@ -23,6 +23,12 @@
         </activity>
 
         <activity
+            android:name=".ui.activities.SettingsActivity"
+            android:label="Настройки"
+            android:theme="@style/PreferencesAppTheme">
+        </activity>
+
+        <activity
             android:name=".ui.activities.auth.AuthActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />

@@ -15,10 +15,17 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
  * Created by radiationx on 21.01.18.
  */
 class ReleaseEpisodesHeadDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+
+    companion object {
+        const val TAG_ONLINE = "online"
+        const val TAG_DOWNLOAD = "download"
+    }
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseEpisodesHeadListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        (holder as ViewHolder).bind()
+        val item = items[position] as ReleaseEpisodesHeadListItem
+        (holder as ViewHolder).bind(item.tabTag)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
@@ -43,15 +50,21 @@ class ReleaseEpisodesHeadDelegate(private val itemListener: Listener) : AdapterD
 
         init {
             view.run {
-                tabLayout.addTab(tabLayout.newTab().setText("Онлайн").setTag("online"))
-                tabLayout.addTab(tabLayout.newTab().setText("Скачать").setTag("download"))
+                tabLayout.addTab(tabLayout.newTab().setText("Онлайн").setTag(TAG_ONLINE))
+                tabLayout.addTab(tabLayout.newTab().setText("Скачать").setTag(TAG_DOWNLOAD))
                 tabLayout.addOnTabSelectedListener(tabListener)
             }
         }
 
-        fun bind() {
+        fun bind(tabTag: String) {
             view.run {
-
+                (0 until tabLayout.tabCount).forEach {
+                    tabLayout.getTabAt(it)?.let {
+                        if (it.tag == tabTag) {
+                            it.select()
+                        }
+                    }
+                }
             }
         }
     }

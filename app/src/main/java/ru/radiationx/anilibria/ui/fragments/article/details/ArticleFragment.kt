@@ -52,28 +52,13 @@ import java.util.*
  * Created by radiationx on 20.12.17.
  */
 class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAdapter.ItemListener {
-
-    override fun showComments(comments: List<Comment>) {
-        commentsAdapter.setComments(comments)
-    }
-
-    override fun insertMoreComments(comments: List<Comment>) {
-        commentsAdapter.addComments(comments)
-    }
-
-    override fun setEndlessComments(enable: Boolean) {
-        commentsAdapter.endless = enable
-    }
-
-    override fun onLoadMore() {
-        presenter.loadMoreComments()
-    }
-
     companion object {
         const val ARG_ITEM: String = "article_item"
         const val ARG_ID_NAME: String = "article_id_name"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
+
+    override val needToolbarShadow: Boolean = false
 
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
@@ -241,6 +226,22 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             }
         })
         pagerAdapter.preShow(imageUrl, title, nick, comments, views)
+    }
+
+    override fun showComments(comments: List<Comment>) {
+        commentsAdapter.setComments(comments)
+    }
+
+    override fun insertMoreComments(comments: List<Comment>) {
+        commentsAdapter.addComments(comments)
+    }
+
+    override fun setEndlessComments(enable: Boolean) {
+        commentsAdapter.endless = enable
+    }
+
+    override fun onLoadMore() {
+        presenter.loadMoreComments()
     }
 
     private inner class CustomPagerAdapter(

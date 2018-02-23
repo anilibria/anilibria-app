@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray

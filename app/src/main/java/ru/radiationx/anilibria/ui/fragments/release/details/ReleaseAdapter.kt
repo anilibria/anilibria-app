@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
-import android.util.Log
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -12,7 +11,6 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import java.util.*
-import kotlin.math.min
 
 class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 

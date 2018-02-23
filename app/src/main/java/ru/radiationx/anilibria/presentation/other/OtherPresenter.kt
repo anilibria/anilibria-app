@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -16,7 +17,8 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class OtherPresenter(
         private val router: Router,
-        private val authRepository: AuthRepository
+        private val authRepository: AuthRepository,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -137,11 +139,12 @@ class OtherPresenter(
     }
 
     fun signOut() {
-        authRepository.signOut()
+        authRepository
+                .signOut()
                 .subscribe({
                     router.showSystemMessage("Данные авторизации удалены")
                 }, {
-                    router.showSystemMessage("Ошибка: ${it.message}")
+                    errorHandler.handle(it)
                 })
     }
 

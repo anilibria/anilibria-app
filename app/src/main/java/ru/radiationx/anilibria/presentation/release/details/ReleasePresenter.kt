@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -25,7 +26,8 @@ class ReleasePresenter(
         private val historyRepository: HistoryRepository,
         private val vitalRepository: VitalRepository,
         private val router: Router,
-        private val linkHandler: LinkHandler
+        private val linkHandler: LinkHandler,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<ReleaseView>(router) {
 
     companion object {
@@ -88,10 +90,9 @@ class ReleasePresenter(
                     viewState.showRelease(release)
                     currentData = release
                     historyRepository.putRelease(release as ReleaseItem)
-                }) { throwable ->
+                }) {
                     viewState.setRefreshing(false)
-                    Log.d("S_DEF_LOG", "SAS")
-                    throwable.printStackTrace()
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
@@ -114,8 +115,8 @@ class ReleasePresenter(
                     } else {
                         viewState.insertMoreComments(comments.data)
                     }
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
@@ -203,8 +204,8 @@ class ReleasePresenter(
                         fav.count = newCount
                         fav.isFaved = !fav.isFaved
                         viewState.updateFavCounter()
-                    }) { throwable ->
-                        throwable.printStackTrace()
+                    }) {
+                        errorHandler.handle(it)
                     }
                     .addToDisposable()
         }

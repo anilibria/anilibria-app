@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -19,7 +20,8 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class FavoritesPresenter(
         private val releaseRepository: ReleaseRepository,
-        private val router: Router
+        private val router: Router,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<FavoritesView>(router) {
 
 
@@ -47,14 +49,15 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository.getFavorites2()
+        releaseRepository
+                .getFavorites2()
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     onLoad(it)
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
@@ -81,14 +84,15 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository.deleteFavorite(id, currentSessId)
+        releaseRepository
+                .deleteFavorite(id, currentSessId)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     onLoad(it)
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }

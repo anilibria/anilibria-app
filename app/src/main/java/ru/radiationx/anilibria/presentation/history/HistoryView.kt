@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.presentation.history
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView

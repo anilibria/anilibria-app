@@ -1,10 +1,7 @@
 package ru.radiationx.anilibria.model.interactors
 
-import android.util.Log
-import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.model.data.storage.EpisodesCheckerStorage
 import ru.radiationx.anilibria.model.repository.ReleaseRepository

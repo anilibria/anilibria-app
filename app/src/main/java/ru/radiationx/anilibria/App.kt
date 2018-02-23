@@ -30,6 +30,8 @@ import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.ErrorHandlerImpl
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.presentation.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
@@ -75,8 +77,8 @@ class App : Application() {
             Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler " + throwable)
             throwable.printStackTrace()
         }
-        injections = Injections(this)
         navigation = Navigation()
+        injections = Injections(this, navigation.root.router)
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         initImageLoader(this)
@@ -106,7 +108,7 @@ class App : Application() {
     }
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
-    class Injections(context: Context) {
+    class Injections(context: Context, router: Router) {
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
         private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -116,6 +118,7 @@ class App : Application() {
         val historyStorage = HistoryStorage(sharedPreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
+        val errorHandler: ErrorHandler = ErrorHandlerImpl(context, router)
 
         private val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
         private val userHolder: UserHolder = UserStorage(sharedPreferences)

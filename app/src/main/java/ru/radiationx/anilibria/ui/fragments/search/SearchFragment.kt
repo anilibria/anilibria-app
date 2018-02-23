@@ -44,9 +44,12 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
-        return SearchPresenter(App.injections.releaseRepository,
+        return SearchPresenter(
+                App.injections.releaseRepository,
                 App.injections.searchRepository,
-                (parentFragment as RouterProvider).router)
+                (parentFragment as RouterProvider).router,
+                App.injections.errorHandler
+        )
     }
 
     override var sharedViewLocal: View? = null

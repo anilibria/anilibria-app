@@ -38,8 +38,11 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @ProvidePresenter
     fun providePagePresenter(): PagePresenter {
-        return PagePresenter(App.injections.pageRepository,
-                (parentFragment as RouterProvider).router)
+        return PagePresenter(
+                App.injections.pageRepository,
+                (parentFragment as RouterProvider).router,
+                App.injections.errorHandler
+        )
     }
 
 

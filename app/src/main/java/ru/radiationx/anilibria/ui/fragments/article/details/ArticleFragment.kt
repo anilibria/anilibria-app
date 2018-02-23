@@ -13,7 +13,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -76,7 +75,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             App.injections.articleRepository,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).router,
-            App.injections.linkHandler
+            App.injections.linkHandler,
+            App.injections.errorHandler
     )
 
     override var transitionNameLocal = ""

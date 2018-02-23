@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
 import ru.radiationx.anilibria.R;

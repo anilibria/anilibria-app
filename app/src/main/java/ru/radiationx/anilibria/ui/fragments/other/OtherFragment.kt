@@ -40,7 +40,8 @@ class OtherFragment : BaseFragment(), OtherView {
     fun provideOtherPresenter(): OtherPresenter {
         return OtherPresenter(
                 (parentFragment as RouterProvider).router,
-                App.injections.authRepository
+                App.injections.authRepository,
+                App.injections.errorHandler
         )
     }
 

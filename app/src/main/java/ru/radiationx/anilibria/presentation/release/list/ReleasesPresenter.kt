@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -20,7 +21,8 @@ import ru.terrakok.cicerone.Router
 class ReleasesPresenter(
         private val releaseRepository: ReleaseRepository,
         private val vitalRepository: VitalRepository,
-        private val router: Router
+        private val router: Router,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<ReleasesView>(router) {
     companion object {
         private const val START_PAGE = 1
@@ -72,8 +74,8 @@ class ReleasesPresenter(
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }

@@ -7,13 +7,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.repository.CheckerRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 
 /**
  * Created by radiationx on 28.01.18.
  */
 @InjectViewState
 class CheckerPresenter(
-        private val checkerRepository: CheckerRepository
+        private val checkerRepository: CheckerRepository,
+        private val errorHandler: ErrorHandler
 ) : MvpPresenter<CheckerView>() {
 
     var forceLoad = false
@@ -36,7 +38,7 @@ class CheckerPresenter(
                     viewState.showUpdateData(it)
                 }, {
                     viewState.setRefreshing(false)
-                    it.printStackTrace()
+                    errorHandler.handle(it)
                 })
                 .addToDisposable()
     }

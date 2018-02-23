@@ -45,7 +45,8 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     fun provideArticlesPresenter(): ArticlesPresenter = ArticlesPresenter(
             App.injections.articleRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router
+            (parentFragment as RouterProvider).router,
+            App.injections.errorHandler
     )
 
 

@@ -6,7 +6,6 @@ import com.mintrocket.gisdelivery.extension.nullString
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 
 /**

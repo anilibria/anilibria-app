@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -20,7 +21,8 @@ class ArticlePresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
         private val router: Router,
-        private val linkHandler: LinkHandler
+        private val linkHandler: LinkHandler,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<ArticleView>(router) {
 
     companion object {
@@ -58,15 +60,16 @@ class ArticlePresenter(
     private fun loadArticle(code: String) {
         Log.e("S_DEF_LOG", "load article $code")
         viewState.setRefreshing(true)
-        articleRepository.getArticle(code)
+        articleRepository
+                .getArticle(code)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ article ->
                     currentData = article
                     articleId = article.id
                     viewState.showArticle(article)
                     loadComments(currentPageComment)
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
@@ -88,8 +91,8 @@ class ArticlePresenter(
                     } else {
                         viewState.insertMoreComments(comments.data)
                     }
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }

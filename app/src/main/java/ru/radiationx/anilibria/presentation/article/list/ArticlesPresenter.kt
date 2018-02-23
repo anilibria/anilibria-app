@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -19,7 +20,8 @@ import ru.terrakok.cicerone.Router
 open class ArticlesPresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        private val router: Router
+        private val router: Router,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<ArticlesView>(router) {
     companion object {
         private const val START_PAGE = 1
@@ -64,7 +66,8 @@ open class ArticlesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        articleRepository.getArticles(category, /*subCategory, */page)
+        articleRepository
+                .getArticles(category, /*subCategory, */page)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
@@ -73,8 +76,8 @@ open class ArticlesPresenter(
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }

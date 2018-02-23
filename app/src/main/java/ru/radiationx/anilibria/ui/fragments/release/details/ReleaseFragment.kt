@@ -87,7 +87,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.historyRepository,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).router,
-            App.injections.linkHandler
+            App.injections.linkHandler,
+            App.injections.errorHandler
     )
 
     override var transitionNameLocal = ""

@@ -2,19 +2,14 @@ package ru.radiationx.anilibria.ui.activities.updatechecker
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.DownloadManager
-import android.content.Context
 import android.graphics.Typeface
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -27,7 +22,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
-import ru.radiationx.anilibria.utils.MimeTypeUtil
 import ru.radiationx.anilibria.utils.Utils
 
 /**
@@ -46,7 +40,8 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
 
     @ProvidePresenter
     fun provideCheckerPresenter() = CheckerPresenter(
-            App.injections.checkerRepository
+            App.injections.checkerRepository,
+            App.injections.errorHandler
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

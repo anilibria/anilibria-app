@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -17,7 +18,8 @@ import ru.terrakok.cicerone.Router
 class SearchPresenter(
         private val releaseRepository: ReleaseRepository,
         private val searchRepository: SearchRepository,
-        private val router: Router
+        private val router: Router,
+        private val errorHandler: ErrorHandler
 ) : BasePresenter<SearchView>(router) {
 
     companion object {
@@ -40,29 +42,29 @@ class SearchPresenter(
     }
 
     fun fastSearch(query: String) {
-        searchRepository.fastSearch(query)
+        searchRepository
+                .fastSearch(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showFastItems(searchItems)
-                }) { throwable ->
-                    Log.d("S_DEF_LOG", "SAS")
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
 
     private fun loadGenres() {
-        releaseRepository.getGenres()
+        releaseRepository
+                .getGenres()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ genres ->
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showGenres(genres)
-                }) { throwable ->
-                    Log.d("S_DEF_LOG", "SAS")
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
@@ -81,20 +83,20 @@ class SearchPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        searchRepository.searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+        searchRepository
+                .searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {
-
                         viewState.showReleases(releaseItems.data)
                     } else {
                         viewState.insertMore(releaseItems.data)
                     }
-                }) { throwable ->
-                    throwable.printStackTrace()
+                }) {
+                    errorHandler.handle(it)
                 }
                 .addToDisposable()
     }

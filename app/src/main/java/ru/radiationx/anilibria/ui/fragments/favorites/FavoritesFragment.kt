@@ -32,8 +32,11 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
     @ProvidePresenter
     fun provideFavoritesPresenter(): FavoritesPresenter {
-        return FavoritesPresenter(App.injections.releaseRepository,
-                (parentFragment as RouterProvider).router)
+        return FavoritesPresenter(
+                App.injections.releaseRepository,
+                (parentFragment as RouterProvider).router,
+                App.injections.errorHandler
+        )
     }
 
     override var sharedViewLocal: View? = null

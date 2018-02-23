@@ -4,6 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.presentation.ErrorHandler
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -12,8 +13,11 @@ import ru.terrakok.cicerone.Router
  * Created by radiationx on 30.12.17.
  */
 @InjectViewState
-class AuthPresenter(private val router: Router,
-                    private val authRepository: AuthRepository) : BasePresenter<AuthView>(router) {
+class AuthPresenter(
+        private val router: Router,
+        private val authRepository: AuthRepository,
+        private val errorHandler: ErrorHandler
+) : BasePresenter<AuthView>(router) {
 
     companion object {
         const val SOCIAL_PATREON = "patreon"
@@ -39,7 +43,8 @@ class AuthPresenter(private val router: Router,
     }
 
     private fun loadAuthPage() {
-        authRepository.loadAuthPage()
+        authRepository
+                .loadAuthPage()
                 .subscribe({ urls ->
                     urls.forEachIndexed { index, s ->
                         val name = when (index) {
@@ -50,32 +55,34 @@ class AuthPresenter(private val router: Router,
                         name?.let { socialUrls.put(it, s) }
                     }
                     viewState.showSocial()
-                }, { throwable ->
-                    throwable.printStackTrace()
+                }, {
+                    errorHandler.handle(it)
                 })
                 .addToDisposable()
     }
 
     private fun signIn(redirectUrl: String) {
         viewState.setRefreshing(true)
-        authRepository.signIn(redirectUrl)
+        authRepository
+                .signIn(redirectUrl)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ user ->
                     decideWhatToDo(user.authState)
-                }, { throwable ->
-                    throwable.printStackTrace()
+                }, {
+                    errorHandler.handle(it)
                 })
                 .addToDisposable()
     }
 
     fun signIn(login: String, password: String) {
         viewState.setRefreshing(true)
-        authRepository.signIn(login, password)
+        authRepository
+                .signIn(login, password)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ user ->
                     decideWhatToDo(user.authState)
-                }, { throwable ->
-                    throwable.printStackTrace()
+                }, {
+                    errorHandler.handle(it)
                 })
                 .addToDisposable()
     }

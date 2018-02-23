@@ -36,7 +36,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
     fun provideReleasesPresenter(): ReleasesPresenter = ReleasesPresenter(
             App.injections.releaseRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router
+            (parentFragment as RouterProvider).router,
+            App.injections.errorHandler
     )
 
     override var sharedViewLocal: View? = null

@@ -165,7 +165,13 @@ class ReleasePresenter(
             if (it.episodes.isEmpty()) {
                 it.moonwalkLink?.let { viewState.playMoonwalk(it) }
             } else {
-                viewState.playEpisodes(it)
+                val startWith = releaseInteractor
+                        .getEpisodes(it.id)
+                        .maxBy { it.id }
+                        ?.let { episode ->
+                            it.episodes.first { it.id == episode.id }
+                        }
+                viewState.playEpisodes(it, startWith)
             }
         }
     }

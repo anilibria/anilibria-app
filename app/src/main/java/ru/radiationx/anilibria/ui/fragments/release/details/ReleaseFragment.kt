@@ -158,19 +158,19 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
                 if (scrim) {
-                    toolbar.navigationIcon?.clearColorFilter()
-                    toolbar.overflowIcon?.clearColorFilter()
-                    toolbar.title = currentTitle
-                    //toolbarTitleView.setVisibility(View.VISIBLE)
-
-                    toolbarInsetShadow.visibility = View.GONE
+                    toolbar?.let {
+                        it.navigationIcon?.clearColorFilter()
+                        it.overflowIcon?.clearColorFilter()
+                        it.title = currentTitle
+                        toolbarInsetShadow.visibility = View.GONE
+                    }
                 } else {
-                    toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                    toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                    toolbar.title = null
-                    //toolbarTitleView.setVisibility(View.GONE)
-
-                    toolbarInsetShadow.visibility = View.VISIBLE
+                    toolbar?.let {
+                        it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                        it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                        it.title = null
+                        toolbarInsetShadow.visibility = View.VISIBLE
+                    }
                 }
             }
         })
@@ -314,10 +314,28 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onClickDonate()
     }
 
-    override fun playEpisodes(release: ReleaseFull) {
-        showQualityDialog({ quality ->
-            presenter.onPlayEpisodeClick(release.episodes.last(), quality)
-        })
+    override fun playEpisodes(release: ReleaseFull, startWith: ReleaseFull.Episode?) {
+        if (startWith != null) {
+            context?.let {
+                val titles = arrayOf("Первая серия", "Последняя просмотренная")
+                AlertDialog.Builder(it)
+                        .setTitle("Начать с")
+                        .setItems(titles) { dialog, which ->
+                            val startEpisode = when (which) {
+                                1 -> startWith
+                                else -> release.episodes.last()
+                            }
+                            showQualityDialog({ quality ->
+                                presenter.onPlayEpisodeClick(startEpisode, quality)
+                            })
+                        }
+                        .show()
+            }
+        } else {
+            showQualityDialog({ quality ->
+                presenter.onPlayEpisodeClick(release.episodes.last(), quality)
+            })
+        }
     }
 
     override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {

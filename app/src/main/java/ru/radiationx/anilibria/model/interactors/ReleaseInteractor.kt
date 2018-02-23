@@ -18,6 +18,8 @@ class ReleaseInteractor(
 
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
 
+    fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
+
     fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
         val source = when {
             id != -1 -> releaseRepository.getRelease(id)

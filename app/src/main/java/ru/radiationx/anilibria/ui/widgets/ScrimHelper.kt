@@ -29,7 +29,7 @@ class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLa
         }
     }
 
-    fun setScrimListener(scrimListener: ScrimListener) {
+    fun setScrimListener(scrimListener: ScrimListener?) {
         this.scrimListener = scrimListener
     }
 

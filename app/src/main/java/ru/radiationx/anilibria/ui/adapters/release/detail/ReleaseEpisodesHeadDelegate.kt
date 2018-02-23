@@ -61,7 +61,8 @@ class ReleaseEpisodesHeadDelegate(private val itemListener: Listener) : AdapterD
                 (0 until tabLayout.tabCount).forEach {
                     tabLayout.getTabAt(it)?.let {
                         if (it.tag == tabTag) {
-                            it.select()
+                            //todo Чеита падает, например осамацу 2, вкладка скачать
+                            //it.select()
                         }
                     }
                 }

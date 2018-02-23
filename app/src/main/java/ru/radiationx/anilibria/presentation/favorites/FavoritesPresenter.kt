@@ -33,6 +33,9 @@ class FavoritesPresenter(
 
     private var currentSessId = ""
 
+
+    private val currentReleases = mutableListOf<ReleaseItem>()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach")
@@ -66,10 +69,12 @@ class FavoritesPresenter(
         currentSessId = favData.sessId
         viewState.setEndless(!favData.items.isEnd())
         if (isFirstPage()) {
+            currentReleases.clear()
             viewState.showReleases(favData.items.data)
         } else {
             viewState.insertMore(favData.items.data)
         }
+        currentReleases.addAll(favData.items.data)
     }
 
     fun refreshReleases() {
@@ -95,6 +100,17 @@ class FavoritesPresenter(
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    fun localSearch(query: String) {
+        if (!query.isEmpty()) {
+            val searchRes = currentReleases.filter {
+                it.title.orEmpty().contains(query, true) || it.originalTitle.orEmpty().contains(query, true)
+            }
+            viewState.showReleases(searchRes)
+        } else {
+            viewState.showReleases(currentReleases)
+        }
     }
 
     fun onItemClick(item: ReleaseItem) {

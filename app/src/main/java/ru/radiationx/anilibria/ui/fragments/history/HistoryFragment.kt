@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -63,6 +66,24 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
                     .spacingDp(8f)
             )
         }
+
+        toolbar.inflateMenu(R.menu.search)
+        val searchItem = toolbar.menu.findItem(R.id.action_search)
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = searchItem.actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        searchView.queryHint = "Название"
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                presenter.localSearch(newText)
+                return false
+            }
+        })
     }
 
     override fun setRefreshing(refreshing: Boolean) {}
@@ -87,6 +108,13 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     }
 
     override fun onBackPressed(): Boolean {
+        toolbar.menu.findItem(R.id.action_search)?.let {
+            if (it.isActionViewExpanded) {
+                (it.actionView as SearchView).setQuery(null, false)
+                toolbar.collapseActionView()
+                return true
+            }
+        }
         presenter.onBackPressed()
         return true
     }

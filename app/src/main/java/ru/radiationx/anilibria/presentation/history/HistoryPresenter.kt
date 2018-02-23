@@ -18,6 +18,8 @@ class HistoryPresenter(
         private val historyRepository: HistoryRepository
 ) : BasePresenter<HistoryView>(router) {
 
+    private val currentReleases = mutableListOf<ReleaseItem>()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         observeReleases()
@@ -27,9 +29,22 @@ class HistoryPresenter(
         historyRepository
                 .observeReleases()
                 .subscribe {
+                    currentReleases.clear()
+                    currentReleases.addAll(it)
                     viewState.showReleases(it)
                 }
                 .addToDisposable()
+    }
+
+    fun localSearch(query: String) {
+        if (!query.isEmpty()) {
+            val searchRes = currentReleases.filter {
+                it.title.orEmpty().contains(query, true) || it.originalTitle.orEmpty().contains(query, true)
+            }
+            viewState.showReleases(searchRes)
+        } else {
+            viewState.showReleases(currentReleases)
+        }
     }
 
     fun onItemClick(item: ReleaseItem) {

@@ -20,6 +20,16 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import android.support.v4.view.MenuItemCompat.getActionView
+import android.content.Context.SEARCH_SERVICE
+import android.app.SearchManager
+import android.R.menu
+import android.content.Context
+import android.support.v7.widget.SearchView
+import android.view.MenuInflater
+import java.util.ArrayList
+
 
 /**
  * Created by radiationx on 13.01.18.
@@ -70,9 +80,34 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
                     .spacingDp(8f)
             )
         }
+
+        toolbar.inflateMenu(R.menu.search)
+        val searchItem = toolbar.menu.findItem(R.id.action_search)
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = searchItem.actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        searchView.queryHint = "Название"
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                presenter.localSearch(newText)
+                return false
+            }
+        })
     }
 
     override fun onBackPressed(): Boolean {
+        toolbar.menu.findItem(R.id.action_search)?.let {
+            if (it.isActionViewExpanded) {
+                (it.actionView as SearchView).setQuery(null, false)
+                toolbar.collapseActionView()
+                return true
+            }
+        }
         presenter.onBackPressed()
         return true
     }

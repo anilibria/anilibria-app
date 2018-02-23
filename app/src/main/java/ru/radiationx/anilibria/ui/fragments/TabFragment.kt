@@ -110,8 +110,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun handle(url: String): Boolean {
         val linkHandler = App.injections.linkHandler
+        Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
-            Log.e("lalala", "IntentHandler $localScreen handle $url, screen=$it")
+            Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
             linkHandler.handle(url, router)
             return true
         }

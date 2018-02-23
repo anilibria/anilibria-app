@@ -62,11 +62,12 @@ class ArticlePresenter(
         viewState.setRefreshing(true)
         articleRepository
                 .getArticle(code)
-                .doAfterTerminate { viewState.setRefreshing(false) }
+                .doOnSubscribe { viewState.setRefreshing(true) }
                 .subscribe({ article ->
                     currentData = article
                     articleId = article.id
                     viewState.showArticle(article)
+                    viewState.setRefreshing(false)
                     loadComments(currentPageComment)
                 }) {
                     errorHandler.handle(it)

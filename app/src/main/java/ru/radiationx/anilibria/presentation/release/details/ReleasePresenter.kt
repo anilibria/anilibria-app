@@ -79,6 +79,7 @@ class ReleasePresenter(
         Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
                 .observeRelease(releaseId, releaseIdCode)
+                .doOnSubscribe { viewState.setRefreshing(true) }
                 .subscribe({ release ->
                     if (releaseId != release.id) {
                         releaseId = release.id
@@ -86,12 +87,11 @@ class ReleasePresenter(
                     }
                     releaseIdCode = release.idName
                     Log.d("S_DEF_LOG", "subscribe call show")
-                    viewState.setRefreshing(false)
                     viewState.showRelease(release)
+                    viewState.setRefreshing(false)
                     currentData = release
                     historyRepository.putRelease(release as ReleaseItem)
                 }) {
-                    viewState.setRefreshing(false)
                     errorHandler.handle(it)
                 }
                 .addToDisposable()

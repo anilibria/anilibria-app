@@ -204,7 +204,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-
+        progressBar.visibility = if (refreshing) View.VISIBLE else View.GONE
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

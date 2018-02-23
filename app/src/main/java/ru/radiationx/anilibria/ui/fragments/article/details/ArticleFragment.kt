@@ -196,6 +196,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     }
 
     override fun setRefreshing(refreshing: Boolean) {
+        progressBar.visibility = if (refreshing) View.VISIBLE else View.GONE
         pagerAdapter.setRefreshing(refreshing)
     }
 

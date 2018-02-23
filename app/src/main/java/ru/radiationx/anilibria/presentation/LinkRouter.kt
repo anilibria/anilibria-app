@@ -17,7 +17,7 @@ class LinkRouter : LinkHandler {
     }
 
     private val articleDetail by lazy {
-        Pattern.compile("\\/[a-zA-Z0-9]+\\/([a-zA-Z0-9]+)\\/?\$")
+        Pattern.compile("\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\\/?\$")
     }
 
     override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {

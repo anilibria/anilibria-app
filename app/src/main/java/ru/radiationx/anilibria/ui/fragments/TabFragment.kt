@@ -9,6 +9,7 @@ import android.support.transition.*
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesFragment
@@ -37,7 +39,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 
-class TabFragment : Fragment(), RouterProvider, BackButtonListener {
+class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandler {
 
     companion object {
         const val TRANSITION_MOVE_TIME: Long = 375
@@ -104,6 +106,16 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener {
             //(activity as RouterProvider).router.exit()
             false
         }
+    }
+
+    override fun handle(url: String): Boolean {
+        val linkHandler = App.injections.linkHandler
+        linkHandler.findScreen(url)?.let {
+            Log.e("lalala", "IntentHandler $localScreen handle $url, screen=$it")
+            linkHandler.handle(url, router)
+            return true
+        }
+        return false
     }
 
     private fun getNavigator(): Navigator {

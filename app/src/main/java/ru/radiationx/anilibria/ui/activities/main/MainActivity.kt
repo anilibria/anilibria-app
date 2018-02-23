@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -80,7 +81,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
         savedInstanceState?.let {
             it.getStringArrayList(TABS_STACK)?.let {
-                if(it.isNotEmpty()){
+                if (it.isNotEmpty()) {
                     tabsStack.addAll(it)
                     presenter.defaultScreen = it.last()
                 }
@@ -91,14 +92,20 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
             SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
         }
 
-        /*if (savedInstanceState == null) {
-            presenter.selectTab(Screens.MAIN_RELEASES)
-        }*/
+
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.e("lalala", "MainActivity, onNewIntent $intent")
+        handleIntent(intent)
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
+        Log.e("lalala", "MainActivity, onCreate {savedInstanceState == null}, $intent")
+        handleIntent(intent)
     }
 
     override fun onPause() {
@@ -124,6 +131,31 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         } else {
             presenter.onBackPressed()
         }
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        Log.e("lalala", "MainActivity, handleIntent $intent")
+        if (intent != null && intent.data != null) {
+            val url = intent.data.toString()
+            var handled = findTabIntentHandler(url, tabsStack.asReversed())
+            if (!handled) {
+                handled = findTabIntentHandler(url, tabs.map { it.screenKey })
+            }
+            Log.e("lalala", "MainActivity, handled $handled")
+        }
+        intent?.data = null
+    }
+
+    private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
+        val fm = supportFragmentManager
+        tabs.forEach {
+            fm.findFragmentByTag(it)?.let {
+                if (it is IntentHandler && it.handle(url)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     private fun initContainers() {

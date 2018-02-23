@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activities.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,11 +23,32 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activities.main.IntentActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="anilibria.tv"
+                    android:scheme="http" />
+                <data
+                    android:host="www.anilibria.tv"
+                    android:scheme="http" />
+                <data
+                    android:host="anilibria.tv"
+                    android:scheme="https" />
+                <data
+                    android:host="www.anilibria.tv"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="Настройки"
-            android:theme="@style/PreferencesAppTheme">
-        </activity>
+            android:theme="@style/PreferencesAppTheme"/>
 
         <activity
             android:name=".ui.activities.auth.AuthActivity"
@@ -50,8 +72,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="c9fe0be2960a17da9205646f7a0c5e5a9f17c65f"
-            />
+            android:value="c9fe0be2960a17da9205646f7a0c5e5a9f17c65f" />
     </application>
 
 </manifest>

@@ -20,7 +20,7 @@ class LinkRouter : LinkHandler {
         Pattern.compile("\\/[a-zA-Z0-9]+\\/([a-zA-Z0-9]+)\\/?\$")
     }
 
-    override fun handle(url: String, router: Router): Boolean {
+    override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {
         releaseDetail.matcher(url).let {
             if (it.find()) {
                 val args: Bundle = Bundle().apply {
@@ -31,7 +31,9 @@ class LinkRouter : LinkHandler {
                         putString(ReleaseFragment.ARG_ID_CODE, it)
                     }
                 }
-                router.navigateTo(Screens.RELEASE_DETAILS, args)
+                if (doNavigate) {
+                    router?.navigateTo(Screens.RELEASE_DETAILS, args)
+                }
                 return true
             }
         }
@@ -40,11 +42,23 @@ class LinkRouter : LinkHandler {
                 val args: Bundle = Bundle().apply {
                     putString(ArticleFragment.ARG_ID_NAME, it.group(1))
                 }
-                router.navigateTo(Screens.ARTICLE_DETAILS, args)
+                if (doNavigate) {
+                    router?.navigateTo(Screens.ARTICLE_DETAILS, args)
+                }
                 return true
             }
         }
         return false
+    }
+
+    override fun findScreen(url: String): String? {
+        if (releaseDetail.matcher(url).find()) {
+            return Screens.RELEASE_DETAILS
+        }
+        if (articleDetail.matcher(url).find()) {
+            return Screens.ARTICLE_DETAILS
+        }
+        return null
     }
 
 }

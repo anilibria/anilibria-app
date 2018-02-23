@@ -61,6 +61,11 @@
             android:theme="@style/PlayerTheme" />
 
         <activity
+            android:name=".ui.activities.WebPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:theme="@style/PlayerTheme" />
+
+        <activity
             android:name=".ui.activities.FullScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />

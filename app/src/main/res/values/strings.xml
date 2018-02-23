@@ -10,6 +10,7 @@
     <string name="fragment_title_favorites">Избранное</string>
 
     <string name="download_torrent">Скачать торрент</string>
+    <string name="watch_web">Веб-плеер</string>
     <string name="watch_all">Смотреть онлайн</string>
     <string name="item_donate">Понравилась озвучка?\nПоддержи проект :3</string>
     <string name="updater_download">Загрузить</string>

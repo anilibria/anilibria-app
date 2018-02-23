@@ -24,4 +24,6 @@ object Screens {
     const val STATIC_PAGE = "STATIC_PAGE"
 
     const val HISTORY = "HISTORY"
+
+    const val PLAYER_WEB = "PLAYER_WEB"
 }

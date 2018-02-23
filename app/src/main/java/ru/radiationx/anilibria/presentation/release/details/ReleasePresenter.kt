@@ -160,19 +160,23 @@ class ReleasePresenter(
         }
     }
 
+    fun onClickWatchWeb() {
+        currentData?.let {
+            it.moonwalkLink?.let {
+                viewState.playWeb(it)
+            }
+        }
+    }
+
     fun onPlayAllClick() {
         currentData?.let {
-            if (it.episodes.isEmpty()) {
-                it.moonwalkLink?.let { viewState.playMoonwalk(it) }
-            } else {
-                val startWith = releaseInteractor
-                        .getEpisodes(it.id)
-                        .maxBy { it.id }
-                        ?.let { episode ->
-                            it.episodes.first { it.id == episode.id }
-                        }
-                viewState.playEpisodes(it, startWith)
-            }
+            val startWith = releaseInteractor
+                    .getEpisodes(it.id)
+                    .maxBy { it.id }
+                    ?.let { episode ->
+                        it.episodes.first { it.id == episode.id }
+                    }
+            viewState.playEpisodes(it, startWith)
         }
     }
 

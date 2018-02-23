@@ -43,6 +43,7 @@ import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
+import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -414,8 +415,15 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
-    override fun playMoonwalk(link: String) {
-        Utils.externalLink(link)
+    override fun playWeb(link: String) {
+        //Utils.externalLink(link)
+        startActivity(Intent(context, WebPlayerActivity::class.java).apply {
+            putExtra(WebPlayerActivity.ARG_URL, link)
+        })
+    }
+
+    override fun onClickWatchWeb() {
+        presenter.onClickWatchWeb()
     }
 
     private fun showQualityDialog(onSelect: (quality: Int) -> Unit) {

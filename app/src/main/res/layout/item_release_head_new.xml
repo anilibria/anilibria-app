@@ -155,6 +155,15 @@
         android:layout_marginStart="16dp"
         android:text="@string/watch_all" />
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/full_button_watch_web"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/watch_web" />
+
     <!--<View
         android:layout_width="match_parent"
         android:layout_height="1dp"

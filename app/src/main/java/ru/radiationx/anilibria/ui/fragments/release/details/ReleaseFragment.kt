@@ -41,6 +41,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
@@ -282,9 +283,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
     override fun onClickEpisode(episode: ReleaseFull.Episode) {
-        showQualityDialog({ quality ->
-            presenter.onPlayEpisodeClick(episode, quality)
-        })
+        presenter.onPlayEpisodeClick(episode)
     }
 
     override fun onClickTorrent(url: String?) {
@@ -293,6 +292,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun onClickWatchAll() {
         presenter.onPlayAllClick()
+    }
+
+    override fun onClickContinue() {
+        presenter.onClickContinue()
     }
 
     override fun onClickTag(text: String) {
@@ -315,57 +318,74 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onClickDonate()
     }
 
-    override fun playEpisodes(release: ReleaseFull, startWith: ReleaseFull.Episode?) {
-        if (startWith != null) {
-            context?.let {
-                val titles = arrayOf("Первая серия", "Последняя просмотренная")
-                AlertDialog.Builder(it)
-                        .setTitle("Начать с")
-                        .setItems(titles) { dialog, which ->
-                            val startEpisode = when (which) {
-                                1 -> startWith
-                                else -> release.episodes.last()
-                            }
-                            showQualityDialog({ quality ->
-                                presenter.onPlayEpisodeClick(startEpisode, quality)
-                            })
+    override fun playEpisodes(release: ReleaseFull) {
+        /*selectQuality({ quality ->
+            playEpisode(release, release.episodes.last(), quality)
+        })*/
+        playEpisode(release, release.episodes.last())
+    }
+
+    override fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode) {
+        /*selectQuality({ quality ->
+            playEpisode(release, startWith, quality, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+        })*/
+        playEpisode(release, startWith, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+    }
+
+    private fun getUrlByQuality(episode: ReleaseFull.Episode, quality: Int): String {
+        return when (quality) {
+            0 -> episode.urlSd
+            1 -> episode.urlHd
+            else -> episode.urlSd
+        }.orEmpty()
+    }
+
+    private fun showDownloadDialog(url: String) {
+        val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(titles) { dialog, which ->
+                        when (which) {
+                            0 -> Utils.externalLink(url)
+                            1 -> systemDownloadWithPermissionCheck(url)
                         }
-                        .show()
-            }
-        } else {
-            showQualityDialog({ quality ->
-                presenter.onPlayEpisodeClick(release.episodes.last(), quality)
-            })
+                    }
+                    .show()
         }
     }
 
-    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
+    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
-            val url = when (quality) {
-                0 -> episode.urlSd
-                1 -> episode.urlHd
-                else -> episode.urlSd
-            }.orEmpty()
-
-            val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
-            context?.let {
-                AlertDialog.Builder(it)
-                        .setItems(titles) { dialog, which ->
-                            when (which) {
-                                0 -> Utils.externalLink(url)
-                                1 -> systemDownloadWithPermissionCheck(url)
-                            }
-                        }
-                        .show()
+            if (quality == null) {
+                selectQuality({ selected ->
+                    showDownloadDialog(getUrlByQuality(episode, selected))
+                }, true)
+            } else {
+                showDownloadDialog(getUrlByQuality(episode, quality))
             }
         } else {
             val titles = arrayOf("Внешний плеер", "Внутренний плеер")
             context?.let {
                 AlertDialog.Builder(it)
                         .setItems(titles) { dialog, which ->
-                            when (which) {
-                                0 -> playExternal(release, episode, quality)
-                                1 -> playInternal(release, episode, quality)
+                            if (quality == null) {
+                                when (which) {
+                                    0 -> {
+                                        selectQuality({ selected ->
+                                            playExternal(release, episode, selected)
+                                        }, true)
+                                    }
+                                    1 -> {
+                                        selectQuality({ selected ->
+                                            playInternal(release, episode, selected, playFlag)
+                                        })
+                                    }
+                                }
+                            } else {
+                                when (which) {
+                                    0 -> playExternal(release, episode, quality)
+                                    1 -> playInternal(release, episode, quality, playFlag)
+                                }
                             }
                         }
                         .show()
@@ -389,11 +409,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         onRequestPermissionsResult(requestCode, grantResults)
     }
 
-    private fun playInternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
+    private fun playInternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int, playFlag: Int? = null) {
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
             putExtra(MyPlayerActivity.ARG_QUALITY, quality)
+            playFlag?.let {
+                putExtra(MyPlayerActivity.ARG_PLAY_FLAG, it)
+            }
         })
     }
 
@@ -426,7 +449,29 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onClickWatchWeb()
     }
 
-    private fun showQualityDialog(onSelect: (quality: Int) -> Unit) {
+    private fun selectQuality(onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
+        if (forceDialog) {
+            showQualityDialog(onSelect, false)
+        } else {
+            val savedQuality = presenter.getQuality()
+            when (savedQuality) {
+                PreferencesHolder.QUALITY_NO -> {
+                    showQualityDialog(onSelect)
+                }
+                PreferencesHolder.QUALITY_ALWAYS -> {
+                    showQualityDialog(onSelect, false)
+                }
+                PreferencesHolder.QUALITY_SD -> {
+                    onSelect(MyPlayerActivity.VAL_QUALITY_SD)
+                }
+                PreferencesHolder.QUALITY_HD -> {
+                    onSelect(MyPlayerActivity.VAL_QUALITY_HD)
+                }
+            }
+        }
+    }
+
+    private fun showQualityDialog(onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
         context?.let {
             AlertDialog.Builder(it)
                     .setTitle("Качество")
@@ -437,6 +482,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                             else -> -1
                         }
                         if (quality != -1) {
+                            if(saveQuality){
+                                presenter.setQuality(when (quality) {
+                                    MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+                                    MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+                                    else -> PreferencesHolder.QUALITY_NO
+                                })
+                            }
                             onSelect.invoke(quality)
                         }
                     }

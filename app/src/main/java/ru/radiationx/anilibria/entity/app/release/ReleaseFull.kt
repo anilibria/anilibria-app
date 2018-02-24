@@ -34,6 +34,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var id: Int = 0
         var seek: Long = 0
         var isViewed: Boolean = false
+        var lastAccess: Long = 0
 
         var title: String? = null
         var urlSd: String? = null

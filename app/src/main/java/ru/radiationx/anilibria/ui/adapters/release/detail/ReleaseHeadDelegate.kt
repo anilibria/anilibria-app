@@ -55,9 +55,6 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                 full_tags.setOnTagClickListener { tag, i ->
                     itemListener.onClickTag(tag.text)
                 }
-                full_button_watch_all.setOnClickListener {
-                    itemListener.onClickWatchAll()
-                }
                 full_button_watch_web.setOnClickListener {
                     itemListener.onClickWatchWeb()
                 }
@@ -104,7 +101,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
                 val hasEpisodes = !item.episodes.isEmpty()
                 val hasMoonwalk = item.moonwalkLink != null
-                full_button_watch_all.isEnabled = hasEpisodes
+                //full_button_watch_all.isEnabled = hasEpisodes
                 full_button_watch_web.isEnabled = hasMoonwalk
 
                 //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
@@ -131,8 +128,6 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
         fun onClickTorrent(url: String?)
 
         fun onClickTag(text: String)
-
-        fun onClickWatchAll()
 
         fun onClickWatchWeb()
 

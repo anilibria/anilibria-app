@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.interactors
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.storage.EpisodesCheckerStorage
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
@@ -13,12 +14,17 @@ import ru.radiationx.anilibria.model.system.SchedulersProvider
 class ReleaseInteractor(
         private val releaseRepository: ReleaseRepository,
         private val episodesCheckerStorage: EpisodesCheckerStorage,
+        private val preferencesHolder: PreferencesHolder,
         private val schedulers: SchedulersProvider
 ) {
 
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
 
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
+
+    fun getQuality() = preferencesHolder.getQuality()
+
+    fun setQuality(value: Int) = preferencesHolder.setQuality(value)
 
     fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
         val source = when {
@@ -35,6 +41,7 @@ class ReleaseInteractor(
                                 t1.episodes.firstOrNull { it.id == localEpisode.id }?.let {
                                     it.isViewed = localEpisode.isViewed
                                     it.seek = localEpisode.seek
+                                    it.lastAccess = localEpisode.lastAccess
                                 }
                             }
                             t1

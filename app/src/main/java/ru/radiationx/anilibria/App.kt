@@ -143,7 +143,7 @@ class App : Application() {
         val checkerRepository = CheckerRepository(schedulers, checkerApi)
         val historyRepository = HistoryRepository(schedulers, historyStorage)
 
-        val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage, schedulers)
+        val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage, appPreferences, schedulers)
     }
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

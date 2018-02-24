@@ -13,6 +13,11 @@
             android:summary="Порядок серий при просмотре страницы релиза"
             android:title="Обратный порядок серий" />
 
+        <Preference
+            android:key="quality"
+            android:layout="@layout/preference_custom"
+            android:title="Качество видео" />
+
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_double" />
     <PreferenceCategory

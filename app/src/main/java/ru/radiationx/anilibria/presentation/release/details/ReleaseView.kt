@@ -41,11 +41,14 @@ interface ReleaseView : IBaseView {
     fun copyLink(url: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisodes(release: ReleaseFull, startWith: ReleaseFull.Episode?)
+    fun playEpisodes(release: ReleaseFull)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode)
 
     @StateStrategyType(SkipStrategy::class)
     fun playWeb(link: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int)
+    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)
 }

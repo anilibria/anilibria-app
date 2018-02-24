@@ -40,6 +40,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 /* Release detail screen */
 
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode) : ListItem()
+class ReleaseEpisodeControlItem(val item: ReleaseFull) : ListItem()
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
 class ReleaseDonateListItem : ListItem()
 class ReleaseRemindListItem : ListItem()

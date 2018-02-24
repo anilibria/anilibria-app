@@ -2,7 +2,10 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -21,6 +24,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import java.lang.Exception
 import java.util.*
@@ -33,9 +37,15 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         //const val ARG_CURRENT = "current"
         const val ARG_EPISODE_ID = "episode_id"
         const val ARG_QUALITY = "quality"
+        const val ARG_PLAY_FLAG = "play_flag"
 
         const val VAL_QUALITY_SD = 0
         const val VAL_QUALITY_HD = 1
+
+        const val PLAY_FLAG_DEFAULT = 0
+        const val PLAY_FLAG_FORCE_START = 1
+        const val PLAY_FLAG_FORCE_CONTINUE = 2
+
 
         //private const val NOT_SELECTED = -1
         private const val NO_ID = -1
@@ -44,6 +54,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     }
 
     private lateinit var releaseData: ReleaseFull
+    private var playFlag = PLAY_FLAG_DEFAULT
     private var currentEpisodeId = NO_ID
     //private var currentEpisode = NOT_SELECTED
     private var quality = DEFAULT_QUALITY
@@ -52,6 +63,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
     private val releaseInteractor = App.injections.releaseInteractor
     private val currentVitals = mutableListOf<VitalItem>()
+    private var qualityMenuItem: MenuItem? = null
 
     private var compositeDisposable = CompositeDisposable()
 
@@ -77,6 +89,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             currentEpisodeId = it.getIntExtra(ARG_EPISODE_ID, if (releaseData.episodes.size > 0) 0 else NO_ID)
             //currentEpisode = it.getIntExtra(ARG_CURRENT, if (releaseData.episodes.size > 0) 0 else NOT_SELECTED)
             quality = it.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
+            playFlag = it.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
         }
 
 
@@ -120,33 +133,54 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu.add("Качество")
-                .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_toolbar_settings))
+        qualityMenuItem = menu.add("Качество")
+                .setIcon(getQualityIcon())
                 .setOnMenuItemClickListener {
-                    AlertDialog.Builder(this)
-                            .setTitle("Качество")
-                            .setSingleChoiceItems(arrayOf("SD", "HD"), when (quality) {
-                                MyPlayerActivity.VAL_QUALITY_SD -> 0
-                                MyPlayerActivity.VAL_QUALITY_HD -> 1
-                                else -> -1
-                            }, { p0, p1 ->
-                                val quality: Int = when (p1) {
-                                    0 -> MyPlayerActivity.VAL_QUALITY_SD
-                                    1 -> MyPlayerActivity.VAL_QUALITY_HD
-                                    else -> -1
-                                }
-                                if (quality != -1) {
-                                    this.quality = quality
-                                    saveEpisode()
-                                    playEpisode(getEpisode())
-                                }
-                                p0.dismiss()
-                            })
-                            .show()
+                    showQualityDialog()
                     true
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun getQualityIcon(): Drawable? {
+        val iconRes = when (quality) {
+            VAL_QUALITY_SD -> R.drawable.ic_quality_sd
+            VAL_QUALITY_HD -> R.drawable.ic_quality_hd
+            else -> R.drawable.ic_toolbar_settings
+        }
+        return ContextCompat.getDrawable(this, iconRes)?.apply {
+            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        }
+    }
+
+    private fun showQualityDialog() {
+        AlertDialog.Builder(this)
+                .setTitle("Качество")
+                .setSingleChoiceItems(arrayOf("SD", "HD"), when (quality) {
+                    MyPlayerActivity.VAL_QUALITY_SD -> 0
+                    MyPlayerActivity.VAL_QUALITY_HD -> 1
+                    else -> -1
+                }, { p0, p1 ->
+                    val quality: Int = when (p1) {
+                        0 -> MyPlayerActivity.VAL_QUALITY_SD
+                        1 -> MyPlayerActivity.VAL_QUALITY_HD
+                        else -> -1
+                    }
+                    if (quality != -1) {
+                        this.quality = quality
+                        App.injections.appPreferences.setQuality(when (quality) {
+                            MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+                            MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+                            else -> PreferencesHolder.QUALITY_NO
+                        })
+                        qualityMenuItem?.icon = getQualityIcon()
+                        saveEpisode()
+                        playEpisode(getEpisode())
+                    }
+                    p0.dismiss()
+                })
+                .show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -221,19 +255,29 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private fun getEpisodeId(episode: ReleaseFull.Episode) = releaseData.episodes.first { it == episode }.id
 
     private fun playEpisode(episode: ReleaseFull.Episode) {
-        if (episode.seek > 0) {
-            hardPlayEpisode(episode)
-            val titles = arrayOf("К началу", "К последней позиции")
-            AlertDialog.Builder(this)
-                    .setTitle("Перемотать")
-                    .setItems(titles) { dialog, which ->
-                        if (which == 1) {
-                            player.seekTo(episode.seek)
-                        }
-                    }
-                    .show()
-        } else {
-            hardPlayEpisode(episode)
+        when (playFlag) {
+            PLAY_FLAG_DEFAULT -> {
+                hardPlayEpisode(episode)
+                if (episode.seek > 0) {
+                    hardPlayEpisode(episode)
+                    val titles = arrayOf("К началу", "К последней позиции")
+                    AlertDialog.Builder(this)
+                            .setTitle("Перемотать")
+                            .setItems(titles) { dialog, which ->
+                                if (which == 1) {
+                                    player.seekTo(episode.seek)
+                                }
+                            }
+                            .show()
+                }
+            }
+            PLAY_FLAG_FORCE_START -> {
+                hardPlayEpisode(episode)
+            }
+            PLAY_FLAG_FORCE_CONTINUE -> {
+                hardPlayEpisode(episode)
+                player.seekTo(episode.seek)
+            }
         }
     }
 

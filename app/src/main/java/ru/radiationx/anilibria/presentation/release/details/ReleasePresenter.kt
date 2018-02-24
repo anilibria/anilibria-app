@@ -54,6 +54,10 @@ class ReleasePresenter(
         }
     }
 
+    fun getQuality() = releaseInteractor.getQuality()
+
+    fun setQuality(value: Int) = releaseInteractor.setQuality(value)
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
@@ -170,19 +174,21 @@ class ReleasePresenter(
 
     fun onPlayAllClick() {
         currentData?.let {
-            val startWith = releaseInteractor
-                    .getEpisodes(it.id)
-                    .maxBy { it.id }
-                    ?.let { episode ->
-                        it.episodes.first { it.id == episode.id }
-                    }
-            viewState.playEpisodes(it, startWith)
+            viewState.playEpisodes(it)
         }
     }
 
-    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int) {
+    fun onClickContinue() {
         currentData?.let {
-            viewState.playEpisode(it, episode, quality)
+            it.episodes.maxBy { it.lastAccess }?.let { episode ->
+                viewState.playContinue(it, episode)
+            }
+        }
+    }
+
+    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int? = null) {
+        currentData?.let {
+            viewState.playEpisode(it, episode, null, quality)
         }
     }
 

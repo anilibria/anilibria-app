@@ -26,6 +26,7 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
     fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
 
     fun putEpisode(episode: ReleaseFull.Episode) {
+        episode.lastAccess = System.currentTimeMillis()
         localEpisodes
                 .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
                 ?.let { localEpisodes.remove(it) }
@@ -46,6 +47,7 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
                 put("id", it.id)
                 put("seek", it.seek)
                 put("isViewed", it.isViewed)
+                put("lastAccess", it.lastAccess)
             })
         }
         sharedPreferences
@@ -63,8 +65,9 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
                     localEpisodes.add(ReleaseFull.Episode().apply {
                         releaseId = it.getInt("releaseId")
                         id = it.getInt("id")
-                        seek = it.getLong("seek")
-                        isViewed = it.getBoolean("isViewed")
+                        seek = it.optLong("seek", 0L)
+                        isViewed = it.optBoolean("isViewed", false)
+                        lastAccess = it.optLong("lastAccess", 0L)
                     })
                 }
             }

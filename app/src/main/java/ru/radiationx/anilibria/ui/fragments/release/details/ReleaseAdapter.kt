@@ -56,6 +56,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         delegatesManager.run {
             addDelegate(ReleaseHeadDelegate(itemListener))
             addDelegate(ReleaseEpisodeDelegate(itemListener))
+            addDelegate(ReleaseEpisodeControlDelegate(itemListener))
             addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
             addDelegate(ReleaseDonateDelegate(itemListener))
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
@@ -112,7 +113,10 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         }
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
-            if (release.episodesSource.isNotEmpty() && release.episodesSource.isNotEmpty()) {
+            if (release.episodes.isNotEmpty()) {
+                items.add(ReleaseEpisodeControlItem(release))
+            }
+            if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
             val newItems = when (currentTabTag) {
@@ -134,6 +138,10 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
     }
 
 
-    interface ItemListener : ReleaseHeadDelegate.Listener, ReleaseEpisodeDelegate.Listener, ReleaseDonateDelegate.Listener
+    interface ItemListener :
+            ReleaseHeadDelegate.Listener,
+            ReleaseEpisodeDelegate.Listener,
+            ReleaseDonateDelegate.Listener,
+            ReleaseEpisodeControlDelegate.Listener
 
 }

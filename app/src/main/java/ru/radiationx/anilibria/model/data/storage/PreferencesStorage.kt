@@ -13,6 +13,7 @@ class PreferencesStorage(
     companion object {
         private const val RELEASE_REMIND_KEY = "release_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
+        private const val QUALITY_KEY = "quality"
     }
 
     override fun getReleaseRemind(): Boolean {
@@ -25,5 +26,13 @@ class PreferencesStorage(
 
     override fun getEpisodesIsReverse(): Boolean {
         return sharedPreferences.getBoolean(EPISODES_IS_REVERSE_KEY, false)
+    }
+
+    override fun getQuality(): Int {
+        return sharedPreferences.getInt(QUALITY_KEY, PreferencesHolder.QUALITY_NO)
+    }
+
+    override fun setQuality(value: Int) {
+        sharedPreferences.edit().putInt(QUALITY_KEY, value).apply()
     }
 }

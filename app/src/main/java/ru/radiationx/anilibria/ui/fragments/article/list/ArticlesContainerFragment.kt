@@ -73,7 +73,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 if (first && positionOffset == 0f && positionOffsetPixels == 0) {
-                    onPageSelected(0);
+                    onPageSelected(viewPager.currentItem);
                     first = false;
                 }
             }

@@ -34,6 +34,10 @@ import ru.terrakok.cicerone.Router
  */
 open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
+    companion object {
+        const val ARG_CATEGORY = "category"
+    }
+
     open val spinnerItems = listOf(
             "" to "Главная",
             "novosti" to "Новости"
@@ -72,6 +76,7 @@ open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, Articl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        category = savedInstanceState?.getString(ARG_CATEGORY) ?: category
         presenter.category = category
     }
 
@@ -118,6 +123,11 @@ open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, Articl
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }*/
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ARG_CATEGORY, category)
     }
 
     override fun onBackPressed(): Boolean {

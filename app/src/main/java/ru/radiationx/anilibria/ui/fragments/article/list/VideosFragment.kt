@@ -17,6 +17,6 @@ class VideosFragment : ArticlesFragment() {
             "tkj" to "Тот, кто живёт"
     )
 
-    override var category = Api.CATEGORY_BLOGS
+    override var category = Api.CATEGORY_VIDEOS
 
 }

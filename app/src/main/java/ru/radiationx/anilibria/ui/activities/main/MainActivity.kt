@@ -69,10 +69,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
                 view_for_measure.post {
-                    root_container.setPadding(
-                            root_container.paddingLeft,
-                            root_container.paddingTop,
-                            root_container.paddingRight,
+                    activity_root.setPadding(
+                            activity_root.paddingLeft,
+                            activity_root.paddingTop,
+                            activity_root.paddingRight,
                             dimensions.keyboardHeight/* - tabsRecycler.height*/
                     )
                 }

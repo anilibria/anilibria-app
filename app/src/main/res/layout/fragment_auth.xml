@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:clipToPadding="false"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:paddingBottom="24dp"
         android:paddingTop="24dp">
@@ -135,13 +136,33 @@
                 android:layout_gravity="center" />
         </ViewSwitcher>
 
-        <Button
-            android:id="@+id/authSkip"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:text="@string/auth_skip" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/authRegistration"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_weight="1"
+                android:text="Регистрация" />
+
+            <Button
+                android:id="@+id/authSkip"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/auth_skip" />
+        </LinearLayout>
+
+
     </LinearLayout>
 </ScrollView>

@@ -25,19 +25,24 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     override val router: Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
+    private val dimensionsProvider = App.injections.dimensionsProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
         router.newRootScreen(Screens.AUTH)
 
-        val dimensionHelper = DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
+        DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
                 view_for_measure.post {
-                    root_container.setPadding(root_container.paddingLeft,
+                    root_container.setPadding(
+                            root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
-                            dimensions.keyboardHeight)
+                            dimensions.keyboardHeight
+                    )
                 }
+                dimensionsProvider.update(dimensions)
             }
         })
     }

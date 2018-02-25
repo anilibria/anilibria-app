@@ -100,4 +100,8 @@ class AuthPresenter(
         router.replaceScreen(Screens.MAIN)
     }
 
+    fun registrationClick() {
+        viewState.showRegistrationDialog()
+    }
+
 }

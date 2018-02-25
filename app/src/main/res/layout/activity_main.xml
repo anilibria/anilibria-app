@@ -10,21 +10,19 @@
         layout="@layout/activity_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomTabs" />
+        android:layout_above="@+id/tabsRecycler" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_above="@+id/bottomTabs"
+        android:layout_above="@+id/tabsRecycler"
         android:background="@drawable/bottom_navigation_shadow" />
 
-    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
-        android:id="@+id/bottomTabs"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tabsRecycler"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        app:elevation="0dp"
-        app:itemIconTint="@drawable/tab_item_state"
-        app:itemTextColor="@drawable/tab_item_state" />
+        android:overScrollMode="never"/>
 </RelativeLayout>

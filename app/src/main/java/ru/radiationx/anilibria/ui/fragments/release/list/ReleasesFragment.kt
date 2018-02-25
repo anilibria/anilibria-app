@@ -66,14 +66,14 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
 
         toolbar.apply {
             title = getString(R.string.fragment_title_releases)
-            menu.add("Поиск")
+            /*menu.add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener({
                         presenter.openSearch()
                         //Toast.makeText(context, "Временно не поддерживается", Toast.LENGTH_SHORT).show()
                         false
                     })
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
         }
     }
 

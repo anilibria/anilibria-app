@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.ui.activities.main.MainActivity
 
 sealed class ListItem
 
@@ -26,6 +27,7 @@ class CommentListItem(val item: Comment) : ListItem()
 class CommentRouteListItem : ListItem()
 class VitalWebListItem(val item: VitalItem) : ListItem()
 class VitalNativeListItem(val item: VitalItem) : ListItem()
+class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
 
 /* Articles, blogs, etc. list screen*/
 

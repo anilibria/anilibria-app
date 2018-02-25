@@ -42,7 +42,7 @@ class OtherPresenter(
         const val MENU_HISTORY = 13
 
         val GROUP_MAIN = arrayOf(
-                MENU_FAVORITES,
+                //MENU_FAVORITES,
                 MENU_HISTORY,
                 MENU_TEAM,
                 //MENU_BID,

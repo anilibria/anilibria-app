@@ -62,12 +62,12 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ToolbarHelper.fixInsets(toolbar)
+        //ToolbarHelper.fixInsets(toolbar)
 
         toolbar.apply {
             title = getString(R.string.fragment_title_favorites)
-            setNavigationOnClickListener({ presenter.onBackPressed() })
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+            /*setNavigationOnClickListener({ presenter.onBackPressed() })
+            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }

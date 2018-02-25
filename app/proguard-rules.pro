@@ -20,11 +20,7 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
-#-keep class com.ittianyu.** { *; }
-#-dontwarn com.ittianyu.**
-
--keep public class android.support.design.widget.BottomNavigationView { *; }
--keep public class android.support.design.internal.BottomNavigationMenuView { *; }
--keep public class android.support.design.internal.BottomNavigationPresenter { *; }
--keep public class android.support.design.internal.BottomNavigationItemView { *; }
-
+-keep class android.support.v4.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep class android.support.v7.app.** { *; }
+-keep interface android.support.v7.app.** { *; }

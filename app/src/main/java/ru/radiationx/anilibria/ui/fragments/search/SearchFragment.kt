@@ -92,13 +92,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             )
         }
 
-        ToolbarHelper.fixInsets(toolbar)
+        //ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
             title = currentTitle
-            setNavigationOnClickListener({
-                presenter.onBackPressed()
-            })
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+            /*setNavigationOnClickListener({ presenter.onBackPressed() })
+            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
         searchView = com.lapism.searchview.SearchView(toolbar.context)
@@ -108,14 +106,14 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
                     searchMenuItem.isVisible = false
-                    toolbar?.navigationIcon = null
+                    //toolbar?.navigationIcon = null
                     toolbar?.title = null
                     return false
                 }
 
                 override fun onClose(): Boolean {
                     searchMenuItem.isVisible = true
-                    toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+                    //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
                     toolbar?.title = currentTitle
                     return false
                 }

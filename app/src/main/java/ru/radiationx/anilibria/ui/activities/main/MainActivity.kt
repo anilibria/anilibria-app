@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.util.Log
-import android.view.Menu
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -29,7 +30,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
 
 
-class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
+class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTabsAdapter.Listener {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -38,13 +39,16 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     override val router: Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
-    private val tabs = arrayOf(
+    private val tabsAdapter = BottomTabsAdapter(this)
+
+    private val allTabs = arrayOf(
             Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MAIN_RELEASES),
+            Tab(R.string.fragment_title_videos, R.drawable.ic_star, Screens.FAVORITES),
+            Tab(R.string.fragment_title_blogs, R.drawable.ic_toolbar_search, Screens.RELEASES_SEARCH),
             Tab(R.string.fragment_title_news, R.drawable.ic_news, Screens.MAIN_ARTICLES),
-            Tab(R.string.fragment_title_videos, R.drawable.ic_videos, Screens.MAIN_VIDEOS),
-            Tab(R.string.fragment_title_blogs, R.drawable.ic_blogs, Screens.MAIN_BLOGS),
             Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
     )
+    private val tabs = mutableListOf<Tab>()
 
     private val tabsStack = mutableListOf<String>()
 
@@ -69,15 +73,20 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                             root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
-                            dimensions.keyboardHeight/* - bottomTabs.height*/
+                            dimensions.keyboardHeight/* - tabsRecycler.height*/
                     )
                 }
                 dimensionsProvider.update(dimensions)
             }
         })
 
+        tabsRecycler.apply {
+            layoutManager = GridLayoutManager(this.context, allTabs.size)
+            adapter = tabsAdapter
+        }
+
+        updateTabs()
         initContainers()
-        initBottomTabs()
 
         savedInstanceState?.let {
             it.getStringArrayList(TABS_STACK)?.let {
@@ -91,8 +100,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         if (savedInstanceState == null) {
             SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
         }
-
-
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -161,7 +168,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     private fun initContainers() {
         val fm = supportFragmentManager
         val ta = fm.beginTransaction()
-        tabs.forEach { tab ->
+        allTabs.forEach { tab ->
             var fragment: Fragment? = fm.findFragmentByTag(tab.screenKey)
             if (fragment == null) {
                 fragment = TabFragment.newInstance(tab.screenKey)
@@ -176,33 +183,27 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         ta.commitNow()
     }
 
-    private fun initBottomTabs() {
-        tabs.forEachIndexed { index, tab ->
-            bottomTabs.menu
-                    .add(Menu.NONE, index + 1, Menu.NONE, tab.title)
-                    .setIcon(tab.icon)
-                    .setOnMenuItemClickListener {
-                        presenter.selectTab(tab.screenKey)
-                        false
-                    }
-        }
+    private fun updateBottomTabs() {
+        tabsAdapter.bindItems(tabs)
+        (tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
+    }
 
-        bottomTabs.enableItemShiftingMode(false)
-        bottomTabs.enableShiftingMode(false)
-        bottomTabs.setTextVisibility(false)
-        bottomTabs.enableAnimation(false)
+    override fun updateTabs() {
+        tabs.clear()
+        if (presenter.getAuthState() == AuthState.AUTH) {
+            tabs.addAll(allTabs)
+        } else {
+            tabs.addAll(allTabs.filter { it.screenKey != Screens.FAVORITES })
+        }
+        updateBottomTabs()
+    }
+
+    override fun onTabClick(tab: Tab) {
+        presenter.selectTab(tab.screenKey)
     }
 
     override fun highlightTab(screenKey: String) {
-        tabs.forEachIndexed { index, tab ->
-            if (tab.screenKey == screenKey) {
-                val menuItem = bottomTabs.menu.findItem(index + 1)
-                //Так не вызывается событие onclick. Позволяет избежать рекурсии при выборе таба
-                menuItem.isEnabled = false
-                menuItem.isChecked = true
-                menuItem.isEnabled = true
-            }
-        }
+        tabsAdapter.setSelected(screenKey)
     }
 
     fun addInStack(screenKey: String) {
@@ -254,12 +255,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
                 return
             } else if (command is Replace) {
-                val inTabs = tabs.firstOrNull { it.screenKey == command.screenKey } != null
+                val inTabs = allTabs.firstOrNull { it.screenKey == command.screenKey } != null
                 if (inTabs) {
                     Log.e("S_DEF_LOG", "Replace " + command.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
-                    tabs.forEach {
+                    allTabs.forEach {
                         val fragment = fm.findFragmentByTag(it.screenKey)
                         if (it.screenKey == command.screenKey) {
                             if (fragment.isDetached) {
@@ -304,7 +305,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
     }
 
-    class Tab(val title: Int,
-              val icon: Int,
-              val screenKey: String)
+    class Tab(
+            val title: Int,
+            val icon: Int,
+            val screenKey: String
+    )
 }

@@ -36,7 +36,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         private const val TABS_STACK = "TABS_STACK"
     }
 
-    override val router: Router = App.navigation.root.router
+    override fun getRouter(): Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
     private val tabsAdapter = BottomTabsAdapter(this)
@@ -59,7 +59,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     @ProvidePresenter
     fun provideMainPresenter(): MainPresenter {
-        return MainPresenter(router, App.injections.authRepository)
+        return MainPresenter(getRouter(), App.injections.authRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

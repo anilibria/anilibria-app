@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesFragment
+import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesContainerFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
@@ -57,8 +57,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         }
     }
 
-    override lateinit var router: Router
+    lateinit var localRouter: Router
 
+    override fun getRouter(): Router = localRouter
     private lateinit var localScreen: String
 
     private var ciceroneHolder = App.navigation.local
@@ -71,7 +72,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
             localScreen = it.getString(LOCAL_ROOT_SCREEN, null) ?: throw NullPointerException("localScreen is null")
         }
         cicerone = ciceroneHolder.getCicerone(localScreen)
-        router = cicerone.router
+        localRouter = cicerone.router
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -103,7 +104,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                 && (fragment as BackButtonListener).onBackPressed()) {
             true
         } else {
-            //(activity as RouterProvider).router.exit()
+            //(activity as RouterProvider).localRouter.exit()
             false
         }
     }
@@ -113,7 +114,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
             Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
-            linkHandler.handle(url, router)
+            linkHandler.handle(url, localRouter)
             return true
         }
         return false
@@ -154,7 +155,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                 override fun createFragment(screenKey: String?, data: Any?): Fragment? {
                     return when (screenKey) {
                         Screens.MAIN_RELEASES -> ReleasesFragment()
-                        Screens.MAIN_ARTICLES -> ArticlesFragment()
+                        Screens.MAIN_ARTICLES -> ArticlesContainerFragment()
                         Screens.MAIN_VIDEOS -> VideosFragment()
                         Screens.MAIN_BLOGS -> BlogsFragment()
                         Screens.MAIN_OTHER -> OtherFragment()
@@ -182,7 +183,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                 }
 
                 override fun exit() {
-                    (activity as RouterProvider).router.exit()
+                    (activity as RouterProvider).getRouter().exit()
                 }
             }
         }
@@ -234,6 +235,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             sharedProvider.getSharedView()?.let {
+                Log.e("lalala", "TABFRAGMENT $it\n${it.transitionName}")
                 sharedReceiver.setTransitionName(it.transitionName)
                 fragmentTransaction.addSharedElement(it, it.transitionName)
             }

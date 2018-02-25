@@ -39,7 +39,7 @@ class OtherFragment : BaseFragment(), OtherView {
     @ProvidePresenter
     fun provideOtherPresenter(): OtherPresenter {
         return OtherPresenter(
-                (parentFragment as RouterProvider).router,
+                (parentFragment as RouterProvider).getRouter(),
                 App.injections.authRepository,
                 App.injections.errorHandler
         )
@@ -80,7 +80,7 @@ class OtherFragment : BaseFragment(), OtherView {
 
         private val profileClickListener = { item: ProfileItem ->
             if (item.authState == AuthState.AUTH) {
-                (parentFragment as RouterProvider).router.showSystemMessage("Просмотр профиля недоступен")
+                (parentFragment as RouterProvider).getRouter().showSystemMessage("Просмотр профиля недоступен")
             } else {
                 App.navigation.root.router.replaceScreen(Screens.AUTH)
             }

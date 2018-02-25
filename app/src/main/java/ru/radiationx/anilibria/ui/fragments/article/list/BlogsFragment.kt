@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.model.data.remote.Api
 class BlogsFragment : ArticlesFragment() {
 
     override val spinnerItems = listOf(
-            "blogs" to "Все блоги",
+            "blog" to "Все блоги",
             "audioblog_lln" to "Новости (ЛЛН)",
             "sharon" to "Шаровые диалоги",
             "newblogofitashi" to "Блоги Itashi",
@@ -18,8 +18,5 @@ class BlogsFragment : ArticlesFragment() {
             "j_r" to "Джей Райм"*/
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.category = Api.CATEGORY_BLOGS
-    }
+    override var category = Api.CATEGORY_BLOGS
 }

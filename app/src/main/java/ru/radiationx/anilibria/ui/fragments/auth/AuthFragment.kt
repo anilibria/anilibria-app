@@ -28,7 +28,7 @@ class AuthFragment : BaseFragment(), AuthView {
     @ProvidePresenter
     fun provideAuthPresenter(): AuthPresenter {
         return AuthPresenter(
-                (activity as RouterProvider).router,
+                (activity as RouterProvider).getRouter(),
                 App.injections.authRepository,
                 App.injections.errorHandler
         )

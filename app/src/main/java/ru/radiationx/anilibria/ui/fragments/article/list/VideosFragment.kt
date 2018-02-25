@@ -17,9 +17,6 @@ class VideosFragment : ArticlesFragment() {
             "tkj" to "Тот, кто живёт"
     )
 
+    override var category = Api.CATEGORY_BLOGS
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.category = Api.CATEGORY_VIDEOS
-    }
 }

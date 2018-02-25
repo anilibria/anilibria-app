@@ -47,7 +47,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         return SearchPresenter(
                 App.injections.releaseRepository,
                 App.injections.searchRepository,
-                (parentFragment as RouterProvider).router,
+                (parentFragment as RouterProvider).getRouter(),
                 App.injections.errorHandler
         )
     }

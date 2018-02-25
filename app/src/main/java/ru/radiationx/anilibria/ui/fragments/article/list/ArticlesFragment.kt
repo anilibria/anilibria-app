@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -18,6 +21,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.article.list.ArticlesPresenter
 import ru.radiationx.anilibria.presentation.article.list.ArticlesView
+import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -28,12 +32,14 @@ import ru.terrakok.cicerone.Router
 /**
  * Created by radiationx on 16.12.17.
  */
-open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
+open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
-    protected open val spinnerItems = listOf(
+    open val spinnerItems = listOf(
             "" to "Главная",
             "novosti" to "Новости"
     )
+
+    open var category = ""
 
     private val adapter: ArticlesAdapter by lazy { ArticlesAdapter(this) }
     lateinit var router: Router
@@ -45,10 +51,16 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
     fun provideArticlesPresenter(): ArticlesPresenter = ArticlesPresenter(
             App.injections.articleRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router,
+            (parentFragment as RouterProvider).getRouter(),
             App.injections.errorHandler
     )
 
+    fun onSelectCategory(category: String) {
+        this.category = category
+        if (this::presenter.isInitialized) {
+            presenter.loadCategory(category)
+        }
+    }
 
     override var sharedViewLocal: View? = null
 
@@ -58,7 +70,15 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_releases
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter.category = category
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val newView: View? = inflater.inflate(R.layout.fragment_releases, container, false)
+        return newView
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,7 +99,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
             title = getString(R.string.fragment_title_news)
         }*/
 
-        spinner.apply {
+        /*spinner.apply {
             spinnerContainer.visibility = View.VISIBLE
 
             adapter = ArrayAdapter<String>(
@@ -97,7 +117,7 @@ open class ArticlesFragment : BaseFragment(), ArticlesView, SharedProvider, Arti
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
-        }
+        }*/
     }
 
     override fun onBackPressed(): Boolean {

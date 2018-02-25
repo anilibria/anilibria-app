@@ -18,9 +18,8 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 /**
  * Created by radiationx on 13.01.18.
  */
-class ArticleItemDelegate (private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is ArticleListItem
+class ArticleItemDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ArticleListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ArticleListItem
@@ -65,7 +64,7 @@ class ArticleItemDelegate (private val itemListener: Listener) : AdapterDelegate
                 item_image.setAspectRatio(item.imageHeight.div(item.imageWidth.toFloat()))
                 ImageLoader.getInstance().displayImage(item.imageUrl, item_image)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+                    item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + item.id
                 }
             }
         }

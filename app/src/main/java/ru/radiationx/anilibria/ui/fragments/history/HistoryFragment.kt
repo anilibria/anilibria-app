@@ -41,7 +41,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
     @ProvidePresenter
     fun provideHistoryPresenter(): HistoryPresenter = HistoryPresenter(
-            (parentFragment as RouterProvider).router,
+            (parentFragment as RouterProvider).getRouter(),
             App.injections.historyRepository
     )
 

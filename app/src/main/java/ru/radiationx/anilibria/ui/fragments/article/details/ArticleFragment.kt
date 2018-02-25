@@ -74,7 +74,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     fun provideArticlePresenter(): ArticlePresenter = ArticlePresenter(
             App.injections.articleRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router,
+            (parentFragment as RouterProvider).getRouter(),
             App.injections.linkHandler,
             App.injections.errorHandler
     )

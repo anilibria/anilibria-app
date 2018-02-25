@@ -88,7 +88,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.releaseInteractor,
             App.injections.historyRepository,
             App.injections.vitalRepository,
-            (parentFragment as RouterProvider).router,
+            (parentFragment as RouterProvider).getRouter(),
             App.injections.linkHandler,
             App.injections.errorHandler
     )

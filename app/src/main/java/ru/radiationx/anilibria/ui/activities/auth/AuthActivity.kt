@@ -22,7 +22,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
  */
 class AuthActivity : AppCompatActivity(), RouterProvider {
 
-    override val router: Router = App.navigation.root.router
+    override fun getRouter(): Router = App.navigation.root.router
     private val navigationHolder = App.navigation.root.holder
 
     private val dimensionsProvider = App.injections.dimensionsProvider
@@ -30,7 +30,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
-        router.newRootScreen(Screens.AUTH)
+        getRouter().newRootScreen(Screens.AUTH)
 
         DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {

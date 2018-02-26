@@ -8,7 +8,9 @@ import android.os.Build
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
+import android.text.TextUtils
 import android.util.Log
+import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
@@ -41,6 +43,7 @@ import ru.terrakok.cicerone.Router
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.Charset
+import java.util.*
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -82,8 +85,54 @@ class App : Application() {
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         initImageLoader(this)
+        appVersionCheck()
     }
 
+    private fun appVersionCheck() {
+        try {
+            val prefKey = "app.versions.history"
+            val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val history = TextUtils.split(sharedPreferences.getString(prefKey, ""), ";").map { it.toInt() }
+
+            var lastAppCode = 0
+
+            var disorder = false
+            history.forEach {
+                if (it < lastAppCode) {
+                    disorder = true
+                }
+                lastAppCode = it
+            }
+            val currentAppCode = ("" + BuildConfig.VERSION_CODE).toInt()
+            val appMigration = AppMigration(currentAppCode, lastAppCode, history)
+
+            try {
+                appMigration.start()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+                val errMsg = "Сбой при миграции данных программы."
+                YandexMetrica.reportError(errMsg, ex)
+                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
+                throw Exception(ex)
+            }
+
+            if (lastAppCode < currentAppCode) {
+                val list = history.map { it.toString() }.toMutableList()
+                list.add(currentAppCode.toString())
+                sharedPreferences.edit().putString(prefKey, TextUtils.join(";", list)).apply()
+            }
+            if (disorder) {
+                val errMsg = "AniLibria: Нарушение порядка версий, программа может работать не стабильно!"
+                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            val errMsg = "Сбой при проверке локальной версии."
+            YandexMetrica.reportError(errMsg, ex)
+            val uiErr = "$errMsg\nПрограмма может работать не стабильно! Переустановите программу."
+            Toast.makeText(this, uiErr, Toast.LENGTH_LONG).show()
+        }
+    }
 
     private fun findTemplate(name: String): MiniTemplator? {
         var template: MiniTemplator? = null

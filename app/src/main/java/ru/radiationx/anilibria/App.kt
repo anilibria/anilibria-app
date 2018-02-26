@@ -43,7 +43,6 @@ import ru.terrakok.cicerone.Router
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.Charset
-import java.util.*
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -91,8 +90,12 @@ class App : Application() {
     private fun appVersionCheck() {
         try {
             val prefKey = "app.versions.history"
-            val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val history = TextUtils.split(sharedPreferences.getString(prefKey, ""), ";").map { it.toInt() }
+            val history = injections
+                    .defaultPreferences
+                    .getString(prefKey, "")
+                    .split(";")
+                    .filter { it.isNotBlank() }
+                    .map { it.toInt() }
 
             var lastAppCode = 0
 
@@ -119,7 +122,11 @@ class App : Application() {
             if (lastAppCode < currentAppCode) {
                 val list = history.map { it.toString() }.toMutableList()
                 list.add(currentAppCode.toString())
-                sharedPreferences.edit().putString(prefKey, TextUtils.join(";", list)).apply()
+                injections
+                        .defaultPreferences
+                        .edit()
+                        .putString(prefKey, TextUtils.join(";", list))
+                        .apply()
             }
             if (disorder) {
                 val errMsg = "AniLibria: Нарушение порядка версий, программа может работать не стабильно!"
@@ -158,19 +165,21 @@ class App : Application() {
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
     class Injections(context: Context, router: Router) {
+
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
-        private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
-        val appPreferences: PreferencesHolder = PreferencesStorage(sharedPreferences)
-        val episodesCheckerStorage = EpisodesCheckerStorage(sharedPreferences)
-        val historyStorage = HistoryStorage(sharedPreferences)
+        val appPreferences: PreferencesHolder = PreferencesStorage(defaultPreferences)
+        val episodesCheckerStorage = EpisodesCheckerStorage(dataStoragePreferences)
+        val historyStorage = HistoryStorage(dataStoragePreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
         val errorHandler: ErrorHandler = ErrorHandlerImpl(context, router)
 
-        private val cookieHolder: CookieHolder = CookiesStorage(sharedPreferences)
-        private val userHolder: UserHolder = UserStorage(sharedPreferences)
+        private val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
+        private val userHolder: UserHolder = UserStorage(defaultPreferences)
 
         val client: IClient = Client(cookieHolder, userHolder)
         val apiUtils: IApiUtils = ApiUtils()

@@ -24,15 +24,15 @@
         android:layout="@layout/preference_category_custom"
         android:title="О программе">
 
-        <!--<Preference
-            android:key="about.check_update"
-            android:layout="@layout/preference_custom"
-            android:title="Проверить обновления" />-->
-
         <Preference
             android:key="about.application"
             android:layout="@layout/preference_custom"
             android:title="@string/app_name" />
+
+        <Preference
+            android:key="about.check_update"
+            android:layout="@layout/preference_custom"
+            android:title="Проверить обновления" />
 
         <Preference
             android:key="about.app_topic_site"

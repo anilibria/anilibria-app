@@ -69,19 +69,17 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
             addSection("Изменено", update.changed)
 
             updateInfo.visibility = View.VISIBLE
-            updateContent.visibility = View.VISIBLE
             updateButton.visibility = View.VISIBLE
             divider.visibility = View.VISIBLE
-            updateButton.setOnClickListener {
-                openDownloadDialog(update)
-            }
         } else {
-            updateInfo.text = "Нет обновлений"
+            updateInfo.text = "Нет обновлений, но вы можете загрузить текущую версию еще раз"
             updateInfo.visibility = View.VISIBLE
             updateContent.visibility = View.GONE
-            updateButton.visibility = View.GONE
             divider.visibility = View.GONE
-            updateButton.setOnClickListener(null)
+        }
+        updateButton.visibility = View.VISIBLE
+        updateButton.setOnClickListener {
+            openDownloadDialog(update)
         }
     }
 

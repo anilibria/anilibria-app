@@ -58,7 +58,8 @@ class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                 }
                 item_desc.text = Html.fromHtml(item.description)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+                    //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+                    item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + item.id
                 }
                 ImageLoader.getInstance().displayImage(item.image, item_image)
             }

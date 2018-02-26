@@ -102,11 +102,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
     override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
 
     inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
-        private val fragments = mutableListOf<Fragment>(
-                /*ArticlesFragment(),
-                VideosFragment(),
-                BlogsFragment()*/
-        )
+        private val fragments = mutableListOf<Fragment>()
 
         private val titles = listOf(
                 getString(R.string.fragment_title_news),

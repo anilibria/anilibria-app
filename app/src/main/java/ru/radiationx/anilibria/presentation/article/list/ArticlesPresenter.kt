@@ -51,6 +51,7 @@ open class ArticlesPresenter(
     }
 
     fun loadCategory(category: String) {
+        Log.e("lalala", "loadCategory $category")
         if (this.category != category) {
             this.category = category
             refresh()

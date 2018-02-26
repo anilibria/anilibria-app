@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.article.list
 
-import android.os.Bundle
 import ru.radiationx.anilibria.model.data.remote.Api
 
 /**
  * Created by radiationx on 16.12.17.
  */
-class BlogsFragment : ArticlesFragment() {
+class BlogsFragment : ArticlesBaseFragment() {
 
     override val spinnerItems = listOf(
             "blog" to "Все блоги",

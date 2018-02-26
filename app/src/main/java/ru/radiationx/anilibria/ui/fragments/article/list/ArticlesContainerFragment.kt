@@ -3,8 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.article.list
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.PagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.View
@@ -53,8 +52,8 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    Log.e("S_DEF_LOG", "TEST onItemSelected " + p2)
-                    val fragment = pagerAdapter.getItem(viewPager.currentItem) as ArticlesFragment
+                    val fragment = pagerAdapter.getItem(viewPager.currentItem) as ArticlesBaseFragment
+                    Log.e("S_DEF_LOG", "TEST onItemSelected $p2, vp.ci=${viewPager.currentItem}, fr=$fragment")
                     fragment.onSelectCategory(fragment.spinnerItems[p2].first)
                 }
 
@@ -79,7 +78,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
             }
 
             override fun onPageSelected(position: Int) {
-                val fragment = pagerAdapter.getItem(position) as ArticlesFragment
+                val fragment = pagerAdapter.getItem(position) as ArticlesBaseFragment
                 val titles = fragment.spinnerItems.map { it.second }
                 val cats = fragment.spinnerItems.map { it.first }
                 val indexCurrent = cats.indexOfFirst { it == fragment.category }
@@ -102,11 +101,11 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
 
     override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
 
-    inner class CustomPagerAdapter : FragmentPagerAdapter(childFragmentManager) {
-        private val fragments = listOf(
-                ArticlesFragment(),
+    inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
+        private val fragments = mutableListOf<Fragment>(
+                /*ArticlesFragment(),
                 VideosFragment(),
-                BlogsFragment()
+                BlogsFragment()*/
         )
 
         private val titles = listOf(
@@ -115,11 +114,26 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
                 getString(R.string.fragment_title_blogs)
         )
 
+        init {
+            val savedFragments = mutableListOf<Fragment>()
+            savedFragments.addAll(childFragmentManager.fragments.filter { it is ArticlesBaseFragment })
+
+            fragments.add(savedFragments.firstOrNull { it is NewsFragment } ?: NewsFragment())
+            fragments.add(savedFragments.firstOrNull { it is VideosFragment } ?: VideosFragment())
+            fragments.add(savedFragments.firstOrNull { it is BlogsFragment } ?: BlogsFragment())
+        }
+
         override fun getItem(position: Int): Fragment = fragments[position]
 
         override fun getCount(): Int = fragments.size
 
-        override fun getPageTitle(position: Int): CharSequence? = titles[position]
+        override fun getPageTitle(position: Int): CharSequence? = when (getItem(position)) {
+            is NewsFragment -> titles[0]
+            is VideosFragment -> titles[1]
+            is BlogsFragment -> titles[2]
+            else -> null
+        }
+
     }
 
 }

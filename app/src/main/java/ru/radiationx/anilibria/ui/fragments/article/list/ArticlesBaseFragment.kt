@@ -7,13 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
@@ -23,7 +20,6 @@ import ru.radiationx.anilibria.presentation.article.list.ArticlesPresenter
 import ru.radiationx.anilibria.presentation.article.list.ArticlesView
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.Utils
@@ -32,16 +28,13 @@ import ru.terrakok.cicerone.Router
 /**
  * Created by radiationx on 16.12.17.
  */
-open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
+abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
     companion object {
         const val ARG_CATEGORY = "category"
     }
 
-    open val spinnerItems = listOf(
-            "" to "Главная",
-            "novosti" to "Новости"
-    )
+    abstract val spinnerItems: List<Pair<String, String>>
 
     open var category = ""
 
@@ -60,6 +53,7 @@ open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, Articl
     )
 
     fun onSelectCategory(category: String) {
+        Log.e("lalala", "onSelectCategory $category, ${this::presenter.isInitialized}, $this")
         this.category = category
         if (this::presenter.isInitialized) {
             presenter.loadCategory(category)
@@ -76,6 +70,7 @@ open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, Articl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("lalala", "onCreate $this")
         category = savedInstanceState?.getString(ARG_CATEGORY) ?: category
         presenter.category = category
     }
@@ -91,7 +86,7 @@ open class ArticlesFragment : MvpAppCompatFragment(), BackButtonListener, Articl
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
         recyclerView.apply {
-            adapter = this@ArticlesFragment.adapter
+            adapter = this@ArticlesBaseFragment.adapter
             layoutManager = LinearLayoutManager(recyclerView.context)
             addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)

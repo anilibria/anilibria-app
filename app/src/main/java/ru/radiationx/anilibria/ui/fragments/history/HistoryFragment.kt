@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -107,16 +108,28 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         this.sharedViewLocal = view
     }
 
-    override fun onBackPressed(): Boolean {
-        toolbar.menu.findItem(R.id.action_search)?.let {
+    private fun closeSearch(): Boolean {
+        Log.e("lalala", "closeSearch $toolbar \n${toolbar?.menu} \n${toolbar?.menu?.findItem(R.id.action_search)?.isActionViewExpanded}")
+        toolbar?.menu?.findItem(R.id.action_search)?.let {
             if (it.isActionViewExpanded) {
-                (it.actionView as SearchView).setQuery(null, false)
+                //(it.actionView as SearchView).setQuery(null, false)
+                it.collapseActionView()
                 toolbar.collapseActionView()
                 return true
             }
         }
+        return false
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (closeSearch())
+            return true
         presenter.onBackPressed()
         return true
     }
 
+    override fun onDestroyView() {
+        closeSearch()
+        super.onDestroyView()
+    }
 }

@@ -32,7 +32,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         const val ARG_GENRE: String = "genre"
     }
 
-    private lateinit var searchView: com.lapism.searchview.SearchView
+    private var searchView: com.lapism.searchview.SearchView? = null
     private lateinit var genresDialog: GenresDialog
     private lateinit var searchMenuItem: MenuItem
     private val adapter = ReleasesAdapter(this)
@@ -101,7 +101,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
         searchView = com.lapism.searchview.SearchView(toolbar.context)
         toolbar.addView(searchView)
-        with(searchView) {
+        searchView?.apply {
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
@@ -138,9 +138,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 }
             })
             hint = "Поиск"
-            if (presenter.isEmpty()) {
-                open(true)
-            }
+
             //releaseAdapter = fastAdapter
         }
 
@@ -149,7 +147,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             searchMenuItem = add("Search")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener {
-                        searchView.open(true)
+                        searchView?.open(true)
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -162,6 +160,18 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (presenter.isEmpty()&&isVisible) {
+            searchView?.open(true)
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        searchView?.close(false)
     }
 
     override fun onBackPressed(): Boolean {
@@ -182,7 +192,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     }
 
     override fun showFastItems(items: List<SearchItem>) {
-        searchView.showSuggestions()
+        searchView?.showSuggestions()
         items.forEach {
             Log.e("S_DEF_LOG", "FAST ITEM: ${it.title} : ${it.originalTitle}")
         }

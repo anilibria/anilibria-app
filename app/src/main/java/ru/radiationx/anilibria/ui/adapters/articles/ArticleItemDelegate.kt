@@ -64,7 +64,7 @@ class ArticleItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                 item_image.setAspectRatio(item.imageHeight.div(item.imageWidth.toFloat()))
                 ImageLoader.getInstance().displayImage(item.imageUrl, item_image)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + item.id
+                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_$position"
                 }
             }
         }

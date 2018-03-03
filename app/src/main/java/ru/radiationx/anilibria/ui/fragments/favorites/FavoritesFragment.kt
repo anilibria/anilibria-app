@@ -100,16 +100,27 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
         })
     }
 
-    override fun onBackPressed(): Boolean {
-        toolbar.menu.findItem(R.id.action_search)?.let {
+    private fun closeSearch(): Boolean {
+        toolbar?.menu?.findItem(R.id.action_search)?.let {
             if (it.isActionViewExpanded) {
-                (it.actionView as SearchView).setQuery(null, false)
+                //(it.actionView as SearchView).setQuery(null, false)
                 toolbar.collapseActionView()
                 return true
             }
         }
+        return false
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (closeSearch())
+            return true
         presenter.onBackPressed()
         return true
+    }
+
+    override fun onDestroyView() {
+        closeSearch()
+        super.onDestroyView()
     }
 
     override fun setEndless(enable: Boolean) {

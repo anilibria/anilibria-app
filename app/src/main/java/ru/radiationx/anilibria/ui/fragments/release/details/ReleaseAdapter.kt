@@ -23,7 +23,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         override fun onClickClose(position: Int) {
             items.removeAt(position)
             items.removeAt(position)
-            notifyItemRangeRemoved(position, position + 1)
+            notifyItemRangeRemoved(position, 2)
             App.injections.appPreferences.setReleaseRemind(false)
         }
     }
@@ -34,17 +34,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             currentRelease?.let {
                 val startPos = items.indexOfFirst { it is ReleaseEpisodeListItem }
                 items.removeAll { it is ReleaseEpisodeListItem }
-                val newItems = when (tabTag) {
-                    ReleaseEpisodesHeadDelegate.TAG_ONLINE -> it.episodes.map { ReleaseEpisodeListItem(it) }
-                    ReleaseEpisodesHeadDelegate.TAG_DOWNLOAD -> it.episodesSource.map { ReleaseEpisodeListItem(it) }
-                    else -> emptyList()
-                }.toMutableList()
-
-                if (reverseEpisodes) {
-                    newItems.reverse()
-                }
-                items.addAll(startPos, newItems)
-
+                items.addAll(startPos, prepareEpisodeItems(it))
                 notifyItemRangeChanged(startPos, items.size)
                 return@let
             }
@@ -119,15 +109,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
-            val newItems = when (currentTabTag) {
-                ReleaseEpisodesHeadDelegate.TAG_ONLINE -> release.episodes.map { ReleaseEpisodeListItem(it) }
-                ReleaseEpisodesHeadDelegate.TAG_DOWNLOAD -> release.episodesSource.map { ReleaseEpisodeListItem(it) }
-                else -> emptyList()
-            }.toMutableList()
-            if (reverseEpisodes) {
-                newItems.reverse()
-            }
-            items.addAll(newItems)
+            items.addAll(prepareEpisodeItems(release))
             items.add(DividerShadowListItem())
         }
 
@@ -137,6 +119,21 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         notifyDataSetChanged()
     }
 
+    private fun prepareEpisodeItems(release: ReleaseFull): List<ReleaseEpisodeListItem> {
+        val newItems = when (currentTabTag) {
+            ReleaseEpisodesHeadDelegate.TAG_ONLINE -> release.episodes.mapIndexed { index, episode ->
+                ReleaseEpisodeListItem(episode, index % 2 == 0)
+            }
+            ReleaseEpisodesHeadDelegate.TAG_DOWNLOAD -> release.episodesSource.mapIndexed { index, episode ->
+                ReleaseEpisodeListItem(episode, index % 2 == 0)
+            }
+            else -> emptyList()
+        }.toMutableList()
+        if (reverseEpisodes) {
+            newItems.reverse()
+        }
+        return newItems
+    }
 
     interface ItemListener :
             ReleaseHeadDelegate.Listener,

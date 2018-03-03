@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ReleaseEpisodeListItem
-        (holder as ViewHolder).bind(item.item)
+        (holder as ViewHolder).bind(item.item, item.isEven)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
@@ -42,11 +43,16 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
             }
         }
 
-        fun bind(item: ReleaseFull.Episode) {
+        fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
             view.run {
                 view.tag = item
                 item_title.text = item.title
                 item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
+                if (isEven) {
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.white))
+                } else {
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.episode_even))
+                }
             }
         }
     }

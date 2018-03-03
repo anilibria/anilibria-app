@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import kotlinx.android.synthetic.main.activity_container.*
+import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
@@ -29,12 +31,14 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_container)
-        getRouter().newRootScreen(Screens.AUTH)
+        setContentView(R.layout.activity_main)
 
-        DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
+        bottomShadow.visibility = View.GONE
+        tabsRecycler.visibility = View.GONE
+
+        DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                view_for_measure.post {
+                root_container.post {
                     root_container.setPadding(
                             root_container.paddingLeft,
                             root_container.paddingTop,
@@ -45,6 +49,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
                 dimensionsProvider.update(dimensions)
             }
         })
+        getRouter().newRootScreen(Screens.AUTH)
     }
 
     override fun onResumeFragments() {

@@ -7,6 +7,21 @@
     android:layout_height="match_parent"
     tools:context="ru.radiationx.anilibria.ui.activities.main.MainActivity">
 
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/measure_root_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <!--
+            Эта вьюха нужна для различных измерений
+        -->
+        <View
+            android:id="@+id/measure_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
     <include
         layout="@layout/activity_container"
         android:layout_width="match_parent"
@@ -14,6 +29,7 @@
         android:layout_above="@+id/tabsRecycler" />
 
     <View
+        android:id="@+id/bottomShadow"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_above="@+id/tabsRecycler"

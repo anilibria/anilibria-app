@@ -28,6 +28,7 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
+import kotlin.math.max
 
 
 class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTabsAdapter.Listener {
@@ -66,14 +67,15 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DimensionHelper(view_for_measure, root_content, object : DimensionHelper.DimensionsListener {
+        DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                view_for_measure.post {
-                    activity_root.setPadding(
-                            activity_root.paddingLeft,
-                            activity_root.paddingTop,
-                            activity_root.paddingRight,
-                            dimensions.keyboardHeight/* - tabsRecycler.height*/
+                Log.e("lalala", "Dim: $dimensions")
+                root_container.post {
+                    root_container.setPadding(
+                            root_container.paddingLeft,
+                            root_container.paddingTop,
+                            root_container.paddingRight,
+                            max(dimensions.keyboardHeight - tabsRecycler.height, 0)
                     )
                 }
                 dimensionsProvider.update(dimensions)

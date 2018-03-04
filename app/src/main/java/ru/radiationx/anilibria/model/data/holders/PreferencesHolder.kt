@@ -13,6 +13,10 @@ interface PreferencesHolder {
 
     fun getReleaseRemind(): Boolean
     fun setReleaseRemind(state: Boolean)
+
+    fun getSearchRemind(): Boolean
+    fun setSearchRemind(state: Boolean)
+
     fun getEpisodesIsReverse(): Boolean
 
     fun getQuality(): Int

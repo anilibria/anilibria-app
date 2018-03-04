@@ -45,7 +45,7 @@ class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean)
 class ReleaseEpisodeControlItem(val item: ReleaseFull) : ListItem()
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
 class ReleaseDonateListItem : ListItem()
-class ReleaseRemindListItem : ListItem()
+class ReleaseRemindListItem(val item: String) : ListItem()
 class ReleaseBlockedListItem(val item: ReleaseFull) : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
 

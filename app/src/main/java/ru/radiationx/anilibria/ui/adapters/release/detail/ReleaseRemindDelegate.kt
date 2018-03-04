@@ -16,7 +16,10 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 class ReleaseRemindDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseRemindListItem
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {}
+    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+        val item = items[position] as ReleaseRemindListItem
+        (holder as ViewHolder).bind(item.item)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_release_remind, parent, false)
@@ -24,11 +27,13 @@ class ReleaseRemindDelegate(private val itemListener: Listener) : AdapterDelegat
 
     private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         init {
-            view.run {
-                remindClose.setOnClickListener {
-                    itemListener.onClickClose(layoutPosition)
-                }
+            view.remindClose.setOnClickListener {
+                itemListener.onClickClose(layoutPosition)
             }
+        }
+
+        fun bind(item: String) {
+            view.item_title.text = item
         }
     }
 

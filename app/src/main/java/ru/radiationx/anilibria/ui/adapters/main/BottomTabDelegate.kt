@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.adapters.main
 
 import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View

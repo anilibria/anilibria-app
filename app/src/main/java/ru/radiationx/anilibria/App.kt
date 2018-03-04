@@ -2,7 +2,6 @@ package ru.radiationx.anilibria
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Handler
@@ -107,19 +106,13 @@ class App : Application() {
                 lastAppCode = it
             }
             val currentAppCode = ("" + BuildConfig.VERSION_CODE).toInt()
-            val appMigration = AppMigration(currentAppCode, lastAppCode, history)
-
-            try {
-                appMigration.start()
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-                val errMsg = "Сбой при миграции данных программы."
-                YandexMetrica.reportError(errMsg, ex)
-                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
-                throw Exception(ex)
-            }
 
             if (lastAppCode < currentAppCode) {
+                if (lastAppCode > 0) {
+                    val appMigration = AppMigration(currentAppCode, lastAppCode, history)
+                    appMigration.start()
+                }
+
                 val list = history.map { it.toString() }.toMutableList()
                 list.add(currentAppCode.toString())
                 injections

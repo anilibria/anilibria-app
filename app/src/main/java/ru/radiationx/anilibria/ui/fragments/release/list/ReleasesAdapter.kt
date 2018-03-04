@@ -10,7 +10,7 @@ import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 
-class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+open class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     var endless: Boolean = false
         set(enable) {
@@ -46,13 +46,13 @@ class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<Mutabl
         this.items.removeAll { it is LoadMoreListItem }
     }
 
-    private fun addLoadMore() {
+    protected fun addLoadMore() {
         if (endless) {
             this.items.add(LoadMoreListItem())
         }
     }
 
-    private fun randomInsertVitals() {
+    protected fun randomInsertVitals() {
         if (vitalItems.isNotEmpty() && items.isNotEmpty()) {
             val randomIndex = rand(0, Math.min(8, items.size))
             if (randomIndex < 6) {
@@ -63,7 +63,7 @@ class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<Mutabl
         }
     }
 
-    private fun getVitalListItem(item: VitalItem) = when (item.contentType) {
+    protected fun getVitalListItem(item: VitalItem) = when (item.contentType) {
         VitalItem.ContentType.WEB -> VitalWebListItem(item)
         else -> VitalNativeListItem(item)
     }
@@ -77,7 +77,7 @@ class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<Mutabl
         notifyItemRangeInserted(prevItems, itemCount)
     }
 
-    fun bindItems(newItems: List<ReleaseItem>) {
+    open fun bindItems(newItems: List<ReleaseItem>) {
         this.items.clear()
         this.items.addAll(newItems.map { ReleaseListItem(it) })
         randomInsertVitals()

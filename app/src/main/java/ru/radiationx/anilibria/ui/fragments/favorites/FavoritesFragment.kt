@@ -1,8 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.favorites
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -19,16 +22,6 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
-import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
-import android.support.v4.view.MenuItemCompat.getActionView
-import android.content.Context.SEARCH_SERVICE
-import android.app.SearchManager
-import android.R.menu
-import android.content.Context
-import android.support.v7.widget.SearchView
-import android.view.MenuInflater
-import java.util.ArrayList
 
 
 /**

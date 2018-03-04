@@ -22,7 +22,6 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
-import ru.radiationx.anilibria.utils.ToolbarHelper
 
 
 class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
@@ -35,7 +34,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     private var searchView: com.lapism.searchview.SearchView? = null
     private lateinit var genresDialog: GenresDialog
     private lateinit var searchMenuItem: MenuItem
-    private val adapter = ReleasesAdapter(this)
+    private val adapter = SearchAdapter(this)
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
 

@@ -14,6 +14,7 @@ import java.util.*
 
 class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
+    private val remindText = "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
     private val vitalItems = mutableListOf<VitalItem>()
 
     private var currentRelease: ReleaseFull? = null
@@ -98,7 +99,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         }
 
         if (!release.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
-            items.add(ReleaseRemindListItem())
+            items.add(ReleaseRemindListItem(remindText))
             items.add(DividerShadowListItem())
         }
 

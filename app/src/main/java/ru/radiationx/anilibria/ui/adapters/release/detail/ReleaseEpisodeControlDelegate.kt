@@ -10,7 +10,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
-import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 
 /**
  * Created by radiationx on 13.01.18.

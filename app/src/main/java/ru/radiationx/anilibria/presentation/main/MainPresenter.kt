@@ -2,14 +2,11 @@ package ru.radiationx.anilibria.presentation.main
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.Single
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by radiationx on 17.12.17.

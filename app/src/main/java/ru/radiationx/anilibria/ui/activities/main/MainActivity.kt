@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
@@ -125,6 +126,13 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ImageLoader.getInstance().clearMemoryCache()
+        ImageLoader.getInstance().stop()
+        System.gc()
     }
 
     override fun onBackPressed() {

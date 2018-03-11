@@ -221,12 +221,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
-                    currentColor = if (it) Color.WHITE else Color.BLACK
+                if(toolbarHelperDisposable==null){
+                    toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
+                        currentColor = if (it) Color.WHITE else Color.BLACK
 
-                    toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                    toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                })
+                        toolbar.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                        toolbar.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
+                    })
+                }
             }
         })
 

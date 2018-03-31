@@ -15,6 +15,8 @@ static def getDateTime() {
 
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
     defaultConfig {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19

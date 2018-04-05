@@ -54,12 +54,12 @@ android {
     }
 }
 ext {
-    supportLibVersion = '27.0.2'
+    supportLibVersion = '27.1.0'
     okHttpVersion = '3.9.0'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

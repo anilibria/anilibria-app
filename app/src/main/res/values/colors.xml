@@ -31,6 +31,16 @@
 
     <color name="playerColorPrimary">#33000000</color>
 
+    <color name="userGroupColor_1">@color/a_red</color>
+    <color name="userGroupColor_2">#FFA500</color>
+    <color name="userGroupColor_3">#008000</color>
+    <color name="userGroupColor_default">@color/textSecond</color>
+
+    <color name="userGroupColorIcon_1">@color/a_red</color>
+    <color name="userGroupColorIcon_2">#FFA500</color>
+    <color name="userGroupColorIcon_3">#009b4e</color>
+    <color name="userGroupColorIcon_default">@color/base_icon</color>
+
     <color name="brand_patreon">#F96854</color>
     <color name="brand_patreon_1">#052a49</color>
     <color name="brand_vk">#45668e</color>

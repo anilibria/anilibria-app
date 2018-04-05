@@ -1,38 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:padding="12dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/comment_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:civ_border_width="0dp"
+        app:civ_circle_background_color="#ddd"
+        app:civ_fill_color="@color/a_red"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/item_nick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textSecond"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/textDefault"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/item_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/comment_avatar"
+        app:layout_constraintTop_toTopOf="@id/comment_avatar"
+        tools:text="RadiationX" />
 
     <TextView
         android:id="@+id/item_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:gravity="end"
+        android:maxLines="2"
+        android:textColor="@color/textSecond"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_nick"
+        app:layout_constraintTop_toTopOf="@id/item_nick"
+        tools:text="5 Апреля 2018 07:01:02" />
+
+    <ImageView
+        android:id="@+id/comment_group_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_user_group"
+        android:padding="3dp"
+        app:layout_constraintEnd_toStartOf="@id/comment_group_name"
+        app:layout_constraintStart_toStartOf="@id/item_nick"
+        app:layout_constraintTop_toBottomOf="@id/item_nick"
+        app:srcCompat="@drawable/ic_anilibria" />
+
+    <TextView
+        android:id="@+id/comment_group_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/medium"
+        android:textColor="@color/textSecond"
+        android:textSize="13sp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/comment_group_icon"
+        app:layout_constraintTop_toBottomOf="@id/item_nick"
+        tools:text="AniLibriec" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/comment_content_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textSecond"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/item_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="comment_avatar, comment_group_icon" />
 
     <ru.radiationx.anilibria.ui.widgets.bbwidgets.BbView
         android:id="@+id/item_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/comment_content_barrier"
+        tools:background="#1000"
+        tools:layout_height="100dp" />
 
 </android.support.constraint.ConstraintLayout>

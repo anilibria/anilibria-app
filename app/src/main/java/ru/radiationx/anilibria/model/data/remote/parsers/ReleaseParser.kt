@@ -313,7 +313,9 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             item.message = jsonItem.getString("postMessage")
             item.authorId = jsonItem.getInt("authorId")
             item.authorNick = jsonItem.getString("authorName")
-            item.avatar = jsonItem.getString("avatar")
+            item.avatar = Api.BASE_URL_IMAGES + jsonItem.getString("avatar")
+            item.userGroup = jsonItem.optInt("userGroup", 0)
+            item.userGroupName = jsonItem.optString("userGroupName", null)
             resItems.add(item)
         }
         val pagination = Paginated(resItems)

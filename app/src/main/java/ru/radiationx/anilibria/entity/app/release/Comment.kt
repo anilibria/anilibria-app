@@ -12,4 +12,6 @@ class Comment {
     var authorId: Int = 0
     var authorNick: String? = null
     var avatar: String? = null
+    var userGroup: Int = 0
+    var userGroupName: String? = null
 }

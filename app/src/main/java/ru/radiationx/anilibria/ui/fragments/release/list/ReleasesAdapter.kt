@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
+import android.util.Log
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -10,7 +11,13 @@ import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 
-open class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+open class ReleasesAdapter(
+        var listener: ItemListener,
+        private val placeHolder: PlaceholderListItem
+) : ListDelegationAdapter<MutableList<ListItem>>() {
+
+    private val vitalItems = mutableListOf<VitalItem>()
+    private val random = Random()
 
     var endless: Boolean = false
         set(enable) {
@@ -19,19 +26,25 @@ open class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<M
             addLoadMore()
             notifyDataSetChanged()
         }
-    private val vitalItems = mutableListOf<VitalItem>()
 
     init {
         items = mutableListOf()
         delegatesManager.run {
             addDelegate(ReleaseItemDelegate(listener))
             addDelegate(LoadMoreDelegate(listener))
+            addDelegate(PlaceholderDelegate())
             addDelegate(VitalWebItemDelegate())
             addDelegate(VitalNativeItemDelegate())
         }
     }
 
-    private val random = Random()
+    protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
+        if (condition) {
+            items.add(placeHolder)
+        } else {
+            items.removeAll { it is PlaceholderListItem }
+        }
+    }
 
     private fun rand(from: Int, to: Int): Int {
         return random.nextInt(to - from) + from
@@ -80,6 +93,7 @@ open class ReleasesAdapter(var listener: ItemListener) : ListDelegationAdapter<M
     open fun bindItems(newItems: List<ReleaseItem>) {
         this.items.clear()
         this.items.addAll(newItems.map { ReleaseListItem(it) })
+        updatePlaceholder()
         randomInsertVitals()
         addLoadMore()
         notifyDataSetChanged()

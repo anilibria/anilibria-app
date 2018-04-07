@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.article.list.ArticlesPresenter
 import ru.radiationx.anilibria.presentation.article.list.ArticlesView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -38,7 +39,11 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
 
     open var category = ""
 
-    private val adapter: ArticlesAdapter by lazy { ArticlesAdapter(this) }
+    private val adapter: ArticlesAdapter by lazy { ArticlesAdapter(this, PlaceholderListItem(
+            R.drawable.ic_toolbar_search,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_base
+    )) }
     lateinit var router: Router
 
     @InjectPresenter

@@ -66,15 +66,20 @@ class ReleasesPresenter(
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
-                    if (isFirstPage()) {
-                        viewState.showReleases(releaseItems.data)
-                    } else {
-                        viewState.insertMore(releaseItems.data)
-                    }
+                    showData(releaseItems.data)
                 }) {
+                    showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    private fun showData(data: List<ReleaseItem>) {
+        if (isFirstPage()) {
+            viewState.showReleases(data)
+        } else {
+            viewState.insertMore(data)
+        }
     }
 
     fun refreshReleases() {

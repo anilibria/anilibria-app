@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
@@ -10,7 +11,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 /**
  * Created by radiationx on 04.03.18.
  */
-class SearchAdapter(listener: ItemListener) : ReleasesAdapter(listener) {
+class SearchAdapter(listener: ItemListener, placeholder: PlaceholderListItem) : ReleasesAdapter(listener, placeholder) {
 
     private val remindText = "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
@@ -34,6 +35,7 @@ class SearchAdapter(listener: ItemListener) : ReleasesAdapter(listener) {
             items.add(ReleaseRemindListItem(remindText))
         }
         this.items.addAll(newItems.map { ReleaseListItem(it) })
+        updatePlaceholder(newItems.isEmpty())
         randomInsertVitals()
         addLoadMore()
         notifyDataSetChanged()

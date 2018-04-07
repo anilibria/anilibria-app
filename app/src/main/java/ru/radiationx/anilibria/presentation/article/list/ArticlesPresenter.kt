@@ -70,17 +70,22 @@ open class ArticlesPresenter(
         articleRepository
                 .getArticles(category, /*subCategory, */page)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ releaseItems ->
-                    viewState.setEndless(!releaseItems.isEnd())
-                    if (isFirstPage()) {
-                        viewState.showArticles(releaseItems.data)
-                    } else {
-                        viewState.insertMore(releaseItems.data)
-                    }
+                .subscribe({ articleItems ->
+                    viewState.setEndless(!articleItems.isEnd())
+                    showData(articleItems.data)
                 }) {
+                    showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    private fun showData(data: List<ArticleItem>) {
+        if (isFirstPage()) {
+            viewState.showArticles(data)
+        } else {
+            viewState.insertMore(data)
+        }
     }
 
     fun refresh() {

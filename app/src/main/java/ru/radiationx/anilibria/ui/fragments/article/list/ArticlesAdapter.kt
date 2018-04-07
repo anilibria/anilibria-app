@@ -10,7 +10,13 @@ import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 
-open class ArticlesAdapter(var listener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+open class ArticlesAdapter(
+        var listener: ItemListener,
+        private val placeHolder: PlaceholderListItem
+) : ListDelegationAdapter<MutableList<ListItem>>() {
+
+    private val vitalItems = mutableListOf<VitalItem>()
+    private val random = Random()
 
     var endless: Boolean = false
         set(enable) {
@@ -20,22 +26,27 @@ open class ArticlesAdapter(var listener: ItemListener) : ListDelegationAdapter<M
             notifyDataSetChanged()
         }
 
-    private val vitalItems = mutableListOf<VitalItem>()
-
     init {
         items = mutableListOf()
         delegatesManager.run {
             addDelegate(ArticleItemDelegate(listener))
             addDelegate(LoadMoreDelegate(listener))
+            addDelegate(PlaceholderDelegate())
             addDelegate(VitalWebItemDelegate())
             addDelegate(VitalNativeItemDelegate())
         }
     }
 
-    private val random = Random()
-
     private fun rand(from: Int, to: Int): Int {
         return random.nextInt(to - from) + from
+    }
+
+    protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
+        if (condition) {
+            items.add(placeHolder)
+        } else {
+            items.removeAll { it is PlaceholderListItem }
+        }
     }
 
     fun setVitals(vitals: List<VitalItem>) {
@@ -82,6 +93,7 @@ open class ArticlesAdapter(var listener: ItemListener) : ListDelegationAdapter<M
     fun bindItems(newItems: List<ArticleItem>) {
         this.items.clear()
         this.items.addAll(newItems.map { ArticleListItem(it) })
+        updatePlaceholder()
         randomInsertVitals()
         addLoadMore()
         notifyDataSetChanged()

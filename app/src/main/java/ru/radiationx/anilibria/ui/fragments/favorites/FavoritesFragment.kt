@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -28,7 +29,11 @@ import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
  * Created by radiationx on 13.01.18.
  */
 class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, ReleasesAdapter.ItemListener {
-    private val adapter: ReleasesAdapter = ReleasesAdapter(this)
+    private val adapter: ReleasesAdapter = ReleasesAdapter(this, PlaceholderListItem(
+            R.drawable.ic_fav_border,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_favorites
+    ))
 
     @InjectPresenter
     lateinit var presenter: FavoritesPresenter

@@ -26,4 +26,10 @@
     <string name="comments_notify_text">Сделайте свайп влево, чтобы открыть комментарии</string>
     <string name="loading">Загрузка</string>
     <string name="episodes_header">Эпизоды</string>
+
+    <string name="placeholder_title_nodata_base">Нет данных</string>
+    <string name="placeholder_desc_nodata_base">Потяните вниз, чтобы обновить данные.</string>
+    <string name="placeholder_desc_nodata_search">Сформируйте поисковой запрос иначе или потяните вниз, чтобы обновить данные.</string>
+    <string name="placeholder_desc_nodata_favorites">Здесь будут отображаться ваши избранные релизы.</string>
+    <string name="placeholder_desc_nodata_history">Здесь будет отображаться локальная история просмотра релизов.</string>
 </resources>

@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
 import ru.radiationx.anilibria.presentation.history.HistoryView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -36,7 +37,12 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         return sharedView
     }
 
-    private val adapter = ReleasesAdapter(this)
+    private val adapter = ReleasesAdapter(this, PlaceholderListItem(
+            R.drawable.ic_history,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_history
+    ))
+
     @InjectPresenter
     lateinit var presenter: HistoryPresenter
 

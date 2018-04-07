@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -34,7 +35,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     private var searchView: com.lapism.searchview.SearchView? = null
     private lateinit var genresDialog: GenresDialog
     private lateinit var searchMenuItem: MenuItem
-    private val adapter = SearchAdapter(this)
+    private val adapter = SearchAdapter(this, PlaceholderListItem(
+            R.drawable.ic_toolbar_search,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_search
+    ))
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
     private var currentSubTitle: String? = null
@@ -220,7 +225,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         } else {
             "Жанр: ${presenter.currentGenre?.capitalize()}"
         }
-        if(searchMenuItem.isVisible){
+        if (searchMenuItem.isVisible) {
             toolbar.apply {
                 title = currentTitle
                 subtitle = currentSubTitle

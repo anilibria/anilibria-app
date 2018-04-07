@@ -28,6 +28,7 @@ class CommentRouteListItem : ListItem()
 class VitalWebListItem(val item: VitalItem) : ListItem()
 class VitalNativeListItem(val item: VitalItem) : ListItem()
 class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
+class PlaceholderListItem(val icRes: Int, val titleRes: Int, val descRes: Int) : ListItem()
 
 /* Articles, blogs, etc. list screen*/
 

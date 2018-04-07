@@ -56,6 +56,7 @@ class FavoritesPresenter(
                 .subscribe({
                     onLoad(it)
                 }) {
+                    showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
@@ -64,13 +65,16 @@ class FavoritesPresenter(
     private fun onLoad(favData: FavoriteData) {
         currentSessId = favData.sessId
         viewState.setEndless(!favData.items.isEnd())
-        if (isFirstPage()) {
-            currentReleases.clear()
-            viewState.showReleases(favData.items.data)
-        } else {
-            viewState.insertMore(favData.items.data)
-        }
+        showData(favData.items.data)
         currentReleases.addAll(favData.items.data)
+    }
+
+    private fun showData(data: List<ReleaseItem>) {
+        if (isFirstPage()) {
+            viewState.showReleases(data)
+        } else {
+            viewState.insertMore(data)
+        }
     }
 
     fun refreshReleases() {

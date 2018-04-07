@@ -108,7 +108,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
                 item.favoriteCount.let {
                     full_fav_count.text = it.count.toString()
-                    val iconRes = if (it.isFaved) R.drawable.ic_favorite else R.drawable.ic_favorite_border
+                    val iconRes = if (it.isFaved) R.drawable.ic_fav else R.drawable.ic_fav_border
                     full_fav_icon.setImageDrawable(ContextCompat.getDrawable(full_fav_icon.context, iconRes))
                     if (it.isFaved && !it.inProgress) {
                         full_fav_btn.background.setColorFilter(Color.parseColor("#c40304"), PorterDuff.Mode.SRC_ATOP)

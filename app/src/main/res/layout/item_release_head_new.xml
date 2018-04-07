@@ -87,7 +87,7 @@
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@null"
                 android:padding="3dp"
-                app:srcCompat="@drawable/ic_favorite_border" />
+                app:srcCompat="@drawable/ic_fav_border" />
 
         </LinearLayout>
     </RelativeLayout>

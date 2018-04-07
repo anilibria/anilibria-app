@@ -81,10 +81,9 @@ class ArticleParser(private val apiUtils: IApiUtils) {
 
         val pagination = Paginated(resItems)
         val jsonNav = responseJson.getJSONObject("navigation")
-        pagination.total = jsonNav.get("total").toString().toInt()
-        pagination.current = jsonNav.get("page").toString().toInt()
-        pagination.allPages = jsonNav.get("total_pages").toString().toInt()
-
+        jsonNav.get("total")?.let { pagination.total = it.toString().toInt() }
+        jsonNav.get("page")?.let { pagination.current = it.toString().toInt() }
+        jsonNav.get("total_pages")?.let { pagination.allPages = it.toString().toInt() }
         return pagination
     }
 

@@ -94,6 +94,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
 
 
         player.setOnPreparedListener(this)
+        player.setOnCompletionListener(this)
 
         player.videoControls?.let { videoControls = it }
 
@@ -298,7 +299,9 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     }
 
     override fun onCompletion() {
-
+        if (!onNextClicked()) {
+            finish()
+        }
     }
 
     override fun onError(e: Exception?): Boolean {

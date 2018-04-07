@@ -13,6 +13,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
@@ -152,9 +154,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             toolbarImage.transitionName = transitionNameLocal
         }
 
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        toolbarImage.maxHeight = (metrics.heightPixels * 0.75f).toInt()
+        toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
@@ -221,7 +221,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
-                if(toolbarHelperDisposable==null){
+                if (toolbarHelperDisposable == null) {
                     toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
                         currentColor = if (it) Color.WHITE else Color.BLACK
 
@@ -250,6 +250,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun showComments(comments: List<Comment>) {
         viewPagerAdapter.showComments(comments)
+    }
+
+    override fun setCommentsRefreshing(isRefreshing: Boolean) {
+        viewPagerAdapter.setCommentsRefreshing(isRefreshing)
     }
 
     override fun loadTorrent(url: String) {
@@ -484,7 +488,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                             else -> -1
                         }
                         if (quality != -1) {
-                            if(saveQuality){
+                            if (saveQuality) {
                                 presenter.setQuality(when (quality) {
                                     MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
                                     MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
@@ -513,11 +517,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     }
 
 
-    class CustomPagerAdapter(
+    private inner class CustomPagerAdapter(
             private val releaseAdapter: ReleaseAdapter,
             private val commentsAdapter: CommentsAdapter
     ) : PagerAdapter() {
+
         private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
+        private var localCommentsRefreshLayout: SwipeRefreshLayout? = null
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
@@ -551,6 +557,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         private fun createComments(layout: ViewGroup) {
             layout.run {
+                localCommentsRefreshLayout = commentsRefreshLayout
+                commentsRefreshLayout.setOnRefreshListener {
+                    presenter.reloadComments()
+                }
                 commentsRecyclerView.apply {
                     adapter = this@CustomPagerAdapter.commentsAdapter
                     layoutManager = LinearLayoutManager(this.context)
@@ -566,6 +576,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         fun showComments(comments: List<Comment>) {
             commentsAdapter.setComments(comments)
+        }
+
+        fun setCommentsRefreshing(isRefreshing: Boolean) {
+            localCommentsRefreshLayout?.isRefreshing = isRefreshing
         }
     }
 }

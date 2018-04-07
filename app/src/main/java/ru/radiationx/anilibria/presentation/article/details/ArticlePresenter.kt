@@ -79,6 +79,8 @@ class ArticlePresenter(
         currentPageComment = page
         articleRepository
                 .getComments(articleId, currentPageComment)
+                .doOnTerminate { viewState.setCommentsRefreshing(true) }
+                .doAfterTerminate { viewState.setCommentsRefreshing(false) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
@@ -104,6 +106,10 @@ class ArticlePresenter(
 
     fun loadMoreComments() {
         loadComments(currentPageComment + 1)
+    }
+
+    fun reloadComments() {
+        loadComments(1)
     }
 
     fun onShareClick() {

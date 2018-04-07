@@ -108,6 +108,8 @@ class ReleasePresenter(
         currentPageComment = page
         releaseRepository
                 .getComments(releaseId, currentPageComment)
+                .doOnTerminate { viewState.setCommentsRefreshing(true) }
+                .doAfterTerminate { viewState.setCommentsRefreshing(false) }
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
                     Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)
@@ -131,6 +133,10 @@ class ReleasePresenter(
 
     fun loadMoreComments() {
         loadComments(currentPageComment + 1)
+    }
+
+    fun reloadComments() {
+        loadComments(1)
     }
 
     fun markEpisodeViewed(episode: ReleaseFull.Episode) {

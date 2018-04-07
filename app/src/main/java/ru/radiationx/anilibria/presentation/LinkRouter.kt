@@ -21,6 +21,9 @@ class LinkRouter : LinkHandler {
     }
 
     override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {
+        if (checkUnsupported(url)) {
+            return false
+        }
         releaseDetail.matcher(url).let {
             if (it.find()) {
                 val args: Bundle = Bundle().apply {
@@ -59,6 +62,11 @@ class LinkRouter : LinkHandler {
             return Screens.ARTICLE_DETAILS
         }
         return null
+    }
+
+    private fun checkUnsupported(url: String): Boolean {
+        if (url.contains("communication/forum")) return true
+        return false
     }
 
 }

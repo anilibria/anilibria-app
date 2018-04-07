@@ -51,4 +51,7 @@ interface ReleaseView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setCommentsRefreshing(isRefreshing: Boolean)
 }

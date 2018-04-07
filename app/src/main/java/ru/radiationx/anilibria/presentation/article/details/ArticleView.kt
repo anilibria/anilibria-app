@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.article.details
 
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
@@ -27,4 +28,7 @@ interface ArticleView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun copyLink(url: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setCommentsRefreshing(isRefreshing: Boolean)
 }

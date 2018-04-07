@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v4.view.PagerAdapter
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Base64
 import android.util.Log
@@ -239,6 +240,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         commentsAdapter.addComments(comments)
     }
 
+    override fun setCommentsRefreshing(isRefreshing: Boolean) {
+        pagerAdapter.setCommentsRefreshing(isRefreshing)
+    }
+
     override fun setEndlessComments(enable: Boolean) {
         commentsAdapter.endless = enable
     }
@@ -257,6 +262,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         private var localWebView: ExtendedWebView? = null
         private var localProgressSwitcher: ViewSwitcher? = null
+        private var localCommentsRefreshLayout: SwipeRefreshLayout? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
 
@@ -314,6 +320,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         private fun createComments(layout: ViewGroup) {
             layout.run {
+                localCommentsRefreshLayout = commentsRefreshLayout
+                commentsRefreshLayout.setOnRefreshListener {
+                    presenter.reloadComments()
+                }
                 commentsRecyclerView.apply {
                     adapter = this@CustomPagerAdapter.commentsAdapter
                     layoutManager = LinearLayoutManager(this.context)
@@ -321,6 +331,10 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                     addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
                 }
             }
+        }
+
+        fun setCommentsRefreshing(isRefreshing: Boolean) {
+            localCommentsRefreshLayout?.isRefreshing = isRefreshing
         }
 
         fun getWebViewScroll(): Int = localWebView?.scrollY ?: 0

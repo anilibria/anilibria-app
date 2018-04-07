@@ -23,7 +23,7 @@ class CheckerApi(
                 "check" to "update",
                 "current" to versionCode.toString()
         )
-        return client.post(Api.API_V2_URL, args)
+        return client.post(Api.API_URL, args)
                 .map { checkerParser.parse(it) }
     }
 

@@ -19,7 +19,7 @@ class ProfileApi(
 
     fun loadProfile(userId: Int): Single<Profile> {
         val args: MutableMap<String, String> = mutableMapOf()
-        val url = "${Api.BASE_URL}user/$userId"
+        val url = "${Api.BASE_URL}/user/$userId"
         return client.get(url, args).map { profileParser.profile(it) }
     }
 }

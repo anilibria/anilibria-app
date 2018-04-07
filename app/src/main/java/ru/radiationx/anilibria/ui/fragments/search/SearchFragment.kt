@@ -37,6 +37,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     private val adapter = SearchAdapter(this)
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
+    private var currentSubTitle: String? = null
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -94,6 +95,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         //ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
             title = currentTitle
+            subtitle = currentSubTitle
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
@@ -106,17 +108,22 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 override fun onOpen(): Boolean {
                     searchMenuItem.isVisible = false
                     //toolbar?.navigationIcon = null
-                    toolbar?.title = null
+                    toolbar?.apply {
+                        title = null
+                        subtitle = null
+                    }
                     return false
                 }
 
                 override fun onClose(): Boolean {
                     searchMenuItem.isVisible = true
                     //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-                    toolbar?.title = currentTitle
+                    toolbar?.apply {
+                        title = currentTitle
+                        subtitle = currentSubTitle
+                    }
                     return false
                 }
-
             })
             setVoice(false)
             setShadow(false)
@@ -163,7 +170,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     override fun onResume() {
         super.onResume()
-        if (presenter.isEmpty()&&isVisible) {
+        if (presenter.isEmpty() && isVisible) {
             searchView?.open(true)
         }
     }
@@ -208,7 +215,17 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         } else {
             "Поиск: " + presenter.currentQuery
         }
-        toolbar.title = currentTitle
+        currentSubTitle = if (presenter.currentGenre.isNullOrBlank()) {
+            null
+        } else {
+            "Жанр: ${presenter.currentGenre?.capitalize()}"
+        }
+        if(searchMenuItem.isVisible){
+            toolbar.apply {
+                title = currentTitle
+                subtitle = currentSubTitle
+            }
+        }
         adapter.bindItems(releases)
         genresDialog.setChecked(presenter.currentGenre.orEmpty())
     }

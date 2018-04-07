@@ -17,7 +17,7 @@ class AuthApi(private val client: IClient,
 
     fun loadAuthPage(): Single<List<String>> {
         val args: MutableMap<String, String> = mutableMapOf()
-        val url = "${Api.BASE_URL}auth"
+        val url = "${Api.BASE_URL}/auth"
         return client.get(url, args)
                 .map { authParser.getSocialLinks(it) }
     }
@@ -27,7 +27,7 @@ class AuthApi(private val client: IClient,
                 "USER_REMEMBER" to "Y"
         )
         return client.post(redirectUrl, args)
-                .map { client.get("${Api.BASE_URL}auth", emptyMap()).blockingGet() }
+                .map { client.get("${Api.BASE_URL}/auth", emptyMap()).blockingGet() }
                 .map { authParser.authResult(it) }
     }
 
@@ -40,7 +40,7 @@ class AuthApi(private val client: IClient,
                 "USER_LOGIN" to login,
                 "USER_PASSWORD" to password
         )
-        val url = "${Api.BASE_URL}auth/?login=yes"
+        val url = "${Api.BASE_URL}/auth/?login=yes"
         return client.post(url, args)
                 .map { authParser.authResult(it) }
     }

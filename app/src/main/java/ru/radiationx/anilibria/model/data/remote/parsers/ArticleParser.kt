@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import com.mintrocket.gisdelivery.extension.nullGet
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
@@ -81,9 +82,9 @@ class ArticleParser(private val apiUtils: IApiUtils) {
 
         val pagination = Paginated(resItems)
         val jsonNav = responseJson.getJSONObject("navigation")
-        jsonNav.get("total")?.let { pagination.total = it.toString().toInt() }
-        jsonNav.get("page")?.let { pagination.current = it.toString().toInt() }
-        jsonNav.get("total_pages")?.let { pagination.allPages = it.toString().toInt() }
+        jsonNav.nullGet("total")?.let { pagination.total = it.toString().toInt() }
+        jsonNav.nullGet("page")?.let { pagination.current = it.toString().toInt() }
+        jsonNav.nullGet("total_pages")?.let { pagination.allPages = it.toString().toInt() }
         return pagination
     }
 

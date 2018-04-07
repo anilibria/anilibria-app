@@ -8,3 +8,9 @@ fun JSONObject.nullString(field: String, fallback: String? = null): String? {
         return null
     return optString(field, fallback)
 }
+
+fun JSONObject.nullGet(field: String): Any? {
+    if (isNull(field))
+        return null
+    return get(field)
+}

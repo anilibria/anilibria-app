@@ -22,7 +22,7 @@ class ReleaseApi(
                 "action" to "release",
                 "ELEMENT_ID" to releaseId.toString()
         )
-        return client.get(Api.API_V2_URL, args)
+        return client.get(Api.API_URL, args)
                 .map { releaseParser.release(it) }
     }
 
@@ -31,7 +31,7 @@ class ReleaseApi(
                 "action" to "release",
                 "ELEMENT_CODE" to releaseIdName
         )
-        return client.get(Api.API_V2_URL, args)
+        return client.get(Api.API_URL, args)
                 .map { releaseParser.release(it) }
     }
 
@@ -50,7 +50,7 @@ class ReleaseApi(
     fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> {
         //val args: MutableMap<String, String> = mutableMapOf("PAGEN_1" to page.toString())
         val args: MutableMap<String, String> = mutableMapOf("SHOWALL_1" to "1")
-        return client.get("${Api.BASE_URL}izbrannoe.php", args)
+        return client.get("${Api.BASE_URL}/izbrannoe.php", args)
                 .map { releaseParser.favorites(it) }
     }
 
@@ -59,7 +59,7 @@ class ReleaseApi(
                 "SHOWALL_1" to "1",
                 "action" to "favorites"
         )
-        return client.get(Api.API_V2_URL, args)
+        return client.get(Api.API_URL, args)
                 .map { releaseParser.favorites2(it) }
     }
 
@@ -71,7 +71,7 @@ class ReleaseApi(
                 "sessid" to sessId,
                 "del" to id.toString()
         )
-        return client.get(Api.API_V2_URL, args)
+        return client.get(Api.API_URL, args)
                 .map { releaseParser.favorites2(it) }
     }
 
@@ -82,7 +82,7 @@ class ReleaseApi(
                 "from" to "release",
                 "PAGEN_1" to page.toString()
         )
-        return client.get(Api.API_V2_URL, args)
+        return client.get(Api.API_URL, args)
                 .map { releaseParser.comments(it) }
     }
 
@@ -94,7 +94,7 @@ class ReleaseApi(
                 "key" to sKey,
                 "type" to "unknown"
         )
-        return client.get("${Api.BASE_URL}bitrix/tools/asd_favorite.php", args)
+        return client.get("${Api.BASE_URL}/bitrix/tools/asd_favorite.php", args)
                 .map { releaseParser.favXhr(it) }
     }
 

@@ -27,7 +27,7 @@ class ArticleApi(
                 "code" to code
         )
         return client
-                .get(Api.API_V2_URL, args)
+                .get(Api.API_URL, args)
                 .map { articleParser.article2(it) }
     }
 
@@ -40,7 +40,7 @@ class ArticleApi(
         )
 
         return client
-                .get(Api.API_V2_URL, args)
+                .get(Api.API_URL, args)
                 .map { articleParser.articles2(it) }
     }
 
@@ -52,7 +52,7 @@ class ArticleApi(
                 "PAGEN_1" to page.toString()
         )
         return client
-                .get(Api.API_V2_URL, args)
+                .get(Api.API_URL, args)
                 .map { releaseParser.comments(it) }
     }
 

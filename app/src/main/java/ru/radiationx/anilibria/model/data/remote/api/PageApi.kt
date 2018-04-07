@@ -34,7 +34,7 @@ class PageApi(
 
     fun getPage(pageId: String): Single<PageLibria> {
         val args: Map<String, String> = emptyMap()
-        return client.get("${Api.BASE_URL}$pageId", args)
+        return client.get("${Api.BASE_URL}/$pageId", args)
                 .map { pagesParser.baseParse(it) }
     }
 }

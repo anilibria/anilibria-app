@@ -21,7 +21,7 @@ class VitalApi(
         val args: MutableMap<String, String> = mutableMapOf(
                 "action" to "app"
         )
-        return client.post(Api.API_V2_URL, args)
+        return client.post(Api.API_URL, args)
                 .map { vitalParser.vital(it) }
     }
 }

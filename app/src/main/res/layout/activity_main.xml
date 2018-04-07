@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_root"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.radiationx.anilibria.ui.activities.main.MainActivity">
@@ -41,5 +41,6 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never"
+        android:transitionGroup="true" />
 </RelativeLayout>

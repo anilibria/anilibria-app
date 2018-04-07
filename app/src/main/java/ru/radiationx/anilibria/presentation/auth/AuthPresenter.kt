@@ -89,7 +89,7 @@ class AuthPresenter(
 
     private fun decideWhatToDo(state: AuthState) {
         if (state == AuthState.AUTH) {
-            router.replaceScreen(Screens.MAIN)
+            router.finishChain()
         } else {
             router.showSystemMessage("Что-то пошло не так")
         }
@@ -97,7 +97,7 @@ class AuthPresenter(
 
     fun skip() {
         authRepository.updateUser(AuthState.AUTH_SKIPPED)
-        router.replaceScreen(Screens.MAIN)
+        router.finishChain()
     }
 
     fun registrationClick() {

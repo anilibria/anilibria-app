@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 
 /**
@@ -100,6 +101,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
     }
 
     override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
+    override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
 
     inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
         private val fragments = mutableListOf<Fragment>()

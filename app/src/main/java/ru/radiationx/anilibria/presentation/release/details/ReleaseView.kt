@@ -54,4 +54,7 @@ interface ReleaseView : IBaseView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setCommentsRefreshing(isRefreshing: Boolean)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showFavoriteDialog()
 }

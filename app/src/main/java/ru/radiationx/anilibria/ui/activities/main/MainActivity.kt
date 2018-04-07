@@ -26,6 +26,7 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
@@ -39,6 +40,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     }
 
     override fun getRouter(): Router = App.navigation.root.router
+    override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
     private val tabsAdapter = BottomTabsAdapter(this)

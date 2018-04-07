@@ -60,11 +60,15 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
     lateinit var localRouter: Router
 
     override fun getRouter(): Router = localRouter
+    override fun getNavigator(): Navigator = navigatorLocal
     private lateinit var localScreen: String
 
     private var ciceroneHolder = App.navigation.local
     private lateinit var cicerone: Cicerone<Router>
-    private var navigator: Navigator? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -89,7 +93,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun onResume() {
         super.onResume()
-        cicerone.navigatorHolder.setNavigator(getNavigator())
+        cicerone.navigatorHolder.setNavigator(navigatorLocal)
     }
 
     override fun onPause() {
@@ -120,27 +124,27 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         return false
     }
 
-    private fun getNavigator(): Navigator {
-        if (navigator == null) {
-            navigator = object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
-                override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-                    return when (screenKey) {
-                        Screens.SETTINGS -> {
-                            Intent(context, SettingsActivity::class.java)
-                        }
-                        else -> null
+
+    private val navigatorLocal: Navigator by lazy {
+        object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+            override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
+                return when (screenKey) {
+                    Screens.SETTINGS -> {
+                        Intent(context, SettingsActivity::class.java)
                     }
+                    else -> null
                 }
+            }
 
-                override fun setupFragmentTransactionAnimation(
-                        command: Command?,
-                        currentFragment: Fragment?,
-                        nextFragment: Fragment?,
-                        fragmentTransaction: FragmentTransaction) {
+            override fun setupFragmentTransactionAnimation(
+                    command: Command?,
+                    currentFragment: Fragment?,
+                    nextFragment: Fragment?,
+                    fragmentTransaction: FragmentTransaction) {
 
-                    if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
-                        setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
-                    }/* else {
+                if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
+                    setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+                }/* else {
                         currentFragment?.let {
                             it.enterTransition = null
                             it.exitTransition = null
@@ -150,44 +154,46 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                             it.exitTransition = null
                         }
                     }*/
-                }
+            }
 
-                override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-                    return when (screenKey) {
-                        Screens.MAIN_RELEASES -> ReleasesFragment()
-                        Screens.MAIN_ARTICLES -> ArticlesContainerFragment()
-                        Screens.MAIN_VIDEOS -> VideosFragment()
-                        Screens.MAIN_BLOGS -> BlogsFragment()
-                        Screens.MAIN_OTHER -> OtherFragment()
-                        Screens.ARTICLE_DETAILS -> ArticleFragment().apply {
-                            if (data is Bundle) arguments = data
-                        }
-                        Screens.RELEASE_DETAILS -> ReleaseFragment().apply {
-                            if (data is Bundle) arguments = data
-                        }
-                        Screens.RELEASES_SEARCH -> SearchFragment().apply {
-                            if (data is Bundle) arguments = data
-                        }
-
-                        Screens.FAVORITES -> FavoritesFragment()
-                        Screens.HISTORY -> HistoryFragment()
-                        Screens.STATIC_PAGE -> PageFragment().apply {
-                            arguments = Bundle().apply { putString(PageFragment.ARG_ID, data as String) }
-                        }
-                        else -> throw RuntimeException("Unknown screen key: " + screenKey)
+            override fun createFragment(screenKey: String?, data: Any?): Fragment? {
+                return when (screenKey) {
+                    Screens.MAIN_RELEASES -> ReleasesFragment()
+                    Screens.MAIN_ARTICLES -> ArticlesContainerFragment()
+                    Screens.MAIN_VIDEOS -> VideosFragment()
+                    Screens.MAIN_BLOGS -> BlogsFragment()
+                    Screens.MAIN_OTHER -> OtherFragment()
+                    Screens.ARTICLE_DETAILS -> ArticleFragment().apply {
+                        if (data is Bundle) arguments = data
                     }
-                }
+                    Screens.RELEASE_DETAILS -> ReleaseFragment().apply {
+                        if (data is Bundle) arguments = data
+                    }
+                    Screens.RELEASES_SEARCH -> SearchFragment().apply {
+                        if (data is Bundle) arguments = data
+                    }
 
-                override fun showSystemMessage(message: String?) {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                }
-
-                override fun exit() {
-                    (activity as RouterProvider).getRouter().exit()
+                    Screens.FAVORITES -> FavoritesFragment()
+                    Screens.HISTORY -> HistoryFragment()
+                    Screens.STATIC_PAGE -> PageFragment().apply {
+                        arguments = Bundle().apply { putString(PageFragment.ARG_ID, data as String) }
+                    }
+                    else -> null
                 }
             }
+
+            override fun showSystemMessage(message: String?) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun exit() {
+                (activity as RouterProvider).getRouter().exit()
+            }
+
+            override fun unknownScreen(command: Command?) {
+                (activity as RouterProvider).getNavigator().applyCommand(command)
+            }
         }
-        return navigator as Navigator
     }
 
     private fun setupSharedTransition(

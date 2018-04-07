@@ -191,4 +191,8 @@ class OtherPresenter(
             }
         }
     }
+
+    fun openAuth() {
+        router.navigateTo(Screens.AUTH)
+    }
 }

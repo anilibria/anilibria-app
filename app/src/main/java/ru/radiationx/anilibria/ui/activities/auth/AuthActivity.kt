@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
 
@@ -25,6 +26,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
 class AuthActivity : AppCompatActivity(), RouterProvider {
 
     override fun getRouter(): Router = App.navigation.root.router
+    override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
     private val dimensionsProvider = App.injections.dimensionsProvider
@@ -62,23 +64,25 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         navigationHolder.removeNavigator()
     }
 
-    private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
-        override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-            return when (screenKey) {
-                Screens.MAIN -> Intent(this@AuthActivity, MainActivity::class.java)
-                else -> null
-            }
-        }
-
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            return when (screenKey) {
-                Screens.AUTH -> AuthFragment()
-                Screens.AUTH_SOCIAL -> AuthSocialFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(AuthSocialFragment.ARG_SOCIAL_URL, data as String)
-                    }
+    private val navigatorNew by lazy {
+        object : SupportAppNavigator(this, R.id.root_container) {
+            override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
+                return when (screenKey) {
+                    Screens.MAIN -> Intent(this@AuthActivity, MainActivity::class.java)
+                    else -> null
                 }
-                else -> null
+            }
+
+            override fun createFragment(screenKey: String?, data: Any?): Fragment? {
+                return when (screenKey) {
+                    Screens.AUTH -> AuthFragment()
+                    Screens.AUTH_SOCIAL -> AuthSocialFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(AuthSocialFragment.ARG_SOCIAL_URL, data as String)
+                        }
+                    }
+                    else -> null
+                }
             }
         }
     }

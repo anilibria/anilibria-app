@@ -23,11 +23,10 @@ class MainPresenter(
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "main onFirstViewAttach " + authRepository.getAuthState().toString())
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
-            router.replaceScreen(Screens.AUTH)
-        } else {
-            selectTab(defaultScreen)
+            router.navigateTo(Screens.AUTH)
         }
 
+        selectTab(defaultScreen)
         authRepository
                 .observeUser()
                 .subscribe {
@@ -41,7 +40,6 @@ class MainPresenter(
         Log.e("S_DEF_LOG", "presenter selectTab " + screenKey)
         viewState.highlightTab(screenKey)
         router.replaceScreen(screenKey)
-
     }
 
 }

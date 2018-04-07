@@ -82,7 +82,7 @@ class OtherFragment : BaseFragment(), OtherView {
             if (item.authState == AuthState.AUTH) {
                 (parentFragment as RouterProvider).getRouter().showSystemMessage("Просмотр профиля недоступен")
             } else {
-                App.navigation.root.router.replaceScreen(Screens.AUTH)
+                presenter.openAuth()
             }
         }
 

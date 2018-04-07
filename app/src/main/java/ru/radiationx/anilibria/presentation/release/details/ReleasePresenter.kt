@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
@@ -25,6 +26,7 @@ class ReleasePresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val vitalRepository: VitalRepository,
+        private val authRepository: AuthRepository,
         private val router: Router,
         private val linkHandler: LinkHandler,
         private val errorHandler: ErrorHandler
@@ -64,6 +66,21 @@ class ReleasePresenter(
         loadRelease()
         loadComments(currentPageComment)
         loadVital()
+        subscribeAuth()
+    }
+
+    private var currentAuthState = authRepository.getAuthState()
+
+    private fun subscribeAuth() {
+        authRepository
+                .observeUser()
+                .subscribe({
+                    if (currentAuthState != it.authState) {
+                        currentAuthState = it.authState
+                        loadRelease()
+                    }
+                })
+                .addToDisposable()
     }
 
     private fun loadVital() {
@@ -209,7 +226,7 @@ class ReleasePresenter(
     fun onClickFav() {
         currentData?.favoriteCount?.let { fav ->
             if (fav.isGuest) {
-                router.showSystemMessage("Для выполнения действия необходимо авторизоваться")
+                viewState.showFavoriteDialog()
                 return
             }
             releaseRepository
@@ -232,6 +249,10 @@ class ReleasePresenter(
                     .addToDisposable()
         }
 
+    }
+
+    fun openAuth() {
+        router.navigateTo(Screens.AUTH)
     }
 
     fun openSearch(genre: String) {

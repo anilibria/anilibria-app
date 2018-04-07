@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -88,6 +89,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.releaseInteractor,
             App.injections.historyRepository,
             App.injections.vitalRepository,
+            App.injections.authRepository,
             (parentFragment as RouterProvider).getRouter(),
             App.injections.linkHandler,
             App.injections.errorHandler
@@ -506,6 +508,16 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun showVitalItems(vital: List<VitalItem>) {
         releaseAdapter.setVitals(vital)
+    }
+
+    override fun showFavoriteDialog() {
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
+                    .setPositiveButton("Да") { dialog, which -> presenter.openAuth() }
+                    .setNegativeButton("Нет", null)
+                    .show()
+        }
     }
 
     override fun onDestroyView() {

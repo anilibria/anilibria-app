@@ -19,9 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.model.data.holders.CookieHolder
-import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
-import ru.radiationx.anilibria.model.data.holders.UserHolder
+import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
@@ -165,8 +163,9 @@ class App : Application() {
         val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
         val appPreferences: PreferencesHolder = PreferencesStorage(defaultPreferences)
-        val episodesCheckerStorage = EpisodesCheckerStorage(dataStoragePreferences)
-        val historyStorage = HistoryStorage(dataStoragePreferences)
+        val episodesCheckerStorage: EpisodesCheckerHolder = EpisodesCheckerStorage(dataStoragePreferences)
+        val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
+        val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
         val errorHandler: ErrorHandler = ErrorHandlerImpl(context, router)
@@ -187,7 +186,7 @@ class App : Application() {
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
-        val releaseRepository = ReleaseRepository(schedulers, releaseApi)
+        val releaseRepository = ReleaseRepository(schedulers, releaseApi, genresHolder)
         val searchRepository = SearchRepository(schedulers, searchApi)
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)

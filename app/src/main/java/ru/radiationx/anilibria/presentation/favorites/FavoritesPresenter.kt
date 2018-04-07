@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.presentation.favorites
 import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -55,8 +53,6 @@ class FavoritesPresenter(
         releaseRepository
                 .getFavorites2()
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     onLoad(it)
                 }) {
@@ -92,8 +88,6 @@ class FavoritesPresenter(
         releaseRepository
                 .deleteFavorite(id, currentSessId)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     onLoad(it)
                 }) {

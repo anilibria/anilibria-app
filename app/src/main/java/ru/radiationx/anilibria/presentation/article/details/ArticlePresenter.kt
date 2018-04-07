@@ -2,8 +2,6 @@ package ru.radiationx.anilibria.presentation.article.details
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
@@ -81,8 +79,6 @@ class ArticlePresenter(
                 .getComments(articleId, currentPageComment)
                 .doOnTerminate { viewState.setCommentsRefreshing(true) }
                 .doAfterTerminate { viewState.setCommentsRefreshing(false) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
                     Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)

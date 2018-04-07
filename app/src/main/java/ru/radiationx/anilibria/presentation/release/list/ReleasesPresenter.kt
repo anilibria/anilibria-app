@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.presentation.release.list
 import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -63,10 +61,9 @@ class ReleasesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository.getReleases(pageNum)
+        releaseRepository
+                .getReleases(pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {

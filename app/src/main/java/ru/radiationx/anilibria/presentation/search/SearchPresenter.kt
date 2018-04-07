@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.presentation.search
 import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
@@ -34,6 +32,7 @@ class SearchPresenter(
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
+        observeGenres()
         loadReleases(START_PAGE)
     }
 
@@ -44,8 +43,6 @@ class SearchPresenter(
     fun fastSearch(query: String) {
         searchRepository
                 .fastSearch(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchItems ->
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showFastItems(searchItems)
@@ -58,14 +55,20 @@ class SearchPresenter(
     private fun loadGenres() {
         releaseRepository
                 .getGenres()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ genres ->
-                    Log.d("S_DEF_LOG", "subscribe call show")
-                    viewState.showGenres(genres)
-                }) {
+                .subscribe({ }) {
                     errorHandler.handle(it)
                 }
+                .addToDisposable()
+    }
+
+    private fun observeGenres() {
+        releaseRepository
+                .observeGenres()
+                .subscribe({
+                    viewState.showGenres(it)
+                }, {
+                    errorHandler.handle(it)
+                })
                 .addToDisposable()
     }
 
@@ -86,8 +89,6 @@ class SearchPresenter(
         searchRepository
                 .searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
                     if (isFirstPage()) {

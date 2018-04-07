@@ -6,11 +6,12 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 
 /**
  * Created by radiationx on 17.02.18.
  */
-class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
+class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) : EpisodesCheckerHolder {
 
     companion object {
         private const val LOCAL_EPISODES_KEY = "data.local_episodes"
@@ -23,9 +24,9 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
         loadAll()
     }
 
-    fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
+    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
 
-    fun putEpisode(episode: ReleaseFull.Episode) {
+    override fun putEpisode(episode: ReleaseFull.Episode) {
         episode.lastAccess = System.currentTimeMillis()
         localEpisodes
                 .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
@@ -35,7 +36,7 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) {
         localEpisodesRelay.accept(localEpisodes)
     }
 
-    fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
+    override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
         return localEpisodes.filter { it.releaseId == releaseId }
     }
 

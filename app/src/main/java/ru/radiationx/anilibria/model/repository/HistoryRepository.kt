@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.model.data.storage.HistoryStorage
+import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
 /**
@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.model.system.SchedulersProvider
  */
 class HistoryRepository(
         private val schedulers: SchedulersProvider,
-        private val historyStorage: HistoryStorage
+        private val historyStorage: HistoryHolder
 ) {
     fun observeReleases(): Observable<MutableList<ReleaseItem>> = historyStorage
             .observeEpisodes()

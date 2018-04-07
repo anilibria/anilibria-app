@@ -7,11 +7,12 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 
 /**
  * Created by radiationx on 18.02.18.
  */
-class HistoryStorage(private val sharedPreferences: SharedPreferences) {
+class HistoryStorage(private val sharedPreferences: SharedPreferences) : HistoryHolder {
 
     companion object {
         private const val LOCAL_HISTORY_KEY = "data.local_history"
@@ -24,9 +25,9 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) {
         loadAll()
     }
 
-    fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
+    override fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
 
-    fun putRelease(release: ReleaseItem) {
+    override fun putRelease(release: ReleaseItem) {
         localReleases
                 .firstOrNull { it.id == release.id }
                 ?.let { localReleases.remove(it) }

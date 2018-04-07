@@ -3,8 +3,8 @@ package ru.radiationx.anilibria.model.interactors
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
-import ru.radiationx.anilibria.model.data.storage.EpisodesCheckerStorage
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.model.system.SchedulersProvider
  */
 class ReleaseInteractor(
         private val releaseRepository: ReleaseRepository,
-        private val episodesCheckerStorage: EpisodesCheckerStorage,
+        private val episodesCheckerStorage: EpisodesCheckerHolder,
         private val preferencesHolder: PreferencesHolder,
         private val schedulers: SchedulersProvider
 ) {

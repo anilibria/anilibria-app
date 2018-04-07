@@ -55,10 +55,6 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
     fun genres(httpResponse: String): List<GenreItem> {
         val result: MutableList<GenreItem> = mutableListOf()
         val jsonItems = JSONObject(httpResponse).getJSONArray("data")
-        result.add(GenreItem().apply {
-            title = "Все"
-            value = ""
-        })
         for (i in 0 until jsonItems.length()) {
             val genreText = jsonItems.getString(i)
             val genreItem = GenreItem().apply {

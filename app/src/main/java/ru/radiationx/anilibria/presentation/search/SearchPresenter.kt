@@ -77,10 +77,10 @@ class SearchPresenter(
     private fun loadReleases(pageNum: Int) {
         Log.e("S_DEF_LOG", "loadReleases")
 
-        if (isEmpty()) {
+        /*if (isEmpty()) {
             viewState.setRefreshing(false)
             return
-        }
+        }*/
 
         currentPage = pageNum
         if (isFirstPage()) {

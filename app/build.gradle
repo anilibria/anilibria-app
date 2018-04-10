@@ -22,7 +22,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 20
-        versionName "2.0.4_Beta1"
+        versionName "2.0.5_Beta1"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

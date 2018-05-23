@@ -36,6 +36,18 @@ class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) :
         localEpisodesRelay.accept(localEpisodes)
     }
 
+    override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
+        episodes.forEach { episode ->
+            episode.lastAccess = System.currentTimeMillis()
+            localEpisodes
+                    .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                    ?.let { localEpisodes.remove(it) }
+            localEpisodes.add(episode)
+        }
+        saveAll()
+        localEpisodesRelay.accept(localEpisodes)
+    }
+
     override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
         return localEpisodes.filter { it.releaseId == releaseId }
     }

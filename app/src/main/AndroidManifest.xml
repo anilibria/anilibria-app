@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".App"
@@ -15,8 +15,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activities.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,6 +27,7 @@
         <activity android:name=".ui.activities.main.IntentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="anilibria.app.RESTORE" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -43,13 +44,17 @@
                 <data
                     android:host="www.anilibria.tv"
                     android:scheme="https" />
+
+                <data
+                    android:host="anilibria.app"
+                    android:scheme="app" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="Настройки"
-            android:theme="@style/PreferencesAppTheme"/>
+            android:theme="@style/PreferencesAppTheme" />
 
         <activity
             android:name=".ui.activities.auth.AuthActivity"

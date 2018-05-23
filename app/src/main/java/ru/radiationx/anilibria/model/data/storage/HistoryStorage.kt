@@ -36,6 +36,17 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) : History
         localReleasesRelay.accept(localReleases)
     }
 
+    override fun putAllRelease(releases: List<ReleaseItem>) {
+        releases.forEach { release ->
+            localReleases
+                    .firstOrNull { it.id == release.id }
+                    ?.let { localReleases.remove(it) }
+            localReleases.add(release)
+        }
+        saveAll()
+        localReleasesRelay.accept(localReleases)
+    }
+
     private fun saveAll() {
         val jsonEpisodes = JSONArray()
         localReleases.forEach {

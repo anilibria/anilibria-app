@@ -19,7 +19,7 @@ class VitalApi(
 
     fun loadVital(): Single<List<VitalItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "app"
+                "action" to "app_v2"
         )
         return client.post(Api.API_URL, args)
                 .map { vitalParser.vital(it) }

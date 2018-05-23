@@ -19,7 +19,7 @@ class CheckerApi(
 
     fun checkUpdate(versionCode: Int): Single<UpdateData> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "app",
+                "action" to "app_v2",
                 "check" to "update",
                 "current" to versionCode.toString()
         )

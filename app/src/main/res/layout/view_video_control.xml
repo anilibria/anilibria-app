@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.devbrackets.android.exomedia.ui.widget.FitsSystemWindowRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/videoControlsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/exomedia_controls_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/exomedia_default_controls_text_background"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/exomedia_controls_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="The Video Title" />
+
+        <TextView
+            android:id="@+id/exomedia_controls_sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            tools:text="The Video Album" />
+
+        <TextView
+            android:id="@+id/exomedia_controls_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            tools:text="The Video Artist" />
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/controlButtonsWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:theme="@style/Theme.AppCompat"
+        tools:background="#1000">
+
+        <LinearLayout
+            android:id="@+id/controlButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/exomedia_controls_previous_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/exomedia_min_button_height"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:visibility="gone"
+                app:srcCompat="@drawable/exomedia_ic_skip_previous_white"
+                tools:ignore="ContentDescription,RtlHardcoded"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/exomedia_controls_play_pause_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/exomedia_ic_play_arrow_white"
+                tools:ignore="ContentDescription" />
+
+            <ImageButton
+                android:id="@+id/exomedia_controls_next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/exomedia_min_button_height"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:visibility="gone"
+                app:srcCompat="@drawable/exomedia_ic_skip_next_white"
+                tools:ignore="ContentDescription,RtlHardcoded"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/controlMinusOpening"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="- 1:30"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/controlPlusOpening"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:layout_marginEnd="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/controlButton" />
+
+        <Button
+            android:id="@+id/controlPlusOpening"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="1:30 +"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/controlMinusOpening"
+            app:layout_constraintTop_toBottomOf="@id/controlButton" />
+    </android.support.constraint.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/timeControlsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_video_time_cotrols"
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:id="@+id/exomedia_controls_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:textColor="@android:color/white"
+            android:typeface="monospace"
+            tools:ignore="RtlHardcoded"
+            tools:text="1:06:29" />
+
+        <SeekBar
+            android:id="@+id/exomedia_controls_video_seek"
+            style="?android:seekBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="16dp"
+            tools:ignore="RtlHardcoded" />
+
+        <TextView
+            android:id="@+id/exomedia_controls_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="16dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:textColor="@android:color/white"
+            android:typeface="monospace"
+            tools:ignore="RtlHardcoded"
+            tools:text="1:23:49" />
+
+        <LinearLayout
+            android:id="@+id/exomedia_controls_extra_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,UselessLeaf" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/exomedia_controls_video_loading"
+        style="?android:progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+</com.devbrackets.android.exomedia.ui.widget.FitsSystemWindowRelativeLayout>

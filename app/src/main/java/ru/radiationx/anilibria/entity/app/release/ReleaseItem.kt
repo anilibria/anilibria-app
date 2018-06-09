@@ -18,4 +18,8 @@ open class ReleaseItem : Serializable {
     val voices = mutableListOf<String>()
     val genres = mutableListOf<String>()
     val types = mutableListOf<String>()
+
+    var torrentUpdate: Int = 0
+
+    var isNew: Boolean = false
 }

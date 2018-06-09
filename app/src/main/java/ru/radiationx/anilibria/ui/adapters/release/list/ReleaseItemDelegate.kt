@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
+import android.graphics.Color
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -20,8 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
  * Created by radiationx on 13.01.18.
  */
 class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is ReleaseListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ReleaseListItem
@@ -61,6 +61,7 @@ class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                     //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
                     item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
                 }
+                item_new_indicator.visibility = if(item.isNew) View.VISIBLE else View.GONE
                 ImageLoader.getInstance().displayImage(item.image, item_image)
             }
         }

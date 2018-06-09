@@ -165,6 +165,7 @@ class App : Application() {
         val appPreferences: PreferencesHolder = PreferencesStorage(defaultPreferences)
         val episodesCheckerStorage: EpisodesCheckerHolder = EpisodesCheckerStorage(dataStoragePreferences)
         val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
+        var releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
 
         val linkHandler: LinkHandler = LinkRouter()
@@ -186,8 +187,8 @@ class App : Application() {
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi)
-        val releaseRepository = ReleaseRepository(schedulers, releaseApi, genresHolder)
-        val searchRepository = SearchRepository(schedulers, searchApi)
+        val releaseRepository = ReleaseRepository(schedulers, releaseApi, genresHolder, releaseUpdateStorage)
+        val searchRepository = SearchRepository(schedulers, searchApi, releaseUpdateStorage)
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)
         val checkerRepository = CheckerRepository(schedulers, checkerApi)

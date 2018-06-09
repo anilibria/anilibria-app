@@ -47,7 +47,7 @@ class Client constructor(
 
     private val client = OkHttpClient.Builder()
             .addNetworkInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.HEADERS
+                level = HttpLoggingInterceptor.Level.BODY
             })
             .cookieJar(cookieJar)
             .build()

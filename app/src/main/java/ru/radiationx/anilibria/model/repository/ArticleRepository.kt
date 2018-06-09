@@ -57,4 +57,10 @@ class ArticleRepository(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
+    fun sendComment(url: String, id: Int, text: String, sessId: String): Observable<Paginated<List<Comment>>> = articleApi
+            .sendComment(url, id, text, sessId)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
 }

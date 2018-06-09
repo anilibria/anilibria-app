@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -14,9 +13,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.v4.view.PagerAdapter
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -254,6 +253,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun setCommentsRefreshing(isRefreshing: Boolean) {
         viewPagerAdapter.setCommentsRefreshing(isRefreshing)
+    }
+
+    override fun onCommentSent() {
+        hideSoftwareKeyboard()
+        viewPagerAdapter.clearCommentField()
     }
 
     override fun loadTorrent(url: String) {
@@ -533,7 +537,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     ) : PagerAdapter() {
 
         private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
-        private var localCommentsRefreshLayout: SwipeRefreshLayout? = null
+        private var localCommentsRootLayout: ViewGroup? = null
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
@@ -566,8 +570,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
 
         private fun createComments(layout: ViewGroup) {
-            layout.run {
-                localCommentsRefreshLayout = commentsRefreshLayout
+            layout.apply {
+                localCommentsRootLayout = commentsRootLayout
                 commentsRefreshLayout.setOnRefreshListener {
                     presenter.reloadComments()
                 }
@@ -576,6 +580,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     layoutManager = LinearLayoutManager(this.context)
                     //addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
                     addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
+
+                    addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                            if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                                hideSoftwareKeyboard()
+                                localCommentsRootLayout?.commentField?.clearFocus()
+                            }
+                        }
+                    })
+                }
+                commentSend.setOnClickListener {
+                    presenter.onClickSendComment(commentField.text?.toString()?.trim().orEmpty())
                 }
             }
         }
@@ -589,7 +605,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
 
         fun setCommentsRefreshing(isRefreshing: Boolean) {
-            localCommentsRefreshLayout?.isRefreshing = isRefreshing
+            localCommentsRootLayout?.commentsRefreshLayout?.isRefreshing = isRefreshing
+        }
+
+        fun clearCommentField() {
+            localCommentsRootLayout?.commentField?.text?.clear()
         }
     }
 }

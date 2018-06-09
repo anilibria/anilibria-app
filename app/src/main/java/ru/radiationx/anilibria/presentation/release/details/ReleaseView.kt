@@ -29,6 +29,9 @@ interface ReleaseView : IBaseView {
     fun setEndlessComments(enable: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
+    fun onCommentSent()
+
+    @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(url: String)
 
     @StateStrategyType(SkipStrategy::class)

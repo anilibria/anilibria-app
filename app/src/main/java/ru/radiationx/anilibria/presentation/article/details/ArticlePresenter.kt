@@ -27,6 +27,7 @@ class ArticlePresenter(
         private const val START_PAGE = 1
     }
 
+    private var lasCommentSentTime = 0L
     private var currentPageComment = START_PAGE
     var articleId = -1
     var articleIdCode: String = ""
@@ -106,6 +107,35 @@ class ArticlePresenter(
 
     fun reloadComments() {
         loadComments(1)
+    }
+
+    fun onClickSendComment(text: String) {
+        if (text.length < 3) {
+            router.showSystemMessage("Комментарий слишком короткий")
+            return
+        }
+        if ((System.currentTimeMillis() - lasCommentSentTime) < 30000) {
+            lasCommentSentTime = System.currentTimeMillis()
+            router.showSystemMessage("Комментарий можно отправлять раз в 30 секунд")
+            return
+        }
+        currentData?.let {
+            articleRepository
+                    .sendComment(it.url.orEmpty(), it.id, text, it.sessId.orEmpty())
+                    .subscribe({ comments ->
+                        viewState.onCommentSent()
+                        currentPageComment = START_PAGE
+                        viewState.setEndlessComments(!comments.isEnd())
+                        if (isFirstPage()) {
+                            viewState.showComments(comments.data)
+                        } else {
+                            viewState.insertMoreComments(comments.data)
+                        }
+                    }, {
+                        errorHandler.handle(it)
+                    })
+                    .addToDisposable()
+        }
     }
 
     fun onShareClick() {

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import android.util.Log
 import com.mintrocket.gisdelivery.extension.nullGet
+import com.mintrocket.gisdelivery.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.*
@@ -146,6 +147,8 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         //release.setEpisodesCount(responseJson.getString("episode"));
         release.description = responseJson.getString("description").trim()
         release.releaseStatus = responseJson.optString("release_status")
+        release.releaseStatus = responseJson.optString("release_status")
+        release.sessId = responseJson.nullString("sessId")
         release.isBlocked = responseJson.optBoolean("isBlocked", false)
         release.contentBlocked = responseJson.optString("contentBlocked", null)
 

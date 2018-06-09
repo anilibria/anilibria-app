@@ -9,6 +9,7 @@ import android.support.design.widget.AppBarLayout
 import android.support.v4.view.PagerAdapter
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -252,6 +253,11 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         presenter.loadMoreComments()
     }
 
+    override fun onCommentSent() {
+        hideSoftwareKeyboard()
+        pagerAdapter.clearCommentField()
+    }
+
     private inner class CustomPagerAdapter(
             private val commentsAdapter: CommentsAdapter
     ) : PagerAdapter(), ExtendedWebView.JsLifeCycleListener {
@@ -262,7 +268,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         private var localWebView: ExtendedWebView? = null
         private var localProgressSwitcher: ViewSwitcher? = null
-        private var localCommentsRefreshLayout: SwipeRefreshLayout? = null
+        private var localCommentsRootLayout: ViewGroup? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
 
@@ -319,8 +325,8 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         }
 
         private fun createComments(layout: ViewGroup) {
-            layout.run {
-                localCommentsRefreshLayout = commentsRefreshLayout
+            layout.apply {
+                localCommentsRootLayout = commentsRootLayout
                 commentsRefreshLayout.setOnRefreshListener {
                     presenter.reloadComments()
                 }
@@ -329,12 +335,32 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                     layoutManager = LinearLayoutManager(this.context)
                     //addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
                     addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
+                    addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                            if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                                hideSoftwareKeyboard()
+                                localCommentsRootLayout?.commentField?.clearFocus()
+                            }
+                        }
+                    })
+                }
+                commentSend.setOnClickListener {
+                    presenter.onClickSendComment(commentField.text?.toString()?.trim().orEmpty())
                 }
             }
         }
 
         fun setCommentsRefreshing(isRefreshing: Boolean) {
-            localCommentsRefreshLayout?.isRefreshing = isRefreshing
+            localCommentsRootLayout?.commentsRefreshLayout?.isRefreshing = isRefreshing
+        }
+
+
+        fun showComments(comments: List<Comment>) {
+            commentsAdapter.setComments(comments)
+        }
+
+        fun clearCommentField() {
+            localCommentsRootLayout?.commentField?.text?.clear()
         }
 
         fun getWebViewScroll(): Int = localWebView?.scrollY ?: 0
@@ -405,10 +431,6 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                 }
                 webViewCallCache.clear()
             }
-        }
-
-        fun showComments(comments: List<Comment>) {
-            commentsAdapter.setComments(comments)
         }
     }
 }

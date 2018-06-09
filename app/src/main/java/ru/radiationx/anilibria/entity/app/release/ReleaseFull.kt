@@ -21,6 +21,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
     }
 
     var isBlocked = false
+    var sessId: String? = null
     var contentBlocked: String? = null
     var releaseStatus: String? = null
     val torrents = mutableListOf<TorrentItem>()

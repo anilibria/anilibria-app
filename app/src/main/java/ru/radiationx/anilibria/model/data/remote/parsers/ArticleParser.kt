@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import com.mintrocket.gisdelivery.extension.nullGet
+import com.mintrocket.gisdelivery.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
@@ -67,7 +68,7 @@ class ArticleParser(private val apiUtils: IApiUtils) {
                 id = jsonItem.getInt("id")
                 code = jsonItem.getString("code")
                 url = Api.BASE_URL + jsonItem.getString("url")
-                title = jsonItem.getString("title")
+                title = apiUtils.escapeHtml(jsonItem.getString("title")).orEmpty()
                 userId = jsonItem.getInt("userId")
                 userNick = jsonItem.getString("userNick")
                 imageUrl = Api.BASE_URL_IMAGES + jsonItem.getString("coverImage")
@@ -106,10 +107,11 @@ class ArticleParser(private val apiUtils: IApiUtils) {
     fun article2(httpResponse: String): ArticleItem {
         val responseJson = JSONObject(httpResponse)
         return ArticleItem().apply {
+            sessId = responseJson.nullString("sessId")
             id = responseJson.getInt("id")
             code = responseJson.getString("code")
             url = Api.BASE_URL + responseJson.getString("url")
-            title = responseJson.getString("title")
+            title = apiUtils.escapeHtml(responseJson.getString("title")).orEmpty()
             userId = responseJson.getInt("userId")
             userNick = responseJson.getString("userNick")
             imageUrl = Api.BASE_URL_IMAGES + responseJson.getString("coverImage")

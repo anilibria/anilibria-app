@@ -24,6 +24,9 @@ interface ArticleView : IBaseView {
     fun setEndlessComments(enable: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
+    fun onCommentSent()
+
+    @StateStrategyType(SkipStrategy::class)
     fun share(text: String)
 
     @StateStrategyType(SkipStrategy::class)

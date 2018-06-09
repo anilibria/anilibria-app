@@ -259,14 +259,14 @@ class ReleasePresenter(
             return
         }
         if ((System.currentTimeMillis() - lasCommentSentTime) < 30000) {
+            lasCommentSentTime = System.currentTimeMillis()
             router.showSystemMessage("Комментарий можно отправлять раз в 30 секунд")
             return
         }
         currentData?.let {
             releaseRepository
-                    .sendComment(it.idName.orEmpty(), it.id, text, it.favoriteCount.sessId)
+                    .sendComment(it.idName.orEmpty(), it.id, text, it.sessId.orEmpty())
                     .subscribe({ comments ->
-                        lasCommentSentTime = System.currentTimeMillis()
                         viewState.onCommentSent()
                         currentPageComment = START_PAGE
                         viewState.setEndlessComments(!comments.isEnd())

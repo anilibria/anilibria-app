@@ -6,6 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureControllerView
+        android:id="@+id/gesturesControllerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
         android:id="@+id/exomedia_controls_text_container"
         android:layout_width="match_parent"
@@ -45,6 +50,7 @@
             android:textSize="14sp"
             tools:text="The Video Artist" />
     </LinearLayout>
+
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/controlButtonsWrapper"
@@ -111,14 +117,15 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="80dp"
             android:fontFamily="monospace"
             android:text="- 1:30"
             android:textColor="#fff"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/controlPlusOpening"
             app:layout_constraintHorizontal_chainStyle="packed"
-            android:layout_marginEnd="80dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/controlButton" />
 
@@ -132,10 +139,28 @@
             android:textColor="#fff"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/controlMinusOpening"
             app:layout_constraintTop_toBottomOf="@id/controlButton" />
     </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/gestureSeekValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_video_seek_value"
+        android:elevation="10dp"
+        android:fontFamily="monospace"
+        android:paddingBottom="12dp"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:paddingTop="12dp"
+        android:textColor="#fff"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/timeControlsContainer"
@@ -173,16 +198,26 @@
             android:id="@+id/exomedia_controls_end_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="10dp"
-            android:layout_marginEnd="16dp"
+            android:layout_toStartOf="@id/controlsFullscreen"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:textColor="@android:color/white"
             android:typeface="monospace"
             tools:ignore="RtlHardcoded"
             tools:text="1:23:49" />
+
+        <ImageButton
+            android:id="@+id/controlsFullscreen"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-16dp"
+            android:minWidth="0dp"
+            app:srcCompat="@drawable/ic_fullscreen" />
 
         <LinearLayout
             android:id="@+id/exomedia_controls_extra_container"

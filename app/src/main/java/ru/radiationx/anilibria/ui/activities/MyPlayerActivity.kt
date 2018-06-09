@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
@@ -68,6 +70,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private val currentVitals = mutableListOf<VitalItem>()
     private var qualityMenuItem: MenuItem? = null
 
+    private var fullscreenOrientation = false
+
     private var compositeDisposable = CompositeDisposable()
 
     fun Disposable.addToDisposable() {
@@ -81,7 +85,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         setContentView(R.layout.activity_myplayer)
 
         supportActionBar?.apply {
-            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
+            //setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
+            setBackgroundDrawable(ContextCompat.getDrawable(themedContext, R.drawable.bg_video_toolbar))
         }
 
         intent?.let {
@@ -114,7 +119,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             //it.setNextDrawable(ContextCompat.getDrawable(this, R.drawable.ic_news))
             it.setButtonListener(this)
         }
-        videoControls.setOpeningListener(object : VideoControlsAlib.OpeningButtonsListener {
+        videoControls.setOpeningListener(object : VideoControlsAlib.AlibControlsListener {
             private val delta = TimeUnit.SECONDS.toMillis(90)
             override fun onMinusClick() {
                 val newPosition = player.currentPosition - delta
@@ -124,6 +129,16 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             override fun onPlusClick() {
                 val newPosition = player.currentPosition + delta
                 player.seekTo(newPosition.coerceIn(0, player.duration))
+            }
+
+            override fun onFullScreenClick() {
+                if (fullscreenOrientation) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                } else {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
+                fullscreenOrientation = !fullscreenOrientation
+                videoControls.setFullScreenMode(fullscreenOrientation)
             }
         })
         playEpisode(getEpisode())
@@ -212,6 +227,15 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     override fun onPause() {
         super.onPause()
         player.pause()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig?.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> fullscreenOrientation = true
+            else -> fullscreenOrientation = false
+        }
+        videoControls.setFullScreenMode(fullscreenOrientation)
     }
 
     private fun saveEpisode() {

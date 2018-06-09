@@ -29,7 +29,7 @@
     <color name="textSecond">#757575</color>
     <color name="textColoredButton">@color/white</color>
 
-    <color name="playerColorPrimary">#33000000</color>
+    <color name="playerColorPrimary">#66000000</color>
 
     <color name="userGroupColor_1">@color/a_red</color>
     <color name="userGroupColor_2">#FFA500</color>

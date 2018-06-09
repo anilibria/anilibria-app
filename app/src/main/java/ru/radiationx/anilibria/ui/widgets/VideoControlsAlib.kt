@@ -41,7 +41,7 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
             private var seekStarted = false;
 
             override fun onTap() {
-                Log.e("gestureLalala", "onTap")
+                //Log.e("gestureLalala", "onTap")
             }
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {
@@ -62,35 +62,35 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
                 gestureSeekValue.text = textValue
                 localSeekDelta = seekMillis
 
-                Log.e("gestureLalala", "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition")
+                //Log.e("gestureLalala", "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition")
             }
 
             override fun onVerticalScroll(event: MotionEvent?, delta: Float) {
-                Log.e("gestureLalala", "onVerticalScroll, d=$delta, e=${event?.action}")
+                //Log.e("gestureLalala", "onVerticalScroll, d=$delta, e=${event?.action}")
             }
 
             override fun onSwipeRight() {
-                Log.e("gestureLalala", "onSwipeRight")
+                //Log.e("gestureLalala", "onSwipeRight")
             }
 
             override fun onSwipeLeft() {
-                Log.e("gestureLalala", "onSwipeLeft")
+                //Log.e("gestureLalala", "onSwipeLeft")
             }
 
             override fun onSwipeBottom() {
-                Log.e("gestureLalala", "onSwipeBottom")
+                //Log.e("gestureLalala", "onSwipeBottom")
             }
 
             override fun onSwipeTop() {
-                Log.e("gestureLalala", "onSwipeTop")
+                //Log.e("gestureLalala", "onSwipeTop")
             }
 
             override fun onStart() {
-                Log.e("gestureLalala", "onStart")
+                //Log.e("gestureLalala", "onStart")
             }
 
             override fun onEnd() {
-                Log.e("gestureLalala", "onEnd, lsd=$localSeekDelta")
+                //Log.e("gestureLalala", "onEnd, lsd=$localSeekDelta")
                 videoView?.apply {
                     if (localSeekDelta != 0L) {
                         seekTo((currentPosition + localSeekDelta).coerceIn(0, duration))

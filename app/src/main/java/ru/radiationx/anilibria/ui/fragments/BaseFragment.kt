@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -8,6 +9,8 @@ import android.support.design.widget.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.arellomobile.mvp.MvpAppCompatFragment
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -79,6 +82,22 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
             return
         }
         baseStatusBar.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    protected fun hideSoftwareKeyboard() {
+        activity?.also {
+            val inputManager = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            it.currentFocus?.let {
+                inputManager?.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+        }
+    }
+
+    protected fun showSoftwareKeyboard(editText: EditText){
+        activity?.also {
+            val inputManager = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            inputManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     override fun onDestroy() {

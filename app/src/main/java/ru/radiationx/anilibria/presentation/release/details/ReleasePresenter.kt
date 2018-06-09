@@ -36,6 +36,8 @@ class ReleasePresenter(
         private const val START_PAGE = 1
     }
 
+    private var lasCommentSentTime = 0L
+
     private var currentPageComment = START_PAGE
 
     var currentData: ReleaseFull? = null
@@ -249,6 +251,35 @@ class ReleasePresenter(
                     .addToDisposable()
         }
 
+    }
+
+    fun onClickSendComment(text: String) {
+        if (text.length < 3) {
+            router.showSystemMessage("Комментарий слишком короткий")
+            return
+        }
+        if ((System.currentTimeMillis() - lasCommentSentTime) < 30000) {
+            router.showSystemMessage("Комментарий можно отправлять раз в 30 секунд")
+            return
+        }
+        currentData?.let {
+            releaseRepository
+                    .sendComment(it.idName.orEmpty(), it.id, text, it.favoriteCount.sessId)
+                    .subscribe({ comments ->
+                        lasCommentSentTime = System.currentTimeMillis()
+                        viewState.onCommentSent()
+                        currentPageComment = START_PAGE
+                        viewState.setEndlessComments(!comments.isEnd())
+                        if (isFirstPage()) {
+                            viewState.showComments(comments.data)
+                        } else {
+                            viewState.insertMoreComments(comments.data)
+                        }
+                    }, {
+                        errorHandler.handle(it)
+                    })
+                    .addToDisposable()
+        }
     }
 
     fun openAuth() {

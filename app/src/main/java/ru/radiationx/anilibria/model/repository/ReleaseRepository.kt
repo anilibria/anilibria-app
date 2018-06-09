@@ -74,4 +74,10 @@ class ReleaseRepository(
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
+
+    fun sendComment(code: String, id: Int, text: String, sessId: String): Observable<Paginated<List<Comment>>> = releaseApi
+            .sendComment(code, id, text, sessId)
+            .toObservable()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 }

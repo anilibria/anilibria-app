@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
@@ -17,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
+import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
@@ -26,8 +29,10 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import java.lang.Exception
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionListener, OnErrorListener, VideoControlsButtonListener {
@@ -58,12 +63,14 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private var currentEpisodeId = NO_ID
     //private var currentEpisode = NOT_SELECTED
     private var quality = DEFAULT_QUALITY
-    private lateinit var videoControls: VideoControls
+    private lateinit var videoControls: VideoControlsAlib
     private val fullScreenListener = FullScreenListener()
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
     private val releaseInteractor = App.injections.releaseInteractor
     private val currentVitals = mutableListOf<VitalItem>()
     private var qualityMenuItem: MenuItem? = null
+
+    private var fullscreenOrientation = false
 
     private var compositeDisposable = CompositeDisposable()
 
@@ -78,7 +85,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         setContentView(R.layout.activity_myplayer)
 
         supportActionBar?.apply {
-            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
+            //setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
+            setBackgroundDrawable(ContextCompat.getDrawable(themedContext, R.drawable.bg_video_toolbar))
         }
 
         intent?.let {
@@ -96,7 +104,9 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         player.setOnPreparedListener(this)
         player.setOnCompletionListener(this)
 
-        player.videoControls?.let { videoControls = it }
+        videoControls = VideoControlsAlib(player.context)
+        player.setControls(videoControls as VideoControlsCore)
+        //player.videoControls?.let { videoControls = it }
 
         videoControls.setVisibilityListener(ControlsVisibilityListener())
         videoControls.fitsSystemWindows = false
@@ -109,6 +119,28 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             //it.setNextDrawable(ContextCompat.getDrawable(this, R.drawable.ic_news))
             it.setButtonListener(this)
         }
+        videoControls.setOpeningListener(object : VideoControlsAlib.AlibControlsListener {
+            private val delta = TimeUnit.SECONDS.toMillis(90)
+            override fun onMinusClick() {
+                val newPosition = player.currentPosition - delta
+                player.seekTo(newPosition.coerceIn(0, player.duration))
+            }
+
+            override fun onPlusClick() {
+                val newPosition = player.currentPosition + delta
+                player.seekTo(newPosition.coerceIn(0, player.duration))
+            }
+
+            override fun onFullScreenClick() {
+                if (fullscreenOrientation) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                } else {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
+                fullscreenOrientation = !fullscreenOrientation
+                videoControls.setFullScreenMode(fullscreenOrientation)
+            }
+        })
         playEpisode(getEpisode())
         supportActionBar?.title = releaseData.title
         supportActionBar?.elevation = 0f
@@ -195,6 +227,15 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     override fun onPause() {
         super.onPause()
         player.pause()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig?.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> fullscreenOrientation = true
+            else -> fullscreenOrientation = false
+        }
+        videoControls.setFullScreenMode(fullscreenOrientation)
     }
 
     private fun saveEpisode() {

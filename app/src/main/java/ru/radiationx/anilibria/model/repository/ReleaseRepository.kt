@@ -24,22 +24,32 @@ class ReleaseRepository(
     fun getRelease(releaseId: Int): Observable<ReleaseFull> = releaseApi
             .getRelease(releaseId)
             .doOnSuccess { item ->
-                releaseUpdateHolder.getRelease(item.id)?.also {
-                    item.isNew = item.torrentUpdate > it.timestamp
-                }
-                releaseUpdateHolder.putRelease(item)
+                suka(item)
+
+
             }
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
+    fun suka(item: ReleaseItem) {
+        val updItem = releaseUpdateHolder.getRelease(item.id)
+
+        if (updItem == null) {
+            releaseUpdateHolder.putRelease(item)
+        } else {
+            item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp
+            updItem.timestamp = item.torrentUpdate
+            updItem.lastOpenTimestamp = updItem.timestamp
+            Log.e("lalalupdata", "updRelease, ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp}")
+            releaseUpdateHolder.updRelease(updItem)
+        }
+    }
+
     fun getRelease(releaseIdName: String): Observable<ReleaseFull> = releaseApi
             .getRelease(releaseIdName)
             .doOnSuccess { item ->
-                releaseUpdateHolder.getRelease(item.id)?.also {
-                    item.isNew = item.torrentUpdate > it.timestamp
-                }
-                releaseUpdateHolder.putRelease(item)
+                suka(item)
             }
             .toObservable()
             .subscribeOn(schedulers.io())
@@ -64,15 +74,23 @@ class ReleaseRepository(
             .getReleases(page)
             .doOnSuccess {
                 val newItems = mutableListOf<ReleaseItem>()
+                val updItems = mutableListOf<ReleaseUpdate>()
                 it.data.forEach { item ->
                     val updItem = releaseUpdateHolder.getRelease(item.id)
+                    Log.e("lalalupdata", "${item.id}, ${item.torrentUpdate} : ${updItem?.id}, ${updItem?.timestamp}, ${updItem?.lastOpenTimestamp}")
                     if (updItem == null) {
                         newItems.add(item)
                     } else {
-                        item.isNew = item.torrentUpdate > updItem.timestamp
+
+                        item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                        /*if (item.torrentUpdate > updItem.timestamp) {
+                            updItem.timestamp = item.torrentUpdate
+                            updItems.add(updItem)
+                        }*/
                     }
                 }
                 releaseUpdateHolder.putAllRelease(newItems)
+                releaseUpdateHolder.updAllRelease(updItems)
             }
             .toObservable()
             .subscribeOn(schedulers.io())

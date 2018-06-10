@@ -33,16 +33,27 @@ class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : R
         return localReleases.firstOrNull { it.id == id }
     }
 
-    override fun putRelease(release: ReleaseItem) {
-        localReleases
-                .firstOrNull { it.id == release.id }
-                ?.let { localReleases.remove(it) }
-        localReleases.add(ReleaseUpdate().apply {
-            id = release.id
-            timestamp = release.torrentUpdate
-        })
+    override fun updRelease(release: ReleaseUpdate) {
+        updAllRelease(listOf(release))
+    }
+
+    override fun updAllRelease(releases: List<ReleaseUpdate>) {
+        releases.forEach { release ->
+            localReleases
+                    .firstOrNull { it.id == release.id }
+                    ?.let { localReleases.remove(it) }
+            localReleases.add(ReleaseUpdate().apply {
+                id = release.id
+                timestamp = release.timestamp
+                lastOpenTimestamp = release.lastOpenTimestamp
+            })
+        }
         saveAll()
         localReleasesRelay.accept(localReleases)
+    }
+
+    override fun putRelease(release: ReleaseItem) {
+        putAllRelease(listOf(release))
     }
 
     override fun putAllRelease(releases: List<ReleaseItem>) {
@@ -53,6 +64,7 @@ class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : R
             localReleases.add(ReleaseUpdate().apply {
                 id = release.id
                 timestamp = release.torrentUpdate
+                //lastOpenTimestamp = release.torrentUpdate
             })
         }
         saveAll()
@@ -65,6 +77,7 @@ class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : R
             jsonEpisodes.put(JSONObject().apply {
                 put("id", it.id)
                 put("timestamp", it.timestamp)
+                put("lastOpenTimestamp", it.lastOpenTimestamp)
             })
         }
         sharedPreferences
@@ -82,6 +95,7 @@ class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : R
                     localReleases.add(ReleaseUpdate().apply {
                         id = it.getInt("id")
                         timestamp = it.getInt("timestamp")
+                        lastOpenTimestamp = it.getInt("lastOpenTimestamp")
                     })
                 }
             }

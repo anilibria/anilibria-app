@@ -153,7 +153,6 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         release.sessId = responseJson.nullString("sessId")
         release.isBlocked = responseJson.optBoolean("isBlocked", false)
         release.contentBlocked = responseJson.optString("contentBlocked", null)
-
         release.torrentUpdate = responseJson.optInt("torrentUpdate", 0)
 
         responseJson.optJSONArray("season")?.let {

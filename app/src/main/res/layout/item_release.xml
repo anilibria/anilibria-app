@@ -13,7 +13,7 @@
     app:cardCornerRadius="0dp"
     app:cardElevation="1dp">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -23,7 +23,9 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:aspectRatio="1.456" />
+            app:aspectRatio="1.456"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/item_new_indicator"
@@ -35,10 +37,46 @@
             android:paddingBottom="8dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
+            android:visibility="gone"
             android:paddingTop="4dp"
+            android:shadowColor="#000"
+            android:shadowDy="1.0"
+            android:shadowRadius="4.0"
             android:text="Обновлено"
             android:textColor="@color/white"
             android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/textDefault"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/item_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Title releaseData long title lol" />
+
+        <TextView
+            android:id="@+id/item_desc"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="6"
+            android:textColor="@color/textDefault"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/item_image"
+            app:layout_constraintTop_toBottomOf="@id/item_title"
+            tools:text="Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol asdasdnhhasdfhjajhhjjhjhjhjhjjjjjjkjkjkjjjjjjjjjjhhhljkahsdkjlfhkjsahdklfjasdjfhlksajdhflksajdhf" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,26 +90,8 @@
             android:paddingStart="12dp"
             android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/item_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textDefault"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Title releaseData long title lol" />
-
-            <TextView
-                android:id="@+id/item_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="6"
-                android:textColor="@color/textDefault"
-                android:textSize="14sp"
-                tools:text="Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol Title releaseData long title lol " />
 
         </LinearLayout>
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

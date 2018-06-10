@@ -10,11 +10,15 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
 import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
+import ru.radiationx.anilibria.model.system.SchedulersProvider
 
 /**
  * Created by radiationx on 18.02.18.
  */
-class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : ReleaseUpdateHolder {
+class ReleaseUpdateStorage(
+        private val sharedPreferences: SharedPreferences,
+        private val schedulers: SchedulersProvider
+) : ReleaseUpdateHolder {
 
     companion object {
         private const val LOCAL_HISTORY_KEY = "data.release_update"
@@ -28,6 +32,8 @@ class ReleaseUpdateStorage(private val sharedPreferences: SharedPreferences) : R
     }
 
     override fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>> = localReleasesRelay
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 
     override fun getRelease(id: Int): ReleaseUpdate? {
         return localReleases.firstOrNull { it.id == id }

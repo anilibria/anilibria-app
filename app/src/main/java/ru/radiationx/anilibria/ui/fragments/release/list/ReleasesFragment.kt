@@ -41,7 +41,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
             App.injections.releaseRepository,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
+            App.injections.errorHandler,
+            App.injections.releaseUpdateStorage
     )
 
     override var sharedViewLocal: View? = null
@@ -104,6 +105,10 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
 
     override fun insertMore(releases: List<ReleaseItem>) {
         adapter.insertMore(releases)
+    }
+
+    override fun updateReleases(releases: List<ReleaseItem>) {
+        adapter.updateItems(releases)
     }
 
     override fun onLoadMore() {

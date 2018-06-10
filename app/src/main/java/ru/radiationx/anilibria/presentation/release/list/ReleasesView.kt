@@ -17,6 +17,9 @@ interface ReleasesView : IBaseView {
     @StateStrategyType(AddToEndStrategy::class)
     fun insertMore(releases: List<ReleaseItem>)
 
+    @StateStrategyType(AddToEndStrategy::class)
+    fun updateReleases(releases: List<ReleaseItem>)
+
     fun setEndless(enable: Boolean)
 
     fun showVitalBottom(vital: VitalItem)

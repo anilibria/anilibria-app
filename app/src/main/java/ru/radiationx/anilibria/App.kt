@@ -165,7 +165,7 @@ class App : Application() {
         val appPreferences: PreferencesHolder = PreferencesStorage(defaultPreferences)
         val episodesCheckerStorage: EpisodesCheckerHolder = EpisodesCheckerStorage(dataStoragePreferences)
         val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
-        var releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences)
+        val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
 
         val linkHandler: LinkHandler = LinkRouter()

@@ -5,6 +5,7 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.presentation.ErrorHandler
@@ -17,7 +18,8 @@ class SearchPresenter(
         private val releaseRepository: ReleaseRepository,
         private val searchRepository: SearchRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: ErrorHandler,
+        private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<SearchView>(router) {
 
     companion object {
@@ -28,12 +30,31 @@ class SearchPresenter(
     var currentGenre: String? = null
     var currentQuery: String? = null
 
+    private val currentItems = mutableListOf<ReleaseItem>()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
         observeGenres()
         loadReleases(START_PAGE)
+        releaseUpdateHolder
+                .observeEpisodes()
+                .subscribe { data ->
+                    val itemsNeedUpdate = mutableListOf<ReleaseItem>()
+                    currentItems.forEach { item ->
+                        data.firstOrNull { it.id == item.id }?.also { updItem ->
+                            val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                            Log.e("lalalupdata", "check pres ${item.id}, ${item.torrentUpdate} : ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp} : ${item.isNew}, $isNew")
+                            if (item.isNew != isNew) {
+                                item.isNew = isNew
+                                itemsNeedUpdate.add(item)
+                            }
+                        }
+                    }
+                    viewState.updateReleases(itemsNeedUpdate)
+                }
+                .addToDisposable()
     }
 
     private fun isFirstPage(): Boolean {
@@ -101,8 +122,11 @@ class SearchPresenter(
 
     private fun showData(data: List<ReleaseItem>) {
         if (isFirstPage()) {
+            currentItems.clear()
+            currentItems.addAll(data)
             viewState.showReleases(data)
         } else {
+            currentItems.addAll(data)
             viewState.insertMore(data)
         }
     }

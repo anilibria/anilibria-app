@@ -99,5 +99,12 @@ open class ReleasesAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateItems(updItems: List<ReleaseItem>) {
+        updItems.map { updItem -> items.indexOfFirst { it is ReleaseListItem && it.item.id == updItem.id } }.forEach {
+            Log.e("lalalupdata", "adapter notify index $it")
+            notifyItemChanged(it)
+        }
+    }
+
     interface ItemListener : LoadMoreDelegate.Listener, ReleaseItemDelegate.Listener
 }

@@ -53,7 +53,8 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 App.injections.releaseRepository,
                 App.injections.searchRepository,
                 (parentFragment as RouterProvider).getRouter(),
-                App.injections.errorHandler
+                App.injections.errorHandler,
+                App.injections.releaseUpdateStorage
         )
     }
 
@@ -237,6 +238,10 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     override fun insertMore(releases: List<ReleaseItem>) {
         adapter.insertMore(releases)
+    }
+
+    override fun updateReleases(releases: List<ReleaseItem>) {
+        adapter.updateItems(releases)
     }
 
     override fun onLoadMore() {

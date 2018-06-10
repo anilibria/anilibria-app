@@ -111,7 +111,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                 item.types.add(jsonTypes.getString(j))
             }
 
-            item.torrentUpdate = jsonItem.optInt("torrentUpdate", 0)
+            item.torrentUpdate = jsonItem.optInt("torrentUpdate", 0) + 4
 
             resItems.add(item)
         }
@@ -153,7 +153,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         release.sessId = responseJson.nullString("sessId")
         release.isBlocked = responseJson.optBoolean("isBlocked", false)
         release.contentBlocked = responseJson.optString("contentBlocked", null)
-        release.torrentUpdate = responseJson.optInt("torrentUpdate", 0)
+        release.torrentUpdate = responseJson.optInt("torrentUpdate", 0) + 4
 
         responseJson.optJSONArray("season")?.let {
             for (j in 0 until it.length()) {

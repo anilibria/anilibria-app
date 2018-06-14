@@ -59,7 +59,7 @@ android {
 }
 ext {
     supportLibVersion = '27.1.0'
-    okHttpVersion = '3.9.0'
+    okHttpVersion = '3.10.0'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

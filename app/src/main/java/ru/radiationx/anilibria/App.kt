@@ -174,7 +174,7 @@ class App : Application() {
         private val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         private val userHolder: UserHolder = UserStorage(defaultPreferences)
 
-        val client: IClient = Client(cookieHolder, userHolder)
+        val client: IClient = Client(cookieHolder, userHolder, context)
         val apiUtils: IApiUtils = ApiUtils()
 
         private val authApi = AuthApi(client, apiUtils)

@@ -13,17 +13,19 @@ interface CookieHolder {
         const val BITRIX_SM_UIDH = "BITRIX_SM_UIDH"
         const val BITRIX_SM_UIDL = "BITRIX_SM_UIDL"
         private const val PHPSESSID = "PHPSESSID"
-        
+        private const val BLAZINGFAST_RCKSID = "rcksid"
+
         val cookieNames = listOf(
                 BITRIX_SM_LOGIN,
                 BITRIX_SM_SOUND_LOGIN_PLAYED,
                 BITRIX_SM_USER_AUTH,
                 BITRIX_SM_UIDH,
                 BITRIX_SM_UIDL,
-                PHPSESSID
+                PHPSESSID,
+                BLAZINGFAST_RCKSID
         )
     }
-    
+
     fun getCookies(): Map<String, Cookie>
     fun putCookie(url: String, cookie: Cookie)
     fun removeCookie(name: String)

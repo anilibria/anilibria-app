@@ -1,18 +1,29 @@
 package ru.radiationx.anilibria
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.ui.fragments.GoogleCaptchaActivity
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 
 class Client constructor(
         private val cookieHolder: CookieHolder,
-        private val userHolder: UserHolder
+        private val userHolder: UserHolder,
+        private val context: Context
 ) : IClient {
     companion object {
         const val METHOD_GET = "GET"
@@ -21,9 +32,16 @@ class Client constructor(
         const val METHOD_DELETE = "DELETE"
     }
 
+    private val blazingFastPattern = Pattern.compile("open[^\\(]*?\\([^\"']*?[\"'][^\"']+[\"'][^,]*?,[^\"']*?[\"']([\\s\\S]*?)[\"']\\s*?(?:,[\\s]*?(?:true|false)|\\))")
+    private val jsConcatStringPattern = Pattern.compile("[\"'][\\s]*?\\+[\\s]*?[^\\+]*?[\\s]*?\\+[\\s]*?[\"']")
+    private val googleCaptchaPattern = Pattern.compile("g-recaptcha\" data-sitekey")
+
+    private val recurseControl = mutableMapOf<String, Int>()
+
     private val cookieJar = object : CookieJar {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+            Log.e("IClient", "saveFromResponse ${cookies.joinToString { it.name() }}")
             var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {
@@ -113,16 +131,90 @@ class Client constructor(
 
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null
+        var stringBody: String = ""
+        var redirectUrl = url
         try {
             okHttpResponse = client.newCall(request).execute()
             if (!okHttpResponse!!.isSuccessful)
-                throw IOException("Unexpected code " + okHttpResponse)
+                throw IOException("Unexpected code $okHttpResponse")
 
+            redirectUrl = okHttpResponse.request().url().toString()
             responseBody = okHttpResponse.body()
-            return responseBody?.string().orEmpty()
+            stringBody = responseBody?.string().orEmpty()
         } finally {
             okHttpResponse?.close()
             responseBody?.close()
         }
+
+        googleCaptchaResolver(stringBody, redirectUrl)
+        val bfr = blazingFastResolver(stringBody)
+        if (bfr) {
+            val recurseLevel = recurseControl[httpUrl.toString()] ?: 0
+            if (recurseLevel >= 1) {
+                return stringBody
+            }
+            recurseControl[httpUrl.toString()] = recurseLevel + 1
+            stringBody = request(method, url, args)
+            if (recurseLevel <= 1) {
+                recurseControl.remove(httpUrl.toString())
+            }
+        }
+        return stringBody;
+    }
+
+    private fun googleCaptchaResolver(response: String, url: String) {
+        if (!googleCaptchaPattern.matcher(response).find()) {
+            return
+        }
+        Handler(Looper.getMainLooper()).post {
+            try {
+                context.startActivity(Intent(context, GoogleCaptchaActivity::class.java).apply {
+                    putExtra("content", response)
+                    putExtra("url", url)
+                }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+        throw Exception("googlecaptcha")
+    }
+
+    private fun blazingFastResolver(response: String): Boolean {
+        val matcher = blazingFastPattern.matcher(response)
+        if (matcher.find()) {
+            Log.e("IClient", "blazingFastResolver before: ${matcher.group(1)}")
+            val width = context.resources.displayMetrics.widthPixels
+            val newUrl = jsConcatStringPattern.matcher(matcher.group(1)).replaceAll(width.toString())
+            Single
+                    .fromCallable {
+                        val httpUrl: HttpUrl = HttpUrl.parse("${Api.BASE_URL}$newUrl")
+                                ?: throw Exception("URL incorrect")
+
+                        val request = Request.Builder()
+                                .url(httpUrl)
+                                .method(METHOD_GET, null)
+                                .build()
+
+                        var okHttpResponse: Response? = null
+                        var responseBody: ResponseBody? = null
+                        try {
+                            okHttpResponse = client.newCall(request).execute()
+                            if (!okHttpResponse!!.isSuccessful)
+                                throw IOException("Unexpected code $okHttpResponse")
+
+                            responseBody = okHttpResponse.body()
+
+                            Log.e("IClient", "blazingFastResolver after: ${responseBody?.string()}")
+                        } finally {
+                            okHttpResponse?.close()
+                            responseBody?.close()
+                        }
+                    }
+                    .delay(4000, TimeUnit.MILLISECONDS)
+                    .subscribe()
+
+            return true
+        }
+        return false
     }
 }

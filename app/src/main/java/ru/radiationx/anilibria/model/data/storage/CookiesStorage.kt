@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -38,6 +39,10 @@ class CookiesStorage(private val sharedPreferences: SharedPreferences) : CookieH
     override fun getCookies(): Map<String, Cookie> {
         Log.e("CookiesStorage", "getCookies: ${clientCookies.map { it.value.name() }.joinToString { it }}")
         return clientCookies
+    }
+
+    override fun putCookie(url: String, name: String, value: String) {
+        putCookie(url, Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host).build() )
     }
 
     override fun putCookie(url: String, cookie: Cookie) {

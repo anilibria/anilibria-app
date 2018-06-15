@@ -23,6 +23,8 @@ import ru.radiationx.anilibria.model.repository.CheckerRepository
 class SimpleUpdateChecker(private val checkerRepository: CheckerRepository) {
 
     fun checkUpdate() {
+        //todo fix it
+        return
         checkerRepository
                 .checkUpdate(BuildConfig.VERSION_CODE, true)
                 .subscribe({

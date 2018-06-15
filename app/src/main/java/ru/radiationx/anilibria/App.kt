@@ -171,8 +171,8 @@ class App : Application() {
         val linkHandler: LinkHandler = LinkRouter()
         val errorHandler: ErrorHandler = ErrorHandlerImpl(context, router)
 
-        private val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
-        private val userHolder: UserHolder = UserStorage(defaultPreferences)
+        val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
+        val userHolder: UserHolder = UserStorage(defaultPreferences)
 
         val client: IClient = Client(cookieHolder, userHolder, context)
         val apiUtils: IApiUtils = ApiUtils()

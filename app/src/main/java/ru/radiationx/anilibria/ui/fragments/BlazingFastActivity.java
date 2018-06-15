@@ -7,32 +7,29 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import ru.radiationx.anilibria.App;
+import ru.radiationx.anilibria.model.data.holders.CookieHolder;
 import ru.radiationx.anilibria.model.data.remote.IClient;
 
 /**
  * Created by radiationx on 09.11.17.
  */
 
-public class GoogleCaptchaActivity extends FragmentActivity {
+public class BlazingFastActivity extends FragmentActivity {
     private WebView webView;
     private String content = "";
     private String url = "";
 
     private IClient client = App.injections.getClient();
+    private CookieHolder cookieHolder = App.injections.getCookieHolder();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -51,8 +48,9 @@ public class GoogleCaptchaActivity extends FragmentActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         Uri uri = Uri.parse(url);
         String domain = uri.getScheme() + "://" + uri.getHost();
-        Log.e("GoogleCaptchaActivity", "domain: " + domain);
-        webView.loadDataWithBaseURL(domain, content, "text/html", "utf-8", null);
+        Log.e("BlazingFastActivity", "domain: " + domain);
+
+        webView.loadDataWithBaseURL(domain, "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script><script>" + content + "</script>", "text/html", "utf-8", null);
 
     }
 
@@ -62,20 +60,29 @@ public class GoogleCaptchaActivity extends FragmentActivity {
         @Nullable
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            Log.e("GoogleCaptchaActivity", "shouldInterceptRequest 21: "+request.getUrl());
+            Log.e("BlazingFastActivity", "shouldInterceptRequest 21: " + request.getUrl());
             return super.shouldInterceptRequest(view, request);
         }
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            Log.e("GoogleCaptchaActivity", "shouldOverrideUrlLoading 21: "+request.getUrl()+" : "+request.getMethod());
+            Log.e("BlazingFastActivity", "shouldOverrideUrlLoading 21: " + request.getUrl() + " : " + request.getMethod());
             return super.shouldOverrideUrlLoading(view, request);
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.e("GoogleCaptchaActivity", "shouldOverrideUrlLoading 19: " + url);
+            String cookies = CookieManager.getInstance().getCookie(url);
+            String[] cookiesArray = cookies.split(";");
+            for (String cookie : cookiesArray) {
+                String[] cookieObj = cookie.split("=");
+                if (cookieObj[0].toLowerCase().contains("BLAZINGFAST-WEB-PROTECT".toLowerCase())) {
+                    Log.e("BlazingFastActivity", "putCookie '" + cookieObj[0] + "' : '" + cookieObj[1] + "'");
+                    cookieHolder.putCookie(url, cookieObj[0], cookieObj[1]);
+                }
+            }
+            Log.e("BlazingFastActivity", "shouldOverrideUrlLoading 19: " + url + " : coockies= " + cookies);
             /*Disposable disposable = Observable
                     .fromCallable(() -> client.get(url, new HashMap<>()))
                     .subscribeOn(Schedulers.io())
@@ -85,7 +92,7 @@ public class GoogleCaptchaActivity extends FragmentActivity {
                                 onResponse();
                             },
                             throwable -> {
-                                Toast.makeText(GoogleCaptchaActivity.this, "error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BlazingFastActivity.this, "error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                     );
             compositeDisposable.add(disposable);*/

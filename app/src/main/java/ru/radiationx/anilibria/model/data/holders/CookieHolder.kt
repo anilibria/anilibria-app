@@ -28,5 +28,6 @@ interface CookieHolder {
 
     fun getCookies(): Map<String, Cookie>
     fun putCookie(url: String, cookie: Cookie)
+    fun putCookie(url: String, name: String, value: String)
     fun removeCookie(name: String)
 }

@@ -9,6 +9,8 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface MainView : MvpView {
+    fun initAntiDdos()
+    fun initMain()
     fun highlightTab(screenKey: String)
     fun updateTabs()
 }

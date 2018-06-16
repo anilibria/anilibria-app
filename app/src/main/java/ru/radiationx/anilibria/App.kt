@@ -20,19 +20,18 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.model.data.holders.*
+import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.storage.*
+import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import ru.radiationx.anilibria.presentation.ErrorHandler
-import ru.radiationx.anilibria.presentation.ErrorHandlerImpl
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.presentation.LinkRouter
+import ru.radiationx.anilibria.presentation.*
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
@@ -168,13 +167,16 @@ class App : Application() {
         val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
 
+        val antiDdosInteractor = AntiDdosInteractor(schedulers)
+
         val linkHandler: LinkHandler = LinkRouter()
-        val errorHandler: ErrorHandler = ErrorHandlerImpl(context, router)
+        val errorHandler: IErrorHandler = ErrorHandler(context, router)
+        val antiDdosErrorHandler: IAntiDdosErrorHandler = AntiDdosErrorHandler(antiDdosInteractor, router)
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         val userHolder: UserHolder = UserStorage(defaultPreferences)
 
-        val client: IClient = Client(cookieHolder, userHolder, context)
+        val client: IClient = Client(cookieHolder, userHolder, context, antiDdosErrorHandler)
         val apiUtils: IApiUtils = ApiUtils()
 
         private val authApi = AuthApi(client, apiUtils)

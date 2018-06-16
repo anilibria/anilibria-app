@@ -12,6 +12,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.fragments.BlazingFastActivity
+import ru.radiationx.anilibria.ui.fragments.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -69,6 +71,16 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
             override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
                 return when (screenKey) {
                     Screens.MAIN -> Intent(this@AuthActivity, MainActivity::class.java)
+                    Screens.GOOGLE_CAPTCHA -> Intent(this@AuthActivity, GoogleCaptchaActivity::class.java).apply {
+                        val args = data as Bundle
+                        putExtra("content", args.getString("content"))
+                        putExtra("url", args.getString("url"))
+                    }
+                    Screens.BLAZINFAST -> Intent(this@AuthActivity, BlazingFastActivity::class.java).apply {
+                        val args = data as Bundle
+                        putExtra("content", args.getString("content"))
+                        putExtra("url", args.getString("url"))
+                    }
                     else -> null
                 }
             }

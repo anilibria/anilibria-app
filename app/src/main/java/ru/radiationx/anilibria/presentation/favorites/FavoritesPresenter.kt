@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -19,7 +19,7 @@ import ru.terrakok.cicerone.Router
 class FavoritesPresenter(
         private val releaseRepository: ReleaseRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<FavoritesView>(router) {
 
 

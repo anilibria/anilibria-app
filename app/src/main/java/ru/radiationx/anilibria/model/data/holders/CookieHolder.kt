@@ -7,13 +7,14 @@ import okhttp3.Cookie
  */
 interface CookieHolder {
     companion object {
-        private const val BITRIX_SM_LOGIN = "BITRIX_SM_LOGIN"
-        private const val BITRIX_SM_SOUND_LOGIN_PLAYED = "BITRIX_SM_SOUND_LOGIN_PLAYED"
-        private const val BITRIX_SM_USER_AUTH = "BITRIX_SM_USER_AUTH"
+        const val BITRIX_SM_LOGIN = "BITRIX_SM_LOGIN"
+        const val BITRIX_SM_SOUND_LOGIN_PLAYED = "BITRIX_SM_SOUND_LOGIN_PLAYED"
+        const val BITRIX_SM_USER_AUTH = "BITRIX_SM_USER_AUTH"
         const val BITRIX_SM_UIDH = "BITRIX_SM_UIDH"
         const val BITRIX_SM_UIDL = "BITRIX_SM_UIDL"
-        private const val PHPSESSID = "PHPSESSID"
-        private const val BLAZINGFAST_RCKSID = "rcksid"
+        const val PHPSESSID = "PHPSESSID"
+        const val BLAZINGFAST_RCKSID = "rcksid"
+        const val BLAZINGFAST_WEB_PROTECT = "BLAZINGFAST-WEB-PROTECT"
 
         val cookieNames = listOf(
                 BITRIX_SM_LOGIN,
@@ -22,7 +23,8 @@ interface CookieHolder {
                 BITRIX_SM_UIDH,
                 BITRIX_SM_UIDL,
                 PHPSESSID,
-                BLAZINGFAST_RCKSID
+                BLAZINGFAST_RCKSID,
+                BLAZINGFAST_WEB_PROTECT
         )
     }
 

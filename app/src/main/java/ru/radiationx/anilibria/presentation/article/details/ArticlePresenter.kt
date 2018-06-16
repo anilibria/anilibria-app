@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -20,7 +20,7 @@ class ArticlePresenter(
         private val vitalRepository: VitalRepository,
         private val router: Router,
         private val linkHandler: LinkHandler,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticleView>(router) {
 
     companion object {

@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -29,7 +29,7 @@ class ReleasePresenter(
         private val authRepository: AuthRepository,
         private val router: Router,
         private val linkHandler: LinkHandler,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseView>(router) {
 
     companion object {

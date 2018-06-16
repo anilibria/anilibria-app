@@ -27,4 +27,9 @@ class CheckerApi(
                 .map { checkerParser.parse(it) }
     }
 
+    fun checkUpdateFromRepository(): Single<UpdateData> {
+        return client.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/check.json", emptyMap())
+                .map { checkerParser.parse(it) }
+    }
+
 }

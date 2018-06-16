@@ -1,0 +1,33 @@
+{
+  "update": {
+    "version_code": "26",
+    "version_name": "2.0.9",
+    "version_build": "0",
+    "build_date": "10 июня 2018 г.",
+    "links": [
+      {
+        "name": "AniLibria",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.0.9.apk",
+        "type": "file"
+      },
+      {
+        "name": "Play Market",
+        "url": "https://play.google.com/store/apps/details?id=ru.radiationx.anilibria.app",
+        "type": "site"
+      }
+    ],
+    "important": [
+      "Обновлён видеоплеер, возможно исправлены некоторые ошибки при воспроизведении"
+    ],
+    "added": [
+      "Отметки об обновлении релизов",
+      "Перемотка свайпом в видеоплеере",
+      "Переход в полноэкранный режим в видеоплеере",
+      "Отправка комментариев в релизах и новостях"
+    ],
+    "fixed": [],
+    "changed": [
+      "Дизайн видеоплеера"
+    ]
+  }
+}

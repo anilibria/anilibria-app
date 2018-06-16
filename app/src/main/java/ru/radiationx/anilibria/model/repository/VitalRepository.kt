@@ -19,8 +19,6 @@ class VitalRepository(
     private var currentLoader: Single<List<VitalItem>>? = null
 
     private fun load() {
-        //todo fix it
-        return
         if (currentLoader == null && !currentDataRelay.hasValue()) {
             currentLoader = vitalApi
                     .loadVital()

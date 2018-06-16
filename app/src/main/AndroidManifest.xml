@@ -82,12 +82,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.fragments.GoogleCaptchaActivity"
+            android:name=".ui.activities.GoogleCaptchaActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.fragments.BlazingFastActivity"
+            android:name=".ui.activities.BlazingFastActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 

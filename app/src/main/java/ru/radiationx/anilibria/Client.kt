@@ -1,11 +1,6 @@
 package ru.radiationx.anilibria
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
@@ -18,12 +13,7 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.NetworkResponse
-import ru.radiationx.anilibria.presentation.ErrorHandler
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.BlazingFastActivity
-import ru.radiationx.anilibria.ui.fragments.GoogleCaptchaActivity
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 

@@ -25,8 +25,8 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.BlazingFastActivity
-import ru.radiationx.anilibria.ui.fragments.GoogleCaptchaActivity
+import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
+import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator

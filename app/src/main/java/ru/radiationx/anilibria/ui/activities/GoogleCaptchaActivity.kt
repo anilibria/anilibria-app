@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments
+package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.net.Uri

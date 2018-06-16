@@ -12,8 +12,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.BlazingFastActivity
-import ru.radiationx.anilibria.ui.fragments.GoogleCaptchaActivity
+import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
+import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.DimensionHelper

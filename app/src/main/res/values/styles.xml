@@ -32,6 +32,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="Splash.AppTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
     <style name="PlayerTheme" parent="AppTheme">
         <item name="colorPrimary">@color/playerColorPrimary</item>
         <item name="colorControlNormal">@color/white</item>

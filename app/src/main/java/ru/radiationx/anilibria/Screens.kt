@@ -26,4 +26,8 @@ object Screens {
     const val HISTORY = "HISTORY"
 
     const val PLAYER_WEB = "PLAYER_WEB"
+
+
+    const val GOOGLE_CAPTCHA = "GOOGLE_CAPTCHA"
+    const val BLAZINFAST = "BLAZINFAST"
 }

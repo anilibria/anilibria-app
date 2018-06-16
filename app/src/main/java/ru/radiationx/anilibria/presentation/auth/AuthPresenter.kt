@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -16,7 +16,7 @@ import ru.terrakok.cicerone.Router
 class AuthPresenter(
         private val router: Router,
         private val authRepository: AuthRepository,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<AuthView>(router) {
 
     companion object {

@@ -7,7 +7,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.repository.CheckerRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 
 /**
  * Created by radiationx on 28.01.18.
@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.presentation.ErrorHandler
 @InjectViewState
 class CheckerPresenter(
         private val checkerRepository: CheckerRepository,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : MvpPresenter<CheckerView>() {
 
     var forceLoad = false

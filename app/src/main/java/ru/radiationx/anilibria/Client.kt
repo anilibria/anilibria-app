@@ -1,19 +1,29 @@
 package ru.radiationx.anilibria
 
+import android.content.Context
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import ru.radiationx.anilibria.model.data.BlazingFastException
+import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
+import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.NetworkResponse
 import java.io.IOException
+import java.util.regex.Pattern
 
 
 class Client constructor(
         private val cookieHolder: CookieHolder,
-        private val userHolder: UserHolder
+        private val userHolder: UserHolder,
+        private val context: Context,
+        private val errorHandler: IAntiDdosErrorHandler
 ) : IClient {
+
     companion object {
         const val METHOD_GET = "GET"
         const val METHOD_POST = "POST"
@@ -21,9 +31,14 @@ class Client constructor(
         const val METHOD_DELETE = "DELETE"
     }
 
+    private val blazingFastPattern = Pattern.compile("open[^\\(]*?\\([^\"']*?[\"'][^\"']+[\"'][^,]*?,[^\"']*?[\"']([\\s\\S]*?)[\"']\\s*?(?:,[\\s]*?(?:true|false)|\\))")
+    private val jsConcatStringPattern = Pattern.compile("[\"'][\\s]*?\\+[\\s]*?[^\\+]*?[\\s]*?\\+[\\s]*?[\"']")
+    private val googleCaptchaPattern = Pattern.compile("g-recaptcha\" data-sitekey")
+
     private val cookieJar = object : CookieJar {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+            Log.e("IClient", "saveFromResponse ${cookies.joinToString { it.name() }}")
             var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {
@@ -49,6 +64,13 @@ class Client constructor(
             .addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            .addInterceptor {
+                val userAgentRequest = it.request()
+                        .newBuilder()
+                        .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68")
+                        .build()
+                it.proceed(userAgentRequest)
+            }
             .cookieJar(cookieJar)
             .build()
 
@@ -91,8 +113,8 @@ class Client constructor(
         }
     }
 
-    @Throws(Exception::class)
-    private fun request(method: String, url: String, args: Map<String, String>): String {
+    private fun simpleRequest(method: String, url: String, args: Map<String, String>): NetworkResponse {
+
         val body = getRequestBody(method, args)
 
         var httpUrl: HttpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect")
@@ -109,6 +131,8 @@ class Client constructor(
                 .method(method, body)
                 .build()
 
+        val response = NetworkResponse(httpUrl.toString())
+
         Log.e("S_DEF_LOG", "REQUEST $httpUrl : $method : $body")
 
         var okHttpResponse: Response? = null
@@ -116,13 +140,51 @@ class Client constructor(
         try {
             okHttpResponse = client.newCall(request).execute()
             if (!okHttpResponse!!.isSuccessful)
-                throw IOException("Unexpected code " + okHttpResponse)
-
+                throw IOException("Unexpected code $okHttpResponse")
             responseBody = okHttpResponse.body()
-            return responseBody?.string().orEmpty()
+
+            response.code = okHttpResponse.code()
+            response.message = okHttpResponse.message()
+            response.redirect = okHttpResponse.request().url().toString()
+            response.body = responseBody?.string().orEmpty()
         } finally {
             okHttpResponse?.close()
             responseBody?.close()
         }
+        return response
+    }
+
+    @Throws(Exception::class)
+    private fun request(method: String, url: String, args: Map<String, String>): String {
+        val response = simpleRequest(method, url, args)
+        googleCaptchaResolver(response.body, response.redirect)
+        blazingFastResolver(response.body)
+        return response.body;
+    }
+
+    private fun blazingFastResolver(response: String) {
+        val matcher = blazingFastPattern.matcher(response)
+        if (matcher.find()) {
+            Log.e("IClient", "blazingFastResolver before: ${matcher.group(1)}")
+            val width = context.resources.displayMetrics.widthPixels
+            val newUrl = jsConcatStringPattern.matcher(matcher.group(1)).replaceAll(width.toString())
+            val jsResponse = simpleRequest(METHOD_GET, "${Api.BASE_URL}$newUrl", emptyMap())
+            blazingFastFinalResolver(jsResponse.body, jsResponse.redirect)
+        }
+    }
+
+    private fun blazingFastFinalResolver(response: String, url: String) {
+        val error = BlazingFastException(response, url)
+        errorHandler.handle(error)
+        throw error
+    }
+
+    private fun googleCaptchaResolver(response: String, url: String) {
+        if (!googleCaptchaPattern.matcher(response).find()) {
+            return
+        }
+        val error = GoogleCaptchaException(response, url)
+        errorHandler.handle(error)
+        throw error
     }
 }

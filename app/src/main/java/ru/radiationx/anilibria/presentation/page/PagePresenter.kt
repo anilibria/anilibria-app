@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.presentation.page
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.PageRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -14,7 +14,7 @@ import ru.terrakok.cicerone.Router
 class PagePresenter(
         private val pageRepository: PageRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<PageView>(router) {
 
     var pageId: String? = null

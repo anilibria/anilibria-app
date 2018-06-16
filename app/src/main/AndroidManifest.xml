@@ -16,7 +16,7 @@
         <activity
             android:name=".ui.activities.main.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Splash.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -78,6 +78,16 @@
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.activities.GoogleCaptchaActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.activities.BlazingFastActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 

@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -21,7 +21,7 @@ class ReleasesPresenter(
         private val releaseRepository: ReleaseRepository,
         private val vitalRepository: VitalRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler,
+        private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<ReleasesView>(router) {
 
@@ -92,7 +92,6 @@ class ReleasesPresenter(
                     viewState.setEndless(!releaseItems.isEnd())
                     showData(releaseItems.data)
                 }) {
-                    showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()

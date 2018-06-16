@@ -13,6 +13,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main_antiddos.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
@@ -24,6 +25,8 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
+import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
@@ -63,11 +66,40 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     @ProvidePresenter
     fun provideMainPresenter(): MainPresenter {
-        return MainPresenter(getRouter(), App.injections.authRepository)
+        return MainPresenter(
+                getRouter(),
+                App.injections.errorHandler,
+                App.injections.authRepository,
+                App.injections.releaseRepository,
+                App.injections.antiDdosInteractor
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme_NoActionBar)
+        savedInstanceState?.let {
+            it.getStringArrayList(TABS_STACK)?.let {
+                if (it.isNotEmpty()) {
+                    tabsStack.addAll(it)
+                    presenter.defaultScreen = it.last()
+                }
+            }
+        }
+        Log.e("S_DEF_LOG", "main oncreate")
+        if (savedInstanceState == null) {
+            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+        }
+    }
+
+    override fun initAntiDdos() {
+        setContentView(R.layout.activity_main_antiddos)
+        antiddos_skip?.setOnClickListener {
+            presenter.skipAntiDdos()
+        }
+    }
+
+    override fun initMain() {
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
@@ -93,18 +125,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         updateTabs()
         initContainers()
 
-        savedInstanceState?.let {
-            it.getStringArrayList(TABS_STACK)?.let {
-                if (it.isNotEmpty()) {
-                    tabsStack.addAll(it)
-                    presenter.defaultScreen = it.last()
-                }
-            }
-        }
-        Log.e("S_DEF_LOG", "main oncreate")
-        if (savedInstanceState == null) {
-            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -234,6 +254,16 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 Screens.AUTH -> {
                     Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
                     Intent(this@MainActivity, AuthActivity::class.java)
+                }
+                Screens.GOOGLE_CAPTCHA -> Intent(this@MainActivity, GoogleCaptchaActivity::class.java).apply {
+                    val args = data as Bundle
+                    putExtra("content", args.getString("content"))
+                    putExtra("url", args.getString("url"))
+                }
+                Screens.BLAZINFAST -> Intent(this@MainActivity, BlazingFastActivity::class.java).apply {
+                    val args = data as Bundle
+                    putExtra("content", args.getString("content"))
+                    putExtra("url", args.getString("url"))
                 }
                 else -> null
             }

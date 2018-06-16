@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
-import ru.radiationx.anilibria.presentation.ErrorHandler
+import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -18,7 +18,7 @@ class SearchPresenter(
         private val releaseRepository: ReleaseRepository,
         private val searchRepository: SearchRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler,
+        private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<SearchView>(router) {
 

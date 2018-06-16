@@ -31,7 +31,7 @@ class Client constructor(
         const val METHOD_DELETE = "DELETE"
     }
 
-    private val blazingFastPattern = Pattern.compile("open[^\\(]*?\\([^\"']*?[\"'][^\"']+[\"'][^,]*?,[^\"']*?[\"']([\\s\\S]*?)[\"']\\s*?(?:,[\\s]*?(?:true|false)|\\))")
+    private val blazingFastPattern = Pattern.compile("open\\([\"'][^\"']+[\"']\\s*?,\\s*?[\"'](\\/___S___\\/\\?[\\s\\S]*?)[\"']\\s*?(?:,[\\s]*?(?:true|false)|\\))")
     private val jsConcatStringPattern = Pattern.compile("[\"'][\\s]*?\\+[\\s]*?[^\\+]*?[\\s]*?\\+[\\s]*?[\"']")
     private val googleCaptchaPattern = Pattern.compile("g-recaptcha\" data-sitekey")
 

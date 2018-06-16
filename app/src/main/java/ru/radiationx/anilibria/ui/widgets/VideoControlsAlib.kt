@@ -42,6 +42,7 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
 
             override fun onTap() {
                 //Log.e("gestureLalala", "onTap")
+                videoView?.showControls()
             }
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {

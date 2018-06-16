@@ -68,13 +68,13 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
-        findPreference("about.app_play_market")?.apply {
+        /*findPreference("about.app_play_market")?.apply {
             icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_market)
             setOnPreferenceClickListener { preference ->
                 Utils.externalLink("https://play.google.com/store/apps/details?id=ru.radiationx.anilibria")
                 false
             }
-        }
+        }*/
 
         findPreference("about.check_update")?.apply {
             setOnPreferenceClickListener { preference ->

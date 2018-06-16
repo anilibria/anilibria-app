@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
@@ -224,8 +225,8 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         else -> super.onOptionsItemSelected(item)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         player.pause()
     }
 
@@ -463,11 +464,13 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
      */
     private inner class ControlsVisibilityListener : VideoControlsVisibilityListener {
         override fun onControlsShown() {
+            Log.e("MyPlayer","onControlsShown $supportActionBar, ${supportActionBar?.isShowing}")
             // No additional functionality performed
             supportActionBar?.show()
         }
 
         override fun onControlsHidden() {
+            Log.e("MyPlayer","onControlsHidden $supportActionBar")
             goFullscreen()
             supportActionBar?.hide()
         }

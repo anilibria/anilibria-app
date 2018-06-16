@@ -6,6 +6,7 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -13,7 +14,6 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main_antiddos.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
@@ -78,28 +78,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme_NoActionBar)
-        savedInstanceState?.let {
-            it.getStringArrayList(TABS_STACK)?.let {
-                if (it.isNotEmpty()) {
-                    tabsStack.addAll(it)
-                    presenter.defaultScreen = it.last()
-                }
-            }
-        }
-        Log.e("S_DEF_LOG", "main oncreate")
-        if (savedInstanceState == null) {
-            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
-        }
-    }
-
-    override fun initAntiDdos() {
-        setContentView(R.layout.activity_main_antiddos)
-        antiddos_skip?.setOnClickListener {
-            presenter.skipAntiDdos()
-        }
-    }
-
-    override fun initMain() {
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
@@ -117,6 +95,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             }
         })
 
+        antiddos_skip?.setOnClickListener {
+            presenter.skipAntiDdos()
+        }
+
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
@@ -125,7 +107,25 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         updateTabs()
         initContainers()
 
+        savedInstanceState?.let {
+            it.getStringArrayList(TABS_STACK)?.let {
+                if (it.isNotEmpty()) {
+                    tabsStack.addAll(it)
+                    presenter.defaultScreen = it.last()
+                }
+            }
+        }
+        Log.e("S_DEF_LOG", "main oncreate")
+        if (savedInstanceState == null) {
+            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+        }
     }
+
+    override fun setAntiDdosVisibility(isVisible: Boolean) {
+        Log.e("MainPresenter", "setAntiDdosVisibility")
+        antiDdosMain.visibility = if(isVisible) View.VISIBLE else View.GONE
+    }
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -221,6 +221,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     }
 
     override fun updateTabs() {
+        Log.e("MainPresenter", "updateTabs")
         tabs.clear()
         if (presenter.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
@@ -235,7 +236,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     }
 
     override fun highlightTab(screenKey: String) {
+        Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
+        getRouter().replaceScreen(screenKey)
     }
 
     fun addInStack(screenKey: String) {

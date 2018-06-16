@@ -41,7 +41,7 @@ class MainPresenter(
     }
 
     private fun initAntiDdos() {
-        viewState.initAntiDdos()
+        viewState.setAntiDdosVisibility(true)
         val disposable = antiDdosInteractor
                 .observerCompleteEvents()
                 .subscribe {
@@ -69,7 +69,7 @@ class MainPresenter(
     private fun initMain() {
         antiDdosInteractor.isHardChecked = true
         antiDdosCompositeDisposable.clear()
-        viewState.initMain()
+        viewState.setAntiDdosVisibility(false)
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(Screens.AUTH)
         }
@@ -92,7 +92,6 @@ class MainPresenter(
     fun selectTab(screenKey: String) {
         Log.e("S_DEF_LOG", "presenter selectTab " + screenKey)
         viewState.highlightTab(screenKey)
-        router.replaceScreen(screenKey)
     }
 
 }

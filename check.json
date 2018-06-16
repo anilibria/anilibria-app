@@ -1,33 +1,32 @@
 {
   "update": {
-    "version_code": "26",
-    "version_name": "2.0.9",
+    "version_code": "27",
+    "version_name": "2.1.0",
     "version_build": "0",
-    "build_date": "10 июня 2018 г.",
+    "build_date": "16 июня 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.0.9.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.0.apk",
         "type": "file"
       },
       {
-        "name": "Play Market",
-        "url": "https://play.google.com/store/apps/details?id=ru.radiationx.anilibria.app",
+        "name": "4PDA",
+        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=74262514",
         "type": "site"
       }
     ],
     "important": [
-      "Обновлён видеоплеер, возможно исправлены некоторые ошибки при воспроизведении"
+      "Обновление до данной версии ОБЯЗАТЕЛЬНО. Так как на сайте добавлена защита от DDOS, приложение в ближайшие дни перестанет работать.",
+      "Приложение снова удалено из Play Market, поэтому для следующих обновлений нужно установить это обновление."
     ],
     "added": [
-      "Отметки об обновлении релизов",
-      "Перемотка свайпом в видеоплеере",
-      "Переход в полноэкранный режим в видеоплеере",
-      "Отправка комментариев в релизах и новостях"
+      "Интеграция с защитой сайта от DDOS",
+      "Запасной источник данных для обновления приложения"
     ],
-    "fixed": [],
-    "changed": [
-      "Дизайн видеоплеера"
-    ]
+    "fixed": [
+      "Воспроизведение видео в режиме разделенного экрана"
+    ],
+    "changed": []
   }
 }

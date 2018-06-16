@@ -70,7 +70,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 getRouter(),
                 App.injections.errorHandler,
                 App.injections.authRepository,
-                App.injections.releaseRepository,
+                App.injections.checkerRepository,
                 App.injections.antiDdosInteractor
         )
     }

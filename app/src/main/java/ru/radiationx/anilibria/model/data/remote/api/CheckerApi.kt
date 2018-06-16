@@ -32,4 +32,9 @@ class CheckerApi(
                 .map { checkerParser.parse(it) }
     }
 
+    fun checkUnderAntiDdos(): Single<String> {
+        val args: MutableMap<String, String> = mutableMapOf("action" to "empty")
+        return client.get(Api.API_URL, args)
+    }
+
 }

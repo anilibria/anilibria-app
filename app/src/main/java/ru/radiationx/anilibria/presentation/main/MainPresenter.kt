@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -22,7 +23,7 @@ class MainPresenter(
         private val router: Router,
         private val errorHandler: IErrorHandler,
         private val authRepository: AuthRepository,
-        private val releaseRepository: ReleaseRepository,
+        private val checkerRepository: CheckerRepository,
         private val antiDdosInteractor: AntiDdosInteractor
 ) : BasePresenter<MainView>(router) {
 
@@ -53,8 +54,8 @@ class MainPresenter(
     }
 
     private fun testRequest() {
-        val disposable = releaseRepository
-                .getGenres()
+        val disposable = checkerRepository
+                .checkUnderAntiDdos()
                 .subscribe({
                     initMain()
                 }, {

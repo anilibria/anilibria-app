@@ -116,14 +116,14 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             }
         }
         Log.e("S_DEF_LOG", "main oncreate")
-        if (savedInstanceState == null) {
-            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
-        }
     }
 
     override fun setAntiDdosVisibility(isVisible: Boolean) {
-        Log.e("MainPresenter", "setAntiDdosVisibility")
+        Log.e("MainPresenter", "setAntiDdosVisibility: $isVisible")
         antiDdosMain.visibility = if(isVisible) View.VISIBLE else View.GONE
+        if(!isVisible){
+            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+        }
     }
 
 
@@ -257,16 +257,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 Screens.AUTH -> {
                     Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
                     Intent(this@MainActivity, AuthActivity::class.java)
-                }
-                Screens.GOOGLE_CAPTCHA -> Intent(this@MainActivity, GoogleCaptchaActivity::class.java).apply {
-                    val args = data as Bundle
-                    putExtra("content", args.getString("content"))
-                    putExtra("url", args.getString("url"))
-                }
-                Screens.BLAZINFAST -> Intent(this@MainActivity, BlazingFastActivity::class.java).apply {
-                    val args = data as Bundle
-                    putExtra("content", args.getString("content"))
-                    putExtra("url", args.getString("url"))
                 }
                 else -> null
             }

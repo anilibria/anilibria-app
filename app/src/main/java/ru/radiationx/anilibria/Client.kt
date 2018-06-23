@@ -133,7 +133,7 @@ class Client constructor(
 
         val response = NetworkResponse(httpUrl.toString())
 
-        Log.e("S_DEF_LOG", "REQUEST $httpUrl : $method : $body")
+        Log.e("S_DEF_LOG", "REQUEST $httpUrl : $method : $body : args={${args.toList().joinToString { "${it.first}: ${it.second}" }}}")
 
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null

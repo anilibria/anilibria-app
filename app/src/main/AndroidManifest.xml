@@ -84,11 +84,13 @@
         <activity
             android:name=".ui.activities.GoogleCaptchaActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.BlazingFastActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data

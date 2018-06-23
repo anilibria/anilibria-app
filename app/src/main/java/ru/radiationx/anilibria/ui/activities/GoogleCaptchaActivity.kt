@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,19 +26,28 @@ class GoogleCaptchaActivity : FragmentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_antiddos)
+        antiddos_title.text = "Google Captcha"
+        antiddos_skip.setOnClickListener { finish() }
+        antiddos_webview.settings.javaScriptEnabled = true
+        antiddos_webview.webViewClient = CaptchaWebViewClient()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?){
         if (intent != null) {
             content = intent.getStringExtra("content")
             contentUrl = intent.getStringExtra("url")
         }
-        antiddos_title.text = "Google Captcha"
-        antiddos_skip.setOnClickListener { finish() }
-        antiddos_webview.webViewClient = CaptchaWebViewClient()
-        antiddos_webview.settings.javaScriptEnabled = true
         val uri = Uri.parse(contentUrl)
         val domain = "${uri.scheme}://${uri.host}"
         Log.e("GoogleCaptchaActivity", "domain: $domain")
+        content = content.replace("</body>", "<span>Нажмите на \"Verify me\" после прохождения captcha.</span></body>", true)
         antiddos_webview.easyLoadData(domain, content)
-
     }
 
     private inner class CaptchaWebViewClient : WebViewClient() {

@@ -171,7 +171,7 @@ class App : Application() {
 
         val linkHandler: LinkHandler = LinkRouter()
         val errorHandler: IErrorHandler = ErrorHandler(context, router)
-        val antiDdosErrorHandler: IAntiDdosErrorHandler = AntiDdosErrorHandler(antiDdosInteractor, router)
+        val antiDdosErrorHandler: IAntiDdosErrorHandler = AntiDdosErrorHandler(antiDdosInteractor, context)
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         val userHolder: UserHolder = UserStorage(defaultPreferences)

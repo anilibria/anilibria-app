@@ -1,31 +1,25 @@
 {
   "update": {
-    "version_code": "27",
-    "version_name": "2.1.0",
+    "version_code": "28",
+    "version_name": "2.1.1",
     "version_build": "0",
-    "build_date": "16 июня 2018 г.",
+    "build_date": "24 июня 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.0.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.1.apk",
         "type": "file"
       },
       {
         "name": "4PDA",
-        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=74262514",
+        "url": "http://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=74477911",
         "type": "site"
       }
     ],
-    "important": [
-      "Обновление до данной версии ОБЯЗАТЕЛЬНО. Так как на сайте добавлена защита от DDOS, приложение в ближайшие дни перестанет работать.",
-      "Приложение снова удалено из Play Market, поэтому для следующих обновлений нужно установить это обновление."
-    ],
-    "added": [
-      "Интеграция с защитой сайта от DDOS",
-      "Запасной источник данных для обновления приложения"
-    ],
+    "important": [],
+    "added": [],
     "fixed": [
-      "Воспроизведение видео в режиме разделенного экрана"
+      "Прохождение проверки GoogleCaptcha и BlazingFast"
     ],
     "changed": []
   }

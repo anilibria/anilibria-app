@@ -85,7 +85,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = App.instance.staticPageTemplate
-        webView.easyLoadData(Api.BASE_URL, template.generateOutput())
+        webView.easyLoadData(Api.SITE_URL, template.generateOutput())
         template.reset()
     }
 

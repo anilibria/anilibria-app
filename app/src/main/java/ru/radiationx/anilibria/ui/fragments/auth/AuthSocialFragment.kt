@@ -27,7 +27,7 @@ class AuthSocialFragment : BaseFragment() {
     }
 
     private var socialUrl = ""
-    private val resultUrlPattern = Pattern.compile("https?:\\/\\/(?:www\\.)?anilibria\\.tv\\/[\\s\\S]*?\\?auth_service_id=(?:Patreon|VKontakte)(&code)?", Pattern.CASE_INSENSITIVE)
+    private val resultUrlPattern = Pattern.compile("https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/[\\s\\S]*?\\?auth_service_id=(?:Patreon|VKontakte)(&code)?", Pattern.CASE_INSENSITIVE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

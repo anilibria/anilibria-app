@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.item_vital_web.view.*
 import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
 
 
@@ -70,7 +71,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
             if (!::currentItem.isInitialized || currentItem != item) {
                 currentItem = item
                 holderView.run {
-                    vitalWebView.easyLoadData("https://www.anilibria.tv/", item.contentText)
+                    vitalWebView.easyLoadData(Api.SITE_URL, item.contentText)
                 }
             }
         }

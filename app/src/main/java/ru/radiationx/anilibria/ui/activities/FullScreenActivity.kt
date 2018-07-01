@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
 
 /**
@@ -79,7 +80,7 @@ class FullScreenActivity : AppCompatActivity() {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
         vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
-        vitalWebView.easyLoadData("https://www.anilibria.tv/", currentVital.contentText)
+        vitalWebView.easyLoadData(Api.SITE_URL, currentVital.contentText)
     }
 
     private fun initImage() {

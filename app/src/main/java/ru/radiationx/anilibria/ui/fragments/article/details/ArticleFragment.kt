@@ -316,7 +316,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                     }
                     it.setJsLifeCycleListener(this@CustomPagerAdapter)
                     val template = App.instance.articleTemplate
-                    it.easyLoadData(Api.BASE_URL, template.generateOutput())
+                    it.easyLoadData(Api.SITE_URL, template.generateOutput())
                     template.reset()
                 }
 

@@ -85,8 +85,8 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                 }
             }
 
-            item.torrentLink = Api.BASE_URL + jsonItem.getString("torrent_link")
-            item.link = Api.BASE_URL + jsonItem.getString("link")
+            item.torrentLink = Api.SITE_URL + jsonItem.getString("torrent_link")
+            item.link = Api.SITE_URL + jsonItem.getString("link")
             item.image = Api.BASE_URL_IMAGES + jsonItem.getString("image")
             item.episodesCount = jsonItem.getString("episode")
             item.description = jsonItem.getString("description").trim()
@@ -141,10 +141,10 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
 
         responseJson.getString("torrent_link").let {
             if (!it.isNullOrEmpty()) {
-                release.torrentLink = Api.BASE_URL + it
+                release.torrentLink = Api.SITE_URL + it
             }
         }
-        release.link = Api.BASE_URL + responseJson.getString("link")
+        release.link = Api.SITE_URL + responseJson.getString("link")
         release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
         //release.setEpisodesCount(responseJson.getString("episode"));
         release.description = responseJson.getString("description").trim()
@@ -224,7 +224,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                         episode = it.getString("episode")
                         quality = it.getString("quality")
                         size = it.getString("size")
-                        url = Api.BASE_URL + it.getString("url")
+                        url = Api.SITE_URL + it.getString("url")
                     })
                 }
             }

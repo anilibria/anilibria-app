@@ -9,6 +9,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_moon.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
 import java.util.*
 import java.util.regex.Pattern
@@ -35,7 +36,7 @@ class WebPlayerActivity : AppCompatActivity() {
         intent?.let {
             it.getStringExtra(ARG_URL)?.let {
                 val extraHeaders = HashMap<String, String>()
-                extraHeaders["Referer"] = "https://www.anilibria.tv/"
+                extraHeaders["Referer"] = Api.SITE_URL
                 Log.e("lalala", "load url $it")
                 webView.loadUrl(it, extraHeaders)
                 webView.webViewClient = object : WebViewClient() {

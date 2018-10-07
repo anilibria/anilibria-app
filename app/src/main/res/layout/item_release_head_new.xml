@@ -63,7 +63,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="9dp"
-            android:background="@drawable/bg_btn_favorite"
+            android:background="?bg_fav_btn"
             android:orientation="horizontal"
             android:paddingEnd="8dp"
             android:paddingStart="8dp">

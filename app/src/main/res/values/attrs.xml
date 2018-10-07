@@ -41,7 +41,9 @@
 
     <attr name="episode_even" extension="reference" format="color" />
 
-    <attr name="comment_quote" extension="reference" format="color" />
+    <attr name="bg_comment_quote" extension="reference" />
+    <attr name="bg_fav_btn" extension="reference" />
+    <attr name="bg_release_remind" extension="reference" />
 
     <attr name="textDefault" extension="reference" format="color" />
     <attr name="textSecond" extension="reference" format="color" />

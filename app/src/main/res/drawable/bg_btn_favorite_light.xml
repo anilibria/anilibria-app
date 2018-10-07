@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="?comment_quote" />
-    <corners android:radius="2dp" />
+    <corners android:radius="16dp" />
+    <solid android:color="@color/light_release_fav_btn" />
 </shape>

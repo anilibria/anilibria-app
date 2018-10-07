@@ -3,5 +3,5 @@
     <stroke
         android:width="2dp"
         android:color="@color/alib_red" />
-    <solid android:color="?cardBackground" />
+    <solid android:color="@color/dark_cardBackground" />
 </shape>

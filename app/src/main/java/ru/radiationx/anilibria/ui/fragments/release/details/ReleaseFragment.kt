@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.nightlynexus.viewstatepageradapter.ViewStatePagerAdapter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -534,12 +535,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     private inner class CustomPagerAdapter(
             private val releaseAdapter: ReleaseAdapter,
             private val commentsAdapter: CommentsAdapter
-    ) : PagerAdapter() {
+    ) : ViewStatePagerAdapter() {
 
         private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
         private var localCommentsRootLayout: ViewGroup? = null
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        override fun createView(container: ViewGroup, position: Int): View {
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
             val layout: ViewGroup = inflater.inflate(views[position], container, false) as ViewGroup
             container.addView(layout)
@@ -551,13 +552,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             return layout
         }
 
-        override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
-            container.removeView(any as View)
-        }
-
         override fun getCount(): Int = 2
-
-        override fun isViewFromObject(view: View, any: Any): Boolean = view == any
 
         private fun createMain(layout: ViewGroup) {
             layout.run {

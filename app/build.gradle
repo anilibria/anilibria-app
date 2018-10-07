@@ -115,5 +115,7 @@ dependencies {
     implementation 'com.yandex.android:mobmetricalib:2.80'
 
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+
+    implementation 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.0.4'
 }
 

@@ -21,6 +21,7 @@
 
         <item name="android:windowTranslucentStatus">false</item>
 
+        <item name="android:textColorLink">@color/light_textLink</item>
 
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
@@ -61,8 +62,8 @@
     <style name="LightAppTheme.NoActionBar" parent="LightAppTheme.NoActionBarBase" />
 
     <style name="PreferencesLightAppTheme" parent="LightAppTheme">
-        <item name="colorPrimary">@color/alib_red</item>
-        <item name="colorPrimaryDark">@color/alib_red_dark</item>
+        <item name="colorPrimary">@color/light_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/light_colorPrimaryDark</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
@@ -113,6 +114,7 @@
 
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
 
 
         <!-- Attrs -->
@@ -154,8 +156,8 @@
     <style name="DarkAppTheme.NoActionBar" parent="DarkAppTheme.NoActionBarBase" />
 
     <style name="PreferencesDarkAppTheme" parent="DarkAppTheme">
-        <item name="colorPrimary">@color/alib_red</item>
-        <item name="colorPrimaryDark">@color/alib_red_dark</item>
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 

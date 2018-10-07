@@ -53,12 +53,21 @@
     <color name="light_textDefault">#212121</color>
     <color name="light_textSecond">#757575</color>
     <color name="light_textColoredButton">@color/white</color>
+    <color name="light_textLink">#c40304</color>
 
 
     <!-- DARK THEME -->
-    <color name="dark_colorPrimary">@color/alib_red_dark</color>
-    <color name="dark_colorPrimaryDark">@color/alib_red_dark</color>
-    <color name="dark_colorAccent">@color/alib_red_dark</color>
+    <color name="temp_red1">#ac0304</color>
+    <color name="temp_red2">#c72828</color>
+    <color name="temp_red3">#a32020</color>
+    <color name="temp_red4">#8f2929</color>
+    <color name="temp_red4_dark">#752222</color>
+    <color name="temp_red5">#933838</color>
+
+    <color name="temp_red_">@color/temp_red4</color>
+    <color name="dark_colorPrimary">@color/temp_red_</color>
+    <color name="dark_colorPrimaryDark">@color/temp_red4_dark</color>
+    <color name="dark_colorAccent">@color/temp_red_</color>
 
     <color name="dark_divider_line">#414141</color>
     <color name="dark_windowBackground">#141414</color>
@@ -71,8 +80,8 @@
     <color name="dark_toolbar_icon">@color/white</color>
     <color name="dark_base_icon">#909090</color>
 
-    <color name="dark_release_tag_color">@color/alib_red</color>
-    <color name="dark_release_tag_color_press">@color/alib_red_dark</color>
+    <color name="dark_release_tag_color">@color/dark_colorAccent</color>
+    <color name="dark_release_tag_color_press">@color/dark_colorAccent</color>
 
     <color name="dark_episode_even">#303030</color>
     <color name="dark_comment_quote">#11ffffff</color>
@@ -80,5 +89,6 @@
     <color name="dark_textDefault">#FFFFFF</color>
     <color name="dark_textSecond">#B2B2B2</color>
     <color name="dark_textColoredButton">@color/white</color>
+    <color name="dark_textLink">#c23838</color>
 
 </resources>

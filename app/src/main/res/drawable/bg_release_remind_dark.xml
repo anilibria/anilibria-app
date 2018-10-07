@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <stroke
         android:width="2dp"
-        android:color="@color/alib_red" />
+        android:color="@color/dark_colorAccent" />
     <solid android:color="@color/dark_cardBackground" />
 </shape>

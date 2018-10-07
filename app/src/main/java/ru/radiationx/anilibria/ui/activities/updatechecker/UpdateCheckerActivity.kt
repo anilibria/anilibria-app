@@ -148,7 +148,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         sectionTitle.text = title
         sectionTitle.setPadding(0, 0, 0, (resources.displayMetrics.density * 8).toInt())
         sectionTitle.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        sectionTitle.setTextColor(ContextCompat.getColor(this, R.color.textDefault))
+        sectionTitle.setTextColor(ContextCompat.getColor(this, R.color.light_textDefault))
         root.addView(sectionTitle)
 
         val stringBuilder = StringBuilder()
@@ -163,7 +163,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         val sectionText = TextView(this)
         sectionText.text = App.injections.apiUtils.toHtml(stringBuilder.toString())
         sectionText.setPadding((resources.displayMetrics.density * 8).toInt(), 0, 0, 0)
-        sectionText.setTextColor(ContextCompat.getColor(this, R.color.textDefault))
+        sectionText.setTextColor(ContextCompat.getColor(this, R.color.light_textDefault))
         root.addView(sectionText)
 
         updateContent.addView(root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))

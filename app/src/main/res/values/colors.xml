@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="a_red">#c40304</color>
-    <color name="a_red_dark">#ac0304</color>
-    <color name="a_gray">#383838</color>
-    <color name="a_gray_dark">#282828</color>
-    <color name="a_red_launcher">@color/a_red</color>
+    <color name="alib_red">#c40304</color>
+    <color name="alib_red_dark">#ac0304</color>
+    <color name="alib_gray">#383838</color>
+    <color name="alib_gray_dark">#282828</color>
+    <color name="alib_red_launcher">@color/alib_red</color>
     <color name="white">#fff</color>
 
 
-    <color name="colorPrimary">@color/a_red</color>
-    <color name="colorPrimaryDark">@color/a_red_dark</color>
-    <color name="colorAccent">@color/a_red</color>
-    <color name="windowBackground">#eee</color>
-    <color name="cardBackground">#fff</color>
+    <color name="colorPrimary">@color/alib_red</color>
+    <color name="colorPrimaryDark">@color/alib_red_dark</color>
+    <color name="colorAccent">@color/alib_red</color>
+    <color name="light_windowBackground">#eee</color>
+    <color name="light_cardBackground">#fff</color>
 
-    <color name="tab_color_checked">@color/colorAccent</color>
-    <color name="tab_color_unchecked">#757575</color>
+    <color name="light_tab_color_checked">@color/colorAccent</color>
+    <color name="light_tab_color_unchecked">#757575</color>
 
-    <color name="toolbar_icon">@color/white</color>
-    <color name="base_icon">#757575</color>
+    <color name="light_toolbar_icon">@color/white</color>
+    <color name="light_base_icon">#757575</color>
 
-    <color name="release_tag_color">@color/a_red</color>
-    <color name="release_tag_color_press">@color/a_red_dark</color>
+    <color name="light_release_tag_color">@color/alib_red</color>
+    <color name="light_release_tag_color_press">@color/alib_red_dark</color>
 
-    <color name="episode_even">#f4f4f4</color>
+    <color name="light_episode_even">#f4f4f4</color>
 
-    <color name="textDefault">#212121</color>
-    <color name="textSecond">#757575</color>
-    <color name="textColoredButton">@color/white</color>
+    <color name="light_textDefault">#212121</color>
+    <color name="light_textSecond">#757575</color>
+    <color name="light_textColoredButton">@color/white</color>
 
     <color name="playerColorPrimary">#66000000</color>
 
-    <color name="userGroupColor_1">@color/a_red</color>
+    <color name="userGroupColor_1">@color/alib_red</color>
     <color name="userGroupColor_2">#FFA500</color>
     <color name="userGroupColor_3">#008000</color>
-    <color name="userGroupColor_default">@color/textSecond</color>
+    <color name="userGroupColor_default">@color/light_textSecond</color>
 
-    <color name="userGroupColorIcon_1">@color/a_red</color>
+    <color name="userGroupColorIcon_1">@color/alib_red</color>
     <color name="userGroupColorIcon_2">#FFA500</color>
     <color name="userGroupColorIcon_3">#009b4e</color>
-    <color name="userGroupColorIcon_default">@color/base_icon</color>
+    <color name="userGroupColorIcon_default">@color/light_base_icon</color>
 
     <color name="brand_patreon">#F96854</color>
     <color name="brand_patreon_1">#052a49</color>

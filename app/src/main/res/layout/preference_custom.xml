@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -20,27 +19,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:gravity="center_vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:background="@color/white"
+    android:background="?cardBackground"
     android:clickable="true"
+    android:clipToPadding="false"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:clipToPadding="false">
+    android:gravity="center_vertical"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <LinearLayout
         android:id="@+android:id/icon_frame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-4dp"
-        android:minWidth="48dp"
         android:gravity="start|center_vertical"
+        android:minWidth="48dp"
         android:orientation="horizontal"
-        android:paddingEnd="12dp"
         android:paddingTop="4dp"
+        android:paddingEnd="12dp"
         android:paddingBottom="4dp">
+
         <android.support.v7.internal.widget.PreferenceImageView
             android:id="@+android:id/icon"
             android:layout_width="wrap_content"
@@ -56,33 +56,36 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp">
 
-        <TextView android:id="@+android:id/title"
+        <TextView
+            android:id="@+android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
             android:singleLine="true"
             android:textAppearance="?textAppearanceListItem"
-            android:textSize="16sp"
-            android:textColor="@color/textDefault"
-            android:ellipsize="marquee" />
+            android:textColor="?textDefault"
+            android:textSize="16sp" />
 
-        <TextView android:id="@+android:id/summary"
+        <TextView
+            android:id="@+android:id/summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+android:id/title"
             android:layout_alignStart="@+android:id/title"
-            android:textSize="14sp"
-            android:textColor="@color/textSecond"
+            android:ellipsize="end"
             android:maxLines="10"
-            android:ellipsize="end" />
+            android:textColor="?textSecond"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
     <!-- Preference should place its actual preference widget here. -->
-    <LinearLayout android:id="@+android:id/widget_frame"
+    <LinearLayout
+        android:id="@+android:id/widget_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="end|center_vertical"
-        android:paddingStart="16dp"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:paddingStart="16dp" />
 
 </LinearLayout>

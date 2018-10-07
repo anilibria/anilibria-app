@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_bottom_tab.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.BottomTabListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -36,9 +37,9 @@ class BottomTabDelegate(private val clickListener: Listener) : AdapterDelegate<M
             this.currentItem = item
             view.run {
                 tabIcon.setImageDrawable(ContextCompat.getDrawable(context, item.icon))
-                val colorRes = if (selected) R.color.tab_color_checked else R.color.tab_color_unchecked
+                val colorRes = if (selected) R.attr.tab_color_checked else R.attr.tab_color_unchecked
                 tabIcon.setColorFilter(
-                        ContextCompat.getColor(context, colorRes),
+                        context.getColorFromAttr(colorRes),
                         PorterDuff.Mode.SRC_ATOP
                 )
             }

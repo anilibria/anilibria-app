@@ -3,7 +3,7 @@
     android:id="@+id/item_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/a_gray"
+    android:background="@color/alib_gray"
     android:clickable="true"
     android:focusable="true"
     android:fontFamily="@font/medium"

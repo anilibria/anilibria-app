@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?cardBackground"
     android:orientation="vertical"
     android:paddingTop="8dp"
     android:clipToPadding="false">
@@ -31,6 +31,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/windowBackground" />
+        android:background="?windowBackground" />
 
 </LinearLayout>

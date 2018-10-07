@@ -9,6 +9,7 @@ import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_release_episode.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 
@@ -49,9 +50,9 @@ class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelega
                 item_title.text = item.title
                 item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
                 if (isEven) {
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.white))
+                    setBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
                 } else {
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.episode_even))
+                    setBackgroundColor(context.getColorFromAttr(R.attr.episode_even))
                 }
             }
         }

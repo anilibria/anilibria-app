@@ -52,7 +52,7 @@ class SimpleUpdateChecker(private val checkerRepository: CheckerRepository) {
             val mNotificationManager = NotificationManagerCompat.from(context)
 
             mBuilder.setSmallIcon(R.drawable.ic_notify)
-            mBuilder.color = ContextCompat.getColor(context, R.color.a_red)
+            mBuilder.color = ContextCompat.getColor(context, R.color.alib_red)
 
             mBuilder.setContentTitle("Обновление AniLibria")
             mBuilder.setContentText("Новая версия: ${update.name}")

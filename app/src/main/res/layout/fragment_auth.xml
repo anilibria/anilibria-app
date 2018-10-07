@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?cardBackground"
     android:fillViewport="true">
 
 
@@ -24,7 +24,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="40dp"
             android:contentDescription="@null"
-            android:tint="@color/a_red"
+            android:tint="@color/alib_red"
             app:srcCompat="@drawable/ic_anilibria" />
 
         <TextView

@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.utils.bbparser.models.BbNode
 import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 import ru.radiationx.anilibria.utils.bbparser.models.BbTypedOp
@@ -74,7 +75,7 @@ open class BbView @JvmOverloads constructor(
         }
         //println("addTextContent: '${result}'")
         val newTextView = TextView(context)
-        newTextView.setTextColor(ContextCompat.getColor(context, R.color.textDefault))
+        newTextView.setTextColor(context.getColorFromAttr(R.attr.textDefault))
         newTextView.text = Html.fromHtml(result)
         newTextView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         addView(newTextView)

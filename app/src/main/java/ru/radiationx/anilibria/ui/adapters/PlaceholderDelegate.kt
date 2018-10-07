@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_placeholder.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 
 class PlaceholderDelegate() : AdapterDelegate<MutableList<ListItem>>() {
 
@@ -25,7 +26,10 @@ class PlaceholderDelegate() : AdapterDelegate<MutableList<ListItem>>() {
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
             view.run {
                 item_placeholder_icon.setImageDrawable(ContextCompat.getDrawable(context, icRes))
-                item_placeholder_icon.drawable?.setColorFilter(ContextCompat.getColor(context, R.color.base_icon), PorterDuff.Mode.SRC_ATOP)
+                item_placeholder_icon.drawable?.setColorFilter(
+                        context.getColorFromAttr(R.attr.base_icon),
+                        PorterDuff.Mode.SRC_ATOP
+                )
                 item_placeholder_title.setText(titleRes)
                 item_placeholder_desc.setText(descRes)
             }

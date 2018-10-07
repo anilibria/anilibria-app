@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="BaseAppTheme">
+    <style name="LightAppTheme.NoActionBar" parent="LightAppTheme.NoActionBarBase">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">#33000000</item>
         <item name="android:windowContentTransitions">true</item>
     </style>
 
-    <style name="PlayerTheme" parent="AppTheme">
+    <style name="PlayerTheme" parent="LightAppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/playerColorPrimary</item>

@@ -11,7 +11,7 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:maxHeight="128dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="?cardBackground"
     app:cardCornerRadius="0dp"
     app:cardElevation="1dp">
 

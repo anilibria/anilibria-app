@@ -10,18 +10,18 @@
         android:id="@+id/appbarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/a_gray"
+        android:background="@color/alib_gray"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="?app_bar_overlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/a_gray"
+            app:contentScrim="@color/alib_gray"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:statusBarScrim="@color/a_gray_dark"
+            app:statusBarScrim="@color/alib_gray_dark"
             app:titleEnabled="false">
 
 
@@ -59,7 +59,7 @@
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="?popup_overlay" />
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -69,7 +69,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/windowBackground"
+        android:background="?windowBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -99,7 +99,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toStartOf="@+id/updateButton"
                     android:singleLine="false"
-                    android:textColor="@color/textDefault"
+                    android:textColor="?textDefault"
                     android:visibility="gone" />
 
                 <Button

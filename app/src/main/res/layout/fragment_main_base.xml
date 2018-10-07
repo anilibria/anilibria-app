@@ -10,7 +10,7 @@
         android:id="@+id/baseStatusBar"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="@color/windowBackground"
+        android:background="?windowBackground"
         android:visibility="gone" />
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,13 +25,13 @@
             android:id="@+id/appbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="?app_bar_overlay">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:contentScrim="@color/colorAccent"
+                app:contentScrim="?colorPrimary"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:scrimAnimationDuration="335"
                 app:scrimVisibleHeightTrigger="96dp"
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/AppTheme.PopupOverlay">
+                    app:popupTheme="?popup_overlay">
 
                     <FrameLayout
                         android:id="@+id/spinnerContainer"
@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="?cardBackground"
         android:visibility="gone">
 
         <ImageView

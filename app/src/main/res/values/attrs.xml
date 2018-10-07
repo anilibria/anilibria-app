@@ -1,8 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="toolbar_icon" extension="reference" format="color"/>
+
+    <!--<attr name="status_bar_color" extension="reference" format="color" />
+
+    <attr name="link_color" extension="reference" format="color" />
+    <attr name="link_color_contrast" extension="reference" format="color" />
+
+    <attr name="default_text_color" extension="reference" format="color" />
+    <attr name="contrast_text_color" extension="reference" format="color" />
+    <attr name="second_text_color" extension="reference" format="color" />
+
+    <attr name="background_base" extension="reference" format="color" />
+    <attr name="background_for_cards" extension="reference" format="color" />
+    <attr name="background_for_lists" extension="reference" format="color" />
+
+    <attr name="divider_line" extension="reference" format="color" />
+    <attr name="divider_line_bottom_nav" extension="reference" format="color" />
+
+    <attr name="icon_base" extension="reference" format="color" />
+    <attr name="icon_base_inverse" extension="reference" format="color" />
+    <attr name="icon_toolbar" extension="reference" format="color" />
+    <attr name="icon_toolbar_inverse" extension="reference" format="color" />
+
+    <attr name="cards_background" extension="reference" format="color" />-->
+
+
+    <attr name="windowBackground" extension="reference" format="color" />
+    <attr name="cardBackground" extension="reference" format="color" />
+
+    <attr name="tab_color_checked" extension="reference" format="color" />
+    <attr name="tab_color_unchecked" extension="reference" format="color" />
+
+    <attr name="toolbar_icon" extension="reference" format="color" />
+    <attr name="base_icon" extension="reference" format="color" />
+
+    <attr name="release_tag_color" extension="reference" format="color" />
+    <attr name="release_tag_color_press" extension="reference" format="color" />
+
+    <attr name="episode_even" extension="reference" format="color" />
+
+    <attr name="textDefault" extension="reference" format="color" />
+    <attr name="textSecond" extension="reference" format="color" />
+    <attr name="textColoredButton" extension="reference" format="color" />
+
+    <attr name="playerColorPrimary" extension="reference" format="color" />
+
+
+    <attr name="app_bar_overlay" extension="reference" />
+    <attr name="popup_overlay" extension="reference" />
+
     <declare-styleable name="AspectRatio">
-        <attr name="aspectRatio" format="float"/>
-        <attr name="enabledAspectRatio" format="boolean"/>
+        <attr name="aspectRatio" format="float" />
+        <attr name="enabledAspectRatio" format="boolean" />
     </declare-styleable>
 </resources>

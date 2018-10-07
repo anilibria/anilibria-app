@@ -77,7 +77,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.AppTheme_NoActionBar)
+        setTheme(R.style.LightAppTheme_NoActionBar)
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
@@ -120,8 +120,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun setAntiDdosVisibility(isVisible: Boolean) {
         Log.e("MainPresenter", "setAntiDdosVisibility: $isVisible")
-        antiDdosMain.visibility = if(isVisible) View.VISIBLE else View.GONE
-        if(!isVisible){
+        antiDdosMain.visibility = if (isVisible) View.VISIBLE else View.GONE
+        if (!isVisible) {
             SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
         }
     }

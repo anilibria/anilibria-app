@@ -16,7 +16,7 @@
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:paddingTop="16dp"
-        android:textColor="@color/textDefault"
+        android:textColor="?textDefault"
         android:textSize="16sp" />
 
     <ImageButton

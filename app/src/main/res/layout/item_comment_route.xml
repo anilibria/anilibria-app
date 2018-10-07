@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="?cardBackground"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground">
@@ -15,7 +15,7 @@
         android:paddingStart="16dp"
         android:paddingTop="16dp"
         android:text="@string/comments_header"
-        android:textColor="@color/textDefault"
+        android:textColor="?textDefault"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -28,5 +28,5 @@
         android:textSize="16sp"
         android:paddingTop="16dp"
         android:text="@string/comments_notify_text"
-        android:textColor="@color/textDefault" />
+        android:textColor="?textDefault" />
 </LinearLayout>

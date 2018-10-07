@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="?cardBackground">
 
     <TextView
         android:id="@+id/antiddos_title"
@@ -12,7 +12,7 @@
         android:elevation="4dp"
         android:fontFamily="@font/medium"
         android:gravity="center"
-        android:textColor="#222"
+        android:textColor="?textDefault"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -23,7 +23,7 @@
         android:fontFamily="@font/medium"
         android:padding="4dp"
         android:text="@string/app_name"
-        android:textColor="@color/textSecond"
+        android:textColor="?textSecond"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/antiddos_title"
         app:layout_constraintTop_toTopOf="@id/antiddos_title" />
@@ -60,7 +60,7 @@
             android:maxLines="3"
             android:padding="8dp"
             android:text="На сайте была добавлена защита от DDOS атак, необходимо пройти проверку"
-            android:textColor="@color/colorAccent"
+            android:textColor="?colorAccent"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/antiddos_skip"

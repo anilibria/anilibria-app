@@ -13,6 +13,7 @@ import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_release_head_new.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.utils.LinkMovementMethod
@@ -42,9 +43,9 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
         init {
             view.context.let {
-                tagColor = ContextCompat.getColor(it, R.color.release_tag_color)
-                tagColorPress = ContextCompat.getColor(it, R.color.release_tag_color_press)
-                tagColorText = ContextCompat.getColor(it, R.color.white)
+                tagColor = it.getColorFromAttr(R.attr.release_tag_color)
+                tagColorPress = it.getColorFromAttr(R.attr.release_tag_color_press)
+                tagColorText = it.getColorFromAttr(R.attr.textColoredButton)
                 tagRadius = 2 * it.resources.displayMetrics.density
             }
 

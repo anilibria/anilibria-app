@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.App
 
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
@@ -96,7 +97,10 @@ class SettingsFragment : BaseSettingFragment() {
         }
         return context?.let {
             ContextCompat.getDrawable(it, iconRes)?.apply {
-                setColorFilter(ContextCompat.getColor(it, R.color.base_icon), PorterDuff.Mode.SRC_ATOP)
+                setColorFilter(
+                        it.getColorFromAttr(R.attr.base_icon),
+                        PorterDuff.Mode.SRC_ATOP
+                )
             }
         }
     }

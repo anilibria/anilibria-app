@@ -2,7 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?cardBackground"
     android:clickable="true"
     android:focusable="true"
     android:fontFamily="@font/medium"
@@ -11,7 +11,7 @@
     android:paddingStart="16dp"
     android:paddingTop="16dp"
     android:text="@string/item_donate"
-    android:textColor="@color/textDefault"
+    android:textColor="?textDefault"
     android:gravity="center"
     android:foreground="?selectableItemBackground"
     android:textSize="16sp" />

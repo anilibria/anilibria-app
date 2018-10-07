@@ -6,7 +6,7 @@
     android:ellipsize="marquee"
     android:gravity="center_vertical"
     android:paddingEnd="8dp"
-    android:textColor="@color/textDefault"
+    android:textColor="?textDefault"
     android:paddingStart="8dp"
     android:singleLine="true"
     android:textAlignment="inherit"

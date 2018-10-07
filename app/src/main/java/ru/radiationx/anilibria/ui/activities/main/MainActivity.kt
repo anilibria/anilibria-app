@@ -77,7 +77,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.LightAppTheme_NoActionBar)
+        //setTheme(R.style.LightAppTheme_NoActionBar)
+        setTheme(R.style.DarkAppTheme_NoActionBar)
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {

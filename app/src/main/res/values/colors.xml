@@ -8,27 +8,6 @@
     <color name="white">#fff</color>
 
 
-    <color name="colorPrimary">@color/alib_red</color>
-    <color name="colorPrimaryDark">@color/alib_red_dark</color>
-    <color name="colorAccent">@color/alib_red</color>
-    <color name="light_windowBackground">#eee</color>
-    <color name="light_cardBackground">#fff</color>
-
-    <color name="light_tab_color_checked">@color/colorAccent</color>
-    <color name="light_tab_color_unchecked">#757575</color>
-
-    <color name="light_toolbar_icon">@color/white</color>
-    <color name="light_base_icon">#757575</color>
-
-    <color name="light_release_tag_color">@color/alib_red</color>
-    <color name="light_release_tag_color_press">@color/alib_red_dark</color>
-
-    <color name="light_episode_even">#f4f4f4</color>
-
-    <color name="light_textDefault">#212121</color>
-    <color name="light_textSecond">#757575</color>
-    <color name="light_textColoredButton">@color/white</color>
-
     <color name="playerColorPrimary">#66000000</color>
 
     <color name="userGroupColor_1">@color/alib_red</color>
@@ -48,5 +27,56 @@
     <color name="brand_discord">#7289DA</color>
     <color name="brand_telegram">#35a6de</color>
 
-    <color name="design_bottom_navigation_shadow_color" tools:override="true">#0000</color>
+
+    <!-- LIGHT THEME -->
+    <color name="light_colorPrimary">@color/alib_red</color>
+    <color name="light_colorPrimaryDark">@color/alib_red_dark</color>
+    <color name="light_colorAccent">@color/alib_red</color>
+
+    <color name="light_divider_line">#fff</color>
+    <color name="light_windowBackground">#eee</color>
+    <color name="light_cardBackground">#fff</color>
+
+    <color name="light_tab_color_checked">@color/light_colorAccent</color>
+    <color name="light_tab_color_unchecked">@color/light_base_icon</color>
+
+    <color name="light_toolbar_icon">@color/white</color>
+    <color name="light_base_icon">#757575</color>
+
+    <color name="light_release_tag_color">@color/alib_red</color>
+    <color name="light_release_tag_color_press">@color/alib_red_dark</color>
+    <color name="light_release_fav_btn">#999</color>
+
+    <color name="light_episode_even">#f4f4f4</color>
+
+    <color name="light_textDefault">#212121</color>
+    <color name="light_textSecond">#757575</color>
+    <color name="light_textColoredButton">@color/white</color>
+
+
+    <!-- DARK THEME -->
+    <color name="dark_colorPrimary">@color/alib_red_dark</color>
+    <color name="dark_colorPrimaryDark">#0f0</color>
+    <color name="dark_colorAccent">@color/alib_red_dark</color>
+
+    <color name="dark_divider_line">#414141</color>
+    <color name="dark_windowBackground">#141414</color>
+    <color name="dark_cardBackground">#282828</color>
+
+    <color name="dark_tab_color_checked">#fff</color>
+    <color name="dark_tab_color_unchecked">@color/dark_base_icon</color>
+    <color name="dark_release_fav_btn">#414141</color>
+
+    <color name="dark_toolbar_icon">@color/white</color>
+    <color name="dark_base_icon">#909090</color>
+
+    <color name="dark_release_tag_color">@color/alib_red</color>
+    <color name="dark_release_tag_color_press">@color/alib_red_dark</color>
+
+    <color name="dark_episode_even">#303030</color>
+
+    <color name="dark_textDefault">#FFFFFF</color>
+    <color name="dark_textSecond">#B2B2B2</color>
+    <color name="dark_textColoredButton">@color/white</color>
+
 </resources>

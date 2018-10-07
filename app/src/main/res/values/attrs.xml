@@ -25,6 +25,7 @@
     <attr name="cards_background" extension="reference" format="color" />-->
 
 
+    <attr name="divider_line" extension="reference" format="color" />
     <attr name="windowBackground" extension="reference" format="color" />
     <attr name="cardBackground" extension="reference" format="color" />
 
@@ -36,6 +37,7 @@
 
     <attr name="release_tag_color" extension="reference" format="color" />
     <attr name="release_tag_color_press" extension="reference" format="color" />
+    <attr name="release_fav_btn" extension="reference" format="color" />
 
     <attr name="episode_even" extension="reference" format="color" />
 

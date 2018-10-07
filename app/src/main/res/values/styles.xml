@@ -8,12 +8,12 @@
     <!-- Base application theme. -->
     <style name="LightAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Base color settings-->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
         <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/light_colorAccent</item>
 
-        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">@color/light_colorPrimary</item>
         <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/LightAppTheme.Dialog</item>
@@ -21,9 +21,11 @@
 
         <item name="android:windowTranslucentStatus">false</item>
 
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
 
 
-
+        <!-- Attrs -->
+        <item name="divider_line">@color/light_divider_line</item>
         <item name="windowBackground">@color/light_windowBackground</item>
         <item name="cardBackground">@color/light_cardBackground</item>
 
@@ -35,6 +37,7 @@
 
         <item name="release_tag_color">@color/light_release_tag_color</item>
         <item name="release_tag_color_press">@color/light_release_tag_color_press</item>
+        <item name="release_fav_btn">@color/light_release_fav_btn</item>
 
         <item name="episode_even">@color/light_episode_even</item>
 
@@ -43,10 +46,6 @@
         <item name="textColoredButton">@color/light_textColoredButton</item>
 
         <item name="playerColorPrimary">@color/playerColorPrimary</item>
-
-
-
-
 
         <item name="app_bar_overlay">@style/LightAppTheme.AppBarOverlay</item>
         <item name="popup_overlay">@style/LightAppTheme.PopupOverlay</item>
@@ -85,17 +84,109 @@
 
     <style name="LightAppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorBackground">@color/light_cardBackground</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/light_colorAccent</item>
     </style>
+
+
+
+
+
+
+
+
+    <!-- Base application theme. -->
+    <style name="DarkAppTheme" parent="Theme.AppCompat">
+        <!-- Base color settings-->
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <!-- Чтобы не было видно статусбара -->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="colorAccent">@color/dark_colorAccent</item>
+
+        <item name="actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="alertDialogTheme">@style/DarkAppTheme.Dialog</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+
+
+        <!-- Attrs -->
+        <item name="divider_line">@color/dark_divider_line</item>
+        <item name="windowBackground">@color/dark_windowBackground</item>
+        <item name="cardBackground">@color/dark_cardBackground</item>
+
+        <item name="tab_color_checked">@color/dark_tab_color_checked</item>
+        <item name="tab_color_unchecked">@color/dark_tab_color_unchecked</item>
+
+        <item name="toolbar_icon">@color/dark_toolbar_icon</item>
+        <item name="base_icon">@color/dark_base_icon</item>
+
+        <item name="release_tag_color">@color/dark_release_tag_color</item>
+        <item name="release_tag_color_press">@color/dark_release_tag_color_press</item>
+        <item name="release_fav_btn">@color/dark_release_fav_btn</item>
+
+        <item name="episode_even">@color/dark_episode_even</item>
+
+        <item name="textDefault">@color/dark_textDefault</item>
+        <item name="textSecond">@color/dark_textSecond</item>
+        <item name="textColoredButton">@color/dark_textColoredButton</item>
+
+        <item name="playerColorPrimary">@color/playerColorPrimary</item>
+
+        <item name="app_bar_overlay">@style/DarkAppTheme.AppBarOverlay</item>
+        <item name="popup_overlay">@style/DarkAppTheme.PopupOverlay</item>
+    </style>
+
+
+    <style name="DarkAppTheme.NoActionBarBase" parent="DarkAppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="DarkAppTheme.NoActionBar" parent="DarkAppTheme.NoActionBarBase" />
+
+    <style name="PreferencesDarkAppTheme" parent="DarkAppTheme">
+        <item name="colorPrimary">@color/alib_red</item>
+        <item name="colorPrimaryDark">@color/alib_red_dark</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="DarkAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="android:singleLine">true</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="DarkAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="elevation">0dp</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="DarkAppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:colorBackground">@color/dark_cardBackground</item>
+        <item name="colorAccent">@color/dark_colorAccent</item>
+    </style>
+
 
 
     <!-- OTHER -->
     <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">@color/light_toolbar_icon</item>
+        <item name="android:tint">?toolbar_icon</item>
     </style>
 
     <style name="actionModeCloseButtonStyle" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
-        <item name="android:tint">@color/light_toolbar_icon</item>
+        <item name="android:tint">?toolbar_icon</item>
+    </style>
+
+    <style name="MyTextViewStyle" parent="android:Widget.TextView">
+       <!-- <item name="android:textColor">?textDefault</item>-->
     </style>
 
 </resources>

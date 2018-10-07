@@ -106,12 +106,31 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
+        with(toolbar.menu) {
+            searchMenuItem = add("Search")
+                    .setIcon(R.drawable.ic_toolbar_search)
+                    .setOnMenuItemClickListener {
+                        searchView?.open(true)
+                        false
+                    }
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+
+            add("Settings")
+                    .setIcon(R.drawable.ic_toolbar_settings)
+                    .setOnMenuItemClickListener {
+                        genresDialog.showDialog()
+                        false
+                    }
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
+
         searchView = com.lapism.searchview.SearchView(toolbar.context)
         toolbar.addView(searchView)
         searchView?.apply {
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
+                    Log.e("kulolo","onOpen")
                     searchMenuItem.isVisible = false
                     //toolbar?.navigationIcon = null
                     toolbar?.apply {
@@ -122,6 +141,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 }
 
                 override fun onClose(): Boolean {
+                    Log.e("kulolo","onClose")
                     searchMenuItem.isVisible = true
                     //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
                     toolbar?.apply {
@@ -133,8 +153,8 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             })
             setVoice(false)
             setShadow(false)
-            version = com.lapism.searchview.SearchView.Version.MENU_ITEM
-            versionMargins = com.lapism.searchview.SearchView.VersionMargins.MENU_ITEM
+            version = com.lapism.searchview.SearchView.VERSION_MENU_ITEM
+            setVersionMargins(com.lapism.searchview.SearchView.VERSION_MARGINS_MENU_ITEM)
             setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.let {
@@ -155,34 +175,21 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         }
 
 
-        with(toolbar.menu) {
-            searchMenuItem = add("Search")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-            add("Settings")
-                    .setIcon(R.drawable.ic_toolbar_settings)
-                    .setOnMenuItemClickListener {
-                        genresDialog.showDialog()
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (presenter.isEmpty() && isVisible) {
-            searchView?.open(true)
-        }
+        Log.e("kulolo", "onResume")
+        searchView?.postDelayed( {
+            if (presenter.isEmpty() && isVisible) {
+                searchView?.open(true, searchMenuItem)
+            }
+        }, 500)
     }
 
     override fun onDetach() {
         super.onDetach()
+        Log.e("kulolo", "onDetach")
         searchView?.close(false)
     }
 

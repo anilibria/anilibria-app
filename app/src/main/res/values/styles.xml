@@ -38,6 +38,7 @@
         <item name="release_fav_btn">@color/light_release_fav_btn</item>
 
         <item name="episode_even">@color/light_episode_even</item>
+        <item name="comment_quote">@color/light_comment_quote</item>
 
         <item name="textDefault">@color/light_textDefault</item>
         <item name="textSecond">@color/light_textSecond</item>
@@ -128,6 +129,7 @@
         <item name="release_fav_btn">@color/dark_release_fav_btn</item>
 
         <item name="episode_even">@color/dark_episode_even</item>
+        <item name="comment_quote">@color/dark_comment_quote</item>
 
         <item name="textDefault">@color/dark_textDefault</item>
         <item name="textSecond">@color/dark_textSecond</item>

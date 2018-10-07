@@ -48,6 +48,7 @@
     <color name="light_release_fav_btn">#999</color>
 
     <color name="light_episode_even">#f4f4f4</color>
+    <color name="light_comment_quote">#11000000</color>
 
     <color name="light_textDefault">#212121</color>
     <color name="light_textSecond">#757575</color>
@@ -74,6 +75,7 @@
     <color name="dark_release_tag_color_press">@color/alib_red_dark</color>
 
     <color name="dark_episode_even">#303030</color>
+    <color name="dark_comment_quote">#11ffffff</color>
 
     <color name="dark_textDefault">#FFFFFF</color>
     <color name="dark_textSecond">#B2B2B2</color>

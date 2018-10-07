@@ -41,6 +41,8 @@
 
     <attr name="episode_even" extension="reference" format="color" />
 
+    <attr name="comment_quote" extension="reference" format="color" />
+
     <attr name="textDefault" extension="reference" format="color" />
     <attr name="textSecond" extension="reference" format="color" />
     <attr name="textColoredButton" extension="reference" format="color" />

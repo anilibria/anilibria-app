@@ -21,6 +21,7 @@ import android.widget.Toast
 import android.widget.ViewSwitcher
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.nightlynexus.viewstatepageradapter.ViewStatePagerAdapter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import io.reactivex.disposables.Disposable
@@ -260,7 +261,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
     private inner class CustomPagerAdapter(
             private val commentsAdapter: CommentsAdapter
-    ) : PagerAdapter(), ExtendedWebView.JsLifeCycleListener {
+    ) : ViewStatePagerAdapter(), ExtendedWebView.JsLifeCycleListener {
 
         var webViewScrollPos = 0
 
@@ -272,7 +273,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private val webViewCallCache = mutableListOf<Runnable>()
 
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        override fun createView(container: ViewGroup, position: Int): View {
             Log.e("S_DEF_LOG", "instantiateItem $position")
             Log.e("S_DEF_LOG", "instantiateItem check $localWebView, $localProgressSwitcher")
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
@@ -287,18 +288,15 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             return layout
         }
 
-        override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+        override fun destroyView(container: ViewGroup, position: Int, view: View) {
             Log.e("S_DEF_LOG", "destroyItem $position")
             if (position == 0) {
                 localWebView = null
                 localProgressSwitcher = null
             }
-            container.removeView(any as View)
         }
 
         override fun getCount(): Int = 2
-
-        override fun isViewFromObject(view: View, any: Any): Boolean = view == any
 
         private fun createMain(layout: ViewGroup) {
             layout.run {

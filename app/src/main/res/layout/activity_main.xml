@@ -49,12 +49,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
-            app:layout_constraintBottom_toTopOf="@id/antiddos_refreshing"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -19,6 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.PreferencesDarkAppTheme);
         setContentView(R.layout.activity_settings);
 
         ActionBar actionBar = getSupportActionBar();

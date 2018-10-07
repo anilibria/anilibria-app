@@ -21,8 +21,6 @@
 
         <item name="android:windowTranslucentStatus">false</item>
 
-        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
-
 
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
@@ -113,8 +111,6 @@
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
 
-        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
-
 
         <!-- Attrs -->
         <item name="divider_line">@color/dark_divider_line</item>
@@ -183,10 +179,6 @@
 
     <style name="actionModeCloseButtonStyle" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
         <item name="android:tint">?toolbar_icon</item>
-    </style>
-
-    <style name="MyTextViewStyle" parent="android:Widget.TextView">
-       <!-- <item name="android:textColor">?textDefault</item>-->
     </style>
 
 </resources>

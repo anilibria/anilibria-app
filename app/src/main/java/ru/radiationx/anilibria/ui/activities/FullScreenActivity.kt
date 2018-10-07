@@ -30,6 +30,7 @@ class FullScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.DarkAppTheme_NoActionBar)
         intent?.let {
             val vital = it.getSerializableExtra(VITAL_ITEM) as VitalItem?
             if (vital != null) {

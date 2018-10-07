@@ -33,7 +33,7 @@
     <color name="light_colorPrimaryDark">@color/alib_red_dark</color>
     <color name="light_colorAccent">@color/alib_red</color>
 
-    <color name="light_divider_line">#fff</color>
+    <color name="light_divider_line">#eee</color>
     <color name="light_windowBackground">#eee</color>
     <color name="light_cardBackground">#fff</color>
 
@@ -56,7 +56,7 @@
 
     <!-- DARK THEME -->
     <color name="dark_colorPrimary">@color/alib_red_dark</color>
-    <color name="dark_colorPrimaryDark">#0f0</color>
+    <color name="dark_colorPrimaryDark">@color/alib_red_dark</color>
     <color name="dark_colorAccent">@color/alib_red_dark</color>
 
     <color name="dark_divider_line">#414141</color>

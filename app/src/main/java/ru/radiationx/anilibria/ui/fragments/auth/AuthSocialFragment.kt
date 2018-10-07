@@ -11,6 +11,7 @@ import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import java.util.regex.Pattern
@@ -44,7 +45,7 @@ class AuthSocialFragment : BaseFragment() {
         appbarLayout.visibility = View.GONE
 
         setStatusBarVisibility(true)
-        setStatusBarColor(Color.WHITE)
+        setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
         webView.settings.apply {
             setAppCacheEnabled(false)

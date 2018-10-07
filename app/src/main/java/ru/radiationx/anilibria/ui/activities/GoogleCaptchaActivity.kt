@@ -25,6 +25,7 @@ class GoogleCaptchaActivity : FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.DarkAppTheme_NoActionBar)
         setContentView(R.layout.activity_antiddos)
         antiddos_title.text = "Google Captcha"
         antiddos_skip.setOnClickListener { finish() }

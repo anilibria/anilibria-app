@@ -30,6 +30,7 @@ class BlazingFastActivity : FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.DarkAppTheme_NoActionBar)
         setContentView(R.layout.activity_antiddos)
         antiddos_refreshing.visibility = View.VISIBLE
         antiddos_title.text = "Проверка BlazingFast"

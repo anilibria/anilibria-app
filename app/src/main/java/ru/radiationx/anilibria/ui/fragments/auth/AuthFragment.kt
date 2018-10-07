@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -40,7 +41,7 @@ class AuthFragment : BaseFragment(), AuthView {
         super.onViewCreated(view, savedInstanceState)
 
         setStatusBarVisibility(true)
-        setStatusBarColor(Color.WHITE)
+        setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
         authPatreon.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.ic_logo_patreon), null, null, null)
         authVk.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.ic_logo_vk), null, null, null)

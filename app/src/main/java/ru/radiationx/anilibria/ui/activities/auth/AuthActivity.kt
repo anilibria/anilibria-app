@@ -35,6 +35,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.DarkAppTheme_NoActionBar)
         setContentView(R.layout.activity_main)
 
         bottomShadow.visibility = View.GONE

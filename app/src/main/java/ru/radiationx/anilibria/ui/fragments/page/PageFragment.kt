@@ -5,11 +5,14 @@ import android.util.Base64
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.anilibria.extension.generateWithTheme
+import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
@@ -30,6 +33,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         const val ARG_ID: String = "page_id"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
+
+    private val appThemeHolder = App.injections.appThemeHolder
+    private val disposables = CompositeDisposable()
 
     private var webViewScrollPos = 0
 
@@ -85,8 +91,15 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = App.instance.staticPageTemplate
-        webView.easyLoadData(Api.SITE_URL, template.generateOutput())
-        template.reset()
+        webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
+
+        disposables.add(
+                appThemeHolder
+                        .observeTheme()
+                        .subscribe {
+                            webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                        }
+        )
     }
 
     override fun onResume() {
@@ -97,6 +110,11 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     override fun onPause() {
         super.onPause()
         webView?.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

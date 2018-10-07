@@ -3,9 +3,14 @@ package ru.radiationx.anilibria.ui.activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
+import io.reactivex.disposables.CompositeDisposable;
+import ru.radiationx.anilibria.App;
 import ru.radiationx.anilibria.R;
+import ru.radiationx.anilibria.extension.ContextKt;
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder;
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment;
 
 
@@ -15,11 +20,15 @@ import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private AppThemeHolder appThemeHolder = App.injections.getAppThemeHolder();
+    private CompositeDisposable disposables = new CompositeDisposable();
+    private AppThemeHolder.AppTheme currentAppTheme = appThemeHolder.getTheme();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.PreferencesDarkAppTheme);
+        currentAppTheme = appThemeHolder.getTheme();
+        setTheme(ContextKt.getPrefStyleRes(currentAppTheme));
         setContentView(R.layout.activity_settings);
 
         ActionBar actionBar = getSupportActionBar();
@@ -31,6 +40,17 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, new SettingsFragment()).commit();
+
+        disposables.add(
+                appThemeHolder
+                        .observeTheme()
+                        .subscribe(appTheme -> {
+                            if (currentAppTheme != appTheme) {
+                                currentAppTheme = appTheme;
+                                recreate();
+                            }
+                        })
+        );
     }
 
 
@@ -39,5 +59,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home)
             finish();
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear();
     }
 }

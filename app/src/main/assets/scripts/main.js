@@ -232,3 +232,16 @@ function ViewModelClass() {
 }
 
 var ViewModel = new ViewModelClass();
+
+ function changeStyleType(type) {
+    console.log("changeStyleType: "+type+", typeof="+(typeof type))
+    if(type !== "light" && type !== "dark"){
+        console.log("Unknown style type: "+type)
+        return
+    }
+    var styleLinks = document.querySelectorAll("link");
+    for (var i = 0; i < styleLinks.length; i++) {
+        var currentHref = styleLinks[i].href
+        styleLinks[i].href = currentHref.replace(/styles\/main_(light|dark)/, "styles/main_" + type)
+    }
+ }

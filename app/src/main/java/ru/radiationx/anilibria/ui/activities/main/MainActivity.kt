@@ -12,12 +12,14 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -25,8 +27,6 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
-import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
@@ -61,6 +61,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     private val dimensionsProvider = App.injections.dimensionsProvider
 
+    private val appThemeHolder = App.injections.appThemeHolder
+    private val disposables = CompositeDisposable()
+    private var currentAppTheme = appThemeHolder.getTheme()
+
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
@@ -77,8 +81,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setTheme(R.style.LightAppTheme_NoActionBar)
-        setTheme(R.style.DarkAppTheme_NoActionBar)
+        currentAppTheme = appThemeHolder.getTheme()
+        setTheme(currentAppTheme.getMainStyleRes())
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
@@ -146,6 +150,25 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         navigationHolder.removeNavigator()
     }
 
+    override fun onStart() {
+        super.onStart()
+        disposables.add(
+                appThemeHolder
+                        .observeTheme()
+                        .subscribe {
+                            if (currentAppTheme != it) {
+                                currentAppTheme = it
+                                recreate()
+                            }
+                        }
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
+    }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
@@ -153,6 +176,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun onDestroy() {
         super.onDestroy()
+        disposables.clear()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
         System.gc()

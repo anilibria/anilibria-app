@@ -24,8 +24,10 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nightlynexus.viewstatepageradapter.ViewStatePagerAdapter
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
+import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_article.view.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -34,6 +36,8 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
+import ru.radiationx.anilibria.extension.generateWithTheme
+import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
 import ru.radiationx.anilibria.presentation.article.details.ArticleView
@@ -272,6 +276,9 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private var localCommentsRootLayout: ViewGroup? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
+        private val appThemeHolder = App.injections.appThemeHolder
+        private val disposables = CompositeDisposable()
+
 
         override fun createView(container: ViewGroup, position: Int): View {
             Log.e("S_DEF_LOG", "instantiateItem $position")
@@ -293,6 +300,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             if (position == 0) {
                 localWebView = null
                 localProgressSwitcher = null
+                disposables.clear()
             }
         }
 
@@ -314,11 +322,18 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                     }
                     it.setJsLifeCycleListener(this@CustomPagerAdapter)
                     val template = App.instance.articleTemplate
-                    it.easyLoadData(Api.SITE_URL, template.generateOutput())
-                    template.reset()
+                    it.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
                 }
 
                 localProgressSwitcher = progressSwitcher
+
+                disposables.add(
+                        appThemeHolder
+                                .observeTheme()
+                                .subscribe {
+                                    localWebView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                                }
+                )
             }
         }
 

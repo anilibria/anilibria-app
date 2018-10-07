@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
@@ -30,12 +31,13 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     override fun getRouter(): Router = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
+    private val appThemeHolder = App.injections.appThemeHolder
 
     private val dimensionsProvider = App.injections.dimensionsProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.DarkAppTheme_NoActionBar)
+        setTheme(appThemeHolder.getTheme().getMainStyleRes())
         setContentView(R.layout.activity_main)
 
         bottomShadow.visibility = View.GONE

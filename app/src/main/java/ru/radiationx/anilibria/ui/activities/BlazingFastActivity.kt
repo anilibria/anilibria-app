@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_antiddos.*
 
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 
@@ -26,11 +27,12 @@ class BlazingFastActivity : FragmentActivity() {
 
     private val cookieHolder = App.injections.cookieHolder
     private val antiDdosInteractor = App.injections.antiDdosInteractor
+    private val appThemeHolder = App.injections.appThemeHolder
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.DarkAppTheme_NoActionBar)
+        setTheme(appThemeHolder.getTheme().getMainStyleRes())
         setContentView(R.layout.activity_antiddos)
         antiddos_refreshing.visibility = View.VISIBLE
         antiddos_title.text = "Проверка BlazingFast"
@@ -45,7 +47,7 @@ class BlazingFastActivity : FragmentActivity() {
         handleIntent(intent)
     }
 
-    private fun handleIntent(intent: Intent?){
+    private fun handleIntent(intent: Intent?) {
         if (intent != null) {
             content = intent.getStringExtra("content")
             contentUrl = intent.getStringExtra("url")

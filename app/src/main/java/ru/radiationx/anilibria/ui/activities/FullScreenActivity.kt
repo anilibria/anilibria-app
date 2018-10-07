@@ -13,8 +13,10 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import kotlinx.android.synthetic.main.activity_vital.*
 import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
 
@@ -28,9 +30,11 @@ class FullScreenActivity : AppCompatActivity() {
 
     private lateinit var currentVital: VitalItem
 
+    private val appThemeHolder = App.injections.appThemeHolder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.DarkAppTheme_NoActionBar)
+        setTheme(appThemeHolder.getTheme().getMainStyleRes())
         intent?.let {
             val vital = it.getSerializableExtra(VITAL_ITEM) as VitalItem?
             if (vital != null) {
@@ -112,7 +116,7 @@ class FullScreenActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        if(!isFinishing){
+        if (!isFinishing) {
             finish()
         }
     }

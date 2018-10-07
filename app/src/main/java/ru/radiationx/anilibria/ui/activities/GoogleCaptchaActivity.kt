@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_antiddos.*
 
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 
 class GoogleCaptchaActivity : FragmentActivity() {
@@ -22,10 +23,11 @@ class GoogleCaptchaActivity : FragmentActivity() {
     private var contentUrl = ""
 
     private val antiDdosInteractor = App.injections.antiDdosInteractor
+    private val appThemeHolder = App.injections.appThemeHolder
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.DarkAppTheme_NoActionBar)
+        setTheme(appThemeHolder.getTheme().getMainStyleRes())
         setContentView(R.layout.activity_antiddos)
         antiddos_title.text = "Google Captcha"
         antiddos_skip.setOnClickListener { finish() }

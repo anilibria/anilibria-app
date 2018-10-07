@@ -19,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -161,7 +162,9 @@ class App : Application() {
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
-        val appPreferences: PreferencesHolder = PreferencesStorage(defaultPreferences)
+        private val preferencesStorage = PreferencesStorage(defaultPreferences)
+
+        val appPreferences: PreferencesHolder = preferencesStorage
         val episodesCheckerStorage: EpisodesCheckerHolder = EpisodesCheckerStorage(dataStoragePreferences)
         val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
         val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
@@ -175,6 +178,8 @@ class App : Application() {
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         val userHolder: UserHolder = UserStorage(defaultPreferences)
+
+        val appThemeHolder: AppThemeHolder = preferencesStorage
 
         val client: IClient = Client(cookieHolder, userHolder, context, antiDdosErrorHandler)
         val apiUtils: IApiUtils = ApiUtils()

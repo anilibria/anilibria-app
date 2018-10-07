@@ -195,7 +195,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
                     MyPlayerActivity.VAL_QUALITY_SD -> 0
                     MyPlayerActivity.VAL_QUALITY_HD -> 1
                     else -> -1
-                }, { p0, p1 ->
+                }) { p0, p1 ->
                     val quality: Int = when (p1) {
                         0 -> MyPlayerActivity.VAL_QUALITY_SD
                         1 -> MyPlayerActivity.VAL_QUALITY_HD
@@ -213,7 +213,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
                         playEpisode(getEpisode())
                     }
                     p0.dismiss()
-                })
+                }
                 .show()
     }
 

@@ -41,7 +41,8 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
             private var seekStarted = false;
 
             override fun onTap() {
-                //Log.e("gestureLalala", "onTap")
+                Log.e("gestureLalala", "onTap, $canViewHide, $isVisible")
+
                 videoView?.showControls()
             }
 
@@ -102,6 +103,21 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
                 localSeekDelta = 0
             }
         })
+    }
+
+    override fun updatePlaybackState(isPlaying: Boolean) {
+        super.updatePlaybackState(isPlaying)
+        Log.e("kulolo", "updatePlaybackState $isPlaying")
+        if (!isPlaying && !isLoading) {
+            hideDelayed()
+        }
+    }
+
+    override fun show() {
+        super.show()
+        if (videoView?.isPlaying == false) {
+            hideDelayed()
+        }
     }
 
     override fun registerListeners() {

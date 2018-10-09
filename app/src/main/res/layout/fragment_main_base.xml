@@ -61,8 +61,6 @@
                         android:id="@+id/spinnerContainer"
                         android:layout_width="wrap_content"
                         android:layout_height="?attr/actionBarSize"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp"
                         android:visibility="gone">
 
                         <android.support.v7.widget.AppCompatSpinner

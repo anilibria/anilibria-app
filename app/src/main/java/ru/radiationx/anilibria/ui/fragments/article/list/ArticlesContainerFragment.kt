@@ -48,6 +48,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
         spinner.apply {
             spinnerContainer.visibility = View.VISIBLE
 
+            dropDownVerticalOffset = (8 * context.resources.displayMetrics.density).toInt()
             adapter = spinnerAdapter
             spinnerAdapter.setDropDownViewResource(R.layout.item_view_spinner_dropdown)
 

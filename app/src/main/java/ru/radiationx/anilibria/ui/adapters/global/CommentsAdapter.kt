@@ -19,7 +19,7 @@ class CommentsAdapter(
 
     var endless: Boolean = false
         set(enable) {
-            //field = enable
+            field = enable
             removeLoadMore()
             addLoadMore()
             notifyDataSetChanged()
@@ -73,7 +73,7 @@ class CommentsAdapter(
 
     fun setComments(newItems: List<Comment>) {
         items.clear()
-        //items.addAll(newItems.map { CommentListItem(it) })
+        items.addAll(newItems.map { CommentListItem(it) })
         updatePlaceholder()
         addLoadMore()
         notifyDataSetChanged()
@@ -82,7 +82,7 @@ class CommentsAdapter(
     fun addComments(newItems: List<Comment>) {
         val prevItems = itemCount
         removeLoadMore()
-        //items.addAll(newItems.map { CommentListItem(it) })
+        items.addAll(newItems.map { CommentListItem(it) })
         addLoadMore()
         notifyItemRangeInserted(prevItems, itemCount)
     }

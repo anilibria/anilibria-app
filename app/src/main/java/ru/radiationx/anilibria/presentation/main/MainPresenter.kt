@@ -82,6 +82,7 @@ class MainPresenter(
                     viewState.updateTabs()
                 }
                 .addToDisposable()
+        viewState.onMainLogicCompleted()
     }
 
     fun skipAntiDdos() {

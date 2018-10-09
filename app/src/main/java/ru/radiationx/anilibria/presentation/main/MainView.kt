@@ -12,4 +12,5 @@ interface MainView : MvpView {
 
     fun highlightTab(screenKey: String)
     fun updateTabs()
+    fun onMainLogicCompleted()
 }

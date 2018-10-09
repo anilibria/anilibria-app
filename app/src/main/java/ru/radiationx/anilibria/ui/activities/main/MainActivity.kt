@@ -141,7 +141,10 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
-        Log.e("lalala", "MainActivity, onCreate {savedInstanceState == null}, $intent")
+    }
+
+    override fun onMainLogicCompleted() {
+        Log.e("lalala", "MainActivity, onMainLogicCompleted $intent")
         handleIntent(intent)
     }
 

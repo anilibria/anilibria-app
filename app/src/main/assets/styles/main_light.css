@@ -156,6 +156,7 @@ a {
 .wrapper .news-detail-content .layday,
 .wrapper .content .layday {
   height: auto!important;
+  color: #212121;
 }
 .wrapper .news-detail-content .day,
 .wrapper .content .day {

@@ -32,7 +32,7 @@ class PlaceholderListItem(val icRes: Int, val titleRes: Int, val descRes: Int) :
 
 /* Articles, blogs, etc. list screen*/
 
-class ArticleListItem(val item: ArticleItem) : ListItem()
+class ArticleListItem(val item: ArticleItem, val transitionAppendix: String) : ListItem()
 
 
 /* Releases list screen */

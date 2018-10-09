@@ -23,7 +23,7 @@ class ArticleItemDelegate(private val itemListener: Listener) : AdapterDelegate<
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ArticleListItem
-        (holder as ViewHolder).bind(item.item, position)
+        (holder as ViewHolder).bind(item.item, position, item.transitionAppendix)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
@@ -43,7 +43,7 @@ class ArticleItemDelegate(private val itemListener: Listener) : AdapterDelegate<
             }
         }
 
-        fun bind(item: ArticleItem, position: Int) {
+        fun bind(item: ArticleItem, position: Int, transitionAppendix: String) {
             currentItem = item
             view.run {
                 item_title.text = item.title
@@ -64,7 +64,7 @@ class ArticleItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                 item_image.setAspectRatio(item.imageHeight.div(item.imageWidth.toFloat()))
                 ImageLoader.getInstance().displayImage(item.imageUrl, item_image)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_$position"
+                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_${position}_$transitionAppendix"
                 }
             }
         }

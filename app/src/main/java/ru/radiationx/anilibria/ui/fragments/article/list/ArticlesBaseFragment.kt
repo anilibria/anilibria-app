@@ -39,11 +39,13 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
 
     open var category = ""
 
-    private val adapter: ArticlesAdapter by lazy { ArticlesAdapter(this, PlaceholderListItem(
-            R.drawable.ic_toolbar_search,
-            R.string.placeholder_title_nodata_base,
-            R.string.placeholder_desc_nodata_base
-    )) }
+    private val adapter: ArticlesAdapter by lazy {
+        ArticlesAdapter(this, PlaceholderListItem(
+                R.drawable.ic_toolbar_search,
+                R.string.placeholder_title_nodata_base,
+                R.string.placeholder_desc_nodata_base
+        ))
+    }
     lateinit var router: Router
 
     @InjectPresenter
@@ -91,6 +93,7 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
         recyclerView.apply {
+            this@ArticlesBaseFragment.adapter.setTransitionAppendix(category)
             adapter = this@ArticlesBaseFragment.adapter
             layoutManager = LinearLayoutManager(recyclerView.context)
             addItemDecoration(UniversalItemDecoration()

@@ -17,6 +17,7 @@ open class ArticlesAdapter(
 
     private val vitalItems = mutableListOf<VitalItem>()
     private val random = Random()
+    private var transitionAppendix: String = ""
 
     var endless: Boolean = false
         set(enable) {
@@ -47,6 +48,10 @@ open class ArticlesAdapter(
         } else {
             items.removeAll { it is PlaceholderListItem }
         }
+    }
+
+    fun setTransitionAppendix(appendix: String) {
+        transitionAppendix = appendix
     }
 
     fun setVitals(vitals: List<VitalItem>) {
@@ -84,7 +89,7 @@ open class ArticlesAdapter(
     fun insertMore(newItems: List<ArticleItem>) {
         val prevItems = itemCount
         removeLoadMore()
-        this.items.addAll(newItems.map { ArticleListItem(it) })
+        this.items.addAll(newItems.map { ArticleListItem(it, transitionAppendix) })
         randomInsertVitals()
         addLoadMore()
         notifyItemRangeInserted(prevItems, itemCount)
@@ -92,7 +97,7 @@ open class ArticlesAdapter(
 
     fun bindItems(newItems: List<ArticleItem>) {
         this.items.clear()
-        this.items.addAll(newItems.map { ArticleListItem(it) })
+        this.items.addAll(newItems.map { ArticleListItem(it, transitionAppendix) })
         updatePlaceholder()
         randomInsertVitals()
         addLoadMore()

@@ -32,4 +32,6 @@
     <string name="placeholder_desc_nodata_search">Сформируйте поисковой запрос иначе или потяните вниз, чтобы обновить данные.</string>
     <string name="placeholder_desc_nodata_favorites">Здесь будут отображаться ваши избранные релизы.</string>
     <string name="placeholder_desc_nodata_history">Здесь будет отображаться локальная история просмотра релизов.</string>
+    <string name="placeholder_title_comments">Нет комментариев</string>
+    <string name="placeholder_desc_comments">Стань первым ;)</string>
 </resources>

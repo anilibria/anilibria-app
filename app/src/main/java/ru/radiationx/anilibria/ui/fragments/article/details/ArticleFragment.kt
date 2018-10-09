@@ -41,6 +41,7 @@ import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
 import ru.radiationx.anilibria.presentation.article.details.ArticleView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -69,7 +70,11 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
 
-    private val commentsAdapter = CommentsAdapter(this)
+    private val commentsAdapter = CommentsAdapter(this, PlaceholderListItem(
+            R.drawable.ic_comment,
+            R.string.placeholder_title_comments,
+            R.string.placeholder_desc_comments
+    ))
     private val pagerAdapter: CustomPagerAdapter = CustomPagerAdapter(commentsAdapter)
 
     private var toolbarHelperDisposable: Disposable? = null

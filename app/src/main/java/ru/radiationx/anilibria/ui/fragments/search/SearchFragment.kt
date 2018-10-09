@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
@@ -23,6 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.ShortcutHelper
 
 
 class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
@@ -268,7 +270,17 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     }
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
-        return presenter.onItemLongClick(item)
+        presenter.onItemLongClick(item)
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(arrayOf("Добавить на главный экран")) { dialog, which ->
+                        when (which) {
+                            0 -> ShortcutHelper.addShortcut(item)
+                        }
+                    }
+                    .show()
+        }
+        return false
     }
 
 }

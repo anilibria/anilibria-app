@@ -49,10 +49,14 @@ class IntentActivity : AppCompatActivity() {
                         })
                     }
                 }
-
                 finish()
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.e("lalala", "IntentActivity onnewintent $intent")
     }
 
     private fun restore(jsonString: String) {

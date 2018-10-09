@@ -189,6 +189,12 @@ class ReleasePresenter(
         }
     }
 
+    fun onShortcutAddClick() {
+        currentData?.let {
+            viewState.addShortCut(it)
+        }
+    }
+
     fun onClickWatchWeb() {
         currentData?.let {
             it.moonwalkLink?.let {

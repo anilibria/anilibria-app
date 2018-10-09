@@ -33,6 +33,7 @@ import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
+import java.util.*
 import kotlin.math.max
 
 
@@ -141,6 +142,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
+        /*Log.e("lalala", "MainActivity, onResumeFragments $intent")
+        handleIntent(intent)*/
     }
 
     override fun onMainLogicCompleted() {
@@ -216,6 +219,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
         tabs.forEach {
+            Log.e("lalala","findTabIntentHandler screen $it")
             fm.findFragmentByTag(it)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true

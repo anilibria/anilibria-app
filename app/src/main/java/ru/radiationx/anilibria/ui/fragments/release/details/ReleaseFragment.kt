@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
-import android.support.v4.view.PagerAdapter
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -42,21 +41,26 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.centerCrop
+import ru.radiationx.anilibria.extension.createAvatar
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
+import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import java.net.URLConnection
 import java.util.regex.Pattern
+import kotlin.math.min
 
 
 /* Created by radiationx on 16.11.17. */
@@ -144,6 +148,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             menu.add("Поделиться")
                     .setOnMenuItemClickListener {
                         presenter.onShareClick()
+                        false
+                    }
+
+            menu.add("Добавить на главный экран")
+                    .setOnMenuItemClickListener {
+                        presenter.onShortcutAddClick()
                         false
                     }
         }
@@ -283,6 +293,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     }
                     .show()
         }
+    }
+
+    override fun addShortCut(release: ReleaseItem) {
+        ShortcutHelper.addShortcut(release)
     }
 
     override fun onClickSd(episode: ReleaseFull.Episode) {

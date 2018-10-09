@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.history
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
@@ -22,6 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 /**
@@ -104,7 +106,16 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     }
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
-        presenter.onItemLongClick(item)
+        //presenter.onItemLongClick(item)
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(arrayOf("Добавить на главный экран")) { dialog, which ->
+                        when (which) {
+                            0 -> ShortcutHelper.addShortcut(item)
+                        }
+                    }
+                    .show()
+        }
         return false
     }
 

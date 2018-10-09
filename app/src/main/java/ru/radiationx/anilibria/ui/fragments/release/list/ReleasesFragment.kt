@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 
 /* Created by radiationx on 05.11.17. */
@@ -129,17 +130,18 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, ReleasesA
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         context?.let {
-            val titles = arrayOf("Копировать ссылку", "Поделиться")
+            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
             AlertDialog.Builder(it)
-                    .setItems(titles, { dialog, which ->
+                    .setItems(titles) { dialog, which ->
                         when (which) {
                             0 -> {
                                 Utils.copyToClipBoard(item.link.orEmpty())
                                 Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                             }
                             1 -> Utils.shareText(item.link.orEmpty())
+                            2 -> ShortcutHelper.addShortcut(item)
                         }
-                    })
+                    }
                     .show()
         }
         return false

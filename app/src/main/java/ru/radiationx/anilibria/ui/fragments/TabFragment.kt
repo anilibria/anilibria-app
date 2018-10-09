@@ -65,9 +65,13 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     private var ciceroneHolder = App.navigation.local
     private lateinit var cicerone: Cicerone<Router>
+    private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigationQueue.add(Runnable {
+            cicerone.router.newRootScreen(localScreen)
+        })
     }
 
     override fun onAttach(context: Context?) {
@@ -83,11 +87,11 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         return inflater.inflate(R.layout.fragment_tab, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.e("lalala", "onViewCreated $localScreen $this")
         if (childFragmentManager.findFragmentById(R.id.fragments_container) == null) {
-            cicerone.router.replaceScreen(localScreen)
+            updateNavQueue()
         }
     }
 
@@ -118,10 +122,21 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
             Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
-            linkHandler.handle(url, localRouter)
+            Log.e("lalala", "handle state $isAdded, $isDetached, $isHidden, $isInLayout, $isMenuVisible, $isRemoving, $isResumed, $isStateSaved, $isVisible")
+            navigationQueue.add(Runnable {
+                linkHandler.handle(url, localRouter)
+            })
+            updateNavQueue()
             return true
         }
         return false
+    }
+
+    private fun updateNavQueue() {
+        navigationQueue.forEach {
+            it.run()
+        }
+        navigationQueue.clear()
     }
 
 
@@ -178,7 +193,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                     Screens.STATIC_PAGE -> PageFragment().apply {
                         arguments = Bundle().apply { putString(PageFragment.ARG_ID, data as String) }
                     }
-                    else -> null
+                    else -> null as Fragment?
+                }?.also {
+                    Log.e("lalala", "createFragment $screenKey")
                 }
             }
 

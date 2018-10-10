@@ -154,7 +154,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(arrayOf("Удалить", "Добавить на главный экран")) { dialog, which ->
+                    .setItems(arrayOf("Удалить"/*, "Добавить на главный экран"*/)) { dialog, which ->
                         when (which) {
                             0 -> presenter.deleteFav(item.id)
                             1 -> ShortcutHelper.addShortcut(item)

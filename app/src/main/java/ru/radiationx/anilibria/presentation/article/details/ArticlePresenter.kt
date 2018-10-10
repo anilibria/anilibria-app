@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.presentation.article.details
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
@@ -152,5 +153,9 @@ class ArticlePresenter(
 
     fun onClickLink(url: String): Boolean {
         return linkHandler.handle(url, router)
+    }
+
+    fun onCommentClick(item: Comment) {
+        viewState.addCommentText("[USER=${item.authorId}]${item.authorNick}[/USER], ")
     }
 }

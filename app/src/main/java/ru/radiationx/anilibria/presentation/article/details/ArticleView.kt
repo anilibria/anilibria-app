@@ -27,6 +27,9 @@ interface ArticleView : IBaseView {
     fun onCommentSent()
 
     @StateStrategyType(SkipStrategy::class)
+    fun addCommentText(text: String)
+
+    @StateStrategyType(SkipStrategy::class)
     fun share(text: String)
 
     @StateStrategyType(SkipStrategy::class)

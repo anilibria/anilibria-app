@@ -33,6 +33,9 @@ interface ReleaseView : IBaseView {
     fun onCommentSent()
 
     @StateStrategyType(SkipStrategy::class)
+    fun addCommentText(text: String)
+
+    @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(url: String)
 
     @StateStrategyType(SkipStrategy::class)

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -257,6 +258,10 @@ class ReleasePresenter(
                     .addToDisposable()
         }
 
+    }
+
+    fun onCommentClick(item: Comment) {
+        viewState.addCommentText("[USER=${item.authorId}]${item.authorNick}[/USER], ")
     }
 
     fun onClickSendComment(text: String) {

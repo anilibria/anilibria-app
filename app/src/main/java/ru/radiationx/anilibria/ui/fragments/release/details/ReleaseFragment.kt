@@ -278,6 +278,23 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         viewPagerAdapter.clearCommentField()
     }
 
+    override fun addCommentText(text: String) {
+        viewPagerAdapter.addCommentText(text)
+        appbarLayout.setExpanded(false, true)
+    }
+
+    override fun onClick(item: Comment) {
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(arrayOf("Ответить")) { dialog, which ->
+                        when (which) {
+                            0 -> presenter.onCommentClick(item)
+                        }
+                    }
+                    .show()
+        }
+    }
+
     override fun loadTorrent(url: String) {
         Utils.externalLink(url)
     }
@@ -598,11 +615,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
 
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                            if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            if (dy < 0 && recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
                                 hideSoftwareKeyboard()
                                 localCommentsRootLayout?.commentField?.clearFocus()
                             }
+                        }
+
+                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                            /*if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                                hideSoftwareKeyboard()
+                                localCommentsRootLayout?.commentField?.clearFocus()
+                            }*/
                         }
                     })
                 }
@@ -626,6 +650,20 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         fun clearCommentField() {
             localCommentsRootLayout?.commentField?.text?.clear()
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun addCommentText(text: String) {
+            localCommentsRootLayout?.commentField?.text?.toString()?.also {
+                localCommentsRootLayout?.commentField?.setText(it + text)
+            }
+            localCommentsRootLayout?.commentField?.postDelayed({
+                localCommentsRootLayout?.commentField?.also {
+                    it.requestFocus()
+                    showSoftwareKeyboard(it)
+                    it.setSelection(it.text.length)
+                }
+            }, 500)
         }
     }
 }

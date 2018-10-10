@@ -28,7 +28,7 @@ class CommentsAdapter(
     init {
         items = mutableListOf()
         delegatesManager.run {
-            addDelegate(CommentDelegate())
+            addDelegate(CommentDelegate(listener))
             addDelegate(LoadMoreDelegate(listener))
             addDelegate(PlaceholderDelegate())
         }
@@ -87,5 +87,5 @@ class CommentsAdapter(
         notifyItemRangeInserted(prevItems, itemCount)
     }
 
-    interface ItemListener : LoadMoreDelegate.Listener
+    interface ItemListener : LoadMoreDelegate.Listener, CommentDelegate.Listener
 }

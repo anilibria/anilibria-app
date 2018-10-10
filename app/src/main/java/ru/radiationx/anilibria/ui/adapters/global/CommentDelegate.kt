@@ -20,7 +20,12 @@ import ru.radiationx.anilibria.utils.bbparser.BbParser
 /**
  * Created by radiationx on 18.01.18.
  */
-class CommentDelegate : AdapterDelegate<MutableList<ListItem>>() {
+class CommentDelegate(
+        private val listener: Listener
+) : AdapterDelegate<MutableList<ListItem>>() {
+
+    private val parser = BbParser()
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is CommentListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
@@ -29,14 +34,23 @@ class CommentDelegate : AdapterDelegate<MutableList<ListItem>>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false),
+            listener
     )
 
-    val parser = BbParser()
+    private inner class ViewHolder(
+            private val view: View,
+            private val listener: Listener
+    ) : RecyclerView.ViewHolder(view) {
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        private lateinit var currentItem: Comment
+
+        init {
+            view.setOnClickListener { listener.onClick(currentItem) }
+        }
 
         fun bind(item: Comment) {
+            currentItem = item
             view.run {
                 item_nick.text = Html.fromHtml(item.authorNick)
                 item_date.text = item.date
@@ -74,5 +88,7 @@ class CommentDelegate : AdapterDelegate<MutableList<ListItem>>() {
         }
     }
 
-
+    interface Listener {
+        fun onClick(item: Comment)
+    }
 }

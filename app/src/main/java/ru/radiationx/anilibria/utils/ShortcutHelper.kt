@@ -8,6 +8,7 @@ import android.net.Uri
 import android.support.v4.content.pm.ShortcutInfoCompat
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
+import android.util.Log
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -35,7 +36,7 @@ object ShortcutHelper {
     fun addShortcut(data: ReleaseItem, bitmap: Bitmap) = addShortcut(
             App.instance,
             data.idName ?: "release_${data.id}",
-            data.title.toString(),
+            (data.title ?: data.originalTitle).toString(),
             "${data.title} / ${data.originalTitle}",
             data.link.orEmpty(),
             bitmap
@@ -49,7 +50,7 @@ object ShortcutHelper {
             url: String,
             bitmap: Bitmap
     ) {
-
+        Log.e("lalala", "addShortcut $id, $shortLabel, $longLabel, $url")
         val shortcut = ShortcutInfoCompat.Builder(context, id)
                 .setShortLabel(shortLabel)
                 .setLongLabel(longLabel)

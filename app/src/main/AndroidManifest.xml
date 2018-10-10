@@ -19,7 +19,8 @@
         <activity
             android:name=".ui.activities.main.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Splash.LightAppTheme">
+            android:theme="@style/Splash.LightAppTheme"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

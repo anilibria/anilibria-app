@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.article.details
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v4.view.PagerAdapter
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Base64
@@ -46,6 +48,7 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
+import ru.radiationx.anilibria.ui.fragments.release.details.systemDownloadWithPermissionCheck
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
@@ -263,9 +266,26 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         presenter.loadMoreComments()
     }
 
+    override fun onClick(item: Comment) {
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(arrayOf("Ответить")) { dialog, which ->
+                        when (which) {
+                            0 -> presenter.onCommentClick(item)
+                        }
+                    }
+                    .show()
+        }
+    }
+
     override fun onCommentSent() {
         hideSoftwareKeyboard()
         pagerAdapter.clearCommentField()
+    }
+
+    override fun addCommentText(text: String) {
+        pagerAdapter.addCommentText(text)
+        appbarLayout.setExpanded(false, true)
     }
 
     private inner class CustomPagerAdapter(
@@ -354,11 +374,18 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
                     //addItemDecoration(ru.radiationx.anilibria.ui.widgets.DividerItemDecoration(this.context))
                     addItemDecoration(UniversalItemDecoration().fullWidth(true).spacingDp(1f).includeEdge(false))
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                            if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            if (dy < 0 && recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
                                 hideSoftwareKeyboard()
                                 localCommentsRootLayout?.commentField?.clearFocus()
                             }
+                        }
+
+                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                            /*if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                                hideSoftwareKeyboard()
+                                localCommentsRootLayout?.commentField?.clearFocus()
+                            }*/
                         }
                     })
                 }
@@ -379,6 +406,20 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
         fun clearCommentField() {
             localCommentsRootLayout?.commentField?.text?.clear()
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun addCommentText(text: String) {
+            localCommentsRootLayout?.commentField?.text?.toString()?.also {
+                localCommentsRootLayout?.commentField?.setText(it + text)
+            }
+            localCommentsRootLayout?.commentField?.postDelayed({
+                localCommentsRootLayout?.commentField?.also {
+                    it.requestFocus()
+                    showSoftwareKeyboard(it)
+                    it.setSelection(it.text.length)
+                }
+            }, 500)
         }
 
         fun getWebViewScroll(): Int = localWebView?.scrollY ?: 0

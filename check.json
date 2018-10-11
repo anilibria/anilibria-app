@@ -1,25 +1,33 @@
 {
   "update": {
-    "version_code": "29",
-    "version_name": "2.1.2",
+    "version_code": "30",
+    "version_name": "2.1.3",
     "version_build": "0",
-    "build_date": "01 июля 2018 г.",
+    "build_date": "11 октября 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.2.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.3.apk",
         "type": "file"
       },
       {
         "name": "4PDA",
-        "url": "http://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=74690460",
+        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=77844568",
         "type": "site"
       }
     ],
     "important": [],
-    "added": [],
+    "added": [
+      "Тёмная тема",
+      "Добавление ярлыков аниме на главный экран",
+      "Возможность ответить на комментарий",
+      "Плейсхолдер для комментариев"
+    ],
     "fixed": [
-      "Прохождение проверки GoogleCaptcha и BlazingFast"
+      "Сплешскрин",
+      "Скрытие интерфейса плеера при паузе",
+      "Сохранение списка комментариев при перевороте устройства",
+      "Открытие приложения по ссылке"
     ],
     "changed": []
   }

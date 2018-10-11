@@ -20,6 +20,7 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
+
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
 -keep class android.support.v7.app.** { *; }

@@ -1,18 +1,18 @@
 {
   "update": {
-    "version_code": "30",
-    "version_name": "2.1.3",
+    "version_code": "31",
+    "version_name": "2.1.4",
     "version_build": "0",
     "build_date": "11 октября 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.3.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.4.apk",
         "type": "file"
       },
       {
         "name": "4PDA",
-        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=77844568",
+        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=77846739",
         "type": "site"
       }
     ],

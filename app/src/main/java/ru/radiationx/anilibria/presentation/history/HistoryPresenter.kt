@@ -55,6 +55,10 @@ class HistoryPresenter(
         router.navigateTo(Screens.RELEASE_DETAILS, args)
     }
 
+    fun onDeleteClick(item: ReleaseItem) {
+        historyRepository.removeRelease(item.id)
+    }
+
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }

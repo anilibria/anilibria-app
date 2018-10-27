@@ -59,7 +59,7 @@ class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<
                 item_desc.text = Html.fromHtml(item.description)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_$position"
+                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_${item.torrentLink}"
                 }
                 item_new_indicator.visibility = if(item.isNew) View.VISIBLE else View.GONE
                 ImageLoader.getInstance().displayImage(item.image, item_image)

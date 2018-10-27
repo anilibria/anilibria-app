@@ -7,4 +7,5 @@ interface HistoryHolder {
     fun observeEpisodes(): Observable<MutableList<ReleaseItem>>
     fun putRelease(release: ReleaseItem)
     fun putAllRelease(releases: List<ReleaseItem>)
+    fun removerRelease(id: Int)
 }

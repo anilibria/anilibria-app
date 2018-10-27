@@ -19,4 +19,6 @@ class HistoryRepository(
             .observeOn(schedulers.ui())
 
     fun putRelease(releaseItem: ReleaseItem) = historyStorage.putRelease(releaseItem)
+
+    fun removeRelease(id: Int) = historyStorage.removerRelease(id)
 }

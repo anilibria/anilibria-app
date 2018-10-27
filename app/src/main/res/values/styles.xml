@@ -23,6 +23,8 @@
 
         <item name="android:textColorLink">@color/light_textLink</item>
 
+        <item name="bottomSheetDialogTheme">@style/Theme.Design.Light.BottomSheetDialog</item>
+
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
         <item name="windowBackground">@color/light_windowBackground</item>
@@ -115,6 +117,8 @@
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
+
+        <item name="bottomSheetDialogTheme">@style/Theme.Design.BottomSheetDialog</item>
 
 
         <!-- Attrs -->

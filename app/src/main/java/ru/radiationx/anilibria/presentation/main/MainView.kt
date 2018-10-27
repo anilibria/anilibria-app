@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.*
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 
 /**
  * Created by radiationx on 17.12.17.
@@ -13,4 +14,7 @@ interface MainView : MvpView {
     fun highlightTab(screenKey: String)
     fun updateTabs()
     fun onMainLogicCompleted()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun changeTheme(appTheme: AppThemeHolder.AppTheme)
 }

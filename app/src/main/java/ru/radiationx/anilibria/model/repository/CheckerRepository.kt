@@ -21,7 +21,7 @@ class CheckerRepository(
             .fromCallable {
                 Log.e("CHECKER", "fromCallable0 $versionCode : $force")
                 return@fromCallable if (!force && currentDataRelay.hasValue())
-                    currentDataRelay.value
+                    currentDataRelay.value!!
                 else
                     checkerApi.checkUpdate(versionCode).blockingGet()
             }

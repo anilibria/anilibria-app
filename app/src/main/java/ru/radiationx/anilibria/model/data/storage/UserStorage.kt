@@ -15,7 +15,7 @@ class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder
 
     private val userRelay = BehaviorRelay.createDefault(getSavedUser())
 
-    override fun getUser(): ProfileItem = userRelay.value
+    override fun getUser(): ProfileItem = userRelay.value!!
 
     private fun getSavedUser(): ProfileItem {
         val user = ProfileItem()

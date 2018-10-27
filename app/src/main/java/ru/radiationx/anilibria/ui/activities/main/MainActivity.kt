@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.activities.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -20,6 +21,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -63,7 +65,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     private val dimensionsProvider = App.injections.dimensionsProvider
 
     private val appThemeHolder = App.injections.appThemeHolder
-    private val disposables = CompositeDisposable()
     private var currentAppTheme = appThemeHolder.getTheme()
 
     @InjectPresenter
@@ -76,14 +77,15 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 App.injections.errorHandler,
                 App.injections.authRepository,
                 App.injections.checkerRepository,
-                App.injections.antiDdosInteractor
+                App.injections.antiDdosInteractor,
+                App.injections.appThemeHolder
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getMainStyleRes())
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
@@ -132,6 +134,16 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         }
     }
 
+    override fun changeTheme(appTheme: AppThemeHolder.AppTheme) {
+        if (currentAppTheme != appTheme) {
+            currentAppTheme = appTheme
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+                Handler().post { recreate() }
+            } else {
+                recreate()
+            }
+        }
+    }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -152,27 +164,8 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     }
 
     override fun onPause() {
-        super.onPause()
         navigationHolder.removeNavigator()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        disposables.add(
-                appThemeHolder
-                        .observeTheme()
-                        .subscribe {
-                            if (currentAppTheme != it) {
-                                currentAppTheme = it
-                                recreate()
-                            }
-                        }
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -182,7 +175,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     override fun onDestroy() {
         super.onDestroy()
-        disposables.clear()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
         System.gc()
@@ -219,7 +211,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
         tabs.forEach {
-            Log.e("lalala","findTabIntentHandler screen $it")
+            Log.e("lalala", "findTabIntentHandler screen $it")
             fm.findFragmentByTag(it)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true

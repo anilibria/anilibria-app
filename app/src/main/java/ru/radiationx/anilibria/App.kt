@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.support.multidex.MultiDex
 import android.support.v7.app.AppCompatDelegate
 import android.text.TextUtils
 import android.util.Log
@@ -18,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
+import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.holders.*
@@ -59,13 +61,20 @@ class App : Application() {
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
 
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        if (BuildConfig.FLAVOR.equals("appDev")) {
+            MultiDex.install(this)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
 
         //Fabric.with(this, Crashlytics())
-
-        YandexMetrica.activate(applicationContext, "48d49aa0-6aad-407e-a738-717a6c77d603")
+        val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
+        YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {

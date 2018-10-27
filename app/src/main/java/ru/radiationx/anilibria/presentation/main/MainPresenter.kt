@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CheckerRepository
@@ -24,12 +25,22 @@ class MainPresenter(
         private val errorHandler: IErrorHandler,
         private val authRepository: AuthRepository,
         private val checkerRepository: CheckerRepository,
-        private val antiDdosInteractor: AntiDdosInteractor
+        private val antiDdosInteractor: AntiDdosInteractor,
+        private val appThemeHolder: AppThemeHolder
 ) : BasePresenter<MainView>(router) {
 
     private var antiDdosCompositeDisposable = CompositeDisposable()
 
     var defaultScreen = Screens.MAIN_RELEASES
+
+    init {
+        appThemeHolder
+                .observeTheme()
+                .subscribe {
+                    viewState.changeTheme(it)
+                }
+                .addToDisposable()
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.widgets.bbwidgets
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import ru.radiationx.anilibria.R
@@ -14,6 +14,8 @@ import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 import ru.radiationx.anilibria.utils.bbparser.models.BbTypedOp
 import kotlin.math.max
 import kotlin.math.min
+import android.view.View
+
 
 /**
  * Created by radiationx on 21.01.18.
@@ -24,20 +26,72 @@ open class BbView @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private var maxHeightDp: Int = 0
+
+    private var overflowListener: OverflowListener? = null
+
+    private var isOverflow = false
+    private var isExpand = false
+
     init {
         orientation = LinearLayout.VERTICAL
+    }
+
+    fun setMaxHeightDp(maxHeightDp: Int) {
+        this.maxHeightDp = maxHeightDp
+        invalidate()
+    }
+
+    fun setExpand(isExpand: Boolean) {
+        this.isExpand = isExpand
+        invalidate()
+        requestLayout()
+    }
+
+    fun setOverflowListener(listener: OverflowListener?) {
+        overflowListener = listener
+    }
+
+    fun isOverflow() = isOverflow
+
+    fun isExpanded() = isExpand
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if ((parent as? BbView) != null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            return
+        }
+        val maxHeightPx = (maxHeightDp * resources.displayMetrics.density).toInt()
+        val lastHeight = measuredHeight
+
+        val newHeightMeasureSpec = if (isExpand /*|| isSoClose*/) {
+            heightMeasureSpec
+        } else {
+            View.MeasureSpec.makeMeasureSpec(maxHeightPx, View.MeasureSpec.AT_MOST)
+        }
+
+        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec)
+        val newIsOverflow = measuredHeight == maxHeightPx
+        if (true || (lastHeight == 0 || isOverflow != newIsOverflow)) {
+            isOverflow = newIsOverflow
+            overflowListener?.onOverflowChanged(isOverflow)
+        }
+    }
+
+    interface OverflowListener {
+        fun onOverflowChanged(isOverFlow: Boolean)
     }
 
     fun setContent(node: BbNode) {
         setContent(node.toSequence())
     }
 
-
     open fun deleteContent() {
         removeViews(0, childCount)
     }
 
     fun setContent(ops: List<BbTypedOp>) {
+        isExpand = false
         deleteContent()
         ops.forEach {
             when (it.type) {

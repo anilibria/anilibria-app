@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.ui.adapters.CommentListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.widgets.bbwidgets.BbView
 import ru.radiationx.anilibria.utils.bbparser.BbParser
 
 /**
@@ -25,12 +27,13 @@ class CommentDelegate(
 ) : AdapterDelegate<MutableList<ListItem>>() {
 
     private val parser = BbParser()
+    private val expandedComments = mutableSetOf<Int>()
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is CommentListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as CommentListItem
-        (holder as ViewHolder).bind(item.item)
+        (holder as ViewHolder).bind(item.item, expandedComments.contains(item.item.id))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
@@ -47,9 +50,23 @@ class CommentDelegate(
 
         init {
             view.setOnClickListener { listener.onClick(currentItem) }
+            view.item_content.setOverflowListener(object : BbView.OverflowListener {
+                override fun onOverflowChanged(isOverFlow: Boolean) {
+                    updateShowFull()
+                }
+            })
+            view.item_comment_showfull.setOnClickListener {
+                val newIsExpand = !view.item_content.isExpanded()
+                if (newIsExpand) {
+                    expandedComments.add(currentItem.id)
+                } else {
+                    expandedComments.remove(currentItem.id)
+                }
+                view.item_content.setExpand(newIsExpand)
+            }
         }
 
-        fun bind(item: Comment) {
+        fun bind(item: Comment, isExpand: Boolean) {
             currentItem = item
             view.run {
                 item_nick.text = Html.fromHtml(item.authorNick)
@@ -84,6 +101,27 @@ class CommentDelegate(
                 item.message?.let {
                     item_content.setContent(parser.parse(it).toSequence())
                 }
+                item_content.setExpand(isExpand)
+            }
+
+            //val parentHeight = (view.parent as ViewGroup).height
+            val targetHeight = (240).toInt()
+            view.item_content.setMaxHeightDp(targetHeight)
+        }
+
+        private fun updateShowFull() {
+            val isOverflow = view.item_content.isOverflow()
+            val isExpanded = view.item_content.isExpanded()
+            view.item_comment_showfull.apply {
+                visibility = if (isOverflow || isExpanded) View.VISIBLE else View.GONE
+                text = if (isExpanded) {
+                    "Свернуть"
+                } else {
+                    "Показать полностью"
+                }
+            }
+            view.item_comment_content_shadow.apply {
+                visibility = if (isOverflow && !isExpanded) View.VISIBLE else View.GONE
             }
         }
     }

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.global
 
 /* Created by radiationx on 18.11.17. */
 
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -11,6 +12,9 @@ class CommentsAdapter(
         var listener: ItemListener,
         private val placeHolder: PlaceholderListItem
 ) : ListDelegationAdapter<MutableList<ListItem>>() {
+
+    private val commentDelegate = CommentDelegate(listener)
+
     companion object {
         /*private const val COMMENT_LAYOUT = 1
         private const val LOAD_MORE_LAYOUT = 2
@@ -32,6 +36,14 @@ class CommentsAdapter(
             addDelegate(LoadMoreDelegate(listener))
             addDelegate(PlaceholderDelegate())
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
     }
 
     /*override fun getItemCount(): Int {

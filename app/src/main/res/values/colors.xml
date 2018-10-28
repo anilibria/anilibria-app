@@ -36,6 +36,7 @@
     <color name="light_divider_line">#eee</color>
     <color name="light_windowBackground">#eee</color>
     <color name="light_cardBackground">#fff</color>
+    <color name="light_cardBackground_alpha">#00ffffff</color>
 
     <color name="light_tab_color_checked">@color/light_colorAccent</color>
     <color name="light_tab_color_unchecked">@color/light_base_icon</color>
@@ -72,6 +73,7 @@
     <color name="dark_divider_line">#414141</color>
     <color name="dark_windowBackground">#141414</color>
     <color name="dark_cardBackground">#282828</color>
+    <color name="dark_cardBackground_alpha">#00282828</color>
 
     <color name="dark_tab_color_checked">#fff</color>
     <color name="dark_tab_color_unchecked">@color/dark_base_icon</color>

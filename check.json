@@ -1,13 +1,13 @@
 {
   "update": {
-    "version_code": "32",
-    "version_name": "2.1.5",
+    "version_code": "33",
+    "version_name": "2.1.6",
     "version_build": "0",
     "build_date": "28 октября 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.5.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.6.apk",
         "type": "file"
       },
       {

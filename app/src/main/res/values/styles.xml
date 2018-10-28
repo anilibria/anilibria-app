@@ -53,6 +53,8 @@
 
         <item name="app_bar_overlay">@style/LightAppTheme.AppBarOverlay</item>
         <item name="popup_overlay">@style/LightAppTheme.PopupOverlay</item>
+
+        <item name="bg_shadow_comment_overflow">@drawable/bg_shadow_comment_overflow_light</item>
     </style>
 
 
@@ -149,6 +151,8 @@
 
         <item name="app_bar_overlay">@style/DarkAppTheme.AppBarOverlay</item>
         <item name="popup_overlay">@style/DarkAppTheme.PopupOverlay</item>
+
+        <item name="bg_shadow_comment_overflow">@drawable/bg_shadow_comment_overflow_dark</item>
     </style>
 
 

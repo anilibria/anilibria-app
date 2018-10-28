@@ -55,6 +55,8 @@
     <attr name="app_bar_overlay" extension="reference" />
     <attr name="popup_overlay" extension="reference" />
 
+    <attr name="bg_shadow_comment_overflow" extension="reference" />
+
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float" />
         <attr name="enabledAspectRatio" format="boolean" />

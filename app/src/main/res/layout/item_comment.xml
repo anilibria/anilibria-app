@@ -99,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="24dp"
         app:layout_constraintBottom_toBottomOf="@id/item_content"
-        android:background="@drawable/bg_shadow_comment_overflow"/>
+        android:background="?bg_shadow_comment_overflow"/>
 
     <Button
         android:id="@+id/item_comment_showfull"

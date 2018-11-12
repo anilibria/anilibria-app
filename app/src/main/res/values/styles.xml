@@ -48,6 +48,7 @@
         <item name="textDefault">@color/light_textDefault</item>
         <item name="textSecond">@color/light_textSecond</item>
         <item name="textColoredButton">@color/light_textColoredButton</item>
+        <item name="textLink">@color/light_textLink</item>
 
         <item name="playerColorPrimary">@color/playerColorPrimary</item>
 
@@ -55,6 +56,7 @@
         <item name="popup_overlay">@style/LightAppTheme.PopupOverlay</item>
 
         <item name="bg_shadow_comment_overflow">@drawable/bg_shadow_comment_overflow_light</item>
+        <item name="bg_btn_outline">@drawable/bg_btn_outline_light</item>
     </style>
 
 
@@ -146,6 +148,7 @@
         <item name="textDefault">@color/dark_textDefault</item>
         <item name="textSecond">@color/dark_textSecond</item>
         <item name="textColoredButton">@color/dark_textColoredButton</item>
+        <item name="textLink">@color/dark_textLink</item>
 
         <item name="playerColorPrimary">@color/playerColorPrimary</item>
 
@@ -153,6 +156,7 @@
         <item name="popup_overlay">@style/DarkAppTheme.PopupOverlay</item>
 
         <item name="bg_shadow_comment_overflow">@drawable/bg_shadow_comment_overflow_dark</item>
+        <item name="bg_btn_outline">@drawable/bg_btn_outline_dark</item>
     </style>
 
 

@@ -28,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
+import kotlinx.android.synthetic.main.dialog_file_download.view.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
@@ -389,7 +390,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }.orEmpty()
     }
 
-    private fun showDownloadDialog(url: String) {
+    override fun showDownloadDialog(url: String) {
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         context?.let {
             AlertDialog.Builder(it)
@@ -403,14 +404,44 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
+    override fun showFileDonateDialog(url: String) {
+        val dialogView = LayoutInflater.from(view!!.context)
+                .inflate(R.layout.dialog_file_download, null, false)
+                .apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+        ImageLoader.getInstance().displayImage("assets://libria_tyan_type3.png", dialogView.dialogFileImage)
+
+        val dialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .show()
+
+        dialogView.dialogFilePatreonBtn.setOnClickListener {
+            presenter.onDialogPatreonClick()
+            dialog.dismiss()
+        }
+        dialogView.dialogFileDonateBtn.setOnClickListener {
+            presenter.onDialogDonateClick()
+            dialog.dismiss()
+        }
+        dialogView.dialogFileDownloadBtn.setOnClickListener {
+            showDownloadDialog(url)
+            dialog.dismiss()
+        }
+    }
+
     override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
             if (quality == null) {
-                selectQuality({ selected ->
-                    showDownloadDialog(getUrlByQuality(episode, selected))
+                selectQuality(episode, { selected ->
+                    presenter.onDownloadLinkSelected(getUrlByQuality(episode, selected))
                 }, true)
             } else {
-                showDownloadDialog(getUrlByQuality(episode, quality))
+                presenter.onDownloadLinkSelected(getUrlByQuality(episode, quality))
             }
         } else {
             val titles = arrayOf("Внешний плеер", "Внутренний плеер")
@@ -420,12 +451,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                             if (quality == null) {
                                 when (which) {
                                     0 -> {
-                                        selectQuality({ selected ->
+                                        selectQuality(episode, { selected ->
                                             playExternal(release, episode, selected)
                                         }, true)
                                     }
                                     1 -> {
-                                        selectQuality({ selected ->
+                                        selectQuality(episode, { selected ->
                                             playInternal(release, episode, selected, playFlag)
                                         })
                                     }
@@ -498,17 +529,25 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onClickWatchWeb()
     }
 
-    private fun selectQuality(onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
+    private fun selectQuality(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
+        if (episode.urlSd == null || episode.urlHd == null) {
+            if (episode.urlSd != null) {
+                onSelect(MyPlayerActivity.VAL_QUALITY_SD)
+            } else if (episode.urlHd != null) {
+                onSelect(MyPlayerActivity.VAL_QUALITY_HD)
+            }
+            return
+        }
         if (forceDialog) {
-            showQualityDialog(onSelect, false)
+            showQualityDialog(episode, onSelect, false)
         } else {
             val savedQuality = presenter.getQuality()
             when (savedQuality) {
                 PreferencesHolder.QUALITY_NO -> {
-                    showQualityDialog(onSelect)
+                    showQualityDialog(episode, onSelect)
                 }
                 PreferencesHolder.QUALITY_ALWAYS -> {
-                    showQualityDialog(onSelect, false)
+                    showQualityDialog(episode, onSelect, false)
                 }
                 PreferencesHolder.QUALITY_SD -> {
                     onSelect(MyPlayerActivity.VAL_QUALITY_SD)
@@ -520,7 +559,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
-    private fun showQualityDialog(onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
+    private fun showQualityDialog(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
         context?.let {
             AlertDialog.Builder(it)
                     .setTitle("Качество")

@@ -203,6 +203,18 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                     episode.type = ReleaseFull.Episode.Type.ONLINE
                     release.episodes.add(episode)
                 }
+                /*jsonEpisodes.optJSONObject(j)?.let {
+                    val episode = ReleaseFull.Episode()
+
+                    episode.releaseId = release.id
+                    episode.id = jsonEpisodes.length() - j
+
+                    episode.title = it.optString("comment")
+                    episode.urlSd = it.optString("file")
+                    episode.urlHd = null
+                    episode.type = ReleaseFull.Episode.Type.SOURCE
+                    release.episodesSource.add(episode)
+                }*/
             }
         }
 

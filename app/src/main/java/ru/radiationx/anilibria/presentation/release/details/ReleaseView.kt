@@ -67,4 +67,10 @@ interface ReleaseView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun addShortCut(release: ReleaseItem)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showDownloadDialog(url: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showFileDonateDialog(url: String)
 }

@@ -48,6 +48,7 @@
     <attr name="textDefault" extension="reference" format="color" />
     <attr name="textSecond" extension="reference" format="color" />
     <attr name="textColoredButton" extension="reference" format="color" />
+    <attr name="textLink" extension="reference" format="color" />
 
     <attr name="playerColorPrimary" extension="reference" format="color" />
 
@@ -56,6 +57,8 @@
     <attr name="popup_overlay" extension="reference" />
 
     <attr name="bg_shadow_comment_overflow" extension="reference" />
+
+    <attr name="bg_btn_outline" extension="reference" />
 
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float" />

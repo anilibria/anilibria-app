@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
@@ -302,5 +303,17 @@ class ReleasePresenter(
             putString(SearchFragment.ARG_GENRE, genre)
         }
         router.navigateTo(Screens.RELEASES_SEARCH, args)
+    }
+
+    fun onDownloadLinkSelected(url: String) {
+        viewState.showFileDonateDialog(url)
+    }
+
+    fun onDialogPatreonClick() {
+        Utils.externalLink("https://www.patreon.com/anilibria")
+    }
+
+    fun onDialogDonateClick() {
+        router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
     }
 }

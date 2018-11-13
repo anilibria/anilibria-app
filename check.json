@@ -1,30 +1,26 @@
 {
   "update": {
-    "version_code": "33",
-    "version_name": "2.1.6",
+    "version_code": "34",
+    "version_name": "2.1.7",
     "version_build": "0",
-    "build_date": "28 октября 2018 г.",
+    "build_date": "13 ноября 2018 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.6.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.7.apk",
         "type": "file"
       },
       {
         "name": "4PDA",
-        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=78399529",
+        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=79000094",
         "type": "site"
       }
     ],
     "important": [],
     "added": [
-      "Удаление релизов из истории",
-      "Ограничение высоты комментариев с возможностью их раскрыть"
+      "Возможность скачивать версии в SD качестве для всех пользователей"
     ],
-    "fixed": [
-      "Навигация по приложению при смене темы",
-      "Цвет фона в списке жанров"
-    ],
+    "fixed": [],
     "changed": []
   }
 }

@@ -1,4 +1,4 @@
-package com.mintrocket.gisdelivery.extension
+package ru.radiationx.anilibria.extension
 
 import org.json.JSONObject
 

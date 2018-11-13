@@ -29,6 +29,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
     val episodes = mutableListOf<Episode>()
     val episodesSource = mutableListOf<Episode>()
     var moonwalkLink: String? = null
+    var showDonateDialog: Boolean = false
 
     class Episode : Serializable {
         var releaseId = 0

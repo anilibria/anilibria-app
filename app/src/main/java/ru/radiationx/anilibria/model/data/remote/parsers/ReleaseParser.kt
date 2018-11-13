@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import android.util.Log
-import com.mintrocket.gisdelivery.extension.nullGet
-import com.mintrocket.gisdelivery.extension.nullString
+import ru.radiationx.anilibria.extension.nullGet
+import ru.radiationx.anilibria.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.*
@@ -181,8 +181,8 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                 jsonMp4.optJSONObject(j)?.let {
                     val episode = ReleaseFull.Episode()
                     episode.title = "Cерия ${jsonMp4.length() - j}"
-                    episode.urlSd = it.optString("sd")
-                    episode.urlHd = it.optString("hd")
+                    episode.urlSd = it.nullString("sd")
+                    episode.urlHd = it.nullString("hd")
                     episode.type = ReleaseFull.Episode.Type.SOURCE
                     release.episodesSource.add(episode)
                 }
@@ -241,6 +241,8 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
                 }
             }
         }
+
+        release.showDonateDialog = responseJson.optBoolean("showDonateDialog")
 
         val jsonFav = responseJson.getJSONObject("fav")
         Log.e("S_DEF_LOG", "loaded json fav " + jsonFav.toString(4))

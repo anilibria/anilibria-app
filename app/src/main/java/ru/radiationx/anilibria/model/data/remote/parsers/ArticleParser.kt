@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import com.mintrocket.gisdelivery.extension.nullGet
-import com.mintrocket.gisdelivery.extension.nullString
+import ru.radiationx.anilibria.extension.nullGet
+import ru.radiationx.anilibria.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem

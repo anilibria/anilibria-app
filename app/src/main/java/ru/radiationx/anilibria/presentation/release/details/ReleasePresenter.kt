@@ -306,7 +306,13 @@ class ReleasePresenter(
     }
 
     fun onDownloadLinkSelected(url: String) {
-        viewState.showFileDonateDialog(url)
+        currentData?.also {
+            if (it.showDonateDialog) {
+                viewState.showFileDonateDialog(url)
+            } else {
+                viewState.showDownloadDialog(url)
+            }
+        }
     }
 
     fun onDialogPatreonClick() {

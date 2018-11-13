@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.mintrocket.gisdelivery.extension.nullString
+import ru.radiationx.anilibria.extension.nullString
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject

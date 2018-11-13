@@ -43,7 +43,7 @@
             android:shadowDy="1.0"
             android:shadowRadius="4.0"
             android:text="Обновлено"
-            android:textColor="?cardBackground"
+            android:textColor="#fff"
             android:textSize="12sp" />
 
         <TextView

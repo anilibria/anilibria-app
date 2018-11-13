@@ -5,13 +5,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.mintrocket.gisdelivery.extension.nullString
+import ru.radiationx.anilibria.extension.nullString
 import io.reactivex.Completable
-import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.App
-import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 

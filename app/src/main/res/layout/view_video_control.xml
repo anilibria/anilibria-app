@@ -210,6 +210,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/bg_video_time_cotrols"
+            android:clipToPadding="false"
             android:orientation="horizontal"
             android:paddingTop="16dp">
 
@@ -223,6 +224,7 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:typeface="monospace"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:06:29" />
@@ -241,25 +243,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="10dp"
-                android:layout_toStartOf="@id/controlsScale"
+                android:layout_toStartOf="@id/controlsFullscreen"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:typeface="monospace"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:23:49" />
-
-            <ImageButton
-                android:id="@+id/controlsScale"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="-16dp"
-                android:layout_toStartOf="@id/controlsFullscreen"
-                android:minWidth="0dp"
-                app:srcCompat="@drawable/ic_crop" />
 
             <ImageButton
                 android:id="@+id/controlsFullscreen"
@@ -267,10 +258,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="-16dp"
+                android:layout_marginTop="-15dp"
+                android:layout_marginEnd="-8dp"
+                android:layout_toStartOf="@id/controlsScale"
                 android:minWidth="0dp"
                 app:srcCompat="@drawable/ic_fullscreen" />
+
+            <ImageButton
+                android:id="@+id/controlsScale"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-15dp"
+                android:minWidth="0dp"
+                app:srcCompat="@drawable/ic_crop" />
 
             <LinearLayout
                 android:id="@+id/exomedia_controls_extra_container"

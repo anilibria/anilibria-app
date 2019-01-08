@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -118,6 +119,10 @@ class MyPlayerActivity : AppCompatActivity() {
                 it.setPreviousButtonRemoved(false)
                 it.setButtonListener(controlsListener)
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
         }
 
         playEpisode(getEpisode())

@@ -4,6 +4,7 @@
     <style name="BasePlayerTheme" parent="LightAppTheme.NoActionBar">
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>
+        <item name="windowBackground">#000</item>
     </style>
 
     <style name="PlayerTheme" parent="BasePlayerTheme" />

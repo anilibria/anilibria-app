@@ -252,6 +252,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
         currentTitle = String.format("%s / %s", release.title, release.originalTitle)
         viewPagerAdapter.showRelease(release)
+        if (release.episodes.isNotEmpty()) {
+            playInternal(release, release.episodes.last(), MyPlayerActivity.VAL_QUALITY_SD)
+        }
     }
 
     override fun insertMoreComments(comments: List<Comment>) {

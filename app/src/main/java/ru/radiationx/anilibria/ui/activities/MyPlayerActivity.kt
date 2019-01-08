@@ -1,16 +1,10 @@
 package ru.radiationx.anilibria.ui.activities
 
-import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
@@ -18,8 +12,6 @@ import android.util.Log
 import android.view.*
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
-import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
-import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -81,7 +73,8 @@ class MyPlayerActivity : AppCompatActivity() {
             ScaleType.FIT_CENTER,
             ScaleType.FIT_XY
     )
-    private var currentScale = ScaleType.FIT_CENTER
+    private val defaultScale = ScaleType.FIT_CENTER
+    private var currentScale = defaultScale
 
     fun Disposable.addToDisposable() {
         compositeDisposable.add(this)
@@ -114,7 +107,7 @@ class MyPlayerActivity : AppCompatActivity() {
         videoControls = VideoControlsAlib(ContextThemeWrapper(this, this.theme), null, 0)
 
         videoControls?.apply {
-            setScale(currentScale)
+            setScale(currentScale, false)
             setQuality(quality)
             setTitle(releaseData.title)
             player.setControls(this as VideoControlsCore)
@@ -131,89 +124,13 @@ class MyPlayerActivity : AppCompatActivity() {
         updateUiFlags()
     }
 
-    private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
-        override fun onToolbarBackClick() {
-            finish()
-        }
-
-        override fun onToolbarQualityClick() {
-            showQualityDialog()
-        }
-
-        override fun onToolbarScaleClick() {
-            toggleScale()
-        }
-
-        private val delta = TimeUnit.SECONDS.toMillis(90)
-        override fun onMinusClick() {
-            val newPosition = player.currentPosition - delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
-        }
-
-        override fun onPlusClick() {
-            val newPosition = player.currentPosition + delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
-        }
-
-        override fun onFullScreenClick() {
-            if (fullscreenOrientation) {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            } else {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            }
-            fullscreenOrientation = !fullscreenOrientation
-            videoControls?.setFullScreenMode(fullscreenOrientation)
-        }
+    private fun loadScale(orientation: Int): ScaleType {
+        val scaleOrdinal = App.injections.defaultPreferences.getInt("video_scale_$orientation", defaultScale.ordinal)
+        return ScaleType.fromOrdinal(scaleOrdinal)
     }
 
-    private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {
-        override fun onPrepared() {
-            player.start()
-        }
-
-        override fun onCompletion() {
-            if (!controlsListener.onNextClicked()) {
-                finish()
-            }
-        }
-
-        override fun onError(e: Exception?): Boolean {
-            e?.printStackTrace()
-            return false
-        }
-    }
-
-    private val controlsListener = object : VideoControlsButtonListener {
-        override fun onPlayPauseClicked(): Boolean {
-            if (player.isPlaying) {
-                player.pause()
-            } else {
-                player.start()
-            }
-            return true
-        }
-
-        override fun onNextClicked(): Boolean {
-            saveEpisode()
-            val episode = getNextEpisode() ?: return false
-            playEpisode(episode)
-            return true
-        }
-
-        override fun onPreviousClicked(): Boolean {
-            saveEpisode()
-            val episode = getPrevEpisode() ?: return false
-            playEpisode(episode)
-            return true
-        }
-
-        override fun onRewindClicked(): Boolean {
-            return false
-        }
-
-        override fun onFastForwardClicked(): Boolean {
-            return false
-        }
+    private fun saveScale(orientation: Int, scale: ScaleType) {
+        App.injections.defaultPreferences.edit().putInt("video_scale_$orientation", scale.ordinal).apply()
     }
 
     private fun toggleScale() {
@@ -224,9 +141,19 @@ class MyPlayerActivity : AppCompatActivity() {
         } else {
             currentIndex + 1
         }
-        currentScale = scales[targetIndex]
-        videoControls?.setScale(currentScale)
-        player.setScaleType(currentScale)
+        updateScale(scales[targetIndex], true)
+    }
+
+    private fun updateScale(scale: ScaleType, fromUser: Boolean) {
+        val inMultiWindow = getInMultiWindow()
+        Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow")
+        currentScale = scale
+        if (!inMultiWindow) {
+            saveScale(currentOrientation, currentScale)
+        }
+        videoControls?.setScaleEnabled(!inMultiWindow)
+        videoControls?.setScale(currentScale, fromUser)
+        player?.setScaleType(currentScale)
     }
 
     private fun loadVital() {
@@ -436,11 +363,17 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     private fun updateUiFlags() {
+        val scale = loadScale(currentOrientation)
         val inMultiWindow = getInMultiWindow()
+
+        updateScale(if (inMultiWindow) defaultScale else scale, false)
+
         window.decorView.also {
             it.systemUiVisibility = flagsHelper.getFlags(currentOrientation, currentFullscreen)
         }
+
         videoControls?.fitSystemWindows(inMultiWindow || currentOrientation != Configuration.ORIENTATION_LANDSCAPE)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             window.attributes.layoutInDisplayCutoutMode = if (inMultiWindow) {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
@@ -448,6 +381,92 @@ class MyPlayerActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
             window.attributes = window.attributes
+        }
+    }
+
+
+    private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
+        override fun onToolbarBackClick() {
+            finish()
+        }
+
+        override fun onToolbarQualityClick() {
+            showQualityDialog()
+        }
+
+        override fun onToolbarScaleClick() {
+            toggleScale()
+        }
+
+        private val delta = TimeUnit.SECONDS.toMillis(90)
+        override fun onMinusClick() {
+            val newPosition = player.currentPosition - delta
+            player.seekTo(newPosition.coerceIn(0, player.duration))
+        }
+
+        override fun onPlusClick() {
+            val newPosition = player.currentPosition + delta
+            player.seekTo(newPosition.coerceIn(0, player.duration))
+        }
+
+        override fun onFullScreenClick() {
+            if (fullscreenOrientation) {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            } else {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+            fullscreenOrientation = !fullscreenOrientation
+            videoControls?.setFullScreenMode(fullscreenOrientation)
+        }
+    }
+
+    private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {
+        override fun onPrepared() {
+            player.start()
+        }
+
+        override fun onCompletion() {
+            if (!controlsListener.onNextClicked()) {
+                finish()
+            }
+        }
+
+        override fun onError(e: Exception?): Boolean {
+            e?.printStackTrace()
+            return false
+        }
+    }
+
+    private val controlsListener = object : VideoControlsButtonListener {
+        override fun onPlayPauseClicked(): Boolean {
+            if (player.isPlaying) {
+                player.pause()
+            } else {
+                player.start()
+            }
+            return true
+        }
+
+        override fun onNextClicked(): Boolean {
+            saveEpisode()
+            val episode = getNextEpisode() ?: return false
+            playEpisode(episode)
+            return true
+        }
+
+        override fun onPreviousClicked(): Boolean {
+            saveEpisode()
+            val episode = getPrevEpisode() ?: return false
+            playEpisode(episode)
+            return true
+        }
+
+        override fun onRewindClicked(): Boolean {
+            return false
+        }
+
+        override fun onFastForwardClicked(): Boolean {
+            return false
         }
     }
 

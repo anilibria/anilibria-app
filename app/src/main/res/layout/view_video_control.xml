@@ -187,6 +187,23 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/scaleValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_video_seek_value"
+            android:elevation="10dp"
+            android:fontFamily="monospace"
+            android:paddingStart="24dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="12dp"
+            android:textColor="#fff"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <RelativeLayout
             android:id="@+id/timeControlsContainer"
             android:layout_width="match_parent"
@@ -216,7 +233,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-
                 android:padding="16dp"
                 tools:ignore="RtlHardcoded" />
 
@@ -226,13 +242,24 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="10dp"
-                android:layout_toStartOf="@id/controlsFullscreen"
+                android:layout_toStartOf="@id/controlsScale"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textColor="@android:color/white"
                 android:typeface="monospace"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:23:49" />
+
+            <ImageButton
+                android:id="@+id/controlsScale"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="-16dp"
+                android:layout_toStartOf="@id/controlsFullscreen"
+                android:minWidth="0dp"
+                app:srcCompat="@drawable/ic_crop" />
 
             <ImageButton
                 android:id="@+id/controlsFullscreen"

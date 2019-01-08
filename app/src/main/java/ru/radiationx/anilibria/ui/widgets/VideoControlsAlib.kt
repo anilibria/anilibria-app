@@ -18,7 +18,14 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.extension.asTimeSecString
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
@@ -36,9 +43,11 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     private var alibControlsListener: AlibControlsListener? = null
     private var qualityMenuItem: MenuItem? = null
-    private var scaleMenuItem: MenuItem? = null
     private var quality: Int = -1
     private var currentScale: ScaleType? = null
+    private var scaleEnabled = false
+
+    private var scaleDisposable = Disposables.disposed()
 
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
@@ -49,14 +58,38 @@ class VideoControlsAlib @JvmOverloads constructor(
         qualityMenuItem?.icon = getQualityIcon()
     }
 
-    fun setScale(scale: ScaleType) {
+    fun setScale(scale: ScaleType, fromUser: Boolean) {
+        val prevScale = currentScale
         currentScale = scale
-        scaleMenuItem?.title = currentScale.toString()
+        if (scaleEnabled && prevScale != currentScale && fromUser) {
+            scaleValue.apply {
+                text = getScaleTitle()
+                scaleValue.visibility = View.VISIBLE
+                scaleDisposable.dispose()
+                scaleDisposable = Completable
+                        .timer(1000L, TimeUnit.MILLISECONDS, Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { scaleValue.visibility = View.GONE }
+
+            }
+        }
+    }
+
+    fun setScaleEnabled(enabled: Boolean) {
+        scaleEnabled = enabled
+        controlsScale.visibility = if (enabled) View.VISIBLE else View.GONE
     }
 
     fun fitSystemWindows(fit: Boolean) {
         this.fitsSystemWindows = false
         videoControlsRoot.fitsSystemWindows = fit
+    }
+
+    private fun getScaleTitle(): String? = when (currentScale) {
+        ScaleType.FIT_CENTER -> "Оптимально"
+        ScaleType.CENTER_CROP -> "Обрезать"
+        ScaleType.FIT_XY -> "Растянуть"
+        else -> null
     }
 
     private fun getQualityIcon(): Drawable? {
@@ -89,12 +122,6 @@ class VideoControlsAlib @JvmOverloads constructor(
                     .setIcon(getQualityIcon())
                     .setOnMenuItemClickListener {
                         alibControlsListener?.onToolbarQualityClick()
-                        true
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            scaleMenuItem = toolbar.menu.add(currentScale.toString())
-                    .setOnMenuItemClickListener {
-                        alibControlsListener?.onToolbarScaleClick()
                         true
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -190,6 +217,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlMinusOpening.setOnClickListener { alibControlsListener?.onMinusClick() }
         controlPlusOpening.setOnClickListener { alibControlsListener?.onPlusClick() }
         controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
+        controlsScale.setOnClickListener { alibControlsListener?.onToolbarScaleClick() }
     }
 
     override fun setTitle(title: CharSequence?) {
@@ -206,10 +234,6 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun isTextContainerEmpty(): Boolean {
         return false
-    }
-
-    override fun updateTextContainerVisibility() {
-        super.updateTextContainerVisibility()
     }
 
     override fun animateVisibility(toVisible: Boolean) {

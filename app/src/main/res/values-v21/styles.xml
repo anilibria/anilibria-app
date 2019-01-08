@@ -13,11 +13,10 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
-    <style name="PlayerTheme" parent="LightAppTheme">
-        <item name="colorPrimary">@color/light_colorPrimary</item>
+    <style name="PlayerTheme" parent="BasePlayerTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/playerColorPrimary</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="android:navigationBarColor">@color/playerColorPrimary</item>
     </style>
 
 </resources>

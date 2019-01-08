@@ -13,12 +13,12 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.view.ContextThemeWrapper
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.Window
+import android.view.*
+import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
+import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import io.reactivex.disposables.CompositeDisposable
@@ -36,7 +36,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionListener, OnErrorListener, VideoControlsButtonListener {
+class MyPlayerActivity : AppCompatActivity() {
 
     companion object {
         const val ARG_RELEASE = "release"
@@ -64,16 +64,24 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     private var currentEpisodeId = NO_ID
     //private var currentEpisode = NOT_SELECTED
     private var quality = DEFAULT_QUALITY
-    private lateinit var videoControls: VideoControlsAlib
+    private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
     private val releaseInteractor = App.injections.releaseInteractor
     private val currentVitals = mutableListOf<VitalItem>()
-    private var qualityMenuItem: MenuItem? = null
-
+    private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
 
+    private var currentFullscreen = false
+    private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED
+
     private var compositeDisposable = CompositeDisposable()
+    private val scales = listOf(
+            ScaleType.CENTER_CROP,
+            ScaleType.FIT_CENTER,
+            ScaleType.FIT_XY
+    )
+    private var currentScale = ScaleType.FIT_CENTER
 
     fun Disposable.addToDisposable() {
         compositeDisposable.add(this)
@@ -83,12 +91,9 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         super.onCreate(savedInstanceState)
         loadVital()
         initUiFlags()
+        currentOrientation = resources.configuration.orientation
+        updateUiFlags()
         setContentView(R.layout.activity_myplayer)
-
-        supportActionBar?.apply {
-            //setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this.themedContext, R.color.playerColorPrimary)))
-            setBackgroundDrawable(ContextCompat.getDrawable(themedContext, R.drawable.bg_video_toolbar))
-        }
 
         intent?.let {
             val release = it.getSerializableExtra(ARG_RELEASE) as ReleaseFull?
@@ -101,51 +106,127 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
             playFlag = it.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
         }
 
+        player.setScaleType(currentScale)
+        player.setOnPreparedListener(playerListener)
+        player.setOnCompletionListener(playerListener)
+        //player.setOnErrorListener(playerListener)
 
-        player.setOnPreparedListener(this)
-        player.setOnCompletionListener(this)
+        videoControls = VideoControlsAlib(ContextThemeWrapper(this, this.theme), null, 0)
 
-        videoControls = VideoControlsAlib(player.context)
-        player.setControls(videoControls as VideoControlsCore)
-        //player.videoControls?.let { videoControls = it }
-
-        videoControls.setVisibilityListener(ControlsVisibilityListener())
-        videoControls.fitsSystemWindows = false
-        videoControls.let {
-            it.setNextButtonRemoved(false)
-            it.setPreviousButtonRemoved(false)
-            //it.setNextButtonEnabled(true)
-            //it.setPreviousButtonEnabled(true)
-            //it.setPreviousDrawable(ContextCompat.getDrawable(this, R.drawable.ic_blogs))
-            //it.setNextDrawable(ContextCompat.getDrawable(this, R.drawable.ic_news))
-            it.setButtonListener(this)
+        videoControls?.apply {
+            setScale(currentScale)
+            setQuality(quality)
+            setTitle(releaseData.title)
+            player.setControls(this as VideoControlsCore)
+            setOpeningListener(alibControlListener)
+            setVisibilityListener(ControlsVisibilityListener())
+            let {
+                it.setNextButtonRemoved(false)
+                it.setPreviousButtonRemoved(false)
+                it.setButtonListener(controlsListener)
+            }
         }
-        videoControls.setOpeningListener(object : VideoControlsAlib.AlibControlsListener {
-            private val delta = TimeUnit.SECONDS.toMillis(90)
-            override fun onMinusClick() {
-                val newPosition = player.currentPosition - delta
-                player.seekTo(newPosition.coerceIn(0, player.duration))
-            }
 
-            override fun onPlusClick() {
-                val newPosition = player.currentPosition + delta
-                player.seekTo(newPosition.coerceIn(0, player.duration))
-            }
-
-            override fun onFullScreenClick() {
-                if (fullscreenOrientation) {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                } else {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                }
-                fullscreenOrientation = !fullscreenOrientation
-                videoControls.setFullScreenMode(fullscreenOrientation)
-            }
-        })
         playEpisode(getEpisode())
-        supportActionBar?.title = releaseData.title
-        supportActionBar?.elevation = 0f
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        updateUiFlags()
+    }
+
+    private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
+        override fun onToolbarBackClick() {
+            finish()
+        }
+
+        override fun onToolbarQualityClick() {
+            showQualityDialog()
+        }
+
+        override fun onToolbarScaleClick() {
+            toggleScale()
+        }
+
+        private val delta = TimeUnit.SECONDS.toMillis(90)
+        override fun onMinusClick() {
+            val newPosition = player.currentPosition - delta
+            player.seekTo(newPosition.coerceIn(0, player.duration))
+        }
+
+        override fun onPlusClick() {
+            val newPosition = player.currentPosition + delta
+            player.seekTo(newPosition.coerceIn(0, player.duration))
+        }
+
+        override fun onFullScreenClick() {
+            if (fullscreenOrientation) {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            } else {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+            fullscreenOrientation = !fullscreenOrientation
+            videoControls?.setFullScreenMode(fullscreenOrientation)
+        }
+    }
+
+    private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {
+        override fun onPrepared() {
+            player.start()
+        }
+
+        override fun onCompletion() {
+            if (!controlsListener.onNextClicked()) {
+                finish()
+            }
+        }
+
+        override fun onError(e: Exception?): Boolean {
+            e?.printStackTrace()
+            return false
+        }
+    }
+
+    private val controlsListener = object : VideoControlsButtonListener {
+        override fun onPlayPauseClicked(): Boolean {
+            if (player.isPlaying) {
+                player.pause()
+            } else {
+                player.start()
+            }
+            return true
+        }
+
+        override fun onNextClicked(): Boolean {
+            saveEpisode()
+            val episode = getNextEpisode() ?: return false
+            playEpisode(episode)
+            return true
+        }
+
+        override fun onPreviousClicked(): Boolean {
+            saveEpisode()
+            val episode = getPrevEpisode() ?: return false
+            playEpisode(episode)
+            return true
+        }
+
+        override fun onRewindClicked(): Boolean {
+            return false
+        }
+
+        override fun onFastForwardClicked(): Boolean {
+            return false
+        }
+    }
+
+    private fun toggleScale() {
+        val currentIndex = scales.indexOf(currentScale)
+
+        val targetIndex = if (currentIndex == scales.lastIndex) {
+            0
+        } else {
+            currentIndex + 1
+        }
+        currentScale = scales[targetIndex]
+        videoControls?.setScale(currentScale)
+        player.setScaleType(currentScale)
     }
 
     private fun loadVital() {
@@ -164,28 +245,6 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
     fun showVitalItems(vital: List<VitalItem>) {
         currentVitals.clear()
         currentVitals.addAll(vital)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        qualityMenuItem = menu.add("Качество")
-                .setIcon(getQualityIcon())
-                .setOnMenuItemClickListener {
-                    showQualityDialog()
-                    true
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun getQualityIcon(): Drawable? {
-        val iconRes = when (quality) {
-            VAL_QUALITY_SD -> R.drawable.ic_quality_sd
-            VAL_QUALITY_HD -> R.drawable.ic_quality_hd
-            else -> R.drawable.ic_toolbar_settings
-        }
-        return ContextCompat.getDrawable(this, iconRes)?.apply {
-            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        }
     }
 
     private fun showQualityDialog() {
@@ -208,7 +267,7 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
                             MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
                             else -> PreferencesHolder.QUALITY_NO
                         })
-                        qualityMenuItem?.icon = getQualityIcon()
+                        videoControls?.setQuality(this.quality)
                         saveEpisode()
                         playEpisode(getEpisode())
                     }
@@ -217,26 +276,45 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
                 .show()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        android.R.id.home -> {
-            finish()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
-    }
-
     override fun onStop() {
         super.onStop()
         player.pause()
     }
 
+    private fun getInMultiWindow(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            isInMultiWindowMode
+        } else {
+            false
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        when (newConfig?.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> fullscreenOrientation = true
-            else -> fullscreenOrientation = false
+        newConfig?.also { config ->
+            val correctOrientation = config.orientation
+            fullscreenOrientation = when (correctOrientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> true
+                else -> false
+            }
+            currentOrientation = correctOrientation
+            updateUiFlags()
+            videoControls?.setFullScreenMode(fullscreenOrientation)
         }
-        videoControls.setFullScreenMode(fullscreenOrientation)
+
+    }
+
+    private fun correctOrientation(orientation: Int): Int {
+        val inMultiWindow = getInMultiWindow()
+        return if (inMultiWindow) {
+            Configuration.ORIENTATION_PORTRAIT
+        } else {
+            orientation
+        }
+        /*return when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> if (inMultiWindow) Configuration.ORIENTATION_PORTRAIT else orientation
+            else -> if (inMultiWindow) Configuration.ORIENTATION_LANDSCAPE else orientation
+        }*/
     }
 
     private fun saveEpisode() {
@@ -328,128 +406,51 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         supportActionBar?.subtitle = episode.title
         currentEpisodeId = getEpisodeId(episode)
         if (quality == VAL_QUALITY_SD) {
-            player.setVideoPath(episode.urlSd)
+            player.setVideoPath(episode.urlSd?.replace("http:", "https:"))
         } else if (quality == VAL_QUALITY_HD) {
-            player.setVideoPath(episode.urlHd)
+            player.setVideoPath(episode.urlHd?.replace("http:", "https:"))
         }
     }
-
-
-    /* Video player callbacks*/
-    override fun onPrepared() {
-        player.start()
-    }
-
-    override fun onCompletion() {
-        if (!onNextClicked()) {
-            finish()
-        }
-    }
-
-    override fun onError(e: Exception?): Boolean {
-        e?.printStackTrace()
-        return false
-    }
-
-    /* Controls callbacks */
-    override fun onPlayPauseClicked(): Boolean {
-        if (player.isPlaying) {
-            player.pause()
-        } else {
-            player.start()
-        }
-        return true
-    }
-
-    override fun onNextClicked(): Boolean {
-        saveEpisode()
-        val episode = getNextEpisode() ?: return false
-        playEpisode(episode)
-        return true
-    }
-
-    override fun onPreviousClicked(): Boolean {
-        saveEpisode()
-        val episode = getPrevEpisode() ?: return false
-        playEpisode(episode)
-        return true
-    }
-
-    override fun onRewindClicked(): Boolean {
-        return false
-    }
-
-    override fun onFastForwardClicked(): Boolean {
-        return false
-    }
-
-
-//    dksa;lf
-
 
     private fun goFullscreen() {
-        setUiFlags(true)
+        currentFullscreen = true
+        updateUiFlags()
     }
 
     private fun exitFullscreen() {
-        setUiFlags(false)
+        currentFullscreen = false
+        updateUiFlags()
     }
 
-    /**
-     * Correctly sets up the fullscreen flags to avoid popping when we switch
-     * between fullscreen and not
-     */
     private fun initUiFlags() {
-        var flags = View.SYSTEM_UI_FLAG_VISIBLE
+        var flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_VISIBLE
 
         flags = flags or (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
 
-        val decorView = window.decorView
-        if (decorView != null) {
-            decorView.systemUiVisibility = flags
-            decorView.setOnSystemUiVisibilityChangeListener(fullScreenListener)
+        window.decorView.also {
+            //it.systemUiVisibility = flags
+            it.setOnSystemUiVisibilityChangeListener(fullScreenListener)
         }
     }
 
-    /**
-     * Applies the correct flags to the windows decor view to enter
-     * or exit fullscreen mode
-     *
-     * @param fullscreen True if entering fullscreen mode
-     */
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private fun setUiFlags(fullscreen: Boolean) {
-        val decorView = window.decorView
-        if (decorView != null) {
-            decorView.systemUiVisibility = if (fullscreen) getFullscreenUiFlags() else View.SYSTEM_UI_FLAG_VISIBLE
+    private fun updateUiFlags() {
+        val inMultiWindow = getInMultiWindow()
+        window.decorView.also {
+            it.systemUiVisibility = flagsHelper.getFlags(currentOrientation, currentFullscreen)
+        }
+        videoControls?.fitSystemWindows(inMultiWindow || currentOrientation != Configuration.ORIENTATION_LANDSCAPE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            window.attributes.layoutInDisplayCutoutMode = if (inMultiWindow) {
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+            } else {
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+            window.attributes = window.attributes
         }
     }
 
-    /**
-     * Determines the appropriate fullscreen flags based on the
-     * systems API version.
-     *
-     * @return The appropriate decor view flags to enter fullscreen mode when supported
-     */
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private fun getFullscreenUiFlags(): Int {
-        var flags = View.SYSTEM_UI_FLAG_LOW_PROFILE or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-
-        flags = flags or (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
-
-        return flags
-    }
-
-    /**
-     * Listens to the system to determine when to show the default controls
-     * for the [VideoView]
-     */
     private inner class FullScreenListener : View.OnSystemUiVisibilityChangeListener {
         override fun onSystemUiVisibilityChange(visibility: Int) {
             if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
@@ -458,21 +459,14 @@ class MyPlayerActivity : AppCompatActivity(), OnPreparedListener, OnCompletionLi
         }
     }
 
-    /**
-     * A Listener for the [VideoControls]
-     * so that we can re-enter fullscreen mode when the controls are hidden.
-     */
     private inner class ControlsVisibilityListener : VideoControlsVisibilityListener {
         override fun onControlsShown() {
-            Log.e("MyPlayer","onControlsShown $supportActionBar, ${supportActionBar?.isShowing}")
-            // No additional functionality performed
-            supportActionBar?.show()
+            Log.e("MyPlayer", "onControlsShown $supportActionBar, ${supportActionBar?.isShowing}")
         }
 
         override fun onControlsHidden() {
-            Log.e("MyPlayer","onControlsHidden $supportActionBar")
+            Log.e("MyPlayer", "onControlsHidden $supportActionBar")
             goFullscreen()
-            supportActionBar?.hide()
         }
     }
 }

@@ -301,7 +301,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 val fm = supportFragmentManager
                 val ta = fm.beginTransaction()
                 val fragment = fm.findFragmentByTag(tabsStack.last())
-                ta.detach(fragment)
+                fragment?.also { ta.detach(it) }
                 removeFromStack(tabsStack.last())
                 ta.commitNow()
                 if (tabsStack.isNotEmpty()) {
@@ -321,15 +321,17 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                     val ta = fm.beginTransaction()
                     allTabs.forEach {
                         val fragment = fm.findFragmentByTag(it.screenKey)
-                        if (it.screenKey == command.screenKey) {
-                            if (fragment.isDetached) {
-                                ta.attach(fragment)
+                        if (fragment != null) {
+                            if (it.screenKey == command.screenKey) {
+                                if (fragment.isDetached) {
+                                    ta.attach(fragment)
+                                }
+                                ta.show(fragment)
+                                addInStack(it.screenKey)
+                                Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
+                            } else {
+                                ta.hide(fragment)
                             }
-                            ta.show(fragment)
-                            addInStack(it.screenKey)
-                            Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
-                        } else {
-                            ta.hide(fragment)
                         }
                     }
                     ta.commitNow()

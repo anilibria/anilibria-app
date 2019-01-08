@@ -12,7 +12,7 @@ class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLa
     private var scrim = false
 
     init {
-        appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
             scrimListener?.let {
                 if (appBarLayout1.height + verticalOffset <= toolbarLayout.scrimVisibleHeightTrigger) {
                     if (!scrim) {
@@ -26,7 +26,7 @@ class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLa
                     }
                 }
             }
-        }
+        })
     }
 
     fun setScrimListener(scrimListener: ScrimListener?) {

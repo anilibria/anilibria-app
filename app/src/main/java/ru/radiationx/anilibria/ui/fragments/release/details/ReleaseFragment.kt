@@ -661,7 +661,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                             }
                         }
 
-                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                             /*if (newState != RecyclerView.SCROLL_STATE_IDLE) {
                                 hideSoftwareKeyboard()
                                 localCommentsRootLayout?.commentField?.clearFocus()

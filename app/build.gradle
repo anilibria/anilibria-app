@@ -14,13 +14,13 @@ static def getDateTime() {
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 34
         versionName "2.1.7"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
@@ -63,7 +63,7 @@ android {
     }
 }
 ext {
-    supportLibVersion = '27.1.1'
+    supportLibVersion = '28.0.0'
     okHttpVersion = '3.10.0'
 }
 dependencies {
@@ -102,7 +102,7 @@ dependencies {
     implementation 'com.lapism:searchview:4.0'
     implementation 'com.google.android:flexbox:0.3.1'
 
-    implementation 'com.devbrackets.android:exomedia:4.2.0'
+    implementation 'com.devbrackets.android:exomedia:4.3.0'
 
     implementation 'org.bsc.util:minitemplator-repackaged:1.2'
 

@@ -11,10 +11,16 @@ import kotlinx.android.synthetic.main.view_video_control.view.*
 import ru.radiationx.anilibria.R
 import android.support.graphics.drawable.ArgbEvaluator
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.util.AttributeSet
 import android.util.Log
+import android.view.MenuItem
 import android.view.MotionEvent
+import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import ru.radiationx.anilibria.extension.asTimeSecString
+import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import java.lang.Math.pow
 import java.util.*
@@ -22,19 +28,78 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
 
-class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
+class VideoControlsAlib @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+) : VideoControlsMobile(context, attrs, defStyleAttr) {
 
     private var alibControlsListener: AlibControlsListener? = null
+    private var qualityMenuItem: MenuItem? = null
+    private var scaleMenuItem: MenuItem? = null
+    private var quality: Int = -1
+    private var currentScale: ScaleType? = null
 
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
     }
 
+    fun setQuality(quality: Int) {
+        this.quality = quality
+        qualityMenuItem?.icon = getQualityIcon()
+    }
+
+    fun setScale(scale: ScaleType) {
+        currentScale = scale
+        scaleMenuItem?.title = currentScale.toString()
+    }
+
+    fun fitSystemWindows(fit: Boolean) {
+        this.fitsSystemWindows = false
+        videoControlsRoot.fitsSystemWindows = fit
+    }
+
+    private fun getQualityIcon(): Drawable? {
+        val iconRes = when (quality) {
+            MyPlayerActivity.VAL_QUALITY_SD -> R.drawable.ic_quality_sd
+            MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd
+            else -> R.drawable.ic_toolbar_settings
+        }
+        return ContextCompat.getDrawable(toolbar.context, iconRes)?.apply {
+            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        }
+    }
 
     override fun getLayoutResource() = R.layout.view_video_control
 
     override fun retrieveViews() {
         super.retrieveViews()
+        textContainer = appbarLayout
+
+        appbarLayout.apply {
+            background = (ContextCompat.getDrawable(context, R.drawable.bg_video_toolbar))
+        }
+
+        toolbar.apply {
+            navigationIcon = ContextCompat.getDrawable(toolbar.context, R.drawable.ic_toolbar_arrow_back)
+            setNavigationOnClickListener {
+                alibControlsListener?.onToolbarBackClick()
+            }
+            qualityMenuItem = toolbar.menu.add("Качество")
+                    .setIcon(getQualityIcon())
+                    .setOnMenuItemClickListener {
+                        alibControlsListener?.onToolbarQualityClick()
+                        true
+                    }
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            scaleMenuItem = toolbar.menu.add(currentScale.toString())
+                    .setOnMenuItemClickListener {
+                        alibControlsListener?.onToolbarScaleClick()
+                        true
+                    }
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
+
         controlsContainer = timeControlsContainer
         gesturesControllerView.setEventsListener(object : VideoGestureEventsListener {
             private var localSeekDelta = 0L
@@ -127,6 +192,26 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
         controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
     }
 
+    override fun setTitle(title: CharSequence?) {
+        toolbar.title = title
+        updateTextContainerVisibility()
+    }
+
+    override fun setSubTitle(subTitle: CharSequence?) {
+        toolbar.subtitle = subTitle
+        updateTextContainerVisibility()
+    }
+
+    override fun setDescription(description: CharSequence?) {}
+
+    override fun isTextContainerEmpty(): Boolean {
+        return false
+    }
+
+    override fun updateTextContainerVisibility() {
+        super.updateTextContainerVisibility()
+    }
+
     override fun animateVisibility(toVisible: Boolean) {
         if (isVisible == toVisible) {
             return
@@ -205,5 +290,9 @@ class VideoControlsAlib(context: Context) : VideoControlsMobile(context) {
         fun onMinusClick()
         fun onPlusClick()
         fun onFullScreenClick()
+
+        fun onToolbarBackClick()
+        fun onToolbarQualityClick()
+        fun onToolbarScaleClick()
     }
 }

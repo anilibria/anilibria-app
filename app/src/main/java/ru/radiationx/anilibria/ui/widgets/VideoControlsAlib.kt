@@ -18,12 +18,9 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.animation.Animation
-import android.view.animation.AnimationSet
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.extension.asTimeSecString
@@ -43,9 +40,11 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     private var alibControlsListener: AlibControlsListener? = null
     private var qualityMenuItem: MenuItem? = null
+    private var pictureInPictureMenuItem: MenuItem? = null
     private var quality: Int = -1
     private var currentScale: ScaleType? = null
     private var scaleEnabled = false
+    private var controlsEnabled = true
 
     private var scaleDisposable = Disposables.disposed()
 
@@ -85,6 +84,17 @@ class VideoControlsAlib @JvmOverloads constructor(
         videoControlsRoot.fitsSystemWindows = fit
     }
 
+    fun setControlsEnabled(enabled: Boolean) {
+        controlsEnabled = enabled
+        if (!controlsEnabled) {
+            hide()
+        }
+    }
+
+    fun setPictureInPictureEnabled(enabled: Boolean) {
+        pictureInPictureMenuItem?.isVisible = enabled
+    }
+
     private fun getScaleTitle(): String? = when (currentScale) {
         ScaleType.FIT_CENTER -> "Оптимально"
         ScaleType.CENTER_CROP -> "Обрезать"
@@ -116,12 +126,19 @@ class VideoControlsAlib @JvmOverloads constructor(
         toolbar.apply {
             navigationIcon = ContextCompat.getDrawable(toolbar.context, R.drawable.ic_toolbar_arrow_back)
             setNavigationOnClickListener {
-                alibControlsListener?.onToolbarBackClick()
+                alibControlsListener?.onBackClick()
             }
             qualityMenuItem = toolbar.menu.add("Качество")
                     .setIcon(getQualityIcon())
                     .setOnMenuItemClickListener {
-                        alibControlsListener?.onToolbarQualityClick()
+                        alibControlsListener?.onQualityClick()
+                        true
+                    }
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
+                    .setIcon(ContextCompat.getDrawable(context, R.drawable.ic_picture_in_picture_alt))
+                    .setOnMenuItemClickListener {
+                        alibControlsListener?.onPIPClick()
                         true
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -203,6 +220,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         if (!isPlaying && !isLoading) {
             hideDelayed()
         }
+        alibControlsListener?.onPlaybackStateChanged(isPlaying)
     }
 
     override fun show() {
@@ -217,7 +235,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlMinusOpening.setOnClickListener { alibControlsListener?.onMinusClick() }
         controlPlusOpening.setOnClickListener { alibControlsListener?.onPlusClick() }
         controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
-        controlsScale.setOnClickListener { alibControlsListener?.onToolbarScaleClick() }
+        controlsScale.setOnClickListener { alibControlsListener?.onScaleClick() }
     }
 
     override fun setTitle(title: CharSequence?) {
@@ -237,6 +255,10 @@ class VideoControlsAlib @JvmOverloads constructor(
     }
 
     override fun animateVisibility(toVisible: Boolean) {
+        if (!controlsEnabled && toVisible) {
+            hide()
+            return
+        }
         if (isVisible == toVisible) {
             return
         }
@@ -315,8 +337,11 @@ class VideoControlsAlib @JvmOverloads constructor(
         fun onPlusClick()
         fun onFullScreenClick()
 
-        fun onToolbarBackClick()
-        fun onToolbarQualityClick()
-        fun onToolbarScaleClick()
+        fun onBackClick()
+        fun onQualityClick()
+        fun onScaleClick()
+        fun onPIPClick()
+
+        fun onPlaybackStateChanged(isPlaying: Boolean)
     }
 }

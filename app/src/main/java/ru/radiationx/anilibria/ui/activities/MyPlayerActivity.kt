@@ -1,15 +1,24 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.app.ActivityManager
+import android.app.PendingIntent
+import android.app.PictureInPictureParams
+import android.app.RemoteAction
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
 import android.util.Log
+import android.util.Rational
 import android.view.*
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
@@ -45,6 +54,12 @@ class MyPlayerActivity : AppCompatActivity() {
         const val PLAY_FLAG_FORCE_START = 1
         const val PLAY_FLAG_FORCE_CONTINUE = 2
 
+        const val ACTION_REMOTE_CONTROL = "action.remote.control"
+        const val EXTRA_REMOTE_CONTROL = "extra.remote.control"
+
+        const val REMOTE_CONTROL_PLAY = 1
+        const val REMOTE_CONTROL_PAUSE = 2
+
 
         //private const val NOT_SELECTED = -1
         private const val NO_ID = -1
@@ -77,40 +92,43 @@ class MyPlayerActivity : AppCompatActivity() {
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
 
+    private var pictureInPictureParams: PictureInPictureParams.Builder? = null
+
     fun Disposable.addToDisposable() {
         compositeDisposable.add(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val devicePIPSupport = packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+            if (devicePIPSupport) {
+                pictureInPictureParams = PictureInPictureParams.Builder()
+            }
+        }
         loadVital()
         initUiFlags()
         currentOrientation = resources.configuration.orientation
         updateUiFlags()
         setContentView(R.layout.activity_myplayer)
 
-        intent?.let {
-            val release = it.getSerializableExtra(ARG_RELEASE) as ReleaseFull?
-            release?.let {
-                this.releaseData = it
-            }
-            currentEpisodeId = it.getIntExtra(ARG_EPISODE_ID, if (releaseData.episodes.size > 0) 0 else NO_ID)
-            //currentEpisode = it.getIntExtra(ARG_CURRENT, if (releaseData.episodes.size > 0) 0 else NOT_SELECTED)
-            quality = it.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
-            playFlag = it.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
-        }
-
         player.setScaleType(currentScale)
         player.setOnPreparedListener(playerListener)
         player.setOnCompletionListener(playerListener)
+        player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
+            Log.e("lalka", "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                pictureInPictureParams?.setAspectRatio(Rational(intrinsicWidth, intrinsicHeight))
+            }
+            updatePictureInPictureParams()
+        }
         //player.setOnErrorListener(playerListener)
 
         videoControls = VideoControlsAlib(ContextThemeWrapper(this, this.theme), null, 0)
 
         videoControls?.apply {
+            setPictureInPictureEnabled(pictureInPictureParams != null)
             setScale(currentScale, false)
-            setQuality(quality)
-            setTitle(releaseData.title)
             player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
@@ -120,13 +138,39 @@ class MyPlayerActivity : AppCompatActivity() {
                 it.setButtonListener(controlsListener)
             }
         }
+        handleIntent(intent)
+        updateUiFlags()
+    }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.also { handleIntent(it) }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        val release = intent.getSerializableExtra(ARG_RELEASE) as ReleaseFull? ?: return
+        val episodeId = intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
+        val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
+        val playFlag = intent.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
+
+        this.releaseData = release
+        this.currentEpisodeId = episodeId
+        this.quality = quality
+        this.playFlag = playFlag
+
+        updateAndPlayRelease()
+    }
+
+    private fun updateAndPlayRelease() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
         }
 
+        videoControls?.apply {
+            setQuality(quality)
+            setTitle(releaseData.title)
+        }
         playEpisode(getEpisode())
-        updateUiFlags()
     }
 
     private fun loadScale(orientation: Int): ScaleType {
@@ -338,9 +382,9 @@ class MyPlayerActivity : AppCompatActivity() {
         supportActionBar?.subtitle = episode.title
         currentEpisodeId = getEpisodeId(episode)
         if (quality == VAL_QUALITY_SD) {
-            player.setVideoPath(episode.urlSd?.replace("http:", "https:"))
+            player.setVideoPath(episode.urlSd)
         } else if (quality == VAL_QUALITY_HD) {
-            player.setVideoPath(episode.urlHd?.replace("http:", "https:"))
+            player.setVideoPath(episode.urlHd)
         }
     }
 
@@ -379,7 +423,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
         videoControls?.fitSystemWindows(inMultiWindow || currentOrientation != Configuration.ORIENTATION_LANDSCAPE)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode = if (inMultiWindow) {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
             } else {
@@ -389,17 +433,89 @@ class MyPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private val mReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent == null || intent.action != ACTION_REMOTE_CONTROL) {
+                return
+            }
+            val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
+            Log.d("lalka", "onReceive $remoteControl")
+            when (remoteControl) {
+                REMOTE_CONTROL_PLAY -> player.start()
+                REMOTE_CONTROL_PAUSE -> player.pause()
+            }
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+            isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        Log.d("lalka", "onPictureInPictureModeChanged $isInPictureInPictureMode")
+        if (isInPictureInPictureMode) {
+            // Starts receiving events from action items in PiP mode.
+            registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
+            videoControls?.setControlsEnabled(false)
+        } else {
+            // We are out of PiP mode. We can stop receiving events from it.
+            unregisterReceiver(mReceiver)
+            // Show the video controls if the video is not playing
+            /*if (!mMovieView.isPlaying) {
+                mMovieView.showControls()
+            }*/
+            videoControls?.setControlsEnabled(true)
+            //player.showControls()
+        }
+        updateUiFlags()
+    }
+
+    private fun updatePictureInPictureParams() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val params = pictureInPictureParams ?: return
+            val actions = mutableListOf<RemoteAction>()
+
+            val playState = player.isPlaying
+
+            val icRes = if (playState) R.drawable.ic_pause_remote else R.drawable.ic_play_arrow_remote
+            val actionCode = if (playState) REMOTE_CONTROL_PAUSE else REMOTE_CONTROL_PLAY
+            val title = if (playState) "Пауза" else "Пуск"
+
+            actions.add(RemoteAction(
+                    Icon.createWithResource(this@MyPlayerActivity, icRes),
+                    title,
+                    title,
+                    PendingIntent.getBroadcast(
+                            this@MyPlayerActivity,
+                            actionCode,
+                            Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
+                            0
+                    )
+            ))
+
+            params.setActions(actions)
+            setPictureInPictureParams(params.build())
+        }
+    }
 
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
-        override fun onToolbarBackClick() {
+
+        override fun onPIPClick() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
+                pictureInPictureParams?.also {
+                    enterPictureInPictureMode(it.build())
+                }
+            }
+        }
+
+        override fun onBackClick() {
             finish()
         }
 
-        override fun onToolbarQualityClick() {
+        override fun onQualityClick() {
             showQualityDialog()
         }
 
-        override fun onToolbarScaleClick() {
+        override fun onScaleClick() {
             toggleScale()
         }
 
@@ -422,6 +538,10 @@ class MyPlayerActivity : AppCompatActivity() {
             }
             fullscreenOrientation = !fullscreenOrientation
             videoControls?.setFullScreenMode(fullscreenOrientation)
+        }
+
+        override fun onPlaybackStateChanged(isPlaying: Boolean) {
+            updatePictureInPictureParams()
         }
     }
 

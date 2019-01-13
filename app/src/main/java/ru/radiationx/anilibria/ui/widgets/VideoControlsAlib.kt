@@ -85,6 +85,7 @@ class VideoControlsAlib @JvmOverloads constructor(
     }
 
     fun setControlsEnabled(enabled: Boolean) {
+        Log.e("lalka", "setControlsEnabled $enabled")
         controlsEnabled = enabled
         if (!controlsEnabled) {
             hide()
@@ -255,6 +256,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     }
 
     override fun animateVisibility(toVisible: Boolean) {
+
+        Log.e("lalka", "animateVisibility $controlsEnabled, $toVisible, ${!controlsEnabled && toVisible}")
         if (!controlsEnabled && toVisible) {
             hide()
             return

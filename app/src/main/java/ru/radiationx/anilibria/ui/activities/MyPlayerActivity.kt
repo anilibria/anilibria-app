@@ -11,9 +11,11 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
@@ -59,6 +61,8 @@ class MyPlayerActivity : AppCompatActivity() {
 
         const val REMOTE_CONTROL_PLAY = 1
         const val REMOTE_CONTROL_PAUSE = 2
+        const val REMOTE_CONTROL_PREV = 3
+        const val REMOTE_CONTROL_NEXT = 4
 
 
         //private const val NOT_SELECTED = -1
@@ -119,6 +123,7 @@ class MyPlayerActivity : AppCompatActivity() {
             Log.e("lalka", "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 pictureInPictureParams?.setAspectRatio(Rational(intrinsicWidth, intrinsicHeight))
+                updatePIPRect()
             }
             updatePictureInPictureParams()
         }
@@ -195,7 +200,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
     private fun updateScale(scale: ScaleType, fromUser: Boolean) {
         val inMultiWindow = getInMultiWindow()
-        Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow")
+        Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
         if (!inMultiWindow) {
             saveScale(currentOrientation, currentScale)
@@ -265,19 +270,30 @@ class MyPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun getInPIP(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            isInPictureInPictureMode
+        } else {
+            false
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         newConfig?.also { config ->
-            val correctOrientation = config.orientation
-            fullscreenOrientation = when (correctOrientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> true
-                else -> false
-            }
-            currentOrientation = correctOrientation
-            updateUiFlags()
-            videoControls?.setFullScreenMode(fullscreenOrientation)
+            updateByConfig(config)
         }
+    }
 
+    private fun updateByConfig(config: Configuration) {
+        val correctOrientation = config.orientation
+        fullscreenOrientation = when (correctOrientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> true
+            else -> false
+        }
+        currentOrientation = correctOrientation
+        updateUiFlags()
+        videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
     private fun correctOrientation(orientation: Int): Int {
@@ -431,6 +447,8 @@ class MyPlayerActivity : AppCompatActivity() {
             }
             window.attributes = window.attributes
         }
+
+        updatePIPRect()
     }
 
     private val mReceiver = object : BroadcastReceiver() {
@@ -441,8 +459,10 @@ class MyPlayerActivity : AppCompatActivity() {
             val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
             Log.d("lalka", "onReceive $remoteControl")
             when (remoteControl) {
-                REMOTE_CONTROL_PLAY -> player.start()
-                REMOTE_CONTROL_PAUSE -> player.pause()
+                REMOTE_CONTROL_PLAY -> controlsListener.onPlayPauseClicked()
+                REMOTE_CONTROL_PAUSE -> controlsListener.onPlayPauseClicked()
+                REMOTE_CONTROL_PREV -> controlsListener.onPreviousClicked()
+                REMOTE_CONTROL_NEXT -> controlsListener.onNextClicked()
             }
         }
     }
@@ -451,10 +471,15 @@ class MyPlayerActivity : AppCompatActivity() {
             isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         Log.d("lalka", "onPictureInPictureModeChanged $isInPictureInPictureMode")
+        saveEpisode()
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
             registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
-            videoControls?.setControlsEnabled(false)
+            //videoControls?.setControlsEnabled(false)
+            videoControls?.hide()
+            videoControls?.visibility = View.GONE
+            updateByConfig(newConfig)
+
         } else {
             // We are out of PiP mode. We can stop receiving events from it.
             unregisterReceiver(mReceiver)
@@ -462,36 +487,94 @@ class MyPlayerActivity : AppCompatActivity() {
             /*if (!mMovieView.isPlaying) {
                 mMovieView.showControls()
             }*/
-            videoControls?.setControlsEnabled(true)
+            //videoControls?.setControlsEnabled(true)
+
+            updateByConfig(newConfig)
+            player.showControls()
+            videoControls?.visibility = View.VISIBLE
+
             //player.showControls()
         }
-        updateUiFlags()
+        //updateUiFlags()
+    }
+
+    private fun updatePIPRect() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)?.also {
+                val rect = Rect(0, 0, 0, 0)
+                it.getGlobalVisibleRect(rect)
+                Log.e("lalka", "setSourceRectHint ${rect.flattenToString()}")
+                pictureInPictureParams?.setSourceRectHint(rect)
+            }
+        }
     }
 
     private fun updatePictureInPictureParams() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val params = pictureInPictureParams ?: return
+            val playState = player?.isPlaying ?: return
             val actions = mutableListOf<RemoteAction>()
+            val maxActions = maxNumPictureInPictureActions
 
-            val playState = player.isPlaying
 
-            val icRes = if (playState) R.drawable.ic_pause_remote else R.drawable.ic_play_arrow_remote
-            val actionCode = if (playState) REMOTE_CONTROL_PAUSE else REMOTE_CONTROL_PLAY
-            val title = if (playState) "Пауза" else "Пуск"
 
-            actions.add(RemoteAction(
-                    Icon.createWithResource(this@MyPlayerActivity, icRes),
-                    title,
-                    title,
-                    PendingIntent.getBroadcast(
-                            this@MyPlayerActivity,
-                            actionCode,
-                            Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
-                            0
-                    )
-            ))
+
+            if (actions.size < maxActions) {
+                val icRes = if (playState) R.drawable.ic_pause_remote else R.drawable.ic_play_arrow_remote
+                val actionCode = if (playState) REMOTE_CONTROL_PAUSE else REMOTE_CONTROL_PLAY
+                val title = if (playState) "Пауза" else "Пуск"
+
+                actions.add(RemoteAction(
+                        Icon.createWithResource(this@MyPlayerActivity, icRes),
+                        title,
+                        title,
+                        PendingIntent.getBroadcast(
+                                this@MyPlayerActivity,
+                                actionCode,
+                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
+                                0
+                        )
+                ))
+            }
+
+            if (actions.size < maxActions) {
+                val icRes = R.drawable.ic_skip_next_remote
+                val actionCode = REMOTE_CONTROL_NEXT
+                val title = "Следующая серия"
+
+                actions.add(RemoteAction(
+                        Icon.createWithResource(this@MyPlayerActivity, icRes),
+                        title,
+                        title,
+                        PendingIntent.getBroadcast(
+                                this@MyPlayerActivity,
+                                actionCode,
+                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
+                                0
+                        )
+                ))
+            }
+
+            if (actions.size < maxActions) {
+                val icRes = R.drawable.ic_skip_previous_remote
+                val actionCode = REMOTE_CONTROL_PREV
+                val title = "Предыдущая серия"
+
+                actions.add(0, RemoteAction(
+                        Icon.createWithResource(this@MyPlayerActivity, icRes),
+                        title,
+                        title,
+                        PendingIntent.getBroadcast(
+                                this@MyPlayerActivity,
+                                actionCode,
+                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
+                                0
+                        )
+                ))
+            }
 
             params.setActions(actions)
+
             setPictureInPictureParams(params.build())
         }
     }
@@ -502,6 +585,7 @@ class MyPlayerActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
                 pictureInPictureParams?.also {
+                    videoControls?.visibility = View.GONE
                     enterPictureInPictureMode(it.build())
                 }
             }

@@ -28,6 +28,7 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
+import kotlinx.android.synthetic.main.view_video_control.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -395,7 +396,7 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
-        supportActionBar?.subtitle = episode.title
+        toolbar.subtitle = episode.title
         currentEpisodeId = getEpisodeId(episode)
         if (quality == VAL_QUALITY_SD) {
             player.setVideoPath(episode.urlSd)

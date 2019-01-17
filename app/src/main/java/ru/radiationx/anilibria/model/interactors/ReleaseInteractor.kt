@@ -30,6 +30,12 @@ class ReleaseInteractor(
 
     fun setPlayerType(value: Int) = preferencesHolder.setPlayerType(value)
 
+    fun getPlaySpeed() = preferencesHolder.playSpeed
+
+    fun setPlaySpeed(value: Float) {
+        preferencesHolder.playSpeed = value
+    }
+
     fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
         val source = when {
             id != -1 -> releaseRepository.getRelease(id)

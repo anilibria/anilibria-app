@@ -20,6 +20,7 @@ class PreferencesStorage(
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
         private const val QUALITY_KEY = "quality"
         private const val PLAYER_TYPE_KEY = "player_type"
+        private const val PLAY_SPEED = "play_speed"
         private const val APP_THEME_KEY = "app_theme_dark"
     }
 
@@ -73,6 +74,12 @@ class PreferencesStorage(
     override fun setPlayerType(value: Int) {
         sharedPreferences.edit().putInt(PLAYER_TYPE_KEY, value).apply()
     }
+
+    override var playSpeed: Float
+        get() = sharedPreferences.getFloat(PLAY_SPEED, 1.0f)
+        set(value) {
+            sharedPreferences.edit().putFloat(PLAY_SPEED, value).apply()
+        }
 
     override fun getTheme(): AppThemeHolder.AppTheme {
         val isDark = sharedPreferences.getBoolean(APP_THEME_KEY, false)

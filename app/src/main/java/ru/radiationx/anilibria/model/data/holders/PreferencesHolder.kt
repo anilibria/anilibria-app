@@ -30,4 +30,6 @@ interface PreferencesHolder {
     fun getPlayerType(): Int
     fun setPlayerType(value: Int)
 
+    var playSpeed: Float
+
 }

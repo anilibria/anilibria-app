@@ -119,6 +119,7 @@ class MyPlayerActivity : AppCompatActivity() {
         initUiFlags()
         currentOrientation = resources.configuration.orientation
         updateUiFlags()
+        currentPlaySpeed = loadPlaySpeed()
         setContentView(R.layout.activity_myplayer)
 
         player.setScaleType(currentScale)
@@ -191,6 +192,14 @@ class MyPlayerActivity : AppCompatActivity() {
         App.injections.defaultPreferences.edit().putInt("video_scale_$orientation", scale.ordinal).apply()
     }
 
+    private fun savePlaySpeed() {
+        releaseInteractor.setPlaySpeed(currentPlaySpeed)
+    }
+
+    private fun loadPlaySpeed(): Float {
+        return releaseInteractor.getPlaySpeed()
+    }
+
     private fun updateScale(scale: ScaleType, fromUser: Boolean) {
         val inMultiWindow = getInMultiWindow()
         Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
@@ -220,27 +229,6 @@ class MyPlayerActivity : AppCompatActivity() {
         currentVitals.addAll(vital)
     }
 
-    private fun showQualityDialog() {
-        AlertDialog.Builder(this)
-                .setTitle("Качество")
-                .setSingleChoiceItems(arrayOf("SD", "HD"), when (currentQuality) {
-                    MyPlayerActivity.VAL_QUALITY_SD -> 0
-                    MyPlayerActivity.VAL_QUALITY_HD -> 1
-                    else -> -1
-                }) { p0, p1 ->
-                    val quality: Int = when (p1) {
-                        0 -> MyPlayerActivity.VAL_QUALITY_SD
-                        1 -> MyPlayerActivity.VAL_QUALITY_HD
-                        else -> -1
-                    }
-                    if (quality != -1) {
-                        updateQuality(quality)
-                    }
-                    p0.dismiss()
-                }
-                .show()
-    }
-
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
         App.injections.appPreferences.setQuality(when (newQuality) {
@@ -255,6 +243,7 @@ class MyPlayerActivity : AppCompatActivity() {
     private fun updatePlaySpeed(newPlaySpeed: Float) {
         currentPlaySpeed = newPlaySpeed
         player.playbackSpeed = currentPlaySpeed
+        savePlaySpeed()
     }
 
     private fun updateScale(newScale: ScaleType) {
@@ -300,20 +289,10 @@ class MyPlayerActivity : AppCompatActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
-    private fun correctOrientation(orientation: Int): Int {
-        val inMultiWindow = getInMultiWindow()
-        return if (inMultiWindow) {
-            Configuration.ORIENTATION_PORTRAIT
-        } else {
-            orientation
-        }
-        /*return when (orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> if (inMultiWindow) Configuration.ORIENTATION_PORTRAIT else orientation
-            else -> if (inMultiWindow) Configuration.ORIENTATION_LANDSCAPE else orientation
-        }*/
-    }
-
     private fun saveEpisode() {
+        if (player.currentPosition <= 0) {
+            return
+        }
         releaseInteractor.putEpisode(getEpisode().apply {
             Log.e("SUKA", "Set posistion seek: ${player.currentPosition}")
             seek = player.currentPosition
@@ -592,6 +571,25 @@ class MyPlayerActivity : AppCompatActivity() {
 
         private fun BottomSheet.register() = openedDialogs.add(this)
 
+        private fun getQualityTitle(quality: Int) = when (quality) {
+            MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+            MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+            else -> "Вероятнее всего 480p"
+        }
+
+        private fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
+            "Обычная"
+        } else {
+            "${"$speed".trimEnd('0').trimEnd('.').trimEnd(',')}x"
+        }
+
+        private fun getScaleTitle(scale: ScaleType) = when (scale) {
+            ScaleType.FIT_CENTER -> "Оптимально"
+            ScaleType.CENTER_CROP -> "Обрезать"
+            ScaleType.FIT_XY -> "Растянуть"
+            else -> "Одному лишь богу известно"
+        }
+
         fun updateSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 openedDialogs.forEach {
@@ -608,18 +606,9 @@ class MyPlayerActivity : AppCompatActivity() {
                 return
             }
 
-            val qualityValue = when (currentQuality) {
-                MyPlayerActivity.VAL_QUALITY_SD -> "480p"
-                MyPlayerActivity.VAL_QUALITY_HD -> "720p"
-                else -> "Вероятнее всего 480p"
-            }
-            val speedValue = "${currentPlaySpeed}x"
-            val scaleValue = when (currentScale) {
-                ScaleType.FIT_CENTER -> "Оптимально"
-                ScaleType.CENTER_CROP -> "Обрезать"
-                ScaleType.FIT_XY -> "Растянуть"
-                else -> "Одному лишь богу известно"
-            }
+            val qualityValue = getQualityTitle(currentQuality)
+            val speedValue = getPlaySpeedTitle(currentPlaySpeed)
+            val scaleValue = getScaleTitle(currentScale)
 
             val values = arrayOf(
                     settingQuality,
@@ -631,7 +620,7 @@ class MyPlayerActivity : AppCompatActivity() {
                     .map {
                         when (it) {
                             settingQuality -> "Качество (<b>$qualityValue</b>)"
-                            settingPlaySpeed -> "Скорость воспроизведения (<b>$speedValue</b>)"
+                            settingPlaySpeed -> "Скорость (<b>$speedValue</b>)"
                             settingScale -> "Соотношение сторон (<b>$scaleValue</b>)"
                             else -> "Привет"
                         }
@@ -664,7 +653,7 @@ class MyPlayerActivity : AppCompatActivity() {
                             settingScale -> showScaleDialog()
                         }
                     }
-                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
+                    //.setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .show()
                     .register()
@@ -672,6 +661,9 @@ class MyPlayerActivity : AppCompatActivity() {
 
         fun showPlaySpeedDialog() {
             val values = arrayOf(
+                    0.25f,
+                    0.5f,
+                    0.75f,
                     1.0f,
                     1.25f,
                     1.5f,
@@ -681,11 +673,7 @@ class MyPlayerActivity : AppCompatActivity() {
             val activeIndex = values.indexOf(currentPlaySpeed)
             val titles = values
                     .mapIndexed { index, s ->
-                        val stringValue = if (s == 1.0f) {
-                            "Обычная"
-                        } else {
-                            "$s"
-                        }
+                        val stringValue = getPlaySpeedTitle(s)
                         when (index) {
                             activeIndex -> "<b>$stringValue</b>"
                             else -> stringValue
@@ -713,11 +701,7 @@ class MyPlayerActivity : AppCompatActivity() {
             val activeIndex = values.indexOf(currentQuality)
             val titles = values
                     .mapIndexed { index, s ->
-                        val stringValue = when (s) {
-                            MyPlayerActivity.VAL_QUALITY_SD -> "480p"
-                            MyPlayerActivity.VAL_QUALITY_HD -> "720p"
-                            else -> "Вероятнее всего 480p"
-                        }
+                        val stringValue = getQualityTitle(s)
                         if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                     }
                     .map { Html.fromHtml(it) }
@@ -743,12 +727,7 @@ class MyPlayerActivity : AppCompatActivity() {
             val activeIndex = values.indexOf(currentScale)
             val titles = values
                     .mapIndexed { index, s ->
-                        val stringValue = when (s) {
-                            ScaleType.FIT_CENTER -> "Оптимально"
-                            ScaleType.CENTER_CROP -> "Обрезать (Оптимально для экранов 18:9)"
-                            ScaleType.FIT_XY -> "Растянуть"
-                            else -> "Одному лишь богу известно"
-                        }
+                        val stringValue = getScaleTitle(s)
                         if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                     }
                     .map { Html.fromHtml(it) }
@@ -802,7 +781,7 @@ class MyPlayerActivity : AppCompatActivity() {
             if (fullscreenOrientation) {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             } else {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             }
             fullscreenOrientation = !fullscreenOrientation
             videoControls?.setFullScreenMode(fullscreenOrientation)

@@ -26,6 +26,10 @@ class ReleaseInteractor(
 
     fun setQuality(value: Int) = preferencesHolder.setQuality(value)
 
+    fun getPlayerType() = preferencesHolder.getPlayerType()
+
+    fun setPlayerType(value: Int) = preferencesHolder.setPlayerType(value)
+
     fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
         val source = when {
             id != -1 -> releaseRepository.getRelease(id)

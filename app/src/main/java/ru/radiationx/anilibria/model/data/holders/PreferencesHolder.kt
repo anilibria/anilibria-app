@@ -9,6 +9,11 @@ interface PreferencesHolder {
         const val QUALITY_SD = 0
         const val QUALITY_HD = 1
         const val QUALITY_ALWAYS = 2
+
+        const val PLAYER_TYPE_NO = -1
+        const val PLAYER_TYPE_EXTERNAL = 0
+        const val PLAYER_TYPE_INTERNAL = 1
+        const val PLAYER_TYPE_ALWAYS = 2
     }
 
     fun getReleaseRemind(): Boolean
@@ -21,4 +26,8 @@ interface PreferencesHolder {
 
     fun getQuality(): Int
     fun setQuality(value: Int)
+
+    fun getPlayerType(): Int
+    fun setPlayerType(value: Int)
+
 }

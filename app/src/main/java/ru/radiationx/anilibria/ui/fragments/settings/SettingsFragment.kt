@@ -28,21 +28,45 @@ class SettingsFragment : BaseSettingFragment() {
             val savedQuality = App.injections.appPreferences.getQuality()
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
-            setOnPreferenceClickListener {
-                val titles = arrayOf("SD", "HD", "Не выбрано", "Спрашивать всегда")
-                AlertDialog.Builder(it.context)
-                        .setTitle(it.title)
+            setOnPreferenceClickListener { preference ->
+                val values = arrayOf(
+                        PreferencesHolder.QUALITY_SD,
+                        PreferencesHolder.QUALITY_HD,
+                        PreferencesHolder.QUALITY_NO,
+                        PreferencesHolder.QUALITY_ALWAYS
+                )
+                val titles = values.map { getQualityTitle(it) }.toTypedArray()
+                AlertDialog.Builder(preference.context)
+                        .setTitle(preference.title)
                         .setItems(titles) { dialog, which ->
-                            val quality = when (which) {
-                                0 -> PreferencesHolder.QUALITY_SD
-                                1 -> PreferencesHolder.QUALITY_HD
-                                2 -> PreferencesHolder.QUALITY_NO
-                                3 -> PreferencesHolder.QUALITY_ALWAYS
-                                else -> PreferencesHolder.QUALITY_NO
-                            }
+                            val quality = values[which]
                             App.injections.appPreferences.setQuality(quality)
                             icon = getQualityIcon(quality)
                             summary = getQualityTitle(quality)
+                        }
+                        .show()
+                false
+            }
+        }
+
+        findPreference("player_type")?.apply {
+            val savedPlayerType = App.injections.appPreferences.getPlayerType()
+            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_circle_outline)
+            summary = getPlayerTypeTitle(savedPlayerType)
+            setOnPreferenceClickListener { preference ->
+                val values = arrayOf(
+                        PreferencesHolder.PLAYER_TYPE_EXTERNAL,
+                        PreferencesHolder.PLAYER_TYPE_INTERNAL,
+                        PreferencesHolder.PLAYER_TYPE_NO,
+                        PreferencesHolder.PLAYER_TYPE_ALWAYS
+                )
+                val titles = values.map { getPlayerTypeTitle(it) }.toTypedArray()
+                AlertDialog.Builder(preference.context)
+                        .setTitle(preference.title)
+                        .setItems(titles) { dialog, which ->
+                            val playerType = values[which]
+                            App.injections.appPreferences.setPlayerType(playerType)
+                            summary = getPlayerTypeTitle(playerType)
                         }
                         .show()
                 false
@@ -96,7 +120,7 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
         return context?.let {
-            ContextCompat.getDrawable(it, iconRes)?.apply {
+            ContextCompat.getDrawable(it, iconRes)?.mutate()?.apply {
                 setColorFilter(
                         it.getColorFromAttr(R.attr.base_icon),
                         PorterDuff.Mode.SRC_ATOP
@@ -111,6 +135,16 @@ class SettingsFragment : BaseSettingFragment() {
             PreferencesHolder.QUALITY_HD -> "HD"
             PreferencesHolder.QUALITY_NO -> "Не выбрано"
             PreferencesHolder.QUALITY_ALWAYS -> "Спрашивать всегда"
+            else -> ""
+        }
+    }
+
+    private fun getPlayerTypeTitle(playerType: Int): String {
+        return when (playerType) {
+            PreferencesHolder.PLAYER_TYPE_EXTERNAL -> "Внешний плеер"
+            PreferencesHolder.PLAYER_TYPE_INTERNAL -> "Внутренний плеер"
+            PreferencesHolder.PLAYER_TYPE_NO -> "Не выбрано"
+            PreferencesHolder.PLAYER_TYPE_ALWAYS -> "Спрашивать всегда"
             else -> ""
         }
     }

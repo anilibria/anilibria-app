@@ -42,14 +42,11 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.extension.centerCrop
-import ru.radiationx.anilibria.extension.createAvatar
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -62,7 +59,6 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import java.net.URLConnection
 import java.util.regex.Pattern
-import kotlin.math.min
 
 
 /* Created by radiationx on 16.11.17. */
@@ -447,32 +443,70 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                 presenter.onDownloadLinkSelected(getUrlByQuality(episode, quality))
             }
         } else {
-            val titles = arrayOf("Внешний плеер", "Внутренний плеер")
-            context?.let {
-                AlertDialog.Builder(it)
-                        .setItems(titles) { dialog, which ->
-                            if (quality == null) {
-                                when (which) {
-                                    0 -> {
-                                        selectQuality(episode, { selected ->
-                                            playExternal(release, episode, selected)
-                                        }, true)
-                                    }
-                                    1 -> {
-                                        selectQuality(episode, { selected ->
-                                            playInternal(release, episode, selected, playFlag)
-                                        })
-                                    }
-                                }
-                            } else {
-                                when (which) {
-                                    0 -> playExternal(release, episode, quality)
-                                    1 -> playInternal(release, episode, quality, playFlag)
-                                }
-                            }
+            selectPlayer({ playerType ->
+                if (quality == null) {
+                    when (playerType) {
+                        PreferencesHolder.PLAYER_TYPE_EXTERNAL -> {
+                            selectQuality(episode, { selected ->
+                                playExternal(release, episode, selected)
+                            }, true)
                         }
-                        .show()
+                        PreferencesHolder.PLAYER_TYPE_INTERNAL -> {
+                            selectQuality(episode, { selected ->
+                                playInternal(release, episode, selected, playFlag)
+                            })
+                        }
+                    }
+                } else {
+                    when (playerType) {
+                        PreferencesHolder.PLAYER_TYPE_EXTERNAL -> playExternal(release, episode, quality)
+                        PreferencesHolder.PLAYER_TYPE_INTERNAL -> playInternal(release, episode, quality, playFlag)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun selectPlayer(onSelect: (playerType: Int) -> Unit, forceDialog: Boolean = false) {
+        if (forceDialog) {
+            showSelectPlayerDialog(onSelect)
+        } else {
+            val savedPlayerType = presenter.getPlayerType()
+            when (savedPlayerType) {
+                PreferencesHolder.PLAYER_TYPE_NO -> {
+                    showSelectPlayerDialog(onSelect)
+                }
+                PreferencesHolder.PLAYER_TYPE_ALWAYS -> {
+                    showSelectPlayerDialog(onSelect, false)
+                }
+                PreferencesHolder.PLAYER_TYPE_INTERNAL -> {
+                    onSelect(PreferencesHolder.PLAYER_TYPE_INTERNAL)
+                }
+                PreferencesHolder.PLAYER_TYPE_EXTERNAL -> {
+                    onSelect(PreferencesHolder.PLAYER_TYPE_EXTERNAL)
+                }
             }
+        }
+    }
+
+    private fun showSelectPlayerDialog(onSelect: (playerType: Int) -> Unit, savePlayerType: Boolean = true) {
+        val titles = arrayOf("Внешний плеер", "Внутренний плеер")
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setItems(titles) { dialog, which ->
+                        val playerType = when (which) {
+                            0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
+                            1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
+                            else -> -1
+                        }
+                        if (playerType != -1) {
+                            if (savePlayerType) {
+                                presenter.setPlayerType(playerType)
+                            }
+                            onSelect.invoke(playerType)
+                        }
+                    }
+                    .show()
         }
     }
 

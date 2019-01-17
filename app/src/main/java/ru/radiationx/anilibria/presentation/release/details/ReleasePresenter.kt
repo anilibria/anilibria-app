@@ -64,6 +64,10 @@ class ReleasePresenter(
 
     fun setQuality(value: Int) = releaseInteractor.setQuality(value)
 
+    fun getPlayerType() = releaseInteractor.getPlayerType()
+
+    fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)

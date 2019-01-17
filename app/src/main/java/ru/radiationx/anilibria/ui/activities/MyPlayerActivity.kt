@@ -4,10 +4,7 @@ import android.app.ActivityManager
 import android.app.PendingIntent
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -15,10 +12,11 @@ import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
+import android.text.Html
 import android.util.Log
 import android.util.Rational
 import android.view.*
@@ -29,10 +27,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.*
+import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
@@ -76,7 +76,8 @@ class MyPlayerActivity : AppCompatActivity() {
     private var playFlag = PLAY_FLAG_DEFAULT
     private var currentEpisodeId = NO_ID
     //private var currentEpisode = NOT_SELECTED
-    private var quality = DEFAULT_QUALITY
+    private var currentQuality = DEFAULT_QUALITY
+    private var currentPlaySpeed = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
@@ -96,6 +97,9 @@ class MyPlayerActivity : AppCompatActivity() {
     )
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
+    private var scaleEnabled = true
+
+    private val dialogController = SettingDialogController()
 
     private var pictureInPictureParams: PictureInPictureParams.Builder? = null
 
@@ -118,6 +122,7 @@ class MyPlayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_myplayer)
 
         player.setScaleType(currentScale)
+        player.playbackSpeed = currentPlaySpeed
         player.setOnPreparedListener(playerListener)
         player.setOnCompletionListener(playerListener)
         player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
@@ -134,7 +139,6 @@ class MyPlayerActivity : AppCompatActivity() {
 
         videoControls?.apply {
             setPictureInPictureEnabled(pictureInPictureParams != null)
-            setScale(currentScale, false)
             player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
@@ -161,7 +165,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
         this.releaseData = release
         this.currentEpisodeId = episodeId
-        this.quality = quality
+        this.currentQuality = quality
         this.playFlag = playFlag
 
         updateAndPlayRelease()
@@ -173,7 +177,6 @@ class MyPlayerActivity : AppCompatActivity() {
         }
 
         videoControls?.apply {
-            setQuality(quality)
             setTitle(releaseData.title)
         }
         playEpisode(getEpisode())
@@ -188,26 +191,14 @@ class MyPlayerActivity : AppCompatActivity() {
         App.injections.defaultPreferences.edit().putInt("video_scale_$orientation", scale.ordinal).apply()
     }
 
-    private fun toggleScale() {
-        val currentIndex = scales.indexOf(currentScale)
-
-        val targetIndex = if (currentIndex == scales.lastIndex) {
-            0
-        } else {
-            currentIndex + 1
-        }
-        updateScale(scales[targetIndex], true)
-    }
-
     private fun updateScale(scale: ScaleType, fromUser: Boolean) {
         val inMultiWindow = getInMultiWindow()
         Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
+        scaleEnabled = !inMultiWindow
         if (!inMultiWindow) {
             saveScale(currentOrientation, currentScale)
         }
-        videoControls?.setScaleEnabled(!inMultiWindow)
-        videoControls?.setScale(currentScale, fromUser)
         player?.setScaleType(currentScale)
     }
 
@@ -232,7 +223,7 @@ class MyPlayerActivity : AppCompatActivity() {
     private fun showQualityDialog() {
         AlertDialog.Builder(this)
                 .setTitle("Качество")
-                .setSingleChoiceItems(arrayOf("SD", "HD"), when (quality) {
+                .setSingleChoiceItems(arrayOf("SD", "HD"), when (currentQuality) {
                     MyPlayerActivity.VAL_QUALITY_SD -> 0
                     MyPlayerActivity.VAL_QUALITY_HD -> 1
                     else -> -1
@@ -243,19 +234,31 @@ class MyPlayerActivity : AppCompatActivity() {
                         else -> -1
                     }
                     if (quality != -1) {
-                        this.quality = quality
-                        App.injections.appPreferences.setQuality(when (quality) {
-                            MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
-                            MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
-                            else -> PreferencesHolder.QUALITY_NO
-                        })
-                        videoControls?.setQuality(this.quality)
-                        saveEpisode()
-                        playEpisode(getEpisode())
+                        updateQuality(quality)
                     }
                     p0.dismiss()
                 }
                 .show()
+    }
+
+    private fun updateQuality(newQuality: Int) {
+        this.currentQuality = newQuality
+        App.injections.appPreferences.setQuality(when (newQuality) {
+            MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+            MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+            else -> PreferencesHolder.QUALITY_NO
+        })
+        saveEpisode()
+        playEpisode(getEpisode())
+    }
+
+    private fun updatePlaySpeed(newPlaySpeed: Float) {
+        currentPlaySpeed = newPlaySpeed
+        player.playbackSpeed = currentPlaySpeed
+    }
+
+    private fun updateScale(newScale: ScaleType) {
+        updateScale(newScale, true)
     }
 
     override fun onStop() {
@@ -398,9 +401,9 @@ class MyPlayerActivity : AppCompatActivity() {
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
         toolbar.subtitle = episode.title
         currentEpisodeId = getEpisodeId(episode)
-        if (quality == VAL_QUALITY_SD) {
+        if (currentQuality == VAL_QUALITY_SD) {
             player.setVideoPath(episode.urlSd)
-        } else if (quality == VAL_QUALITY_HD) {
+        } else if (currentQuality == VAL_QUALITY_HD) {
             player.setVideoPath(episode.urlHd)
         }
     }
@@ -580,6 +583,190 @@ class MyPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private inner class SettingDialogController {
+        private val settingQuality = 0
+        private val settingPlaySpeed = 1
+        private val settingScale = 2
+
+        private var openedDialogs = mutableListOf<BottomSheet>()
+
+        private fun BottomSheet.register() = openedDialogs.add(this)
+
+        fun updateSettingsDialog() {
+            if (openedDialogs.isNotEmpty()) {
+                openedDialogs.forEach {
+                    it.dismiss()
+                }
+                openedDialogs.clear()
+                showSettingsDialog()
+            }
+        }
+
+        fun showSettingsDialog() {
+            if (openedDialogs.isNotEmpty()) {
+                updateSettingsDialog()
+                return
+            }
+
+            val qualityValue = when (currentQuality) {
+                MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+                MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+                else -> "Вероятнее всего 480p"
+            }
+            val speedValue = "${currentPlaySpeed}x"
+            val scaleValue = when (currentScale) {
+                ScaleType.FIT_CENTER -> "Оптимально"
+                ScaleType.CENTER_CROP -> "Обрезать"
+                ScaleType.FIT_XY -> "Растянуть"
+                else -> "Одному лишь богу известно"
+            }
+
+            val values = arrayOf(
+                    settingQuality,
+                    settingPlaySpeed,
+                    settingScale
+            )
+
+            val titles = values
+                    .map {
+                        when (it) {
+                            settingQuality -> "Качество (<b>$qualityValue</b>)"
+                            settingPlaySpeed -> "Скорость воспроизведения (<b>$speedValue</b>)"
+                            settingScale -> "Соотношение сторон (<b>$scaleValue</b>)"
+                            else -> "Привет"
+                        }
+                    }
+                    .map { Html.fromHtml(it) }
+                    .toTypedArray()
+
+            val icQualityRes = when (currentQuality) {
+                MyPlayerActivity.VAL_QUALITY_SD -> R.drawable.ic_quality_sd_base
+                MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd_base
+                else -> R.drawable.ic_settings
+            }
+            val icons = values
+                    .map {
+                        when (it) {
+                            settingQuality -> icQualityRes
+                            settingPlaySpeed -> R.drawable.ic_play_speed
+                            settingScale -> R.drawable.ic_aspect_ratio
+                            else -> R.drawable.ic_anilibria
+                        }
+                    }
+                    .map { ContextCompat.getDrawable(this@MyPlayerActivity, it) }
+                    .toTypedArray()
+
+            BottomSheet.Builder(this@MyPlayerActivity)
+                    .setItems(titles, icons) { dialog, which ->
+                        when (values[which]) {
+                            settingQuality -> showQualityDialog()
+                            settingPlaySpeed -> showPlaySpeedDialog()
+                            settingScale -> showScaleDialog()
+                        }
+                    }
+                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
+                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .show()
+                    .register()
+        }
+
+        fun showPlaySpeedDialog() {
+            val values = arrayOf(
+                    1.0f,
+                    1.25f,
+                    1.5f,
+                    1.75f,
+                    2.0f
+            )
+            val activeIndex = values.indexOf(currentPlaySpeed)
+            val titles = values
+                    .mapIndexed { index, s ->
+                        val stringValue = if (s == 1.0f) {
+                            "Обычная"
+                        } else {
+                            "$s"
+                        }
+                        when (index) {
+                            activeIndex -> "<b>$stringValue</b>"
+                            else -> stringValue
+                        }
+                    }
+                    .map { Html.fromHtml(it) }
+                    .toTypedArray()
+
+            BottomSheet.Builder(this@MyPlayerActivity)
+                    .setTitle("Скорость воспроизведения")
+                    .setItems(titles) { dialog, which ->
+                        updatePlaySpeed(values[which])
+                    }
+                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .show()
+                    .register()
+        }
+
+        fun showQualityDialog() {
+            val values = arrayOf(
+                    MyPlayerActivity.VAL_QUALITY_SD,
+                    MyPlayerActivity.VAL_QUALITY_HD
+            )
+            val activeIndex = values.indexOf(currentQuality)
+            val titles = values
+                    .mapIndexed { index, s ->
+                        val stringValue = when (s) {
+                            MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+                            MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+                            else -> "Вероятнее всего 480p"
+                        }
+                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                    }
+                    .map { Html.fromHtml(it) }
+                    .toTypedArray()
+
+            BottomSheet.Builder(this@MyPlayerActivity)
+                    .setTitle("Качество")
+                    .setItems(titles) { dialog, which ->
+                        updateQuality(values[which])
+                    }
+                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .show()
+                    .register()
+        }
+
+        fun showScaleDialog() {
+            val values = arrayOf(
+                    ScaleType.FIT_CENTER,
+                    ScaleType.CENTER_CROP,
+                    ScaleType.FIT_XY
+            )
+            val activeIndex = values.indexOf(currentScale)
+            val titles = values
+                    .mapIndexed { index, s ->
+                        val stringValue = when (s) {
+                            ScaleType.FIT_CENTER -> "Оптимально"
+                            ScaleType.CENTER_CROP -> "Обрезать (Оптимально для экранов 18:9)"
+                            ScaleType.FIT_XY -> "Растянуть"
+                            else -> "Одному лишь богу известно"
+                        }
+                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                    }
+                    .map { Html.fromHtml(it) }
+                    .toTypedArray()
+
+            BottomSheet.Builder(this@MyPlayerActivity)
+                    .setTitle("Соотношение сторон")
+                    .setItems(titles) { dialog, which ->
+                        val newScaleType = values[which]
+                        updateScale(newScaleType)
+                    }
+                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .show()
+                    .register()
+        }
+    }
+
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
 
         override fun onPIPClick() {
@@ -596,12 +783,8 @@ class MyPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        override fun onQualityClick() {
-            showQualityDialog()
-        }
-
-        override fun onScaleClick() {
-            toggleScale()
+        override fun onSettingsClick() {
+            dialogController.showSettingsDialog()
         }
 
         private val delta = TimeUnit.SECONDS.toMillis(90)
@@ -628,6 +811,8 @@ class MyPlayerActivity : AppCompatActivity() {
         override fun onPlaybackStateChanged(isPlaying: Boolean) {
             updatePictureInPictureParams()
         }
+
+
     }
 
     private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {

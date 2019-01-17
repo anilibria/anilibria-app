@@ -39,44 +39,13 @@ class VideoControlsAlib @JvmOverloads constructor(
 ) : VideoControlsMobile(context, attrs, defStyleAttr) {
 
     private var alibControlsListener: AlibControlsListener? = null
-    private var qualityMenuItem: MenuItem? = null
     private var pictureInPictureMenuItem: MenuItem? = null
-    private var quality: Int = -1
-    private var currentScale: ScaleType? = null
-    private var scaleEnabled = false
     private var controlsEnabled = true
 
     private var scaleDisposable = Disposables.disposed()
 
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
-    }
-
-    fun setQuality(quality: Int) {
-        this.quality = quality
-        qualityMenuItem?.icon = getQualityIcon()
-    }
-
-    fun setScale(scale: ScaleType, fromUser: Boolean) {
-        val prevScale = currentScale
-        currentScale = scale
-        if (scaleEnabled && prevScale != currentScale && fromUser) {
-            scaleValue.apply {
-                text = getScaleTitle()
-                scaleValue.visibility = View.VISIBLE
-                scaleDisposable.dispose()
-                scaleDisposable = Completable
-                        .timer(1000L, TimeUnit.MILLISECONDS, Schedulers.computation())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { scaleValue.visibility = View.GONE }
-
-            }
-        }
-    }
-
-    fun setScaleEnabled(enabled: Boolean) {
-        scaleEnabled = enabled
-        controlsScale.visibility = if (enabled) View.VISIBLE else View.GONE
     }
 
     fun fitSystemWindows(fit: Boolean) {
@@ -96,24 +65,6 @@ class VideoControlsAlib @JvmOverloads constructor(
         pictureInPictureMenuItem?.isVisible = enabled
     }
 
-    private fun getScaleTitle(): String? = when (currentScale) {
-        ScaleType.FIT_CENTER -> "Оптимально"
-        ScaleType.CENTER_CROP -> "Обрезать"
-        ScaleType.FIT_XY -> "Растянуть"
-        else -> null
-    }
-
-    private fun getQualityIcon(): Drawable? {
-        val iconRes = when (quality) {
-            MyPlayerActivity.VAL_QUALITY_SD -> R.drawable.ic_quality_sd
-            MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd
-            else -> R.drawable.ic_toolbar_settings
-        }
-        return ContextCompat.getDrawable(toolbar.context, iconRes)?.apply {
-            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        }
-    }
-
     override fun getLayoutResource() = R.layout.view_video_control
 
     override fun retrieveViews() {
@@ -129,13 +80,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             setNavigationOnClickListener {
                 alibControlsListener?.onBackClick()
             }
-            qualityMenuItem = toolbar.menu.add("Качество")
-                    .setIcon(getQualityIcon())
-                    .setOnMenuItemClickListener {
-                        alibControlsListener?.onQualityClick()
-                        true
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
             pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
                     .setIcon(ContextCompat.getDrawable(context, R.drawable.ic_picture_in_picture_alt))
                     .setOnMenuItemClickListener {
@@ -236,7 +180,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlMinusOpening.setOnClickListener { alibControlsListener?.onMinusClick() }
         controlPlusOpening.setOnClickListener { alibControlsListener?.onPlusClick() }
         controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
-        controlsScale.setOnClickListener { alibControlsListener?.onScaleClick() }
+        controlsSettings.setOnClickListener { alibControlsListener?.onSettingsClick() }
     }
 
     override fun setTitle(title: CharSequence?) {
@@ -326,9 +270,9 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     fun setFullScreenMode(isFullscreen: Boolean) {
         val icRes = if (isFullscreen) {
-            R.drawable.ic_fullscreen_exit
+            R.drawable.ic_arrow_collapse
         } else {
-            R.drawable.ic_fullscreen
+            R.drawable.ic_arrow_expand
         }
         controlsFullscreen.apply {
             setImageDrawable(ContextCompat.getDrawable(context, icRes))
@@ -341,8 +285,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         fun onFullScreenClick()
 
         fun onBackClick()
-        fun onQualityClick()
-        fun onScaleClick()
+        fun onSettingsClick()
         fun onPIPClick()
 
         fun onPlaybackStateChanged(isPlaying: Boolean)

@@ -248,39 +248,41 @@
                 android:layout_toStartOf="@id/controlsFullscreen"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:layout_marginEnd="8dp"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:typeface="monospace"
-                app:layout_constraintEnd_toStartOf="@id/controlsFullscreen"
+                app:layout_constraintEnd_toStartOf="@id/controlsSettings"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:23:49" />
 
-            <ImageButton
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/controlsFullscreen"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="48dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-15dp"
-                android:layout_marginEnd="-8dp"
-                android:minWidth="0dp"
-                app:layout_constraintEnd_toStartOf="@id/controlsScale"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_fullscreen" />
-
-            <ImageButton
-                android:id="@+id/controlsScale"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
                 android:layout_marginTop="-15dp"
                 android:layout_marginEnd="8dp"
                 android:minWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_crop" />
+                app:srcCompat="@drawable/ic_arrow_expand"
+                app:tint="#fff" />
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/controlsSettings"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-15dp"
+                android:minWidth="0dp"
+                app:layout_constraintEnd_toStartOf="@id/controlsFullscreen"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_settings"
+                app:tint="#fff" />
 
             <LinearLayout
                 android:id="@+id/exomedia_controls_extra_container"

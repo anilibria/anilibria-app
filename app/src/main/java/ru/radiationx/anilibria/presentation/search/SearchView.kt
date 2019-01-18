@@ -6,5 +6,6 @@ import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 
 interface SearchView : ReleasesView {
     fun showGenres(genres: List<GenreItem>)
+    fun selectGenres(genres: List<String>)
     fun showFastItems(items: List<SearchItem>)
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/genresTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:text="Жанры"
+            android:textColor="?textSecond"
+            android:textSize="16sp" />
+
+        <android.support.design.chip.ChipGroup
+            android:id="@+id/genresChips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"
+            app:singleSelection="false" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

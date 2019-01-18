@@ -44,7 +44,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     ))
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
-    private var currentSubTitle: String? = null
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -70,9 +69,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            presenter.currentQuery = it.getString(ARG_QUERY_TEXT, null)
-            presenter.currentGenre = it.getString(ARG_GENRE, null)
+        arguments?.also { bundle ->
+            presenter.currentQuery = bundle.getString(ARG_QUERY_TEXT, null)
+            bundle.getString(ARG_GENRE, null)?.also {
+                presenter.onChangeGenres(listOf(it))
+            }
         }
     }
 
@@ -82,9 +83,13 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         super.onViewCreated(view, savedInstanceState)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
-                override fun onItemClick(item: GenreItem) {
-                    presenter.currentGenre = item.value
+                override fun onHide() {
                     presenter.refreshReleases()
+                }
+
+                override fun onCheckedItems(items: List<String>) {
+                    Log.e("lululu", "onCheckedItems ${items.size}")
+                    presenter.onChangeGenres(items)
                 }
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
@@ -103,7 +108,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         //ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
             title = currentTitle
-            subtitle = currentSubTitle
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
@@ -148,7 +152,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                     //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
                     toolbar?.apply {
                         title = currentTitle
-                        subtitle = currentSubTitle
                     }
                     return false
                 }
@@ -223,25 +226,22 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         genresDialog.setItems(genres)
     }
 
+    override fun selectGenres(genres: List<String>) {
+        genresDialog.setChecked(genres)
+    }
+
     override fun showReleases(releases: List<ReleaseItem>) {
         currentTitle = if (presenter.currentQuery.orEmpty().isEmpty()) {
             "Поиск"
         } else {
             "Поиск: " + presenter.currentQuery
         }
-        currentSubTitle = if (presenter.currentGenre.isNullOrBlank()) {
-            null
-        } else {
-            "Жанр: ${presenter.currentGenre?.capitalize()}"
-        }
         if (searchMenuItem.isVisible) {
             toolbar.apply {
                 title = currentTitle
-                subtitle = currentSubTitle
             }
         }
         adapter.bindItems(releases)
-        genresDialog.setChecked(presenter.currentGenre.orEmpty())
     }
 
     override fun insertMore(releases: List<ReleaseItem>) {

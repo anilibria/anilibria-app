@@ -30,7 +30,7 @@ class SearchApi(
     fun searchReleases(name: String, genre: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "action" to "search",
-                "genre" to genre,
+                "genres" to genre,
                 "name" to name,
                 "PAGEN_1" to page.toString()
         )

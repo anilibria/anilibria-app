@@ -27,7 +27,8 @@ class SearchPresenter(
     }
 
     private var currentPage = START_PAGE
-    var currentGenre: String? = null
+    private val currentGenres = mutableListOf<String>()
+    //var currentGenre: String? = null
     var currentQuery: String? = null
 
     private val currentItems = mutableListOf<ReleaseItem>()
@@ -93,7 +94,7 @@ class SearchPresenter(
                 .addToDisposable()
     }
 
-    fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenre.isNullOrEmpty()
+    fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenres.isEmpty()
 
     private fun loadReleases(pageNum: Int) {
         Log.e("S_DEF_LOG", "loadReleases")
@@ -107,8 +108,9 @@ class SearchPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
+        val genresQuery = currentGenres.joinToString(",")
         searchRepository
-                .searchReleases(currentQuery.orEmpty(), currentGenre.orEmpty(), pageNum)
+                .searchReleases(currentQuery.orEmpty(), genresQuery, pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())
@@ -137,6 +139,12 @@ class SearchPresenter(
 
     fun loadMore() {
         loadReleases(currentPage + 1)
+    }
+
+    fun onChangeGenres(newGenres: List<String>) {
+        currentGenres.clear()
+        currentGenres.addAll(newGenres)
+        viewState.selectGenres(currentGenres)
     }
 
     fun onItemClick(item: ReleaseItem) {

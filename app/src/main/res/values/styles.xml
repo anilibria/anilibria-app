@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -82,26 +82,26 @@
     </style>
 
 
-    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="android:singleLine">true</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="elevation">0dp</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="LightAppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="LightAppTheme.Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:colorBackground">@color/light_cardBackground</item>
         <item name="colorAccent">@color/light_colorAccent</item>
     </style>
 
 
     <!-- Base application theme. -->
-    <style name="DarkAppTheme" parent="Theme.AppCompat">
+    <style name="DarkAppTheme" parent="Theme.MaterialComponents">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -171,19 +171,19 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
-    <style name="DarkAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
+    <style name="DarkAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="DarkAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat">
+    <style name="DarkAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="elevation">0dp</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="DarkAppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="DarkAppTheme.Dialog" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="android:colorBackground">@color/dark_cardBackground</item>
         <item name="colorAccent">@color/dark_colorAccent</item>
     </style>

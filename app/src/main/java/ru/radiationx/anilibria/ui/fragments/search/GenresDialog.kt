@@ -1,81 +1,105 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.content.Context
+import android.support.design.chip.Chip
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import android.widget.CompoundButton
+import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.ui.adapters.BaseItemListener
-import ru.radiationx.anilibria.ui.adapters.GenreListItem
-import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.search.GenreItemDelegate
 
-class GenresDialog(context: Context, private val listener: ClickListener) {
+class GenresDialog(
+        private val context: Context,
+        private val listener: ClickListener
+) {
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
-    private val adapter: ReleasesAdapter = ReleasesAdapter()
-    private val recyclerView: RecyclerView = RecyclerView(context).apply {
-        setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this.context)
-        adapter = this@GenresDialog.adapter
-    }
     private val items = mutableListOf<GenreItem>()
+    private val checkedItems = mutableSetOf<String>()
+    private val rootView = LayoutInflater.from(context).inflate(ru.radiationx.anilibria.R.layout.dialog_genres, null, false)
+    private val chipGroup = rootView.genresChips
+    private val titleView = rootView.genresTitle
+    private val currentChips = mutableListOf<Chip>()
 
-    fun setItems(items: List<GenreItem>) {
-        this.items.apply {
-            clear()
-            addAll(items)
+    private val chipListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+        if (isChecked) {
+            checkedItems.add(items.first { it.value.hashCode() == buttonView.id }.value)
+        } else {
+            checkedItems.remove(items.first { it.value.hashCode() == buttonView.id }.value)
         }
-        adapter.bindItems(items)
-        adapter.notifyDataSetChanged()
+        listener.onCheckedItems(checkedItems.toList())
     }
 
-    fun setChecked(genreValue: String) {
-        items.forEachIndexed { index, genreItem ->
-            if (genreValue == genreItem.value) {
-                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(index, 0)
-                return@forEachIndexed
-            }
+    init {
+        dialog.setOnDismissListener {
+            listener.onHide()
         }
-        adapter.notifyDataSetChanged()
+    }
+
+    fun setItems(newItems: List<GenreItem>) {
+        items.clear()
+        items.addAll(newItems)
+
+        Log.e("lululu", "setItems ${items.size}")
+        updateViews()
+        updateChecked()
+    }
+
+    private fun updateViews() {
+        chipGroup.removeAllViews()
+        currentChips.clear()
+        items.forEach { genre ->
+            val chip = Chip(chipGroup.context).also {
+                Log.e("lululu", "set id=${genre.value.hashCode()} to '${genre.value}'")
+                it.id = genre.value.hashCode()
+                it.text = genre.title
+                it.isCheckable = true
+                it.isChecked = checkedItems.contains(genre.value)
+                it.setOnCheckedChangeListener(chipListener)
+            }
+            chipGroup.addView(chip)
+            currentChips.add(chip)
+        }
+    }
+
+    private fun updateChecked() {
+        currentChips.forEach { chip ->
+            chip.isChecked = checkedItems.any { it.hashCode() == chip.id }
+        }
+    }
+
+    fun setChecked(items: List<String>) {
+        checkedItems.clear()
+        checkedItems.addAll(items)
+        updateChecked()
     }
 
     fun showDialog() {
-        recyclerView.parent?.let {
-            (it as ViewGroup).removeView(recyclerView)
+        rootView.parent?.let {
+            (it as ViewGroup).removeView(rootView)
         }
-        dialog.setContentView(recyclerView)
+        updateViews()
+        dialog.setContentView(rootView)
         dialog.show()
+        expandDialog()
+    }
+
+    private fun expandDialog() {
+        getBehavior()?.also {
+            it.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+    }
+
+    private fun getBehavior(): BottomSheetBehavior<View>? {
+        val bottomSheetInternal = dialog.findViewById<View>(android.support.design.R.id.design_bottom_sheet)
+        return BottomSheetBehavior.from(bottomSheetInternal!!)
     }
 
     interface ClickListener {
-        fun onItemClick(item: GenreItem)
-    }
-
-    inner class ReleasesAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
-
-        private val itemListener = object : BaseItemListener<GenreItem> {
-            override fun onItemClick(item: GenreItem, position: Int) {
-                setChecked(item.value)
-                listener.onItemClick(item)
-                dialog.dismiss()
-            }
-
-            override fun onItemLongClick(item: GenreItem): Boolean = false
-        }
-
-        init {
-            items = mutableListOf()
-            delegatesManager.run {
-                addDelegate(GenreItemDelegate(itemListener))
-            }
-        }
-
-        fun bindItems(newItems: List<GenreItem>) {
-            items.clear()
-            items.addAll(newItems.map { GenreListItem(it) })
-        }
-
+        fun onHide()
+        fun onCheckedItems(items: List<String>)
     }
 }

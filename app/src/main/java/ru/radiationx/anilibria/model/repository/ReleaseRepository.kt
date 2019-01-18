@@ -59,10 +59,10 @@ class ReleaseRepository(
             .getGenres()
             .map {
                 val items = it.toMutableList()
-                items.add(0, GenreItem().apply {
+                /*items.add(0, GenreItem().apply {
                     title = "Все"
                     value = ""
-                })
+                })*/
                 genresHolder.saveGenres(items)
                 items.toList()
             }

@@ -137,7 +137,7 @@
 
             </LinearLayout>
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/controlMinusOpening"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
@@ -154,7 +154,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/controlButton" />
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/controlPlusOpening"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"

@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toStartOf="@id/antiddos_skip"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/antiddos_skip"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"

@@ -31,7 +31,7 @@
     </LinearLayout>
 
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/nl_lm_btn"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"

@@ -42,7 +42,7 @@
 
             android:orientation="horizontal">
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/authPatreon"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                 android:text="@string/auth_patreon"
                 android:textColor="@color/brand_patreon" />
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/authVk"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
@@ -122,7 +122,7 @@
             android:paddingStart="24dp"
             android:paddingTop="16dp">
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/authSubmit"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
@@ -142,7 +142,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/authRegistration"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="match_parent"
@@ -152,7 +152,7 @@
                 android:layout_weight="1"
                 android:text="Регистрация" />
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/authSkip"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="match_parent"

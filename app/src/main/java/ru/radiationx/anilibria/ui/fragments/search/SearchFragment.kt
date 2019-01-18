@@ -132,7 +132,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
-                    Log.e("kulolo","onOpen")
+                    Log.e("kulolo", "onOpen")
                     searchMenuItem.isVisible = false
                     //toolbar?.navigationIcon = null
                     toolbar?.apply {
@@ -143,7 +143,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                 }
 
                 override fun onClose(): Boolean {
-                    Log.e("kulolo","onClose")
+                    Log.e("kulolo", "onClose")
                     searchMenuItem.isVisible = true
                     //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
                     toolbar?.apply {
@@ -182,16 +182,15 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun onResume() {
         super.onResume()
         Log.e("kulolo", "onResume")
-        searchView?.postDelayed( {
-            if (presenter.isEmpty() && isVisible) {
+        searchView?.postDelayed({
+            if (presenter.isEmpty() && !(parentFragment?.isHidden == true)) {
                 searchView?.open(true, searchMenuItem)
             }
         }, 500)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        Log.e("kulolo", "onDetach")
+    override fun onPause() {
+        super.onPause()
         searchView?.close(false)
     }
 

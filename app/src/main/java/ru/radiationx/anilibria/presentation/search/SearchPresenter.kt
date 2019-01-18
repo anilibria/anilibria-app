@@ -32,6 +32,7 @@ class SearchPresenter(
     var currentQuery: String? = null
 
     private val currentItems = mutableListOf<ReleaseItem>()
+    private val beforeOpenDialogGenres = mutableListOf<String>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -139,6 +140,18 @@ class SearchPresenter(
 
     fun loadMore() {
         loadReleases(currentPage + 1)
+    }
+
+    fun showDialog() {
+        beforeOpenDialogGenres.clear()
+        beforeOpenDialogGenres.addAll(currentGenres)
+        viewState.showDialog()
+    }
+
+    fun onCloseDialog() {
+        if (beforeOpenDialogGenres != currentGenres) {
+            refreshReleases()
+        }
     }
 
     fun onChangeGenres(newGenres: List<String>) {

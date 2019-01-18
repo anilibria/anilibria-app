@@ -85,7 +85,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onHide() {
-                    presenter.refreshReleases()
+                    presenter.onCloseDialog()
                 }
 
                 override fun onCheckedItems(items: List<String>) {
@@ -125,7 +125,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
             add("Settings")
                     .setIcon(R.drawable.ic_toolbar_settings)
                     .setOnMenuItemClickListener {
-                        genresDialog.showDialog()
+                        presenter.showDialog()
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -204,6 +204,10 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
+    }
+
+    override fun showDialog() {
+        genresDialog.showDialog()
     }
 
     override fun showVitalBottom(vital: VitalItem) {

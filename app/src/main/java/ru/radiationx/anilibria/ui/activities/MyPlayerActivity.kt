@@ -119,7 +119,7 @@ class MyPlayerActivity : AppCompatActivity() {
         loadVital()
         initUiFlags()
         currentOrientation = resources.configuration.orientation
-        updateUiFlags()
+        goFullscreen()
         currentPlaySpeed = loadPlaySpeed()
         currentPipControl = loadPIPControl()
         setContentView(R.layout.activity_myplayer)

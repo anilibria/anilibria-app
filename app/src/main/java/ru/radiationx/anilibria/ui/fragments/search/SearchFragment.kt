@@ -44,6 +44,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     ))
     private val fastAdapter = FastSearchAdapter()
     private var currentTitle: String? = "Поиск"
+    private var wasOpenOnPause = true
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -185,15 +186,18 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun onResume() {
         super.onResume()
         Log.e("kulolo", "onResume")
-        searchView?.postDelayed({
-            if (presenter.isEmpty() && !(parentFragment?.isHidden == true)) {
-                searchView?.open(true, searchMenuItem)
-            }
-        }, 500)
+        if (wasOpenOnPause) {
+            searchView?.postDelayed({
+                if (presenter.isEmpty() && !(parentFragment?.isHidden == true)) {
+                    searchView?.open(true, searchMenuItem)
+                }
+            }, 500)
+        }
     }
 
     override fun onPause() {
         super.onPause()
+        wasOpenOnPause = searchView?.isSearchOpen == true
         searchView?.close(false)
     }
 

@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Point
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.os.Build
@@ -35,6 +36,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
@@ -86,6 +88,7 @@ class MyPlayerActivity : AppCompatActivity() {
     private val fullScreenListener = FullScreenListener()
     private val vitalRepository: VitalRepository = App.injections.vitalRepository
     private val releaseInteractor = App.injections.releaseInteractor
+    private val appThemeHolder = App.injections.appThemeHolder
     private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
@@ -732,7 +735,9 @@ class MyPlayerActivity : AppCompatActivity() {
                             else -> R.drawable.ic_anilibria
                         }
                     }
-                    .map { ContextCompat.getDrawable(this@MyPlayerActivity, it) }
+                    .map {
+                        ContextCompat.getDrawable(this@MyPlayerActivity, it)
+                    }
                     .toList()
                     .toTypedArray()
 
@@ -745,8 +750,11 @@ class MyPlayerActivity : AppCompatActivity() {
                             settingPIP -> showPIPDialog()
                         }
                     }
-                    //.setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
+                    .setDarkTheme(appThemeHolder.getTheme().isDark())
+                    .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
+                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                     .show()
                     .register()
         }
@@ -779,8 +787,10 @@ class MyPlayerActivity : AppCompatActivity() {
                     .setItems(titles) { dialog, which ->
                         updatePlaySpeed(values[which])
                     }
+                    .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                     .show()
                     .register()
         }
@@ -804,8 +814,10 @@ class MyPlayerActivity : AppCompatActivity() {
                     .setItems(titles) { dialog, which ->
                         updateQuality(values[which])
                     }
+                    .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                     .show()
                     .register()
         }
@@ -831,8 +843,10 @@ class MyPlayerActivity : AppCompatActivity() {
                         val newScaleType = values[which]
                         updateScale(newScaleType)
                     }
+                    .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                     .show()
                     .register()
         }
@@ -857,8 +871,10 @@ class MyPlayerActivity : AppCompatActivity() {
                         val newPipControl = values[which]
                         updatePIPControl(newPipControl)
                     }
+                    .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                     .show()
                     .register()
         }

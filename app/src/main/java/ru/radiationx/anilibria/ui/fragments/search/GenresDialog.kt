@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
 import android.support.design.chip.Chip
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
@@ -11,6 +13,15 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.entity.app.release.GenreItem
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.util.DisplayMetrics
+import android.os.Build
+import android.support.annotation.RequiresApi
+import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
+
 
 class GenresDialog(
         private val context: Context,
@@ -83,6 +94,9 @@ class GenresDialog(
         }
         updateViews()
         dialog.setContentView(rootView)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setWhiteNavigationBar(dialog)
+        }
         dialog.show()
         expandDialog()
     }
@@ -96,6 +110,28 @@ class GenresDialog(
     private fun getBehavior(): BottomSheetBehavior<View>? {
         val bottomSheetInternal = dialog.findViewById<View>(android.support.design.R.id.design_bottom_sheet)
         return BottomSheetBehavior.from(bottomSheetInternal!!)
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O_MR1)
+    private fun setWhiteNavigationBar(dialog: Dialog) {
+        val window = dialog.window
+        if (window != null) {
+            val metrics = DisplayMetrics()
+            window.windowManager.defaultDisplay.getMetrics(metrics)
+
+            val dimDrawable = GradientDrawable()
+
+            val navigationBarDrawable = GradientDrawable()
+            navigationBarDrawable.shape = GradientDrawable.RECTANGLE
+            navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.cardBackground))
+
+            val layers = arrayOf<Drawable>(dimDrawable, navigationBarDrawable)
+
+            val windowBackground = LayerDrawable(layers)
+            windowBackground.setLayerInsetTop(1, metrics.heightPixels)
+
+            window.setBackgroundDrawable(windowBackground)
+        }
     }
 
     interface ClickListener {

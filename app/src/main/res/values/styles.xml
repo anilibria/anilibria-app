@@ -1,9 +1,9 @@
 <resources>
 
 
-    <style name="BasePlayerTheme" parent="LightAppTheme.NoActionBar">
-        <item name="colorPrimary">@color/light_colorPrimary</item>
-        <item name="colorControlNormal">@color/white</item>
+    <style name="BasePlayerTheme" parent="DarkAppTheme.NoActionBar">
+        <!--<item name="colorPrimary">@color/light_colorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>-->
         <item name="windowBackground">#000</item>
     </style>
 
@@ -71,11 +71,13 @@
 
     <style name="LightAppTheme.NoActionBar" parent="LightAppTheme.NoActionBarBase" />
 
-    <style name="PreferencesLightAppTheme" parent="LightAppTheme">
+    <style name="BasePreferencesLightAppTheme" parent="LightAppTheme">
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <item name="colorPrimaryDark">@color/light_colorPrimaryDark</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
+
+    <style name="PreferencesLightAppTheme" parent="BasePreferencesLightAppTheme"/>
 
     <style name="Splash.LightAppTheme" parent="LightAppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
@@ -165,11 +167,13 @@
 
     <style name="DarkAppTheme.NoActionBar" parent="DarkAppTheme.NoActionBarBase" />
 
-    <style name="PreferencesDarkAppTheme" parent="DarkAppTheme">
+    <style name="BasePreferencesDarkAppTheme" parent="DarkAppTheme">
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
+
+    <style name="PreferencesDarkAppTheme" parent="BasePreferencesDarkAppTheme" />
 
     <style name="DarkAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>

@@ -52,6 +52,12 @@ fun AppThemeHolder.AppTheme.getWebStyleType() = when (this) {
     AppThemeHolder.AppTheme.DARK -> "dark"
 }
 
+fun AppThemeHolder.AppTheme.isDark() = when (this) {
+    AppThemeHolder.AppTheme.LIGHT -> false
+    AppThemeHolder.AppTheme.DARK -> true
+    else -> false
+}
+
 fun MiniTemplator.generateWithTheme(appTheme: AppThemeHolder.AppTheme): String {
     this.setVariableOpt("app_theme", appTheme.getWebStyleType())
     return generateOutput().also {

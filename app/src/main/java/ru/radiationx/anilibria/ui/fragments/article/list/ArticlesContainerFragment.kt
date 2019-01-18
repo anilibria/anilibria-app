@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.fragment_article_container.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -65,6 +66,11 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
 
         val tabLayout = TabLayout(appbarLayout.context)
         appbarLayout.addView(tabLayout)
+        tabLayout.background = null
+        tabLayout.setTabTextColors(
+                tabLayout.context.getColorFromAttr(R.attr.textColoredButton),
+                tabLayout.context.getColorFromAttr(R.attr.textColoredButton)
+        )
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

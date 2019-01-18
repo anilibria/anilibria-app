@@ -101,9 +101,9 @@
         app:layout_constraintBottom_toBottomOf="@id/item_content"
         android:background="?bg_shadow_comment_overflow"/>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/item_comment_showfull"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Показать полностью"

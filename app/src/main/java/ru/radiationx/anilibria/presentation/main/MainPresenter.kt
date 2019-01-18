@@ -31,7 +31,7 @@ class MainPresenter(
 
     private var antiDdosCompositeDisposable = CompositeDisposable()
 
-    var defaultScreen = Screens.RELEASES_SEARCH
+    var defaultScreen = Screens.MAIN_RELEASES
 
     init {
         appThemeHolder

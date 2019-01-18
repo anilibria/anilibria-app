@@ -55,10 +55,10 @@
             android:layout="@layout/preference_custom"
             android:title="Обсуждение на 4PDA" />
 
-        <Preference
+       <!--setting <Preference
             android:key="about.app_play_market"
             android:layout="@layout/preference_custom"
-            android:title="Play Market" />
+            android:title="Play Market" />-->
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_bottom" />

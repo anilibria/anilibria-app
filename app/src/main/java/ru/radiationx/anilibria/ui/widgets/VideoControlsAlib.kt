@@ -81,7 +81,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 alibControlsListener?.onBackClick()
             }
             pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
-                    .setIcon(ContextCompat.getDrawable(context, R.drawable.ic_picture_in_picture_alt))
+                    .setIcon(ContextCompat.getDrawable(context, R.drawable.ic_picture_in_picture_alt_toolbar))
                     .setOnMenuItemClickListener {
                         alibControlsListener?.onPIPClick()
                         true

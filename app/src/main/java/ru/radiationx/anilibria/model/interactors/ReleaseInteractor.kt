@@ -36,6 +36,12 @@ class ReleaseInteractor(
         preferencesHolder.playSpeed = value
     }
 
+    fun getPIPControl() = preferencesHolder.pipControl
+
+    fun setPIPControl(value: Int) {
+        preferencesHolder.pipControl = value
+    }
+
     fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
         val source = when {
             id != -1 -> releaseRepository.getRelease(id)

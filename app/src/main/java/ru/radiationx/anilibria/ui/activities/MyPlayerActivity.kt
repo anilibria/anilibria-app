@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
+import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.app.PendingIntent
 import android.app.PictureInPictureParams
@@ -8,6 +9,7 @@ import android.content.*
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.os.Build
@@ -39,6 +41,8 @@ import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.max
+import kotlin.math.min
 
 
 class MyPlayerActivity : AppCompatActivity() {
@@ -99,6 +103,8 @@ class MyPlayerActivity : AppCompatActivity() {
     private var currentScale = defaultScale
     private var scaleEnabled = true
 
+    private var currentPipControl = PreferencesHolder.PIP_BUTTON
+
     private val dialogController = SettingDialogController()
 
     private var pictureInPictureParams: PictureInPictureParams.Builder? = null
@@ -109,17 +115,13 @@ class MyPlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val devicePIPSupport = packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
-            if (devicePIPSupport) {
-                pictureInPictureParams = PictureInPictureParams.Builder()
-            }
-        }
+        createPIPParams()
         loadVital()
         initUiFlags()
         currentOrientation = resources.configuration.orientation
         updateUiFlags()
         currentPlaySpeed = loadPlaySpeed()
+        currentPipControl = loadPIPControl()
         setContentView(R.layout.activity_myplayer)
 
         player.setScaleType(currentScale)
@@ -128,18 +130,14 @@ class MyPlayerActivity : AppCompatActivity() {
         player.setOnCompletionListener(playerListener)
         player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
             Log.e("lalka", "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                pictureInPictureParams?.setAspectRatio(Rational(intrinsicWidth, intrinsicHeight))
-                updatePIPRect()
-            }
-            updatePictureInPictureParams()
+            updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
         //player.setOnErrorListener(playerListener)
 
         videoControls = VideoControlsAlib(ContextThemeWrapper(this, this.theme), null, 0)
 
         videoControls?.apply {
-            setPictureInPictureEnabled(pictureInPictureParams != null)
+            updatePIPControl()
             player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
@@ -156,6 +154,29 @@ class MyPlayerActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.also { handleIntent(it) }
+    }
+
+    private fun checkPipMode(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        }
+        return false
+    }
+
+    private fun checkSausage(): Boolean {
+        val size = windowManager.defaultDisplay.let {
+            val size = Point()
+            it.getRealSize(size)
+            size
+        }
+        val notSausage = 16f / 9f
+
+        val width = max(size.x, size.y)
+        val height = min(size.x, size.y)
+        val ratio = width.toFloat() / height.toFloat()
+
+        Log.e("lululu", "checkSausage $width, $height, $ratio && $notSausage = ${ratio != notSausage}")
+        return notSausage != ratio
     }
 
     private fun handleIntent(intent: Intent) {
@@ -184,12 +205,12 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     private fun loadScale(orientation: Int): ScaleType {
-        val scaleOrdinal = App.injections.defaultPreferences.getInt("video_scale_$orientation", defaultScale.ordinal)
+        val scaleOrdinal = App.injections.defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
         return ScaleType.fromOrdinal(scaleOrdinal)
     }
 
     private fun saveScale(orientation: Int, scale: ScaleType) {
-        App.injections.defaultPreferences.edit().putInt("video_scale_$orientation", scale.ordinal).apply()
+        App.injections.defaultPreferences.edit().putInt("video_ratio_$orientation", scale.ordinal).apply()
     }
 
     private fun savePlaySpeed() {
@@ -198,6 +219,14 @@ class MyPlayerActivity : AppCompatActivity() {
 
     private fun loadPlaySpeed(): Float {
         return releaseInteractor.getPlaySpeed()
+    }
+
+    private fun savePIPControl() {
+        releaseInteractor.setPIPControl(currentPipControl)
+    }
+
+    private fun loadPIPControl(): Int {
+        return releaseInteractor.getPIPControl()
     }
 
     private fun updateScale(scale: ScaleType, fromUser: Boolean) {
@@ -237,7 +266,7 @@ class MyPlayerActivity : AppCompatActivity() {
             else -> PreferencesHolder.QUALITY_NO
         })
         saveEpisode()
-        playEpisode(getEpisode())
+        updateAndPlayRelease()
     }
 
     private fun updatePlaySpeed(newPlaySpeed: Float) {
@@ -248,6 +277,19 @@ class MyPlayerActivity : AppCompatActivity() {
 
     private fun updateScale(newScale: ScaleType) {
         updateScale(newScale, true)
+    }
+
+    private fun updatePIPControl(newPipControl: Int = currentPipControl) {
+        currentPipControl = newPipControl
+        val pipCheck = checkPipMode() && newPipControl == PreferencesHolder.PIP_BUTTON
+        videoControls?.setPictureInPictureEnabled(pipCheck)
+        savePIPControl()
+    }
+
+    override fun onUserLeaveHint() {
+        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
+            enterPipMode()
+        }
     }
 
     override fun onStop() {
@@ -375,6 +417,7 @@ class MyPlayerActivity : AppCompatActivity() {
                 player.seekTo(episode.seek)
             }
         }
+        playFlag = PLAY_FLAG_FORCE_CONTINUE
     }
 
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
@@ -481,8 +524,25 @@ class MyPlayerActivity : AppCompatActivity() {
         //updateUiFlags()
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun createPIPParams() {
+        if (checkPipMode()) {
+            pictureInPictureParams = PictureInPictureParams.Builder()
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun updatePIPRatio(width: Int, height: Int) {
+        if (checkPipMode()) {
+            pictureInPictureParams?.setAspectRatio(Rational(width, height))
+            updatePIPRect()
+        }
+        updatePictureInPictureParams()
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (checkPipMode()) {
             player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)?.also {
                 val rect = Rect(0, 0, 0, 0)
                 it.getGlobalVisibleRect(rect)
@@ -492,8 +552,9 @@ class MyPlayerActivity : AppCompatActivity() {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     private fun updatePictureInPictureParams() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (checkPipMode()) {
             val params = pictureInPictureParams ?: return
             val playState = player?.isPlaying ?: return
             val actions = mutableListOf<RemoteAction>()
@@ -562,10 +623,22 @@ class MyPlayerActivity : AppCompatActivity() {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun enterPipMode() {
+        if (checkPipMode()) {
+            Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
+            pictureInPictureParams?.also {
+                videoControls?.visibility = View.GONE
+                enterPictureInPictureMode(it.build())
+            }
+        }
+    }
+
     private inner class SettingDialogController {
         private val settingQuality = 0
         private val settingPlaySpeed = 1
         private val settingScale = 2
+        private val settingPIP = 3
 
         private var openedDialogs = mutableListOf<BottomSheet>()
 
@@ -590,6 +663,12 @@ class MyPlayerActivity : AppCompatActivity() {
             else -> "Одному лишь богу известно"
         }
 
+        private fun getPIPTitle(pipControl: Int) = when (pipControl) {
+            PreferencesHolder.PIP_AUTO -> "При скрытии экрана"
+            PreferencesHolder.PIP_BUTTON -> "По кнопке"
+            else -> "Одному лишь богу известно"
+        }
+
         fun updateSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 openedDialogs.forEach {
@@ -609,23 +688,32 @@ class MyPlayerActivity : AppCompatActivity() {
             val qualityValue = getQualityTitle(currentQuality)
             val speedValue = getPlaySpeedTitle(currentPlaySpeed)
             val scaleValue = getScaleTitle(currentScale)
+            val pipValue = getPIPTitle(currentPipControl)
 
-            val values = arrayOf(
+            val valuesList = mutableListOf(
                     settingQuality,
-                    settingPlaySpeed,
-                    settingScale
+                    settingPlaySpeed
             )
+            if (checkSausage()) {
+                valuesList.add(settingScale)
+            }
+            if (checkPipMode()) {
+                valuesList.add(settingPIP)
+            }
 
-            val titles = values
+            val titles = valuesList
+                    .asSequence()
                     .map {
                         when (it) {
                             settingQuality -> "Качество (<b>$qualityValue</b>)"
                             settingPlaySpeed -> "Скорость (<b>$speedValue</b>)"
                             settingScale -> "Соотношение сторон (<b>$scaleValue</b>)"
+                            settingPIP -> "Режим окна (<b>$pipValue</b>)"
                             else -> "Привет"
                         }
                     }
                     .map { Html.fromHtml(it) }
+                    .toList()
                     .toTypedArray()
 
             val icQualityRes = when (currentQuality) {
@@ -633,24 +721,28 @@ class MyPlayerActivity : AppCompatActivity() {
                 MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd_base
                 else -> R.drawable.ic_settings
             }
-            val icons = values
+            val icons = valuesList
+                    .asSequence()
                     .map {
                         when (it) {
                             settingQuality -> icQualityRes
                             settingPlaySpeed -> R.drawable.ic_play_speed
                             settingScale -> R.drawable.ic_aspect_ratio
+                            settingPIP -> R.drawable.ic_picture_in_picture_alt
                             else -> R.drawable.ic_anilibria
                         }
                     }
                     .map { ContextCompat.getDrawable(this@MyPlayerActivity, it) }
+                    .toList()
                     .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setItems(titles, icons) { dialog, which ->
-                        when (values[which]) {
+                        when (valuesList[which]) {
                             settingQuality -> showQualityDialog()
                             settingPlaySpeed -> showPlaySpeedDialog()
                             settingScale -> showScaleDialog()
+                            settingPIP -> showPIPDialog()
                         }
                     }
                     //.setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
@@ -744,18 +836,38 @@ class MyPlayerActivity : AppCompatActivity() {
                     .show()
                     .register()
         }
+
+        fun showPIPDialog() {
+            val values = arrayOf(
+                    PreferencesHolder.PIP_AUTO,
+                    PreferencesHolder.PIP_BUTTON
+            )
+            val activeIndex = values.indexOf(currentPipControl)
+            val titles = values
+                    .mapIndexed { index, s ->
+                        val stringValue = getPIPTitle(s)
+                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                    }
+                    .map { Html.fromHtml(it) }
+                    .toTypedArray()
+
+            BottomSheet.Builder(this@MyPlayerActivity)
+                    .setTitle("Режим окна (картинка в картинке)")
+                    .setItems(titles) { dialog, which ->
+                        val newPipControl = values[which]
+                        updatePIPControl(newPipControl)
+                    }
+                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                    .show()
+                    .register()
+        }
     }
 
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
 
         override fun onPIPClick() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
-                pictureInPictureParams?.also {
-                    videoControls?.visibility = View.GONE
-                    enterPictureInPictureMode(it.build())
-                }
-            }
+            enterPipMode()
         }
 
         override fun onBackClick() {

@@ -14,6 +14,9 @@ interface PreferencesHolder {
         const val PLAYER_TYPE_EXTERNAL = 0
         const val PLAYER_TYPE_INTERNAL = 1
         const val PLAYER_TYPE_ALWAYS = 2
+
+        const val PIP_BUTTON = 0
+        const val PIP_AUTO = 1
     }
 
     fun getReleaseRemind(): Boolean
@@ -31,5 +34,7 @@ interface PreferencesHolder {
     fun setPlayerType(value: Int)
 
     var playSpeed: Float
+
+    var pipControl: Int
 
 }

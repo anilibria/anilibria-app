@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
@@ -20,7 +19,8 @@ class PreferencesStorage(
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
         private const val QUALITY_KEY = "quality"
         private const val PLAYER_TYPE_KEY = "player_type"
-        private const val PLAY_SPEED = "play_speed"
+        private const val PLAY_SPEED_KEY = "play_speed"
+        private const val PIP_CONTROL_KEY = "pip_control"
         private const val APP_THEME_KEY = "app_theme_dark"
     }
 
@@ -76,9 +76,15 @@ class PreferencesStorage(
     }
 
     override var playSpeed: Float
-        get() = sharedPreferences.getFloat(PLAY_SPEED, 1.0f)
+        get() = sharedPreferences.getFloat(PLAY_SPEED_KEY, 1.0f)
         set(value) {
-            sharedPreferences.edit().putFloat(PLAY_SPEED, value).apply()
+            sharedPreferences.edit().putFloat(PLAY_SPEED_KEY, value).apply()
+        }
+
+    override var pipControl: Int
+        get() = sharedPreferences.getInt(PIP_CONTROL_KEY, PreferencesHolder.PIP_BUTTON)
+        set(value) {
+            sharedPreferences.edit().putInt(PIP_CONTROL_KEY, value).apply()
         }
 
     override fun getTheme(): AppThemeHolder.AppTheme {

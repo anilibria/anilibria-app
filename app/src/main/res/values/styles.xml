@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->

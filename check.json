@@ -1,26 +1,36 @@
 {
   "update": {
-    "version_code": "34",
-    "version_name": "2.1.7",
+    "version_code": "35",
+    "version_name": "2.2.0",
     "version_build": "0",
-    "build_date": "13 ноября 2018 г.",
+    "build_date": "19 января 2019 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.1.7.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.2.0.apk",
         "type": "file"
       },
       {
         "name": "4PDA",
-        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=79000094",
+        "url": "https://4pda.ru/forum/index.php?s=&showtopic=886616&view=findpost&p=81462494",
         "type": "site"
       }
     ],
     "important": [],
     "added": [
-      "Возможность скачивать серии в SD качестве для всех пользователей"
+      "Режим \"картинка в картинке\" в плеере для Android 8.0+",
+      "Выбор соотношения сторон в плеере для экранов с соотношением сторон не 16:9",
+      "Выбор скорости воспроизведения видео",
+      "Выбор нескольких жанров в поиске",
+      "Запоминание выбора плеера (внешний/внутренний)"
     ],
-    "fixed": [],
-    "changed": []
+    "fixed": [
+      "Ложное открытие клавиатуры",
+      "Цвет выделения в строке поиска"
+    ],
+    "changed": [
+      "В плеере название релиза теперь отображается и в \"меню многозадачности\"",
+      "Цветной navigationbar для Android 8.0"
+    ]
   }
 }

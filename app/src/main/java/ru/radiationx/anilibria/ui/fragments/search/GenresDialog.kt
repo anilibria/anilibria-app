@@ -70,6 +70,8 @@ class GenresDialog(
                 it.isCheckable = true
                 it.isClickable = true
                 it.isChecked = checkedItems.contains(genre.value)
+                it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
+                it.setChipBackgroundColorResource(R.color.bg_chip)
                 it.setOnCheckedChangeListener(chipListener)
             }
             chipGroup.addView(chip)

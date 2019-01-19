@@ -65,6 +65,7 @@
 
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/spinner"
+                            style="@style/Widget.AppCompat.Spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             app:popupTheme="?popup_overlay" />

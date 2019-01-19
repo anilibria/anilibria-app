@@ -68,6 +68,7 @@ class GenresDialog(
                 it.id = genre.value.hashCode()
                 it.text = genre.title
                 it.isCheckable = true
+                it.isClickable = true
                 it.isChecked = checkedItems.contains(genre.value)
                 it.setOnCheckedChangeListener(chipListener)
             }

@@ -131,7 +131,7 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
-        searchView = com.lapism.searchview.SearchView(toolbar.context)
+        searchView = com.lapism.searchview.SearchView(coordinator_layout.context)
         toolbar.addView(searchView)
         searchView?.apply {
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)

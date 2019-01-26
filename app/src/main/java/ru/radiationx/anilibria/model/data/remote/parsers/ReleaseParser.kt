@@ -67,193 +67,149 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         return result
     }
 
-    fun releases(httpResponse: String): Paginated<List<ReleaseItem>> {
-        val resItems = mutableListOf<ReleaseItem>()
-        val responseJson = JSONObject(httpResponse)
-        val jsonItems = responseJson.getJSONArray("items")
-        for (i in 0 until jsonItems.length()) {
-            val item = ReleaseItem()
-            val jsonItem = jsonItems.getJSONObject(i)
-            item.id = jsonItem.getInt("id")
-            item.idName = jsonItem.getString("code")
-
-            val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (titles.isNotEmpty()) {
-                item.originalTitle = apiUtils.escapeHtml(titles[0])
-                if (titles.size > 1) {
-                    item.title = apiUtils.escapeHtml(titles[1])
-                }
+    private fun parseRelease(jsonItem: JSONObject): ReleaseItem {
+        val item = ReleaseItem()
+        item.id = jsonItem.getInt("id")
+        item.code = jsonItem.getString("code")
+        item.names.addAll(jsonItem.getJSONArray("names").let { names ->
+            (0 until names.length()).map {
+                apiUtils.escapeHtml(names.getString(it)).toString()
             }
-
-            item.torrentLink = Api.SITE_URL + jsonItem.getString("torrent_link")
-            item.link = Api.SITE_URL + jsonItem.getString("link")
-            item.image = Api.BASE_URL_IMAGES + jsonItem.getString("image")
-            item.episodesCount = jsonItem.getString("episode")
-            item.description = jsonItem.getString("description").trim()
-
-            val jsonSeasons = jsonItem.getJSONArray("season")
-            for (j in 0 until jsonSeasons.length()) {
-                item.seasons.add(jsonSeasons.getString(j))
+        })
+        item.series = jsonItem.nullString("series")
+        item.poster = Api.BASE_URL_IMAGES + jsonItem.nullString("poster")
+        item.posterFull = Api.BASE_URL_IMAGES + jsonItem.nullString("posterFull")
+        jsonItem.optJSONObject("favorite")?.also { jsonFavorite ->
+            item.favoriteInfo.also {
+                it.rating = jsonFavorite.getInt("rating")
+                it.isAdded = jsonFavorite.getBoolean("added")
             }
-
-            val jsonVoices = jsonItem.getJSONArray("voices")
-            for (j in 0 until jsonVoices.length()) {
-                item.voices.add(jsonVoices.getString(j))
+        }
+        item.torrentUpdate = jsonItem.nullString("last")?.let {
+            try {
+                it.toInt()
+            } catch (ex: Exception) {
+                item.torrentUpdate
             }
+        } ?: item.torrentUpdate
+        item.status = jsonItem.nullString("status")
+        item.description = jsonItem.nullString("description")?.trim()
 
-            val jsonGenres = jsonItem.getJSONArray("genres")
+        jsonItem.nullString("type")?.also {
+            item.types.add(it)
+        }
+
+        jsonItem.optJSONArray("genres")?.also { jsonGenres ->
             for (j in 0 until jsonGenres.length()) {
                 item.genres.add(jsonGenres.getString(j))
             }
+        }
 
-            val jsonTypes = jsonItem.getJSONArray("types")
-            for (j in 0 until jsonTypes.length()) {
-                item.types.add(jsonTypes.getString(j))
+        jsonItem.optJSONArray("voices")?.also { jsonVoices ->
+            for (j in 0 until jsonVoices.length()) {
+                item.voices.add(jsonVoices.getString(j))
             }
+        }
 
-            item.torrentUpdate = jsonItem.optInt("torrentUpdate", 0) + 4
+        jsonItem.nullString("year")?.also {
+            item.seasons.add(it)
+        }
 
-            resItems.add(item)
+        jsonItem.nullString("day")?.also {
+            item.days.add(it)
+        }
+        return item
+    }
+
+    fun releases(httpResponse: String): Paginated<List<ReleaseItem>> {
+        val resItems = mutableListOf<ReleaseItem>()
+        val responseJson = JSONObject(httpResponse)
+        val jsonData = responseJson.getJSONObject("data")
+        val jsonItems = jsonData.getJSONArray("items")
+        for (i in 0 until jsonItems.length()) {
+            val jsonItem = jsonItems.getJSONObject(i)
+            resItems.add(parseRelease(jsonItem))
         }
         val pagination = Paginated(resItems)
-        val jsonNav = responseJson.getJSONObject("navigation")
-        jsonNav.nullGet("total")?.let { pagination.total = it.toString().toInt() }
-        jsonNav.nullGet("page")?.let { pagination.current = it.toString().toInt() }
-        jsonNav.nullGet("total_pages")?.let { pagination.allPages = it.toString().toInt() }
+        val jsonNav = jsonData.getJSONObject("pagination")
+        jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
+        jsonNav.nullGet("perPage")?.let { pagination.perPage = it.toString().toInt() }
+        jsonNav.nullGet("allPages")?.let { pagination.allPages = it.toString().toInt() }
+        jsonNav.nullGet("allItems")?.let { pagination.allItems = it.toString().toInt() }
         return pagination
     }
 
     fun release(httpResponse: String): ReleaseFull {
-        val release = ReleaseFull()
+        val responseJson = JSONObject(httpResponse).getJSONObject("data")
+        val baseRelease = parseRelease(responseJson)
+        val release = ReleaseFull(baseRelease)
 
-        val responseJson = JSONObject(httpResponse)
-
-        release.id = responseJson.getInt("id")
-        release.idName = responseJson.getString("code")
-
-        val titles = responseJson.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (titles.isNotEmpty()) {
-            release.originalTitle = apiUtils.escapeHtml(titles[0])
-            if (titles.size > 1) {
-                release.title = apiUtils.escapeHtml(titles[1])
+        responseJson.optJSONObject("blockedInfo")?.also {jsonBlockedInfo->
+            release.blockedInfo.also {
+                it.isBlocked = jsonBlockedInfo.getBoolean("blocked")
+                it.reason = jsonBlockedInfo.nullString("reason")
             }
         }
 
-        responseJson.getString("torrent_link").let {
-            if (!it.isNullOrEmpty()) {
-                release.torrentLink = Api.SITE_URL + it
-            }
-        }
-        release.link = Api.SITE_URL + responseJson.getString("link")
-        release.image = Api.BASE_URL_IMAGES + responseJson.getString("image")
-        //release.setEpisodesCount(responseJson.getString("episode"));
-        release.description = responseJson.getString("description").trim()
-        release.releaseStatus = responseJson.optString("release_status")
-        release.releaseStatus = responseJson.optString("release_status")
-        release.sessId = responseJson.nullString("sessId")
-        release.isBlocked = responseJson.optBoolean("isBlocked", false)
-        release.contentBlocked = responseJson.optString("contentBlocked", null)
-        release.torrentUpdate = responseJson.optInt("torrentUpdate", 0) + 4
-
-        responseJson.optJSONArray("season")?.let {
-            for (j in 0 until it.length()) {
-                release.seasons.add(it.optString(j))
-            }
-        }
-        responseJson.optJSONArray("voices")?.let {
-            for (j in 0 until it.length()) {
-                release.voices.add(it.optString(j))
-            }
-        }
-        responseJson.optJSONArray("genres")?.let {
-            for (j in 0 until it.length()) {
-                release.genres.add(it.optString(j))
-            }
-        }
-        responseJson.optJSONArray("types")?.let {
-            for (j in 0 until it.length()) {
-                release.types.add(it.optString(j))
-            }
-        }
-
-        responseJson.optJSONArray("mp4")?.let { jsonMp4 ->
-            for (j in 0 until jsonMp4.length()) {
-                jsonMp4.optJSONObject(j)?.let {
-                    val episode = ReleaseFull.Episode()
-                    episode.title = "Cерия ${jsonMp4.length() - j}"
-                    episode.urlSd = it.nullString("sd")
-                    episode.urlHd = it.nullString("hd")
-                    episode.type = ReleaseFull.Episode.Type.SOURCE
-                    release.episodesSource.add(episode)
-                }
-            }
-        }
-
-        responseJson.optJSONArray("Uppod")?.let { jsonEpisodes ->
-            for (j in 0 until jsonEpisodes.length()) {
-                jsonEpisodes.optJSONObject(j)?.let {
-                    val episode = ReleaseFull.Episode()
-
-                    episode.releaseId = release.id
-                    episode.id = jsonEpisodes.length() - j
-
-                    episode.title = it.optString("comment")
-                    episode.urlSd = it.optString("file")
-                    episode.urlHd = it.optString("filehd")
-                    episode.type = ReleaseFull.Episode.Type.ONLINE
-                    release.episodes.add(episode)
-                }
-                /*jsonEpisodes.optJSONObject(j)?.let {
-                    val episode = ReleaseFull.Episode()
-
-                    episode.releaseId = release.id
-                    episode.id = jsonEpisodes.length() - j
-
-                    episode.title = it.optString("comment")
-                    episode.urlSd = it.optString("file")
-                    episode.urlHd = null
-                    episode.type = ReleaseFull.Episode.Type.SOURCE
-                    release.episodesSource.add(episode)
-                }*/
-            }
-        }
-
-        responseJson.optString("Moonwalk").let {
+        responseJson.nullString("moon")?.also {
             val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
             if (matcher.find()) {
                 var mwUrl = matcher.group(1)
                 if (mwUrl.substring(0, 2) == "//") {
-                    mwUrl = "https:" + mwUrl
+                    mwUrl = "https:$mwUrl"
                 }
                 release.moonwalkLink = mwUrl
             }
         }
 
-        responseJson.getJSONArray("torrentList")?.let {
-            for (j in 0 until it.length()) {
-                it.optJSONObject(j)?.let {
+        responseJson.optJSONArray("playlist")?.also { jsonPlaylist ->
+            for (j in 0 until jsonPlaylist.length()) {
+                val jsonEpisode = jsonPlaylist.getJSONObject(j)
+
+                val episodeId: Int = jsonEpisode.optInt("id")
+                val episodeTitle = jsonEpisode.nullString("title")
+
+                ReleaseFull.Episode().also {
+                    it.releaseId = release.id
+                    it.id = episodeId
+                    it.title = episodeTitle
+                    it.urlSd = jsonEpisode.nullString("sd")
+                    it.urlHd = jsonEpisode.nullString("hd")
+                    it.type = ReleaseFull.Episode.Type.ONLINE
+                    release.episodes.add(it)
+                }
+
+                ReleaseFull.Episode().also {
+                    it.releaseId = release.id
+                    it.id = episodeId
+                    it.title = episodeTitle
+                    it.urlSd = jsonEpisode.nullString("srcSd")
+                    it.urlHd = jsonEpisode.nullString("srcHd")
+                    it.type = ReleaseFull.Episode.Type.SOURCE
+                    release.episodesSource.add(it)
+                }
+            }
+        }
+
+        responseJson.getJSONArray("torrents")?.also { jsonTorrents ->
+            for (j in 0 until jsonTorrents.length()) {
+                jsonTorrents.optJSONObject(j)?.let { jsonTorrent ->
                     release.torrents.add(TorrentItem().apply {
-                        episode = it.getString("episode")
-                        quality = it.getString("quality")
-                        size = it.getString("size")
-                        url = Api.SITE_URL + it.getString("url")
+                        id = jsonTorrent.optInt("id")
+                        hash = jsonTorrent.nullString("hash")
+                        leechers = jsonTorrent.optInt("leechers")
+                        seeders = jsonTorrent.optInt("seeders")
+                        completed = jsonTorrent.optInt("completed")
+                        quality = jsonTorrent.nullString("quality")
+                        series = jsonTorrent.nullString("series")
+                        size = jsonTorrent.optLong("size")
+                        url = "${Api.SITE_URL}${jsonTorrent.nullString("url")}"
                     })
                 }
             }
         }
 
         release.showDonateDialog = responseJson.optBoolean("showDonateDialog")
-
-        val jsonFav = responseJson.getJSONObject("fav")
-        Log.e("S_DEF_LOG", "loaded json fav " + jsonFav.toString(4))
-        release.favoriteCount.apply {
-            id = jsonFav.getInt("id")
-            count = jsonFav.getInt("count")
-            isFaved = jsonFav.getBoolean("isFaved")
-            sessId = jsonFav.getString("sessId")
-            skey = jsonFav.getString("skey")
-            isGuest = jsonFav.getBoolean("isGuest")
-        }
 
         return release
     }
@@ -264,17 +220,17 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         while (matcher.find()) {
             val item = ReleaseItem()
             item.description = apiUtils.escapeHtml(matcher.group(1))
-            item.idName = matcher.group(2)
+            item.code = matcher.group(2)
             item.id = matcher.group(3).toInt()
-            item.image = Api.BASE_URL_IMAGES + matcher.group(4)
+            item.poster = Api.BASE_URL_IMAGES + matcher.group(4)
 
-            val titles = matcher.group(5).split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            /*val titles = matcher.group(5).split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (titles.isNotEmpty()) {
                 item.originalTitle = apiUtils.escapeHtml(titles[0])
                 if (titles.size > 1) {
                     item.title = apiUtils.escapeHtml(titles[1])
                 }
-            }
+            }*/
             resItems.add(item)
         }
         /*val jsonNav = responseJson.getJSONObject("navigation")
@@ -295,19 +251,19 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
 
             val matcher = idNamePattern.matcher(jsonItem.getString("link"))
             if (matcher.find()) {
-                item.idName = matcher.group(1)
+                item.code = matcher.group(1)
             }
 
             item.description = jsonItem.getString("description")
-            item.image = Api.BASE_URL_IMAGES + jsonItem.get("image")
+            item.poster = Api.BASE_URL_IMAGES + jsonItem.get("image")
 
             val titles = jsonItem.getString("title").split(" / ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (titles.isNotEmpty()) {
+            /*if (titles.isNotEmpty()) {
                 item.originalTitle = apiUtils.escapeHtml(titles[0])
                 if (titles.size > 1) {
                     item.title = apiUtils.escapeHtml(titles[1])
                 }
-            }
+            }*/
             resItems.add(item)
         }
         val result = FavoriteData()
@@ -337,8 +293,8 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         }
         val pagination = Paginated(resItems)
         val jsonNav = responseJson.getJSONObject("navigation")
-        jsonNav.nullGet("total")?.let { pagination.total = it.toString().toInt() }
-        jsonNav.nullGet("page")?.let { pagination.current = it.toString().toInt() }
+        jsonNav.nullGet("total")?.let { pagination.allItems = it.toString().toInt() }
+        jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
         jsonNav.nullGet("total_pages")?.let { pagination.allPages = it.toString().toInt() }
         return pagination
     }

@@ -57,8 +57,14 @@ import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
+import java.lang.Math.pow
 import java.net.URLConnection
+import java.text.DecimalFormat
 import java.util.regex.Pattern
+import kotlin.math.floor
+import kotlin.math.log
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 
 /* Created by radiationx on 16.11.17. */
@@ -232,7 +238,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
 
     override fun showRelease(release: ReleaseFull) {
         Log.e("S_DEF_LOG", "showRelease")
-        ImageLoader.getInstance().displayImage(release.image, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
+        ImageLoader.getInstance().displayImage(release.poster, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
                 if (toolbarHelperDisposable == null) {
@@ -246,7 +252,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             }
         })
 
-        currentTitle = String.format("%s / %s", release.title, release.originalTitle)
+        currentTitle = String.format("%s / %s", release.title, release.titleEng)
         viewPagerAdapter.showRelease(release)
         /*if (release.episodes.isNotEmpty()) {
             playInternal(release, release.episodes.last(), MyPlayerActivity.VAL_QUALITY_SD)
@@ -295,8 +301,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
-    override fun loadTorrent(url: String) {
-        Utils.externalLink(url)
+    override fun loadTorrent(torrent: TorrentItem) {
+        torrent.url?.also { Utils.externalLink(it) }
     }
 
     override fun shareRelease(text: String) {
@@ -308,15 +314,22 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
     }
 
-    override fun showTorrentDialog(torrent: List<TorrentItem>) {
-        val titles = torrent.map { "Серия ${it.episode} [${it.quality}][${it.size}]" }.toTypedArray()
+    override fun showTorrentDialog(torrents: List<TorrentItem>) {
+        val titles = torrents.map { "Серия ${it.series} [${it.quality}][${readableFileSize(it.size)}]" }.toTypedArray()
         context?.let {
             AlertDialog.Builder(it)
                     .setItems(titles) { dialog, which ->
-                        loadTorrent(torrent[which].url)
+                        loadTorrent(torrents[which])
                     }
                     .show()
         }
+    }
+
+    private fun readableFileSize(size: Long): String {
+        if (size <= 0) return "0"
+        val units = arrayOf("B", "kB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+        return DecimalFormat("#,##0.#").format(size / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     override fun addShortCut(release: ReleaseItem) {
@@ -335,7 +348,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         presenter.onPlayEpisodeClick(episode)
     }
 
-    override fun onClickTorrent(url: String?) {
+    override fun onClickTorrent() {
         presenter.onTorrentClick()
     }
 

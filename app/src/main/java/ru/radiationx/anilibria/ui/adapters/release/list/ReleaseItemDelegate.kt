@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
-import android.graphics.Color
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -51,18 +50,18 @@ class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<
         fun bind(item: ReleaseItem, position: Int) {
             currentItem = item
             view.run {
-                if (item.episodesCount == null) {
+                if (item.series == null) {
                     item_title.text = item.title
                 } else {
-                    item_title.text = String.format("%s (%s)", item.title, item.episodesCount)
+                    item_title.text = String.format("%s (%s)", item.title, item.series)
                 }
                 item_desc.text = Html.fromHtml(item.description)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}_${item.torrentLink}"
+                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
                 }
                 item_new_indicator.visibility = if(item.isNew) View.VISIBLE else View.GONE
-                ImageLoader.getInstance().displayImage(item.image, item_image)
+                ImageLoader.getInstance().displayImage(item.poster, item_image)
             }
         }
     }

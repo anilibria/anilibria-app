@@ -36,10 +36,10 @@ interface ReleaseView : IBaseView {
     fun addCommentText(text: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun loadTorrent(url: String)
+    fun loadTorrent(torrent: TorrentItem)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showTorrentDialog(torrent: List<TorrentItem>)
+    fun showTorrentDialog(torrents: List<TorrentItem>)
 
     @StateStrategyType(SkipStrategy::class)
     fun shareRelease(text: String)

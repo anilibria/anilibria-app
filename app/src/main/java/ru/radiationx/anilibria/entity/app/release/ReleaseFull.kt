@@ -6,30 +6,34 @@ class ReleaseFull() : ReleaseItem(), Serializable {
 
     constructor(item: ReleaseItem) : this() {
         id = item.id
-        idName = item.idName
-        title = item.title
-        originalTitle = item.originalTitle
-        torrentLink = item.torrentLink
-        link = item.link
-        image = item.image
-        episodesCount = item.episodesCount
-        description = item.description
-        seasons.addAll(item.seasons)
-        voices.addAll(item.voices)
-        genres.addAll(item.genres)
+        code = item.code
+        names.addAll(item.names)
+        poster = item.poster
+        posterFull = item.posterFull
+        status = item.status
         types.addAll(item.types)
+        genres.addAll(item.genres)
+        voices.addAll(item.voices)
+        seasons.addAll(item.seasons)
+        days.addAll(item.days)
+        description = item.description
+        favoriteInfo.also {
+            it.rating = item.favoriteInfo.rating
+            it.isAdded = item.favoriteInfo.isAdded
+        }
+
+        isNew = item.isNew
     }
 
-    var isBlocked = false
-    var sessId: String? = null
-    var contentBlocked: String? = null
-    var releaseStatus: String? = null
-    val torrents = mutableListOf<TorrentItem>()
-    val favoriteCount = FavoriteCount()
+    var showDonateDialog: Boolean = false
+
+    val blockedInfo = BlockedInfo()
+
+    var moonwalkLink: String? = null
     val episodes = mutableListOf<Episode>()
     val episodesSource = mutableListOf<Episode>()
-    var moonwalkLink: String? = null
-    var showDonateDialog: Boolean = false
+
+    val torrents = mutableListOf<TorrentItem>()
 
     class Episode : Serializable {
         var releaseId = 0

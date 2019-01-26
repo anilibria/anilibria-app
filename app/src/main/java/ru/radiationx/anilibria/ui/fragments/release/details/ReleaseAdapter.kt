@@ -81,12 +81,12 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         items.add(ReleaseHeadListItem(release))
         items.add(DividerShadowListItem())
 
-        if (release.isBlocked) {
+        if (release.blockedInfo.isBlocked) {
             items.add(ReleaseBlockedListItem(release))
             items.add(DividerShadowListItem())
         }
 
-        if (!release.isBlocked && release.episodes.isNotEmpty()) {
+        if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
             items.add(ReleaseDonateListItem())
             items.add(DividerShadowListItem())
         }
@@ -98,7 +98,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             items.add(DividerShadowListItem())
         }
 
-        if (!release.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
+        if (!release.blockedInfo.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
             items.add(DividerShadowListItem())
         }

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -51,7 +50,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
             view.run {
                 full_button_torrent.setOnClickListener {
-                    itemListener.onClickTorrent(currentItem.torrentLink)
+                    itemListener.onClickTorrent()
                 }
                 full_tags.setOnTagClickListener { tag, i ->
                     itemListener.onClickTag(tag.text)
@@ -73,7 +72,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
                 full_description.movementMethod = LinkMovementMethod({ itemListener.onClickSomeLink(it) })
 
-                full_button_torrent.isEnabled = !item.torrentLink.isNullOrEmpty() || !item.torrents.isEmpty()
+                full_button_torrent.isEnabled = !item.torrents.isEmpty()
 
                 if (full_tags.tags.isEmpty()) {
                     item.genres.forEach {
@@ -89,10 +88,10 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                 val seasonsHtml = "<b>Сезон:</b> " + item.seasons.joinToString(", ")
                 val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
                 val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
-                val releaseStatus = item.releaseStatus ?: "Не указано"
+                val releaseStatus = item.status ?: "Не указано"
                 val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
                 val arrHtml = arrayOf(
-                        item.originalTitle,
+                        item.titleEng,
                         seasonsHtml,
                         voicesHtml,
                         typesHtml,
@@ -107,11 +106,11 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
 
                 //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 
-                item.favoriteCount.let {
-                    full_fav_count.text = it.count.toString()
-                    val iconRes = if (it.isFaved) R.drawable.ic_fav else R.drawable.ic_fav_border
+                item.favoriteInfo.let {
+                    full_fav_count.text = it.rating.toString()
+                    val iconRes = if (it.isAdded) R.drawable.ic_fav else R.drawable.ic_fav_border
                     full_fav_icon.setImageDrawable(ContextCompat.getDrawable(full_fav_icon.context, iconRes))
-                    if (it.isFaved && !it.inProgress) {
+                    if (it.isAdded && !it.inProgress) {
                         full_fav_btn.background.setColorFilter(context.getColorFromAttr(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP)
                     } else {
                         full_fav_btn.background.clearColorFilter()
@@ -126,7 +125,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
     interface Listener {
         fun onClickSomeLink(url: String): Boolean
 
-        fun onClickTorrent(url: String?)
+        fun onClickTorrent()
 
         fun onClickTag(text: String)
 

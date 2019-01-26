@@ -114,7 +114,7 @@ class ReleasePresenter(
                         releaseId = release.id
                         loadComments(currentPageComment)
                     }
-                    releaseIdCode = release.idName
+                    releaseIdCode = release.code
                     Log.d("S_DEF_LOG", "subscribe call show")
                     viewState.showRelease(release)
                     viewState.setRefreshing(false)
@@ -172,8 +172,7 @@ class ReleasePresenter(
     fun onTorrentClick() {
         currentData?.let {
             when {
-                it.torrents.isEmpty() -> it.torrentLink?.let { url -> viewState.loadTorrent(url) }
-                it.torrents.size == 1 -> viewState.loadTorrent(it.torrents.last().url)
+                it.torrents.size == 1 -> viewState.loadTorrent(it.torrents.last())
                 else -> viewState.showTorrentDialog(it.torrents)
             }
         }
@@ -238,13 +237,14 @@ class ReleasePresenter(
     }
 
     fun onClickFav() {
-        currentData?.favoriteCount?.let { fav ->
-            if (fav.isGuest) {
+        currentData?.favoriteInfo?.let { fav ->
+            //todo
+            /*if (fav.isGuest) {
                 viewState.showFavoriteDialog()
                 return
             }
             releaseRepository
-                    .sendFav(fav.id, !fav.isFaved, fav.sessId, fav.skey)
+                    .sendFav(fav.id, !fav.isAdded, fav.sessId, fav.skey)
                     .doOnSubscribe {
                         fav.inProgress = true
                         viewState.updateFavCounter()
@@ -254,13 +254,13 @@ class ReleasePresenter(
                         viewState.updateFavCounter()
                     }
                     .subscribe({ newCount ->
-                        fav.count = newCount
-                        fav.isFaved = !fav.isFaved
+                        fav.rating = newCount
+                        fav.isAdded = !fav.isAdded
                         viewState.updateFavCounter()
                     }) {
                         errorHandler.handle(it)
                     }
-                    .addToDisposable()
+                    .addToDisposable()*/
         }
 
     }
@@ -280,8 +280,9 @@ class ReleasePresenter(
             return
         }
         currentData?.let {
-            releaseRepository
-                    .sendComment(it.idName.orEmpty(), it.id, text, it.sessId.orEmpty())
+            //todo
+            /*releaseRepository
+                    .sendComment(it.code.orEmpty(), it.id, text, it.sessId.orEmpty())
                     .subscribe({ comments ->
                         viewState.onCommentSent()
                         currentPageComment = START_PAGE
@@ -294,7 +295,7 @@ class ReleasePresenter(
                     }, {
                         errorHandler.handle(it)
                     })
-                    .addToDisposable()
+                    .addToDisposable()*/
         }
     }
 

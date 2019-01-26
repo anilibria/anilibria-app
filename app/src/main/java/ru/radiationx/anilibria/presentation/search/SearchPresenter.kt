@@ -163,7 +163,7 @@ class SearchPresenter(
     fun onItemClick(item: ReleaseItem) {
         val args = Bundle()
         args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.idName)
+        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
         router.navigateTo(Screens.RELEASE_DETAILS, args)
     }

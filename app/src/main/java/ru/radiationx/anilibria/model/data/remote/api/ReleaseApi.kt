@@ -19,19 +19,19 @@ class ReleaseApi(
 
     fun getRelease(releaseId: Int): Single<ReleaseFull> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "release",
-                "ELEMENT_ID" to releaseId.toString()
+                "query" to "release",
+                "id" to releaseId.toString()
         )
-        return client.get(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
                 .map { releaseParser.release(it) }
     }
 
-    fun getRelease(releaseIdName: String): Single<ReleaseFull> {
+    fun getRelease(releaseCode: String): Single<ReleaseFull> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "release",
-                "ELEMENT_CODE" to releaseIdName
+                "query" to "release",
+                "code" to releaseCode
         )
-        return client.get(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
                 .map { releaseParser.release(it) }
     }
 
@@ -42,8 +42,11 @@ class ReleaseApi(
     }
 
     fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> {
-        val args: MutableMap<String, String> = mutableMapOf("PAGEN_1" to page.toString())
-        return client.get(Api.API_URL, args)
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "list",
+                "page" to page.toString()
+        )
+        return client.post(Api.API_URL, args)
                 .map { releaseParser.releases(it) }
     }
 

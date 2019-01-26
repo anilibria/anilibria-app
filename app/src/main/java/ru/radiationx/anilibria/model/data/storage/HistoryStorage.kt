@@ -59,18 +59,25 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) : History
         localReleases.forEach {
             jsonEpisodes.put(JSONObject().apply {
                 put("id", it.id)
-                put("idName", it.idName)
-                put("title", it.title)
-                put("originalTitle", it.originalTitle)
-                put("torrentLink", it.torrentLink)
-                put("link", it.link)
-                put("image", it.image)
-                put("episodesCount", it.episodesCount)
-                put("description", it.description)
-                put("seasons", JSONArray(it.seasons))
-                put("voices", JSONArray(it.voices))
-                put("genres", JSONArray(it.genres))
+                put("code", it.code)
+                put("names", JSONArray(it.names))
+                put("series", it.series)
+                put("poster", it.poster)
+                put("posterFull", it.posterFull)
+                put("torrentUpdate", it.torrentUpdate)
+                put("status", it.status)
                 put("types", JSONArray(it.types))
+                put("genres", JSONArray(it.genres))
+                put("voices", JSONArray(it.voices))
+                put("seasons", JSONArray(it.seasons))
+                put("days", JSONArray(it.days))
+                put("description", it.description)
+                put("favoriteInfo", it.favoriteInfo.let { favInfo ->
+                    JSONObject().apply {
+                        put("rating", favInfo.rating)
+                        put("isAdded", favInfo.isAdded)
+                    }
+                })
             })
         }
         sharedPreferences
@@ -80,31 +87,43 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) : History
     }
 
     private fun loadAll() {
-        val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
-        savedEpisodes?.let {
-            val jsonEpisodes = JSONArray(it)
-            (0 until jsonEpisodes.length()).forEach {
-                jsonEpisodes.getJSONObject(it).let {
-                    localReleases.add(ReleaseItem().apply {
-                        id = it.getInt("id")
-                        idName = it.nullString("idName")
-                        title = it.nullString("title")
-                        originalTitle = it.nullString("originalTitle")
-                        torrentLink = it.nullString("torrentLink")
-                        link = it.nullString("link")
-                        image = it.nullString("image")
-                        episodesCount = it.nullString("episodesCount")
-                        description = it.nullString("description")
-                        val jsonSeasons = it.getJSONArray("seasons")
-                        (0 until jsonSeasons.length()).mapTo(seasons) { jsonSeasons.getString(it) }
-                        val jsonVoices = it.getJSONArray("voices")
-                        (0 until jsonVoices.length()).mapTo(voices) { jsonVoices.getString(it) }
-                        val jsonGenres = it.getJSONArray("genres")
-                        (0 until jsonGenres.length()).mapTo(genres) { jsonGenres.getString(it) }
-                        val jsonTypes = it.getJSONArray("types")
+        val jsonEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
+        if (jsonEpisodes != null) {
+            (0 until jsonEpisodes.length()).forEach { releaseIndex ->
+                val jsonRelease = jsonEpisodes.getJSONObject(releaseIndex)
+                val release = ReleaseItem().apply {
+                    id = jsonRelease.getInt("id")
+                    code = jsonRelease.nullString("code")
+                    jsonRelease.getJSONArray("names").also { jsonNames ->
+                        (0 until jsonNames.length()).mapTo(names) { jsonNames.getString(it) }
+                    }
+                    series = jsonRelease.nullString("series")
+                    poster = jsonRelease.nullString("poster")
+                    posterFull = jsonRelease.nullString("posterFull")
+                    torrentUpdate = jsonRelease.getInt("torrentUpdate")
+                    status = jsonRelease.nullString("status")
+                    jsonRelease.getJSONArray("types").also { jsonTypes ->
                         (0 until jsonTypes.length()).mapTo(types) { jsonTypes.getString(it) }
-                    })
+                    }
+                    jsonRelease.getJSONArray("genres").also { jsonGenres ->
+                        (0 until jsonGenres.length()).mapTo(genres) { jsonGenres.getString(it) }
+                    }
+                    jsonRelease.getJSONArray("voices").also { jsonVoices ->
+                        (0 until jsonVoices.length()).mapTo(voices) { jsonVoices.getString(it) }
+                    }
+                    jsonRelease.getJSONArray("seasons").also { jsonSeasons ->
+                        (0 until jsonSeasons.length()).mapTo(seasons) { jsonSeasons.getString(it) }
+                    }
+                    jsonRelease.getJSONArray("days").also { jsonDays ->
+                        (0 until jsonDays.length()).mapTo(days) { jsonDays.getString(it) }
+                    }
+                    description = jsonRelease.nullString("description")
+                    jsonRelease.getJSONObject("favoriteInfo").also { jsonFav ->
+                        favoriteInfo.rating = jsonFav.getInt("rating")
+                        favoriteInfo.isAdded = jsonFav.getBoolean("isAdded")
+                    }
                 }
+                localReleases.add(release)
             }
         }
         localReleasesRelay.accept(localReleases)

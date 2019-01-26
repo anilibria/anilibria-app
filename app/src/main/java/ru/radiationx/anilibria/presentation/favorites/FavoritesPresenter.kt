@@ -103,7 +103,7 @@ class FavoritesPresenter(
     fun localSearch(query: String) {
         if (!query.isEmpty()) {
             val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(query, true) || it.originalTitle.orEmpty().contains(query, true)
+                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
             }
             viewState.showReleases(searchRes)
         } else {
@@ -114,7 +114,7 @@ class FavoritesPresenter(
     fun onItemClick(item: ReleaseItem) {
         val args = Bundle()
         args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.idName)
+        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
         router.navigateTo(Screens.RELEASE_DETAILS, args)
     }

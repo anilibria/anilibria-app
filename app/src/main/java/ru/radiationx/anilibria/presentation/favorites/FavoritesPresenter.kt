@@ -6,6 +6,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.model.repository.FavoriteRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
@@ -17,7 +18,7 @@ import ru.terrakok.cicerone.Router
  */
 @InjectViewState
 class FavoritesPresenter(
-        private val releaseRepository: ReleaseRepository,
+        private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FavoritesView>(router) {
@@ -50,7 +51,7 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository
+        favoriteRepository
                 .getFavorites2()
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
@@ -89,7 +90,7 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository
+        favoriteRepository
                 .deleteFavorite(id, currentSessId)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({

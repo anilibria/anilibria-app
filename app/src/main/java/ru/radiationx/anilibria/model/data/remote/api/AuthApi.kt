@@ -10,10 +10,10 @@ import ru.radiationx.anilibria.model.data.remote.parsers.AuthParser
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthApi(private val client: IClient,
-              apiUtils: IApiUtils) {
-
-    private val authParser = AuthParser(apiUtils)
+class AuthApi(
+        private val client: IClient,
+        private val authParser: AuthParser
+) {
 
     fun loadAuthPage(): Single<List<String>> {
         val args: MutableMap<String, String> = mutableMapOf()

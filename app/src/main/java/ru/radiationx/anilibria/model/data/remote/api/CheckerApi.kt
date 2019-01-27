@@ -12,10 +12,8 @@ import ru.radiationx.anilibria.model.data.remote.parsers.CheckerParser
  */
 class CheckerApi(
         private val client: IClient,
-        apiUtils: IApiUtils
+        private val checkerParser:CheckerParser
 ) {
-
-    private val checkerParser = CheckerParser(apiUtils)
 
     fun checkUpdate(versionCode: Int): Single<UpdateData> {
         val args: MutableMap<String, String> = mutableMapOf(

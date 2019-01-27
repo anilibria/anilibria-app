@@ -12,10 +12,8 @@ import ru.radiationx.anilibria.model.data.remote.parsers.VitalParser
  */
 class VitalApi(
         private val client: IClient,
-        apiUtils: IApiUtils
+        private val vitalParser: VitalParser
 ) {
-
-    private val vitalParser = VitalParser(apiUtils)
 
     fun loadVital(): Single<List<VitalItem>> {
         val args: MutableMap<String, String> = mutableMapOf(

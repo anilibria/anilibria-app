@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.PagesParser
  */
 class PageApi(
         private val client: IClient,
-        val apiUtils: IApiUtils
+        private val pagesParser: PagesParser
 ) {
     companion object {
         const val PAGE_ID_TEAM = "team.php"
@@ -29,8 +29,6 @@ class PageApi(
                 PAGE_ID_RULES
         )
     }
-
-    private val pagesParser = PagesParser(apiUtils)
 
     fun getPage(pageId: String): Single<PageLibria> {
         val args: Map<String, String> = emptyMap()

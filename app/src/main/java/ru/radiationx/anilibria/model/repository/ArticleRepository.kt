@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
+import ru.radiationx.anilibria.model.data.remote.api.CommentApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
 /**
@@ -12,7 +13,8 @@ import ru.radiationx.anilibria.model.system.SchedulersProvider
  */
 class ArticleRepository(
         private val schedulers: SchedulersProvider,
-        private val articleApi: ArticleApi
+        private val articleApi: ArticleApi,
+        private val commentApi: CommentApi
 ) {
 
     /*
@@ -51,14 +53,14 @@ class ArticleRepository(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun getComments(id: Int, page: Int): Observable<Paginated<List<Comment>>> = articleApi
-            .getComments(id, page)
+    fun getComments(id: Int, page: Int): Observable<Paginated<List<Comment>>> = commentApi
+            .getCommentsArticle(id, page)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun sendComment(url: String, id: Int, text: String, sessId: String): Observable<Paginated<List<Comment>>> = articleApi
-            .sendComment(url, id, text, sessId)
+    fun sendComment(url: String, id: Int, text: String, sessId: String): Observable<Paginated<List<Comment>>> = commentApi
+            .sendCommentArticle(url, id, text, sessId)
             .toObservable()
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

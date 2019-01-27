@@ -42,7 +42,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     @ProvidePresenter
     fun provideFavoritesPresenter(): FavoritesPresenter {
         return FavoritesPresenter(
-                App.injections.releaseRepository,
+                App.injections.favoriteRepository,
                 (parentFragment as RouterProvider).getRouter(),
                 App.injections.errorHandler
         )

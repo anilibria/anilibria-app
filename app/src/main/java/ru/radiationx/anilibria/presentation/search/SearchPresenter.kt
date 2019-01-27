@@ -15,7 +15,6 @@ import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class SearchPresenter(
-        private val releaseRepository: ReleaseRepository,
         private val searchRepository: SearchRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
@@ -76,7 +75,7 @@ class SearchPresenter(
     }
 
     private fun loadGenres() {
-        releaseRepository
+        searchRepository
                 .getGenres()
                 .subscribe({ }) {
                     errorHandler.handle(it)
@@ -85,7 +84,7 @@ class SearchPresenter(
     }
 
     private fun observeGenres() {
-        releaseRepository
+        searchRepository
                 .observeGenres()
                 .subscribe({
                     viewState.showGenres(it)

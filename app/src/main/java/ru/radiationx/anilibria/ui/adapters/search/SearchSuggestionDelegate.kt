@@ -34,7 +34,7 @@ class SearchSuggestionDelegate : AdapterDelegate<MutableList<ListItem>>() {
         fun bind(item: SearchItem) {
             view.run {
                 item_title.text = Html.fromHtml(item.title)
-                item_title_original.text = Html.fromHtml(item.originalTitle)
+                item_title_original.text = Html.fromHtml(item.titleEng)
             }
         }
     }

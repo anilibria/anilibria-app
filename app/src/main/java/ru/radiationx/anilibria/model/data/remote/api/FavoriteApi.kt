@@ -1,49 +1,48 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.release.FavoriteData
+import org.json.JSONObject
+import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
-import ru.radiationx.anilibria.model.data.remote.parsers.FavoriteParser
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 
 class FavoriteApi(
         private val client: IClient,
-        private val favoriteParser: FavoriteParser
+        private val releaseParser: ReleaseParser
 ) {
 
-    fun getFavorites2(): Single<FavoriteData> {
+    fun getFavorites(): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "SHOWALL_1" to "1",
-                "action" to "favorites"
+                "query" to "favorites"
         )
-        return client.get(Api.API_URL, args)
-                .map { favoriteParser.favorites2(it) }
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
+                .map { releaseParser.releases(it) }
     }
 
-    fun deleteFavorite(id: Int, sessId: String): Single<FavoriteData> {
+    fun addFavorite(releaseId: Int): Single<ReleaseItem> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "SHOWALL_1" to "1",
-                "action" to "favorites",
-                "a" to "",
-                "sessid" to sessId,
-                "del" to id.toString()
+                "query" to "favorites",
+                "action" to "add",
+                "id" to releaseId.toString()
         )
         return client.get(Api.API_URL, args)
-                .map { favoriteParser.favorites2(it) }
+                .compose(ApiResponse.fetchResult<JSONObject>())
+                .map { releaseParser.release(it) }
     }
 
-    fun sendFav(id: Int, isFaved: Boolean, sessId: String, sKey: String): Single<Int> {
+    fun deleteFavorite(releaseId: Int): Single<ReleaseItem> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to if (isFaved) "like" else "unlike",
-                "id" to id.toString(),
-                "sessid" to sessId,
-                "key" to sKey,
-                "type" to "unknown"
+                "query" to "favorites",
+                "action" to "delete",
+                "id" to releaseId.toString()
         )
-        return client.get("${Api.BASE_URL}/bitrix/tools/asd_favorite.php", args)
-                .map { favoriteParser.favXhr(it) }
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
+                .map { releaseParser.release(it) }
     }
 
 }

@@ -104,6 +104,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.historyRepository,
             App.injections.vitalRepository,
             App.injections.authRepository,
+            App.injections.favoriteRepository,
             (parentFragment as RouterProvider).getRouter(),
             App.injections.linkHandler,
             App.injections.errorHandler
@@ -664,7 +665,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             private val commentsAdapter: CommentsAdapter
     ) : ViewStatePagerAdapter() {
 
-        private val views = arrayOf(R.layout.fragment_release, R.layout.fragment_comments)
+        private val views = arrayOf(R.layout.fragment_release/*, R.layout.fragment_comments*/)
         private var localCommentsRootLayout: ViewGroup? = null
 
         override fun createView(container: ViewGroup, position: Int): View {
@@ -679,7 +680,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             return layout
         }
 
-        override fun getCount(): Int = 2
+        override fun getCount(): Int = views.size
 
         private fun createMain(layout: ViewGroup) {
             layout.run {

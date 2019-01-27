@@ -7,7 +7,6 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.FavoriteRepository
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -30,9 +29,6 @@ class FavoritesPresenter(
 
     private var currentPage = START_PAGE
 
-    private var currentSessId = ""
-
-
     private val currentReleases = mutableListOf<ReleaseItem>()
 
     override fun onFirstViewAttach() {
@@ -52,22 +48,17 @@ class FavoritesPresenter(
             viewState.setRefreshing(true)
         }
         favoriteRepository
-                .getFavorites2()
+                .getFavorites()
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    onLoad(it)
+                    viewState.setEndless(!it.isEnd())
+                    currentReleases.addAll(it.data)
+                    showData(it.data)
                 }) {
                     showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
-    }
-
-    private fun onLoad(favData: FavoriteData) {
-        currentSessId = favData.sessId
-        viewState.setEndless(!favData.items.isEnd())
-        showData(favData.items.data)
-        currentReleases.addAll(favData.items.data)
     }
 
     private fun showData(data: List<ReleaseItem>) {
@@ -91,10 +82,10 @@ class FavoritesPresenter(
             viewState.setRefreshing(true)
         }
         favoriteRepository
-                .deleteFavorite(id, currentSessId)
+                .deleteFavorite(id)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    onLoad(it)
+                    viewState.removeReleases(listOf(it))
                 }) {
                     errorHandler.handle(it)
                 }

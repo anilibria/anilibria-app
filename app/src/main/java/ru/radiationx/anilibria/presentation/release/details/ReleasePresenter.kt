@@ -8,12 +8,10 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.model.repository.HistoryRepository
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
@@ -29,6 +27,7 @@ class ReleasePresenter(
         private val historyRepository: HistoryRepository,
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
+        private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
@@ -72,7 +71,7 @@ class ReleasePresenter(
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadRelease()
-        loadComments(currentPageComment)
+        //loadComments(currentPageComment)
         loadVital()
         subscribeAuth()
     }
@@ -237,32 +236,31 @@ class ReleasePresenter(
     }
 
     fun onClickFav() {
-        currentData?.favoriteInfo?.let { fav ->
-            //todo
-            /*if (fav.isGuest) {
-                viewState.showFavoriteDialog()
-                return
-            }
-            releaseRepository
-                    .sendFav(fav.id, !fav.isAdded, fav.sessId, fav.skey)
-                    .doOnSubscribe {
-                        fav.inProgress = true
-                        viewState.updateFavCounter()
-                    }
-                    .doAfterTerminate {
-                        fav.inProgress = false
-                        viewState.updateFavCounter()
-                    }
-                    .subscribe({ newCount ->
-                        fav.rating = newCount
-                        fav.isAdded = !fav.isAdded
-                        viewState.updateFavCounter()
-                    }) {
-                        errorHandler.handle(it)
-                    }
-                    .addToDisposable()*/
+        if (authRepository.getAuthState() != AuthState.AUTH) {
+            viewState.showFavoriteDialog()
+            return
         }
+        val releaseId = currentData?.id ?: return
+        val favInfo = currentData?.favoriteInfo ?: return
 
+        favoriteRepository
+                .sendFav(releaseId)
+                .doOnSubscribe {
+                    favInfo.inProgress = true
+                    viewState.updateFavCounter()
+                }
+                .doAfterTerminate {
+                    favInfo.inProgress = false
+                    viewState.updateFavCounter()
+                }
+                .subscribe({ releaseItem ->
+                    favInfo.rating = releaseItem.favoriteInfo.rating
+                    favInfo.isAdded = releaseItem.favoriteInfo.isAdded
+                    viewState.updateFavCounter()
+                }) {
+                    errorHandler.handle(it)
+                }
+                .addToDisposable()
     }
 
     fun onCommentClick(item: Comment) {

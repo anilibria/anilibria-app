@@ -19,7 +19,8 @@ class VitalRepository(
     private var currentLoader: Single<List<VitalItem>>? = null
 
     private fun load() {
-        if (currentLoader == null && !currentDataRelay.hasValue()) {
+        //todo
+        /*if (currentLoader == null && !currentDataRelay.hasValue()) {
             currentLoader = vitalApi
                     .loadVital()
                     //.delay(1, TimeUnit.SECONDS)
@@ -34,7 +35,7 @@ class VitalRepository(
                         currentLoader = null
                     }
                     ?.subscribe()
-        }
+        }*/
     }
 
     fun observeByType(type: VitalItem.VitalType): Observable<List<VitalItem>> {

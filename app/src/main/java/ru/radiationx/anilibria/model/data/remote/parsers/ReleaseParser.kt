@@ -71,17 +71,15 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         return item
     }
 
-    fun releases(httpResponse: String): Paginated<List<ReleaseItem>> {
+    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
         val resItems = mutableListOf<ReleaseItem>()
-        val responseJson = JSONObject(httpResponse)
-        val jsonData = responseJson.getJSONObject("data")
-        val jsonItems = jsonData.getJSONArray("items")
+        val jsonItems = jsonResponse.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
             val jsonItem = jsonItems.getJSONObject(i)
             resItems.add(parseRelease(jsonItem))
         }
         val pagination = Paginated(resItems)
-        val jsonNav = jsonData.getJSONObject("pagination")
+        val jsonNav = jsonResponse.getJSONObject("pagination")
         jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
         jsonNav.nullGet("perPage")?.let { pagination.perPage = it.toString().toInt() }
         jsonNav.nullGet("allPages")?.let { pagination.allPages = it.toString().toInt() }
@@ -89,19 +87,18 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         return pagination
     }
 
-    fun release(httpResponse: String): ReleaseFull {
-        val responseJson = JSONObject(httpResponse).getJSONObject("data")
-        val baseRelease = parseRelease(responseJson)
+    fun release(jsonResponse: JSONObject): ReleaseFull {
+        val baseRelease = parseRelease(jsonResponse)
         val release = ReleaseFull(baseRelease)
 
-        responseJson.optJSONObject("blockedInfo")?.also {jsonBlockedInfo->
+        jsonResponse.optJSONObject("blockedInfo")?.also {jsonBlockedInfo->
             release.blockedInfo.also {
                 it.isBlocked = jsonBlockedInfo.getBoolean("blocked")
                 it.reason = jsonBlockedInfo.nullString("reason")
             }
         }
 
-        responseJson.nullString("moon")?.also {
+        jsonResponse.nullString("moon")?.also {
             val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
             if (matcher.find()) {
                 var mwUrl = matcher.group(1)
@@ -112,7 +109,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
-        responseJson.optJSONArray("playlist")?.also { jsonPlaylist ->
+        jsonResponse.optJSONArray("playlist")?.also { jsonPlaylist ->
             for (j in 0 until jsonPlaylist.length()) {
                 val jsonEpisode = jsonPlaylist.getJSONObject(j)
 
@@ -141,7 +138,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
-        responseJson.getJSONArray("torrents")?.also { jsonTorrents ->
+        jsonResponse.getJSONArray("torrents")?.also { jsonTorrents ->
             for (j in 0 until jsonTorrents.length()) {
                 jsonTorrents.optJSONObject(j)?.let { jsonTorrent ->
                     release.torrents.add(TorrentItem().apply {
@@ -159,7 +156,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
-        release.showDonateDialog = responseJson.optBoolean("showDonateDialog")
+        release.showDonateDialog = jsonResponse.optBoolean("showDonateDialog")
 
         return release
     }

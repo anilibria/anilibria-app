@@ -209,7 +209,7 @@ class App : Application() {
         private val authApi = AuthApi(client, authParser)
         private val checkerApi = CheckerApi(client, checkerParser)
         private val commentApi = CommentApi(client, commentParser)
-        private val favoriteApi = FavoriteApi(client, favoriteParser)
+        private val favoriteApi = FavoriteApi(client, releaseParser)
         private val releaseApi = ReleaseApi(client, releaseParser)
         private val searchApi = SearchApi(client, releaseParser, searchParser)
         private val pageApi = PageApi(client, pagesParser)

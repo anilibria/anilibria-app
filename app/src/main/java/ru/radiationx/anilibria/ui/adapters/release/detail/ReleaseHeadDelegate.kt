@@ -85,7 +85,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<
                     }
                 }
 
-                val seasonsHtml = "<b>Сезон:</b> " + item.seasons.joinToString(", ")
+                val seasonsHtml = "<b>Год:</b> " + item.seasons.joinToString(", ")
                 val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
                 val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
                 val releaseStatus = item.status ?: "Не указано"

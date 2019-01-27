@@ -9,10 +9,9 @@ import ru.radiationx.anilibria.model.data.remote.IApiUtils
 
 class CommentParser(private val apiUtils: IApiUtils) {
 
-    fun comments(httpResponse: String): Paginated<List<Comment>> {
+    fun comments(jsonResponse:JSONObject): Paginated<List<Comment>> {
         val resItems = mutableListOf<Comment>()
-        val responseJson = JSONObject(httpResponse)
-        val jsonItems = responseJson.getJSONArray("items")
+        val jsonItems = jsonResponse.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
             val item = Comment()
             val jsonItem = jsonItems.getJSONObject(i)
@@ -29,7 +28,7 @@ class CommentParser(private val apiUtils: IApiUtils) {
             resItems.add(item)
         }
         val pagination = Paginated(resItems)
-        val jsonNav = responseJson.getJSONObject("navigation")
+        val jsonNav = jsonResponse.getJSONObject("pagination")
         jsonNav.nullGet("total")?.let { pagination.allItems = it.toString().toInt() }
         jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
         jsonNav.nullGet("total_pages")?.let { pagination.allPages = it.toString().toInt() }

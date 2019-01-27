@@ -1,9 +1,12 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import org.json.JSONArray
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.CommentParser
@@ -21,7 +24,8 @@ class CommentApi(
                 "from" to "release",
                 "PAGEN_1" to page.toString()
         )
-        return client.get(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { commentParser.comments(it) }
     }
 
@@ -40,6 +44,7 @@ class CommentApi(
         )
 
         return client.post("${Api.BASE_URL}/release/$code.html?ELEMENT_CODE=$code", args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { commentParser.comments(it) }
     }
 
@@ -51,7 +56,8 @@ class CommentApi(
                 "PAGEN_1" to page.toString()
         )
         return client
-                .get(Api.API_URL, args)
+                .post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { commentParser.comments(it) }
     }
 
@@ -70,6 +76,7 @@ class CommentApi(
         )
 
         return client.post(url, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { commentParser.comments(it) }
     }
 }

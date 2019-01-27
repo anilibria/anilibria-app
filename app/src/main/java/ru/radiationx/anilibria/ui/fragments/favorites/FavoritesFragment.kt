@@ -135,6 +135,10 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
         adapter.insertMore(releases)
     }
 
+    override fun removeReleases(releases: List<ReleaseItem>) {
+        adapter.removeItems(releases)
+    }
+
     override fun onLoadMore() {
         presenter.loadMore()
     }

@@ -204,6 +204,7 @@ class App : Application() {
         private val releaseParser = ReleaseParser(apiUtils)
         private val searchParser = SearchParser(apiUtils)
         private val vitalParser = VitalParser(apiUtils)
+        private val youtubeParser = YoutubeParser(apiUtils)
 
         private val articleApi = ArticleApi(client, articleParser)
         private val authApi = AuthApi(client, authParser)
@@ -214,6 +215,7 @@ class App : Application() {
         private val searchApi = SearchApi(client, releaseParser, searchParser)
         private val pageApi = PageApi(client, pagesParser)
         private val vitalApi = VitalApi(client, vitalParser)
+        private val youtubeApi = YoutubeApi(client, youtubeParser)
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi, commentApi)
@@ -224,6 +226,7 @@ class App : Application() {
         val checkerRepository = CheckerRepository(schedulers, checkerApi)
         val historyRepository = HistoryRepository(schedulers, historyStorage)
         val favoriteRepository = FavoriteRepository(schedulers, favoriteApi)
+        val youtubeRepository = YoutubeRepository(schedulers, youtubeApi)
 
         val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage, appPreferences, schedulers)
     }

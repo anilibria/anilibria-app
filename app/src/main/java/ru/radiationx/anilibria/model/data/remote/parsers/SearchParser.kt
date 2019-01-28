@@ -2,12 +2,11 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
 import ru.radiationx.anilibria.entity.app.release.GenreItem
+import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 class SearchParser(private val apiUtils: IApiUtils) {
 
@@ -30,12 +29,25 @@ class SearchParser(private val apiUtils: IApiUtils) {
         return result
     }
 
+    fun years(jsonResponse: JSONArray): List<YearItem> {
+        val result: MutableList<YearItem> = mutableListOf()
+        for (i in 0 until jsonResponse.length()) {
+            val yearText = jsonResponse.getString(i)
+            val genreItem = YearItem().apply {
+                title = yearText
+                value = yearText
+            }
+            result.add(genreItem)
+        }
+        return result
+    }
+
     fun genres(jsonResponse: JSONArray): List<GenreItem> {
         val result: MutableList<GenreItem> = mutableListOf()
         for (i in 0 until jsonResponse.length()) {
             val genreText = jsonResponse.getString(i)
             val genreItem = GenreItem().apply {
-                title = genreText.substring(0, 1).toUpperCase() + genreText.substring(1)
+                title = genreText.capitalize()
                 value = genreText
             }
             result.add(genreItem)

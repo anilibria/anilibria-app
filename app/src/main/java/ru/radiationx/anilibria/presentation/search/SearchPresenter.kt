@@ -6,7 +6,6 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
@@ -27,17 +26,23 @@ class SearchPresenter(
 
     private var currentPage = START_PAGE
     private val currentGenres = mutableListOf<String>()
-    //var currentGenre: String? = null
-    var currentQuery: String? = null
+    private val currentYears = mutableListOf<String>()
+    private var currentSorting = "2"
 
     private val currentItems = mutableListOf<ReleaseItem>()
     private val beforeOpenDialogGenres = mutableListOf<String>()
+    private val beforeOpenDialogYears = mutableListOf<String>()
+    private var beforeOpenDialogSorting = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
+        loadYears()
         observeGenres()
+        observeYears()
+        updateInfo()
+        onChangeSorting(currentSorting)
         loadReleases(START_PAGE)
         releaseUpdateHolder
                 .observeEpisodes()
@@ -94,7 +99,25 @@ class SearchPresenter(
                 .addToDisposable()
     }
 
-    fun isEmpty(): Boolean = currentQuery.isNullOrEmpty() && currentGenres.isEmpty()
+    private fun loadYears() {
+        searchRepository
+                .getYears()
+                .subscribe({ }) {
+                    errorHandler.handle(it)
+                }
+                .addToDisposable()
+    }
+
+    private fun observeYears() {
+        searchRepository
+                .observeYears()
+                .subscribe({
+                    viewState.showYears(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
+    }
 
     private fun loadReleases(pageNum: Int) {
         Log.e("S_DEF_LOG", "loadReleases")
@@ -109,20 +132,25 @@ class SearchPresenter(
             viewState.setRefreshing(true)
         }
         val genresQuery = currentGenres.joinToString(",")
+        val yearsQuery = currentYears.joinToString(",")
         searchRepository
-                .searchReleases(currentQuery.orEmpty(), genresQuery, pageNum)
+                .searchReleases(genresQuery, yearsQuery, currentSorting, pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
-                    viewState.setEndless(!releaseItems.isEnd())
+                    viewState.setEndless(releaseItems.data.isNotEmpty())
                     showData(releaseItems.data)
                 }) {
-                    showData(emptyList())
+                    if (currentItems.isEmpty()) {
+                        showData(emptyList())
+                    }
+                    viewState.setEndless(false)
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
     }
 
     private fun showData(data: List<ReleaseItem>) {
+        updateInfo()
         if (isFirstPage()) {
             currentItems.clear()
             currentItems.addAll(data)
@@ -143,12 +171,15 @@ class SearchPresenter(
 
     fun showDialog() {
         beforeOpenDialogGenres.clear()
+        beforeOpenDialogYears.clear()
         beforeOpenDialogGenres.addAll(currentGenres)
+        beforeOpenDialogYears.addAll(currentYears)
+        beforeOpenDialogSorting = currentSorting
         viewState.showDialog()
     }
 
     fun onCloseDialog() {
-        if (beforeOpenDialogGenres != currentGenres) {
+        if (beforeOpenDialogGenres != currentGenres || beforeOpenDialogYears != currentYears || beforeOpenDialogSorting != currentSorting) {
             refreshReleases()
         }
     }
@@ -157,6 +188,24 @@ class SearchPresenter(
         currentGenres.clear()
         currentGenres.addAll(newGenres)
         viewState.selectGenres(currentGenres)
+        updateInfo()
+    }
+
+    fun onChangeYears(newYears: List<String>) {
+        currentYears.clear()
+        currentYears.addAll(newYears)
+        viewState.selectYears(currentYears)
+        updateInfo()
+    }
+
+    fun onChangeSorting(newSorting: String) {
+        currentSorting = newSorting
+        viewState.setSorting(currentSorting)
+        updateInfo()
+    }
+
+    private fun updateInfo() {
+        viewState.updateInfo(currentSorting, currentGenres.size + currentYears.size)
     }
 
     fun onItemClick(item: ReleaseItem) {

@@ -179,6 +179,7 @@ class App : Application() {
         val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
         val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
+        val yearsHolder: YearsHolder = YearsStorage(dataStoragePreferences)
 
         val antiDdosInteractor = AntiDdosInteractor(schedulers)
 
@@ -220,7 +221,7 @@ class App : Application() {
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi, commentApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi, commentApi, genresHolder, releaseUpdateStorage)
-        val searchRepository = SearchRepository(schedulers, searchApi, genresHolder, releaseUpdateStorage)
+        val searchRepository = SearchRepository(schedulers, searchApi, genresHolder, yearsHolder, releaseUpdateStorage)
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)
         val checkerRepository = CheckerRepository(schedulers, checkerApi)

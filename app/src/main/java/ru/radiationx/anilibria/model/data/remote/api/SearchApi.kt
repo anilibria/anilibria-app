@@ -6,6 +6,7 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
@@ -28,6 +29,15 @@ class SearchApi(
                 .map { searchParser.genres(it) }
     }
 
+    fun getYears(): Single<List<YearItem>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "years"
+        )
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { searchParser.years(it) }
+    }
+
     fun fastSearch(name: String): Single<List<SearchItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "search",
@@ -39,13 +49,15 @@ class SearchApi(
                 .map { searchParser.fastSearch(it) }
     }
 
-    fun searchReleases(name: String, genre: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
+    fun searchReleases(genre: String, year: String, sort: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "catalog",
-                "genre" to genre,
-                "year" to "",
+                "search" to JSONObject().apply {
+                    put("genre", genre)
+                    put("year", year)
+                }.toString(),
                 "xpage" to "catalog",
-                "sort" to "2",
+                "sort" to sort,
                 "page" to page.toString(),
                 "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
                 "rm" to "true"

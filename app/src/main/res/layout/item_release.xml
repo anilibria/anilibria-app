@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/cardview_horizontal_margin"
     android:layout_marginStart="@dimen/cardview_horizontal_margin"
+    android:layout_marginEnd="@dimen/cardview_horizontal_margin"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
@@ -25,7 +25,8 @@
             android:scaleType="centerCrop"
             app:aspectRatio="1.456"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="#1f00" />
 
         <TextView
             android:id="@+id/item_new_indicator"
@@ -34,25 +35,25 @@
             android:background="@drawable/bg_release_new"
             android:fontFamily="@font/medium"
             android:gravity="center"
-            android:paddingBottom="8dp"
-            android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:visibility="gone"
             android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
             android:shadowColor="#000"
             android:shadowDy="1.0"
             android:shadowRadius="4.0"
             android:text="Обновлено"
             android:textColor="#fff"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
             android:textColor="?textDefault"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -65,9 +66,9 @@
             android:id="@+id/item_desc"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="6"
             android:textColor="?textDefault"
@@ -81,14 +82,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/item_image"
             android:layout_alignTop="@+id/item_image"
+            android:layout_alignBottom="@+id/item_image"
             android:layout_toEndOf="@id/item_image"
             android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingEnd="12dp"
             android:paddingStart="12dp"
-            android:paddingTop="8dp">
+            android:paddingTop="8dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp">
 
 
         </LinearLayout>

@@ -10,13 +10,77 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/typeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:text="Сортировка"
+            android:textColor="?textSecond"
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/sortingRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingStart="8dp">
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/sortingPopular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="По популярности"
+                android:textColor="?textDefault"
+                android:textSize="16sp" />
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/sortingNew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="По новизне"
+                android:textColor="?textDefault"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/yearsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:text="Год"
+            android:textColor="?textSecond"
+            android:textSize="16sp" />
+
+        <android.support.design.chip.ChipGroup
+            android:id="@+id/yearsChips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:singleSelection="false" />
+
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/genresTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingTop="16dp"
             android:paddingBottom="8dp"
-            android:text="Жанры"
+            android:text="Жанр"
             android:textColor="?textSecond"
             android:textSize="16sp" />
 
@@ -24,9 +88,9 @@
             android:id="@+id/genresChips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:clipToPadding="false"
             android:padding="8dp"
-            android:layout_marginBottom="8dp"
             app:singleSelection="false" />
 
     </LinearLayout>

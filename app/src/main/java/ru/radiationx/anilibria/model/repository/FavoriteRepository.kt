@@ -21,7 +21,7 @@ class FavoriteRepository(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun sendFav(releaseId: Int): Single<ReleaseItem> = favoriteApi
+    fun addFavorite(releaseId: Int): Single<ReleaseItem> = favoriteApi
             .addFavorite(releaseId)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

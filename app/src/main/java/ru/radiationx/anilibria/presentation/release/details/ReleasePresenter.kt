@@ -243,8 +243,13 @@ class ReleasePresenter(
         val releaseId = currentData?.id ?: return
         val favInfo = currentData?.favoriteInfo ?: return
 
-        favoriteRepository
-                .sendFav(releaseId)
+        val source = if (favInfo.isAdded) {
+            favoriteRepository.deleteFavorite(releaseId)
+        } else {
+            favoriteRepository.addFavorite(releaseId)
+        }
+
+        source
                 .doOnSubscribe {
                     favInfo.inProgress = true
                     viewState.updateFavCounter()

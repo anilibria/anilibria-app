@@ -29,7 +29,7 @@ class FavoriteApi(
                 "action" to "add",
                 "id" to releaseId.toString()
         )
-        return client.get(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.release(it) }
     }

@@ -97,16 +97,7 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
             }
         }
 
-        jsonResponse.nullString("moon")?.also {
-            val matcher = Pattern.compile("<iframe[^>]*?src=\"([^\"]*?)\"[^>]*?>").matcher(it)
-            if (matcher.find()) {
-                var mwUrl = matcher.group(1)
-                if (mwUrl.substring(0, 2) == "//") {
-                    mwUrl = "https:$mwUrl"
-                }
-                release.moonwalkLink = mwUrl
-            }
-        }
+        release.moonwalkLink = jsonResponse.nullString("moon")
 
         jsonResponse.optJSONArray("playlist")?.also { jsonPlaylist ->
             for (j in 0 until jsonPlaylist.length()) {

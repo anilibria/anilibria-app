@@ -34,7 +34,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     @LayoutRes
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
 
-    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
         if (getLayoutResource() != View.NO_ID) {
             inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
@@ -93,7 +93,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
         }
     }
 
-    protected fun showSoftwareKeyboard(editText: EditText){
+    protected fun showSoftwareKeyboard(editText: EditText) {
         activity?.also {
             val inputManager = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             inputManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)

@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.entity.app.search
 /**
  * Created by radiationx on 24.12.17.
  */
-class SearchItem {
+class FastSearchItem {
     var id: Int = 0
     var code: String? = null
     val names = mutableListOf<String>()

@@ -1,16 +1,12 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import android.util.Log
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.*
-import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 18.12.17.

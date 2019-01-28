@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.FastSearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchView
@@ -151,11 +151,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         adapter.endless = enable
     }
 
-    override fun showFastItems(items: List<SearchItem>) {
+    override fun showFastItems(items: List<FastSearchItem>) {
         items.forEach {
             Log.e("S_DEF_LOG", "FAST ITEM: ${it.title} : ${it.title}")
         }
-        fastAdapter.bindItems(items)
+        fastAdapter.bindItems(items,"")
     }
 
     override fun showGenres(genres: List<GenreItem>) {

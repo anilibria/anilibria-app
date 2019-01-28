@@ -10,20 +10,19 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/item_poster"
-        android:layout_width="0dp"
+        android:id="@+id/item_icon"
+        android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
-        android:background="#1000"
-        android:scaleType="centerCrop"
+        android:scaleType="center"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="350:500"
         app:layout_constraintEnd_toStartOf="@id/item_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintVertical_bias="0"
+        tools:src="@drawable/ic_settings" />
 
     <TextView
         android:id="@+id/item_title"
@@ -33,13 +32,12 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="6dp"
-        android:maxLines="3"
         android:textColor="?textDefault"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="kekkejsadklfjakl;sdjf;lasjldfdnamsfbjnamsdbfnm,asdnmfnbas,mndfasdfjhaskldhfkljashdljfkhaslkdhflkashdfklasjhdlfasldkfhlakshdfkjasldhflkashdflhsadf" />
+        tools:text="kekkejsadksldhflkashdflhsadf" />
 
 </android.support.constraint.ConstraintLayout>

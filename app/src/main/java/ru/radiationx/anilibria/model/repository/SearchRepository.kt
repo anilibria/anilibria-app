@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.FastSearchItem
 import ru.radiationx.anilibria.model.data.holders.GenresHolder
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.data.holders.YearsHolder
@@ -26,7 +26,7 @@ class SearchRepository(
     fun observeGenres(): Observable<MutableList<GenreItem>> = genresHolder.observeGenres()
     fun observeYears(): Observable<MutableList<YearItem>> = yearsHolder.observeYears()
 
-    fun fastSearch(query: String): Single<List<SearchItem>> = searchApi
+    fun fastSearch(query: String): Single<List<FastSearchItem>> = searchApi
             .fastSearch(query)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

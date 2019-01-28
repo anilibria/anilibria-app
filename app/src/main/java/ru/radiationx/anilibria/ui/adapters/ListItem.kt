@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.FastSearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
@@ -54,7 +54,8 @@ class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
 
 /* Search screen */
 
-class SearchSuggestionListItem(val item: SearchItem) : ListItem()
+class SearchSuggestionListItem(val item: FastSearchItem, val query: String) : ListItem()
+class SearchSimpleListItem(val icRes: Int, val title: String, val query: String) : ListItem()
 class GenreListItem(val item: GenreItem) : ListItem()
 
 class YoutubeListItem(val item: YoutubeItem) : ListItem()

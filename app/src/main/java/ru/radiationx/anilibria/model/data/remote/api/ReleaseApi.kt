@@ -40,7 +40,9 @@ class ReleaseApi(
     fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "list",
-                "page" to page.toString()
+                "page" to page.toString(),
+                "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+                "rm" to "true"
         )
         return client.post(Api.API_URL, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())

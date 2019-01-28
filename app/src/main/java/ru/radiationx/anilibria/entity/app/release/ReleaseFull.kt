@@ -9,7 +9,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         code = item.code
         names.addAll(item.names)
         poster = item.poster
-        posterFull = item.posterFull
         status = item.status
         types.addAll(item.types)
         genres.addAll(item.genres)

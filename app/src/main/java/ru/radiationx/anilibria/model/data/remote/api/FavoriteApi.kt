@@ -16,7 +16,9 @@ class FavoriteApi(
 
     fun getFavorites(): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "query" to "favorites"
+                "query" to "favorites",
+                "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+                "rm" to "true"
         )
         return client.post(Api.API_URL, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())

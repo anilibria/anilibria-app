@@ -11,7 +11,6 @@ open class ReleaseItem : Serializable {
     val names = mutableListOf<String>()
     var series: String? = null
     var poster: String? = null
-    var posterFull: String? = null
     var torrentUpdate: Int = 0
     var status: String? = null
     val types = mutableListOf<String>()

@@ -82,9 +82,9 @@ class MainPresenter(
         antiDdosInteractor.isHardChecked = true
         antiDdosCompositeDisposable.clear()
         viewState.setAntiDdosVisibility(false)
-        //if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+        if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(Screens.AUTH)
-        //}
+        }
 
         selectTab(defaultScreen)
         authRepository

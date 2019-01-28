@@ -30,8 +30,9 @@ class SearchApi(
 
     fun fastSearch(name: String): Single<List<SearchItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "query" to "fast-search",
-                "name" to name
+                "query" to "search",
+                "search" to name,
+                "filter" to "id,code,names,poster"
         )
         return client.post(Api.API_URL, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
@@ -40,11 +41,14 @@ class SearchApi(
 
     fun searchReleases(name: String, genre: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "query" to "search",
-                "genres" to genre,
-                "years" to "",
-                "name" to name,
-                "page" to page.toString()
+                "query" to "catalog",
+                "genre" to genre,
+                "year" to "",
+                "xpage" to "catalog",
+                "sort" to "2",
+                "page" to page.toString(),
+                "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+                "rm" to "true"
         )
         return client.post(Api.API_URL, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())

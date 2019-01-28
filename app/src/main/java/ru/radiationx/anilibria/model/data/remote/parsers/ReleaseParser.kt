@@ -28,7 +28,6 @@ class ReleaseParser(private val apiUtils: IApiUtils) {
         })
         item.series = jsonItem.nullString("series")
         item.poster = Api.BASE_URL_IMAGES + jsonItem.nullString("poster")
-        item.posterFull = Api.BASE_URL_IMAGES + jsonItem.nullString("posterFull")
         jsonItem.optJSONObject("favorite")?.also { jsonFavorite ->
             item.favoriteInfo.also {
                 it.rating = jsonFavorite.getInt("rating")

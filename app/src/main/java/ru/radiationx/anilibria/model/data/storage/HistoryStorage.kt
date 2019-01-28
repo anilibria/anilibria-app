@@ -63,7 +63,6 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) : History
                 put("names", JSONArray(it.names))
                 put("series", it.series)
                 put("poster", it.poster)
-                put("posterFull", it.posterFull)
                 put("torrentUpdate", it.torrentUpdate)
                 put("status", it.status)
                 put("types", JSONArray(it.types))
@@ -99,7 +98,6 @@ class HistoryStorage(private val sharedPreferences: SharedPreferences) : History
                     }
                     series = jsonRelease.nullString("series")
                     poster = jsonRelease.nullString("poster")
-                    posterFull = jsonRelease.nullString("posterFull")
                     torrentUpdate = jsonRelease.getInt("torrentUpdate")
                     status = jsonRelease.nullString("status")
                     jsonRelease.getJSONArray("types").also { jsonTypes ->

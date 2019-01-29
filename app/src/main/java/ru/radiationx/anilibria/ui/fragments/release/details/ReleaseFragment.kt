@@ -719,6 +719,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                             }*/
                         }
                     })
+
+                    recycledViewPool?.apply {
+
+                    }
                 }
                 commentSend.setOnClickListener {
                     presenter.onClickSendComment(commentField.text?.toString()?.trim().orEmpty())

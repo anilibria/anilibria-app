@@ -91,7 +91,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = App.instance.staticPageTemplate
-        webView.easyLoadData(Api.WIDGETS_SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
+        webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
 
         disposables.add(
                 appThemeHolder

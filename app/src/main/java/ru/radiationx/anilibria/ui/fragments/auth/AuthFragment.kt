@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -80,9 +81,9 @@ class AuthFragment : BaseFragment(), AuthView {
     override fun showRegistrationDialog() {
         context?.let {
             AlertDialog.Builder(it)
-                    .setMessage("Зарегистрировать аккаунт можно на сайте.\n\nЕсли авторизоваться через Patreon или ВКонтакте, тогда аккаунт будет создан автоматически.")
+                    .setMessage("Зарегистрировать аккаунт можно только на сайте.")
                     .setPositiveButton("Регистрация") { dialog, which ->
-                        Utils.externalLink("https://www.anilibria.tv/auth/registration.php")
+                        Utils.externalLink("${Api.SITE_URL}/pages/login.php")
                     }
                     .setNeutralButton("Отмена", null)
                     .show()

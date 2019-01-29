@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
 
@@ -80,7 +81,7 @@ class SettingsFragment : BaseSettingFragment() {
         findPreference("about.app_topic_site")?.apply {
             icon = ContextCompat.getDrawable(this.context, R.drawable.ic_anilibria)
             setOnPreferenceClickListener { preference ->
-                Utils.externalLink("https://www.anilibria.tv/all/app/")
+                Utils.externalLink("${Api.SITE_URL}/pages/app.php")
                 false
             }
         }

@@ -71,7 +71,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
             if (!::currentItem.isInitialized || currentItem != item) {
                 currentItem = item
                 holderView.run {
-                    vitalWebView.easyLoadData(Api.SITE_URL, item.contentText)
+                    vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, item.contentText)
                 }
             }
         }

@@ -36,7 +36,7 @@ class WebPlayerActivity : AppCompatActivity() {
         intent?.let {
             it.getStringExtra(ARG_URL)?.let {
                 val extraHeaders = HashMap<String, String>()
-                extraHeaders["Referer"] = Api.SITE_URL
+                extraHeaders["Referer"] = Api.WIDGETS_SITE_URL
                 Log.e("lalala", "load url $it")
                 webView.loadUrl(it, extraHeaders)
                 webView.webViewClient = object : WebViewClient() {

@@ -20,7 +20,7 @@
     <string name="auth_patreon">Patreon</string>
     <string name="auth_vk">Вконтакте</string>
     <string name="or">или</string>
-    <string name="auth_login">Логин</string>
+    <string name="auth_login">Логин или email</string>
     <string name="auth_password">Пароль</string>
     <string name="auth_signin">Войти</string>
     <string name="auth_skip">Пропустить</string>

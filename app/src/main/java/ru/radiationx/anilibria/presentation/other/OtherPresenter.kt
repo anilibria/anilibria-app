@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
@@ -46,9 +47,9 @@ class OtherPresenter(
                 MENU_HISTORY,
                 MENU_TEAM,
                 //MENU_BID,
-                MENU_DONATE,
-                MENU_ABOUT_ANILIB,
-                MENU_RULES
+                MENU_DONATE
+                //MENU_ABOUT_ANILIB,
+                //MENU_RULES
         )
 
         val GROUP_SYSTEM = arrayOf(MENU_SETTINGS)
@@ -187,7 +188,7 @@ class OtherPresenter(
                 Utils.externalLink("https://discordapp.com/invite/anilibria")
             }
             MENU_SITE_ANILIB -> {
-                Utils.externalLink("https://anilibria.tv/")
+                Utils.externalLink(Api.SITE_URL)
             }
         }
     }

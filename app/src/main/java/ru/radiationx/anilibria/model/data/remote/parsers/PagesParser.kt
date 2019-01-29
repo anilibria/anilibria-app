@@ -9,7 +9,7 @@ import java.util.regex.Pattern
  */
 class PagesParser(private val apiUtils: IApiUtils) {
 
-    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?libria_static_page[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?(?:<\\/?br[^>]*?>[^<]*?)?(?=<div[^>]*?class=\"[^\"]*?libria_static_page[^\"]*?\"[^>]*?>|<\\/article>)"
+    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div class=\"clear\">"
     private val titlePatternSource = "<title>([\\s\\S]*?)<\\/title>"
 
     private val pagePattern: Pattern by lazy {

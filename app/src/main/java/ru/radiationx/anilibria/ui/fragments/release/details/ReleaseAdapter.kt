@@ -2,6 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -56,6 +59,12 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             addDelegate(DividerShadowItemDelegate())
             addDelegate(VitalWebItemDelegate(true))
             addDelegate(VitalNativeItemDelegate(true))
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return super.onCreateViewHolder(parent, viewType)?.also {
+            Log.e("kukusik", "onCreateViewHolder $viewType")
         }
     }
 

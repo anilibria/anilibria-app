@@ -3,18 +3,19 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import org.json.JSONArray
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.FastSearchItem
+import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 
 class SearchParser(private val apiUtils: IApiUtils) {
 
-    fun fastSearch(jsonResponse: JSONArray): List<FastSearchItem> {
-        val result: MutableList<FastSearchItem> = mutableListOf()
+    fun fastSearch(jsonResponse: JSONArray): List<SuggestionItem> {
+        val result: MutableList<SuggestionItem> = mutableListOf()
         for (i in 0 until jsonResponse.length()) {
             val jsonItem = jsonResponse.getJSONObject(i)
-            val item = FastSearchItem()
+            val item = SuggestionItem()
 
             item.id = jsonItem.getInt("id")
             item.code = jsonItem.getString("code")

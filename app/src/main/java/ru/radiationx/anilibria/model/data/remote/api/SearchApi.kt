@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.FastSearchItem
+import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
@@ -38,7 +38,7 @@ class SearchApi(
                 .map { searchParser.years(it) }
     }
 
-    fun fastSearch(name: String): Single<List<FastSearchItem>> {
+    fun fastSearch(name: String): Single<List<SearchItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "search",
                 "search" to name,

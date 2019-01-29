@@ -67,18 +67,6 @@ class SearchPresenter(
         return currentPage == START_PAGE
     }
 
-    fun fastSearch(query: String) {
-        searchRepository
-                .fastSearch(query)
-                .subscribe({ searchItems ->
-                    Log.d("S_DEF_LOG", "subscribe call show")
-                    viewState.showFastItems(searchItems)
-                }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
-    }
-
     private fun loadGenres() {
         searchRepository
                 .getGenres()

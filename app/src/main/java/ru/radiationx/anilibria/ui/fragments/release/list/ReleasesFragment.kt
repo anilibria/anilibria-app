@@ -13,17 +13,14 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
 import com.lapism.searchview.SearchView
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.search.FastSearchItem
+import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -51,7 +48,10 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     private val appThemeHolder = App.injections.appThemeHolder
     private var currentAppTheme: AppThemeHolder.AppTheme = appThemeHolder.getTheme()
 
-    private val searchAdapter = FastSearchAdapter().apply {
+    private val searchAdapter = FastSearchAdapter {
+        searchView?.close(true)
+        searchPresenter.onItemClick(it)
+    }.apply {
         setHasStableIds(true)
     }
     private var searchView: SearchView? = null
@@ -115,7 +115,6 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
-
         coordinator_layout.addView(searchView)
         searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
             width = CoordinatorLayout.LayoutParams.MATCH_PARENT
@@ -129,7 +128,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             close(false)
             setVoice(false)
-            setShadow(false)
+            setShadow(true)
             setDivider(true)
             setTheme(when (currentAppTheme) {
                 AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
@@ -184,8 +183,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     }
 
     /* FastSearchView */
-    override fun showSearchItems(items: List<FastSearchItem>, query: String) {
-        searchAdapter.bindItems(items, query)
+    override fun showSearchItems(items: List<SearchItem>) {
+        searchAdapter.bindItems(items)
     }
 
     override fun setSearchProgress(isProgress: Boolean) {

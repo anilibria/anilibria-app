@@ -129,6 +129,9 @@ class ReleasePresenter(
         if (releaseId == -1) {
             return
         }
+        if (true) {
+            return
+        }
         currentPageComment = page
         releaseRepository
                 .getComments(releaseId, currentPageComment)

@@ -10,20 +10,19 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/item_poster"
+        android:id="@+id/item_image"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
-        android:background="#1000"
-        android:scaleType="centerCrop"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="350:500"
         app:layout_constraintEnd_toStartOf="@id/item_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_max="40dp" />
 
     <TextView
         android:id="@+id/item_title"

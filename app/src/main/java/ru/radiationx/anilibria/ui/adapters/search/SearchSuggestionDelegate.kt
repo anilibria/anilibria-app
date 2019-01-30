@@ -27,7 +27,7 @@ class SearchSuggestionDelegate(
         private val clickListener: (SearchItem) -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =items[position] is SearchSuggestionListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is SearchSuggestionListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         (items[position] as SearchSuggestionListItem).also {
@@ -47,12 +47,12 @@ class SearchSuggestionDelegate(
             view.setOnClickListener {
                 clickListener.invoke(currentItem)
             }
+            view.item_image.scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
         fun bind(item: SuggestionItem) {
             currentItem = item
             view.run {
-                item_image.scaleType = ImageView.ScaleType.CENTER
                 ImageLoader.getInstance().cancelDisplayTask(item_image)
                 ImageLoader.getInstance().displayImage(item.poster, item_image)
                 val title = item.names.joinToString(" / ")

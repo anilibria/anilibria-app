@@ -43,12 +43,12 @@ class SearchDelegate(
             view.setOnClickListener {
                 clickListener.invoke(currentItem)
             }
+            view.item_image.scaleType = ImageView.ScaleType.CENTER
         }
 
         fun bind(item: SearchItem) {
             currentItem = item
             view.apply {
-                item_image.scaleType = ImageView.ScaleType.CENTER
                 item_image.setImageDrawable(ContextCompat.getDrawable(context, item.icRes))
                 ImageViewCompat.setImageTintList(item_image, ColorStateList.valueOf(context.getColorFromAttr(R.attr.base_icon)))
                 item_title.text = item.title

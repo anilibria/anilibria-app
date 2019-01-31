@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
 
@@ -33,5 +35,12 @@ class PagesParser(private val apiUtils: IApiUtils) {
         }
         result.content = content
         return result
+    }
+
+    fun parseVkComments(jsonResponse: JSONObject): VkComments {
+        return VkComments(
+                jsonResponse.getString("baseUrl"),
+                jsonResponse.getString("script")
+        )
     }
 }

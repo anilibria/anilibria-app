@@ -25,6 +25,7 @@ class ReleasePresenter(
         private val releaseRepository: ReleaseRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
+        private val pageRepository: PageRepository,
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
         private val favoriteRepository: FavoriteRepository,
@@ -74,6 +75,15 @@ class ReleasePresenter(
         //loadComments(currentPageComment)
         loadVital()
         subscribeAuth()
+
+        pageRepository
+                .getComments()
+                .subscribe({
+                    viewState.showArticle(it)
+                },{
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
     }
 
     private var currentAuthState = authRepository.getAuthState()

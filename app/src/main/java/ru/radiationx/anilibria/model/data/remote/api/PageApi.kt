@@ -1,8 +1,11 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.PagesParser
@@ -34,5 +37,14 @@ class PageApi(
         val args: Map<String, String> = emptyMap()
         return client.get("${Api.BASE_URL}/$pageId", args)
                 .map { pagesParser.baseParse(it) }
+    }
+
+    fun getComments(): Single<VkComments> {
+        val args: Map<String, String> = mapOf(
+                "query" to "vkcomments"
+        )
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
+                .map { pagesParser.parseVkComments(it) }
     }
 }

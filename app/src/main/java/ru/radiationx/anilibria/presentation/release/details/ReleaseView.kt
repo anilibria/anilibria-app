@@ -4,6 +4,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -20,6 +21,9 @@ interface ReleaseView : IBaseView {
     fun updateFavCounter()
 
     fun showRelease(release: ReleaseFull)
+
+    fun showArticle(article: VkComments)
+
 
     @StateStrategyType(AddToEndStrategy::class)
     fun showComments(comments: List<Comment>)

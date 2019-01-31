@@ -15,20 +15,26 @@ import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
+import android.widget.ViewSwitcher
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nightlynexus.viewstatepageradapter.ViewStatePagerAdapter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.dialog_file_download.view.*
+import kotlinx.android.synthetic.main.fragment_article.view.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
@@ -37,12 +43,17 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.generateWithTheme
+import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
@@ -52,6 +63,7 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
+import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -59,7 +71,9 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import java.lang.Math.pow
 import java.net.URLConnection
+import java.nio.charset.StandardCharsets
 import java.text.DecimalFormat
+import java.util.ArrayList
 import java.util.regex.Pattern
 import kotlin.math.floor
 import kotlin.math.log
@@ -102,6 +116,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             App.injections.releaseRepository,
             App.injections.releaseInteractor,
             App.injections.historyRepository,
+            App.injections.pageRepository,
             App.injections.vitalRepository,
             App.injections.authRepository,
             App.injections.favoriteRepository,
@@ -653,7 +668,22 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
         }
     }
 
+    override fun showArticle(article: VkComments) {
+        viewPagerAdapter.showArticle(article)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewPagerAdapter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewPagerAdapter.onPause()
+    }
+
     override fun onDestroyView() {
+        viewPagerAdapter.onDestroyView()
         toolbarHelperDisposable?.dispose()
         toolbarHelperDisposable = null
         super.onDestroyView()
@@ -663,10 +693,19 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
     private inner class CustomPagerAdapter(
             private val releaseAdapter: ReleaseAdapter,
             private val commentsAdapter: CommentsAdapter
-    ) : ViewStatePagerAdapter() {
+    ) : ViewStatePagerAdapter(), ExtendedWebView.JsLifeCycleListener  {
 
-        private val views = arrayOf(R.layout.fragment_release/*, R.layout.fragment_comments*/)
+        private val views = arrayOf(R.layout.fragment_release/*, R.layout.fragment_comments*/, R.layout.fragment_article)
         private var localCommentsRootLayout: ViewGroup? = null
+
+        private var localWebView: ExtendedWebView? = null
+        var webViewScrollPos = 0
+
+        private val webViewCallCache = mutableListOf<Runnable>()
+
+        private val appThemeHolder = App.injections.appThemeHolder
+        private val disposables = CompositeDisposable()
+        private var localProgressSwitcher: ViewSwitcher? = null
 
         override fun createView(container: ViewGroup, position: Int): View {
             val inflater: LayoutInflater = LayoutInflater.from(container.context)
@@ -675,12 +714,21 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
             if (position == 0) {
                 createMain(layout)
             } else if (position == 1) {
-                createComments(layout)
+                createVkComments(layout)
             }
             return layout
         }
 
         override fun getCount(): Int = views.size
+
+        override fun destroyView(container: ViewGroup?, position: Int, view: View?) {
+            super.destroyView(container, position, view)
+            if (position == 1) {
+                localWebView = null
+                localProgressSwitcher = null
+                disposables.clear()
+            }
+        }
 
         private fun createMain(layout: ViewGroup) {
             layout.run {
@@ -689,6 +737,37 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     adapter = this@CustomPagerAdapter.releaseAdapter
                     layoutManager = LinearLayoutManager(this.context)
                 }
+            }
+        }
+
+        private fun createVkComments(layout: ViewGroup) {
+            layout.run {
+                localWebView = webView
+                localWebView?.let {
+
+                    it.webViewClient = object : WebViewClient() {
+                        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                            val handled = presenter.onClickLink(url.orEmpty())
+                            if (!handled) {
+                                Utils.externalLink(url.orEmpty())
+                            }
+                            return true
+                        }
+                    }
+                    it.setJsLifeCycleListener(this@CustomPagerAdapter)
+                    val template = App.instance.staticPageTemplate
+                    it.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
+                }
+
+                localProgressSwitcher = progressSwitcher
+
+                disposables.add(
+                        appThemeHolder
+                                .observeTheme()
+                                .subscribe {
+                                    localWebView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                                }
+                )
             }
         }
 
@@ -758,6 +837,73 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver, Releas
                     it.setSelection(it.text.length)
                 }
             }, 500)
+        }
+
+
+
+
+
+
+
+        fun getWebViewScroll(): Int = localWebView?.scrollY ?: 0
+
+
+        fun onResume() {
+            localWebView?.onResume()
+        }
+
+        fun onPause() {
+            localWebView?.onPause()
+        }
+
+        fun onDestroyView() {
+            localWebView = null
+            localProgressSwitcher = null
+        }
+
+        override fun onDomContentComplete(actions: ArrayList<String>) {
+
+        }
+
+        override fun onPageComplete(actions: ArrayList<String>) {
+            localWebView?.syncWithJs {
+                localWebView?.scrollTo(0, webViewScrollPos)
+            }
+        }
+
+        fun setRefreshing(refreshing: Boolean) {
+            webViewCallCache.add(Runnable {
+                localProgressSwitcher?.displayedChild = if (refreshing) 1 else 0
+            })
+            tryRunCache()
+        }
+
+        fun showArticle(article: VkComments) {
+
+            val template = App.instance.staticPageTemplate
+            localWebView?.easyLoadData(article.baseUrl, article.script)
+
+            /*webViewCallCache.add(Runnable {
+                localWebView?.evalJs("ViewModel.setText('content','${convert(article.script)}');")
+            })
+            tryRunCache()*/
+        }
+
+        private fun convert(string: String): String {
+            return Base64.encodeToString(string.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        }
+
+        private fun tryRunCache() {
+            if (localWebView != null) {
+                webViewCallCache.forEach { call ->
+                    try {
+                        localWebView?.syncWithJs(call)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+                webViewCallCache.clear()
+            }
         }
     }
 }

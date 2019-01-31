@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import java.util.*
 
-class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+class ReleaseInfoAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
 
     companion object {
         val TYPE_HEAD = Pair(1, 1)

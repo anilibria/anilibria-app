@@ -12,19 +12,38 @@ import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.utils.mvp.IBaseView
 
-/* Created by radiationx on 18.11.17. */
-
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ReleaseView : IBaseView {
+interface ReleaseInfoView: IBaseView {
+    fun showVitalItems(vital: List<VitalItem>)
+
+    fun updateFavCounter()
 
     fun showRelease(release: ReleaseFull)
 
     @StateStrategyType(SkipStrategy::class)
-    fun shareRelease(text: String)
+    fun loadTorrent(torrent: TorrentItem)
 
     @StateStrategyType(SkipStrategy::class)
-    fun copyLink(url: String)
+    fun showTorrentDialog(torrents: List<TorrentItem>)
 
     @StateStrategyType(SkipStrategy::class)
-    fun addShortCut(release: ReleaseItem)
+    fun playEpisodes(release: ReleaseFull)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun playWeb(link: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showFavoriteDialog()
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showDownloadDialog(url: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showFileDonateDialog(url: String)
 }

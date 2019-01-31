@@ -29,7 +29,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     protected open val needToolbarShadow = true
 
     @LayoutRes
-    protected abstract fun getLayoutResource(): Int
+    protected open fun getLayoutResource(): Int = View.NO_ID
 
     @LayoutRes
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
@@ -63,25 +63,24 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     }
 
     open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
-        toolbar?.layoutParams = (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).apply {
+        toolbar?.layoutParams = (toolbar?.layoutParams as CollapsingToolbarLayout.LayoutParams?)?.apply {
             topMargin = dimensions.statusBar
         }
-        toolbar?.requestLayout()
     }
 
     fun setStatusBarColor(color: Int) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             return
         }
-        baseStatusBar.setBackgroundColor(color)
+        baseStatusBar?.setBackgroundColor(color)
     }
 
     fun setStatusBarVisibility(isVisible: Boolean) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            baseStatusBar.visibility = View.GONE
+            baseStatusBar?.visibility = View.GONE
             return
         }
-        baseStatusBar.visibility = if (isVisible) View.VISIBLE else View.GONE
+        baseStatusBar?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     protected fun hideSoftwareKeyboard() {

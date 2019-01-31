@@ -74,13 +74,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         args?.also { bundle ->
             bundle.getInt(ARG_ID, -1).let { presenter.releaseId = it }
             bundle.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
-            bundle.getSerializable(ARG_ITEM)?.let {
-                if (it is ReleaseFull) {
-                    presenter.setLoadedData(it)
-                } else if (it is ReleaseItem) {
-                    presenter.setCurrentData(it)
-                }
-            }
         }
     }
 
@@ -99,7 +92,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         super.onSaveInstanceState(outState)
         outState.putInt(ARG_ID, presenter.releaseId)
         outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
-        outState.putSerializable(ARG_ITEM, presenter.currentData)
     }
 
     override fun onBackPressed(): Boolean {

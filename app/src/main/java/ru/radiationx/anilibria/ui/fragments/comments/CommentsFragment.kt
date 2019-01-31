@@ -47,6 +47,7 @@ class CommentsFragment : BaseFragment(), CommentsView {
     @ProvidePresenter
     fun providePresenter(): CommentsPresenter = CommentsPresenter(
             App.injections.releaseRepository,
+            App.injections.commentsRepository,
             App.injections.releaseInteractor,
             App.injections.historyRepository,
             App.injections.authRepository,

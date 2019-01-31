@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
@@ -18,7 +19,7 @@ import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class ReleasesPresenter(
-        private val releaseRepository: ReleaseRepository,
+        private val releaseInteractor: ReleaseInteractor,
         private val vitalRepository: VitalRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
@@ -85,8 +86,8 @@ class ReleasesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository
-                .getReleases(pageNum)
+        releaseInteractor
+                .loadReleases(pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(!releaseItems.isEnd())

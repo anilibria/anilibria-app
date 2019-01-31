@@ -72,7 +72,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
 
     @ProvidePresenter
     fun provideReleasesPresenter(): ReleasesPresenter = ReleasesPresenter(
-            App.injections.releaseRepository,
+            App.injections.releaseInteractor,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).getRouter(),
             App.injections.errorHandler,

@@ -68,15 +68,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
-            App.injections.releaseRepository,
             App.injections.releaseInteractor,
             App.injections.historyRepository,
-            App.injections.pageRepository,
-            App.injections.vitalRepository,
-            App.injections.authRepository,
-            App.injections.favoriteRepository,
             (parentFragment as RouterProvider).getRouter(),
-            App.injections.linkHandler,
             App.injections.errorHandler
     )
 
@@ -97,16 +91,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         val args = savedInstanceState ?: arguments
-        args?.let {
-            it.getInt(ARG_ID, -1).let { presenter.releaseId = it }
-            it.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
-            it.getSerializable(ARG_ITEM)?.let {
-                if (it is ReleaseFull) {
-                    presenter.setLoadedData(it)
-                } else if (it is ReleaseItem) {
-                    presenter.setCurrentData(it)
-                }
-            }
+        args?.also { bundle ->
+            bundle.getInt(ARG_ID, -1).let { presenter.releaseId = it }
+            bundle.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
         }
     }
 
@@ -179,7 +166,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         super.onSaveInstanceState(outState)
         outState.putInt(ARG_ID, presenter.releaseId)
         outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
-        outState.putSerializable(ARG_ITEM, presenter.currentData)
     }
 
     override fun onBackPressed(): Boolean {
@@ -235,8 +221,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     private inner class CustomPagerAdapter() : FragmentStatePagerAdapter(childFragmentManager) {
 
         private val fragments = listOf<Fragment>(
-                ReleaseInfoFragment(),
-                CommentsFragment()
+                ReleaseInfoFragment()/*,
+                CommentsFragment()*/
         )
 
         init {

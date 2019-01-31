@@ -16,6 +16,7 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class CommentsPresenter(
         private val releaseRepository: ReleaseRepository,
+        private val commentsRepository: CommentsRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val authRepository: AuthRepository,
@@ -61,7 +62,7 @@ class CommentsPresenter(
 
     private fun loadRelease() {
         Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
-        releaseInteractor
+        /*releaseInteractor
                 .observeRelease(releaseId, releaseIdCode)
                 .doOnSubscribe { viewState.setRefreshing(true) }
                 .subscribe({ release ->
@@ -76,7 +77,7 @@ class CommentsPresenter(
                 }) {
                     errorHandler.handle(it)
                 }
-                .addToDisposable()
+                .addToDisposable()*/
     }
 
     private fun loadComments(page: Int) {
@@ -84,8 +85,8 @@ class CommentsPresenter(
             return
         }
         currentPageComment = page
-        releaseRepository
-                .getComments(releaseId, currentPageComment)
+        commentsRepository
+                .getCommentsRelease(releaseId, currentPageComment)
                 .doOnTerminate { viewState.setRefreshing(true) }
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ comments ->
@@ -138,8 +139,8 @@ class CommentsPresenter(
             return
         }
         currentData?.let { release ->
-            releaseRepository
-                    .sendComment(release.code.orEmpty(), release.id, text, "")
+            commentsRepository
+                    .sendCommentRelease(release.code.orEmpty(), release.id, text, "")
                     .subscribe({ comments ->
                         viewState.onCommentSent()
                         currentPageComment = START_PAGE

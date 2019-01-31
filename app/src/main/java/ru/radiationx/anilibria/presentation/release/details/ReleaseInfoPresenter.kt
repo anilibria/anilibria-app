@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -33,34 +32,20 @@ class ReleaseInfoPresenter(
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseInfoView>(router) {
 
-    var currentData: ReleaseFull? = null
+    private var currentData: ReleaseFull? = null
     var releaseId = -1
     var releaseIdCode: String? = null
-    private var currentAuthState = authRepository.getAuthState()
-
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
+        releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
+            updateLocalRelease(ReleaseFull(it))
+        }
+        observeRelease()
         loadRelease()
-        //loadComments(currentPageComment)
         loadVital()
         subscribeAuth()
-    }
-
-
-    fun setCurrentData(item: ReleaseItem) {
-        currentData = ReleaseFull(item)
-        currentData?.let {
-            viewState.showRelease(it)
-        }
-    }
-
-    fun setLoadedData(data: ReleaseFull) {
-        currentData = data
-        currentData?.let {
-            viewState.showRelease(it)
-        }
     }
 
     fun getQuality() = releaseInteractor.getQuality()
@@ -75,11 +60,10 @@ class ReleaseInfoPresenter(
     private fun subscribeAuth() {
         authRepository
                 .observeUser()
+                .distinctUntilChanged()
+                .skip(1)
                 .subscribe {
-                    if (currentAuthState != it.authState) {
-                        currentAuthState = it.authState
-                        loadRelease()
-                    }
+                    loadRelease()
                 }
                 .addToDisposable()
     }
@@ -98,21 +82,36 @@ class ReleaseInfoPresenter(
     }
 
     private fun loadRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
-                .observeRelease(releaseId, releaseIdCode)
+                .loadRelease(releaseId, releaseIdCode)
                 .doOnSubscribe { viewState.setRefreshing(true) }
                 .subscribe({ release ->
-                    releaseIdCode = release.code
-                    Log.d("S_DEF_LOG", "subscribe call show")
-                    viewState.showRelease(release)
                     viewState.setRefreshing(false)
-                    currentData = release
                     historyRepository.putRelease(release as ReleaseItem)
+                }) {
+                    viewState.setRefreshing(false)
+                    errorHandler.handle(it)
+                }
+                .addToDisposable()
+    }
+
+    private fun observeRelease() {
+        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
+        releaseInteractor
+                .observeFull(releaseId, releaseIdCode)
+                .subscribe({ release ->
+                    updateLocalRelease(release)
                 }) {
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    private fun updateLocalRelease(release: ReleaseFull) {
+        currentData = release
+        releaseId = release.id
+        releaseIdCode = release.code
+        viewState.showRelease(release)
     }
 
     fun markEpisodeViewed(episode: ReleaseFull.Episode) {

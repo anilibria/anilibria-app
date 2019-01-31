@@ -220,7 +220,7 @@ class App : Application() {
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi, commentApi)
-        val releaseRepository = ReleaseRepository(schedulers, releaseApi, commentApi, genresHolder, releaseUpdateStorage)
+        val releaseRepository = ReleaseRepository(schedulers, releaseApi, releaseUpdateStorage)
         val searchRepository = SearchRepository(schedulers, searchApi, genresHolder, yearsHolder, releaseUpdateStorage)
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)
@@ -228,6 +228,7 @@ class App : Application() {
         val historyRepository = HistoryRepository(schedulers, historyStorage)
         val favoriteRepository = FavoriteRepository(schedulers, favoriteApi)
         val youtubeRepository = YoutubeRepository(schedulers, youtubeApi)
+        val commentsRepository = CommentsRepository(schedulers, commentApi)
 
         val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage, appPreferences, schedulers)
     }

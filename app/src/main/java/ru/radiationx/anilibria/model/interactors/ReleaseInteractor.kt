@@ -1,12 +1,18 @@
 package ru.radiationx.anilibria.model.interactors
 
+import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import java.lang.Exception
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by radiationx on 17.02.18.
@@ -18,6 +24,112 @@ class ReleaseInteractor(
         private val schedulers: SchedulersProvider
 ) {
 
+    private val checkerCombiner = BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { release, savedEpisodes ->
+        savedEpisodes.filter { it.releaseId == release.id }.forEach { localEpisode ->
+            release.episodes.firstOrNull { it.id == localEpisode.id }?.also {
+                it.isViewed = localEpisode.isViewed
+                it.seek = localEpisode.seek
+                it.lastAccess = localEpisode.lastAccess
+            }
+        }
+        release
+    }
+
+    private val fullLoadCacheById = ConcurrentHashMap<Int, Observable<ReleaseFull>>()
+    private val fullLoadCacheByCode = ConcurrentHashMap<String, Observable<ReleaseFull>>()
+
+    private val releaseItemsById = mutableMapOf<Int, ReleaseItem>()
+    private val releaseItemsByCode = mutableMapOf<String, ReleaseItem>()
+
+    private val releasesById = mutableMapOf<Int, ReleaseFull>()
+    private val releasesByCode = mutableMapOf<String, ReleaseFull>()
+
+    private val itemsUpdateTrigger = PublishRelay.create<Boolean>()
+    private val fullUpdateTrigger = PublishRelay.create<Boolean>()
+
+    private fun loadRelease(releaseId: Int): Observable<ReleaseFull> = releaseRepository
+            .getRelease(releaseId)
+            .doOnSuccess(this::updateFullCache)
+            .doFinally { fullLoadCacheById.remove(releaseId) }
+            .toObservable()
+            .share()
+            .replay()
+            .autoConnect(1)
+            .also { fullLoadCacheById[releaseId] = it }
+
+    private fun loadRelease(releaseCode: String): Observable<ReleaseFull> = releaseRepository
+            .getRelease(releaseCode)
+            .doOnSuccess(this::updateFullCache)
+            .doFinally { fullLoadCacheByCode.remove(releaseCode) }
+            .toObservable()
+            .share()
+            .replay()
+            .autoConnect(1)
+            .also { fullLoadCacheByCode[releaseCode] = it }
+
+    fun loadRelease(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseFull> {
+        (fullLoadCacheById[releaseId] ?: fullLoadCacheByCode[releaseCode])?.also {
+            return it
+        }
+        return when {
+            releaseId != 0 -> loadRelease(releaseId)
+            releaseCode != null -> loadRelease(releaseCode)
+            else -> Observable.error(Exception("Unknown id=$releaseId or code=$releaseCode"))
+        }
+    }
+
+    fun loadReleases(page: Int): Single<Paginated<List<ReleaseItem>>> = releaseRepository
+            .getReleases(page)
+            .doOnSuccess { updateItemsCache(it.data) }
+
+    fun getItem(releaseId: Int = 0, releaseCode: String? = null): ReleaseItem? {
+        return releaseItemsById[releaseId] ?: releaseItemsByCode[releaseCode]
+    }
+
+    fun getFull(releaseId: Int = 0, releaseCode: String? = null): ReleaseFull? {
+        return releasesById[releaseId] ?: releasesByCode[releaseCode]
+    }
+
+    fun observeItem(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseItem> = Observable
+            .just("")
+            .filter { getItem(releaseId, releaseCode) != null }
+            .map { getItem(releaseId, releaseCode)!! }
+            .repeatWhen { itemsUpdateTrigger }
+
+    fun observeFull(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseFull> = Observable
+            .combineLatest(
+                    createFullObservable(releaseId, releaseCode),
+                    episodesCheckerStorage.observeEpisodes(),
+                    checkerCombiner
+            )
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    private fun createFullObservable(releaseId: Int = 0, releaseCode: String? = null) = Observable
+            .just("")
+            .filter { getFull(releaseId, releaseCode) != null }
+            .map { getFull(releaseId, releaseCode)!! }
+            .repeatWhen { fullUpdateTrigger }
+
+    private fun updateItemsCache(items: List<ReleaseItem>) {
+        items.forEach { release ->
+            releaseItemsById[release.id] = release
+            release.code?.also { code ->
+                releaseItemsByCode[code] = release
+            }
+        }
+        itemsUpdateTrigger.accept(true)
+    }
+
+    private fun updateFullCache(release: ReleaseFull) {
+        releasesById[release.id] = release
+        release.code?.also { code ->
+            releasesByCode[code] = release
+        }
+        fullUpdateTrigger.accept(true)
+    }
+
+    /* Common */
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
 
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
@@ -40,30 +152,5 @@ class ReleaseInteractor(
 
     fun setPIPControl(value: Int) {
         preferencesHolder.pipControl = value
-    }
-
-    fun observeRelease(id: Int, idCode: String?): Observable<ReleaseFull> {
-        val source = when {
-            id != -1 -> releaseRepository.getRelease(id)
-            idCode != null -> releaseRepository.getRelease(idCode)
-            else -> return Observable.error(Exception("Wtf brou?!"))
-        }
-        return Observable
-                .combineLatest(
-                        source,
-                        episodesCheckerStorage.observeEpisodes(),
-                        BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { t1, t2 ->
-                            t2.filter { it.releaseId == t1.id }.forEach { localEpisode ->
-                                t1.episodes.firstOrNull { it.id == localEpisode.id }?.let {
-                                    it.isViewed = localEpisode.isViewed
-                                    it.seek = localEpisode.seek
-                                    it.lastAccess = localEpisode.lastAccess
-                                }
-                            }
-                            t1
-                        }
-                )
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
     }
 }

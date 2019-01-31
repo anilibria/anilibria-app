@@ -1,78 +1,69 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.os.Bundle
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
 class ReleasePresenter(
-        private val releaseRepository: ReleaseRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
-        private val pageRepository: PageRepository,
-        private val vitalRepository: VitalRepository,
-        private val authRepository: AuthRepository,
-        private val favoriteRepository: FavoriteRepository,
         private val router: Router,
-        private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseView>(router) {
 
-    var currentData: ReleaseFull? = null
+    private var currentData: ReleaseFull? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
-    fun setCurrentData(item: ReleaseItem) {
-        currentData = ReleaseFull(item)
-        currentData?.let {
-            viewState.showRelease(it)
-        }
-    }
-
-    fun setLoadedData(data: ReleaseFull) {
-        currentData = data
-        currentData?.let {
-            viewState.showRelease(it)
-        }
-    }
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
+            updateLocalRelease(ReleaseFull(it))
+        }
+        observeRelease()
         loadRelease()
     }
 
     private fun loadRelease() {
+        releaseInteractor
+                .loadRelease(releaseId, releaseIdCode)
+                .doOnSubscribe { viewState.setRefreshing(true) }
+                .subscribe({
+                    viewState.setRefreshing(false)
+                    historyRepository.putRelease(it as ReleaseItem)
+                }, {
+                    viewState.setRefreshing(false)
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
+    }
+
+    private fun observeRelease() {
         Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
-                .observeRelease(releaseId, releaseIdCode)
-                .doOnSubscribe { viewState.setRefreshing(true) }
+                .observeFull(releaseId, releaseIdCode)
                 .subscribe({ release ->
-                    releaseIdCode = release.code
-                    Log.d("S_DEF_LOG", "subscribe call show")
-                    viewState.showRelease(release)
-                    viewState.setRefreshing(false)
-                    currentData = release
+                    updateLocalRelease(release)
                     historyRepository.putRelease(release as ReleaseItem)
                 }) {
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    private fun updateLocalRelease(release: ReleaseFull) {
+        currentData = release
+        releaseId = release.id
+        releaseIdCode = release.code
+        viewState.showRelease(release)
     }
 
     fun onShareClick() {

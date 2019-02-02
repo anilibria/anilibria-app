@@ -90,8 +90,7 @@ class ReleaseInteractor(
         return releasesById[releaseId] ?: releasesByCode[releaseCode]
     }
 
-    fun observeItem(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseItem> = Observable
-            .just("")
+    fun observeItem(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseItem> = itemsUpdateTrigger
             .filter { getItem(releaseId, releaseCode) != null }
             .map { getItem(releaseId, releaseCode)!! }
             .repeatWhen { itemsUpdateTrigger }
@@ -105,8 +104,7 @@ class ReleaseInteractor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    private fun createFullObservable(releaseId: Int = 0, releaseCode: String? = null) = Observable
-            .just("")
+    private fun createFullObservable(releaseId: Int = 0, releaseCode: String? = null) = fullUpdateTrigger
             .filter { getFull(releaseId, releaseCode) != null }
             .map { getFull(releaseId, releaseCode)!! }
             .repeatWhen { fullUpdateTrigger }

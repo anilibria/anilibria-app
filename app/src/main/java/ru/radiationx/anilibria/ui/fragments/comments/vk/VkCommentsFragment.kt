@@ -97,8 +97,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         val cookieManager = CookieManager.getInstance()
 
         cookieManager.setAcceptCookie(true)
-        cookieManager.setAcceptThirdPartyCookies(webView, true)
-        Log.d("kukosina", "${cookieManager.acceptCookie()}, ${cookieManager.acceptThirdPartyCookies(webView)}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.setAcceptThirdPartyCookies(webView, true)
+        }
         /*val template = App.instance.staticPageTemplate
         webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))*/
 
@@ -116,6 +117,21 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         webView?.let {
             outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webView.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
+    override fun onDestroyView() {
+        webView.endWork()
+        super.onDestroyView()
     }
 
     override fun setRefreshing(refreshing: Boolean) {

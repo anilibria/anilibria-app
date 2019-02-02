@@ -61,6 +61,19 @@ class App : Application() {
 
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
+    lateinit var vkCommentsTemplate: MiniTemplator
+
+    val vkCommentCssFixLight: String by lazy {
+        assets.open("styles/vk_comments_fix_light.css").bufferedReader().use {
+            it.readText()
+        }
+    }
+
+    val vkCommentCssFixDark: String by lazy {
+        assets.open("styles/vk_comments_fix_dark.css").bufferedReader().use {
+            it.readText()
+        }
+    }
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
@@ -90,6 +103,8 @@ class App : Application() {
         injections = Injections(this, navigation.root.router)
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
+        findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
+
         initImageLoader(this)
         appVersionCheck()
     }

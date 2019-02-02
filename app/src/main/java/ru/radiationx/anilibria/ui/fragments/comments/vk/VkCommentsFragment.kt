@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 import android.webkit.WebView
+import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.utils.Utils
 
 
@@ -140,7 +141,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     override fun showBody(comments: VkComments) {
         if (webView.url != comments.baseUrl) {
-            val template = App.instance.staticPageTemplate
+            val template = App.instance.vkCommentsTemplate
             webView.easyLoadData(comments.baseUrl, template.generateWithTheme(appThemeHolder.getTheme()))
         }
         webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
@@ -193,10 +194,26 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
 
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-        override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-            //Log.d("S_DEF_LOG", "shouldInterceptRequest ${request?.requestHeaders?.toList()?.joinToString { "${it.first}=${it.second}" }}")
-            return super.shouldInterceptRequest(view, request)
+        override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
+            return if (url?.contains("widget_comments.css") == true) {
+                val client = App.injections.client
+                Log.d("S_DEF_LOG", "CHANGE CSS")
+                val cssSrc = client.get(url.orEmpty(), emptyMap()).blockingGet()
+                var newCss = cssSrc
+
+                val fixCss = if (appThemeHolder.getTheme().isDark()) {
+                    App.instance.vkCommentCssFixDark
+                } else {
+                    App.instance.vkCommentCssFixLight
+                }
+
+                newCss += fixCss
+
+                val newData = ByteArrayInputStream(newCss.toByteArray(StandardCharsets.UTF_8))
+                WebResourceResponse("text/css", "utf-8", newData)
+            } else {
+                super.shouldInterceptRequest(view, url)
+            }
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {

@@ -189,6 +189,7 @@ class App : Application() {
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         val userHolder: UserHolder = UserStorage(defaultPreferences)
+        val authHolder: AuthHolder = AuthStorage()
 
         val appThemeHolder: AppThemeHolder = preferencesStorage
 

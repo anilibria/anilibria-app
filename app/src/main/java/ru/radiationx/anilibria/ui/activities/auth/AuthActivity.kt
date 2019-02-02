@@ -13,10 +13,9 @@ import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
-import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
+import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
@@ -27,6 +26,11 @@ import ru.terrakok.cicerone.android.SupportAppNavigator
  * Created by radiationx on 30.12.17.
  */
 class AuthActivity : AppCompatActivity(), RouterProvider {
+
+    companion object {
+        const val ARG_INIT_SCREEN = "arg_screen"
+        const val ARG_SCREEN_EXTRA = "arg_screen_extra"
+    }
 
     override fun getRouter(): Router = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
@@ -39,6 +43,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
         setContentView(R.layout.activity_main)
+
 
         bottomShadow.visibility = View.GONE
         tabsRecycler.visibility = View.GONE
@@ -56,7 +61,9 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
                 dimensionsProvider.update(dimensions)
             }
         })
-        getRouter().newRootScreen(Screens.AUTH)
+
+        val initScreen = intent?.extras?.getString(ARG_INIT_SCREEN, null) ?: Screens.AUTH
+        getRouter().newRootScreen(initScreen, intent?.extras?.getBundle(ARG_SCREEN_EXTRA))
     }
 
     override fun onResumeFragments() {
@@ -81,9 +88,12 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
             override fun createFragment(screenKey: String?, data: Any?): Fragment? {
                 return when (screenKey) {
                     Screens.AUTH -> AuthFragment()
-                    Screens.AUTH_SOCIAL -> AuthSocialFragment().apply {
+                    Screens.AUTH_VK -> AuthVkFragment().apply {
                         arguments = Bundle().apply {
-                            putString(AuthSocialFragment.ARG_SOCIAL_URL, data as String)
+                            val extra = data as Bundle?
+                            extra?.also {
+                                putString(AuthVkFragment.ARG_URL, it.getString(AuthVkFragment.ARG_URL))
+                            }
                         }
                     }
                     else -> null

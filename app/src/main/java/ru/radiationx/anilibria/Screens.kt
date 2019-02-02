@@ -18,6 +18,7 @@ object Screens {
 
     const val AUTH = "AUTH"
     const val AUTH_SOCIAL = "AUTH_SOCIAL"
+    const val AUTH_VK = "AUTH_VK"
     const val MAIN = "MAIN"
     const val SETTINGS = "SETTINGS"
 

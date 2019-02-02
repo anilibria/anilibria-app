@@ -280,7 +280,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             return when (screenKey) {
                 Screens.AUTH -> {
                     Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
-                    Intent(this@MainActivity, AuthActivity::class.java)
+                    Intent(this@MainActivity, AuthActivity::class.java).apply {
+                        val screenExtra = (data as? Bundle?)
+                        putExtra(AuthActivity.ARG_INIT_SCREEN, screenExtra?.getString(AuthActivity.ARG_INIT_SCREEN))
+                        putExtra(AuthActivity.ARG_SCREEN_EXTRA, screenExtra?.getBundle(AuthActivity.ARG_SCREEN_EXTRA))
+                    }
                 }
                 else -> null
             }

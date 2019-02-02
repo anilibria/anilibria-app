@@ -118,7 +118,7 @@ class Client constructor(
 
         val body = getRequestBody(method, args)
 
-        var httpUrl: HttpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect")
+        var httpUrl: HttpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect: '$url'")
 
         if (method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->

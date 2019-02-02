@@ -116,6 +116,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public void easyLoadData(String baseUrl, String data) {
+        Log.d("kekeke", "easyLoadData " + baseUrl);
         loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
     }
 
@@ -188,8 +189,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     /*
-    * JS LIFECYCLE
-    * */
+     * JS LIFECYCLE
+     * */
 
     @Override
     @JavascriptInterface
@@ -282,8 +283,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     /*
-    * OVERRIDE CONTEXT MENU
-    * */
+     * OVERRIDE CONTEXT MENU
+     * */
 
     private OnStartActionModeListener actionModeListener;
 

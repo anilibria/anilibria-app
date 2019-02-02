@@ -32,6 +32,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.CommentsFragment
+import ru.radiationx.anilibria.ui.fragments.comments.vk.VkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
@@ -222,7 +223,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
 
         private val fragments = listOf<Fragment>(
                 ReleaseInfoFragment()/*,
-                CommentsFragment()*/
+                CommentsFragment()*/,
+                VkCommentsFragment()
         )
 
         init {

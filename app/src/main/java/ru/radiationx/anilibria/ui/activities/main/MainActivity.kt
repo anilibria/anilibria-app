@@ -53,9 +53,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     private val allTabs = arrayOf(
             Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MAIN_RELEASES),
-            Tab(R.string.fragment_title_videos, R.drawable.ic_star, Screens.FAVORITES),
-            Tab(R.string.fragment_title_blogs, R.drawable.ic_toolbar_search, Screens.RELEASES_SEARCH),
-            Tab(R.string.fragment_title_news, R.drawable.ic_news, Screens.MAIN_ARTICLES),
+            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.FAVORITES),
+            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.RELEASES_SEARCH),
+            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MAIN_YOUTUBE),
             Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
     )
     private val tabs = mutableListOf<Tab>()
@@ -280,7 +280,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             return when (screenKey) {
                 Screens.AUTH -> {
                     Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
-                    Intent(this@MainActivity, AuthActivity::class.java)
+                    Intent(this@MainActivity, AuthActivity::class.java).apply {
+                        val screenExtra = (data as? Bundle?)
+                        putExtra(AuthActivity.ARG_INIT_SCREEN, screenExtra?.getString(AuthActivity.ARG_INIT_SCREEN))
+                        putExtra(AuthActivity.ARG_SCREEN_EXTRA, screenExtra?.getBundle(AuthActivity.ARG_SCREEN_EXTRA))
+                    }
                 }
                 else -> null
             }

@@ -12,10 +12,8 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ProfileParser
  */
 class ProfileApi(
         private val client: IClient,
-        apiUtils: IApiUtils
+        private val profileParser: ProfileParser
 ) {
-
-    private val profileParser = ProfileParser(apiUtils)
 
     fun loadProfile(userId: Int): Single<Profile> {
         val args: MutableMap<String, String> = mutableMapOf()

@@ -12,19 +12,17 @@ import android.util.Log
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.centerCrop
 import ru.radiationx.anilibria.extension.createAvatar
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import kotlin.math.min
 
 object ShortcutHelper {
 
     fun addShortcut(data: ReleaseItem) {
-        ImageLoader.getInstance().loadImage(data.image, object : SimpleImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(data.poster, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val bmp = loadedImage.centerCrop(minSize, minSize).createAvatar(isCircle = true)
@@ -35,9 +33,9 @@ object ShortcutHelper {
 
     fun addShortcut(data: ReleaseItem, bitmap: Bitmap) = addShortcut(
             App.instance,
-            data.idName ?: "release_${data.id}",
-            (data.title ?: data.originalTitle).toString(),
-            "${data.title} / ${data.originalTitle}",
+            data.code ?: "release_${data.id}",
+            (data.title ?: data.titleEng).toString(),
+            data.names.joinToString(" / ") { it },
             data.link.orEmpty(),
             bitmap
     )

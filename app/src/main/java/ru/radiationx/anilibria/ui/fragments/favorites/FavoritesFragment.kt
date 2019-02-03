@@ -42,7 +42,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     @ProvidePresenter
     fun provideFavoritesPresenter(): FavoritesPresenter {
         return FavoritesPresenter(
-                App.injections.releaseRepository,
+                App.injections.favoriteRepository,
                 (parentFragment as RouterProvider).getRouter(),
                 App.injections.errorHandler
         )
@@ -133,6 +133,10 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
     override fun insertMore(releases: List<ReleaseItem>) {
         adapter.insertMore(releases)
+    }
+
+    override fun removeReleases(releases: List<ReleaseItem>) {
+        adapter.removeItems(releases)
     }
 
     override fun onLoadMore() {

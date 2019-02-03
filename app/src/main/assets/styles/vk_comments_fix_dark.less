@@ -1,0 +1,167 @@
+@import "config_dark";
+@popupBorder: @dividerLine;
+@popupBackground: @cardBackground;
+@popupEmojiBottomBg: lighten(@popupBackground, 10%);
+@inputFieldBg: rgba(255, 255, 255, 0.1);
+
+.wcomments_form {
+	background: @cardBackground  !important;
+	border-color: @dividerLine  !important;
+}
+
+#page_wrap {
+	background: @windowBackground  !important;
+	color: @textDefault  !important;
+	border-radius: 0;
+}
+
+.post_edit_settings_wrap:before {
+	background: @dividerLine  !important;
+}
+
+.eltt {
+	background: @popupBackground  !important;
+	border-color: @popupBorder  !important;
+}
+
+.emoji_tt_wrap {
+	background: @popupBackground  !important;
+	border-color: @popupBorder  !important;
+}
+
+.ui_actions_menu {
+	background: @popupBackground  !important;
+	border-color: @popupBorder  !important;
+}
+
+.ui_actions_menu:after {
+	border-bottom-color: @popupBackground  !important;
+}
+
+.ui_actions_menu_item:hover {
+	background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.emoji_tt_wrap.tt_down:after {
+	border-top-color: @popupEmojiBottomBg  !important;
+}
+
+.emoji_tt_wrap.tt_up:after {
+	border-bottom-color: @popupBackground  !important;
+}
+
+.ui_actions_menu:before {
+	border-bottom-color: @popupBorder  !important;
+}
+
+.emoji_tt_wrap.tt_down:before {
+	border-top-color: @popupBorder  !important;
+}
+
+.emoji_tt_wrap.tt_up:before {
+	border-bottom-color: @popupBorder  !important;
+}
+
+.emoji_cat_title {
+	background: @popupBackground  !important;
+}
+
+.emoji_tabs {
+	background: @popupEmojiBottomBg  !important;
+}
+
+.emoji_tabs_l_s,
+.emoji_tabs_r_s {
+	background: transparent !important;
+}
+
+.emoji_tabs_l_sc,
+.emoji_tabs_r_sc {
+	background: transparent !important;
+}
+
+.emoji_tab_sel,
+.emoji_tab_sel:hover {
+	background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.wcomments_post.reply_box_open .reply_box_inner_wrap .reply_box {
+	background: @inputFieldBg  !important;
+	border-color: @dividerLine  !important;
+}
+
+.wall_module .reply_fakebox {
+	background: @inputFieldBg  !important;
+	border-color: @dividerLine  !important;
+}
+
+.fakeinput,
+div[contenteditable=true],
+input.big_text,
+input.dark,
+input.search,
+input.text,
+textarea {
+	background: @inputFieldBg  !important;
+	border-color: @dividerLine  !important;
+}
+
+
+.wcomments_post .reply_box_inner_wrap .reply_fakebox,
+.wcomments_post .reply_box_inner_wrap .reply_field,
+.wcomments_post .reply_box_inner_wrap .reply_field ~ .placeholder .ph_input {
+	background: @inputFieldBg  !important;
+	border-color: @dividerLine  !important;
+}
+
+.wall_module .reply_box,
+.wall_module .reply_fakebox_wrap {
+	background: @windowBackground  !important;
+}
+
+.fakeinput,
+.fakeinput ~ .placeholder .ph_input,
+div[contenteditable=true],
+div[contenteditable=true] ~ .placeholder .ph_input,
+input.big_text,
+input.big_text ~ .placeholder .ph_input,
+input.dark,
+input.dark ~ .placeholder .ph_input,
+input.search,
+input.search ~ .placeholder .ph_input,
+input.text,
+input.text ~ .placeholder .ph_input,
+textarea,
+textarea ~ .placeholder .ph_input {
+	color: @textSecond  !important;
+}
+
+.submit_post {
+	background: transparent !important;
+}
+
+.ui_scroll_default_theme.ui_scroll_emoji_theme > .ui_scroll_overflow > .ui_scroll_shadow_bottom,
+.ui_scroll_default_theme.ui_scroll_emoji_theme > .ui_scroll_overflow > .ui_scroll_shadow_top {
+	background: none !important;
+}
+
+.ui_scroll_default_theme.ui_scroll_emoji_theme > .ui_scroll_overflow > .ui_scroll_shadow_bottom,
+.ui_scroll_default_theme.ui_scroll_emoji_theme > .ui_scroll_overflow > .ui_scroll_shadow_top {
+	background: none !important;
+}
+
+.emoji_cats_title_helper:after {
+	background: none !important;
+}
+
+.wall_module .reply_form {
+	background: transparent !important;
+}
+
+.flat_button.secondary {
+	background: @cardBackground !important;
+}
+
+.flat_button.secondary:hover {
+	background: lighten(@cardBackground, 10%) !important;
+}

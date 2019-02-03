@@ -1,23 +1,21 @@
 package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
+import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.Observable
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthStorage constructor(private val sharedPreferences: SharedPreferences) : AuthHolder {
+class AuthStorage constructor() : AuthHolder {
 
-    override fun getAuthState(): AuthState {
-        val savedState = sharedPreferences.getString("auth_state", AuthState.NO_AUTH.toString())
-        return AuthState.valueOf(savedState)
-    }
+    private val vkAuthRelay = PublishRelay.create<Boolean>()
 
-    override fun setAuthState(state: AuthState) {
-        sharedPreferences
-                .edit()
-                .putString("auth_state", state.toString())
-                .apply()
+    override fun observeVkAuthChange(): Observable<Boolean> = vkAuthRelay.hide()
+
+    override fun changeVkAuth(value: Boolean) {
+        vkAuthRelay.accept(value)
     }
 }

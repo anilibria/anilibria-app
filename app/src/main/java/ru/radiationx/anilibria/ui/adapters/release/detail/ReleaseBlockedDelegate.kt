@@ -31,11 +31,11 @@ class ReleaseBlockedDelegate() : AdapterDelegate<MutableList<ListItem>>() {
 
         fun bind(item: ReleaseFull) {
             view.run {
-                val defaultText = """
+                val defaultReason = """
                     <h4>Контент недоступен на территории Российской Федерации*. Приносим извинения за неудобства.</h4>
                     <br>
                     <span>Подробности смотрите в новостях или социальных сетях</span>""".trimIndent()
-                item_title.text = Html.fromHtml(item.contentBlocked ?: defaultText)
+                item_title.text = Html.fromHtml(item.blockedInfo.reason ?: defaultReason)
             }
         }
     }

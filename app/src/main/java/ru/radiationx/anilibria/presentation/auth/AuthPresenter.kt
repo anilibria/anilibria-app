@@ -28,7 +28,7 @@ class AuthPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        loadAuthPage()
+        //loadAuthPage()
     }
 
     fun socialClick(socialName: String) {

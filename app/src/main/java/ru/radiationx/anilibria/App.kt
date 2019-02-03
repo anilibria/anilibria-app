@@ -27,6 +27,7 @@ import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
+import ru.radiationx.anilibria.model.data.remote.parsers.*
 import ru.radiationx.anilibria.model.data.storage.*
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
@@ -60,6 +61,19 @@ class App : Application() {
 
     lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
+    lateinit var vkCommentsTemplate: MiniTemplator
+
+    val vkCommentCssFixLight: String by lazy {
+        assets.open("styles/vk_comments_fix_light.css").bufferedReader().use {
+            it.readText()
+        }
+    }
+
+    val vkCommentCssFixDark: String by lazy {
+        assets.open("styles/vk_comments_fix_dark.css").bufferedReader().use {
+            it.readText()
+        }
+    }
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
@@ -89,6 +103,8 @@ class App : Application() {
         injections = Injections(this, navigation.root.router)
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
+        findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
+
         initImageLoader(this)
         appVersionCheck()
     }
@@ -178,6 +194,7 @@ class App : Application() {
         val historyStorage: HistoryHolder = HistoryStorage(dataStoragePreferences)
         val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
+        val yearsHolder: YearsHolder = YearsStorage(dataStoragePreferences)
 
         val antiDdosInteractor = AntiDdosInteractor(schedulers)
 
@@ -187,28 +204,47 @@ class App : Application() {
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
         val userHolder: UserHolder = UserStorage(defaultPreferences)
+        val authHolder: AuthHolder = AuthStorage()
 
         val appThemeHolder: AppThemeHolder = preferencesStorage
 
         val client: IClient = Client(cookieHolder, userHolder, context, antiDdosErrorHandler)
         val apiUtils: IApiUtils = ApiUtils()
 
-        private val authApi = AuthApi(client, apiUtils)
-        private val articleApi = ArticleApi(client, apiUtils)
-        private val releaseApi = ReleaseApi(client, apiUtils)
-        private val searchApi = SearchApi(client, apiUtils)
-        private val pageApi = PageApi(client, apiUtils)
-        private val vitalApi = VitalApi(client, apiUtils)
-        private val checkerApi = CheckerApi(client, apiUtils)
+        private val articleParser = ArticleParser(apiUtils)
+        private val authParser = AuthParser(apiUtils)
+        private val checkerParser = CheckerParser(apiUtils)
+        private val commentParser = CommentParser(apiUtils)
+        private val favoriteParser = FavoriteParser(apiUtils)
+        private val pagesParser = PagesParser(apiUtils)
+        private val profileParser = ProfileParser(apiUtils)
+        private val releaseParser = ReleaseParser(apiUtils)
+        private val searchParser = SearchParser(apiUtils)
+        private val vitalParser = VitalParser(apiUtils)
+        private val youtubeParser = YoutubeParser(apiUtils)
+
+        private val articleApi = ArticleApi(client, articleParser)
+        private val authApi = AuthApi(client, authParser)
+        private val checkerApi = CheckerApi(client, checkerParser)
+        private val commentApi = CommentApi(client, commentParser)
+        private val favoriteApi = FavoriteApi(client, releaseParser)
+        private val releaseApi = ReleaseApi(client, releaseParser)
+        private val searchApi = SearchApi(client, releaseParser, searchParser)
+        private val pageApi = PageApi(client, pagesParser)
+        private val vitalApi = VitalApi(client, vitalParser)
+        private val youtubeApi = YoutubeApi(client, youtubeParser)
 
         val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
-        val articleRepository = ArticleRepository(schedulers, articleApi)
-        val releaseRepository = ReleaseRepository(schedulers, releaseApi, genresHolder, releaseUpdateStorage)
-        val searchRepository = SearchRepository(schedulers, searchApi, releaseUpdateStorage)
+        val articleRepository = ArticleRepository(schedulers, articleApi, commentApi)
+        val releaseRepository = ReleaseRepository(schedulers, releaseApi, releaseUpdateStorage)
+        val searchRepository = SearchRepository(schedulers, searchApi, genresHolder, yearsHolder, releaseUpdateStorage)
         val pageRepository = PageRepository(schedulers, pageApi)
         val vitalRepository = VitalRepository(schedulers, vitalApi)
         val checkerRepository = CheckerRepository(schedulers, checkerApi)
         val historyRepository = HistoryRepository(schedulers, historyStorage)
+        val favoriteRepository = FavoriteRepository(schedulers, favoriteApi)
+        val youtubeRepository = YoutubeRepository(schedulers, youtubeApi)
+        val commentsRepository = CommentsRepository(schedulers, commentApi)
 
         val releaseInteractor = ReleaseInteractor(releaseRepository, episodesCheckerStorage, appPreferences, schedulers)
     }

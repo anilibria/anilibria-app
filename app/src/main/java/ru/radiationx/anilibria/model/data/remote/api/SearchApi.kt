@@ -1,40 +1,69 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import org.json.JSONArray
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import ru.radiationx.anilibria.model.data.remote.parsers.SearchParser
 
 class SearchApi(
         private val client: IClient,
-        apiUtils: IApiUtils
+        private val releaseParser: ReleaseParser,
+        private val searchParser: SearchParser
 ) {
 
-    private val releaseParser = ReleaseParser(apiUtils)
-
-    fun fastSearch(query: String): Single<List<SearchItem>> {
+    fun getGenres(): Single<List<GenreItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "ajax_call" to "y",
-                "INPUT_ID" to "search-input-custom",
-                "q" to query,
-                "l" to "2"
+                "query" to "genres"
         )
-        return client.post(Api.BASE_URL, args)
-                .map { releaseParser.fastSearch(it) }
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { searchParser.genres(it) }
     }
 
-    fun searchReleases(name: String, genre: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
+    fun getYears(): Single<List<YearItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "search",
-                "genres" to genre,
-                "name" to name,
-                "PAGEN_1" to page.toString()
+                "query" to "years"
         )
-        return client.get(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { searchParser.years(it) }
+    }
+
+    fun fastSearch(name: String): Single<List<SearchItem>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "search",
+                "search" to name,
+                "filter" to "id,code,names,poster"
+        )
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { searchParser.fastSearch(it) }
+    }
+
+    fun searchReleases(genre: String, year: String, sort: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "catalog",
+                "search" to JSONObject().apply {
+                    put("genre", genre)
+                    put("year", year)
+                }.toString(),
+                "xpage" to "catalog",
+                "sort" to sort,
+                "page" to page.toString(),
+                "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+                "rm" to "true"
+        )
+        return client.post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.releases(it) }
     }
 

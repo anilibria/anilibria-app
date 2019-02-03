@@ -8,6 +8,8 @@
     <string name="fragment_title_other">Прочее</string>
     <string name="fragment_title_release">Релиз</string>
     <string name="fragment_title_favorites">Избранное</string>
+    <string name="fragment_title_youtube">YouTube</string>
+    <string name="fragment_title_search">Поиск</string>
 
     <string name="download_torrent">Скачать торрент</string>
     <string name="watch_web">Веб-плеер</string>
@@ -18,7 +20,7 @@
     <string name="auth_patreon">Patreon</string>
     <string name="auth_vk">Вконтакте</string>
     <string name="or">или</string>
-    <string name="auth_login">Логин</string>
+    <string name="auth_login">Логин или email</string>
     <string name="auth_password">Пароль</string>
     <string name="auth_signin">Войти</string>
     <string name="auth_skip">Пропустить</string>

@@ -6,7 +6,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.model.repository.FavoriteRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
@@ -17,7 +17,7 @@ import ru.terrakok.cicerone.Router
  */
 @InjectViewState
 class FavoritesPresenter(
-        private val releaseRepository: ReleaseRepository,
+        private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FavoritesView>(router) {
@@ -28,9 +28,6 @@ class FavoritesPresenter(
     }
 
     private var currentPage = START_PAGE
-
-    private var currentSessId = ""
-
 
     private val currentReleases = mutableListOf<ReleaseItem>()
 
@@ -50,23 +47,18 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository
-                .getFavorites2()
+        favoriteRepository
+                .getFavorites()
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    onLoad(it)
+                    viewState.setEndless(!it.isEnd())
+                    currentReleases.addAll(it.data)
+                    showData(it.data)
                 }) {
                     showData(emptyList())
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
-    }
-
-    private fun onLoad(favData: FavoriteData) {
-        currentSessId = favData.sessId
-        viewState.setEndless(!favData.items.isEnd())
-        showData(favData.items.data)
-        currentReleases.addAll(favData.items.data)
     }
 
     private fun showData(data: List<ReleaseItem>) {
@@ -89,11 +81,11 @@ class FavoritesPresenter(
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
-        releaseRepository
-                .deleteFavorite(id, currentSessId)
+        favoriteRepository
+                .deleteFavorite(id)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
-                    onLoad(it)
+                    viewState.removeReleases(listOf(it))
                 }) {
                     errorHandler.handle(it)
                 }
@@ -103,7 +95,7 @@ class FavoritesPresenter(
     fun localSearch(query: String) {
         if (!query.isEmpty()) {
             val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(query, true) || it.originalTitle.orEmpty().contains(query, true)
+                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
             }
             viewState.showReleases(searchRes)
         } else {
@@ -114,7 +106,7 @@ class FavoritesPresenter(
     fun onItemClick(item: ReleaseItem) {
         val args = Bundle()
         args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.idName)
+        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
         router.navigateTo(Screens.RELEASE_DETAILS, args)
     }

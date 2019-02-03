@@ -85,7 +85,7 @@ class FullScreenActivity : AppCompatActivity() {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
         vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
-        vitalWebView.easyLoadData(Api.SITE_URL, currentVital.contentText)
+        vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, currentVital.contentText)
     }
 
     private fun initImage() {

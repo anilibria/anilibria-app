@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
+import ru.radiationx.anilibria.extension.toBase64
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
@@ -145,10 +146,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun showPage(page: PageLibria) {
         //toolbar.title = page.title
-        webView?.evalJs("ViewModel.setText('content','${convert(page.content)}');")
+        webView?.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
     }
 
-    private fun convert(string: String): String {
-        return Base64.encodeToString(string.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
-    }
 }

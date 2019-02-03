@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
@@ -30,21 +31,16 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapter.ItemListener {
 
     companion object {
-        const val ARG_QUERY_TEXT: String = "query"
         const val ARG_GENRE: String = "genre"
+        const val ARG_YEAR: String = "year"
     }
 
-    private var searchView: com.lapism.searchview.SearchView? = null
     private lateinit var genresDialog: GenresDialog
-    private lateinit var searchMenuItem: MenuItem
     private val adapter = SearchAdapter(this, PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
     ))
-    private val fastAdapter = FastSearchAdapter()
-    private var currentTitle: String? = "Поиск"
-    private var wasOpenOnPause = true
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -52,7 +48,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
         return SearchPresenter(
-                App.injections.releaseRepository,
                 App.injections.searchRepository,
                 (parentFragment as RouterProvider).getRouter(),
                 App.injections.errorHandler,
@@ -71,9 +66,11 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.currentQuery = bundle.getString(ARG_QUERY_TEXT, null)
             bundle.getString(ARG_GENRE, null)?.also {
                 presenter.onChangeGenres(listOf(it))
+            }
+            bundle.getString(ARG_YEAR, null)?.also {
+                presenter.onChangeYears(listOf(it))
             }
         }
     }
@@ -84,13 +81,21 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         super.onViewCreated(view, savedInstanceState)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
-                override fun onHide() {
+                override fun onAccept() {
                     presenter.onCloseDialog()
                 }
 
-                override fun onCheckedItems(items: List<String>) {
+                override fun onCheckedGenres(items: List<String>) {
                     Log.e("lululu", "onCheckedItems ${items.size}")
                     presenter.onChangeGenres(items)
+                }
+
+                override fun onCheckedYears(items: List<String>) {
+                    presenter.onChangeYears(items)
+                }
+
+                override fun onChangeSorting(sorting: String) {
+                    presenter.onChangeSorting(sorting)
                 }
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
@@ -108,20 +113,12 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
 
         //ToolbarHelper.fixInsets(toolbar)
         with(toolbar) {
-            title = currentTitle
+            title = "Поиск"
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
         with(toolbar.menu) {
-            searchMenuItem = add("Search")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
             add("Settings")
                     .setIcon(R.drawable.ic_toolbar_settings)
                     .setOnMenuItemClickListener {
@@ -130,75 +127,6 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
-
-        searchView = com.lapism.searchview.SearchView(coordinator_layout.context)
-        toolbar.addView(searchView)
-        searchView?.apply {
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    Log.e("kulolo", "onOpen")
-                    searchMenuItem.isVisible = false
-                    //toolbar?.navigationIcon = null
-                    toolbar?.apply {
-                        title = null
-                        subtitle = null
-                    }
-                    return false
-                }
-
-                override fun onClose(): Boolean {
-                    Log.e("kulolo", "onClose")
-                    searchMenuItem.isVisible = true
-                    //toolbar?.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-                    toolbar?.apply {
-                        title = currentTitle
-                    }
-                    return false
-                }
-            })
-            setVoice(false)
-            setShadow(false)
-            version = com.lapism.searchview.SearchView.VERSION_MENU_ITEM
-            setVersionMargins(com.lapism.searchview.SearchView.VERSION_MARGINS_MENU_ITEM)
-            setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    query?.let {
-                        presenter.currentQuery = it
-                        presenter.refreshReleases()
-                    }
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    //newText?.let { presenter.fastSearch(it) }
-                    return false
-                }
-            })
-            hint = "Поиск"
-
-            //releaseAdapter = fastAdapter
-        }
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.e("kulolo", "onResume")
-        if (wasOpenOnPause) {
-            searchView?.postDelayed({
-                if (presenter.isEmpty() && !(parentFragment?.isHidden == true)) {
-                    searchView?.open(true, searchMenuItem)
-                }
-            }, 500)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        wasOpenOnPause = searchView?.isSearchOpen == true
-        searchView?.close(false)
     }
 
     override fun onBackPressed(): Boolean {
@@ -222,33 +150,38 @@ class SearchFragment : BaseFragment(), SearchView, SharedProvider, ReleasesAdapt
         adapter.endless = enable
     }
 
-    override fun showFastItems(items: List<SearchItem>) {
-        searchView?.showSuggestions()
-        items.forEach {
-            Log.e("S_DEF_LOG", "FAST ITEM: ${it.title} : ${it.originalTitle}")
-        }
-        fastAdapter.bindItems(items)
-    }
-
     override fun showGenres(genres: List<GenreItem>) {
         genresDialog.setItems(genres)
     }
 
+    override fun showYears(years: List<YearItem>) {
+        genresDialog.setYears(years)
+    }
+
     override fun selectGenres(genres: List<String>) {
-        genresDialog.setChecked(genres)
+        genresDialog.setCheckedGenres(genres)
+    }
+
+    override fun selectYears(years: List<String>) {
+        genresDialog.setCheckedYears(years)
+    }
+
+    override fun setSorting(sorting: String) {
+        genresDialog.setSorting(sorting)
+    }
+
+    override fun updateInfo(sort: String, filters: Int) {
+        var subtitle = ""
+        subtitle += when (sort) {
+            "1" -> "По новизне"
+            "2" -> "По популярности"
+            else -> "Ваще рандом"
+        }
+        subtitle += ", Фильтров: $filters"
+        toolbar.subtitle = subtitle
     }
 
     override fun showReleases(releases: List<ReleaseItem>) {
-        currentTitle = if (presenter.currentQuery.orEmpty().isEmpty()) {
-            "Поиск"
-        } else {
-            "Поиск: " + presenter.currentQuery
-        }
-        if (searchMenuItem.isVisible) {
-            toolbar.apply {
-                title = currentTitle
-            }
-        }
         adapter.bindItems(releases)
     }
 

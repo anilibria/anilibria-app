@@ -202,4 +202,9 @@
         <item name="android:tint">?toolbar_icon</item>
     </style>
 
+    <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <!--<item name="android:textColor">?textColoredButton</item>-->
+    </style>
+
 </resources>

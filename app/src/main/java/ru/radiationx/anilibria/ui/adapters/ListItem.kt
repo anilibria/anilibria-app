@@ -8,7 +8,9 @@ import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 
 sealed class ListItem
@@ -53,6 +55,8 @@ class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
 
 /* Search screen */
 
-class SearchSuggestionListItem(val item: SearchItem) : ListItem()
+class SearchListItem(val item: SearchItem) : ListItem()
+class SearchSuggestionListItem(val item: SuggestionItem) : ListItem()
 class GenreListItem(val item: GenreItem) : ListItem()
 
+class YoutubeListItem(val item: YoutubeItem) : ListItem()

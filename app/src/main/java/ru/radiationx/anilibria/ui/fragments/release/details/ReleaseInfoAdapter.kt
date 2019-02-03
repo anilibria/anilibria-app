@@ -2,6 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -12,7 +15,19 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import java.util.*
 
-class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+class ReleaseInfoAdapter(private var itemListener: ItemListener) : ListDelegationAdapter<MutableList<ListItem>>() {
+
+    companion object {
+        val TYPE_HEAD = Pair(1, 1)
+        val TYPE_EPISODE = Pair(2, 15)
+        val TYPE_EPISODE_CONTROL = Pair(3, 1)
+        val TYPE_EPISODES_HEAD = Pair(4, 1)
+        val TYPE_DONATE = Pair(5, 1)
+        val TYPE_REMIND = Pair(6, 1)
+        val TYPE_BLOCKED = Pair(7, 1)
+        val TYPE_ROUTE = Pair(8, 1)
+        val TYPE_SHADOW = Pair(9, 5)
+    }
 
     private val remindText = "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
     private val vitalItems = mutableListOf<VitalItem>()
@@ -44,18 +59,33 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
 
     init {
         items = mutableListOf()
-        delegatesManager.run {
-            addDelegate(ReleaseHeadDelegate(itemListener))
-            addDelegate(ReleaseEpisodeDelegate(itemListener))
-            addDelegate(ReleaseEpisodeControlDelegate(itemListener))
-            addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
-            addDelegate(ReleaseDonateDelegate(itemListener))
-            addDelegate(ReleaseRemindDelegate(remindCloseListener))
-            addDelegate(ReleaseBlockedDelegate())
-            addDelegate(CommentRouteDelegate())
-            addDelegate(DividerShadowItemDelegate())
+        delegatesManager.apply {
+            addDelegate(TYPE_HEAD.first, ReleaseHeadDelegate(itemListener))
+            addDelegate(TYPE_EPISODE.first, ReleaseEpisodeDelegate(itemListener))
+            addDelegate(TYPE_EPISODE_CONTROL.first, ReleaseEpisodeControlDelegate(itemListener))
+            addDelegate(TYPE_EPISODES_HEAD.first, ReleaseEpisodesHeadDelegate(episodeHeadListener))
+            addDelegate(TYPE_DONATE.first, ReleaseDonateDelegate(itemListener))
+            addDelegate(TYPE_REMIND.first, ReleaseRemindDelegate(remindCloseListener))
+            addDelegate(TYPE_BLOCKED.first, ReleaseBlockedDelegate())
+            addDelegate(TYPE_ROUTE.first, CommentRouteDelegate())
+            addDelegate(TYPE_SHADOW.first, DividerShadowItemDelegate())
             addDelegate(VitalWebItemDelegate(true))
             addDelegate(VitalNativeItemDelegate(true))
+        }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.recycledViewPool.apply {
+            setMaxRecycledViews(TYPE_HEAD.first, TYPE_HEAD.second)
+            setMaxRecycledViews(TYPE_EPISODE.first, TYPE_EPISODE.second)
+            setMaxRecycledViews(TYPE_EPISODE_CONTROL.first, TYPE_EPISODE_CONTROL.second)
+            setMaxRecycledViews(TYPE_EPISODES_HEAD.first, TYPE_EPISODES_HEAD.second)
+            setMaxRecycledViews(TYPE_DONATE.first, TYPE_DONATE.second)
+            setMaxRecycledViews(TYPE_REMIND.first, TYPE_REMIND.second)
+            setMaxRecycledViews(TYPE_BLOCKED.first, TYPE_BLOCKED.second)
+            setMaxRecycledViews(TYPE_ROUTE.first, TYPE_ROUTE.second)
+            setMaxRecycledViews(TYPE_SHADOW.first, TYPE_SHADOW.second)
         }
     }
 
@@ -81,12 +111,12 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
         items.add(ReleaseHeadListItem(release))
         items.add(DividerShadowListItem())
 
-        if (release.isBlocked) {
+        if (release.blockedInfo.isBlocked) {
             items.add(ReleaseBlockedListItem(release))
             items.add(DividerShadowListItem())
         }
 
-        if (!release.isBlocked && release.episodes.isNotEmpty()) {
+        if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
             items.add(ReleaseDonateListItem())
             items.add(DividerShadowListItem())
         }
@@ -98,7 +128,7 @@ class ReleaseAdapter(private var itemListener: ItemListener) : ListDelegationAda
             items.add(DividerShadowListItem())
         }
 
-        if (!release.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
+        if (!release.blockedInfo.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
             items.add(DividerShadowListItem())
         }

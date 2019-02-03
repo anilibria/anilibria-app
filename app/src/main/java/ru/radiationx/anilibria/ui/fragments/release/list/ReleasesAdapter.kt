@@ -99,6 +99,16 @@ open class ReleasesAdapter(
         notifyDataSetChanged()
     }
 
+    fun removeItems(remItems: List<ReleaseItem>) {
+        remItems.forEach { remItem ->
+            val index = items.indexOfFirst { it is ReleaseListItem && it.item.id == remItem.id }
+            if (index != -1) {
+                items.removeAt(index)
+                notifyItemRemoved(index)
+            }
+        }
+    }
+
     fun updateItems(updItems: List<ReleaseItem>) {
         updItems.map { updItem -> items.indexOfFirst { it is ReleaseListItem && it.item.id == updItem.id } }.forEach {
             Log.e("lalalupdata", "adapter notify index $it")

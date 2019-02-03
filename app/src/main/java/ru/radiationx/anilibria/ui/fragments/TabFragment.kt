@@ -32,6 +32,7 @@ import ru.radiationx.anilibria.ui.fragments.page.PageFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
+import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.Router
@@ -187,6 +188,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                     Screens.RELEASES_SEARCH -> SearchFragment().apply {
                         if (data is Bundle) arguments = data
                     }
+                    Screens.MAIN_YOUTUBE -> YoutubeFragment()
 
                     Screens.FAVORITES -> FavoritesFragment()
                     Screens.HISTORY -> HistoryFragment()

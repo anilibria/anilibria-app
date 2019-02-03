@@ -12,11 +12,13 @@ object Screens {
     const val MAIN_VIDEOS = "MAIN_VIDEOS"
     const val MAIN_BLOGS = "MAIN_BLOGS"
     const val MAIN_OTHER = "MAIN_OTHER"
+    const val MAIN_YOUTUBE = "MAIN_YOUTUBE"
 
     const val ARTICLE_DETAILS = "ARTICLE_DETAILS"
 
     const val AUTH = "AUTH"
     const val AUTH_SOCIAL = "AUTH_SOCIAL"
+    const val AUTH_VK = "AUTH_VK"
     const val MAIN = "MAIN"
     const val SETTINGS = "SETTINGS"
 

@@ -15,5 +15,8 @@ interface FavoritesView : IBaseView {
     @StateStrategyType(AddToEndStrategy::class)
     fun insertMore(releases: List<ReleaseItem>)
 
+    @StateStrategyType(AddToEndStrategy::class)
+    fun removeReleases(releases: List<ReleaseItem>)
+
     fun setEndless(enable: Boolean)
 }

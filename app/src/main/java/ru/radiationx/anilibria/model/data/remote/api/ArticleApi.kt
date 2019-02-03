@@ -15,11 +15,8 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
  */
 class ArticleApi(
         private val client: IClient,
-        apiUtils: IApiUtils
+        private val articleParser: ArticleParser
 ) {
-
-    private val articleParser = ArticleParser(apiUtils)
-    private val releaseParser = ReleaseParser(apiUtils)
 
     fun getArticle(code: String): Single<ArticleItem> {
         val args: MutableMap<String, String> = mutableMapOf(
@@ -42,36 +39,6 @@ class ArticleApi(
         return client
                 .get(Api.API_URL, args)
                 .map { articleParser.articles2(it) }
-    }
-
-    fun getComments(id: Int, page: Int): Single<Paginated<List<Comment>>> {
-        val args: MutableMap<String, String> = mutableMapOf(
-                "action" to "comments",
-                "id" to id.toString(),
-                "from" to "article",
-                "PAGEN_1" to page.toString()
-        )
-        return client
-                .get(Api.API_URL, args)
-                .map { releaseParser.comments(it) }
-    }
-
-    fun sendComment(url: String, id: Int, text: String, sessId: String): Single<Paginated<List<Comment>>> {
-        val args = mapOf(
-                //"index" to "ZZtH",
-                "back_page" to "/api/api_v2.php?action=comments&id=$id&from=article&PAGEN_1=1",
-                "ELEMENT_ID" to "$id",
-                "SECTION_ID" to "",
-                "save_product_review" to "Y",
-                "preview_comment" to "N",
-                "sessid" to sessId,
-                //"autosave_id" to "27f64ba01ec10848c3c2cec1e137d06ac",
-                "REVIEW_TEXT" to text,
-                "REVIEW_USE_SMILES" to "Y"
-        )
-
-        return client.post(url, args)
-                .map { releaseParser.comments(it) }
     }
 
 }

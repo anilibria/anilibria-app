@@ -42,7 +42,7 @@ class Client constructor(
             var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {
-                    if (cookie.name() == CookieHolder.BITRIX_SM_UIDH || cookie.name() == CookieHolder.BITRIX_SM_UIDL) {
+                    if (cookie.name() == CookieHolder.PHPSESSID) {
                         authDestroyed = true
                     }
                     cookieHolder.removeCookie(cookie.name())
@@ -67,7 +67,8 @@ class Client constructor(
             .addInterceptor {
                 val userAgentRequest = it.request()
                         .newBuilder()
-                        .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68")
+                        .header("mobileApp", "true")
+                        .header("User-Agent", "mobileApp Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68")
                         .build()
                 it.proceed(userAgentRequest)
             }
@@ -117,7 +118,7 @@ class Client constructor(
 
         val body = getRequestBody(method, args)
 
-        var httpUrl: HttpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect")
+        var httpUrl: HttpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect: '$url'")
 
         if (method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->

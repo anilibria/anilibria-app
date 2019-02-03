@@ -1,8 +1,11 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
 
@@ -16,20 +19,25 @@ class AuthParser(private val apiUtils: IApiUtils) {
     private val socialPatterns = arrayOf(patreonPattern, vkPattern)
     private val userPattern = "<div[^>]*?class=\"[^\"]*?useravatar[^\"]*?\"[^>]*?>[^<]*?(?:<img[^>]*?src=\"([^\"]*?)\"[^>]*?>)?[^<]*?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<p>[^<]*?<a[^>]href=\"\\/user\\/(\\d+)[^\"]*?\"[^>]*?"
 
-
-    fun authResult(responseText: String): ProfileItem {
-        val user = ProfileItem()
-        val matcher = Pattern.compile(userPattern).matcher(responseText)
-        if (matcher.find()) {
-            matcher.group(1)?.let {
-                user.avatarUrl = Api.BASE_URL_IMAGES + it
-            }
-            user.nick = apiUtils.escapeHtml(matcher.group(2)).toString()
-            user.id = matcher.group(3).toInt()
-            user.authState = AuthState.AUTH
-        } else {
-            user.authState = AuthState.NO_AUTH
+    fun authResult(responseText: String): String {
+        val responseJson = JSONObject(responseText)
+        val error = responseJson.nullString("err")
+        val message = responseJson.nullString("mes")
+        val key = responseJson.nullString("key")
+        if (error != "ok" && key != "authorized") {
+            throw ApiError(400, message, null)
         }
+        return message.orEmpty()
+    }
+
+    fun parseUser(responseJson: JSONObject): ProfileItem {
+        val user = ProfileItem()
+        user.id = responseJson.getInt("id")
+        user.nick = responseJson.nullString("login").orEmpty()
+        user.avatarUrl = responseJson.nullString("avatar")?.let {
+            "${Api.BASE_URL_IMAGES}$it"
+        }
+        user.authState = AuthState.AUTH
         return user
     }
 

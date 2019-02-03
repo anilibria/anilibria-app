@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
 
@@ -9,7 +11,7 @@ import java.util.regex.Pattern
  */
 class PagesParser(private val apiUtils: IApiUtils) {
 
-    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?libria_static_page[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?(?:<\\/?br[^>]*?>[^<]*?)?(?=<div[^>]*?class=\"[^\"]*?libria_static_page[^\"]*?\"[^>]*?>|<\\/article>)"
+    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div class=\"clear\">"
     private val titlePatternSource = "<title>([\\s\\S]*?)<\\/title>"
 
     private val pagePattern: Pattern by lazy {
@@ -33,5 +35,12 @@ class PagesParser(private val apiUtils: IApiUtils) {
         }
         result.content = content
         return result
+    }
+
+    fun parseVkComments(jsonResponse: JSONObject): VkComments {
+        return VkComments(
+                jsonResponse.getString("baseUrl"),
+                jsonResponse.getString("script")
+        )
     }
 }

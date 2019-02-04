@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class CommentsPresenter(
@@ -20,7 +20,7 @@ class CommentsPresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val authRepository: AuthRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<CommentsView>(router) {
@@ -158,6 +158,6 @@ class CommentsPresenter(
     }
 
     fun openAuth() {
-        router.navigateTo(Screens.AUTH)
+        router.navigateTo(Screens.Auth())
     }
 }

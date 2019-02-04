@@ -10,12 +10,12 @@ import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class SearchPresenter(
         private val searchRepository: SearchRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<SearchView>(router) {
@@ -201,7 +201,7 @@ class SearchPresenter(
         args.putInt(ReleaseFragment.ARG_ID, item.id)
         args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(args))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

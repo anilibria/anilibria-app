@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /* Created by radiationx on 05.11.17. */
 
@@ -21,7 +21,7 @@ import ru.terrakok.cicerone.Router
 class ReleasesPresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val vitalRepository: VitalRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<ReleasesView>(router) {
@@ -122,7 +122,7 @@ class ReleasesPresenter(
         args.putInt(ReleaseFragment.ARG_ID, item.id)
         args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(args))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {
@@ -130,6 +130,6 @@ class ReleasesPresenter(
     }
 
     fun openSearch() {
-        router.navigateTo(Screens.RELEASES_SEARCH)
+        router.navigateTo(Screens.ReleasesSearch())
     }
 }

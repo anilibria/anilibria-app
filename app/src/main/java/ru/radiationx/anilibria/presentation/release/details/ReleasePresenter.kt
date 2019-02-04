@@ -8,14 +8,14 @@ import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
 class ReleasePresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseView>(router) {
 

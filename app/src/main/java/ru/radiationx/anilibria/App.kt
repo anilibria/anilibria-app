@@ -39,7 +39,7 @@ import ru.radiationx.anilibria.presentation.*
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.Charset
@@ -180,7 +180,7 @@ class App : Application() {
     }
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
-    class Injections(context: Context, router: Router) {
+    class Injections(context: Context, router: AppRouter) {
 
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
@@ -274,18 +274,18 @@ class App : Application() {
     * local - для табов, типа как в семпле cicerone
     * */
     class NavigationRoot {
-        private val cicerone: Cicerone<Router> = Cicerone.create()
+        private val cicerone: Cicerone<AppRouter> = Cicerone.create(AppRouter())
 
-        val router: Router = cicerone.router
+        val router: AppRouter = cicerone.router
         val holder: NavigatorHolder = cicerone.navigatorHolder
     }
 
     class LocalCiceroneHolder {
-        private val containers: MutableMap<String, Cicerone<Router>> = mutableMapOf()
+        private val containers: MutableMap<String, Cicerone<AppRouter>> = mutableMapOf()
 
-        fun getCicerone(containerTag: String): Cicerone<Router> {
+        fun getCicerone(containerTag: String): Cicerone<AppRouter> {
             if (!containers.containsKey(containerTag)) {
-                containers[containerTag] = Cicerone.create()
+                containers[containerTag] = Cicerone.create(AppRouter())
             }
             return containers.getValue(containerTag)
         }

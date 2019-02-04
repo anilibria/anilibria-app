@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class ReleaseInfoPresenter(
@@ -27,7 +27,7 @@ class ReleaseInfoPresenter(
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
         private val favoriteRepository: FavoriteRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseInfoView>(router) {
@@ -161,7 +161,7 @@ class ReleaseInfoPresenter(
     }
 
     fun onClickDonate() {
-        router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
     }
 
     fun onClickFav() {
@@ -198,14 +198,14 @@ class ReleaseInfoPresenter(
     }
 
     fun openAuth() {
-        router.navigateTo(Screens.AUTH)
+        router.navigateTo(Screens.Auth())
     }
 
     fun openSearch(genre: String) {
         val args: Bundle = Bundle().apply {
             putString(SearchFragment.ARG_GENRE, genre)
         }
-        router.navigateTo(Screens.RELEASES_SEARCH, args)
+        router.navigateTo(Screens.ReleasesSearch(args))
     }
 
     fun onDownloadLinkSelected(url: String) {
@@ -223,7 +223,7 @@ class ReleaseInfoPresenter(
     }
 
     fun onDialogDonateClick() {
-        router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
     }
 
 }

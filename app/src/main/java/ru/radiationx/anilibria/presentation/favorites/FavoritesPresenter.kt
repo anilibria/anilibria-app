@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.model.repository.FavoriteRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 13.01.18.
@@ -18,7 +18,7 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class FavoritesPresenter(
         private val favoriteRepository: FavoriteRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FavoritesView>(router) {
 
@@ -108,7 +108,7 @@ class FavoritesPresenter(
         args.putInt(ReleaseFragment.ARG_ID, item.id)
         args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(args))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

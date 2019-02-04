@@ -7,14 +7,14 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 18.02.18.
  */
 @InjectViewState
 class HistoryPresenter(
-        private val router: Router,
+        private val router: AppRouter,
         private val historyRepository: HistoryRepository
 ) : BasePresenter<HistoryView>(router) {
 
@@ -52,7 +52,7 @@ class HistoryPresenter(
         args.putInt(ReleaseFragment.ARG_ID, item.id)
         args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
         args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(args))
     }
 
     fun onDeleteClick(item: ReleaseItem) {

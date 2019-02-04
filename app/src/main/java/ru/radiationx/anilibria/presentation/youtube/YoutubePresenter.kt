@@ -11,12 +11,12 @@ import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class YoutubePresenter(
         private val youtubeRepository: YoutubeRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<YoutubeView>(router) {

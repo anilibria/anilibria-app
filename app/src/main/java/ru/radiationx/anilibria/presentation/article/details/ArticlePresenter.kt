@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.presentation.LinkHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 20.12.17.
@@ -19,7 +19,7 @@ import ru.terrakok.cicerone.Router
 class ArticlePresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticleView>(router) {

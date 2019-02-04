@@ -13,7 +13,6 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
@@ -24,16 +23,17 @@ import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
-import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.TabFragment
+import ru.radiationx.anilibria.ui.navigation.AppNavigator
+import ru.radiationx.anilibria.ui.navigation.SystemMessage
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.terrakok.cicerone.Screen
 import ru.terrakok.cicerone.commands.*
 import java.util.*
 import kotlin.math.max
@@ -45,18 +45,18 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         private const val TABS_STACK = "TABS_STACK"
     }
 
-    override fun getRouter(): Router = App.navigation.root.router
+    override fun getRouter(): AppRouter = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
     private val tabsAdapter = BottomTabsAdapter(this)
 
     private val allTabs = arrayOf(
-            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MAIN_RELEASES),
-            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.FAVORITES),
-            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.RELEASES_SEARCH),
-            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MAIN_YOUTUBE),
-            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
+            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MainReleases()),
+            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
+            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
+            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
+            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
     )
     private val tabs = mutableListOf<Tab>()
 
@@ -201,7 +201,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             val url = intent.data.toString()
             var handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
-                handled = findTabIntentHandler(url, tabs.map { it.screenKey })
+                handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
             Log.e("lalala", "MainActivity, handled $handled")
         }
@@ -225,11 +225,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         val fm = supportFragmentManager
         val ta = fm.beginTransaction()
         allTabs.forEach { tab ->
-            var fragment: Fragment? = fm.findFragmentByTag(tab.screenKey)
+            var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
             if (fragment == null) {
-                fragment = TabFragment.newInstance(tab.screenKey)
-                ta.add(R.id.root_container, fragment, tab.screenKey)
-                if (tabsStack.contains(tab.screenKey)) {
+                fragment = Screens.TabScreen(tab.screen).fragment
+                ta.add(R.id.root_container, fragment, tab.screen.screenKey)
+                if (tabsStack.contains(tab.screen.screenKey)) {
                     ta.attach(fragment)
                 } else {
                     ta.detach(fragment)
@@ -250,19 +250,19 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         if (presenter.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
         } else {
-            tabs.addAll(allTabs.filter { it.screenKey != Screens.FAVORITES })
+            tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
         }
         updateBottomTabs()
     }
 
     override fun onTabClick(tab: Tab) {
-        presenter.selectTab(tab.screenKey)
+        presenter.selectTab(tab.screen.screenKey)
     }
 
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
-        getRouter().replaceScreen(screenKey)
+        getRouter().replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
     }
 
     fun addInStack(screenKey: String) {
@@ -274,32 +274,13 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         tabsStack.remove(screenKey)
     }
 
-    private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
-        override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-            Log.e("S_DEF_LOG", "Create intent " + screenKey)
-            return when (screenKey) {
-                Screens.AUTH -> {
-                    Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
-                    Intent(this@MainActivity, AuthActivity::class.java).apply {
-                        val screenExtra = (data as? Bundle?)
-                        putExtra(AuthActivity.ARG_INIT_SCREEN, screenExtra?.getString(AuthActivity.ARG_INIT_SCREEN))
-                        putExtra(AuthActivity.ARG_SCREEN_EXTRA, screenExtra?.getBundle(AuthActivity.ARG_SCREEN_EXTRA))
-                    }
-                }
-                else -> null
-            }
-        }
+    private val navigatorNew = object : AppNavigator(this, R.id.root_container) {
 
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            Log.e("S_DEF_LOG", "Create fragment " + screenKey)
-            return null
-        }
-
-        override fun applyCommand(command: Command) {
+        override fun applyCommand(command: Command?) {
             Log.e("S_DEF_LOG", "ApplyCommand " + command)
             if (command is Back) {
                 if (tabsStack.size <= 1) {
-                    exit()
+                    activityBack()
                     return
                 }
                 val fm = supportFragmentManager
@@ -311,27 +292,27 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 if (tabsStack.isNotEmpty()) {
                     presenter.selectTab(tabsStack.last())
                 } else {
-                    exit()
+                    activityBack()
                 }
                 return
             } else if (command is SystemMessage) {
                 Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
                 return
             } else if (command is Replace) {
-                val inTabs = allTabs.firstOrNull { it.screenKey == command.screenKey } != null
+                val inTabs = allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
                 if (inTabs) {
-                    Log.e("S_DEF_LOG", "Replace " + command.screenKey)
+                    Log.e("S_DEF_LOG", "Replace " + command.screen.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
                     allTabs.forEach {
-                        val fragment = fm.findFragmentByTag(it.screenKey)
+                        val fragment = fm.findFragmentByTag(it.screen.screenKey)
                         if (fragment != null) {
-                            if (it.screenKey == command.screenKey) {
+                            if (it.screen.screenKey == command.screen.screenKey) {
                                 if (fragment.isDetached) {
                                     ta.attach(fragment)
                                 }
                                 ta.show(fragment)
-                                addInStack(it.screenKey)
+                                addInStack(it.screen.screenKey)
                                 Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                             } else {
                                 ta.hide(fragment)
@@ -347,25 +328,15 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             super.applyCommand(command)
         }
 
-        override fun unknownScreen(command: Command?) {
-            val screenKey = when {
-                command is BackTo -> command.screenKey
-                command is Forward -> command.screenKey
-                command is Replace -> command.screenKey
-                else -> "NO_KEY"
-            }
-            throw RuntimeException("Can't create a screen for passed screenKey $command, $screenKey")
-        }
-
-
         private var exitToastShowed: Boolean = false
-        override fun exit() {
+        override fun activityBack() {
+            super.activityBack()
             if (!exitToastShowed) {
                 showSystemMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true
                 Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
             } else {
-                super.exit()
+                super.activityBack()
             }
         }
     }
@@ -373,6 +344,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     class Tab(
             val title: Int,
             val icon: Int,
-            val screenKey: String
+            val screen: Screens.AppScreen
     )
 }

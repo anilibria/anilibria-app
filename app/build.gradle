@@ -92,7 +92,7 @@ dependencies {
     implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
     kapt 'com.arello-mobile:moxy-compiler:1.5.5'
 
-    implementation 'ru.terrakok.cicerone:cicerone:2.1.0'
+    implementation 'ru.terrakok.cicerone:cicerone:4.0.2'
 
     implementation 'com.github.Cutta:TagView:1.3'
 

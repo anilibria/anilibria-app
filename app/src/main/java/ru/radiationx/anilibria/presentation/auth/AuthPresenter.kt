@@ -7,14 +7,14 @@ import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 30.12.17.
  */
 @InjectViewState
 class AuthPresenter(
-        private val router: Router,
+        private val router: AppRouter,
         private val authRepository: AuthRepository,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<AuthView>(router) {

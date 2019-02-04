@@ -31,7 +31,7 @@ class BottomTabsAdapter(private val listener: BottomTabDelegate.Listener) : List
         items.forEachIndexed { index, item ->
             val listItem = (item as BottomTabListItem)
             val lastSelected = listItem.selected
-            listItem.selected = listItem.item.screenKey == screenKey
+            listItem.selected = listItem.item.screen.screenKey == screenKey
             if (lastSelected != listItem.selected) {
                 notifyItemChanged(index)
             }

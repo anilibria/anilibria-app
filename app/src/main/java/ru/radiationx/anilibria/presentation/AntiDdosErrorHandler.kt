@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
 import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 class AntiDdosErrorHandler(
         private val antiDdosInteractor: AntiDdosInteractor,

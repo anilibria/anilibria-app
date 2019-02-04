@@ -13,11 +13,11 @@ import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class OtherPresenter(
-        private val router: Router,
+        private val router: AppRouter,
         private val authRepository: AuthRepository,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<OtherView>(router) {
@@ -160,25 +160,25 @@ class OtherPresenter(
     fun onMenuClick(item: OtherMenuItem) {
         when (item.id) {
             MENU_FAVORITES -> {
-                router.navigateTo(Screens.FAVORITES)
+                router.navigateTo(Screens.Favorites())
             }
             MENU_HISTORY -> {
-                router.navigateTo(Screens.HISTORY)
+                router.navigateTo(Screens.History())
             }
             MENU_TEAM -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_TEAM)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_TEAM))
             }
             MENU_DONATE -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
             }
             MENU_ABOUT_ANILIB -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_ABOUT_ANILIB)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_ABOUT_ANILIB))
             }
             MENU_RULES -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_RULES))
             }
             MENU_SETTINGS -> {
-                router.navigateTo(Screens.SETTINGS)
+                router.navigateTo(Screens.Settings())
             }
             MENU_GROUP_VK -> {
                 Utils.externalLink("https://vk.com/anilibria")
@@ -202,6 +202,6 @@ class OtherPresenter(
     }
 
     fun openAuth() {
-        router.navigateTo(Screens.AUTH)
+        router.navigateTo(Screens.Auth())
     }
 }

@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class FastSearchPresenter(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FastSearchView>(router) {
 
@@ -99,14 +99,14 @@ class FastSearchPresenter(
                 Utils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {
-                router.navigateTo(Screens.RELEASES_SEARCH)
+                router.navigateTo(Screens.ReleasesSearch())
             }
             else -> {
                 (item as? SuggestionItem)?.also {
                     val args = Bundle()
                     args.putInt(ReleaseFragment.ARG_ID, it.id)
                     args.putString(ReleaseFragment.ARG_ID_CODE, it.code)
-                    router.navigateTo(Screens.RELEASE_DETAILS, args)
+                    router.navigateTo(Screens.ReleaseDetails(args))
                 }
             }
         }

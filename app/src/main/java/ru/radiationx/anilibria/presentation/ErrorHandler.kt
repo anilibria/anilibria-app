@@ -3,14 +3,14 @@ package ru.radiationx.anilibria.presentation
 import android.content.Context
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 23.02.18.
  */
 class ErrorHandler(
         private val context: Context,
-        private val router: Router
+        private val router: AppRouter
 ) : IErrorHandler {
 
     override fun handle(throwable: Throwable, messageListener: ((Throwable, String?) -> Unit)?) {

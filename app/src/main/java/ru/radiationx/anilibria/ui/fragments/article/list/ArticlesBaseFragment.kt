@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.Utils
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 16.12.17.
@@ -46,7 +46,7 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
                 R.string.placeholder_desc_nodata_base
         ))
     }
-    lateinit var router: Router
+    lateinit var router: AppRouter
 
     @InjectPresenter
     lateinit var presenter: ArticlesPresenter

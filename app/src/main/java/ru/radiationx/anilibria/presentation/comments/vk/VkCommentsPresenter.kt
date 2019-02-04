@@ -15,14 +15,14 @@ import ru.radiationx.anilibria.presentation.comments.CommentsView
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class VkCommentsPresenter(
         private val pageRepository: PageRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val authHolder: AuthHolder,
-        private val router: Router,
+        private val router: AppRouter,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<VkCommentsView>(router) {
@@ -49,12 +49,11 @@ class VkCommentsPresenter(
     }
 
     fun authRequest(url: String) {
-        router.navigateTo(Screens.AUTH, Bundle().apply {
-            putString(AuthActivity.ARG_INIT_SCREEN, Screens.AUTH_VK)
-            putBundle(AuthActivity.ARG_SCREEN_EXTRA, Bundle().apply {
+        router.navigateTo(Screens.Auth(Bundle().apply {
+            putSerializable(AuthActivity.ARG_INIT_SCREEN, Screens.AuthVk(Bundle().apply {
                 putString(AuthVkFragment.ARG_URL, url)
-            })
-        })
+            }))
+        }))
     }
 
     fun loadData() {

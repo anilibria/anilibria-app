@@ -16,10 +16,10 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
+import ru.radiationx.anilibria.ui.navigation.AppNavigator
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 
 /**
@@ -32,7 +32,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         const val ARG_SCREEN_EXTRA = "arg_screen_extra"
     }
 
-    override fun getRouter(): Router = App.navigation.root.router
+    override fun getRouter(): AppRouter = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
     private val appThemeHolder = App.injections.appThemeHolder
@@ -63,8 +63,9 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         })
 
         if (savedInstanceState == null) {
-            val initScreen = intent?.extras?.getString(ARG_INIT_SCREEN, null) ?: Screens.AUTH
-            getRouter().newRootScreen(initScreen, intent?.extras?.getBundle(ARG_SCREEN_EXTRA))
+            val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? Screens.AppScreen)
+                    ?: Screens.Auth()
+            getRouter().newRootScreen(initScreen)
         }
     }
 
@@ -79,28 +80,8 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     }
 
     private val navigatorNew by lazy {
-        object : SupportAppNavigator(this, R.id.root_container) {
-            override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-                return when (screenKey) {
-                    Screens.MAIN -> Intent(this@AuthActivity, MainActivity::class.java)
-                    else -> null
-                }
-            }
+        object : AppNavigator(this, R.id.root_container) {
 
-            override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-                return when (screenKey) {
-                    Screens.AUTH -> AuthFragment()
-                    Screens.AUTH_VK -> AuthVkFragment().apply {
-                        arguments = Bundle().apply {
-                            val extra = data as Bundle?
-                            extra?.also {
-                                putString(AuthVkFragment.ARG_URL, it.getString(AuthVkFragment.ARG_URL))
-                            }
-                        }
-                    }
-                    else -> null
-                }
-            }
         }
     }
 }

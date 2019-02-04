@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 25.02.18.
@@ -107,7 +107,7 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
         return false
     }
 
-    override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
+    override fun getRouter(): AppRouter = (parentFragment as RouterProvider).getRouter()
     override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
 
     inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {

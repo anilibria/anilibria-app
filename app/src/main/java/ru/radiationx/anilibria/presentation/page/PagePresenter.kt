@@ -5,7 +5,7 @@ import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.PageRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 13.01.18.
@@ -13,7 +13,7 @@ import ru.terrakok.cicerone.Router
 @InjectViewState
 class PagePresenter(
         private val pageRepository: PageRepository,
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<PageView>(router) {
 

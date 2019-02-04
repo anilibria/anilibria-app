@@ -66,7 +66,9 @@ class AuthVkFragment : BaseFragment() {
                 val matcher = resultUrlPattern.matcher(url)
                 if (matcher.find()) {
                     App.injections.authHolder.changeVkAuth(true)
-                    (activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
+                    //todo
+                    //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
+                    (activity as RouterProvider).getRouter().exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())

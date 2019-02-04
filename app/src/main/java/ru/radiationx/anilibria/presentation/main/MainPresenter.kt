@@ -15,14 +15,14 @@ import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.terrakok.cicerone.Router
+import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 17.12.17.
  */
 @InjectViewState
 class MainPresenter(
-        private val router: Router,
+        private val router: AppRouter,
         private val errorHandler: IErrorHandler,
         private val authRepository: AuthRepository,
         private val checkerRepository: CheckerRepository,
@@ -32,7 +32,7 @@ class MainPresenter(
 
     private var antiDdosCompositeDisposable = CompositeDisposable()
 
-    var defaultScreen = Screens.MAIN_RELEASES
+    var defaultScreen = Screens.MainReleases().screenKey
 
     init {
         appThemeHolder
@@ -84,7 +84,7 @@ class MainPresenter(
         antiDdosCompositeDisposable.clear()
         viewState.setAntiDdosVisibility(false)
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
-            router.navigateTo(Screens.AUTH)
+            router.navigateTo(Screens.Auth())
         }
 
         selectTab(defaultScreen)

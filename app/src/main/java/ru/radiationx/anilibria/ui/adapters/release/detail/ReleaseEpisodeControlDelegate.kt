@@ -10,11 +10,13 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseEpisodeControlDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseEpisodeControlDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseEpisodeControlItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

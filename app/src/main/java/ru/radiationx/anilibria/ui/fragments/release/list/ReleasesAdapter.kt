@@ -1,12 +1,15 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import java.util.*
 
 /* Created by radiationx on 31.10.17. */
@@ -14,7 +17,7 @@ import java.util.*
 open class ReleasesAdapter(
         var listener: ItemListener,
         private val placeHolder: PlaceholderListItem
-) : ListDelegationAdapter<MutableList<ListItem>>() {
+) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
     private val random = Random()
@@ -29,13 +32,11 @@ open class ReleasesAdapter(
 
     init {
         items = mutableListOf()
-        delegatesManager.run {
-            addDelegate(ReleaseItemDelegate(listener))
-            addDelegate(LoadMoreDelegate(listener))
-            addDelegate(PlaceholderDelegate())
-            addDelegate(VitalWebItemDelegate())
-            addDelegate(VitalNativeItemDelegate())
-        }
+        addDelegate(ReleaseItemDelegate(listener))
+        addDelegate(LoadMoreDelegate(listener))
+        addDelegate(PlaceholderDelegate())
+        addDelegate(VitalWebItemDelegate())
+        addDelegate(VitalNativeItemDelegate())
     }
 
     protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {

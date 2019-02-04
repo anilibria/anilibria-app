@@ -8,20 +8,19 @@ import ru.radiationx.anilibria.ui.adapters.SearchListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.adapters.search.SearchDelegate
 import ru.radiationx.anilibria.ui.adapters.search.SearchSuggestionDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 
 /**
  * Created by radiationx on 24.12.17.
  */
 class FastSearchAdapter(
         private val clickListener: (SearchItem) -> Unit
-) : ListDelegationAdapter<MutableList<ListItem>>() {
+) : OptimizeAdapter<MutableList<ListItem>>() {
 
     init {
         items = mutableListOf()
-        delegatesManager.apply {
-            addDelegate(SearchSuggestionDelegate(clickListener))
-            addDelegate(SearchDelegate(clickListener))
-        }
+        addDelegate(SearchSuggestionDelegate(clickListener))
+        addDelegate(SearchDelegate(clickListener))
     }
 
     fun bindItems(newItems: List<SearchItem>) {

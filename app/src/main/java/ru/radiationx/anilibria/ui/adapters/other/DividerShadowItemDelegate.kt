@@ -8,8 +8,10 @@ import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
-class DividerShadowItemDelegate : AdapterDelegate<MutableList<ListItem>>() {
+class DividerShadowItemDelegate : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
             = items[position] is DividerShadowListItem
 

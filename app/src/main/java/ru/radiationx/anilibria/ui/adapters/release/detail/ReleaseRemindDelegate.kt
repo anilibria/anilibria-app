@@ -9,11 +9,13 @@ import kotlinx.android.synthetic.main.item_release_remind.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 21.01.18.
  */
-class ReleaseRemindDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseRemindDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseRemindListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

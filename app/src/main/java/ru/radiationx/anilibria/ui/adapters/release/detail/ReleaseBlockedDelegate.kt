@@ -11,11 +11,13 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 21.01.18.
  */
-class ReleaseBlockedDelegate() : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseBlockedDelegate() : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseBlockedListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

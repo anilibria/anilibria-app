@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.articles.ArticleItemDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import java.util.*
 
 /* Created by radiationx on 31.10.17. */
@@ -15,7 +16,7 @@ import java.util.*
 open class YoutubeAdapter(
         var listener: ItemListener,
         private val placeHolder: PlaceholderListItem
-) : ListDelegationAdapter<MutableList<ListItem>>() {
+) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
     private val random = Random()
@@ -30,13 +31,11 @@ open class YoutubeAdapter(
 
     init {
         items = mutableListOf()
-        delegatesManager.run {
-            addDelegate(YoutubeDelegate(listener))
-            addDelegate(LoadMoreDelegate(listener))
-            addDelegate(PlaceholderDelegate())
-            addDelegate(VitalWebItemDelegate())
-            addDelegate(VitalNativeItemDelegate())
-        }
+        addDelegate(YoutubeDelegate(listener))
+        addDelegate(LoadMoreDelegate(listener))
+        addDelegate(PlaceholderDelegate())
+        addDelegate(VitalWebItemDelegate())
+        addDelegate(VitalNativeItemDelegate())
     }
 
     private fun rand(from: Int, to: Int): Int {

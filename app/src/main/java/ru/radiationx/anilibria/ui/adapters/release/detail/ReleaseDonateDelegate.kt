@@ -8,11 +8,13 @@ import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseDonateListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 21.01.18.
  */
-class ReleaseDonateDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseDonateDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseDonateListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {}

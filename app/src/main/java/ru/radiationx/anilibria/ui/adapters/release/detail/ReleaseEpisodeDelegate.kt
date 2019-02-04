@@ -15,11 +15,15 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseEpisodeDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseEpisodeDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+
+    override fun getPoolSize(): Int = 20
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseEpisodeListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

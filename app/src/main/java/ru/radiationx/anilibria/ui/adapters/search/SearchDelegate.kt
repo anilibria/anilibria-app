@@ -15,13 +15,16 @@ import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class SearchDelegate(
         private val clickListener: (SearchItem) -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
+) : OptimizeDelegate<MutableList<ListItem>>() {
+
+    override fun getPoolSize(): Int = 15
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is SearchListItem
 

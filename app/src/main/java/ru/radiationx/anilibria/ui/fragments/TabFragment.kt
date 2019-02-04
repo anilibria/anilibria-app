@@ -37,7 +37,6 @@ import ru.radiationx.anilibria.ui.navigation.AppNavigator
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.radiationx.anilibria.ui.navigation.AppRouter
-import ru.terrakok.cicerone.android.pure.AppScreen
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 import ru.terrakok.cicerone.commands.Command
@@ -56,7 +55,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun getRouter(): AppRouter = localRouter
     override fun getNavigator(): Navigator = navigatorLocal
-    private lateinit var localScreen: AppScreen
+    private lateinit var localScreen: Screens.AppScreen
 
     private var ciceroneHolder = App.navigation.local
     private lateinit var cicerone: Cicerone<AppRouter>
@@ -72,7 +71,8 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         arguments?.let {
-            localScreen = (it.getSerializable(LOCAL_ROOT_SCREEN) as? AppScreen?) ?: throw NullPointerException("localScreen is null")
+            Log.d("kekeke", "${it.getSerializable(LOCAL_ROOT_SCREEN)}")
+            localScreen = (it.getSerializable(LOCAL_ROOT_SCREEN) as? Screens.AppScreen?) ?: throw NullPointerException("localScreen is null")
         }
         cicerone = ciceroneHolder.getCicerone(localScreen.screenKey)
         localRouter = cicerone.router

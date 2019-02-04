@@ -15,12 +15,14 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseHeadDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseHeadDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseHeadListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

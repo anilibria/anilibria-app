@@ -10,11 +10,12 @@ import kotlinx.android.synthetic.main.item_release_head_episodes.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 21.01.18.
  */
-class ReleaseEpisodesHeadDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class ReleaseEpisodesHeadDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
 
     companion object {
         const val TAG_ONLINE = "online"

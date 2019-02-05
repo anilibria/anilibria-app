@@ -39,7 +39,7 @@ import java.util.*
 import kotlin.math.max
 
 
-class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTabsAdapter.Listener {
+class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider{
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -49,7 +49,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
-    private val tabsAdapter = BottomTabsAdapter(this)
+    private val tabsAdapter by lazy {  BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
             Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MainReleases()),
@@ -177,18 +177,14 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         super.onDestroy()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
-        System.gc()
     }
 
     override fun onBackPressed() {
-        val fragment = if (tabsStack.isEmpty()) {
-            null
-        } else {
-            supportFragmentManager.findFragmentByTag(tabsStack.last())
-        }
-        if (fragment != null
+        val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
+        val check = fragment != null
                 && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed()) {
+                && (fragment as BackButtonListener).onBackPressed()
+        if (check) {
             return
         } else {
             presenter.onBackPressed()
@@ -255,10 +251,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         updateBottomTabs()
     }
 
-    override fun onTabClick(tab: Tab) {
-        presenter.selectTab(tab.screen.screenKey)
-    }
-
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
@@ -272,6 +264,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     fun removeFromStack(screenKey: String) {
         tabsStack.remove(screenKey)
+    }
+
+    private val tabsListener = object : BottomTabsAdapter.Listener {
+        override fun onTabClick(tab: Tab) {
+            presenter.selectTab(tab.screen.screenKey)
+        }
     }
 
     private val navigatorNew = object : AppNavigator(this, R.id.root_container) {
@@ -330,7 +328,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
         private var exitToastShowed: Boolean = false
         override fun activityBack() {
-            super.activityBack()
             if (!exitToastShowed) {
                 showSystemMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true

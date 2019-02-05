@@ -102,14 +102,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
-        return if (fragment != null
+        return (fragment != null
                 && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed()) {
-            true
-        } else {
-            //(activity as RouterProvider).localRouter.exit()
-            false
-        }
+                && (fragment as BackButtonListener).onBackPressed())
     }
 
     override fun handle(url: String): Boolean {
@@ -147,6 +142,10 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
                     setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
                 }
+            }
+
+            override fun activityBack() {
+                (activity as RouterProvider).getRouter().exit()
             }
         }
     }

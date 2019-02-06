@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.extension.toBase64
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
@@ -31,8 +32,12 @@ import java.util.*
 class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListener {
 
     companion object {
-        const val ARG_ID: String = "page_id"
+        private const val ARG_ID: String = "page_id"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
+
+        fun newInstance(pageId: String) = PageFragment().putExtra {
+            putString(ARG_ID, pageId)
+        }
     }
 
     private val appThemeHolder = App.injections.appThemeHolder

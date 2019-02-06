@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
@@ -38,8 +39,16 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvider, ReleasesAdapter.ItemListener {
 
     companion object {
-        const val ARG_GENRE: String = "genre"
-        const val ARG_YEAR: String = "year"
+        private const val ARG_GENRE: String = "genre"
+        private const val ARG_YEAR: String = "year"
+
+        fun newInstance(
+                genres: String? = null,
+                years: String? = null
+        ) = SearchFragment().putExtra {
+            putString(ARG_GENRE, genres)
+            putString(ARG_YEAR, years)
+        }
     }
 
     private lateinit var genresDialog: GenresDialog

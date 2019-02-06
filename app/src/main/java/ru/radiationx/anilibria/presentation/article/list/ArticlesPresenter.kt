@@ -97,9 +97,7 @@ open class ArticlesPresenter(
     }
 
     fun onItemClick(item: ArticleItem) {
-        val args = Bundle()
-        args.putSerializable(ArticleFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.ArticleDetails(args))
+        router.navigateTo(Screens.ArticleDetails(item = item))
     }
 
     fun onItemLongClick(item: ArticleItem): Boolean {

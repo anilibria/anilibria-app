@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -39,17 +40,19 @@ import java.util.*
 import kotlin.math.max
 
 
-class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider{
+class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
+
+        fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
     override fun getRouter(): AppRouter = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
-    private val tabsAdapter by lazy {  BottomTabsAdapter(tabsListener) }
+    private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
             Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MainReleases()),

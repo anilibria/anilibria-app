@@ -36,23 +36,13 @@ class LinkRouter : LinkHandler {
         }
         releaseDetail.matcher(url).let {
             if (it.find()) {
-                val args: Bundle = Bundle().apply {
-                    it.group(1)?.let {
-                        putString(ReleaseFragment.ARG_ID_CODE, it)
-                    }
-                    it.group(2)?.let {
-                        putString(ReleaseFragment.ARG_ID_CODE, it)
-                    }
-                }
-                return Screens.ReleaseDetails(args)
+                val code = it.group(1) ?: it.group(2)
+                return Screens.ReleaseDetails(code = code)
             }
         }
         articleDetail.matcher(url).let {
             if (it.find()) {
-                val args: Bundle = Bundle().apply {
-                    putString(ArticleFragment.ARG_ID_NAME, it.group(1))
-                }
-                return Screens.ArticleDetails(args)
+                return Screens.ArticleDetails(it.group(1))
             }
         }
         return null

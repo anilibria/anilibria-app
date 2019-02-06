@@ -103,10 +103,7 @@ class FastSearchPresenter(
             }
             else -> {
                 (item as? SuggestionItem)?.also {
-                    val args = Bundle()
-                    args.putInt(ReleaseFragment.ARG_ID, it.id)
-                    args.putString(ReleaseFragment.ARG_ID_CODE, it.code)
-                    router.navigateTo(Screens.ReleaseDetails(args))
+                    router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
                 }
             }
         }

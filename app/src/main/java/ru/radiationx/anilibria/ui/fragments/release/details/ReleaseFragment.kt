@@ -26,6 +26,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.common.RouterProvider
@@ -44,10 +45,20 @@ import ru.radiationx.anilibria.ui.navigation.AppRouter
 /* Created by radiationx on 16.11.17. */
 open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, SharedReceiver {
     companion object {
-        const val ARG_ID: String = "release_id"
-        const val ARG_ID_CODE: String = "release_id_code"
-        const val ARG_ITEM: String = "release_item"
+        private const val ARG_ID: String = "release_id"
+        private const val ARG_ID_CODE: String = "release_id_code"
+        private const val ARG_ITEM: String = "release_item"
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
+
+        fun newInstance(
+                id: Int = -1,
+                code: String? = null,
+                item: ReleaseItem? = null
+        ) = ReleaseFragment().putExtra {
+            putInt(ReleaseFragment.ARG_ID, id)
+            putString(ReleaseFragment.ARG_ID_CODE, code)
+            putSerializable(ReleaseFragment.ARG_ITEM, item)
+        }
     }
 
     override val needToolbarShadow: Boolean = false

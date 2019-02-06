@@ -118,11 +118,7 @@ class ReleasesPresenter(
     }
 
     fun onItemClick(item: ReleaseItem) {
-        val args = Bundle()
-        args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
-        args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.ReleaseDetails(args))
+        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

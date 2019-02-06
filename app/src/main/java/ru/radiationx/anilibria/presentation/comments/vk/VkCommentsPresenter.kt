@@ -49,11 +49,7 @@ class VkCommentsPresenter(
     }
 
     fun authRequest(url: String) {
-        router.navigateTo(Screens.Auth(Bundle().apply {
-            putSerializable(AuthActivity.ARG_INIT_SCREEN, Screens.AuthVk(Bundle().apply {
-                putString(AuthVkFragment.ARG_URL, url)
-            }))
-        }))
+        router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
     }
 
     fun loadData() {

@@ -202,10 +202,7 @@ class ReleaseInfoPresenter(
     }
 
     fun openSearch(genre: String) {
-        val args: Bundle = Bundle().apply {
-            putString(SearchFragment.ARG_GENRE, genre)
-        }
-        router.navigateTo(Screens.ReleasesSearch(args))
+        router.navigateTo(Screens.ReleasesSearch(genre))
     }
 
     fun onDownloadLinkSelected(url: String) {

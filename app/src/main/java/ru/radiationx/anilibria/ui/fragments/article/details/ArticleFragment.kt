@@ -40,6 +40,7 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
 import ru.radiationx.anilibria.presentation.article.details.ArticleView
@@ -63,9 +64,14 @@ import java.util.*
  */
 class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAdapter.ItemListener {
     companion object {
-        const val ARG_ITEM: String = "article_item"
-        const val ARG_ID_NAME: String = "article_id_name"
+        private const val ARG_ITEM: String = "article_item"
+        private const val ARG_ID_NAME: String = "article_id_name"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
+
+        fun newInstance(idCode: String?, item: ArticleItem?) = ArticleFragment().putExtra {
+            putString(ARG_ID_NAME, idCode)
+            putSerializable(ARG_ITEM, item)
+        }
     }
 
     override val needToolbarShadow: Boolean = false

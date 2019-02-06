@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.auth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -28,8 +29,11 @@ import ru.radiationx.anilibria.ui.navigation.AppRouter
 class AuthActivity : AppCompatActivity(), RouterProvider {
 
     companion object {
-        const val ARG_INIT_SCREEN = "arg_screen"
-        const val ARG_SCREEN_EXTRA = "arg_screen_extra"
+        private const val ARG_INIT_SCREEN = "arg_screen"
+
+        fun createIntent(context: Context, rootScreen: Screens.AppScreen? = null): Intent = Intent(context, AuthActivity::class.java).apply {
+            putExtra(AuthActivity.ARG_INIT_SCREEN, rootScreen)
+        }
     }
 
     override fun getRouter(): AppRouter = App.navigation.root.router

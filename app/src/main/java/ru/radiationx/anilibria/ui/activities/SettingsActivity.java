@@ -1,10 +1,14 @@
 package ru.radiationx.anilibria.ui.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.disposables.CompositeDisposable;
 import ru.radiationx.anilibria.App;
@@ -23,6 +27,11 @@ public class SettingsActivity extends AppCompatActivity {
     private AppThemeHolder appThemeHolder = App.injections.getAppThemeHolder();
     private CompositeDisposable disposables = new CompositeDisposable();
     private AppThemeHolder.AppTheme currentAppTheme = appThemeHolder.getTheme();
+
+    @NotNull
+    public static Intent getIntent(@NotNull Context context) {
+        return new Intent(context, SettingsActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

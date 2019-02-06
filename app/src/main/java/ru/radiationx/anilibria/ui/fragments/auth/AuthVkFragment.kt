@@ -12,14 +12,18 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import java.util.regex.Pattern
 
 class AuthVkFragment : BaseFragment() {
     companion object {
-        const val ARG_URL = "ARG_SOCIAL_URL"
-        const val RETURN_URL = 1337
+        private const val ARG_URL = "ARG_SOCIAL_URL"
+
+        fun newInstance(url: String) = AuthVkFragment().putExtra {
+            putString(AuthVkFragment.ARG_URL, url)
+        }
     }
 
 

@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments
 
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
@@ -13,42 +12,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.ui.activities.SettingsActivity
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesContainerFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
-import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
-import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
-import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
-import ru.radiationx.anilibria.ui.fragments.page.PageFragment
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.anilibria.ui.navigation.AppNavigator
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
 import ru.radiationx.anilibria.ui.navigation.AppRouter
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.android.support.SupportAppScreen
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 
 class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandler {
 
     companion object {
-        const val TRANSITION_MOVE_TIME: Long = 375
-        const val TRANSITION_OTHER_TIME: Long = 225
+        private const val TRANSITION_MOVE_TIME: Long = 375
+        private const val TRANSITION_OTHER_TIME: Long = 225
+        private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
-        const val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
+        fun newInstance(rootScreen: Screens.AppScreen) = TabFragment().putExtra {
+            putSerializable(TabFragment.ARG_ROOT_SCREEN, rootScreen)
+        }
     }
 
     lateinit var localRouter: AppRouter
@@ -71,8 +58,9 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         arguments?.let {
-            Log.d("kekeke", "${it.getSerializable(LOCAL_ROOT_SCREEN)}")
-            localScreen = (it.getSerializable(LOCAL_ROOT_SCREEN) as? Screens.AppScreen?) ?: throw NullPointerException("localScreen is null")
+            Log.d("kekeke", "${it.getSerializable(ARG_ROOT_SCREEN)}")
+            localScreen = (it.getSerializable(ARG_ROOT_SCREEN) as? Screens.AppScreen?)
+                    ?: throw NullPointerException("localScreen is null")
         }
         cicerone = ciceroneHolder.getCicerone(localScreen.screenKey)
         localRouter = cicerone.router

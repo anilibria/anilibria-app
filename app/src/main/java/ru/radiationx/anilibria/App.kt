@@ -34,6 +34,7 @@ import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.LinkHandler
 import ru.radiationx.anilibria.ui.common.AntiDdosErrorHandler
@@ -42,7 +43,7 @@ import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
-import ru.radiationx.anilibria.navigation.AppRouter
+import ru.terrakok.cicerone.Router
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.Charset
@@ -107,6 +108,14 @@ class App : Application() {
         findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
+
+        val disposable = injections
+                .systemMessenger
+                .observe()
+                .observeOn(injections.schedulers.ui())
+                .subscribe {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                }
 
         initImageLoader(this)
         appVersionCheck()
@@ -183,7 +192,7 @@ class App : Application() {
     }
 
     /* Костыле-колесо чтобы не тащить toothpick или dagger2 */
-    class Injections(context: Context, router: AppRouter) {
+    class Injections(context: Context, router: Router) {
 
         val dimensionsProvider = DimensionsProvider()
         val schedulers: SchedulersProvider = AppSchedulers()
@@ -200,9 +209,10 @@ class App : Application() {
         val yearsHolder: YearsHolder = YearsStorage(dataStoragePreferences)
 
         val antiDdosInteractor = AntiDdosInteractor(schedulers)
+        val systemMessenger = SystemMessenger()
 
         val linkHandler: LinkHandler = LinkRouter()
-        val errorHandler: IErrorHandler = ErrorHandler(context, router)
+        val errorHandler: IErrorHandler = ErrorHandler(systemMessenger)
         val antiDdosErrorHandler: IAntiDdosErrorHandler = AntiDdosErrorHandler(antiDdosInteractor, context)
 
         val cookieHolder: CookieHolder = CookiesStorage(defaultPreferences)
@@ -277,18 +287,18 @@ class App : Application() {
     * local - для табов, типа как в семпле cicerone
     * */
     class NavigationRoot {
-        private val cicerone: Cicerone<AppRouter> = Cicerone.create(AppRouter())
+        private val cicerone: Cicerone<Router> = Cicerone.create(Router())
 
-        val router: AppRouter = cicerone.router
+        val router: Router = cicerone.router
         val holder: NavigatorHolder = cicerone.navigatorHolder
     }
 
     class LocalCiceroneHolder {
-        private val containers: MutableMap<String, Cicerone<AppRouter>> = mutableMapOf()
+        private val containers: MutableMap<String, Cicerone<Router>> = mutableMapOf()
 
-        fun getCicerone(containerTag: String): Cicerone<AppRouter> {
+        fun getCicerone(containerTag: String): Cicerone<Router> {
             if (!containers.containsKey(containerTag)) {
-                containers[containerTag] = Cicerone.create(AppRouter())
+                containers[containerTag] = Cicerone.create(Router())
             }
             return containers.getValue(containerTag)
         }

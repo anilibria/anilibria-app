@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.presentation.release.list
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 05.11.17. */
 
@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter
 class ReleasesPresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val vitalRepository: VitalRepository,
-        private val router: AppRouter,
+        private val router: Router,
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<ReleasesView>(router) {

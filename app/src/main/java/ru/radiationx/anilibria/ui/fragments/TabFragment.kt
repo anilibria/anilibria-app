@@ -15,14 +15,14 @@ import android.view.ViewGroup
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.navigation.BaseAppNavigator
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.navigation.AppRouter
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 
@@ -38,14 +38,14 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         }
     }
 
-    lateinit var localRouter: AppRouter
+    lateinit var localRouter: Router
 
-    override fun getRouter(): AppRouter = localRouter
+    override fun getRouter(): Router = localRouter
     override fun getNavigator(): Navigator = navigatorLocal
     private lateinit var localScreen: BaseAppScreen
 
     private var ciceroneHolder = App.navigation.local
-    private lateinit var cicerone: Cicerone<AppRouter>
+    private lateinit var cicerone: Cicerone<Router>
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +119,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
 
     private val navigatorLocal: Navigator by lazy {
-        object : BaseAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+        object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
                     command: Command?,

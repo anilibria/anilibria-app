@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 
-class GoogleCaptchaActivity : FragmentActivity() {
+class GoogleCaptchaActivity : BaseActivity() {
     private var content = ""
     private var contentUrl = ""
 

@@ -12,11 +12,16 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.arellomobile.mvp.MvpAppCompatFragment
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.anilibria.utils.DimensionHelper
 
 /* Created by radiationx on 18.11.17. */
@@ -24,7 +29,10 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     private val dimensionsProvider = App.injections.dimensionsProvider
-    private var dimensionsDisposable: Disposable? = null
+    private val disposables = CompositeDisposable()
+    private val screenMessagesObserver = ScreenMessagesObserver()
+    protected val screenMessenger: SystemMessenger
+        get() = screenMessagesObserver.screenMessenger
 
     protected open val needToolbarShadow = true
 
@@ -33,6 +41,16 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     @LayoutRes
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(screenMessagesObserver)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        screenMessagesObserver.context = context
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
@@ -52,14 +70,17 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            toolbar?.post {
-                toolbar?.let { _ ->
+        dimensionsProvider
+                .dimensions()
+                .subscribe {
+                    toolbar?.post {
+                        toolbar?.let { _ ->
+                            updateDimens(it)
+                        }
+                    }
                     updateDimens(it)
                 }
-            }
-            updateDimens(it)
-        }
+                .addTo(disposables)
     }
 
     open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -101,6 +122,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        dimensionsDisposable?.dispose()
+        disposables.dispose()
     }
 }

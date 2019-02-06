@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -9,11 +8,12 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class ReleaseInfoPresenter(
@@ -24,7 +24,7 @@ class ReleaseInfoPresenter(
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
         private val favoriteRepository: FavoriteRepository,
-        private val router: AppRouter,
+        private val router: Router,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseInfoView>(router) {

@@ -15,7 +15,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-class WebPlayerActivity : AppCompatActivity() {
+class WebPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_URL = "iframe_url"

@@ -9,20 +9,21 @@ import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.navigation.BaseAppNavigator
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.navigation.AppRouter
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
 
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthActivity : AppCompatActivity(), RouterProvider {
+class AuthActivity : BaseActivity(), RouterProvider {
 
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
@@ -32,7 +33,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         }
     }
 
-    override fun getRouter(): AppRouter = App.navigation.root.router
+    override fun getRouter(): Router = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
     private val appThemeHolder = App.injections.appThemeHolder
@@ -64,7 +65,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
 
         if (savedInstanceState == null) {
             val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
-                    ?: Screens.Auth()
+                    ?: Screens.AuthMain()
             getRouter().newRootScreen(initScreen)
         }
     }
@@ -80,7 +81,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     }
 
     private val navigatorNew by lazy {
-        object : BaseAppNavigator(this, R.id.root_container) {
+        object : SupportAppNavigator(this, R.id.root_container) {
 
         }
     }

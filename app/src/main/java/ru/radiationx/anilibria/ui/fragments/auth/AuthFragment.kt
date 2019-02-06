@@ -32,6 +32,7 @@ class AuthFragment : BaseFragment(), AuthView {
     fun provideAuthPresenter(): AuthPresenter {
         return AuthPresenter(
                 (activity as RouterProvider).getRouter(),
+                screenMessenger,
                 App.injections.authRepository,
                 App.injections.errorHandler
         )

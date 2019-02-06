@@ -9,8 +9,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -18,28 +16,30 @@ import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
+import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.navigation.BaseAppNavigator
-import ru.radiationx.anilibria.navigation.SystemMessage
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.navigation.AppRouter
-import ru.radiationx.anilibria.navigation.BaseAppScreen
-import ru.terrakok.cicerone.commands.*
+import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
+import ru.terrakok.cicerone.commands.Back
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Replace
 import java.util.*
 import kotlin.math.max
 
 
-class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
+class MainActivity : BaseActivity(), MainView, RouterProvider {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -47,7 +47,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    override fun getRouter(): AppRouter = App.navigation.root.router
+    override fun getRouter(): Router = App.navigation.root.router
     override fun getNavigator(): Navigator = navigatorNew
     private val navigationHolder = App.navigation.root.holder
 
@@ -76,6 +76,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     fun provideMainPresenter(): MainPresenter {
         return MainPresenter(
                 getRouter(),
+                screenMessenger,
                 App.injections.errorHandler,
                 App.injections.authRepository,
                 App.injections.checkerRepository,
@@ -274,7 +275,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
     }
 
-    private val navigatorNew = object : BaseAppNavigator(this, R.id.root_container) {
+    private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command?) {
             Log.e("S_DEF_LOG", "ApplyCommand " + command)
@@ -294,9 +295,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
                 } else {
                     activityBack()
                 }
-                return
-            } else if (command is SystemMessage) {
-                Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
                 return
             } else if (command is Replace) {
                 val inTabs = allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
@@ -331,7 +329,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         private var exitToastShowed: Boolean = false
         override fun activityBack() {
             if (!exitToastShowed) {
-                showSystemMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
+                screenMessenger.showMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true
                 Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
             } else {

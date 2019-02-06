@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.disposables.CompositeDisposable
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
@@ -11,16 +10,19 @@ import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CheckerRepository
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 17.12.17.
  */
 @InjectViewState
 class MainPresenter(
-        private val router: AppRouter,
+        private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val errorHandler: IErrorHandler,
         private val authRepository: AuthRepository,
         private val checkerRepository: CheckerRepository,
@@ -55,7 +57,7 @@ class MainPresenter(
         val disposable = antiDdosInteractor
                 .observerCompleteEvents()
                 .subscribe {
-                    router.showSystemMessage("new complete: $it")
+                    systemMessenger.showMessage("new complete: $it")
                     testRequest()
                 }
         antiDdosCompositeDisposable.add(disposable)

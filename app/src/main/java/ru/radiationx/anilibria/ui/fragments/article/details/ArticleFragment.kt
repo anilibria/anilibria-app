@@ -96,6 +96,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
             App.injections.articleRepository,
             App.injections.vitalRepository,
             (parentFragment as RouterProvider).getRouter(),
+            screenMessenger,
             App.injections.linkHandler,
             App.injections.errorHandler
     )

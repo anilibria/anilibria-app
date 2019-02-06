@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
+import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
 
 /**
@@ -29,7 +30,7 @@ import ru.radiationx.anilibria.utils.Utils
  */
 
 @RuntimePermissions
-class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
+class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
         const val ARG_FORCE = "force"

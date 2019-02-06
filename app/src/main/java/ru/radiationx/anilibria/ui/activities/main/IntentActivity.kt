@@ -12,11 +12,12 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.ui.activities.BaseActivity
 
 /**
  * Created by radiationx on 23.02.18.
  */
-class IntentActivity : AppCompatActivity() {
+class IntentActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

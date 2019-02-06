@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.ui.common
 
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.navigation.AppRouter
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 
 /**
@@ -19,7 +19,7 @@ class LinkRouter : LinkHandler {
         Pattern.compile("\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\\/?\$")
     }
 
-    override fun handle(url: String, router: AppRouter?, doNavigate: Boolean): Boolean {
+    override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {
         findScreen(url)?.also { screen ->
             if (doNavigate) {
                 router?.navigateTo(screen)

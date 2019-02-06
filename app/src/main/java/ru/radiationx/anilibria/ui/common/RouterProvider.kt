@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.ui.common
 
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.navigation.AppRouter
+import ru.terrakok.cicerone.Router
 
 interface RouterProvider {
-    fun getRouter(): AppRouter
+    fun getRouter(): Router
     fun getNavigator(): Navigator
 }

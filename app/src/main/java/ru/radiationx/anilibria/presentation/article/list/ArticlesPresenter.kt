@@ -1,14 +1,14 @@
 package ru.radiationx.anilibria.presentation.article.list
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 18.12.17.
@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter
 open class ArticlesPresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        private val router: AppRouter,
+        private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticlesView>(router) {
     companion object {

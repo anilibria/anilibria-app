@@ -52,6 +52,7 @@ class CommentsFragment : BaseFragment(), CommentsView {
             App.injections.historyRepository,
             App.injections.authRepository,
             (parentFragment as RouterProvider).getRouter(),
+            screenMessenger,
             App.injections.linkHandler,
             App.injections.errorHandler
     )

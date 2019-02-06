@@ -6,10 +6,11 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 20.12.17.
@@ -18,7 +19,8 @@ import ru.radiationx.anilibria.utils.mvp.BasePresenter
 class ArticlePresenter(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
-        private val router: AppRouter,
+        private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticleView>(router) {
@@ -105,12 +107,12 @@ class ArticlePresenter(
 
     fun onClickSendComment(text: String) {
         if (text.length < 3) {
-            router.showSystemMessage("Комментарий слишком короткий")
+            systemMessenger.showMessage("Комментарий слишком короткий")
             return
         }
         if ((System.currentTimeMillis() - lasCommentSentTime) < 30000) {
             lasCommentSentTime = System.currentTimeMillis()
-            router.showSystemMessage("Комментарий можно отправлять раз в 30 секунд")
+            systemMessenger.showMessage("Комментарий можно отправлять раз в 30 секунд")
             return
         }
         currentData?.let {

@@ -5,14 +5,14 @@ import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.repository.YoutubeRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class YoutubePresenter(
         private val youtubeRepository: YoutubeRepository,
-        private val router: AppRouter,
+        private val router: Router,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<YoutubeView>(router) {

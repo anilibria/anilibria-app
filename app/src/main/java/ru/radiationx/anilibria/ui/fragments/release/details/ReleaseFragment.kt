@@ -36,7 +36,7 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.navigation.AppRouter
+import ru.terrakok.cicerone.Router
 
 
 /* Created by radiationx on 16.11.17. */
@@ -89,7 +89,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         transitionNameLocal = name
     }
 
-    override fun getRouter(): AppRouter = (parentFragment as RouterProvider).getRouter()
+    override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
 
     override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
 

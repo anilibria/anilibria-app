@@ -21,7 +21,7 @@ import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 
-class BlazingFastActivity : FragmentActivity() {
+class BlazingFastActivity : BaseActivity() {
     private var content = ""
     private var contentUrl = ""
 

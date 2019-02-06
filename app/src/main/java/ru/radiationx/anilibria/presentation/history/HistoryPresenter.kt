@@ -1,18 +1,18 @@
 package ru.radiationx.anilibria.presentation.history
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.HistoryRepository
-import ru.radiationx.anilibria.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 18.02.18.
  */
 @InjectViewState
 class HistoryPresenter(
-        private val router: AppRouter,
+        private val router: Router,
         private val historyRepository: HistoryRepository
 ) : BasePresenter<HistoryView>(router) {
 

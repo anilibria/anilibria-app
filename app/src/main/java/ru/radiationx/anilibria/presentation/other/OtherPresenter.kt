@@ -2,21 +2,23 @@ package ru.radiationx.anilibria.presentation.other
 
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class OtherPresenter(
-        private val router: AppRouter,
+        private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<OtherView>(router) {
@@ -149,7 +151,7 @@ class OtherPresenter(
         authRepository
                 .signOut()
                 .subscribe({
-                    router.showSystemMessage("Данные авторизации удалены")
+                    systemMessenger.showMessage("Данные авторизации удалены")
                 }, {
                     errorHandler.handle(it)
                 })

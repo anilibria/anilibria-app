@@ -1,20 +1,21 @@
 package ru.radiationx.anilibria.presentation.auth
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.terrakok.cicerone.Router
 
 /**
  * Created by radiationx on 30.12.17.
  */
 @InjectViewState
 class AuthPresenter(
-        private val router: AppRouter,
+        private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<AuthView>(router) {
@@ -65,7 +66,7 @@ class AuthPresenter(
         if (state == AuthState.AUTH) {
             router.finishChain()
         } else {
-            router.showSystemMessage("Что-то пошло не так")
+            systemMessenger.showMessage("Что-то пошло не так")
         }
     }
 

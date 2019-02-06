@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.utils.Utils
 /**
  * Created by radiationx on 27.01.18.
  */
-class FullScreenActivity : AppCompatActivity() {
+class FullScreenActivity : BaseActivity() {
     companion object {
         const val VITAL_ITEM = "vitalik"
     }

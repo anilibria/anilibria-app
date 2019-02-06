@@ -47,7 +47,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class MyPlayerActivity : AppCompatActivity() {
+class MyPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_RELEASE = "release"

@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment;
  * Created by radiationx on 25.12.16.
  */
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private AppThemeHolder appThemeHolder = App.injections.getAppThemeHolder();
     private CompositeDisposable disposables = new CompositeDisposable();

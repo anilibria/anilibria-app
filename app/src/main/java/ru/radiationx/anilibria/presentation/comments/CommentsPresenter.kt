@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.presentation.comments
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
@@ -9,10 +8,12 @@ import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CommentsRepository
 import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 
 @InjectViewState
 class CommentsPresenter(
@@ -21,7 +22,8 @@ class CommentsPresenter(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val authRepository: AuthRepository,
-        private val router: AppRouter,
+        private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<CommentsView>(router) {
@@ -124,12 +126,12 @@ class CommentsPresenter(
 
     fun onClickSendComment(text: String) {
         if (text.length < 3) {
-            router.showSystemMessage("Комментарий слишком короткий")
+            systemMessenger.showMessage("Комментарий слишком короткий")
             return
         }
         if ((System.currentTimeMillis() - lasCommentSentTime) < 30000) {
             lasCommentSentTime = System.currentTimeMillis()
-            router.showSystemMessage("Комментарий можно отправлять раз в 30 секунд")
+            systemMessenger.showMessage("Комментарий можно отправлять раз в 30 секунд")
             return
         }
         currentData?.let { release ->

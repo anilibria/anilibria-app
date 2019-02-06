@@ -3,15 +3,15 @@ package ru.radiationx.anilibria.presentation.search
 import com.arellomobile.mvp.InjectViewState
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 class FastSearchPresenter(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
-        private val router: AppRouter,
+        private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FastSearchView>(router) {
 

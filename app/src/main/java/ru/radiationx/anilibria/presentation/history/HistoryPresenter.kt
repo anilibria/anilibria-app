@@ -1,13 +1,11 @@
 package ru.radiationx.anilibria.presentation.history
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.HistoryRepository
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 18.02.18.

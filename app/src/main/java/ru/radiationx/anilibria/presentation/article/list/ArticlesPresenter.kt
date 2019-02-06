@@ -1,17 +1,14 @@
 package ru.radiationx.anilibria.presentation.article.list
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 18.12.17.
@@ -32,7 +29,6 @@ open class ArticlesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refresh()
         loadVital()
     }
@@ -51,7 +47,6 @@ open class ArticlesPresenter(
     }
 
     fun loadCategory(category: String) {
-        Log.e("lalala", "loadCategory $category")
         if (this.category != category) {
             this.category = category
             refresh()

@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
 
 /**
  * Created by radiationx on 16.12.17.

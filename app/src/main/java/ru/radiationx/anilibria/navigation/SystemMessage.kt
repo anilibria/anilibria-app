@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.navigation
+package ru.radiationx.anilibria.navigation
 
 import ru.terrakok.cicerone.commands.Command
 

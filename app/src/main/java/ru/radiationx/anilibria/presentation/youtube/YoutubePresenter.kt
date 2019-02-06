@@ -1,17 +1,13 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.repository.YoutubeRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class YoutubePresenter(

@@ -1,17 +1,18 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
+import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.repository.CommentsRepository
+import ru.radiationx.anilibria.model.repository.HistoryRepository
+import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class CommentsPresenter(
@@ -40,7 +41,6 @@ class CommentsPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadRelease()
         loadComments(currentPageComment)
         subscribeAuth()
@@ -61,7 +61,6 @@ class CommentsPresenter(
     }
 
     private fun loadRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         /*releaseInteractor
                 .observeRelease(releaseId, releaseIdCode)
                 .doOnSubscribe { viewState.setRefreshing(true) }
@@ -71,7 +70,6 @@ class CommentsPresenter(
                         loadComments(currentPageComment)
                     }
                     releaseIdCode = release.code
-                    Log.d("S_DEF_LOG", "subscribe call show")
                     currentData = release
                     historyRepository.putRelease(release as ReleaseItem)
                 }) {
@@ -91,10 +89,6 @@ class CommentsPresenter(
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
-                    Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)
-                    comments.data.forEach {
-                        Log.e("S_DEF_LOG", "Comment: ${it.id}, ${it.authorNick}")
-                    }
                     if (isFirstPage()) {
                         viewState.showComments(comments.data)
                     } else {

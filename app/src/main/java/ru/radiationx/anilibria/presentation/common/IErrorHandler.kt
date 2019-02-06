@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation
+package ru.radiationx.anilibria.presentation.common
 
 /**
  * Created by radiationx on 23.02.18.

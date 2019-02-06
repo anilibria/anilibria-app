@@ -1,16 +1,15 @@
 package ru.radiationx.anilibria.presentation.article.details
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 20.12.17.
@@ -43,7 +42,6 @@ class ArticlePresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         loadArticle(articleIdCode)
         loadVital()
     }
@@ -58,7 +56,6 @@ class ArticlePresenter(
     }
 
     private fun loadArticle(code: String) {
-        Log.e("S_DEF_LOG", "load article $code")
         viewState.setRefreshing(true)
         articleRepository
                 .getArticle(code)
@@ -83,10 +80,6 @@ class ArticlePresenter(
                 .doAfterTerminate { viewState.setCommentsRefreshing(false) }
                 .subscribe({ comments ->
                     viewState.setEndlessComments(!comments.isEnd())
-                    Log.e("S_DEF_LOG", "Comments loaded: " + comments.data.size)
-                    comments.data.forEach {
-                        Log.e("S_DEF_LOG", "Comment: ${it.id}, ${it.authorNick}")
-                    }
                     if (isFirstPage()) {
                         viewState.showComments(comments.data)
                     } else {

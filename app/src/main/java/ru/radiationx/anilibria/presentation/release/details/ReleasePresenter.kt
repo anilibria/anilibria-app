@@ -1,14 +1,13 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.model.repository.HistoryRepository
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
@@ -47,7 +46,6 @@ class ReleasePresenter(
     }
 
     private fun observeRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
                 .observeFull(releaseId, releaseIdCode)
                 .subscribe({ release ->
@@ -67,17 +65,13 @@ class ReleasePresenter(
     }
 
     fun onShareClick() {
-        Log.e("S_DEF_LOG", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            Log.e("S_DEF_LOG", "onShareClick $it")
             viewState.shareRelease(it)
         }
     }
 
     fun onCopyLinkClick() {
-        Log.e("S_DEF_LOG", "onShareClick $currentData, ${currentData?.link}")
         currentData?.link?.let {
-            Log.e("S_DEF_LOG", "onShareClick $it")
             viewState.copyLink(it)
         }
     }

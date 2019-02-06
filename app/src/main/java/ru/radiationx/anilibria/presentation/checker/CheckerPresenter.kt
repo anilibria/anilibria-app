@@ -1,13 +1,12 @@
 package ru.radiationx.anilibria.presentation.checker
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.repository.CheckerRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 
 /**
  * Created by radiationx on 28.01.18.
@@ -28,12 +27,10 @@ class CheckerPresenter(
     }
 
     private fun checkUpdate() {
-        Log.e("CHECKER", "checkUpdate presenter")
         checkerRepository
                 .checkUpdate(BuildConfig.VERSION_CODE, forceLoad)
                 .doOnSubscribe { viewState.setRefreshing(true) }
                 .subscribe({
-                    Log.e("CHECKER", "SUBSC DATE " + it)
                     viewState.setRefreshing(false)
                     viewState.showUpdateData(it)
                 }, {

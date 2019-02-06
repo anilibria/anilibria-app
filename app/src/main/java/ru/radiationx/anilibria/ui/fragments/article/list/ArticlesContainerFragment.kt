@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
 
 /**
  * Created by radiationx on 25.02.18.

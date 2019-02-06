@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.navigation
+package ru.radiationx.anilibria.navigation
 
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
@@ -6,7 +6,7 @@ import android.widget.Toast
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 
-open class AppNavigator : SupportAppNavigator {
+open class BaseAppNavigator : SupportAppNavigator {
 
     private var activity: FragmentActivity? = null
 

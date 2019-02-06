@@ -1,16 +1,13 @@
-package ru.radiationx.anilibria.presentation
+package ru.radiationx.anilibria.ui.common
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
 import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 class AntiDdosErrorHandler(
         private val antiDdosInteractor: AntiDdosInteractor,

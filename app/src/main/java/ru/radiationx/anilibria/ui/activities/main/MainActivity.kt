@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
@@ -28,13 +28,12 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.TabFragment
-import ru.radiationx.anilibria.ui.navigation.AppNavigator
-import ru.radiationx.anilibria.ui.navigation.SystemMessage
+import ru.radiationx.anilibria.navigation.BaseAppNavigator
+import ru.radiationx.anilibria.navigation.SystemMessage
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.ui.navigation.AppRouter
-import ru.terrakok.cicerone.Screen
+import ru.radiationx.anilibria.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.terrakok.cicerone.commands.*
 import java.util.*
 import kotlin.math.max
@@ -275,7 +274,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
         }
     }
 
-    private val navigatorNew = object : AppNavigator(this, R.id.root_container) {
+    private val navigatorNew = object : BaseAppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command?) {
             Log.e("S_DEF_LOG", "ApplyCommand " + command)
@@ -344,6 +343,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider {
     class Tab(
             val title: Int,
             val icon: Int,
-            val screen: Screens.AppScreen
+            val screen: BaseAppScreen
     )
 }

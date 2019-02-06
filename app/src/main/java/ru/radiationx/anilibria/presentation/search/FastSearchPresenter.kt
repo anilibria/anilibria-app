@@ -1,19 +1,17 @@
 package ru.radiationx.anilibria.presentation.search
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 

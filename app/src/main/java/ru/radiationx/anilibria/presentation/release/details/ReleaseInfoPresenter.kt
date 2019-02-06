@@ -1,9 +1,7 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -11,12 +9,11 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class ReleaseInfoPresenter(
@@ -38,7 +35,6 @@ class ReleaseInfoPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
@@ -96,7 +92,6 @@ class ReleaseInfoPresenter(
     }
 
     private fun observeRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
                 .observeFull(releaseId, releaseIdCode)
                 .subscribe({ release ->

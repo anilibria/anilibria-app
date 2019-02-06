@@ -1,10 +1,9 @@
-package ru.radiationx.anilibria.presentation
+package ru.radiationx.anilibria.ui.common
 
-import android.os.Bundle
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 import java.util.regex.Pattern
 
 /**
@@ -30,7 +29,7 @@ class LinkRouter : LinkHandler {
         return false
     }
 
-    override fun findScreen(url: String): Screens.AppScreen? {
+    override fun findScreen(url: String): BaseAppScreen? {
         if (checkUnsupported(url)) {
             return null
         }

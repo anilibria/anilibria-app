@@ -1,16 +1,13 @@
 package ru.radiationx.anilibria.presentation.search
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.SearchRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class SearchPresenter(
@@ -36,7 +33,6 @@ class SearchPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
         loadYears()
         observeGenres()
@@ -51,7 +47,6 @@ class SearchPresenter(
                     currentItems.forEach { item ->
                         data.firstOrNull { it.id == item.id }?.also { updItem ->
                             val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                            Log.e("lalalupdata", "check pres ${item.id}, ${item.torrentUpdate} : ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp} : ${item.isNew}, $isNew")
                             if (item.isNew != isNew) {
                                 item.isNew = isNew
                                 itemsNeedUpdate.add(item)
@@ -108,7 +103,6 @@ class SearchPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("S_DEF_LOG", "loadReleases")
 
         /*if (isEmpty()) {
             viewState.setRefreshing(false)

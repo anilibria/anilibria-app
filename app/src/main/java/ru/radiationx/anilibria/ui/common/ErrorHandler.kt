@@ -1,9 +1,10 @@
-package ru.radiationx.anilibria.presentation
+package ru.radiationx.anilibria.ui.common
 
 import android.content.Context
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 
 /**
  * Created by radiationx on 23.02.18.

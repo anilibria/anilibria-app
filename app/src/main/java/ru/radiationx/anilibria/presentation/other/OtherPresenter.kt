@@ -1,19 +1,18 @@
 package ru.radiationx.anilibria.presentation.other
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 @InjectViewState
 class OtherPresenter(
@@ -141,7 +140,6 @@ class OtherPresenter(
         authRepository.observeUser()
                 .subscribe {
                     profileItem = it
-                    Log.e("S_DEF_LOG", "updateUser ${it.nick} : ${profileItem.nick}")
                     updateMenuItems()
                 }
                 .addToDisposable()

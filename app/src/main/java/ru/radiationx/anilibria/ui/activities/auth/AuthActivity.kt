@@ -3,24 +3,20 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
-import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
-import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
-import ru.radiationx.anilibria.ui.navigation.AppNavigator
+import ru.radiationx.anilibria.navigation.BaseAppNavigator
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 
 
 /**
@@ -31,7 +27,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
-        fun createIntent(context: Context, rootScreen: Screens.AppScreen? = null): Intent = Intent(context, AuthActivity::class.java).apply {
+        fun createIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent = Intent(context, AuthActivity::class.java).apply {
             putExtra(AuthActivity.ARG_INIT_SCREEN, rootScreen)
         }
     }
@@ -67,7 +63,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
         })
 
         if (savedInstanceState == null) {
-            val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? Screens.AppScreen)
+            val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
                     ?: Screens.Auth()
             getRouter().newRootScreen(initScreen)
         }
@@ -84,7 +80,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
     }
 
     private val navigatorNew by lazy {
-        object : AppNavigator(this, R.id.root_container) {
+        object : BaseAppNavigator(this, R.id.root_container) {
 
         }
     }

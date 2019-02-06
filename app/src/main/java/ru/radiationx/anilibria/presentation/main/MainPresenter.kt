@@ -1,9 +1,8 @@
 package ru.radiationx.anilibria.presentation.main
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.disposables.CompositeDisposable
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
@@ -12,10 +11,9 @@ import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CheckerRepository
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 17.12.17.
@@ -45,7 +43,6 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "main onFirstViewAttach ${authRepository.getAuthState()} : ${antiDdosInteractor.isHardChecked}")
         if (antiDdosInteractor.isHardChecked) {
             initMain()
         } else {
@@ -108,7 +105,6 @@ class MainPresenter(
     fun getAuthState() = authRepository.getAuthState()
 
     fun selectTab(screenKey: String) {
-        Log.e("S_DEF_LOG", "presenter selectTab " + screenKey)
         viewState.highlightTab(screenKey)
     }
 

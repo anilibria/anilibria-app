@@ -5,7 +5,7 @@ import com.arellomobile.mvp.MvpView
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
 
 /**
  * Created by radiationx on 05.11.17.

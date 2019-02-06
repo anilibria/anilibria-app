@@ -21,7 +21,6 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -35,11 +34,15 @@ import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import ru.radiationx.anilibria.presentation.*
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.ui.common.AntiDdosErrorHandler
+import ru.radiationx.anilibria.ui.common.ErrorHandler
+import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.Charset

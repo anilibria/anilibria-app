@@ -14,15 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.navigation.AppNavigator
+import ru.radiationx.anilibria.navigation.BaseAppNavigator
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Navigator
-import ru.radiationx.anilibria.ui.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.AppRouter
+import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 
@@ -33,7 +33,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         private const val TRANSITION_OTHER_TIME: Long = 225
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
-        fun newInstance(rootScreen: Screens.AppScreen) = TabFragment().putExtra {
+        fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
             putSerializable(TabFragment.ARG_ROOT_SCREEN, rootScreen)
         }
     }
@@ -42,7 +42,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun getRouter(): AppRouter = localRouter
     override fun getNavigator(): Navigator = navigatorLocal
-    private lateinit var localScreen: Screens.AppScreen
+    private lateinit var localScreen: BaseAppScreen
 
     private var ciceroneHolder = App.navigation.local
     private lateinit var cicerone: Cicerone<AppRouter>
@@ -59,7 +59,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
         super.onAttach(context)
         arguments?.let {
             Log.d("kekeke", "${it.getSerializable(ARG_ROOT_SCREEN)}")
-            localScreen = (it.getSerializable(ARG_ROOT_SCREEN) as? Screens.AppScreen?)
+            localScreen = (it.getSerializable(ARG_ROOT_SCREEN) as? BaseAppScreen?)
                     ?: throw NullPointerException("localScreen is null")
         }
         cicerone = ciceroneHolder.getCicerone(localScreen.screenKey)
@@ -119,7 +119,7 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
 
     private val navigatorLocal: Navigator by lazy {
-        object : AppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+        object : BaseAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
                     command: Command?,

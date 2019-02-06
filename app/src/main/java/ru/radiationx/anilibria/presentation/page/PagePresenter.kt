@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.presentation.page
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.PageRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.navigation.AppRouter
 import ru.radiationx.anilibria.utils.mvp.BasePresenter
-import ru.radiationx.anilibria.ui.navigation.AppRouter
 
 /**
  * Created by radiationx on 13.01.18.

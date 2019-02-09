@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments
 
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
@@ -12,16 +13,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
 import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScopeProvider
+import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -43,6 +47,9 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     }
 
     @Inject
+    lateinit var screenMessagesObserver: ScreenMessagesObserver
+
+    @Inject
     lateinit var linkHandler: ILinkHandler
 
     @Inject
@@ -62,13 +69,13 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope, RouterModule(screenScope))
+        injectDependencies(screenScope, RouterModule(screenScope), MessengerModule())
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(screenMessagesObserver)
         navigationQueue.add(Runnable {
             router.newRootScreen(localScreen)
         })
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tab, container, false)

@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.repository.CheckerRepository
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.main.MainPresenter
@@ -49,6 +50,9 @@ class MainActivity : BaseActivity(), MainView {
 
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
+
+    @Inject
+    lateinit var screenMessenger: SystemMessenger
 
     @Inject
     lateinit var router: Router

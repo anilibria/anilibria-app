@@ -203,6 +203,10 @@ class OtherPresenter @Inject constructor(
     }
 
     fun openAuth() {
+        if (profileItem.authState == AuthState.AUTH) {
+            systemMessenger.showMessage("Просмотр профиля недоступен")
+            return
+        }
         router.navigateTo(Screens.Auth())
     }
 }

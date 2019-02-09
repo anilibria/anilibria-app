@@ -17,12 +17,14 @@ import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import io.reactivex.ObservableTransformer
 import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.anilibria.model.system.messages.SystemMessage
+import javax.inject.Inject
 
 
-class ScreenMessagesObserver : LifecycleObserver {
+class ScreenMessagesObserver @Inject constructor(
+        private val context: Context,
+        screenMessenger: SystemMessenger
+) : LifecycleObserver {
 
-    var context: Context? = null
-    val screenMessenger = SystemMessenger()
     private val disposables = CompositeDisposable()
     private var messengerDisposable = Disposables.disposed()
     private val messageBufferTrigger = BehaviorSubject.create<Boolean>()
@@ -37,7 +39,6 @@ class ScreenMessagesObserver : LifecycleObserver {
                     messageBufferTrigger.onNext(true)
                 }
                 .addTo(disposables)
-
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -60,12 +61,11 @@ class ScreenMessagesObserver : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun destroy() {
-        context = null
         disposables.dispose()
     }
 
     private fun showMessage(message: SystemMessage) {
-        context?.also {
+        context.also {
             Toast.makeText(it, message.message, Toast.LENGTH_SHORT).show()
         }
     }

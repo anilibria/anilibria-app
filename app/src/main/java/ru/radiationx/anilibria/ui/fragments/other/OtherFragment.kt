@@ -75,11 +75,7 @@ class OtherFragment : BaseFragment(), OtherView {
     inner class OtherAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
 
         private val profileClickListener = { item: ProfileItem ->
-            if (item.authState == AuthState.AUTH) {
-                screenMessenger.showMessage("Просмотр профиля недоступен")
-            } else {
-                presenter.openAuth()
-            }
+            presenter.openAuth()
         }
 
         private val logoutClickListener = { presenter.signOut() }

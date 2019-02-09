@@ -16,8 +16,10 @@ import com.arellomobile.mvp.MvpAppCompatFragment
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.addTo
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.ui.common.BackButtonListener
@@ -37,9 +39,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
 
     private val dimensionsProvider = getDependency(DimensionsProvider::class.java)
     private val disposables = CompositeDisposable()
-    private val screenMessagesObserver = ScreenMessagesObserver()
-    protected val screenMessenger: SystemMessenger
-        get() = screenMessagesObserver.screenMessenger
 
     protected open val needToolbarShadow = true
 
@@ -51,16 +50,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
 
     override val screenScope: String by lazy {
         arguments?.getString(ARG_SCREEN_SCOPE, null) ?: Scopes.APP
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(screenMessagesObserver)
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        screenMessagesObserver.context = context
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

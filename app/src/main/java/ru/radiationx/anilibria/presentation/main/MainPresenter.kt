@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
 
 /**

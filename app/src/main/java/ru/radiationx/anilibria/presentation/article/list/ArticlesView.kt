@@ -5,7 +5,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.utils.mvp.IBaseView
+import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**
  * Created by radiationx on 18.12.17.

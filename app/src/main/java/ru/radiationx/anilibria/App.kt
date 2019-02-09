@@ -36,7 +36,7 @@ import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.presentation.common.LinkHandler
+import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.AntiDdosErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
@@ -211,7 +211,7 @@ class App : Application() {
         val antiDdosInteractor = AntiDdosInteractor(schedulers)
         val systemMessenger = SystemMessenger()
 
-        val linkHandler: LinkHandler = LinkRouter()
+        val linkHandler: ILinkHandler = LinkRouter()
         val errorHandler: IErrorHandler = ErrorHandler(systemMessenger)
         val antiDdosErrorHandler: IAntiDdosErrorHandler = AntiDdosErrorHandler(antiDdosInteractor, context)
 

@@ -6,7 +6,7 @@ import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.utils.mvp.IBaseView
+import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**
  * Created by radiationx on 20.12.17.

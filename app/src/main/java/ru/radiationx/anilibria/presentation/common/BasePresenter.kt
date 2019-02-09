@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils.mvp
+package ru.radiationx.anilibria.presentation.common
 
 import com.arellomobile.mvp.MvpPresenter
 import com.arellomobile.mvp.MvpView

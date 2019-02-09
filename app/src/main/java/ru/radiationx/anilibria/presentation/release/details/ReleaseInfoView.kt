@@ -6,7 +6,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.utils.mvp.IBaseView
+import ru.radiationx.anilibria.presentation.common.IBaseView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseInfoView: IBaseView {

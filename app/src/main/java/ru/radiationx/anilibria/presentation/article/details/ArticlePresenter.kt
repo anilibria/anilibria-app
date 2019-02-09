@@ -8,8 +8,8 @@ import ru.radiationx.anilibria.model.repository.ArticleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.presentation.common.LinkHandler
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.presentation.common.ILinkHandler
+import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
 
 /**
@@ -21,7 +21,7 @@ class ArticlePresenter(
         private val vitalRepository: VitalRepository,
         private val router: Router,
         private val systemMessenger: SystemMessenger,
-        private val linkHandler: LinkHandler,
+        private val linkHandler: ILinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticleView>(router) {
 

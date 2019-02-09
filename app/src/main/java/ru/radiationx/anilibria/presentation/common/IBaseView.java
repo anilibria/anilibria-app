@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils.mvp;
+package ru.radiationx.anilibria.presentation.common;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;

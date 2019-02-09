@@ -14,9 +14,10 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class ReleaseInfoPresenter(
+class ReleaseInfoPresenter @Inject constructor(
         private val releaseRepository: ReleaseRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,

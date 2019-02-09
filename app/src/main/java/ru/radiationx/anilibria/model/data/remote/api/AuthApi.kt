@@ -7,11 +7,12 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.AuthParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthApi(
+class AuthApi @Inject constructor(
         private val client: IClient,
         private val authParser: AuthParser
 ) {

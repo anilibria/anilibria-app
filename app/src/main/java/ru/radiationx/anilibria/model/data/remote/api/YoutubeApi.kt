@@ -10,8 +10,9 @@ import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import ru.radiationx.anilibria.model.data.remote.parsers.YoutubeParser
+import javax.inject.Inject
 
-class YoutubeApi(
+class YoutubeApi @Inject constructor(
         private val client: IClient,
         private val youtubeParser: YoutubeParser
 ) {

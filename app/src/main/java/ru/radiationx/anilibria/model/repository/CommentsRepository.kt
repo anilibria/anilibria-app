@@ -6,8 +6,9 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
 import ru.radiationx.anilibria.model.data.remote.api.CommentApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
-class CommentsRepository(
+class CommentsRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val commentApi: CommentApi
 ) {

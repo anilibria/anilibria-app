@@ -7,12 +7,13 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
 @InjectViewState
-class FavoritesPresenter(
+class FavoritesPresenter @Inject constructor(
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler

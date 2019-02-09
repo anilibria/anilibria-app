@@ -6,12 +6,13 @@ import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.02.18.
  */
 @InjectViewState
-class HistoryPresenter(
+class HistoryPresenter @Inject constructor(
         private val router: Router,
         private val historyRepository: HistoryRepository
 ) : BasePresenter<HistoryView>(router) {

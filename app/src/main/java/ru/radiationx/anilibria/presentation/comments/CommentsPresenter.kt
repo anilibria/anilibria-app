@@ -14,9 +14,10 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class CommentsPresenter(
+class CommentsPresenter @Inject constructor(
         private val releaseRepository: ReleaseRepository,
         private val commentsRepository: CommentsRepository,
         private val releaseInteractor: ReleaseInteractor,

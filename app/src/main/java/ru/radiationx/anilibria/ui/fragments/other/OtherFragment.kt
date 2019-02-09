@@ -7,8 +7,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_other.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
@@ -21,7 +22,6 @@ import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 
 
@@ -36,18 +36,14 @@ class OtherFragment : BaseFragment(), OtherView {
     lateinit var presenter: OtherPresenter
 
     @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter {
-        return OtherPresenter(
-                (parentFragment as RouterProvider).getRouter(),
-                screenMessenger,
-                App.injections.authRepository,
-                App.injections.errorHandler
-        )
-    }
-
-    override fun getLayoutResource(): Int = View.NO_ID
+    fun provideOtherPresenter(): OtherPresenter = getDependency(OtherPresenter::class.java)
 
     override fun getBaseLayout(): Int = R.layout.fragment_other
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

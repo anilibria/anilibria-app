@@ -8,8 +8,11 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class FavoriteParser(private val apiUtils: IApiUtils) {
+class FavoriteParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     private val idNamePatternSource = "\\/release\\/([\\s\\S]*?)\\.html"
     private val idNamePattern: Pattern by lazy {

@@ -1,12 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments.comments.vk
 
-import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
-import android.support.annotation.RequiresApi
 import android.util.Log
 import android.view.View
 import android.webkit.*
@@ -14,24 +12,26 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_article.*
-import okhttp3.HttpUrl
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
+import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.extension.toBase64
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.presentation.comments.vk.VkCommentsPresenter
 import ru.radiationx.anilibria.presentation.comments.vk.VkCommentsView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
+import ru.radiationx.anilibria.utils.Utils
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
-import java.util.ArrayList
-import android.webkit.WebView
-import ru.radiationx.anilibria.extension.isDark
-import ru.radiationx.anilibria.utils.Utils
+import java.util.*
+import javax.inject.Inject
 
 
 class VkCommentsFragment : BaseFragment(), VkCommentsView {
@@ -45,26 +45,21 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     private var webViewScrollPos = 0
 
-    private val appThemeHolder = App.injections.appThemeHolder
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
+
     private val disposables = CompositeDisposable()
 
     @InjectPresenter
     lateinit var presenter: VkCommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): VkCommentsPresenter = VkCommentsPresenter(
-            App.injections.pageRepository,
-            App.injections.releaseInteractor,
-            App.injections.authHolder,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.linkHandler,
-            App.injections.errorHandler
-    )
-
+    fun providePresenter(): VkCommentsPresenter = getDependency(VkCommentsPresenter::class.java)
 
     override fun getBaseLayout(): Int = R.layout.fragment_article
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
@@ -195,7 +190,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
-                val client = App.injections.client
+                val client = getDependency(IClient::class.java)
                 Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = client.get(url.orEmpty(), emptyMap()).blockingGet()
                 var newCss = cssSrc

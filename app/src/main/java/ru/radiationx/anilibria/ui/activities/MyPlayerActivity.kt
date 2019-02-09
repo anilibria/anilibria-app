@@ -33,16 +33,20 @@ import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
@@ -86,9 +90,23 @@ class MyPlayerActivity : BaseActivity() {
     private var currentPlaySpeed = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
-    private val vitalRepository: VitalRepository = App.injections.vitalRepository
-    private val releaseInteractor = App.injections.releaseInteractor
-    private val appThemeHolder = App.injections.appThemeHolder
+
+    @Inject
+    lateinit var vitalRepository: VitalRepository
+
+    @Inject
+    lateinit var releaseInteractor: ReleaseInteractor
+
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
+
+    @Inject
+    lateinit var defaultPreferences: SharedPreferences
+
+    @Inject
+    lateinit var appPreferences: PreferencesHolder
+
+
     private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
@@ -117,6 +135,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         createPIPParams()
         loadVital()
@@ -208,12 +227,12 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun loadScale(orientation: Int): ScaleType {
-        val scaleOrdinal = App.injections.defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
+        val scaleOrdinal = defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
         return ScaleType.fromOrdinal(scaleOrdinal)
     }
 
     private fun saveScale(orientation: Int, scale: ScaleType) {
-        App.injections.defaultPreferences.edit().putInt("video_ratio_$orientation", scale.ordinal).apply()
+        defaultPreferences.edit().putInt("video_ratio_$orientation", scale.ordinal).apply()
     }
 
     private fun savePlaySpeed() {
@@ -263,7 +282,7 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
-        App.injections.appPreferences.setQuality(when (newQuality) {
+        appPreferences.setQuality(when (newQuality) {
             MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
             MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
             else -> PreferencesHolder.QUALITY_NO

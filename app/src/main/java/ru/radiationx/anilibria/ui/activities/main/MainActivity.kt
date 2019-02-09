@@ -14,11 +14,13 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.main.MainPresenter
@@ -27,19 +29,20 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.terrakok.cicerone.Navigator
+import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.max
 
 
-class MainActivity : BaseActivity(), MainView, RouterProvider {
+class MainActivity : BaseActivity(), MainView {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -47,9 +50,17 @@ class MainActivity : BaseActivity(), MainView, RouterProvider {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    override fun getRouter(): Router = App.navigation.root.router
-    override fun getNavigator(): Navigator = navigatorNew
-    private val navigationHolder = App.navigation.root.holder
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigationHolder: NavigatorHolder
+
+    @Inject
+    lateinit var dimensionsProvider: DimensionsProvider
+
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
 
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
@@ -64,28 +75,16 @@ class MainActivity : BaseActivity(), MainView, RouterProvider {
 
     private val tabsStack = mutableListOf<String>()
 
-    private val dimensionsProvider = App.injections.dimensionsProvider
-
-    private val appThemeHolder = App.injections.appThemeHolder
-    private var currentAppTheme = appThemeHolder.getTheme()
+    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
     @ProvidePresenter
-    fun provideMainPresenter(): MainPresenter {
-        return MainPresenter(
-                getRouter(),
-                screenMessenger,
-                App.injections.errorHandler,
-                App.injections.authRepository,
-                App.injections.checkerRepository,
-                App.injections.antiDdosInteractor,
-                App.injections.appThemeHolder
-        )
-    }
+    fun provideMainPresenter(): MainPresenter = getDependency(MainPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)
@@ -133,7 +132,7 @@ class MainActivity : BaseActivity(), MainView, RouterProvider {
         Log.e("MainPresenter", "setAntiDdosVisibility: $isVisible")
         antiDdosMain.visibility = if (isVisible) View.VISIBLE else View.GONE
         if (!isVisible) {
-            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+            SimpleUpdateChecker(getDependency(CheckerRepository::class.java)).checkUpdate()
         }
     }
 
@@ -257,7 +256,7 @@ class MainActivity : BaseActivity(), MainView, RouterProvider {
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
-        getRouter().replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
+        router.replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
     }
 
     fun addInStack(screenKey: String) {

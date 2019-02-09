@@ -12,13 +12,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
 import ru.radiationx.anilibria.presentation.history.HistoryView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -49,12 +49,14 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     lateinit var presenter: HistoryPresenter
 
     @ProvidePresenter
-    fun provideHistoryPresenter(): HistoryPresenter = HistoryPresenter(
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.historyRepository
-    )
+    fun provideHistoryPresenter(): HistoryPresenter = getDependency(HistoryPresenter::class.java)
 
     override fun getLayoutResource(): Int = R.layout.fragment_history
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

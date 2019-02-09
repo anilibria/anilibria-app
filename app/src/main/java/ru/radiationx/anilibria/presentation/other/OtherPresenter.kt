@@ -14,9 +14,10 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class OtherPresenter(
+class OtherPresenter @Inject constructor(
         private val router: Router,
         private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,

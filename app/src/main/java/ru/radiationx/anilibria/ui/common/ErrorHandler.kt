@@ -4,11 +4,12 @@ import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 23.02.18.
  */
-class ErrorHandler(
+class ErrorHandler @Inject constructor(
         private val systemMessenger: SystemMessenger
 ) : IErrorHandler {
 

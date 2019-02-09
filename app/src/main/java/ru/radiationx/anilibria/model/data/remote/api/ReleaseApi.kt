@@ -9,10 +9,11 @@ import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import javax.inject.Inject
 
 /* Created by radiationx on 31.10.17. */
 
-class ReleaseApi(
+class ReleaseApi @Inject constructor(
         private val client: IClient,
         private val releaseParser: ReleaseParser
 ) {

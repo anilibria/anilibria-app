@@ -15,9 +15,10 @@ import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.NetworkResponse
 import java.io.IOException
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 
-class Client constructor(
+class Client @Inject constructor(
         private val cookieHolder: CookieHolder,
         private val userHolder: UserHolder,
         private val context: Context,

@@ -14,13 +14,17 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.Scopes
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.article.list.ArticlesPresenter
 import ru.radiationx.anilibria.presentation.article.list.ArticlesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.BackButtonListener
-import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.ui.common.ScopeProvider
+import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.Utils
@@ -29,7 +33,7 @@ import ru.terrakok.cicerone.Router
 /**
  * Created by radiationx on 16.12.17.
  */
-abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
+abstract class ArticlesBaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonListener, ArticlesView, SharedProvider, ArticlesAdapter.ItemListener {
 
     companion object {
         const val ARG_CATEGORY = "category"
@@ -52,12 +56,7 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
     lateinit var presenter: ArticlesPresenter
 
     @ProvidePresenter
-    fun provideArticlesPresenter(): ArticlesPresenter = ArticlesPresenter(
-            App.injections.articleRepository,
-            App.injections.vitalRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun provideArticlesPresenter(): ArticlesPresenter = getDependency(ArticlesPresenter::class.java)
 
     fun onSelectCategory(category: String) {
         Log.e("lalala", "onSelectCategory $category, ${this::presenter.isInitialized}, $this")
@@ -75,7 +74,12 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), BackButtonListener
         return sharedView
     }
 
+    override val screenScope: String by lazy {
+        arguments?.getString(BaseFragment.ARG_SCREEN_SCOPE, null) ?: Scopes.APP
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         Log.e("lalala", "onCreate $this")
         category = savedInstanceState?.getString(ARG_CATEGORY) ?: category

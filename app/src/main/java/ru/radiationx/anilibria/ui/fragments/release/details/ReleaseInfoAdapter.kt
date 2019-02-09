@@ -2,13 +2,11 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.App
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
@@ -18,18 +16,20 @@ import java.util.*
 
 class ReleaseInfoAdapter(private var itemListener: ItemListener) : OptimizeAdapter<MutableList<ListItem>>() {
 
+    private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
+
     private val remindText = "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
     private val vitalItems = mutableListOf<VitalItem>()
 
     private var currentRelease: ReleaseFull? = null
     private var currentTabTag = ReleaseEpisodesHeadDelegate.TAG_ONLINE
-    private var reverseEpisodes = App.injections.appPreferences.getEpisodesIsReverse()
+    private var reverseEpisodes = appPreferences.getEpisodesIsReverse()
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
             items.removeAt(position)
             items.removeAt(position)
             notifyItemRangeRemoved(position, 2)
-            App.injections.appPreferences.setReleaseRemind(false)
+            appPreferences.setReleaseRemind(false)
         }
     }
 
@@ -100,7 +100,7 @@ class ReleaseInfoAdapter(private var itemListener: ItemListener) : OptimizeAdapt
             items.add(DividerShadowListItem())
         }
 
-        if (!release.blockedInfo.isBlocked && App.injections.appPreferences.getReleaseRemind()) {
+        if (!release.blockedInfo.isBlocked && appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
             items.add(DividerShadowListItem())
         }

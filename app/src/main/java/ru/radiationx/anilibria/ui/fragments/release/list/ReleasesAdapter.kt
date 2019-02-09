@@ -1,9 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.ui.adapters.*

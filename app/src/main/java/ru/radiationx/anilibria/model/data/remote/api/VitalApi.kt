@@ -6,11 +6,12 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.VitalParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
-class VitalApi(
+class VitalApi @Inject constructor(
         private val client: IClient,
         private val vitalParser: VitalParser
 ) {

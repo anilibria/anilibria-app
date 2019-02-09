@@ -8,11 +8,14 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthParser(private val apiUtils: IApiUtils) {
+class AuthParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
     private val patreonPattern = "<div[^>]*?id=\"bx_auth_serv_formPatreon\"[^>]*?>[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>"
     private val vkPattern = "<div[^>]*?id=\"bx_auth_serv_formVKontakte\"[^>]*?>[^<]*?<a[^>]*?onclick=\"BX.util.popup\\(['\"]([^\"']*?)['\"]"
 

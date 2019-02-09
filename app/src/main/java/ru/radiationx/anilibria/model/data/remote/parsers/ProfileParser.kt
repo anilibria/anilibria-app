@@ -5,11 +5,14 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.01.18.
  */
-class ProfileParser(private val apiUtils: IApiUtils) {
+class ProfileParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     /*
     * 1.    String  Nick

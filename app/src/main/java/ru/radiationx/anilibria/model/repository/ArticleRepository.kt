@@ -7,11 +7,12 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.model.data.remote.api.ArticleApi
 import ru.radiationx.anilibria.model.data.remote.api.CommentApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
-class ArticleRepository(
+class ArticleRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val articleApi: ArticleApi,
         private val commentApi: CommentApi

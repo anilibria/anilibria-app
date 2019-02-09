@@ -6,12 +6,13 @@ import ru.radiationx.anilibria.model.repository.PageRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
 @InjectViewState
-class PagePresenter(
+class PagePresenter @Inject constructor(
         private val pageRepository: PageRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler

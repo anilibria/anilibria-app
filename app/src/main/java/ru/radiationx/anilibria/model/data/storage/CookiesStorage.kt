@@ -7,11 +7,14 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder.Companion.cookieNames
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class CookiesStorage(private val sharedPreferences: SharedPreferences) : CookieHolder {
+class CookiesStorage @Inject constructor(
+        private val sharedPreferences: SharedPreferences
+) : CookieHolder {
 
     private val clientCookies = mutableMapOf<String, Cookie>()
 

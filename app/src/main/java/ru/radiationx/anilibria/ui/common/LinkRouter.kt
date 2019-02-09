@@ -5,11 +5,12 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.02.18.
  */
-class LinkRouter : ILinkHandler {
+class LinkRouter @Inject constructor() : ILinkHandler {
 
     private val releaseDetail by lazy {
         Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html|tracker\\/\\?ELEMENT_CODE=([^&]+)")

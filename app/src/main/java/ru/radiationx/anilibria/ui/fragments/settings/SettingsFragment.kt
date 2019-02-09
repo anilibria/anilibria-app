@@ -6,27 +6,33 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import ru.radiationx.anilibria.App
-
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 25.12.16.
  */
 
 class SettingsFragment : BaseSettingFragment() {
+
+    @Inject
+    lateinit var appPreferences: PreferencesHolder
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 
         findPreference("quality")?.apply {
-            val savedQuality = App.injections.appPreferences.getQuality()
+            val savedQuality = appPreferences.getQuality()
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
@@ -41,7 +47,7 @@ class SettingsFragment : BaseSettingFragment() {
                         .setTitle(preference.title)
                         .setItems(titles) { dialog, which ->
                             val quality = values[which]
-                            App.injections.appPreferences.setQuality(quality)
+                            appPreferences.setQuality(quality)
                             icon = getQualityIcon(quality)
                             summary = getQualityTitle(quality)
                         }
@@ -51,7 +57,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("player_type")?.apply {
-            val savedPlayerType = App.injections.appPreferences.getPlayerType()
+            val savedPlayerType = appPreferences.getPlayerType()
             icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_circle_outline)
             summary = getPlayerTypeTitle(savedPlayerType)
             setOnPreferenceClickListener { preference ->
@@ -66,7 +72,7 @@ class SettingsFragment : BaseSettingFragment() {
                         .setTitle(preference.title)
                         .setItems(titles) { dialog, which ->
                             val playerType = values[which]
-                            App.injections.appPreferences.setPlayerType(playerType)
+                            appPreferences.setPlayerType(playerType)
                             summary = getPlayerTypeTitle(playerType)
                         }
                         .show()

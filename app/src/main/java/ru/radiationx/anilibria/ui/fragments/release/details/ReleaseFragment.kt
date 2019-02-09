@@ -20,14 +20,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.vk.VkCommentsFragment
@@ -35,12 +35,10 @@ import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.Router
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, SharedReceiver {
+open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -76,12 +74,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
-            App.injections.releaseInteractor,
-            App.injections.historyRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun provideReleasePresenter(): ReleasePresenter = getDependency(ReleasePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -89,13 +82,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         transitionNameLocal = name
     }
 
-    override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
-
-    override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
-
     override fun getLayoutResource(): Int = R.layout.fragment_paged
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
@@ -240,7 +230,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
             }
         }
 
-        override fun getItem(position: Int): Fragment = fragments[position]
+        override fun getItem(position: Int): Fragment = fragments[position].putExtra {
+            putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+        }
 
         override fun getCount(): Int = fragments.size
 

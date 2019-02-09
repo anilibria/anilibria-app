@@ -8,11 +8,12 @@ import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.CheckerParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
-class CheckerApi(
+class CheckerApi @Inject constructor(
         private val client: IClient,
         private val checkerParser: CheckerParser
 ) {

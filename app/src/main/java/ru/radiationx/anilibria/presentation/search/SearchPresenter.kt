@@ -8,9 +8,10 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class SearchPresenter(
+class SearchPresenter @Inject constructor(
         private val searchRepository: SearchRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,

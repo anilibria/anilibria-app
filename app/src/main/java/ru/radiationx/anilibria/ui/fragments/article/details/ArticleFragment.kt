@@ -7,8 +7,6 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
-import android.support.v4.view.PagerAdapter
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -29,27 +27,27 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
-import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_article.view.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.article.details.ArticlePresenter
 import ru.radiationx.anilibria.presentation.article.details.ArticleView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
-import ru.radiationx.anilibria.ui.fragments.release.details.systemDownloadWithPermissionCheck
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
@@ -92,14 +90,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     lateinit var presenter: ArticlePresenter
 
     @ProvidePresenter
-    fun provideArticlePresenter(): ArticlePresenter = ArticlePresenter(
-            App.injections.articleRepository,
-            App.injections.vitalRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            screenMessenger,
-            App.injections.linkHandler,
-            App.injections.errorHandler
-    )
+    fun provideArticlePresenter(): ArticlePresenter = getDependency(ArticlePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -108,6 +99,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             it.getString(ARG_ID_NAME, null)?.let { presenter.articleIdCode = it }
@@ -307,7 +299,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private var localCommentsRootLayout: ViewGroup? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
-        private val appThemeHolder = App.injections.appThemeHolder
+        private val appThemeHolder = getDependency(AppThemeHolder::class.java)
         private val disposables = CompositeDisposable()
 
 

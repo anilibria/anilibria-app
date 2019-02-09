@@ -2,8 +2,9 @@ package ru.radiationx.anilibria.model.system
 
 import android.text.Html
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
-class ApiUtils : IApiUtils {
+class ApiUtils  @Inject constructor(): IApiUtils {
     override fun toHtml(text: String?): CharSequence? {
         if (text == null)
             return null

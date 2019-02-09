@@ -11,20 +11,22 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_other_profile.view.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
+import ru.radiationx.anilibria.utils.DimensionsProvider
 
 class ProfileItemDelegate(
         private val clickListener: (ProfileItem) -> Unit,
         private val logoutClickListener: () -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
-    private val dimensionsProvider = App.injections.dimensionsProvider
+
+    private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
     private var compositeDisposable = CompositeDisposable()
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is ProfileListItem
+    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ProfileListItem
 
     override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val item = items[position] as ProfileListItem

@@ -17,20 +17,29 @@ import kotlinx.android.synthetic.main.activity_antiddos.*
 
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
+import javax.inject.Inject
 
 class BlazingFastActivity : BaseActivity() {
     private var content = ""
     private var contentUrl = ""
 
-    private val cookieHolder = App.injections.cookieHolder
-    private val antiDdosInteractor = App.injections.antiDdosInteractor
-    private val appThemeHolder = App.injections.appThemeHolder
+    @Inject
+    lateinit var cookieHolder: CookieHolder
+
+    @Inject
+    lateinit var antiDdosInteractor: AntiDdosInteractor
+
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
         setContentView(R.layout.activity_antiddos)

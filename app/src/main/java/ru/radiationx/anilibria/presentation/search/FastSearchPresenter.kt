@@ -14,9 +14,10 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @InjectViewState
-class FastSearchPresenter(
+class FastSearchPresenter @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
         private val router: Router,

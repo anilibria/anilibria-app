@@ -11,17 +11,14 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_comments.*
 import kotlinx.android.synthetic.main.fragment_comments.view.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.Comment
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.comments.CommentsPresenter
 import ru.radiationx.anilibria.presentation.comments.CommentsView
-import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.global.CommentsAdapter
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 
@@ -45,21 +42,12 @@ class CommentsFragment : BaseFragment(), CommentsView {
     lateinit var presenter: CommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): CommentsPresenter = CommentsPresenter(
-            App.injections.releaseRepository,
-            App.injections.commentsRepository,
-            App.injections.releaseInteractor,
-            App.injections.historyRepository,
-            App.injections.authRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            screenMessenger,
-            App.injections.linkHandler,
-            App.injections.errorHandler
-    )
+    fun providePresenter(): CommentsPresenter = getDependency(CommentsPresenter::class.java)
 
     override fun getBaseLayout(): Int = R.layout.fragment_comments
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")

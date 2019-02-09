@@ -9,11 +9,13 @@ import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthRepository constructor(
+class AuthRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val authApi: AuthApi,
         private val userHolder: UserHolder,

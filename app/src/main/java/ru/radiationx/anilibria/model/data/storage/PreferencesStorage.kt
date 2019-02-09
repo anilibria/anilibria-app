@@ -3,13 +3,15 @@ package ru.radiationx.anilibria.model.data.storage
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
+import ru.radiationx.anilibria.di.qualifier.DefaultPreferences
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.02.18.
  */
-class PreferencesStorage(
+class PreferencesStorage @Inject constructor(
         private val sharedPreferences: SharedPreferences
 ) : PreferencesHolder, AppThemeHolder {
 

@@ -10,20 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_updater.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 24.07.17.
@@ -36,16 +38,17 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         const val ARG_FORCE = "force"
     }
 
+    @Inject
+    lateinit var apiUtils: IApiUtils
+
     @InjectPresenter
     lateinit var presenter: CheckerPresenter
 
     @ProvidePresenter
-    fun provideCheckerPresenter() = CheckerPresenter(
-            App.injections.checkerRepository,
-            App.injections.errorHandler
-    )
+    fun provideCheckerPresenter() = getDependency(CheckerPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_updater)
 
@@ -162,7 +165,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
 
         val sectionText = TextView(this)
-        sectionText.text = App.injections.apiUtils.toHtml(stringBuilder.toString())
+        sectionText.text = apiUtils.toHtml(stringBuilder.toString())
         sectionText.setPadding((resources.displayMetrics.density * 8).toInt(), 0, 0, 0)
         sectionText.setTextColor(ContextCompat.getColor(this, R.color.light_textDefault))
         root.addView(sectionText)

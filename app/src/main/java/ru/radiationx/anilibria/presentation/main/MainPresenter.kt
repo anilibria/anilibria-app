@@ -15,12 +15,13 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.12.17.
  */
 @InjectViewState
-class MainPresenter(
+class MainPresenter @Inject constructor(
         private val router: Router,
         private val systemMessenger: SystemMessenger,
         private val errorHandler: IErrorHandler,

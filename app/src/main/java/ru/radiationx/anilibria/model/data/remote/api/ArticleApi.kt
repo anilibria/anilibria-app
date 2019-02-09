@@ -9,11 +9,12 @@ import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ArticleParser
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
-class ArticleApi(
+class ArticleApi @Inject constructor(
         private val client: IClient,
         private val articleParser: ArticleParser
 ) {

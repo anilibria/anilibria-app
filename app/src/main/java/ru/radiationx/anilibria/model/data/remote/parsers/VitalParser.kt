@@ -3,11 +3,14 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 27.01.18.
  */
-class VitalParser(private val apiUtils: IApiUtils) {
+class VitalParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     fun vital(httpResponse: String): List<VitalItem> {
         val resItems = mutableListOf<VitalItem>()

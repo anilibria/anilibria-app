@@ -6,11 +6,12 @@ import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.VitalApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 27.01.18.
  */
-class VitalRepository(
+class VitalRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val vitalApi: VitalApi
 ) {

@@ -8,9 +8,10 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class YoutubePresenter(
+class YoutubePresenter @Inject constructor(
         private val youtubeRepository: YoutubeRepository,
         private val router: Router,
         private val linkHandler: ILinkHandler,

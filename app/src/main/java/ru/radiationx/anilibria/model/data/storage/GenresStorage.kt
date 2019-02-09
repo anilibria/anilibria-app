@@ -5,13 +5,17 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.model.data.holders.GenresHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.02.18.
  */
-class GenresStorage(private val sharedPreferences: SharedPreferences) : GenresHolder {
+class GenresStorage @Inject constructor(
+        @DataPreferences private val sharedPreferences: SharedPreferences
+) : GenresHolder {
 
     companion object {
         private const val LOCAL_GENRES_KEY = "data.local_genres"

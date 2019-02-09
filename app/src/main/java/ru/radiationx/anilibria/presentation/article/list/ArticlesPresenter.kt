@@ -9,12 +9,13 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
 @InjectViewState
-open class ArticlesPresenter(
+open class ArticlesPresenter @Inject constructor(
         private val articleRepository: ArticleRepository,
         private val vitalRepository: VitalRepository,
         private val router: Router,

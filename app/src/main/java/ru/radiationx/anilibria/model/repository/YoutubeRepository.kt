@@ -6,8 +6,9 @@ import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
 import ru.radiationx.anilibria.model.data.remote.api.YoutubeApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
-class YoutubeRepository(
+class YoutubeRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val youtubeApi: YoutubeApi
 ) {

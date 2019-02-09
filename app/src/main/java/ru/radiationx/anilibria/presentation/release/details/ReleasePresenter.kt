@@ -8,10 +8,11 @@ import ru.radiationx.anilibria.model.repository.HistoryRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
-class ReleasePresenter(
+class ReleasePresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val router: Router,

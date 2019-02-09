@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,9 +10,11 @@ import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 
 
@@ -31,6 +32,7 @@ class AuthSocialFragment : BaseFragment() {
     private val resultUrlPattern = Pattern.compile("https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/[\\s\\S]*?\\?auth_service_id=(?:Patreon|VKontakte)(&code)?", Pattern.CASE_INSENSITIVE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             socialUrl = it.getString(ARG_SOCIAL_URL)
@@ -72,7 +74,7 @@ class AuthSocialFragment : BaseFragment() {
                     val result = if (matcher.group(1) != null) url else ""
                     //todo
                     //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, result)
-                    (activity as RouterProvider).getRouter().exit()
+                    getDependency(Router::class.java).exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())

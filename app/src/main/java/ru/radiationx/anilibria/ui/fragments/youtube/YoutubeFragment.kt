@@ -7,13 +7,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 
@@ -31,12 +31,12 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
     lateinit var presenter: YoutubePresenter
 
     @ProvidePresenter
-    fun providePresenter(): YoutubePresenter = YoutubePresenter(
-            App.injections.youtubeRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.linkHandler,
-            App.injections.errorHandler
-    )
+    fun providePresenter(): YoutubePresenter = getDependency(YoutubePresenter::class.java)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun getLayoutResource(): Int = R.layout.fragment_releases
 
@@ -80,7 +80,7 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         refreshLayout.isRefreshing = refreshing
     }
 
-    private val adapterListener = object : YoutubeAdapter.ItemListener{
+    private val adapterListener = object : YoutubeAdapter.ItemListener {
         override fun onLoadMore() {
             presenter.loadMore()
         }

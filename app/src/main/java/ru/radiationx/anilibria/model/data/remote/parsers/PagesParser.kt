@@ -5,11 +5,14 @@ import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class PagesParser(private val apiUtils: IApiUtils) {
+class PagesParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div class=\"clear\">"
     private val titlePatternSource = "<title>([\\s\\S]*?)<\\/title>"

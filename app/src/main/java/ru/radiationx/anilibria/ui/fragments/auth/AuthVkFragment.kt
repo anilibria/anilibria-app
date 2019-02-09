@@ -11,10 +11,13 @@ import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.putExtra
-import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 
 class AuthVkFragment : BaseFragment() {
@@ -31,6 +34,7 @@ class AuthVkFragment : BaseFragment() {
     private val resultUrlPattern = Pattern.compile("widget\\.html", Pattern.CASE_INSENSITIVE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             startUrl = it.getString(ARG_URL)
@@ -69,10 +73,10 @@ class AuthVkFragment : BaseFragment() {
 
                 val matcher = resultUrlPattern.matcher(url)
                 if (matcher.find()) {
-                    App.injections.authHolder.changeVkAuth(true)
+                    getDependency(AuthHolder::class.java).changeVkAuth(true)
                     //todo
                     //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
-                    (activity as RouterProvider).getRouter().exit()
+                    getDependency(Router::class.java).exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())

@@ -12,13 +12,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -40,13 +40,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     lateinit var presenter: FavoritesPresenter
 
     @ProvidePresenter
-    fun provideFavoritesPresenter(): FavoritesPresenter {
-        return FavoritesPresenter(
-                App.injections.favoriteRepository,
-                (parentFragment as RouterProvider).getRouter(),
-                App.injections.errorHandler
-        )
-    }
+    fun provideFavoritesPresenter(): FavoritesPresenter = getDependency(FavoritesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -57,6 +51,11 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     }
 
     override fun getLayoutResource(): Int = R.layout.fragment_releases
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

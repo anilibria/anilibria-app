@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.ui.adapters.ListItem

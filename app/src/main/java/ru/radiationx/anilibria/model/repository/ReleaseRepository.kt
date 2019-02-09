@@ -10,11 +10,12 @@ import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.data.remote.api.CommentApi
 import ru.radiationx.anilibria.model.data.remote.api.ReleaseApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.12.17.
  */
-class ReleaseRepository(
+class ReleaseRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val releaseApi: ReleaseApi,
         private val releaseUpdateHolder: ReleaseUpdateHolder

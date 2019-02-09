@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -26,7 +28,6 @@ import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
@@ -34,6 +35,7 @@ import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
@@ -45,8 +47,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
             R.string.placeholder_desc_nodata_base
     ))
 
-    private val appThemeHolder = App.injections.appThemeHolder
-    private var currentAppTheme: AppThemeHolder.AppTheme = appThemeHolder.getTheme()
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
 
     private val searchAdapter = FastSearchAdapter {
         searchView?.close(true)
@@ -59,25 +61,14 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     @InjectPresenter
     lateinit var searchPresenter: FastSearchPresenter
 
-    @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = FastSearchPresenter(
-            App.injections.schedulers,
-            App.injections.searchRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
-
     @InjectPresenter
     lateinit var presenter: ReleasesPresenter
 
     @ProvidePresenter
-    fun provideReleasesPresenter(): ReleasesPresenter = ReleasesPresenter(
-            App.injections.releaseInteractor,
-            App.injections.vitalRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler,
-            App.injections.releaseUpdateStorage
-    )
+    fun provideSearchPresenter(): FastSearchPresenter = getDependency(FastSearchPresenter::class.java)
+
+    @ProvidePresenter
+    fun provideReleasesPresenter(): ReleasesPresenter = getDependency(ReleasesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -88,6 +79,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     }
 
     override fun getLayoutResource(): Int = R.layout.fragment_releases
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -130,7 +126,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
             setVoice(false)
             setShadow(true)
             setDivider(true)
-            setTheme(when (currentAppTheme) {
+            setTheme(when (appThemeHolder.getTheme()) {
                 AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
                 AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
             })

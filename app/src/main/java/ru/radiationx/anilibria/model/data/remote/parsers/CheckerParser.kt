@@ -3,11 +3,14 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 27.01.18.
  */
-class CheckerParser(private val apiUtils: IApiUtils) {
+class CheckerParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     fun parse(responseJson: JSONObject): UpdateData {
         val resData = UpdateData()

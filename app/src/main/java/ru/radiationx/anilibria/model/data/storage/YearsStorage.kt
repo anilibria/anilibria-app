@@ -5,13 +5,17 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.model.data.holders.YearsHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.02.18.
  */
-class YearsStorage(private val sharedPreferences: SharedPreferences) : YearsHolder {
+class YearsStorage @Inject constructor(
+        @DataPreferences private val sharedPreferences: SharedPreferences
+) : YearsHolder {
 
     companion object {
         private const val LOCAL_YEARS_KEY = "data.local_years"

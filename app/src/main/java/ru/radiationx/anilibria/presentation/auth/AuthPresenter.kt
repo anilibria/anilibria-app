@@ -7,12 +7,13 @@ import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
 @InjectViewState
-class AuthPresenter(
+class AuthPresenter @Inject constructor(
         private val router: Router,
         private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,

@@ -13,12 +13,12 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
@@ -27,7 +27,6 @@ import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -84,14 +83,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
-    fun providePresenter(): SearchPresenter {
-        return SearchPresenter(
-                App.injections.searchRepository,
-                (parentFragment as RouterProvider).getRouter(),
-                App.injections.errorHandler,
-                App.injections.releaseUpdateStorage
-        )
-    }
+    fun provideSearchPresenter(): SearchPresenter = getDependency(SearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -102,6 +94,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             bundle.getString(ARG_GENRE, null)?.also {

@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.page
 
 import android.os.Bundle
-import android.util.Base64
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -10,21 +9,23 @@ import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.extension.toBase64
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
 import ru.radiationx.anilibria.presentation.page.PageView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import java.nio.charset.StandardCharsets
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
@@ -40,7 +41,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
-    private val appThemeHolder = App.injections.appThemeHolder
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
+
     private val disposables = CompositeDisposable()
 
     private var webViewScrollPos = 0
@@ -49,16 +52,10 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     lateinit var presenter: PagePresenter
 
     @ProvidePresenter
-    fun providePagePresenter(): PagePresenter {
-        return PagePresenter(
-                App.injections.pageRepository,
-                (parentFragment as RouterProvider).getRouter(),
-                App.injections.errorHandler
-        )
-    }
-
+    fun providePagePresenter(): PagePresenter = getDependency(PagePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             presenter.pageId = it.getString(ARG_ID, null)

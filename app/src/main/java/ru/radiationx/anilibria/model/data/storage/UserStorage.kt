@@ -7,11 +7,14 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.UserHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 11.01.18.
  */
-class UserStorage(private val sharedPreferences: SharedPreferences) : UserHolder {
+class UserStorage @Inject constructor(
+        private val sharedPreferences: SharedPreferences
+) : UserHolder {
 
     private val userRelay = BehaviorRelay.createDefault(getSavedUser())
 

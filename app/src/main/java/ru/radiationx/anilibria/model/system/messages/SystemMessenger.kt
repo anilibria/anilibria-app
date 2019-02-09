@@ -2,8 +2,9 @@ package ru.radiationx.anilibria.model.system.messages
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
+import javax.inject.Inject
 
-class SystemMessenger {
+class SystemMessenger @Inject constructor() {
     private val messagesRelay = PublishRelay.create<SystemMessage>()
 
     fun observe(): Observable<SystemMessage> = messagesRelay.hide()

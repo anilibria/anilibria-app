@@ -7,11 +7,14 @@ import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.*
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
-class ReleaseParser(private val apiUtils: IApiUtils) {
+class ReleaseParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     private fun parseRelease(jsonItem: JSONObject): ReleaseItem {
         val item = ReleaseItem()

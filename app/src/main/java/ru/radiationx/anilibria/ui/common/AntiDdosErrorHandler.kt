@@ -8,8 +8,9 @@ import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.ui.activities.BlazingFastActivity
 import ru.radiationx.anilibria.ui.activities.GoogleCaptchaActivity
+import javax.inject.Inject
 
-class AntiDdosErrorHandler(
+class AntiDdosErrorHandler @Inject constructor(
         private val antiDdosInteractor: AntiDdosInteractor,
         private val context: Context
 ) : IAntiDdosErrorHandler {

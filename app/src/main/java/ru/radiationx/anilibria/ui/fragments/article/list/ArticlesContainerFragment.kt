@@ -12,8 +12,9 @@ import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.fragment_article_container.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.terrakok.cicerone.Navigator
@@ -22,7 +23,7 @@ import ru.terrakok.cicerone.Router
 /**
  * Created by radiationx on 25.02.18.
  */
-class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider {
+class ArticlesContainerFragment : BaseFragment(), SharedProvider {
     override var sharedViewLocal: View? = null
 
     override fun getSharedView(): View? {
@@ -42,6 +43,11 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
     }
 
     override fun getLayoutResource(): Int = R.layout.fragment_article_container
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -107,9 +113,6 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
         return false
     }
 
-    override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
-    override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
-
     inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
         private val fragments = mutableListOf<Fragment>()
 
@@ -128,7 +131,9 @@ class ArticlesContainerFragment : BaseFragment(), RouterProvider, SharedProvider
             fragments.add(savedFragments.firstOrNull { it is BlogsFragment } ?: BlogsFragment())
         }
 
-        override fun getItem(position: Int): Fragment = fragments[position]
+        override fun getItem(position: Int): Fragment = fragments[position].putExtra {
+            putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+        }
 
         override fun getCount(): Int = fragments.size
 

@@ -13,22 +13,27 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.arellomobile.mvp.MvpAppCompatFragment
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.Scopes
+import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.extension.addTo
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.DimensionsProvider
 
 /* Created by radiationx on 18.11.17. */
 
-abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
+abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonListener {
 
-    private val dimensionsProvider = App.injections.dimensionsProvider
+    companion object {
+        const val ARG_SCREEN_SCOPE = "arg_screen_scope"
+    }
+
+    private val dimensionsProvider = getDependency(DimensionsProvider::class.java)
     private val disposables = CompositeDisposable()
     private val screenMessagesObserver = ScreenMessagesObserver()
     protected val screenMessenger: SystemMessenger
@@ -41,6 +46,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     @LayoutRes
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
+
+    override val screenScope: String by lazy {
+        arguments?.getString(ARG_SCREEN_SCOPE, null) ?: Scopes.APP
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

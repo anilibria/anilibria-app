@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.content.res.AppCompatResources
@@ -12,11 +11,12 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.addTextChangeListener
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 
@@ -29,18 +29,12 @@ class AuthFragment : BaseFragment(), AuthView {
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter {
-        return AuthPresenter(
-                (activity as RouterProvider).getRouter(),
-                screenMessenger,
-                App.injections.authRepository,
-                App.injections.errorHandler
-        )
-    }
+    fun provideAuthPresenter(): AuthPresenter = getDependency(AuthPresenter::class.java)
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
 
         setStatusBarVisibility(true)

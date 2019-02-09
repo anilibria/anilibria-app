@@ -6,8 +6,11 @@ import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
-class CommentParser(private val apiUtils: IApiUtils) {
+class CommentParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     fun comments(jsonResponse:JSONObject): Paginated<List<Comment>> {
         val resItems = mutableListOf<Comment>()

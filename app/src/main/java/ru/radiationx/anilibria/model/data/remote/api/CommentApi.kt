@@ -11,8 +11,9 @@ import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.CommentParser
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import javax.inject.Inject
 
-class CommentApi(
+class CommentApi @Inject constructor(
         private val client: IClient,
         private val commentParser: CommentParser
 ) {

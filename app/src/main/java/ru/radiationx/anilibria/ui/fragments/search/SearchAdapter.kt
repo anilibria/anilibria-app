@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.App
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
@@ -15,11 +17,13 @@ class SearchAdapter(listener: ItemListener, placeholder: PlaceholderListItem) : 
 
     private val remindText = "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
+    private val appPreferences = DI.get(PreferencesHolder::class.java)
+
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
             items.removeAt(position)
             notifyItemRangeRemoved(position, 1)
-            App.injections.appPreferences.setSearchRemind(false)
+            appPreferences.setSearchRemind(false)
         }
     }
 
@@ -31,7 +35,7 @@ class SearchAdapter(listener: ItemListener, placeholder: PlaceholderListItem) : 
 
     override fun bindItems(newItems: List<ReleaseItem>) {
         this.items.clear()
-        if (newItems.isEmpty() && App.injections.appPreferences.getSearchRemind()) {
+        if (newItems.isEmpty() && appPreferences.getSearchRemind()) {
             items.add(ReleaseRemindListItem(remindText))
         }
         this.items.addAll(newItems.map { ReleaseListItem(it) })

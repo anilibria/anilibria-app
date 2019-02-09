@@ -8,11 +8,14 @@ import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
-class ArticleParser(private val apiUtils: IApiUtils) {
+class ArticleParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     /*
     * 1.    Int     Какой-то айдишник битриксовский

@@ -74,7 +74,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter = getDependency(ReleasePresenter::class.java)
+    fun provideReleasePresenter(): ReleasePresenter = getDependency(screenScope, ReleasePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -226,13 +226,16 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
         init {
             fragments.forEach {
-                it.arguments = this@ReleaseFragment.arguments
+                val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
+                it.arguments = newBundle
+                it.putExtra {
+                    putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                }
+                Log.e("lalallala", "CustomPagerAdapter ini ${newBundle}")
             }
         }
 
-        override fun getItem(position: Int): Fragment = fragments[position].putExtra {
-            putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
-        }
+        override fun getItem(position: Int): Fragment = fragments[position]
 
         override fun getCount(): Int = fragments.size
 

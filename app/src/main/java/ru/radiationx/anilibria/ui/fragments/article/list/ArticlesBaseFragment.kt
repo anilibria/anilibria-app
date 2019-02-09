@@ -56,7 +56,7 @@ abstract class ArticlesBaseFragment : MvpAppCompatFragment(), ScopeProvider, Bac
     lateinit var presenter: ArticlesPresenter
 
     @ProvidePresenter
-    fun provideArticlesPresenter(): ArticlesPresenter = getDependency(ArticlesPresenter::class.java)
+    fun provideArticlesPresenter(): ArticlesPresenter = getDependency(screenScope, ArticlesPresenter::class.java)
 
     fun onSelectCategory(category: String) {
         Log.e("lalala", "onSelectCategory $category, ${this::presenter.isInitialized}, $this")

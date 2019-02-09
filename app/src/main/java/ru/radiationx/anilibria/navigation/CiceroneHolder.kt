@@ -4,7 +4,7 @@ import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
-class LocalCiceroneHolder @Inject constructor() {
+class CiceroneHolder @Inject constructor() {
     private val containers: MutableMap<String, Cicerone<Router>> = mutableMapOf()
 
     fun getCicerone(containerTag: String): Cicerone<Router> {

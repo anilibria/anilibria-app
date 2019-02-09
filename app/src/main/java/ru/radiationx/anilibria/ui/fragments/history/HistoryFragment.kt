@@ -49,7 +49,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     lateinit var presenter: HistoryPresenter
 
     @ProvidePresenter
-    fun provideHistoryPresenter(): HistoryPresenter = getDependency(HistoryPresenter::class.java)
+    fun provideHistoryPresenter(): HistoryPresenter = getDependency(screenScope, HistoryPresenter::class.java)
 
     override fun getLayoutResource(): Int = R.layout.fragment_history
 

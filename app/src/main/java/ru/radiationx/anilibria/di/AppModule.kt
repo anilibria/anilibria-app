@@ -3,10 +3,8 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.util.Log
 import ru.radiationx.anilibria.Client
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
-import ru.radiationx.anilibria.di.qualifier.DefaultPreferences
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -21,15 +19,13 @@ import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
-import ru.radiationx.anilibria.navigation.LocalCiceroneHolder
-import ru.radiationx.anilibria.navigation.NavigationRoot
+import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.AntiDdosErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module
@@ -38,15 +34,17 @@ class AppModule(context: Context) : Module() {
 
 
     init {
+        bind(Context::class.java).toInstance(context)
+
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
+        val ciceroneHolder = CiceroneHolder()
+        bind(CiceroneHolder::class.java).toInstance(ciceroneHolder)
 
-        val cicerone = Cicerone.create()
+        val cicerone = ciceroneHolder.getCicerone("root")
         bind(Router::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
-
-        bind(LocalCiceroneHolder::class.java).singletonInScope()
 
         bind(SystemMessenger::class.java).singletonInScope()
 

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.RouterModule
+import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.putExtra
@@ -91,6 +92,11 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         super.onPause()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        closeDependenciesScope(screenScope)
+    }
+
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
         return (fragment != null
@@ -130,8 +136,11 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
                     nextFragment: Fragment?,
                     fragmentTransaction: FragmentTransaction
             ) {
+
+                Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope")
+                val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
                 nextFragment?.putExtra {
-                    putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                    putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
                 }
 
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {

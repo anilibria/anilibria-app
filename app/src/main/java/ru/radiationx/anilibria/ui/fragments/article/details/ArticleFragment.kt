@@ -90,7 +90,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
     lateinit var presenter: ArticlePresenter
 
     @ProvidePresenter
-    fun provideArticlePresenter(): ArticlePresenter = getDependency(ArticlePresenter::class.java)
+    fun provideArticlePresenter(): ArticlePresenter = getDependency(screenScope, ArticlePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -299,7 +299,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
         private var localCommentsRootLayout: ViewGroup? = null
         private val webViewCallCache = mutableListOf<Runnable>()
 
-        private val appThemeHolder = getDependency(AppThemeHolder::class.java)
+        private val appThemeHolder = getDependency(screenScope, AppThemeHolder::class.java)
         private val disposables = CompositeDisposable()
 
 

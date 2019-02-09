@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.v4.app.Fragment
 import android.util.Log
 import ru.radiationx.anilibria.di.Scopes
+import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
 
@@ -13,21 +14,30 @@ object DI {
     fun <T> get(clazz: Class<T>): T = get(DEFAULT_SCOPE, clazz)
     fun <T> get(scope: String, clazz: Class<T>): T {
         Log.d("ToothDI", "get in '$scope' class '$clazz'")
-        return Toothpick.openScope(scope).getInstance(clazz)
+        return openScope(scope).getInstance(clazz)
     }
 
     fun inject(target: Any) = DI.inject(target, DEFAULT_SCOPE)
     fun inject(target: Any, scope: String) {
         Log.d("ToothDI", "inject in '$scope' to '$target'")
-        return Toothpick.inject(target, Toothpick.openScope(scope))
+        return Toothpick.inject(target, openScope(scope))
     }
 
     fun inject(target: Any, scope: String, vararg modules: Module) {
         Log.d("ToothDI", "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName.toString() }}'")
-        return Toothpick.inject(target, Toothpick.openScope(scope).apply {
+        return Toothpick.inject(target, openScope(scope).apply {
             installModules(*modules)
         })
     }
+
+    private fun openScope(scope: String): Scope = Toothpick.openScopes(*(toScopes(scope).also {
+        Log.d("ToothDI", "toscopes '$scope' -> '${it.joinToString()}'")
+    }))
+
+    private fun toScopes(newScope: String): Array<String> = if (newScope == DEFAULT_SCOPE)
+        arrayOf(DEFAULT_SCOPE)
+    else
+        arrayOf(DEFAULT_SCOPE, newScope)
 
     fun close(scope: String) = Toothpick.closeScope(scope)
 }

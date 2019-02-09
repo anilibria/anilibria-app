@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 

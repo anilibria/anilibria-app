@@ -65,10 +65,10 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     lateinit var presenter: ReleasesPresenter
 
     @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = getDependency(FastSearchPresenter::class.java)
+    fun provideSearchPresenter(): FastSearchPresenter = getDependency(screenScope, FastSearchPresenter::class.java)
 
     @ProvidePresenter
-    fun provideReleasesPresenter(): ReleasesPresenter = getDependency(ReleasesPresenter::class.java)
+    fun provideReleasesPresenter(): ReleasesPresenter = getDependency(screenScope, ReleasesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 

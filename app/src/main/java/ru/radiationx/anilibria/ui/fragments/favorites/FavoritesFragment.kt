@@ -40,7 +40,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     lateinit var presenter: FavoritesPresenter
 
     @ProvidePresenter
-    fun provideFavoritesPresenter(): FavoritesPresenter = getDependency(FavoritesPresenter::class.java)
+    fun provideFavoritesPresenter(): FavoritesPresenter = getDependency(screenScope, FavoritesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 

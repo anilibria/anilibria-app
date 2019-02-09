@@ -74,7 +74,7 @@ class AuthSocialFragment : BaseFragment() {
                     val result = if (matcher.group(1) != null) url else ""
                     //todo
                     //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, result)
-                    getDependency(Router::class.java).exit()
+                    getDependency(screenScope, Router::class.java).exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())

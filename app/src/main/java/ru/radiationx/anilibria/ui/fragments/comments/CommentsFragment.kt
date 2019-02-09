@@ -42,7 +42,7 @@ class CommentsFragment : BaseFragment(), CommentsView {
     lateinit var presenter: CommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): CommentsPresenter = getDependency(CommentsPresenter::class.java)
+    fun providePresenter(): CommentsPresenter = getDependency(screenScope, CommentsPresenter::class.java)
 
     override fun getBaseLayout(): Int = R.layout.fragment_comments
 

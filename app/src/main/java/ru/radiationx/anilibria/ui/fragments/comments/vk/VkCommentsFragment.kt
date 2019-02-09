@@ -54,7 +54,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     lateinit var presenter: VkCommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): VkCommentsPresenter = getDependency(VkCommentsPresenter::class.java)
+    fun providePresenter(): VkCommentsPresenter = getDependency(screenScope, VkCommentsPresenter::class.java)
 
     override fun getBaseLayout(): Int = R.layout.fragment_article
 
@@ -190,7 +190,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
-                val client = getDependency(IClient::class.java)
+                val client = getDependency(screenScope, IClient::class.java)
                 Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = client.get(url.orEmpty(), emptyMap()).blockingGet()
                 var newCss = cssSrc

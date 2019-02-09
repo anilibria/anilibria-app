@@ -31,7 +31,7 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
     lateinit var presenter: YoutubePresenter
 
     @ProvidePresenter
-    fun providePresenter(): YoutubePresenter = getDependency(YoutubePresenter::class.java)
+    fun providePresenter(): YoutubePresenter = getDependency(screenScope, YoutubePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

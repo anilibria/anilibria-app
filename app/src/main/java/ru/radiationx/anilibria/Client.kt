@@ -62,9 +62,9 @@ class Client @Inject constructor(
     }
 
     private val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(HttpLoggingInterceptor().apply {
+            /*.addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
-            })
+            })*/
             .addInterceptor {
                 val userAgentRequest = it.request()
                         .newBuilder()

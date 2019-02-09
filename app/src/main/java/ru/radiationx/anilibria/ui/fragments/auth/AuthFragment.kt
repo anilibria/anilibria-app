@@ -29,7 +29,7 @@ class AuthFragment : BaseFragment(), AuthView {
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter = getDependency(AuthPresenter::class.java)
+    fun provideAuthPresenter(): AuthPresenter = getDependency(screenScope, AuthPresenter::class.java)
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 

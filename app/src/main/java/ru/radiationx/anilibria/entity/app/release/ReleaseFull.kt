@@ -8,7 +8,9 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         id = item.id
         code = item.code
         names.addAll(item.names)
+        series = item.series
         poster = item.poster
+        torrentUpdate = item.torrentUpdate
         status = item.status
         types.addAll(item.types)
         genres.addAll(item.genres)

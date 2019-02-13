@@ -9,9 +9,8 @@ import ru.radiationx.anilibria.model.data.remote.IApiUtils
  */
 class CheckerParser(private val apiUtils: IApiUtils) {
 
-    fun parse(httpResponse: String): UpdateData {
+    fun parse(responseJson: JSONObject): UpdateData {
         val resData = UpdateData()
-        val responseJson = JSONObject(httpResponse)
         val jsonUpdate = responseJson.getJSONObject("update")
 
         resData.code = jsonUpdate.optInt("version_code", Int.MAX_VALUE)

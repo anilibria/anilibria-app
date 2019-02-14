@@ -48,7 +48,7 @@ class FavoritesPresenter(
             viewState.setRefreshing(true)
         }
         favoriteRepository
-                .getFavorites()
+                .getFavorites(pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({
                     viewState.setEndless(!it.isEnd())

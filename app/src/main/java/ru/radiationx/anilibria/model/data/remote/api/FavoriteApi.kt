@@ -14,9 +14,10 @@ class FavoriteApi(
         private val releaseParser: ReleaseParser
 ) {
 
-    fun getFavorites(): Single<Paginated<List<ReleaseItem>>> {
+    fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "favorites",
+                "page" to page.toString(),
                 "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
                 "rm" to "true"
         )

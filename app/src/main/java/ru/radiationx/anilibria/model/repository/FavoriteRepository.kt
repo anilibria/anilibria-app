@@ -11,8 +11,8 @@ class FavoriteRepository(
         private val favoriteApi: FavoriteApi
 ) {
 
-    fun getFavorites(): Single<Paginated<List<ReleaseItem>>> = favoriteApi
-            .getFavorites()
+    fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> = favoriteApi
+            .getFavorites(page)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

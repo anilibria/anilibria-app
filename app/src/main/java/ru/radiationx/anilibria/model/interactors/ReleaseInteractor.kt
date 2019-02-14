@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.interactors
 
+import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -68,7 +69,9 @@ class ReleaseInteractor(
             .also { fullLoadCacheByCode[releaseCode] = it }
 
     fun loadRelease(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseFull> {
-        (fullLoadCacheById[releaseId] ?: fullLoadCacheByCode[releaseCode])?.also {
+        val releaseSource = fullLoadCacheById[releaseId]
+                ?: releaseCode?.let { fullLoadCacheByCode[it] }
+        (releaseSource)?.also {
             return it
         }
         return when {
@@ -83,11 +86,11 @@ class ReleaseInteractor(
             .doOnSuccess { updateItemsCache(it.data) }
 
     fun getItem(releaseId: Int = 0, releaseCode: String? = null): ReleaseItem? {
-        return releaseItemsById[releaseId] ?: releaseItemsByCode[releaseCode]
+        return releaseItemsById[releaseId] ?: releaseCode?.let { releaseItemsByCode[it] }
     }
 
     fun getFull(releaseId: Int = 0, releaseCode: String? = null): ReleaseFull? {
-        return releasesById[releaseId] ?: releasesByCode[releaseCode]
+        return releasesById[releaseId] ?: releaseCode?.let { releasesByCode[it] }
     }
 
     fun observeItem(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseItem> = itemsUpdateTrigger

@@ -70,8 +70,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
-        val args = savedInstanceState ?: arguments
-        args?.also { bundle ->
+        arguments?.also { bundle ->
             bundle.getInt(ARG_ID, -1).let { presenter.releaseId = it }
             bundle.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
         }

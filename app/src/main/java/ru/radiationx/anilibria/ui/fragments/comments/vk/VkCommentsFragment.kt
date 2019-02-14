@@ -66,8 +66,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val args = savedInstanceState ?: arguments
-        args?.also { bundle ->
+        arguments?.also { bundle ->
             bundle.getInt(ARG_ID, -1).let { presenter.releaseId = it }
             bundle.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
         }

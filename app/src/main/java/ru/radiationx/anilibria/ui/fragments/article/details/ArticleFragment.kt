@@ -102,8 +102,7 @@ class ArticleFragment : BaseFragment(), ArticleView, SharedReceiver, CommentsAda
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val args = savedInstanceState ?: arguments
-        args?.let {
+        arguments?.let {
             it.getString(ARG_ID_NAME, null)?.let { presenter.articleIdCode = it }
             (it.getSerializable(ARG_ITEM) as ArticleItem?)?.let {
                 presenter.setDataFromItem(it)

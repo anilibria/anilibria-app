@@ -26,6 +26,7 @@
             android:background="@drawable/bg_video_toolbar"
             android:elevation="0dp"
             android:theme="?app_bar_overlay"
+            android:stateListAnimator="@null"
             app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar

@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 class HistoryStorage(private val sharedPreferences: SharedPreferences) : HistoryHolder {
 
     companion object {
-        private const val LOCAL_HISTORY_KEY = "data.local_history"
+        private const val LOCAL_HISTORY_KEY = "data.local_history_new"
     }
 
     private val localReleases = mutableListOf<ReleaseItem>()

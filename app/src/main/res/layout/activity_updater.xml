@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/alib_gray"
         android:fitsSystemWindows="true"
+        android:stateListAnimator="@null"
         android:theme="?app_bar_overlay">
 
         <android.support.design.widget.CollapsingToolbarLayout

@@ -25,7 +25,8 @@
             android:id="@+id/appbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="?app_bar_overlay">
+            android:theme="?app_bar_overlay"
+            android:stateListAnimator="@null">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbarLayout"

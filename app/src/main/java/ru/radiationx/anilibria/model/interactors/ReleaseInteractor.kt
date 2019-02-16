@@ -8,6 +8,7 @@ import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.idOrNull
 import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
@@ -68,14 +69,15 @@ class ReleaseInteractor(
             .autoConnect(1)
             .also { fullLoadCacheByCode[releaseCode] = it }
 
-    fun loadRelease(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseFull> {
-        val releaseSource = fullLoadCacheById[releaseId]
+    fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> {
+        val releaseSource = releaseId.idOrNull()
+                ?.let { fullLoadCacheById[it] }
                 ?: releaseCode?.let { fullLoadCacheByCode[it] }
         (releaseSource)?.also {
             return it
         }
         return when {
-            releaseId != 0 -> loadRelease(releaseId)
+            releaseId != -1 -> loadRelease(releaseId)
             releaseCode != null -> loadRelease(releaseCode)
             else -> Observable.error(Exception("Unknown id=$releaseId or code=$releaseCode"))
         }
@@ -85,20 +87,24 @@ class ReleaseInteractor(
             .getReleases(page)
             .doOnSuccess { updateItemsCache(it.data) }
 
-    fun getItem(releaseId: Int = 0, releaseCode: String? = null): ReleaseItem? {
-        return releaseItemsById[releaseId] ?: releaseCode?.let { releaseItemsByCode[it] }
+    fun getItem(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem? {
+        return releaseId.idOrNull()
+                ?.let { releaseItemsById[it] }
+                ?: releaseCode?.let { releaseItemsByCode[it] }
     }
 
-    fun getFull(releaseId: Int = 0, releaseCode: String? = null): ReleaseFull? {
-        return releasesById[releaseId] ?: releaseCode?.let { releasesByCode[it] }
+    fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull? {
+        return releaseId.idOrNull()
+                ?.let { releasesById[it] }
+                ?: releaseCode?.let { releasesByCode[it] }
     }
 
-    fun observeItem(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseItem> = itemsUpdateTrigger
+    fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseItem> = itemsUpdateTrigger
             .filter { getItem(releaseId, releaseCode) != null }
             .map { getItem(releaseId, releaseCode)!! }
             .repeatWhen { itemsUpdateTrigger }
 
-    fun observeFull(releaseId: Int = 0, releaseCode: String? = null): Observable<ReleaseFull> = Observable
+    fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> = Observable
             .combineLatest(
                     createFullObservable(releaseId, releaseCode),
                     episodesCheckerStorage.observeEpisodes(),
@@ -107,7 +113,7 @@ class ReleaseInteractor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    private fun createFullObservable(releaseId: Int = 0, releaseCode: String? = null) = fullUpdateTrigger
+    private fun createFullObservable(releaseId: Int = -1, releaseCode: String? = null) = fullUpdateTrigger
             .filter { getFull(releaseId, releaseCode) != null }
             .map { getFull(releaseId, releaseCode)!! }
             .repeatWhen { fullUpdateTrigger }

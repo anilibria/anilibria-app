@@ -34,7 +34,7 @@ class CheckerApi(
 
     fun checkUnderAntiDdos(): Single<String> {
         val args: MutableMap<String, String> = mutableMapOf("query" to "empty")
-        return client.put(Api.API_URL, args)
+        return client.post(Api.API_URL, args)
     }
 
 }

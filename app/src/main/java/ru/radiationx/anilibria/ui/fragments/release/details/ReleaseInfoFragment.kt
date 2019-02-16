@@ -71,8 +71,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         arguments?.also { bundle ->
-            bundle.getInt(ARG_ID, -1).let { presenter.releaseId = it }
-            bundle.getString(ARG_ID_CODE, null)?.let { presenter.releaseIdCode = it }
+            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
+            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
         }
     }
 

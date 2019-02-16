@@ -22,6 +22,8 @@
     <string name="or">или</string>
     <string name="auth_login">Логин или email</string>
     <string name="auth_password">Пароль</string>
+    <string name="auth_2fa">Секретный код 2FA</string>
+    <string name="auth_2fa_desc">Оставьте поле пустым, если вы не настроили двухфакторную аутентификацию</string>
     <string name="auth_signin">Войти</string>
     <string name="auth_skip">Пропустить</string>
     <string name="comments_header">Комментарии</string>

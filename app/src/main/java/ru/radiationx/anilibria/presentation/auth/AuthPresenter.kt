@@ -19,65 +19,39 @@ class AuthPresenter(
         private val errorHandler: IErrorHandler
 ) : BasePresenter<AuthView>(router) {
 
-    companion object {
-        const val SOCIAL_PATREON = "patreon"
-        const val SOCIAL_VK = "vk"
-    }
-
-    private var socialUrls = mutableMapOf<String, String>()
+    private var currentLogin = ""
+    private var currentPassword = ""
+    private var currentCode2fa = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        //loadAuthPage()
+        updateButtonState()
     }
 
-    fun socialClick(socialName: String) {
-        val socialUrl = socialUrls[socialName]
-        socialUrl?.let { url ->
-            router.navigateTo(Screens.AUTH_SOCIAL, url)
-            router.setResultListener(AuthSocialFragment.RETURN_URL, {
-                router.removeResultListener(AuthSocialFragment.RETURN_URL)
-                signIn(it as String)
-            })
-        }
+    fun setLogin(login: String) {
+        currentLogin = login
+        updateButtonState()
     }
 
-    private fun loadAuthPage() {
-        authRepository
-                .loadAuthPage()
-                .subscribe({ urls ->
-                    urls.forEachIndexed { index, s ->
-                        val name = when (index) {
-                            0 -> SOCIAL_PATREON
-                            1 -> SOCIAL_VK
-                            else -> null
-                        }
-                        name?.let { socialUrls.put(it, s) }
-                    }
-                    viewState.showSocial()
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+    fun setPassword(password: String) {
+        currentPassword = password
+        updateButtonState()
     }
 
-    private fun signIn(redirectUrl: String) {
+    fun setCode2fa(code2fa: String) {
+        currentCode2fa = code2fa
+        updateButtonState()
+    }
+
+    private fun updateButtonState() {
+        val enabled = currentLogin.isNotEmpty() && currentPassword.isNotEmpty()
+        viewState.setSignButtonEnabled(enabled)
+    }
+
+    fun signIn() {
         viewState.setRefreshing(true)
         authRepository
-                .signIn(redirectUrl)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ user ->
-                    decideWhatToDo(user.authState)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
-    }
-
-    fun signIn(login: String, password: String) {
-        viewState.setRefreshing(true)
-        authRepository
-                .signIn(login, password)
+                .signIn(currentLogin, currentPassword, currentCode2fa)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ user ->
                     decideWhatToDo(user.authState)

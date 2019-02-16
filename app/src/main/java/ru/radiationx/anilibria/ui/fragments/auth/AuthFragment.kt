@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
@@ -44,38 +45,19 @@ class AuthFragment : BaseFragment(), AuthView {
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
-        authPatreon.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.ic_logo_patreon), null, null, null)
-        authVk.setCompoundDrawablesRelativeWithIntrinsicBounds(AppCompatResources.getDrawable(authPatreon.context, R.drawable.ic_logo_vk), null, null, null)
-
         appbarLayout.visibility = View.GONE
-        authSubmit.setOnClickListener {
-            presenter.signIn(authLogin.text.toString(), authPassword.text.toString())
-        }
-        authSkip.setOnClickListener {
-            presenter.skip()
-        }
 
-        //ImageLoader.getInstance().displayImage("drawable://" + R.drawable.alib_new_or_b, auth_logo)
+        authSubmit.setOnClickListener { presenter.signIn() }
+        authSkip.setOnClickListener { presenter.skip() }
+        authRegistration.setOnClickListener { presenter.registrationClick() }
 
-        authPatreon.isEnabled = false
-        authVk.isEnabled = false
-
-        authPatreon.setOnClickListener {
-            presenter.socialClick(AuthPresenter.SOCIAL_PATREON)
-        }
-
-        authVk.setOnClickListener {
-            presenter.socialClick(AuthPresenter.SOCIAL_VK)
-        }
-
-        authRegistration.setOnClickListener {
-            presenter.registrationClick()
-        }
+        authLogin.addTextChangeListener { presenter.setLogin(it) }
+        authPassword.addTextChangeListener { presenter.setPassword(it) }
+        authPassword.addTextChangeListener { presenter.setCode2fa(it) }
     }
 
-    override fun showSocial() {
-        authPatreon.isEnabled = true
-        authVk.isEnabled = true
+    override fun setSignButtonEnabled(isEnabled: Boolean) {
+        authSubmit.isEnabled = isEnabled
     }
 
     override fun showRegistrationDialog() {
@@ -98,4 +80,5 @@ class AuthFragment : BaseFragment(), AuthView {
     override fun setRefreshing(refreshing: Boolean) {
         authSwitcher.displayedChild = if (refreshing) 1 else 0
     }
+
 }

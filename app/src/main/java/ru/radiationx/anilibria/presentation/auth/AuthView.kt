@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.utils.mvp.IBaseView
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface AuthView : IBaseView {
-    fun showSocial()
+    fun setSignButtonEnabled(isEnabled: Boolean)
     @StateStrategyType(SkipStrategy::class)
     fun showRegistrationDialog()
 }

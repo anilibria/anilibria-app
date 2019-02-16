@@ -62,8 +62,10 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
             }
         })
 
-        val initScreen = intent?.extras?.getString(ARG_INIT_SCREEN, null) ?: Screens.AUTH
-        getRouter().newRootScreen(initScreen, intent?.extras?.getBundle(ARG_SCREEN_EXTRA))
+        if (savedInstanceState == null) {
+            val initScreen = intent?.extras?.getString(ARG_INIT_SCREEN, null) ?: Screens.AUTH
+            getRouter().newRootScreen(initScreen, intent?.extras?.getBundle(ARG_SCREEN_EXTRA))
+        }
     }
 
     override fun onResumeFragments() {

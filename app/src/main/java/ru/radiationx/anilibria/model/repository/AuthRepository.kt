@@ -8,7 +8,6 @@ import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 30.12.17.
@@ -19,8 +18,6 @@ class AuthRepository constructor(
         private val userHolder: UserHolder,
         private val cookieHolder: CookieHolder
 ) {
-
-    private var stateSite = ""
 
     fun observeUser(): Observable<ProfileItem> = userHolder
             .observeUser()
@@ -37,34 +34,10 @@ class AuthRepository constructor(
         userHolder.saveUser(user)
     }
 
-    fun signIn(login: String, password: String): Single<ProfileItem> = authApi
-            .testAuth(login, password)
+    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
+            .auth(login, password, code2fa)
             .doOnSuccess {
                 userHolder.saveUser(it)
-            }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-
-    fun signIn(redirectUrl: String): Single<ProfileItem> = authApi
-            .socialAuth(redirectUrl + stateSite)
-            .doOnSuccess {
-                userHolder.saveUser(it)
-            }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-
-    fun loadAuthPage(): Single<List<String>> = authApi
-            .loadAuthPage()
-            .map {
-                val newList = mutableListOf<String>()
-                it.forEachIndexed { _, s ->
-                    val matcher = Pattern.compile("&state[\\s\\S]*").matcher(s)
-                    if (matcher.find()) {
-                        stateSite = matcher.group(0)
-                        newList.add(s.replace(stateSite, ""))
-                    }
-                }
-                newList as List<String>
             }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

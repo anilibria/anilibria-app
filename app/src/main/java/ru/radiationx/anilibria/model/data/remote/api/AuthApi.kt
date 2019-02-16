@@ -16,27 +16,11 @@ class AuthApi(
         private val authParser: AuthParser
 ) {
 
-    fun loadAuthPage(): Single<List<String>> {
-        val args: MutableMap<String, String> = mutableMapOf()
-        val url = "${Api.BASE_URL}/auth"
-        return client.get(url, args)
-                .map { authParser.getSocialLinks(it) }
-    }
-
-    fun socialAuth(redirectUrl: String): Single<ProfileItem> {
-        val args: MutableMap<String, String> = mutableMapOf(
-                "USER_REMEMBER" to "Y"
-        )
-        return client.post(redirectUrl, args)
-                .map { client.get("${Api.BASE_URL}/auth", emptyMap()).blockingGet() }
-                .compose(ApiResponse.fetchResult<JSONObject>())
-                .map { authParser.parseUser(it) }
-    }
-
-    fun testAuth(login: String, password: String): Single<ProfileItem> {
+    fun auth(login: String, password: String, code2fa: String): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "mail" to login,
-                "passwd" to password
+                "passwd" to password,
+                "fa2code" to code2fa
         )
         val url = "${Api.BASE_URL}/public/login.php"
         return client.post(url, args)

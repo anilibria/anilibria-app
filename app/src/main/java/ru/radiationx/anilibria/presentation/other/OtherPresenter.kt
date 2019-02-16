@@ -97,6 +97,14 @@ class OtherPresenter(
         updateMenuItems()
     }
 
+    override fun attachView(view: OtherView?) {
+        super.attachView(view)
+        authRepository
+                .loadUser()
+                .subscribe({}, {})
+                .addToDisposable()
+    }
+
     private fun updateMenuItems() {
         mainMenu.clear()
         systemMenu.clear()

@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CheckerRepository
@@ -94,6 +95,10 @@ class MainPresenter(
                 }
                 .addToDisposable()
         viewState.onMainLogicCompleted()
+        authRepository
+                .loadUser()
+                .subscribe({}, {})
+                .addToDisposable()
     }
 
     fun skipAntiDdos() {

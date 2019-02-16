@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
+import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 
@@ -34,8 +35,26 @@ class AuthRepository constructor(
         userHolder.saveUser(user)
     }
 
+    fun updateUser(newUser: ProfileItem) {
+        val user = userHolder.getUser()
+        newUser.authState = user.authState
+        userHolder.saveUser(newUser)
+    }
+
+    fun loadUser(): Single<ProfileItem> = authApi
+            .loadUser()
+            .doOnSuccess { updateUser(it) }
+            .doOnError {
+                it.printStackTrace()
+                (it as? ApiError)?.also {
+                    userHolder.delete()
+                }
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
     fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
-            .auth(login, password, code2fa)
+            .signIn(login, password, code2fa)
             .doOnSuccess {
                 userHolder.saveUser(it)
             }
@@ -44,9 +63,6 @@ class AuthRepository constructor(
 
     fun signOut(): Single<String> = authApi
             .signOut()
-            .doOnSuccess {
-               // hardSignOut()
-            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

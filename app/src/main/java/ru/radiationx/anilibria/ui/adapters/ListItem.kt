@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.app.release.Comment
@@ -60,3 +61,5 @@ class SearchSuggestionListItem(val item: SuggestionItem) : ListItem()
 class GenreListItem(val item: GenreItem) : ListItem()
 
 class YoutubeListItem(val item: YoutubeItem) : ListItem()
+
+class SocialAuthListItem(val item: SocialAuth) : ListItem()

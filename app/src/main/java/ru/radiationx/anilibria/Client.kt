@@ -38,7 +38,7 @@ class Client constructor(
     private val cookieJar = object : CookieJar {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-            Log.e("IClient", "saveFromResponse ${cookies.joinToString { it.name() }}")
+            Log.e("IClient", "saveFromResponse ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
             var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {

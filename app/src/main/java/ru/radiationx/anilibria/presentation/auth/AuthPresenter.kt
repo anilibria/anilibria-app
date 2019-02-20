@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.auth
 
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.IErrorHandler
@@ -25,11 +26,19 @@ class AuthPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        authRepository
+                .loadSocialAuth()
+                .subscribe({
+                    viewState.showSocial(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
         updateButtonState()
     }
 
-    fun socialClick() {
-        router.navigateTo(Screens.AUTH_SOCIAL)
+    fun onSocialClick(item: SocialAuth) {
+        router.navigateTo(Screens.AUTH_SOCIAL, item.key)
     }
 
     fun setLogin(login: String) {

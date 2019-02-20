@@ -1,9 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.content.res.AppCompatResources
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -11,6 +10,7 @@ import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -25,17 +25,19 @@ import ru.radiationx.anilibria.utils.Utils
  */
 class AuthFragment : BaseFragment(), AuthView {
 
+    private val socialAuthAdapter = SocialAuthAdapter {
+        presenter.onSocialClick(it)
+    }
+
     @InjectPresenter
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter {
-        return AuthPresenter(
-                (activity as RouterProvider).getRouter(),
-                App.injections.authRepository,
-                App.injections.errorHandler
-        )
-    }
+    fun provideAuthPresenter(): AuthPresenter = AuthPresenter(
+            (activity as RouterProvider).getRouter(),
+            App.injections.authRepository,
+            App.injections.errorHandler
+    )
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
@@ -47,8 +49,9 @@ class AuthFragment : BaseFragment(), AuthView {
 
         appbarLayout.visibility = View.GONE
 
-        authVk.setOnClickListener {
-            presenter.socialClick()
+        authSocialList.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = socialAuthAdapter
         }
 
         authSubmit.setOnClickListener { presenter.signIn() }
@@ -83,6 +86,10 @@ class AuthFragment : BaseFragment(), AuthView {
 
     override fun setRefreshing(refreshing: Boolean) {
         authSwitcher.displayedChild = if (refreshing) 1 else 0
+    }
+
+    override fun showSocial(items: List<SocialAuth>) {
+        socialAuthAdapter.bindItems(items)
     }
 
 }

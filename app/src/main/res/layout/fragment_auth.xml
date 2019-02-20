@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?cardBackground"
@@ -36,33 +37,22 @@
             android:text="@string/auth_sign_with"
             android:visibility="visible" />
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:visibility="visible">
+            android:orientation="horizontal">
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/authPatreon"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/authSocialList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="8dp"
-                android:text="@string/auth_patreon"
-                android:textColor="@color/brand_patreon"
-                android:visibility="gone" />
+                android:orientation="horizontal"
+                tools:itemCount="1"
+                tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_social_auth" />
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/authVk"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="8dp"
-                android:text="@string/auth_vk"
-                android:textColor="@color/brand_vk" />
-
-        </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"

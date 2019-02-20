@@ -27,7 +27,7 @@ import ru.radiationx.anilibria.utils.Utils
 class AuthFragment : BaseFragment(), AuthView {
 
     private val socialAuthAdapter = SocialAuthAdapter {
-        presenter.onSocialClick(it)
+        onSocialClick(it)
     }
 
     @InjectPresenter
@@ -94,6 +94,18 @@ class AuthFragment : BaseFragment(), AuthView {
         authSocialContent.visible(items.isNotEmpty())
         authSocialBottom.visible(items.isNotEmpty())
         socialAuthAdapter.bindItems(items)
+    }
+
+    private fun onSocialClick(item: SocialAuth) {
+        AlertDialog.Builder(context!!)
+                .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
+                .setPositiveButton("Продолжить"){dialog, which ->
+                    presenter.onSocialClick(item)
+                }
+                .setNegativeButton("Личный кабинет") { dialog, which ->
+                    Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
+                }
+                .show()
     }
 
 }

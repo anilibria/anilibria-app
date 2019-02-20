@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
@@ -89,6 +90,9 @@ class AuthFragment : BaseFragment(), AuthView {
     }
 
     override fun showSocial(items: List<SocialAuth>) {
+        authSocialTop.visible(items.isNotEmpty())
+        authSocialContent.visible(items.isNotEmpty())
+        authSocialBottom.visible(items.isNotEmpty())
         socialAuthAdapter.bindItems(items)
     }
 

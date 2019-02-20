@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
+import ru.radiationx.anilibria.model.data.holders.SocialAuthHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
@@ -18,16 +19,17 @@ class AuthRepository constructor(
         private val schedulers: SchedulersProvider,
         private val authApi: AuthApi,
         private val userHolder: UserHolder,
+        private val socialAuthHolder: SocialAuthHolder,
         private val cookieHolder: CookieHolder
 ) {
 
-    private val socialAuthInfo = listOf(SocialAuth(
+    /*private val socialAuthInfo = listOf(SocialAuth(
             "vk",
             "ВКонтакте",
             "https://oauth.vk.com/authorize?client_id=5315207&redirect_uri=https://www.anilibria.tv/public/vk.php",
             "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/public\\/vk\\.php([?&]code)",
             "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/pages\\/vk\\.php"
-    ))
+    ))*/
 
     fun observeUser(): Observable<ProfileItem> = userHolder
             .observeUser()
@@ -76,13 +78,19 @@ class AuthRepository constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun loadSocialAuth(): Single<List<SocialAuth>> = Single
-            .just(socialAuthInfo)
+    fun observeSocialAuth(): Observable<List<SocialAuth>> = socialAuthHolder
+            .observe()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+
+    fun loadSocialAuth(): Single<List<SocialAuth>> = authApi
+            .loadSocialAuth()
+            .doOnSuccess { socialAuthHolder.save(it) }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
     fun getSocialAuth(key: String): Single<SocialAuth> = Single
-            .just(socialAuthInfo.first { it.key == key })
+            .just(socialAuthHolder.get().first { it.key == key })
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

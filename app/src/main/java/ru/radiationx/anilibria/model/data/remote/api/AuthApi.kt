@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 
 import android.util.Log
 import io.reactivex.Single
+import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
@@ -40,6 +41,16 @@ class AuthApi(
         return client.post(url, args)
                 .map { authParser.authResult(it) }
                 .flatMap { loadUser() }
+    }
+
+    fun loadSocialAuth(): Single<List<SocialAuth>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "social_auth"
+        )
+        return client
+                .post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { authParser.parseSocialAuth(it) }
     }
 
     fun signSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {

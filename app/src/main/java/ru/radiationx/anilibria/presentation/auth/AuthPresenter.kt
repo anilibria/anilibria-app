@@ -26,8 +26,16 @@ class AuthPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
         authRepository
                 .loadSocialAuth()
+                .subscribe({}, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
+
+        authRepository
+                .observeSocialAuth()
                 .subscribe({
                     viewState.showSocial(it)
                 }, {

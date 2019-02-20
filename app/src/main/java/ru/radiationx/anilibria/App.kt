@@ -195,6 +195,7 @@ class App : Application() {
         val releaseUpdateStorage: ReleaseUpdateHolder = ReleaseUpdateStorage(dataStoragePreferences, schedulers)
         val genresHolder: GenresHolder = GenresStorage(dataStoragePreferences)
         val yearsHolder: YearsHolder = YearsStorage(dataStoragePreferences)
+        val socialAuthHolder: SocialAuthHolder = SocialAuthStorage(dataStoragePreferences)
 
         val antiDdosInteractor = AntiDdosInteractor(schedulers)
 
@@ -234,7 +235,7 @@ class App : Application() {
         private val vitalApi = VitalApi(client, vitalParser)
         private val youtubeApi = YoutubeApi(client, youtubeParser)
 
-        val authRepository = AuthRepository(schedulers, authApi, userHolder, cookieHolder)
+        val authRepository = AuthRepository(schedulers, authApi, userHolder, socialAuthHolder, cookieHolder)
         val articleRepository = ArticleRepository(schedulers, articleApi, commentApi)
         val releaseRepository = ReleaseRepository(schedulers, releaseApi, releaseUpdateStorage)
         val searchRepository = SearchRepository(schedulers, searchApi, genresHolder, yearsHolder, releaseUpdateStorage)

@@ -29,19 +29,22 @@
             app:srcCompat="@drawable/ic_anilibria" />
 
         <TextView
+            android:id="@+id/authSocialTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/auth_sign_with"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <FrameLayout
+            android:id="@+id/authSocialContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/authSocialList"
@@ -55,13 +58,14 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/authSocialBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/or"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

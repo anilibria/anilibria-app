@@ -28,6 +28,10 @@ class AuthPresenter(
         updateButtonState()
     }
 
+    fun socialClick() {
+        router.navigateTo(Screens.AUTH_SOCIAL)
+    }
+
     fun setLogin(login: String) {
         currentLogin = login
         updateButtonState()

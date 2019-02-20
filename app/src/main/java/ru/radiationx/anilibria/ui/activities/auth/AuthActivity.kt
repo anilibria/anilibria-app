@@ -90,6 +90,7 @@ class AuthActivity : AppCompatActivity(), RouterProvider {
             override fun createFragment(screenKey: String?, data: Any?): Fragment? {
                 return when (screenKey) {
                     Screens.AUTH -> AuthFragment()
+                    Screens.AUTH_SOCIAL -> AuthSocialFragment()
                     Screens.AUTH_VK -> AuthVkFragment().apply {
                         arguments = Bundle().apply {
                             val extra = data as Bundle?

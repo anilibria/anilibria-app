@@ -47,6 +47,10 @@ class AuthFragment : BaseFragment(), AuthView {
 
         appbarLayout.visibility = View.GONE
 
+        authVk.setOnClickListener {
+            presenter.socialClick()
+        }
+
         authSubmit.setOnClickListener { presenter.signIn() }
         authSkip.setOnClickListener { presenter.skip() }
         authRegistration.setOnClickListener { presenter.registrationClick() }

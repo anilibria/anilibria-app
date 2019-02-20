@@ -27,13 +27,13 @@ class AuthSocialFragment : BaseFragment() {
         const val RETURN_URL = 1337
     }
 
-    private var socialUrl = ""
+    private var socialUrl = "https://oauth.vk.com/authorize?client_id=5315207&redirect_uri=https://www.anilibria.tv/public/vk.php"
     private val resultUrlPattern = Pattern.compile("https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/[\\s\\S]*?\\?auth_service_id=(?:Patreon|VKontakte)(&code)?", Pattern.CASE_INSENSITIVE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            socialUrl = it.getString(ARG_SOCIAL_URL)
+            //socialUrl = it.getString(ARG_SOCIAL_URL)
         }
     }
 

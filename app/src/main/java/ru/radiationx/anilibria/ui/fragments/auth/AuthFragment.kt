@@ -61,7 +61,7 @@ class AuthFragment : BaseFragment(), AuthView {
 
         authLogin.addTextChangeListener { presenter.setLogin(it) }
         authPassword.addTextChangeListener { presenter.setPassword(it) }
-        authPassword.addTextChangeListener { presenter.setCode2fa(it) }
+        auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
     }
 
     override fun setSignButtonEnabled(isEnabled: Boolean) {

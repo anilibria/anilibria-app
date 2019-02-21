@@ -159,9 +159,18 @@ textarea ~ .placeholder .ph_input {
 }
 
 .flat_button.secondary {
-	background: @cardBackground !important;
+	background: @cardBackground  !important;
 }
 
 .flat_button.secondary:hover {
 	background: lighten(@cardBackground, 10%) !important;
+}
+
+.wall_module .replies_open,
+.wall_module .wr_header {
+	background: @cardBackground  !important;
+}
+
+.wall_module a.wall_reply_greeting {
+	color: @textDefault  !important;
 }

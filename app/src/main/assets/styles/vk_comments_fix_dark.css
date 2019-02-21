@@ -129,3 +129,10 @@ textarea ~ .placeholder .ph_input {
 .flat_button.secondary:hover {
   background: #424242 !important;
 }
+.wall_module .replies_open,
+.wall_module .wr_header {
+  background: #282828 !important;
+}
+.wall_module a.wall_reply_greeting {
+  color: #ffffff !important;
+}

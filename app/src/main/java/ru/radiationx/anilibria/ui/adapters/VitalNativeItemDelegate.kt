@@ -13,27 +13,25 @@ import kotlinx.android.synthetic.main.item_vital_native.view.*
 import kotlinx.android.synthetic.main.item_vital_native_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils
 
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class VitalNativeItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<MutableList<ListItem>>() {
+class VitalNativeItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegate<VitalNativeListItem, ListItem, VitalNativeItemDelegate.ViewHolder>(
+        R.layout.item_vital_native_card,
+        { it is VitalNativeListItem },
+        { ViewHolder(it, inDetail) }
+) {
 
+    override fun bindData(item: VitalNativeListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is VitalNativeListItem
-
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as VitalNativeListItem
-        (holder as ViewHolder).bind(item.item)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_native_card, parent, false)
-    )
-
-    private inner class ViewHolder(val holderView: View) : RecyclerView.ViewHolder(holderView) {
+    class ViewHolder(
+            private val holderView: View,
+            inDetail: Boolean
+    ) : RecyclerView.ViewHolder(holderView) {
 
         lateinit var currentItem: VitalItem
 
@@ -65,8 +63,7 @@ class VitalNativeItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<M
                     override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
                         imageSwitcher.displayedChild = 1
                     }
-                }
-                )
+                })
             }
         }
     }

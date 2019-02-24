@@ -8,32 +8,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.cunoraz.tagview.Tag
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_release_head_new.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseHeadDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+class ReleaseHeadDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<ReleaseHeadListItem, ListItem, ReleaseHeadDelegate.ViewHolder>(
+        R.layout.item_release_head_new,
+        { it is ReleaseHeadListItem },
+        { ViewHolder(it, itemListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseHeadListItem
+    override fun bindData(item: ReleaseHeadListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ReleaseHeadListItem
-        (holder as ViewHolder).bind(item.item)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_release_head_new, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
         private var tagColor = 0
         private var tagColorPress = 0
         private var tagColorText = 0

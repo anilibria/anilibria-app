@@ -15,27 +15,25 @@ import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils
 
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<MutableList<ListItem>>() {
+class VitalWebItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegate<VitalWebListItem, ListItem, VitalWebItemDelegate.ViewHolder>(
+        R.layout.item_vital_web_card,
+        { it is VitalWebListItem },
+        { ViewHolder(it, inDetail) }
+)  {
 
+    override fun bindData(item: VitalWebListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is VitalWebListItem
-
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as VitalWebListItem
-        (holder as ViewHolder).bind(item.item)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_vital_web_card, parent, false)
-    )
-
-    private inner class ViewHolder(val holderView: View) : RecyclerView.ViewHolder(holderView) {
+    class ViewHolder(
+            private val holderView: View,
+            private val inDetail: Boolean
+    ) : RecyclerView.ViewHolder(holderView) {
 
         lateinit var currentItem: VitalItem
 

@@ -11,23 +11,19 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
-class MenuItemDelegate(private val clickListener: (OtherMenuItem) -> Unit) : AdapterDelegate<MutableList<ListItem>>() {
+class MenuItemDelegate(
+        private val clickListener: (OtherMenuItem) -> Unit
+) : AppAdapterDelegate<MenuListItem, ListItem, MenuItemDelegate.ViewHolder>(
+        R.layout.item_other_menu,
+        { it is MenuListItem },
+        { ViewHolder(it, clickListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is MenuListItem
+    override fun bindData(item: MenuListItem, holder: ViewHolder) = holder.bind(item.menuItem)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as MenuListItem
-        (holder as ViewHolder).bind(item.menuItem)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_other_menu, parent, false),
-            clickListener
-    )
-
-    private class ViewHolder(
+    class ViewHolder(
             val view: View,
             val clickListener: (OtherMenuItem) -> Unit
     ) : RecyclerView.ViewHolder(view) {

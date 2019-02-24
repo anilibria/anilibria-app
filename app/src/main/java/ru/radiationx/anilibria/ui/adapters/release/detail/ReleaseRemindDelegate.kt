@@ -4,29 +4,31 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_release_remind.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 21.01.18.
  */
-class ReleaseRemindDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+class ReleaseRemindDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<ReleaseRemindListItem, ListItem, ReleaseRemindDelegate.ViewHolder>(
+        R.layout.item_release_remind,
+        { it is ReleaseRemindListItem },
+        { ViewHolder(it, itemListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseRemindListItem
+    override fun bindData(item: ReleaseRemindListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ReleaseRemindListItem
-        (holder as ViewHolder).bind(item.item)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_release_remind, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
         init {
             view.remindClose.setOnClickListener {
                 itemListener.onClickClose(layoutPosition)

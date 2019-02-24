@@ -13,28 +13,29 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseItemDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+class ReleaseItemDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<ReleaseListItem, ListItem, ReleaseItemDelegate.ViewHolder>(
+        R.layout.item_release,
+        { it is ReleaseListItem },
+        { ViewHolder(it, itemListener) }
+), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 10
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseListItem
+    override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ReleaseListItem
-        (holder as ViewHolder).bind(item.item, position)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_release, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: ReleaseItem
 
@@ -50,7 +51,7 @@ class ReleaseItemDelegate(private val itemListener: Listener) : OptimizeDelegate
             }
         }
 
-        fun bind(item: ReleaseItem, position: Int) {
+        fun bind(item: ReleaseItem) {
             currentItem = item
             view.run {
                 if (item.series == null) {

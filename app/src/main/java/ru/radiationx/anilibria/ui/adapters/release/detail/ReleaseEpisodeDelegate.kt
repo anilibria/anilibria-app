@@ -6,33 +6,36 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_release_episode.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseEpisodeDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+class ReleaseEpisodeDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<ReleaseEpisodeListItem, ListItem, ReleaseEpisodeDelegate.ViewHolder>(
+        R.layout.item_release_episode,
+        { it is ReleaseEpisodeListItem },
+        { ViewHolder(it, itemListener) }
+), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 20
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseEpisodeListItem
+    override fun bindData(item: ReleaseEpisodeListItem, holder: ViewHolder) =
+            holder.bind(item.item, item.isEven)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ReleaseEpisodeListItem
-        (holder as ViewHolder).bind(item.item, item.isEven)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_release_episode, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
         private val disableColor = ColorStateList.valueOf(view.context.getColorFromAttr(R.attr.base_icon))
         private val enableColor = ColorStateList.valueOf(view.context.getColorFromAttr(R.attr.colorAccent))
 

@@ -13,19 +13,21 @@ import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.BottomTabListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
-class BottomTabDelegate(private val clickListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class BottomTabDelegate(private val clickListener: Listener) : AppAdapterDelegate<BottomTabListItem, ListItem, BottomTabDelegate.ViewHolder>(
+        R.layout.item_bottom_tab,
+        { it is BottomTabListItem },
+        { ViewHolder(it, clickListener) }
+)  {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is BottomTabListItem
+    override fun bindData(item: BottomTabListItem, holder: ViewHolder) =
+            holder.bind(item.item, item.selected)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as BottomTabListItem
-        (holder as ViewHolder).bind(item.item, item.selected)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bottom_tab, parent, false))
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val clickListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: MainActivity.Tab
 

@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
@@ -21,23 +23,20 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
  */
 class SearchDelegate(
         private val clickListener: (SearchItem) -> Unit
-) : OptimizeDelegate<MutableList<ListItem>>() {
+) : AppAdapterDelegate<SearchListItem, ListItem, SearchDelegate.ViewHolder>(
+        R.layout.item_fast_search,
+        { it is SearchListItem },
+        { ViewHolder(it, clickListener) }
+), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 15
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is SearchListItem
+    override fun bindData(item: SearchListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        (items[position] as SearchListItem).also {
-            (holder as ViewHolder).bind(it.item)
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_fast_search, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val clickListener: (SearchItem) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: SearchItem
 

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_youtube.view.*
 import ru.radiationx.anilibria.R
@@ -12,28 +13,29 @@ import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class YoutubeDelegate(private val itemListener: Listener) : OptimizeDelegate<MutableList<ListItem>>() {
+class YoutubeDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<YoutubeListItem, ListItem, YoutubeDelegate.ViewHolder>(
+        R.layout.item_youtube,
+        { it is YoutubeListItem },
+        { ViewHolder(it, itemListener) }
+), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 10
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is YoutubeListItem
+    override fun bindData(item: YoutubeListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as YoutubeListItem
-        (holder as ViewHolder).bind(item.item)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_youtube, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: YoutubeItem
 

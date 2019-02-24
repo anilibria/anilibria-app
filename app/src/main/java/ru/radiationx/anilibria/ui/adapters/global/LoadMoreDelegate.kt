@@ -10,23 +10,25 @@ import kotlinx.android.synthetic.main.item_load_more.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class LoadMoreDelegate(private val listener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is LoadMoreListItem
+class LoadMoreDelegate(
+        private val listener: Listener
+) : AppAdapterDelegate<LoadMoreListItem, ListItem, LoadMoreDelegate.ViewHolder>(
+        R.layout.item_load_more,
+        { it is LoadMoreListItem },
+        { ViewHolder(it, listener) }
+) {
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        (holder as ViewHolder).bind()
-    }
+    override fun bindData(item: LoadMoreListItem, holder: ViewHolder) = holder.bind()
 
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_load_more, parent, false)
-    )
-
-    private inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            view: View,
+            private val listener: Listener
+    ) : RecyclerView.ViewHolder(view) {
 
         init {
             view.run {

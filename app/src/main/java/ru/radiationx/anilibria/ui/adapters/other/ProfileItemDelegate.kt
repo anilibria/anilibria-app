@@ -15,39 +15,33 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.DimensionsProvider
 
 class ProfileItemDelegate(
         private val clickListener: (ProfileItem) -> Unit,
         private val logoutClickListener: () -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
-
-    private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
-    private var compositeDisposable = CompositeDisposable()
-
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ProfileListItem
-
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ProfileListItem
-        (holder as ViewHolder).bind(item.profileItem)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_other_profile, parent, false),
-            clickListener,
-            logoutClickListener
-    )
+) : AppAdapterDelegate<ProfileListItem, ListItem, ProfileItemDelegate.ViewHolder>(
+        R.layout.item_other_profile,
+        { it is ProfileListItem },
+        { ViewHolder(it, clickListener, logoutClickListener) }
+) {
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
-        compositeDisposable.dispose()
+        (holder as ViewHolder).onDetach()
     }
 
-    inner class ViewHolder(
+    override fun bindData(item: ProfileListItem, holder: ViewHolder) = holder.bind(item.profileItem)
+
+    class ViewHolder(
             val view: View,
             private val clickListener: (ProfileItem) -> Unit,
             private val logoutClickListener: () -> Unit
     ) : RecyclerView.ViewHolder(view) {
+
+        private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
+        private var compositeDisposable = CompositeDisposable()
 
         private lateinit var item: ProfileItem
 
@@ -85,6 +79,10 @@ class ProfileItemDelegate(
                     profileLogout.visibility = View.GONE
                 }
             }
+        }
+
+        fun onDetach() {
+            compositeDisposable.clear()
         }
     }
 }

@@ -12,24 +12,22 @@ import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
 class SocialAuthDelegate(
         private val clickListener: (SocialAuth) -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
+) : AppAdapterDelegate<SocialAuthListItem, ListItem, SocialAuthDelegate.ViewHolder>(
+        R.layout.item_social_auth,
+        { it is SocialAuthListItem },
+        { ViewHolder(it, clickListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is SocialAuthListItem
+    override fun bindData(item: SocialAuthListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        (items[position] as SocialAuthListItem).also {
-            (holder as ViewHolder).bind(it.item)
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_social_auth, parent, false)
-    )
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            val view: View,
+            private val clickListener: (SocialAuth) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: SocialAuth
 

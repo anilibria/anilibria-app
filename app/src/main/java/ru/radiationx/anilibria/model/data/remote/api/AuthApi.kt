@@ -54,7 +54,7 @@ class AuthApi @Inject constructor(
                 .map { authParser.parseSocialAuth(it) }
     }
 
-    fun signSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
+    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf()
         return client
                 .getFull(resultUrl, args)

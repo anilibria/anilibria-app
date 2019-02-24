@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
@@ -60,7 +59,7 @@ class AuthSocialPresenter @Inject constructor(
     private fun signSocial(resultUrl: String) {
         currentData?.also { model ->
             authRepository
-                    .signSocial(resultUrl, model)
+                    .signInSocial(resultUrl, model)
                     .subscribe({
                         router.finishChain()
                     }, {

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release_episode_control.*
 import kotlinx.android.synthetic.main.item_release_episode_control.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -28,28 +30,24 @@ class ReleaseEpisodeControlDelegate(
             holder.bind(item.item)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
-            view.run {
-                full_button_watch_all.setOnClickListener {
-                    itemListener.onClickWatchAll()
-                }
-                full_button_continue.setOnClickListener {
-                    itemListener.onClickContinue()
-                }
+            full_button_watch_all.setOnClickListener {
+                itemListener.onClickWatchAll()
+            }
+            full_button_continue.setOnClickListener {
+                itemListener.onClickContinue()
             }
         }
 
         fun bind(item: ReleaseFull) {
-            view.run {
-                val hasEpisodes = !item.episodes.isEmpty()
-                val hasViewed = item.episodes.firstOrNull { it.isViewed } != null
-                full_button_watch_all.isEnabled = hasEpisodes
-                full_button_continue.visibility = if (hasViewed) View.VISIBLE else View.GONE
-            }
+            val hasEpisodes = !item.episodes.isEmpty()
+            val hasViewed = item.episodes.firstOrNull { it.isViewed } != null
+            full_button_watch_all.isEnabled = hasEpisodes
+            full_button_continue.visibility = if (hasViewed) View.VISIBLE else View.GONE
         }
     }
 

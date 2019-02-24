@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release_remind.*
 import kotlinx.android.synthetic.main.item_release_remind.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -26,17 +28,17 @@ class ReleaseRemindDelegate(
     override fun bindData(item: ReleaseRemindListItem, holder: ViewHolder) = holder.bind(item.item)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
         init {
-            view.remindClose.setOnClickListener {
+            remindClose.setOnClickListener {
                 itemListener.onClickClose(layoutPosition)
             }
         }
 
         fun bind(item: String) {
-            view.item_title.text = item
+            item_title.text = item
         }
     }
 

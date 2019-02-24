@@ -9,10 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_fast_search.*
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.setCompatDrawable
+import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -34,26 +38,24 @@ class SearchDelegate(
     override fun bindData(item: SearchListItem, holder: ViewHolder) = holder.bind(item.item)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val clickListener: (SearchItem) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: SearchItem
 
         init {
-            view.setOnClickListener {
+            containerView.setOnClickListener {
                 clickListener.invoke(currentItem)
             }
-            view.item_image.scaleType = ImageView.ScaleType.CENTER
+            item_image.scaleType = ImageView.ScaleType.CENTER
         }
 
         fun bind(item: SearchItem) {
             currentItem = item
-            view.apply {
-                item_image.setImageDrawable(ContextCompat.getDrawable(context, item.icRes))
-                ImageViewCompat.setImageTintList(item_image, ColorStateList.valueOf(context.getColorFromAttr(R.attr.base_icon)))
-                item_title.text = item.title
-            }
+            item_image.setCompatDrawable(item.icRes)
+            item_image.setTintColorAttr(R.attr.base_icon)
+            item_title.text = item.title
         }
 
     }

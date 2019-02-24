@@ -27,10 +27,8 @@ class ReleaseDonateDelegate(
             private val itemListener: Listener
     ) : RecyclerView.ViewHolder(view) {
         init {
-            view.run {
-                view.setOnClickListener {
-                    itemListener.onClickDonate()
-                }
+            view.setOnClickListener {
+                itemListener.onClickDonate()
             }
         }
     }

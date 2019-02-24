@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_other_profile.*
 import kotlinx.android.synthetic.main.item_other_profile.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
@@ -35,10 +37,10 @@ class ProfileItemDelegate(
     override fun bindData(item: ProfileListItem, holder: ViewHolder) = holder.bind(item.profileItem)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val clickListener: (ProfileItem) -> Unit,
             private val logoutClickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
         private var compositeDisposable = CompositeDisposable()
@@ -47,37 +49,33 @@ class ProfileItemDelegate(
 
         init {
             compositeDisposable.add(dimensionsProvider.dimensions().subscribe {
-                view.setPadding(
-                        view.paddingLeft,
+                containerView.setPadding(
+                        containerView.paddingLeft,
                         it.statusBar,
-                        view.paddingRight,
-                        view.paddingBottom
+                        containerView.paddingRight,
+                        containerView.paddingBottom
                 )
             })
-            view.run {
-                this.setOnClickListener { clickListener(item) }
-                profileLogout.setOnClickListener { logoutClickListener() }
-            }
+            containerView.setOnClickListener { clickListener(item) }
+            profileLogout.setOnClickListener { logoutClickListener() }
         }
 
         fun bind(profileItem: ProfileItem) {
             item = profileItem
             Log.e("S_DEF_LOG", "bind prfile $profileItem")
-            view.run {
-                if (profileItem.avatarUrl.isNullOrEmpty()) {
-                    ImageLoader.getInstance().displayImage("assets://res/alib_new_or_b.png", profileAvatar)
-                } else {
-                    ImageLoader.getInstance().displayImage(profileItem.avatarUrl, profileAvatar)
-                }
-                if (profileItem.authState == AuthState.AUTH) {
-                    profileNick.text = profileItem.nick
-                    profileDesc.text = "Перейти в профиль"
-                    profileLogout.visibility = View.VISIBLE
-                } else {
-                    profileNick.text = "Гость"
-                    profileDesc.text = "Авторизоваться"
-                    profileLogout.visibility = View.GONE
-                }
+            if (profileItem.avatarUrl.isNullOrEmpty()) {
+                ImageLoader.getInstance().displayImage("assets://res/alib_new_or_b.png", profileAvatar)
+            } else {
+                ImageLoader.getInstance().displayImage(profileItem.avatarUrl, profileAvatar)
+            }
+            if (profileItem.authState == AuthState.AUTH) {
+                profileNick.text = profileItem.nick
+                profileDesc.text = "Перейти в профиль"
+                profileLogout.visibility = View.VISIBLE
+            } else {
+                profileNick.text = "Гость"
+                profileDesc.text = "Авторизоваться"
+                profileLogout.visibility = View.GONE
             }
         }
 

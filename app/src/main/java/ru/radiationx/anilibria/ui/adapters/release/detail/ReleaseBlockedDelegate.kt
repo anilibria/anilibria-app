@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release_blocked.*
 import kotlinx.android.synthetic.main.item_release_blocked.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -25,16 +27,16 @@ class ReleaseBlockedDelegate : AppAdapterDelegate<ReleaseBlockedListItem, ListIt
 
     override fun bindData(item: ReleaseBlockedListItem, holder: ViewHolder) = holder.bind(item.item)
 
-     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            override val containerView: View
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: ReleaseFull) {
-            view.run {
-                val defaultReason = """
+            val defaultReason = """
                     <h4>Контент недоступен на территории Российской Федерации*. Приносим извинения за неудобства.</h4>
                     <br>
                     <span>Подробности смотрите в новостях или социальных сетях</span>""".trimIndent()
-                item_title.text = Html.fromHtml(item.blockedInfo.reason ?: defaultReason)
-            }
+            item_title.text = Html.fromHtml(item.blockedInfo.reason ?: defaultReason)
         }
     }
 }

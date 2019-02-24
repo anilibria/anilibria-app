@@ -7,10 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release_episode.*
 import kotlinx.android.synthetic.main.item_release_episode.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.setTint
+import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -33,43 +37,42 @@ class ReleaseEpisodeDelegate(
             holder.bind(item.item, item.isEven)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
-        private val disableColor = ColorStateList.valueOf(view.context.getColorFromAttr(R.attr.base_icon))
-        private val enableColor = ColorStateList.valueOf(view.context.getColorFromAttr(R.attr.colorAccent))
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
+        private lateinit var currentItem: ReleaseFull.Episode
+        private val disableColor = R.attr.base_icon
+        private val enableColor = R.attr.colorAccent
 
         init {
-            view.run {
-                quality_sd.setOnClickListener {
-                    itemListener.onClickSd(view.tag as ReleaseFull.Episode)
-                }
-                quality_hd.setOnClickListener {
-                    itemListener.onClickHd(view.tag as ReleaseFull.Episode)
-                }
-                view.setOnClickListener {
-                    itemListener.onClickEpisode(view.tag as ReleaseFull.Episode)
-                }
+            quality_sd.setOnClickListener {
+                itemListener.onClickSd(currentItem)
+            }
+            quality_hd.setOnClickListener {
+                itemListener.onClickHd(currentItem)
+            }
+            containerView.setOnClickListener {
+                itemListener.onClickEpisode(currentItem)
             }
         }
 
         fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
-            view.run {
-                view.tag = item
-                item_title.text = item.title
-                item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
+            currentItem = item
+            item_title.text = item.title
+            item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
 
-                quality_sd.isEnabled = item.urlSd != null
-                quality_hd.isEnabled = item.urlHd != null
-                ImageViewCompat.setImageTintList(quality_sd, if (item.urlSd != null) enableColor else disableColor)
-                ImageViewCompat.setImageTintList(quality_hd, if (item.urlHd != null) enableColor else disableColor)
+            quality_sd.isEnabled = item.urlSd != null
+            quality_hd.isEnabled = item.urlHd != null
+            quality_sd.setTintColorAttr(if (item.urlSd != null) enableColor else disableColor)
+            quality_hd.setTintColorAttr(if (item.urlHd != null) enableColor else disableColor)
 
-                if (isEven) {
-                    setBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
-                } else {
-                    setBackgroundColor(context.getColorFromAttr(R.attr.episode_even))
-                }
+            val bgColor = if (isEven) {
+                containerView.context.getColorFromAttr(R.attr.cardBackground)
+            } else {
+                containerView.context.getColorFromAttr(R.attr.episode_even)
             }
+            containerView.setBackgroundColor(bgColor)
         }
     }
 

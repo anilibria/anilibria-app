@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release_head_episodes.*
 import kotlinx.android.synthetic.main.item_release_head_episodes.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -32,9 +34,10 @@ class ReleaseEpisodesHeadDelegate(
     override fun bindData(item: ReleaseEpisodesHeadListItem, holder: ViewHolder) = holder.bind(item.tabTag)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
         private val tabListener = object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
 
@@ -51,21 +54,17 @@ class ReleaseEpisodesHeadDelegate(
         }
 
         init {
-            view.run {
-                tabLayout.addTab(tabLayout.newTab().setText("Онлайн").setTag(TAG_ONLINE))
-                tabLayout.addTab(tabLayout.newTab().setText("Скачать").setTag(TAG_DOWNLOAD))
-                tabLayout.addOnTabSelectedListener(tabListener)
-            }
+            tabLayout.addTab(tabLayout.newTab().setText("Онлайн").setTag(TAG_ONLINE))
+            tabLayout.addTab(tabLayout.newTab().setText("Скачать").setTag(TAG_DOWNLOAD))
+            tabLayout.addOnTabSelectedListener(tabListener)
         }
 
         fun bind(tabTag: String) {
-            view.run {
-                (0 until tabLayout.tabCount).forEach {
-                    tabLayout.getTabAt(it)?.let {
-                        if (it.tag == tabTag) {
-                            //todo Чеита падает, например осамацу 2, вкладка скачать
-                            //it.select()
-                        }
+            (0 until tabLayout.tabCount).forEach {
+                tabLayout.getTabAt(it)?.let {
+                    if (it.tag == tabTag) {
+                        //todo Чеита падает, например осамацу 2, вкладка скачать
+                        //it.select()
                     }
                 }
             }

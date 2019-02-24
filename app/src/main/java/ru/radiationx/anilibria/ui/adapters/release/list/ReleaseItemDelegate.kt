@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.ImageLoader
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release.*
 import kotlinx.android.synthetic.main.item_release.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -33,40 +35,36 @@ class ReleaseItemDelegate(
     override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item.item)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseItem
 
         init {
-            itemView.run {
-                setOnClickListener {
-                    itemListener.onItemClick(layoutPosition, item_image)
-                    itemListener.onItemClick(currentItem, layoutPosition)
-                }
-                setOnLongClickListener {
-                    itemListener.onItemLongClick(currentItem)
-                }
+            containerView.setOnClickListener {
+                itemListener.onItemClick(layoutPosition, item_image)
+                itemListener.onItemClick(currentItem, layoutPosition)
+            }
+            containerView.setOnLongClickListener {
+                itemListener.onItemLongClick(currentItem)
             }
         }
 
         fun bind(item: ReleaseItem) {
             currentItem = item
-            view.run {
-                if (item.series == null) {
-                    item_title.text = item.title
-                } else {
-                    item_title.text = String.format("%s (%s)", item.title, item.series)
-                }
-                item_desc.text = Html.fromHtml(item.description)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
-                }
-                item_new_indicator.visibility = if (item.isNew) View.VISIBLE else View.GONE
-                ImageLoader.getInstance().displayImage(item.poster, item_image)
+            if (item.series == null) {
+                item_title.text = item.title
+            } else {
+                item_title.text = String.format("%s (%s)", item.title, item.series)
             }
+            item_desc.text = Html.fromHtml(item.description)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+                item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
+            }
+            item_new_indicator.visibility = if (item.isNew) View.VISIBLE else View.GONE
+            ImageLoader.getInstance().displayImage(item.poster, item_image)
         }
     }
 

@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_other_menu.*
 import kotlinx.android.synthetic.main.item_other_menu.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
+import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -24,22 +27,20 @@ class MenuItemDelegate(
     override fun bindData(item: MenuListItem, holder: ViewHolder) = holder.bind(item.menuItem)
 
     class ViewHolder(
-            val view: View,
+            override val containerView: View,
             val clickListener: (OtherMenuItem) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var item: OtherMenuItem
 
         init {
-            view.setOnClickListener { clickListener(item) }
+            containerView.setOnClickListener { clickListener(item) }
         }
 
         fun bind(menuItem: OtherMenuItem) {
             this.item = menuItem
-            view.run {
-                otherMenuTitle.text = menuItem.title
-                otherMenuIcon.setImageDrawable(AppCompatResources.getDrawable(view.context, menuItem.icon))
-            }
+            otherMenuTitle.text = menuItem.title
+            otherMenuIcon.setCompatDrawable(menuItem.icon)
         }
     }
 }

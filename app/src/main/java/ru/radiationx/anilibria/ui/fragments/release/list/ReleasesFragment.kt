@@ -86,7 +86,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("S_DEF_LOG", "TEST onViewCreated " + this)
+        Log.e("S_DEF_LOG", "TEST onViewCreated $this")
         searchView = SearchView(coordinator_layout.context)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 

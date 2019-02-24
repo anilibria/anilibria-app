@@ -31,7 +31,7 @@ object Screens {
         override fun getActivityIntent(context: Context) = AuthActivity.createIntent(context, rootScreen)
     }
 
-    class AuthMain() : BaseAppScreen() {
+    class AuthMain : BaseAppScreen() {
         override fun getFragment() = AuthFragment()
     }
 

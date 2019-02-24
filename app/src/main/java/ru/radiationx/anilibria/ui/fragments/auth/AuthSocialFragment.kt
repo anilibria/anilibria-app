@@ -105,6 +105,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         var loadingFinished = true
         var redirect = false
 
+        @Suppress("OverridingDeprecatedMember")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
             if (!loadingFinished) {

@@ -117,8 +117,4 @@ class ReleasesPresenter @Inject constructor(
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }
-
-    fun openSearch() {
-        router.navigateTo(Screens.ReleasesSearch())
-    }
 }

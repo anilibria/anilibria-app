@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
  * Created by radiationx on 24.12.17.
  */
 class FastSearchAdapter(
-        private val clickListener: (SearchItem) -> Unit
+        clickListener: (SearchItem) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     init {

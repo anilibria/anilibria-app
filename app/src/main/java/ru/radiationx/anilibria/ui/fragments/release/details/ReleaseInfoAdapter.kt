@@ -13,7 +13,9 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import java.util.*
 
-class ReleaseInfoAdapter(private var itemListener: ItemListener) : OptimizeAdapter<MutableList<ListItem>>() {
+class ReleaseInfoAdapter(
+        private var itemListener: ItemListener
+) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
 
@@ -80,28 +82,28 @@ class ReleaseInfoAdapter(private var itemListener: ItemListener) : OptimizeAdapt
         items.clear()
         currentRelease = release
         items.add(ReleaseHeadListItem(release))
-        items.add(DividerShadowListItem())
+        items.add(DividerShadowListItem)
 
         if (release.blockedInfo.isBlocked) {
             items.add(ReleaseBlockedListItem(release))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
         if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
-            items.add(ReleaseDonateListItem())
-            items.add(DividerShadowListItem())
+            items.add(ReleaseDonateListItem)
+            items.add(DividerShadowListItem)
         }
 
         if (vitalItems.isNotEmpty()) {
             val randomVital = if (vitalItems.size > 1) rand(0, vitalItems.size) else 0
             val listItem = getVitalListItem(vitalItems[randomVital])
             this.items.add(listItem)
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
         if (!release.blockedInfo.isBlocked && appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
@@ -112,11 +114,11 @@ class ReleaseInfoAdapter(private var itemListener: ItemListener) : OptimizeAdapt
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
             items.addAll(prepareEpisodeItems(release))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
-        items.add(CommentRouteListItem())
-        items.add(DividerShadowListItem())
+        items.add(CommentRouteListItem)
+        items.add(DividerShadowListItem)
 
         notifyDataSetChanged()
     }

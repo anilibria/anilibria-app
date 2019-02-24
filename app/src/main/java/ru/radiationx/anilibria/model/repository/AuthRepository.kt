@@ -20,8 +20,7 @@ class AuthRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val authApi: AuthApi,
         private val userHolder: UserHolder,
-        private val socialAuthHolder: SocialAuthHolder,
-        private val cookieHolder: CookieHolder
+        private val socialAuthHolder: SocialAuthHolder
 ) {
 
     /*private val socialAuthInfo = listOf(SocialAuth(

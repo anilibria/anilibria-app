@@ -65,7 +65,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
         toolbar.apply {
             title = "История"
-            setNavigationOnClickListener({ presenter.onBackPressed() })
+            setNavigationOnClickListener { presenter.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 

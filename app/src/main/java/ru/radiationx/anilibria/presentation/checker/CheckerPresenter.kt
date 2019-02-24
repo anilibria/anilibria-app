@@ -7,12 +7,13 @@ import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
 @InjectViewState
-class CheckerPresenter(
+class CheckerPresenter @Inject constructor(
         private val checkerRepository: CheckerRepository,
         private val errorHandler: IErrorHandler
 ) : MvpPresenter<CheckerView>() {

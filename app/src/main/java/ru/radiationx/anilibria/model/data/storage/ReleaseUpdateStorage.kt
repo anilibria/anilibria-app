@@ -96,8 +96,8 @@ class ReleaseUpdateStorage @Inject constructor(
         val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
-            (0 until jsonEpisodes.length()).forEach {
-                jsonEpisodes.getJSONObject(it).let {
+            (0 until jsonEpisodes.length()).forEach { index ->
+                jsonEpisodes.getJSONObject(index).let {
                     localReleases.add(ReleaseUpdate().apply {
                         id = it.getInt("id")
                         timestamp = it.getInt("timestamp")

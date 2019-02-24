@@ -4,10 +4,10 @@ package ru.radiationx.anilibria.utils
  * Created by radiationx on 23.05.17.
  */
 
-public object MimeTypeUtil {
+object MimeTypeUtil {
 
     private val types by lazy {
-        mutableMapOf<String, String>(
+        mutableMapOf(
                 "323" to "text/h323",
                 "3g2" to "video/3gpp2",
                 "3gp" to "video/3gpp",

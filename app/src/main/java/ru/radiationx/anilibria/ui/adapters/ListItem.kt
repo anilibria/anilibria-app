@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.adapters
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.app.release.Comment
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -19,14 +18,13 @@ sealed class ListItem
 
 class ProfileListItem(val profileItem: ProfileItem) : ListItem()
 class MenuListItem(val menuItem: OtherMenuItem) : ListItem()
-class DividerShadowListItem : ListItem()
+object DividerShadowListItem : ListItem()
 
 
 /* Common */
 
-class LoadMoreListItem : ListItem()
-class CommentListItem(val item: Comment) : ListItem()
-class CommentRouteListItem : ListItem()
+object LoadMoreListItem : ListItem()
+object CommentRouteListItem : ListItem()
 class VitalWebListItem(val item: VitalItem) : ListItem()
 class VitalNativeListItem(val item: VitalItem) : ListItem()
 class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
@@ -42,7 +40,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean) : ListItem()
 class ReleaseEpisodeControlItem(val item: ReleaseFull) : ListItem()
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
-class ReleaseDonateListItem : ListItem()
+object ReleaseDonateListItem : ListItem()
 class ReleaseRemindListItem(val item: String) : ListItem()
 class ReleaseBlockedListItem(val item: ReleaseFull) : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()

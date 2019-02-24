@@ -78,7 +78,6 @@ class AppModule(context: Context) : Module() {
 
         bind(AuthParser::class.java).singletonInScope()
         bind(CheckerParser::class.java).singletonInScope()
-        bind(FavoriteParser::class.java).singletonInScope()
         bind(PagesParser::class.java).singletonInScope()
         bind(ProfileParser::class.java).singletonInScope()
         bind(ReleaseParser::class.java).singletonInScope()

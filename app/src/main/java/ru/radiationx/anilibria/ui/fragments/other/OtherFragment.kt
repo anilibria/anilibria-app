@@ -96,13 +96,13 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun addProfile(profileItem: ProfileItem) {
             items.add(ProfileListItem(profileItem))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
         fun addMenu(newItems: MutableList<OtherMenuItem>) {
             items.addAll(newItems.map { MenuListItem(it) })
             if (newItems.isNotEmpty()) {
-                items.add(DividerShadowListItem())
+                items.add(DividerShadowListItem)
             }
         }
     }

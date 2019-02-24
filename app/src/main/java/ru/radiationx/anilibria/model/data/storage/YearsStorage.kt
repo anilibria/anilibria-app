@@ -57,8 +57,8 @@ class YearsStorage @Inject constructor(
         val savedYears = sharedPreferences.getString(LOCAL_YEARS_KEY, null)
         savedYears?.let {
             val jsonYears = JSONArray(it)
-            (0 until jsonYears.length()).forEach {
-                jsonYears.getJSONObject(it).let {
+            (0 until jsonYears.length()).forEach { index ->
+                jsonYears.getJSONObject(index).let {
                     localYears.add(YearItem().apply {
                         title = it.getString("title")
                         value = it.getString("value")

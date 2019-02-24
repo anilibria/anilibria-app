@@ -216,7 +216,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         super.onDestroyView()
     }
 
-    private inner class CustomPagerAdapter() : FragmentStatePagerAdapter(childFragmentManager) {
+    private inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
 
         private val fragments = listOf<Fragment>(
                 ReleaseInfoFragment()/*,
@@ -231,7 +231,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 it.putExtra {
                     putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
                 }
-                Log.e("lalallala", "CustomPagerAdapter ini ${newBundle}")
+                Log.e("lalallala", "CustomPagerAdapter ini $newBundle")
             }
         }
 

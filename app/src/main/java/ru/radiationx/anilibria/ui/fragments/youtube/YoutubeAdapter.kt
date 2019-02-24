@@ -10,7 +10,7 @@ import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 
-open class YoutubeAdapter(
+class YoutubeAdapter(
         var listener: ItemListener,
         private val placeHolder: PlaceholderListItem
 ) : OptimizeAdapter<MutableList<ListItem>>() {
@@ -39,7 +39,7 @@ open class YoutubeAdapter(
         return random.nextInt(to - from) + from
     }
 
-    protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
+    private fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
         if (condition) {
             items.add(placeHolder)
         } else {
@@ -59,7 +59,7 @@ open class YoutubeAdapter(
 
     private fun addLoadMore() {
         if (endless) {
-            this.items.add(LoadMoreListItem())
+            this.items.add(LoadMoreListItem)
         }
     }
 

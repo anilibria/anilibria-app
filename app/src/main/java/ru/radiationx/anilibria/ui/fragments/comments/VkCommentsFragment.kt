@@ -36,7 +36,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     companion object {
         const val ARG_ID: String = "release_id"
         const val ARG_ID_CODE: String = "release_id_code"
-        const val ARG_ITEM: String = "release_item"
         const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
 
@@ -185,7 +184,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "OverridingDeprecatedMember")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
                 val client = getDependency(screenScope, IClient::class.java)
@@ -210,7 +209,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         @Suppress("OverridingDeprecatedMember")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            Log.e("S_DEF_LOG", "OverrideUrlLoading: " + url)
+            Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
             val cookies = CookieManager.getInstance().getCookie(url)
             Log.d("S_DEF_LOG", "URL COOKIES: '$cookies'")
             if (!loadingFinished) {
@@ -250,10 +249,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             }
         }
 
-        override fun onPageCommitVisible(view: WebView?, url: String?) {
-            super.onPageCommitVisible(view, url)
-            //progressBar.visibility = View.GONE
-        }
     }
 
 }

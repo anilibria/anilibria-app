@@ -9,7 +9,6 @@ import ru.radiationx.anilibria.model.repository.PageRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -19,12 +18,11 @@ class VkCommentsPresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val authHolder: AuthHolder,
         private val router: Router,
-        private val linkHandler: ILinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<VkCommentsView>(router) {
 
-    var currentData: ReleaseFull? = null
-    var currentVkComments: VkComments? = null
+    private var currentData: ReleaseFull? = null
+    private var currentVkComments: VkComments? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
@@ -48,7 +46,7 @@ class VkCommentsPresenter @Inject constructor(
         router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
     }
 
-    fun loadData() {
+    private fun loadData() {
         pageRepository
                 .getComments()
                 .subscribe({
@@ -60,7 +58,7 @@ class VkCommentsPresenter @Inject constructor(
                 .addToDisposable()
     }
 
-    fun loadRelease() {
+    private fun loadRelease() {
         releaseInteractor
                 .loadRelease(releaseId, releaseIdCode)
                 .subscribe({ release ->
@@ -72,7 +70,7 @@ class VkCommentsPresenter @Inject constructor(
                 .addToDisposable()
     }
 
-    fun updateComments() {
+    private fun updateComments() {
         if (currentData != null && currentVkComments != null) {
             currentVkComments?.also {
                 viewState.showBody(VkComments(

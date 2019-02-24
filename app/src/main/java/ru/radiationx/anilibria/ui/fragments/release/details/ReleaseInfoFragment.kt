@@ -43,7 +43,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     companion object {
         const val ARG_ID: String = "release_id"
         const val ARG_ID_CODE: String = "release_id_code"
-        const val ARG_ITEM: String = "release_item"
     }
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy { ReleaseInfoAdapter(adapterListener) }

@@ -35,8 +35,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     private var pictureInPictureMenuItem: MenuItem? = null
     private var controlsEnabled = true
 
-    private var scaleDisposable = Disposables.disposed()
-
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
     }
@@ -44,14 +42,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     fun fitSystemWindows(fit: Boolean) {
         this.fitsSystemWindows = false
         videoControlsRoot.fitsSystemWindows = fit
-    }
-
-    fun setControlsEnabled(enabled: Boolean) {
-        Log.e("lalka", "setControlsEnabled $enabled")
-        controlsEnabled = enabled
-        if (!controlsEnabled) {
-            hide()
-        }
     }
 
     fun setPictureInPictureEnabled(enabled: Boolean) {
@@ -85,7 +75,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlsContainer = timeControlsContainer
         gesturesControllerView.setEventsListener(object : VideoGestureEventsListener {
             private var localSeekDelta = 0L
-            private var seekStarted = false;
+            private var seekStarted = false
 
             override fun onTap() {
                 Log.e("gestureLalala", "onTap, $canViewHide, $isVisible")

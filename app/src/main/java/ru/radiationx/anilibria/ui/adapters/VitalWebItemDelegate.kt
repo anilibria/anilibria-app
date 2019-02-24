@@ -47,7 +47,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
                 vitalWebView.settings.apply {
                     layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
                 }
-                vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
+                vitalWebView.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
                 vitalWebView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
@@ -59,6 +59,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AdapterDelegate<Muta
                         webSwitcher.displayedChild = 1
                     }
 
+                    @Suppress("OverridingDeprecatedMember")
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                         Utils.externalLink(url.toString())
                         return true

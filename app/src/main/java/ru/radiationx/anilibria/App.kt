@@ -84,7 +84,7 @@ class App : Application() {
         }
 
         RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler " + throwable)
+            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler $throwable")
             throwable.printStackTrace()
         }
 
@@ -108,11 +108,11 @@ class App : Application() {
     }
 
     private fun initDependencies() {
-        Toothpick.setConfiguration(Configuration.forProduction());
+        Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(Scopes.APP)
         scope.installModules(AppModule(this))
 
-        Log.e("lalala", "initDependencies ${Toothpick.openScope(Scopes.APP).toString()}")
+        Log.e("lalala", "initDependencies ${Toothpick.openScope(Scopes.APP)}")
     }
 
     private fun appVersionCheck() {
@@ -120,11 +120,11 @@ class App : Application() {
             val prefKey = "app.versions.history"
             val defaultPreferences = DI.get(SharedPreferences::class.java)
             val history = defaultPreferences
-                    .getString(prefKey, "")?.let {
-                        it.split(";")
-                                .filter { it.isNotBlank() }
-                                .map { it.toInt() }
-                    } ?: emptyList()
+                    .getString(prefKey, "")
+                    ?.split(";")
+                    ?.filter { it.isNotBlank() }
+                    ?.map { it.toInt() }
+                    ?: emptyList()
 
 
             var lastAppCode = 0

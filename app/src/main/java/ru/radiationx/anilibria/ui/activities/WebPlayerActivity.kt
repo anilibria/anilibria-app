@@ -35,12 +35,13 @@ class WebPlayerActivity : BaseActivity() {
             javaScriptEnabled = true
         }
         intent?.let {
-            it.getStringExtra(ARG_URL)?.let {
+            it.getStringExtra(ARG_URL)?.let { argUrl ->
                 val extraHeaders = HashMap<String, String>()
                 extraHeaders["Referer"] = Api.WIDGETS_SITE_URL
-                Log.e("lalala", "load url $it")
-                webView.loadUrl(it, extraHeaders)
+                Log.e("lalala", "load url $argUrl")
+                webView.loadUrl(argUrl, extraHeaders)
                 webView.webViewClient = object : WebViewClient() {
+                    @Suppress("OverridingDeprecatedMember")
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                         val matcher = Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc)").matcher(url)
                         return if (matcher.find()) {

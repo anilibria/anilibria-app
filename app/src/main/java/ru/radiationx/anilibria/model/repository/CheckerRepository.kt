@@ -30,7 +30,7 @@ class CheckerRepository @Inject constructor(
                 checkerApi.checkUpdateFromRepository()
             }
             .doOnSuccess {
-                Log.e("CHECKER", "doOnSuccess " + it)
+                Log.e("CHECKER", "doOnSuccess $it")
                 currentDataRelay.accept(it)
             }
             .subscribeOn(schedulers.io())

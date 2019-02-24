@@ -267,7 +267,7 @@ class MainActivity : BaseActivity(), MainView {
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command?) {
-            Log.e("S_DEF_LOG", "ApplyCommand " + command)
+            Log.e("S_DEF_LOG", "ApplyCommand $command")
             if (command is Back) {
                 if (tabsStack.size <= 1) {
                     activityBack()

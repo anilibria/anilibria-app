@@ -94,7 +94,7 @@ class FastSearchPresenter @Inject constructor(
     fun onItemClick(item: SearchItem) {
         when (item.id) {
             ITEM_ID_GOOGLE -> {
-                val urlQuery = URLEncoder.encode("anilibria ${item.query}", "utf-8");
+                val urlQuery = URLEncoder.encode("anilibria ${item.query}", "utf-8")
                 Utils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {

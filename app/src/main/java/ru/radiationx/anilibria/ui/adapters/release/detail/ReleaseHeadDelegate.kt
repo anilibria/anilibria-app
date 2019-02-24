@@ -71,7 +71,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : OptimizeDelegate
                 full_title.text = item.title
                 full_description.text = Html.fromHtml(item.description)
 
-                full_description.movementMethod = LinkMovementMethod({ itemListener.onClickSomeLink(it) })
+                full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
 
                 full_button_torrent.isEnabled = !item.torrents.isEmpty()
 

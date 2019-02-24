@@ -18,10 +18,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class ReleaseInfoPresenter @Inject constructor(
-        private val releaseRepository: ReleaseRepository,
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
-        private val pageRepository: PageRepository,
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
         private val favoriteRepository: FavoriteRepository,

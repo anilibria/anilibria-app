@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.system
 
-import android.content.Context
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
@@ -14,8 +13,7 @@ import javax.inject.Inject
 
 class Client @Inject constructor(
         private val cookieHolder: CookieHolder,
-        private val userHolder: UserHolder,
-        private val context: Context
+        private val userHolder: UserHolder
 ) : IClient {
 
     companion object {

@@ -79,6 +79,7 @@ class FullScreenActivity : BaseActivity() {
                 webSwitcher.displayedChild = 1
             }
 
+            @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 Utils.externalLink(url.toString())
                 return true
@@ -87,7 +88,7 @@ class FullScreenActivity : BaseActivity() {
         vitalWebView.settings.apply {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
-        vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
+        vitalWebView.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
         vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, currentVital.contentText)
     }
 

@@ -114,11 +114,6 @@ class MyPlayerActivity : BaseActivity() {
     private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED
 
     private var compositeDisposable = CompositeDisposable()
-    private val scales = listOf(
-            ScaleType.CENTER_CROP,
-            ScaleType.FIT_CENTER,
-            ScaleType.FIT_XY
-    )
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
     private var scaleEnabled = true
@@ -390,7 +385,7 @@ class MyPlayerActivity : BaseActivity() {
     private fun getNextEpisode(): ReleaseFull.Episode? {
         val nextId = currentEpisodeId + 1
         if (checkIndex(nextId)) {
-            Log.e("S_DEF_LOG", "NEXT INDEX " + nextId)
+            Log.e("S_DEF_LOG", "NEXT INDEX $nextId")
             return getEpisode(nextId)
         }
         return null
@@ -399,7 +394,7 @@ class MyPlayerActivity : BaseActivity() {
     private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevId = currentEpisodeId - 1
         if (checkIndex(prevId)) {
-            Log.e("S_DEF_LOG", "PREV INDEX " + prevId)
+            Log.e("S_DEF_LOG", "PREV INDEX $prevId")
             return getEpisode(prevId)
         }
         return null

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_placeholder.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
 
-class PlaceholderDelegate() : AdapterDelegate<MutableList<ListItem>>() {
+class PlaceholderDelegate : AdapterDelegate<MutableList<ListItem>>() {
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is PlaceholderListItem
 

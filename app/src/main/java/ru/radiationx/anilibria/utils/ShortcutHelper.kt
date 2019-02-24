@@ -40,7 +40,7 @@ object ShortcutHelper {
             bitmap
     )
 
-    fun addShortcut(
+    private fun addShortcut(
             context: Context,
             id: String,
             shortLabel: String,

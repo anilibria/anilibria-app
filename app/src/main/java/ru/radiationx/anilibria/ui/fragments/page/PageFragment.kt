@@ -78,9 +78,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
                 PageApi.PAGE_ID_RULES -> "Правила"
                 else -> "Статическая страница"
             }
-            setNavigationOnClickListener({
-                presenter.onBackPressed()
-            })
+            setNavigationOnClickListener { presenter.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 

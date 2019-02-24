@@ -66,13 +66,13 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
         super.onActivityCreated(savedInstanceState)
         dimensionsProvider
                 .dimensions()
-                .subscribe {
+                .subscribe { dimension ->
                     toolbar?.post {
-                        toolbar?.let { _ ->
-                            updateDimens(it)
+                        toolbar?.let {
+                            updateDimens(dimension)
                         }
                     }
-                    updateDimens(it)
+                    updateDimens(dimension)
                 }
                 .addTo(disposables)
     }

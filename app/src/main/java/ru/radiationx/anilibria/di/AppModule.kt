@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import ru.radiationx.anilibria.model.system.Client
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -15,6 +14,7 @@ import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
 import ru.radiationx.anilibria.model.system.AppSchedulers
+import ru.radiationx.anilibria.model.system.Client
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder

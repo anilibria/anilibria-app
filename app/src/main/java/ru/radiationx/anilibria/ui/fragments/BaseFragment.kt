@@ -18,6 +18,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -58,7 +60,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && needToolbarShadow) {
-            toolbar_shadow_prelp?.visibility = View.VISIBLE
+            toolbar_shadow_prelp?.visible()
         }
     }
 
@@ -92,10 +94,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
 
     fun setStatusBarVisibility(isVisible: Boolean) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            baseStatusBar?.visibility = View.GONE
+            baseStatusBar?.gone()
             return
         }
-        baseStatusBar?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        baseStatusBar?.visible(isVisible)
     }
 
     protected fun hideSoftwareKeyboard() {

@@ -7,7 +7,10 @@ import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.*
+import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.repository.FavoriteRepository
+import ru.radiationx.anilibria.model.repository.HistoryRepository
+import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

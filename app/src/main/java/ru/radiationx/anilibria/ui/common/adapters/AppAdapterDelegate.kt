@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 
 abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
         private val layoutRes: Int,

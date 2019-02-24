@@ -25,7 +25,9 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -127,8 +129,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                         false
                     }
         }
-        toolbarInsetShadow.visibility = View.VISIBLE
-        toolbarImage.visibility = View.VISIBLE
+        toolbarInsetShadow.visible()
+        toolbarImage.visible()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbarImage.transitionName = transitionNameLocal
@@ -139,19 +141,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
+                toolbarInsetShadow.gone(scrim)
                 if (scrim) {
                     toolbar?.let {
                         it.navigationIcon?.clearColorFilter()
                         it.overflowIcon?.clearColorFilter()
                         it.title = currentTitle
-                        toolbarInsetShadow.visibility = View.GONE
                     }
                 } else {
                     toolbar?.let {
                         it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
-                        toolbarInsetShadow.visibility = View.VISIBLE
                     }
                 }
             }
@@ -176,7 +177,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBar.visibility = if (refreshing) View.VISIBLE else View.GONE
+        progressBar.visible(refreshing)
     }
 
     override fun showRelease(release: ReleaseFull) {

@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.extension
 
-import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.support.annotation.AttrRes
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
@@ -50,12 +48,6 @@ fun TextView.addTextChangeListener(action: (String) -> Unit) {
         }
     })
 }
-
-fun Context.getCompatDrawable(@DrawableRes icRes: Int): Drawable? = ContextCompat.getDrawable(this, icRes)
-fun View.getCompatDrawable(@DrawableRes icRes: Int): Drawable? = context.getCompatDrawable(icRes)
-
-fun Context.getCompatColor(@ColorRes icRes: Int): Int = ContextCompat.getColor(this, icRes)
-fun View.getCompatColor(@ColorRes icRes: Int): Int = context.getCompatColor(icRes)
 
 fun ImageView.setCompatDrawable(@DrawableRes icRes: Int) = this.setImageDrawable(context.getCompatDrawable(icRes))
 

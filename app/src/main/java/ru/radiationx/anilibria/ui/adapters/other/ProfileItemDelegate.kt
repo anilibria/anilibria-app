@@ -2,19 +2,16 @@ package ru.radiationx.anilibria.ui.adapters.other
 
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
-import kotlinx.android.synthetic.main.item_other_profile.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -68,14 +65,13 @@ class ProfileItemDelegate(
             } else {
                 ImageLoader.getInstance().displayImage(profileItem.avatarUrl, profileAvatar)
             }
+            profileLogout.visible(profileItem.authState == AuthState.AUTH)
             if (profileItem.authState == AuthState.AUTH) {
                 profileNick.text = profileItem.nick
                 profileDesc.text = "Перейти в профиль"
-                profileLogout.visibility = View.VISIBLE
             } else {
                 profileNick.text = "Гость"
                 profileDesc.text = "Авторизоваться"
-                profileLogout.visibility = View.GONE
             }
         }
 

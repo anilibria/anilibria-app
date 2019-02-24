@@ -3,12 +3,12 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
@@ -53,8 +53,8 @@ class AuthActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
 
-        bottomShadow.visibility = View.GONE
-        tabsRecycler.visibility = View.GONE
+        bottomShadow.gone()
+        tabsRecycler.gone()
 
         DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {

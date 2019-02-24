@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.main
 
-import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer

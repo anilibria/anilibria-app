@@ -16,6 +16,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
@@ -57,7 +59,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appbarLayout.visibility = View.GONE
+        appbarLayout.gone()
 
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
@@ -124,7 +126,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             loadingFinished = false
-            progressBar.visibility = View.VISIBLE
+            progressBar.visible()
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
@@ -133,7 +135,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             }
 
             if (loadingFinished && !redirect) {
-                progressBar.visibility = View.GONE
+                progressBar.gone()
             } else {
                 redirect = false
             }
@@ -141,7 +143,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
         override fun onPageCommitVisible(view: WebView?, url: String?) {
             super.onPageCommitVisible(view, url)
-            progressBar.visibility = View.GONE
+            progressBar.gone()
         }
     }
 }

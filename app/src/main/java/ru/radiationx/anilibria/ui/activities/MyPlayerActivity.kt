@@ -37,7 +37,9 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.isDark
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
@@ -508,7 +510,7 @@ class MyPlayerActivity : BaseActivity() {
             registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
             //videoControls?.setControlsEnabled(false)
             videoControls?.hide()
-            videoControls?.visibility = View.GONE
+            videoControls?.gone()
             updateByConfig(newConfig)
 
         } else {
@@ -522,7 +524,7 @@ class MyPlayerActivity : BaseActivity() {
 
             updateByConfig(newConfig)
             player.showControls()
-            videoControls?.visibility = View.VISIBLE
+            videoControls?.visible()
 
             //player.showControls()
         }
@@ -633,7 +635,7 @@ class MyPlayerActivity : BaseActivity() {
         if (checkPipMode()) {
             Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
             pictureInPictureParams?.also {
-                videoControls?.visibility = View.GONE
+                videoControls?.gone()
                 enterPictureInPictureMode(it.build())
             }
         }

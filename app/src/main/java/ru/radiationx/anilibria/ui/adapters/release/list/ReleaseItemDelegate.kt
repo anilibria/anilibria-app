@@ -3,15 +3,13 @@ package ru.radiationx.anilibria.ui.adapters.release.list
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release.*
-import kotlinx.android.synthetic.main.item_release.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
@@ -63,7 +61,7 @@ class ReleaseItemDelegate(
                 //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
                 item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
             }
-            item_new_indicator.visibility = if (item.isNew) View.VISIBLE else View.GONE
+            item_new_indicator.visible(item.isNew)
             ImageLoader.getInstance().displayImage(item.poster, item_image)
         }
     }

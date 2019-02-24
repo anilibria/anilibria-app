@@ -1,19 +1,15 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode_control.*
-import kotlinx.android.synthetic.main.item_release_episode_control.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 
 /**
  * Created by radiationx on 13.01.18.
@@ -47,7 +43,7 @@ class ReleaseEpisodeControlDelegate(
             val hasEpisodes = !item.episodes.isEmpty()
             val hasViewed = item.episodes.firstOrNull { it.isViewed } != null
             full_button_watch_all.isEnabled = hasEpisodes
-            full_button_continue.visibility = if (hasViewed) View.VISIBLE else View.GONE
+            full_button_continue.visible(hasViewed)
         }
     }
 

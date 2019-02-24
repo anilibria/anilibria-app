@@ -26,6 +26,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.visible
 
 
 class GenresDialog(
@@ -187,7 +188,7 @@ class GenresDialog(
         }
         val allCount = checkedGenres.size + checkedYears.size
         actionButtonCount.text = "$allCount"
-        actionButtonCount.visibility = if (allCount > 0) View.VISIBLE else View.GONE
+        actionButtonCount.visible(allCount > 0)
     }
 
     fun setCheckedGenres(items: List<String>) {

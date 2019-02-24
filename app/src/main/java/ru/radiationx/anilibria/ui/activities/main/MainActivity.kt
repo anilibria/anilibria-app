@@ -11,7 +11,6 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -26,6 +25,7 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
@@ -167,7 +167,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             val mNotificationManager = NotificationManagerCompat.from(context)
 
             mBuilder.setSmallIcon(R.drawable.ic_notify)
-            mBuilder.color = ContextCompat.getColor(context, R.color.alib_red)
+            mBuilder.color = context.getCompatColor(R.color.alib_red)
 
             mBuilder.setContentTitle("Обновление AniLibria")
             mBuilder.setContentText("Новая версия: ${update.name}")

@@ -7,7 +7,6 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder.Companion.cookieNames
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 /**

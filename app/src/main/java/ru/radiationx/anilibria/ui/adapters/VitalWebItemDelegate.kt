@@ -2,19 +2,14 @@ package ru.radiationx.anilibria.ui.adapters
 
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_vital_web.*
-import kotlinx.android.synthetic.main.item_vital_web.view.*
 import kotlinx.android.synthetic.main.item_vital_web_card.*
-import kotlinx.android.synthetic.main.item_vital_web_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.Api

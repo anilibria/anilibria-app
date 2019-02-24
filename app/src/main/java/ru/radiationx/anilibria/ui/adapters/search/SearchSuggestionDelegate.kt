@@ -5,12 +5,9 @@ import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R

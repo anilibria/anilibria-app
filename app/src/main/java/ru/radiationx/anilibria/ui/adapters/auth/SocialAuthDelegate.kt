@@ -1,14 +1,9 @@
 package ru.radiationx.anilibria.ui.adapters.auth
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_social_auth.*
-import kotlinx.android.synthetic.main.item_social_auth.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.getColorFromAttr

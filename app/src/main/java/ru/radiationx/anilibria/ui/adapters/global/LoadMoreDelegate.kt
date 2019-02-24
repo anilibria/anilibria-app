@@ -6,6 +6,8 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_load_more.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -29,8 +31,8 @@ class LoadMoreDelegate(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
-            itemLoadMoreBtn.visibility = View.GONE
-            itemLoadMoreContainer.visibility = View.VISIBLE
+            itemLoadMoreBtn.gone()
+            itemLoadMoreContainer.visible()
         }
 
         fun bind() {

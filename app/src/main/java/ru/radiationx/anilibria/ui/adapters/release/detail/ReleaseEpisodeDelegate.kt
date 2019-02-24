@@ -1,20 +1,14 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.content.res.ColorStateList
-import android.support.v4.widget.ImageViewCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
-import kotlinx.android.synthetic.main.item_release_episode.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.setTint
 import ru.radiationx.anilibria.extension.setTintColorAttr
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -60,7 +54,7 @@ class ReleaseEpisodeDelegate(
         fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
             currentItem = item
             item_title.text = item.title
-            item_viewed_state.visibility = if (item.isViewed) View.VISIBLE else View.GONE
+            item_viewed_state.visible(item.isViewed)
 
             quality_sd.isEnabled = item.urlSd != null
             quality_hd.isEnabled = item.urlHd != null

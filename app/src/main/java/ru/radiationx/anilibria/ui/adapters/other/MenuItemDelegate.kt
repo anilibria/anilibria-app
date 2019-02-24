@@ -1,14 +1,9 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_menu.*
-import kotlinx.android.synthetic.main.item_other_menu.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.extension.setCompatDrawable

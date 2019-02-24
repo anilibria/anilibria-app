@@ -1,20 +1,12 @@
 package ru.radiationx.anilibria.ui.adapters.search
 
-import android.content.res.ColorStateList
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.ImageViewCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_fast_search.*
-import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem

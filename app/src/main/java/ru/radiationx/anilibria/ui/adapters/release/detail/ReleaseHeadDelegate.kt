@@ -1,17 +1,12 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.cunoraz.tagview.Tag
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
-import kotlinx.android.synthetic.main.item_release_head_new.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.extension.getColorFromAttr
@@ -19,7 +14,6 @@ import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 
 /**

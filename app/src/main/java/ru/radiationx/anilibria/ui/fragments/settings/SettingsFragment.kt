@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
@@ -57,7 +58,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference("player_type")?.apply {
             val savedPlayerType = appPreferences.getPlayerType()
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_circle_outline)
+            icon = this.context.getCompatDrawable(R.drawable.ic_play_circle_outline)
             summary = getPlayerTypeTitle(savedPlayerType)
             setOnPreferenceClickListener { preference ->
                 val values = arrayOf(
@@ -84,7 +85,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("about.app_topic_site")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_anilibria)
+            icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
             setOnPreferenceClickListener {
                 Utils.externalLink("${Api.SITE_URL}/pages/app.php")
                 false
@@ -92,7 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("about.app_topic_4pda")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_4pda)
+            icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
             setOnPreferenceClickListener {
                 Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
                 false

@@ -2,18 +2,13 @@ package ru.radiationx.anilibria.ui.adapters
 
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_vital_native.*
-import kotlinx.android.synthetic.main.item_vital_native.view.*
 import kotlinx.android.synthetic.main.item_vital_native_card.*
-import kotlinx.android.synthetic.main.item_vital_native_card.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

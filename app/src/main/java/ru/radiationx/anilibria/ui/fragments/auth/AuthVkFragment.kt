@@ -13,7 +13,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.terrakok.cicerone.Router
@@ -36,7 +38,7 @@ class AuthVkFragment : BaseFragment() {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            startUrl = it.getString(ARG_URL)
+            startUrl = it.getString(ARG_URL, startUrl)
         }
     }
 
@@ -45,7 +47,7 @@ class AuthVkFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appbarLayout.visibility = View.GONE
+        appbarLayout.gone()
 
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
@@ -86,7 +88,7 @@ class AuthVkFragment : BaseFragment() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 loadingFinished = false
-                progressBar.visibility = View.VISIBLE
+                progressBar.visible()
 
                 Log.e("S_DEF_LOG", "ON onPageStarted")
                 //SHOW LOADING IF IT ISNT ALREADY VISIBLE
@@ -100,7 +102,7 @@ class AuthVkFragment : BaseFragment() {
                 }
 
                 if (loadingFinished && !redirect) {
-                    progressBar.visibility = View.GONE
+                    progressBar.gone()
                 } else {
                     redirect = false
                 }
@@ -108,7 +110,7 @@ class AuthVkFragment : BaseFragment() {
 
             override fun onPageCommitVisible(view: WebView?, url: String?) {
                 super.onPageCommitVisible(view, url)
-                progressBar.visibility = View.GONE
+                progressBar.gone()
             }
         }
     }

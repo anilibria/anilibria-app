@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
@@ -194,7 +195,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
 
     /* ReleaseView */
     override fun showVitalBottom(vital: VitalItem) {
-        vitalBottom.visibility = View.VISIBLE
+        vitalBottom.visible()
     }
 
     override fun showVitalItems(vital: List<VitalItem>) {

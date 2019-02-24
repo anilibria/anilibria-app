@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.common
 
-import ru.radiationx.anilibria.model.data.BlazingFastException
-import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import javax.inject.Inject
@@ -23,10 +21,5 @@ class ErrorHandler @Inject constructor(
         }
     }
 
-    private fun getMessage(throwable: Throwable): String {
-        if (throwable is GoogleCaptchaException || throwable is BlazingFastException) {
-            return "Защита от DDOS: ${throwable.message}"
-        }
-        return throwable.message.orEmpty()
-    }
+    private fun getMessage(throwable: Throwable) = throwable.message.orEmpty()
 }

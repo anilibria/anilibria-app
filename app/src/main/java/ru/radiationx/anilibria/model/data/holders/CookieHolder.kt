@@ -8,13 +8,9 @@ import okhttp3.Cookie
 interface CookieHolder {
     companion object {
         const val PHPSESSID = "PHPSESSID"
-        const val BLAZINGFAST_RCKSID = "rcksid"
-        const val BLAZINGFAST_WEB_PROTECT = "BLAZINGFAST-WEB-PROTECT"
 
         val cookieNames = listOf(
-                PHPSESSID,
-                BLAZINGFAST_RCKSID,
-                BLAZINGFAST_WEB_PROTECT
+                PHPSESSID
         )
     }
 

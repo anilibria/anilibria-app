@@ -4,24 +4,18 @@ import android.content.Context
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
-import ru.radiationx.anilibria.model.data.BlazingFastException
-import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
-import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.NetworkResponse
 import java.io.IOException
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 
 class Client @Inject constructor(
         private val cookieHolder: CookieHolder,
         private val userHolder: UserHolder,
-        private val context: Context,
-        private val errorHandler: IAntiDdosErrorHandler
+        private val context: Context
 ) : IClient {
 
     companion object {
@@ -30,10 +24,6 @@ class Client @Inject constructor(
         const val METHOD_PUT = "PUT"
         const val METHOD_DELETE = "DELETE"
     }
-
-    private val blazingFastPattern = Pattern.compile("open\\([\"'][^\"']+[\"']\\s*?,\\s*?[\"'](\\/___S___\\/\\?[\\s\\S]*?)[\"']\\s*?(?:,[\\s]*?(?:true|false)|\\))")
-    private val jsConcatStringPattern = Pattern.compile("[\"'][\\s]*?\\+[\\s]*?[^\\+]*?[\\s]*?\\+[\\s]*?[\"']")
-    private val googleCaptchaPattern = Pattern.compile("g-recaptcha\" data-sitekey")
 
     private val cookieJar = object : CookieJar {
 
@@ -164,36 +154,7 @@ class Client @Inject constructor(
     }
 
     @Throws(Exception::class)
-    private fun request(method: String, url: String, args: Map<String, String>): NetworkResponse {
-        val response = simpleRequest(method, url, args)
-        googleCaptchaResolver(response.body, response.redirect)
-        blazingFastResolver(response.body)
-        return response
-    }
+    private fun request(method: String, url: String, args: Map<String, String>): NetworkResponse =
+            simpleRequest(method, url, args)
 
-    private fun blazingFastResolver(response: String) {
-        val matcher = blazingFastPattern.matcher(response)
-        if (matcher.find()) {
-            Log.e("IClient", "blazingFastResolver before: ${matcher.group(1)}")
-            val width = context.resources.displayMetrics.widthPixels
-            val newUrl = jsConcatStringPattern.matcher(matcher.group(1)).replaceAll(width.toString())
-            val jsResponse = simpleRequest(METHOD_GET, "${Api.BASE_URL}$newUrl", emptyMap())
-            blazingFastFinalResolver(jsResponse.body, jsResponse.redirect)
-        }
-    }
-
-    private fun blazingFastFinalResolver(response: String, url: String) {
-        val error = BlazingFastException(response, url)
-        errorHandler.handle(error)
-        throw error
-    }
-
-    private fun googleCaptchaResolver(response: String, url: String) {
-        if (!googleCaptchaPattern.matcher(response).find()) {
-            return
-        }
-        val error = GoogleCaptchaException(response, url)
-        errorHandler.handle(error)
-        throw error
-    }
 }

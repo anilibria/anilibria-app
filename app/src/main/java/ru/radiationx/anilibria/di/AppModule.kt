@@ -6,13 +6,11 @@ import android.preference.PreferenceManager
 import ru.radiationx.anilibria.Client
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.model.data.holders.*
-import ru.radiationx.anilibria.model.data.remote.IAntiDdosErrorHandler
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.remote.parsers.*
 import ru.radiationx.anilibria.model.data.storage.*
-import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.anilibria.model.system.ApiUtils
@@ -22,7 +20,6 @@ import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
-import ru.radiationx.anilibria.ui.common.AntiDdosErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
@@ -52,7 +49,6 @@ class AppModule(context: Context) : Module() {
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singletonInScope()
 
 
-
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
         bind(SharedPreferences::class.java).withName(DataPreferences::class.java).toInstance(dataStoragePreferences)
 
@@ -70,7 +66,6 @@ class AppModule(context: Context) : Module() {
 
         bind(ILinkHandler::class.java).to(LinkRouter::class.java).singletonInScope()
         bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singletonInScope()
-        bind(IAntiDdosErrorHandler::class.java).to(AntiDdosErrorHandler::class.java).singletonInScope()
 
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singletonInScope()
@@ -111,7 +106,6 @@ class AppModule(context: Context) : Module() {
         bind(YoutubeRepository::class.java).singletonInScope()
 
         bind(ReleaseInteractor::class.java).singletonInScope()
-        bind(AntiDdosInteractor::class.java).singletonInScope()
     }
 
 }

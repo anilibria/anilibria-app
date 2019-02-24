@@ -10,8 +10,6 @@ import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface MainView : MvpView {
-    fun setAntiDdosVisibility(isVisible: Boolean)
-
     fun highlightTab(screenKey: String)
     fun updateTabs()
     fun onMainLogicCompleted()

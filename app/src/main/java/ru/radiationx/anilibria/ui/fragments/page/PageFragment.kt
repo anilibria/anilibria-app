@@ -5,8 +5,8 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_webview.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency

@@ -32,9 +32,4 @@ class CheckerApi @Inject constructor(
                 .map { checkerParser.parse(JSONObject(it)) }
     }
 
-    fun checkUnderAntiDdos(): Single<String> {
-        val args: MutableMap<String, String> = mutableMapOf("query" to "empty")
-        return client.post(Api.API_URL, args)
-    }
-
 }

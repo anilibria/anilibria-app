@@ -8,7 +8,6 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
-import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -20,14 +19,12 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -109,10 +106,6 @@ class MainActivity : BaseActivity(), MainView {
             }
         })
 
-        antiddos_skip?.setOnClickListener {
-            presenter.skipAntiDdos()
-        }
-
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
@@ -130,14 +123,6 @@ class MainActivity : BaseActivity(), MainView {
             }
         }
         Log.e("S_DEF_LOG", "main oncreate")
-    }
-
-    override fun setAntiDdosVisibility(isVisible: Boolean) {
-        Log.e("MainPresenter", "setAntiDdosVisibility: $isVisible")
-        antiDdosMain.visibility = if (isVisible) View.VISIBLE else View.GONE
-        if (!isVisible) {
-            SimpleUpdateChecker(getDependency(CheckerRepository::class.java)).checkUpdate()
-        }
     }
 
     override fun changeTheme(appTheme: AppThemeHolder.AppTheme) {

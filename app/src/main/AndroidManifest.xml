@@ -89,18 +89,6 @@
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/LightAppTheme.NoActionBar" />
 
-        <activity
-            android:name=".ui.activities.GoogleCaptchaActivity"
-            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/LightAppTheme.NoActionBar" />
-
-        <activity
-            android:name=".ui.activities.BlazingFastActivity"
-            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/LightAppTheme.NoActionBar" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="c9fe0be2960a17da9205646f7a0c5e5a9f17c65f" />

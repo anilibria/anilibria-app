@@ -36,8 +36,4 @@ class CheckerRepository @Inject constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun checkUnderAntiDdos(): Single<String> = checkerApi
-            .checkUnderAntiDdos()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
 }

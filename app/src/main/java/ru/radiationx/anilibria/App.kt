@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
@@ -44,6 +45,8 @@ class App : Application() {
             private set
 
     }
+
+    private var messengerDisposable = Disposables.disposed()
 
     lateinit var staticPageTemplate: MiniTemplator
     lateinit var vkCommentsTemplate: MiniTemplator
@@ -93,7 +96,7 @@ class App : Application() {
         val systemMessenger = DI.get(SystemMessenger::class.java)
         val schedulers = DI.get(SchedulersProvider::class.java)
 
-        val disposable = systemMessenger
+        messengerDisposable = systemMessenger
                 .observe()
                 .observeOn(schedulers.ui())
                 .subscribe {

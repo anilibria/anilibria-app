@@ -24,7 +24,7 @@ object DI {
     }
 
     fun inject(target: Any, scope: String, vararg modules: Module) {
-        Log.d("ToothDI", "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName.toString() }}'")
+        Log.d("ToothDI", "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName?.toString().orEmpty() }}'")
         return Toothpick.inject(target, openScope(scope).apply {
             installModules(*modules)
         })

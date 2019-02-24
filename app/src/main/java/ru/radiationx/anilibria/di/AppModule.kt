@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import ru.radiationx.anilibria.Client
+import ru.radiationx.anilibria.model.system.Client
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria
+package ru.radiationx.anilibria.model.system
 
 import android.content.Context
 import android.util.Log

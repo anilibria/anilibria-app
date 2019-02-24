@@ -26,7 +26,27 @@ class AuthPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        authRepository
+                .loadSocialAuth()
+                .subscribe({}, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
+
+        authRepository
+                .observeSocialAuth()
+                .subscribe({
+                    viewState.showSocial(it)
+                }, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
         updateButtonState()
+    }
+
+    fun onSocialClick(item: SocialAuth) {
+        router.navigateTo(Screens.AUTH_SOCIAL, item.key)
     }
 
     fun setLogin(login: String) {

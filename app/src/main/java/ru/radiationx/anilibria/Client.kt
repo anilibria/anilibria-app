@@ -39,7 +39,7 @@ class Client @Inject constructor(
     private val cookieJar = object : CookieJar {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-            Log.e("IClient", "saveFromResponse ${cookies.joinToString { it.name() }}")
+            Log.e("IClient", "saveFromResponse ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
             var authDestroyed = false
             for (cookie in cookies) {
                 if (cookie.value() == "deleted") {
@@ -76,21 +76,29 @@ class Client @Inject constructor(
             .cookieJar(cookieJar)
             .build()
 
-    override fun get(url: String, args: Map<String, String>): Single<String> = Single.fromCallable {
-        request(METHOD_GET, url, args)
-    }
+    override fun get(url: String, args: Map<String, String>): Single<String> = getFull(url, args)
+            .map { it.body }
 
-    override fun post(url: String, args: Map<String, String>): Single<String> = Single.fromCallable {
-        request(METHOD_POST, url, args)
-    }
+    override fun post(url: String, args: Map<String, String>): Single<String> = postFull(url, args)
+            .map { it.body }
 
-    override fun put(url: String, args: Map<String, String>): Single<String> = Single.fromCallable {
-        request(METHOD_PUT, url, args)
-    }
+    override fun put(url: String, args: Map<String, String>): Single<String> = putFull(url, args)
+            .map { it.body }
 
-    override fun delete(url: String, args: Map<String, String>): Single<String> = Single.fromCallable {
-        request(METHOD_DELETE, url, args)
-    }
+    override fun delete(url: String, args: Map<String, String>): Single<String> = deleteFull(url, args)
+            .map { it.body }
+
+    override fun getFull(url: String, args: Map<String, String>): Single<NetworkResponse> = Single
+            .fromCallable { request(METHOD_GET, url, args) }
+
+    override fun postFull(url: String, args: Map<String, String>): Single<NetworkResponse> = Single
+            .fromCallable { request(METHOD_POST, url, args) }
+
+    override fun putFull(url: String, args: Map<String, String>): Single<NetworkResponse> = Single
+            .fromCallable { request(METHOD_PUT, url, args) }
+
+    override fun deleteFull(url: String, args: Map<String, String>): Single<NetworkResponse> = Single
+            .fromCallable { request(METHOD_DELETE, url, args) }
 
     private fun getRequestBody(method: String, args: Map<String, String>): RequestBody? {
         return when (method) {
@@ -157,11 +165,11 @@ class Client @Inject constructor(
     }
 
     @Throws(Exception::class)
-    private fun request(method: String, url: String, args: Map<String, String>): String {
+    private fun request(method: String, url: String, args: Map<String, String>): NetworkResponse {
         val response = simpleRequest(method, url, args)
         googleCaptchaResolver(response.body, response.redirect)
         blazingFastResolver(response.body)
-        return response.body;
+        return response
     }
 
     private fun blazingFastResolver(response: String) {

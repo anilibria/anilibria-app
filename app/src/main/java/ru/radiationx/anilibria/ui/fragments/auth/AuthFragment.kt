@@ -25,6 +25,10 @@ import ru.radiationx.anilibria.utils.Utils
  */
 class AuthFragment : BaseFragment(), AuthView {
 
+    private val socialAuthAdapter = SocialAuthAdapter {
+        onSocialClick(it)
+    }
+
     @InjectPresenter
     lateinit var presenter: AuthPresenter
 
@@ -42,13 +46,18 @@ class AuthFragment : BaseFragment(), AuthView {
 
         appbarLayout.visibility = View.GONE
 
+        authSocialList.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = socialAuthAdapter
+        }
+
         authSubmit.setOnClickListener { presenter.signIn() }
         authSkip.setOnClickListener { presenter.skip() }
         authRegistration.setOnClickListener { presenter.registrationClick() }
 
         authLogin.addTextChangeListener { presenter.setLogin(it) }
         authPassword.addTextChangeListener { presenter.setPassword(it) }
-        authPassword.addTextChangeListener { presenter.setCode2fa(it) }
+        auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
     }
 
     override fun setSignButtonEnabled(isEnabled: Boolean) {
@@ -74,6 +83,25 @@ class AuthFragment : BaseFragment(), AuthView {
 
     override fun setRefreshing(refreshing: Boolean) {
         authSwitcher.displayedChild = if (refreshing) 1 else 0
+    }
+
+    override fun showSocial(items: List<SocialAuth>) {
+        authSocialTop.visible(items.isNotEmpty())
+        authSocialContent.visible(items.isNotEmpty())
+        authSocialBottom.visible(items.isNotEmpty())
+        socialAuthAdapter.bindItems(items)
+    }
+
+    private fun onSocialClick(item: SocialAuth) {
+        AlertDialog.Builder(context!!)
+                .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
+                .setPositiveButton("Продолжить"){dialog, which ->
+                    presenter.onSocialClick(item)
+                }
+                .setNegativeButton("Личный кабинет") { dialog, which ->
+                    Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
+                }
+                .show()
     }
 
 }

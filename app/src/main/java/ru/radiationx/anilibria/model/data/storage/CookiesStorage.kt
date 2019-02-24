@@ -40,16 +40,16 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun getCookies(): Map<String, Cookie> {
-        Log.e("CookiesStorage", "getCookies: ${clientCookies.map { it.value.name() }.joinToString { it }}")
+        Log.e("CookiesStorage", "getCookies: ${clientCookies.map { it.value }.joinToString { "${it.name()}=${it.value()}" }}")
         return clientCookies
     }
 
     override fun putCookie(url: String, name: String, value: String) {
-        putCookie(url, Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host).build() )
+        putCookie(url, Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host).build())
     }
 
     override fun putCookie(url: String, cookie: Cookie) {
-        Log.e("CookiesStorage", "putCookie: ${cookie.name()}")
+        Log.e("CookiesStorage", "putCookie: ${"${cookie.name()}=${cookie.value()}"}")
         sharedPreferences
                 .edit()
                 .putString("cookie_${cookie.name()}", convertCookie(url, cookie))

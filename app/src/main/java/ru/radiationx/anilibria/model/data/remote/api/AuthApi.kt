@@ -38,6 +38,39 @@ class AuthApi @Inject constructor(
                 .flatMap { loadUser() }
     }
 
+    fun loadSocialAuth(): Single<List<SocialAuth>> {
+        val args: MutableMap<String, String> = mutableMapOf(
+                "query" to "social_auth"
+        )
+        return client
+                .post(Api.API_URL, args)
+                .compose(ApiResponse.fetchResult<JSONArray>())
+                .map { authParser.parseSocialAuth(it) }
+    }
+
+    fun signSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
+        val args: MutableMap<String, String> = mutableMapOf()
+        return client
+                .getFull(resultUrl, args)
+                .doOnSuccess { response ->
+                    val matcher = Pattern.compile(item.errorUrlPattern).matcher(response.redirect)
+                    if (matcher.find()) {
+                        throw SocialAuthException()
+                    }
+                }
+                .doOnSuccess {
+                    val message = try {
+                        JSONObject(it.body).nullString("mes")
+                    } catch (ignore: Exception) {
+                        null
+                    }
+                    if (message != null) {
+                        throw ApiError(400, message, null)
+                    }
+                }
+                .flatMap { loadUser() }
+    }
+
     fun signOut(): Single<String> {
         val args = mapOf<String, String>()
         return client.post("${Api.BASE_URL}/public/logout.php", args)

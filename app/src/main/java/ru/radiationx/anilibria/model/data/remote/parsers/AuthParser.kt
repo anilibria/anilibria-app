@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.nullString
@@ -16,11 +18,6 @@ import javax.inject.Inject
 class AuthParser @Inject constructor(
         private val apiUtils: IApiUtils
 ) {
-    private val patreonPattern = "<div[^>]*?id=\"bx_auth_serv_formPatreon\"[^>]*?>[^<]*?<a[^>]*?href=\"([^\"]*?)\"[^>]*?>"
-    private val vkPattern = "<div[^>]*?id=\"bx_auth_serv_formVKontakte\"[^>]*?>[^<]*?<a[^>]*?onclick=\"BX.util.popup\\(['\"]([^\"']*?)['\"]"
-
-    private val socialPatterns = arrayOf(patreonPattern, vkPattern)
-    private val userPattern = "<div[^>]*?class=\"[^\"]*?useravatar[^\"]*?\"[^>]*?>[^<]*?(?:<img[^>]*?src=\"([^\"]*?)\"[^>]*?>)?[^<]*?<\\/div>[^<]*?<div[^>]*?class=\"[^\"]*?userinfo[^\"]*?\"[^>]*?>[^<]*?<p[^>]*?>([\\s\\S]*?)<\\/p>[^<]*?<p>[^<]*?<a[^>]href=\"\\/user\\/(\\d+)[^\"]*?\"[^>]*?"
 
     fun authResult(responseText: String): String {
         val responseJson = JSONObject(responseText)
@@ -44,14 +41,19 @@ class AuthParser @Inject constructor(
         return user
     }
 
-    fun getSocialLinks(responseText: String): List<String> {
-        val result = mutableListOf<String>()
-        socialPatterns.forEach { pattern ->
-            val matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(responseText)
-            if (matcher.find()) {
-                result.add(matcher.group(1).replace("&amp;".toRegex(), "&"))
-            }
+    fun parseSocialAuth(responseJson: JSONArray): List<SocialAuth> {
+        val resultItems = mutableListOf<SocialAuth>()
+        for (j in 0 until responseJson.length()) {
+            val jsonItem = responseJson.getJSONObject(j)
+            resultItems.add(SocialAuth(
+                    jsonItem.getString("key"),
+                    jsonItem.getString("title"),
+                    jsonItem.getString("socialUrl"),
+                    jsonItem.getString("resultPattern"),
+                    jsonItem.getString("errorUrlPattern")
+            ))
         }
-        return result
+        return resultItems
     }
+
 }

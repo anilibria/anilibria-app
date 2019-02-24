@@ -126,7 +126,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBar.visible(refreshing)
+        progressBarWv.visible(refreshing)
     }
 
     override fun showBody(comments: VkComments) {

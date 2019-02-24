@@ -126,7 +126,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             loadingFinished = false
-            progressBar.visible()
+            progressBarWv.visible()
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
@@ -135,7 +135,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             }
 
             if (loadingFinished && !redirect) {
-                progressBar.gone()
+                progressBarWv.gone()
             } else {
                 redirect = false
             }
@@ -143,7 +143,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
         override fun onPageCommitVisible(view: WebView?, url: String?) {
             super.onPageCommitVisible(view, url)
-            progressBar.gone()
+            progressBarWv.gone()
         }
     }
 }

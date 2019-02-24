@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -158,7 +159,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             }
         })
 
-        viewPager.adapter = pagerAdapter
+        viewPagerPaged.adapter = pagerAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -168,8 +169,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewPager.currentItem > 0) {
-            viewPager.currentItem = viewPager.currentItem - 1
+        if (viewPagerPaged.currentItem > 0) {
+            viewPagerPaged.currentItem = viewPagerPaged.currentItem - 1
             return true
         }
         presenter.onBackPressed()
@@ -177,7 +178,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBar.visible(refreshing)
+        progressBarPaged.visible(refreshing)
     }
 
     override fun showRelease(release: ReleaseFull) {

@@ -138,7 +138,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBar.visible(refreshing)
+        progressBarWv.visible(refreshing)
     }
 
     override fun showPage(page: PageLibria) {

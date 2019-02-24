@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.navigation
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.navigation.BaseAppScreen
@@ -11,6 +12,7 @@ import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
 import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesContainerFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
+import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
@@ -40,6 +42,10 @@ object Screens {
 
     class AuthVk(val url: String) : BaseAppScreen() {
         override fun getFragment() = AuthVkFragment.newInstance(url)
+    }
+
+    class AuthSocial(val key: String) : BaseAppScreen() {
+        override fun getFragment() = AuthSocialFragment.newInstance(key)
     }
 
     class Main : BaseAppScreen() {

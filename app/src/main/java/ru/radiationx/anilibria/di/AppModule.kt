@@ -65,6 +65,7 @@ class AppModule(context: Context) : Module() {
         bind(ReleaseUpdateHolder::class.java).to(ReleaseUpdateStorage::class.java).singletonInScope()
         bind(GenresHolder::class.java).to(GenresStorage::class.java).singletonInScope()
         bind(YearsHolder::class.java).to(YearsStorage::class.java).singletonInScope()
+        bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singletonInScope()
 
 
         bind(ILinkHandler::class.java).to(LinkRouter::class.java).singletonInScope()

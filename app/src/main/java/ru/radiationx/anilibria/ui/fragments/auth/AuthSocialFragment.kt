@@ -15,11 +15,12 @@ import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import java.util.regex.Pattern
@@ -44,13 +45,10 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     lateinit var presenter: AuthSocialPresenter
 
     @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter = AuthSocialPresenter(
-            App.injections.authRepository,
-            (activity as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun providePresenter(): AuthSocialPresenter = getDependency(screenScope, AuthSocialPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             presenter.argKey = it.getString(ARG_KEY, presenter.argKey)

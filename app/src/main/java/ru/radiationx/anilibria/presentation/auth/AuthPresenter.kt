@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.presentation.auth
 
 import com.arellomobile.mvp.InjectViewState
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
@@ -46,7 +48,7 @@ class AuthPresenter @Inject constructor(
     }
 
     fun onSocialClick(item: SocialAuth) {
-        router.navigateTo(Screens.AUTH_SOCIAL, item.key)
+        router.navigateTo(Screens.AuthSocial(item.key))
     }
 
     fun setLogin(login: String) {

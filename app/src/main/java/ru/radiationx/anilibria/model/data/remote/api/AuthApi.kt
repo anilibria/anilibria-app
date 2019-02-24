@@ -1,12 +1,18 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
+import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.AuthParser
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**

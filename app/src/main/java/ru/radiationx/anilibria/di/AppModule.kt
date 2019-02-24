@@ -83,7 +83,6 @@ class AppModule(context: Context) : Module() {
 
         bind(AuthParser::class.java).singletonInScope()
         bind(CheckerParser::class.java).singletonInScope()
-        bind(CommentParser::class.java).singletonInScope()
         bind(FavoriteParser::class.java).singletonInScope()
         bind(PagesParser::class.java).singletonInScope()
         bind(ProfileParser::class.java).singletonInScope()
@@ -94,7 +93,6 @@ class AppModule(context: Context) : Module() {
 
         bind(AuthApi::class.java).singletonInScope()
         bind(CheckerApi::class.java).singletonInScope()
-        bind(CommentApi::class.java).singletonInScope()
         bind(FavoriteApi::class.java).singletonInScope()
         bind(ReleaseApi::class.java).singletonInScope()
         bind(SearchApi::class.java).singletonInScope()
@@ -111,7 +109,6 @@ class AppModule(context: Context) : Module() {
         bind(HistoryRepository::class.java).singletonInScope()
         bind(FavoriteRepository::class.java).singletonInScope()
         bind(YoutubeRepository::class.java).singletonInScope()
-        bind(CommentsRepository::class.java).singletonInScope()
 
         bind(ReleaseInteractor::class.java).singletonInScope()
         bind(AntiDdosInteractor::class.java).singletonInScope()

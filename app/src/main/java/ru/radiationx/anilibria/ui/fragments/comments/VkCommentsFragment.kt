@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.comments.vk
+package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
@@ -20,8 +20,8 @@ import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
-import ru.radiationx.anilibria.presentation.comments.vk.VkCommentsPresenter
-import ru.radiationx.anilibria.presentation.comments.vk.VkCommentsView
+import ru.radiationx.anilibria.presentation.comments.VkCommentsPresenter
+import ru.radiationx.anilibria.presentation.comments.VkCommentsView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.Utils

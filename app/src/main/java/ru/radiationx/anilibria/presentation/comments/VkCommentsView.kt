@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.presentation.comments.vk
+package ru.radiationx.anilibria.presentation.comments
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType

@@ -8,9 +8,9 @@ import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit

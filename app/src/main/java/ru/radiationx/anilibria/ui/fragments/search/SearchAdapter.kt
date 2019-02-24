@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder

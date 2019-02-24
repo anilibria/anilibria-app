@@ -30,8 +30,6 @@ class VitalItem : Serializable {
     enum class Rule {
         RELEASE_DETAIL,
         RELEASE_LIST,
-        ARTICLE_DETAIL,
-        ARTICLE_LIST,
         VIDEO_PLAYER
     }
 

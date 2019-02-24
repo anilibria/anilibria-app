@@ -6,14 +6,13 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.interactors.AntiDdosInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.CheckerRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

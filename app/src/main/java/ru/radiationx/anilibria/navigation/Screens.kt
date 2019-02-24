@@ -1,16 +1,11 @@
 package ru.radiationx.anilibria.navigation
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesContainerFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
@@ -68,13 +63,6 @@ object Screens {
         override fun getFragment() = HistoryFragment()
     }
 
-    class ArticleDetails(
-            val idCode: String? = null,
-            val item: ArticleItem? = null
-    ) : BaseAppScreen() {
-        override fun getFragment() = ArticleFragment.newInstance(idCode, item)
-    }
-
     class ReleaseDetails(
             val id: Int = -1,
             val code: String? = null,
@@ -92,10 +80,6 @@ object Screens {
 
     class MainReleases : BaseAppScreen() {
         override fun getFragment() = ReleasesFragment()
-    }
-
-    class MainArticles : BaseAppScreen() {
-        override fun getFragment() = ArticlesContainerFragment()
     }
 
     class MainYouTube : BaseAppScreen() {

@@ -2,12 +2,12 @@ package ru.radiationx.anilibria.model.data.storage
 
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
-import ru.radiationx.anilibria.extension.nullString
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 import javax.inject.Inject
 

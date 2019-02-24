@@ -7,7 +7,6 @@ import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
-import java.lang.Exception
 import java.util.regex.Pattern
 import javax.inject.Inject
 

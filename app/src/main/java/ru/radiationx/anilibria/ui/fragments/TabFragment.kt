@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments
 
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
@@ -19,7 +18,6 @@ import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.putExtra
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener

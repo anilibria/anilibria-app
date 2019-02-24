@@ -12,7 +12,6 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem

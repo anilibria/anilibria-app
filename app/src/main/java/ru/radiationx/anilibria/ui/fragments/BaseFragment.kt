@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.design.widget.CollapsingToolbarLayout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +15,13 @@ import com.arellomobile.mvp.MvpAppCompatFragment
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
-import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.terrakok.cicerone.Router
 
 /* Created by radiationx on 18.11.17. */
 

@@ -3,10 +3,10 @@ package ru.radiationx.anilibria.presentation.youtube
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.repository.YoutubeRepository
+import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -41,9 +41,9 @@ class YoutubePresenter @Inject constructor(
         youtubeRepository
                 .getYoutubeList(page)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ articleItems ->
-                    viewState.setEndless(!articleItems.isEnd())
-                    showData(articleItems.data)
+                .subscribe({ items ->
+                    viewState.setEndless(!items.isEnd())
+                    showData(items.data)
                 }) {
                     errorHandler.handle(it)
                 }

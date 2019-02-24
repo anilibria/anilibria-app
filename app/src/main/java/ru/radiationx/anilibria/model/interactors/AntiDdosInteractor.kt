@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.model.interactors
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject
 

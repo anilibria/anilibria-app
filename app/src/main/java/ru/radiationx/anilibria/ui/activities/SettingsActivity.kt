@@ -3,20 +3,14 @@ package ru.radiationx.anilibria.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MenuItem
-
-import javax.inject.Inject
-
 import io.reactivex.disposables.CompositeDisposable
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.*
-import ru.radiationx.anilibria.extension.*
+import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.extension.getPrefStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
+import javax.inject.Inject
 
 
 /**

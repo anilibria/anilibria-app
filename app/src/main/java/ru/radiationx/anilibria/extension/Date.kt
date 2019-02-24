@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.extension
 
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Date
 
 private object DateFormats {
     val dateTimeFormat = SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.getDefault())

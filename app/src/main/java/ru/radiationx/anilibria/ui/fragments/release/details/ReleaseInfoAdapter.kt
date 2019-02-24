@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem

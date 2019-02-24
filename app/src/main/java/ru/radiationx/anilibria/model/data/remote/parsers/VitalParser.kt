@@ -74,8 +74,6 @@ class VitalParser @Inject constructor(
     private fun getRule(jsonString: String): VitalItem.Rule? = when (jsonString) {
         "releaseDetail" -> VitalItem.Rule.RELEASE_DETAIL
         "releaseList" -> VitalItem.Rule.RELEASE_LIST
-        "articleDetail" -> VitalItem.Rule.ARTICLE_DETAIL
-        "articleList" -> VitalItem.Rule.ARTICLE_LIST
         "videoPlayer" -> VitalItem.Rule.VIDEO_PLAYER
         else -> null
     }

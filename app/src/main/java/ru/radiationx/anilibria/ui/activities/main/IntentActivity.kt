@@ -2,18 +2,8 @@ package ru.radiationx.anilibria.ui.activities.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
-import ru.radiationx.anilibria.extension.nullString
-import io.reactivex.Completable
-import org.json.JSONArray
-import org.json.JSONObject
-import ru.radiationx.anilibria.App
-import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import javax.inject.Inject

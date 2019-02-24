@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -13,7 +12,6 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -23,7 +21,6 @@ import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
-import java.util.regex.Pattern
 
 
 /**

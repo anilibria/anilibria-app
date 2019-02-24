@@ -9,7 +9,6 @@ import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**

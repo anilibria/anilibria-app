@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import ru.radiationx.anilibria.extension.nullGet
-import ru.radiationx.anilibria.extension.nullString
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.*
+import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
+import ru.radiationx.anilibria.extension.nullGet
+import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import javax.inject.Inject

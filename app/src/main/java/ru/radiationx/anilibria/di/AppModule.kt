@@ -81,7 +81,6 @@ class AppModule(context: Context) : Module() {
         bind(IClient::class.java).to(Client::class.java).singletonInScope()
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singletonInScope()
 
-        bind(ArticleParser::class.java).singletonInScope()
         bind(AuthParser::class.java).singletonInScope()
         bind(CheckerParser::class.java).singletonInScope()
         bind(CommentParser::class.java).singletonInScope()
@@ -93,7 +92,6 @@ class AppModule(context: Context) : Module() {
         bind(VitalParser::class.java).singletonInScope()
         bind(YoutubeParser::class.java).singletonInScope()
 
-        bind(ArticleApi::class.java).singletonInScope()
         bind(AuthApi::class.java).singletonInScope()
         bind(CheckerApi::class.java).singletonInScope()
         bind(CommentApi::class.java).singletonInScope()
@@ -105,7 +103,6 @@ class AppModule(context: Context) : Module() {
         bind(YoutubeApi::class.java).singletonInScope()
 
         bind(AuthRepository::class.java).singletonInScope()
-        bind(ArticleRepository::class.java).singletonInScope()
         bind(ReleaseRepository::class.java).singletonInScope()
         bind(SearchRepository::class.java).singletonInScope()
         bind(PageRepository::class.java).singletonInScope()

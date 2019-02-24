@@ -2,19 +2,17 @@ package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.remote.Api

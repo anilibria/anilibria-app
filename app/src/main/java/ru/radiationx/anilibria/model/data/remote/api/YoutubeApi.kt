@@ -3,12 +3,10 @@ package ru.radiationx.anilibria.model.data.remote.api
 import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
-import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import ru.radiationx.anilibria.model.data.remote.parsers.YoutubeParser
 import javax.inject.Inject
 

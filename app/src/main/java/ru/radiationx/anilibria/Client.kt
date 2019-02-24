@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.model.data.BlazingFastException
 import ru.radiationx.anilibria.model.data.GoogleCaptchaException
 import ru.radiationx.anilibria.model.data.holders.CookieHolder

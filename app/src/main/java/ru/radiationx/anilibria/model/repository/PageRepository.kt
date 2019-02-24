@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.repository
 
-import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments

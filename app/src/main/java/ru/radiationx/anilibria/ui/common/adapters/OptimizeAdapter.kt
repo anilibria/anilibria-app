@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.common.adapters
 import android.support.v7.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import ru.radiationx.anilibria.ui.adapters.ListItem
 
 open class OptimizeAdapter<T : List<*>>(
         private val manager: OptimizeDelegateManager<T> = OptimizeDelegateManager()

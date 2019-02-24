@@ -17,12 +17,12 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
 import android.text.Html
 import android.util.Log
 import android.util.Rational
-import android.view.*
+import android.view.View
+import android.view.WindowManager
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
@@ -43,7 +43,6 @@ import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
-import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

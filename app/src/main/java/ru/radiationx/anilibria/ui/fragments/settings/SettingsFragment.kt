@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder

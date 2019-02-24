@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -13,7 +12,6 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import kotlinx.android.synthetic.main.activity_vital.*
 import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.vital.VitalItem

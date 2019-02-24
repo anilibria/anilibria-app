@@ -45,7 +45,6 @@ class App : Application() {
 
     }
 
-    lateinit var articleTemplate: MiniTemplator
     lateinit var staticPageTemplate: MiniTemplator
     lateinit var vkCommentsTemplate: MiniTemplator
 
@@ -88,7 +87,6 @@ class App : Application() {
 
         initDependencies()
 
-        findTemplate("article")?.let { articleTemplate = it }
         findTemplate("static_page")?.let { staticPageTemplate = it }
         findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
 

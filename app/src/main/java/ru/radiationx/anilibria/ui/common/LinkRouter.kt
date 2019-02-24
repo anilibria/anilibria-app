@@ -16,10 +16,6 @@ class LinkRouter @Inject constructor() : ILinkHandler {
         Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html|tracker\\/\\?ELEMENT_CODE=([^&]+)")
     }
 
-    private val articleDetail by lazy {
-        Pattern.compile("\\/[a-zA-Z0-9\\-]+\\/([a-zA-Z0-9\\-]+)\\/?\$")
-    }
-
     override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {
         findScreen(url)?.also { screen ->
             if (doNavigate) {
@@ -38,11 +34,6 @@ class LinkRouter @Inject constructor() : ILinkHandler {
             if (it.find()) {
                 val code = it.group(1) ?: it.group(2)
                 return Screens.ReleaseDetails(code = code)
-            }
-        }
-        articleDetail.matcher(url).let {
-            if (it.find()) {
-                return Screens.ArticleDetails(it.group(1))
             }
         }
         return null

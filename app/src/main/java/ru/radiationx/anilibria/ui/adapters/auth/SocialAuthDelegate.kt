@@ -1,28 +1,17 @@
 package ru.radiationx.anilibria.ui.adapters.auth
 
-import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_social_auth.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
-import java.util.regex.Pattern
 
 class SocialAuthDelegate(
         private val clickListener: (SocialAuth) -> Unit

@@ -6,7 +6,6 @@ import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.PagesParser
 import javax.inject.Inject

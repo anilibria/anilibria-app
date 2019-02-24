@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters
 
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
@@ -32,11 +31,6 @@ class VitalWebListItem(val item: VitalItem) : ListItem()
 class VitalNativeListItem(val item: VitalItem) : ListItem()
 class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
 class PlaceholderListItem(val icRes: Int, val titleRes: Int, val descRes: Int) : ListItem()
-
-/* Articles, blogs, etc. list screen*/
-
-class ArticleListItem(val item: ArticleItem, val transitionAppendix: String) : ListItem()
-
 
 /* Releases list screen */
 

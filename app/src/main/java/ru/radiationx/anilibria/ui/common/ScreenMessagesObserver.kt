@@ -4,19 +4,14 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
-import io.reactivex.subjects.PublishSubject
-import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
-import io.reactivex.ObservableTransformer
 import io.reactivex.subjects.BehaviorSubject
+import ru.radiationx.anilibria.extension.addTo
 import ru.radiationx.anilibria.model.system.messages.SystemMessage
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import javax.inject.Inject
 
 

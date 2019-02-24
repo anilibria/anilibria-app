@@ -6,6 +6,7 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 
+@Suppress("UNCHECKED_CAST")
 open class ApiResponse<T>(
         jsonString: String
 ) {

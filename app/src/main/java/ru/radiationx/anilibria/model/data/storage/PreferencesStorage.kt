@@ -28,7 +28,7 @@ class PreferencesStorage @Inject constructor(
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
 
     // Важно, чтобы было вынесено именно в поле
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { preferences, key ->
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             APP_THEME_KEY -> {
                 appThemeRelay.accept(getTheme())

@@ -76,7 +76,7 @@ class GenresDialog(
         listener.onCheckedYears(checkedYears.toList())
     }
 
-    private val sortingListener = RadioGroup.OnCheckedChangeListener { group, checkedId ->
+    private val sortingListener = RadioGroup.OnCheckedChangeListener { _, _ ->
         currentSorting = when {
             sortingPopular.isChecked -> "2"
             sortingNew.isChecked -> "1"

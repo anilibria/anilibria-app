@@ -69,7 +69,7 @@ class AuthFragment : BaseFragment(), AuthView {
         context?.let {
             AlertDialog.Builder(it)
                     .setMessage("Зарегистрировать аккаунт можно только на сайте.")
-                    .setPositiveButton("Регистрация") { dialog, which ->
+                    .setPositiveButton("Регистрация") { _, _ ->
                         Utils.externalLink("${Api.SITE_URL}/pages/login.php")
                     }
                     .setNeutralButton("Отмена", null)
@@ -96,10 +96,10 @@ class AuthFragment : BaseFragment(), AuthView {
     private fun onSocialClick(item: SocialAuth) {
         AlertDialog.Builder(context!!)
                 .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-                .setPositiveButton("Продолжить"){dialog, which ->
+                .setPositiveButton("Продолжить"){ _, _ ->
                     presenter.onSocialClick(item)
                 }
-                .setNegativeButton("Личный кабинет") { dialog, which ->
+                .setNegativeButton("Личный кабинет") { _, _ ->
                     Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
                 }
                 .show()

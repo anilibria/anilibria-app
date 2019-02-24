@@ -44,7 +44,7 @@ class SettingsFragment : BaseSettingFragment() {
                 val titles = values.map { getQualityTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
                         .setTitle(preference.title)
-                        .setItems(titles) { dialog, which ->
+                        .setItems(titles) { _, which ->
                             val quality = values[which]
                             appPreferences.setQuality(quality)
                             icon = getQualityIcon(quality)
@@ -85,7 +85,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference("about.app_topic_site")?.apply {
             icon = ContextCompat.getDrawable(this.context, R.drawable.ic_anilibria)
-            setOnPreferenceClickListener { preference ->
+            setOnPreferenceClickListener {
                 Utils.externalLink("${Api.SITE_URL}/pages/app.php")
                 false
             }
@@ -93,7 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference("about.app_topic_4pda")?.apply {
             icon = ContextCompat.getDrawable(this.context, R.drawable.ic_4pda)
-            setOnPreferenceClickListener { preference ->
+            setOnPreferenceClickListener {
                 Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
                 false
             }
@@ -108,7 +108,7 @@ class SettingsFragment : BaseSettingFragment() {
         }*/
 
         findPreference("about.check_update")?.apply {
-            setOnPreferenceClickListener { preference ->
+            setOnPreferenceClickListener {
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)
                 })

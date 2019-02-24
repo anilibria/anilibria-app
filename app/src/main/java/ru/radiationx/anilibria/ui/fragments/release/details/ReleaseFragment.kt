@@ -66,7 +66,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(false)
-            .cacheInMemory()
+            .cacheInMemory(true)
             .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
 

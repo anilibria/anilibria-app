@@ -185,6 +185,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
 
+        @Suppress("DEPRECATION")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
                 val client = getDependency(screenScope, IClient::class.java)
@@ -207,6 +208,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             }
         }
 
+        @Suppress("OverridingDeprecatedMember")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             Log.e("S_DEF_LOG", "OverrideUrlLoading: " + url)
             val cookies = CookieManager.getInstance().getCookie(url)

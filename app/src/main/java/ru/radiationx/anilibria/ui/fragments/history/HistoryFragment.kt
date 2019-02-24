@@ -111,7 +111,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         //presenter.onItemLongClick(item)
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(arrayOf("Добавить на главный экран", "Удалить")) { dialog, which ->
+                    .setItems(arrayOf("Добавить на главный экран", "Удалить")) { _, which ->
                         when (which) {
                             0 -> ShortcutHelper.addShortcut(item)
                             1 -> presenter.onDeleteClick(item)

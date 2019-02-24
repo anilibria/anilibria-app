@@ -120,10 +120,12 @@ class App : Application() {
             val prefKey = "app.versions.history"
             val defaultPreferences = DI.get(SharedPreferences::class.java)
             val history = defaultPreferences
-                    .getString(prefKey, "")
-                    .split(";")
-                    .filter { it.isNotBlank() }
-                    .map { it.toInt() }
+                    .getString(prefKey, "")?.let {
+                        it.split(";")
+                                .filter { it.isNotBlank() }
+                                .map { it.toInt() }
+                    } ?: emptyList()
+
 
             var lastAppCode = 0
 

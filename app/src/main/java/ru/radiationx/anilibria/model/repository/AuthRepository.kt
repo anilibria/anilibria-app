@@ -47,8 +47,7 @@ class AuthRepository @Inject constructor(
         userHolder.saveUser(user)
     }
 
-    fun updateUser(newUser: ProfileItem) {
-        val user = userHolder.getUser()
+    private fun updateUser(newUser: ProfileItem) {
         newUser.authState = AuthState.AUTH
         userHolder.saveUser(newUser)
     }

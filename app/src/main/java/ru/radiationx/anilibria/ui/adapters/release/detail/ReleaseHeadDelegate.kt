@@ -53,7 +53,7 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : OptimizeDelegate
                 full_button_torrent.setOnClickListener {
                     itemListener.onClickTorrent()
                 }
-                full_tags.setOnTagClickListener { tag, i ->
+                full_tags.setOnTagClickListener { tag, _ ->
                     itemListener.onClickTag(tag.text)
                 }
                 full_button_watch_web.setOnClickListener {
@@ -100,7 +100,6 @@ class ReleaseHeadDelegate(private val itemListener: Listener) : OptimizeDelegate
                 )
                 full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
-                val hasEpisodes = !item.episodes.isEmpty()
                 val hasMoonwalk = item.moonwalkLink != null
                 //full_button_watch_all.isEnabled = hasEpisodes
                 full_button_watch_web.isEnabled = hasMoonwalk

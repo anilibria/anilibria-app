@@ -250,7 +250,7 @@ class MyPlayerActivity : BaseActivity() {
         return releaseInteractor.getPIPControl()
     }
 
-    private fun updateScale(scale: ScaleType, fromUser: Boolean) {
+    private fun updateScale(scale: ScaleType) {
         val inMultiWindow = getInMultiWindow()
         Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
@@ -294,10 +294,6 @@ class MyPlayerActivity : BaseActivity() {
         currentPlaySpeed = newPlaySpeed
         player.playbackSpeed = currentPlaySpeed
         savePlaySpeed()
-    }
-
-    private fun updateScale(newScale: ScaleType) {
-        updateScale(newScale, true)
     }
 
     private fun updatePIPControl(newPipControl: Int = currentPipControl) {
@@ -422,7 +418,7 @@ class MyPlayerActivity : BaseActivity() {
                     val titles = arrayOf("К началу", "К последней позиции")
                     AlertDialog.Builder(this)
                             .setTitle("Перемотать")
-                            .setItems(titles) { dialog, which ->
+                            .setItems(titles) { _, which ->
                                 if (which == 1) {
                                     player.seekTo(episode.seek)
                                 }
@@ -462,14 +458,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun initUiFlags() {
-        var flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_VISIBLE
-
-        flags = flags or (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-
         window.decorView.also {
-            //it.systemUiVisibility = flags
             it.setOnSystemUiVisibilityChangeListener(fullScreenListener)
         }
     }
@@ -478,7 +467,7 @@ class MyPlayerActivity : BaseActivity() {
         val scale = loadScale(currentOrientation)
         val inMultiWindow = getInMultiWindow()
 
-        updateScale(if (inMultiWindow) defaultScale else scale, false)
+        updateScale(if (inMultiWindow) defaultScale else scale)
 
         window.decorView.also {
             it.systemUiVisibility = flagsHelper.getFlags(currentOrientation, currentFullscreen)
@@ -760,7 +749,7 @@ class MyPlayerActivity : BaseActivity() {
                     .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setItems(titles, icons) { dialog, which ->
+                    .setItems(titles, icons) { _, which ->
                         when (valuesList[which]) {
                             settingQuality -> showQualityDialog()
                             settingPlaySpeed -> showPlaySpeedDialog()
@@ -802,7 +791,7 @@ class MyPlayerActivity : BaseActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Скорость воспроизведения")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         updatePlaySpeed(values[which])
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
@@ -829,7 +818,7 @@ class MyPlayerActivity : BaseActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Качество")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         updateQuality(values[which])
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
@@ -857,7 +846,7 @@ class MyPlayerActivity : BaseActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Соотношение сторон")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val newScaleType = values[which]
                         updateScale(newScaleType)
                     }
@@ -885,7 +874,7 @@ class MyPlayerActivity : BaseActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Режим окна (картинка в картинке)")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val newPipControl = values[which]
                         updatePIPControl(newPipControl)
                     }

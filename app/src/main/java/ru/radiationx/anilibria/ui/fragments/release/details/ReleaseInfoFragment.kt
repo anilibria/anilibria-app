@@ -135,7 +135,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         when (which) {
                             0 -> Utils.externalLink(url)
                             1 -> systemDownloadWithPermissionCheck(url)
@@ -338,7 +338,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         context?.let {
             AlertDialog.Builder(it)
                     .setTitle("Качество")
-                    .setItems(arrayOf("SD", "HD")) { p0, p1 ->
+                    .setItems(arrayOf("SD", "HD")) { _, p1 ->
                         val quality: Int = when (p1) {
                             0 -> MyPlayerActivity.VAL_QUALITY_SD
                             1 -> MyPlayerActivity.VAL_QUALITY_HD
@@ -371,7 +371,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         context?.let {
             AlertDialog.Builder(it)
                     .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-                    .setPositiveButton("Да") { dialog, which -> presenter.openAuth() }
+                    .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
                     .setNegativeButton("Нет", null)
                     .show()
         }

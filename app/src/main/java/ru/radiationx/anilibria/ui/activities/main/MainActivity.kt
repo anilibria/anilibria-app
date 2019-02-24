@@ -184,8 +184,9 @@ class MainActivity : BaseActivity(), MainView {
 
     private fun handleIntent(intent: Intent?) {
         Log.e("lalala", "MainActivity, handleIntent $intent")
-        if (intent != null && intent.data != null) {
-            val url = intent.data.toString()
+
+        intent?.data?.also { intentData ->
+            val url = intentData.toString()
             var handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
                 handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })

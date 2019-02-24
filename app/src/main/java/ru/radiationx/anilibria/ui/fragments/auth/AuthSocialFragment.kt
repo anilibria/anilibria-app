@@ -90,9 +90,8 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     override fun showError() {
         AlertDialog.Builder(context!!)
                 .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
-                .setPositiveButton("Перейти") { dialog, which ->
+                .setPositiveButton("Перейти") { _, _ ->
                     Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
-                    dialog.dismiss()
                 }
                 .setNegativeButton("Отмена", null)
                 .show()

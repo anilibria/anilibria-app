@@ -11,7 +11,7 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_releases.*
+import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -50,7 +50,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_releases
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

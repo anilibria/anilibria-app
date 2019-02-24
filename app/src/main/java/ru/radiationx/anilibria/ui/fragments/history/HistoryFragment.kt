@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import kotlinx.android.synthetic.main.fragment_history.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
@@ -51,7 +51,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     @ProvidePresenter
     fun provideHistoryPresenter(): HistoryPresenter = getDependency(screenScope, HistoryPresenter::class.java)
 
-    override fun getLayoutResource(): Int = R.layout.fragment_history
+    override fun getLayoutResource(): Int = R.layout.fragment_list
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

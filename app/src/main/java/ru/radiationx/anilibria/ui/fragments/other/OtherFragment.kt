@@ -6,7 +6,7 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import kotlinx.android.synthetic.main.fragment_other.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -37,7 +37,7 @@ class OtherFragment : BaseFragment(), OtherView {
     @ProvidePresenter
     fun provideOtherPresenter(): OtherPresenter = getDependency(screenScope, OtherPresenter::class.java)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_other
+    override fun getBaseLayout(): Int = R.layout.fragment_list
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

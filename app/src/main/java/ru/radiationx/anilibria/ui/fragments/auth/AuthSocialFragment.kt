@@ -10,8 +10,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -52,7 +52,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+    override fun getLayoutResource(): Int = R.layout.fragment_webview
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

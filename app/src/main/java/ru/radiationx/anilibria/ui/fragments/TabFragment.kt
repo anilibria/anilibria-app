@@ -76,7 +76,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_tab, container, false)
+        return inflater.inflate(R.layout.fragment_tab_root, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

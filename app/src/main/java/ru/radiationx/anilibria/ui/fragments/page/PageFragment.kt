@@ -5,17 +5,14 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.page.PageLibria
-import ru.radiationx.anilibria.extension.generateWithTheme
-import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.extension.putExtra
-import ru.radiationx.anilibria.extension.toBase64
+import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
@@ -62,7 +59,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_article
+    override fun getLayoutResource(): Int = R.layout.fragment_webview
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -143,7 +140,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressSwitcher.displayedChild = if (refreshing) 1 else 0
+        progressBar.visible(refreshing)
     }
 
     override fun showPage(page: PageLibria) {

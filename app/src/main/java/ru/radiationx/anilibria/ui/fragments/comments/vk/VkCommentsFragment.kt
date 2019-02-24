@@ -11,16 +11,13 @@ import android.webkit.*
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.page.VkComments
-import ru.radiationx.anilibria.extension.generateWithTheme
-import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.extension.isDark
-import ru.radiationx.anilibria.extension.toBase64
+import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.presentation.comments.vk.VkCommentsPresenter
@@ -56,7 +53,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     @ProvidePresenter
     fun providePresenter(): VkCommentsPresenter = getDependency(screenScope, VkCommentsPresenter::class.java)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_article
+    override fun getBaseLayout(): Int = R.layout.fragment_webview
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -130,7 +127,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressSwitcher.displayedChild = if (refreshing) 1 else 0
+        progressBar.visible(refreshing)
     }
 
     override fun showBody(comments: VkComments) {

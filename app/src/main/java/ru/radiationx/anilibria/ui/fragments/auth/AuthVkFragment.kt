@@ -7,8 +7,8 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -40,7 +40,7 @@ class AuthVkFragment : BaseFragment() {
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+    override fun getLayoutResource(): Int = R.layout.fragment_webview
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

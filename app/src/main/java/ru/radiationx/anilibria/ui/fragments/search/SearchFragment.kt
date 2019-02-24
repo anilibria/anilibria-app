@@ -12,7 +12,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_releases.*
+import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
@@ -103,7 +103,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_releases
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

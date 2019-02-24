@@ -17,7 +17,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.dialog_file_download.view.*
-import kotlinx.android.synthetic.main.fragment_release.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
@@ -65,7 +65,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    override fun getBaseLayout(): Int = R.layout.fragment_release
+    override fun getBaseLayout(): Int = R.layout.fragment_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

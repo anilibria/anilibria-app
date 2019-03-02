@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
-import android.util.Log
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
@@ -13,13 +12,13 @@ import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.AuthParser
-import java.lang.Exception
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthApi(
+class AuthApi @Inject constructor(
         private val client: IClient,
         private val authParser: AuthParser
 ) {
@@ -55,7 +54,7 @@ class AuthApi(
                 .map { authParser.parseSocialAuth(it) }
     }
 
-    fun signSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
+    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf()
         return client
                 .getFull(resultUrl, args)

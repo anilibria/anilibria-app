@@ -2,29 +2,22 @@ package ru.radiationx.anilibria.ui.widgets
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.view.View
+import android.graphics.Color
+import android.support.graphics.drawable.ArgbEvaluator
+import android.util.AttributeSet
+import android.util.Log
+import android.view.MenuItem
+import android.view.MotionEvent
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
 import kotlinx.android.synthetic.main.view_video_control.view.*
 import ru.radiationx.anilibria.R
-import android.support.graphics.drawable.ArgbEvaluator
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
-import android.util.AttributeSet
-import android.util.Log
-import android.view.MenuItem
-import android.view.MotionEvent
-import com.devbrackets.android.exomedia.core.video.scale.ScaleType
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.extension.asTimeSecString
-import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
+import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import java.lang.Math.pow
 import java.util.*
@@ -42,8 +35,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     private var pictureInPictureMenuItem: MenuItem? = null
     private var controlsEnabled = true
 
-    private var scaleDisposable = Disposables.disposed()
-
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
     }
@@ -51,14 +42,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     fun fitSystemWindows(fit: Boolean) {
         this.fitsSystemWindows = false
         videoControlsRoot.fitsSystemWindows = fit
-    }
-
-    fun setControlsEnabled(enabled: Boolean) {
-        Log.e("lalka", "setControlsEnabled $enabled")
-        controlsEnabled = enabled
-        if (!controlsEnabled) {
-            hide()
-        }
     }
 
     fun setPictureInPictureEnabled(enabled: Boolean) {
@@ -72,16 +55,16 @@ class VideoControlsAlib @JvmOverloads constructor(
         textContainer = appbarLayout
 
         appbarLayout.apply {
-            background = (ContextCompat.getDrawable(context, R.drawable.bg_video_toolbar))
+            background = context.getCompatDrawable(R.drawable.bg_video_toolbar)
         }
 
         toolbar.apply {
-            navigationIcon = ContextCompat.getDrawable(toolbar.context, R.drawable.ic_toolbar_arrow_back)
+            navigationIcon = context.getCompatDrawable(R.drawable.ic_toolbar_arrow_back)
             setNavigationOnClickListener {
                 alibControlsListener?.onBackClick()
             }
             pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
-                    .setIcon(ContextCompat.getDrawable(context, R.drawable.ic_picture_in_picture_alt_toolbar))
+                    .setIcon(context.getCompatDrawable(R.drawable.ic_picture_in_picture_alt_toolbar))
                     .setOnMenuItemClickListener {
                         alibControlsListener?.onPIPClick()
                         true
@@ -92,7 +75,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlsContainer = timeControlsContainer
         gesturesControllerView.setEventsListener(object : VideoGestureEventsListener {
             private var localSeekDelta = 0L
-            private var seekStarted = false;
+            private var seekStarted = false
 
             override fun onTap() {
                 Log.e("gestureLalala", "onTap, $canViewHide, $isVisible")
@@ -102,7 +85,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {
                 if (!seekStarted) {
-                    gestureSeekValue.visibility = View.VISIBLE
+                    gestureSeekValue.visible()
                     seekStarted = true
                 }
 
@@ -152,7 +135,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                         seekTo((currentPosition + localSeekDelta).coerceIn(0, duration))
                     }
                 }
-                gestureSeekValue.visibility = View.GONE
+                gestureSeekValue.gone()
                 seekStarted = false
                 localSeekDelta = 0
             }
@@ -237,11 +220,11 @@ class VideoControlsAlib @JvmOverloads constructor(
         }
 
         isLoading = true
-        loadingProgressBar.visibility = View.VISIBLE
+        loadingProgressBar.visible()
 
         if (initialLoad) {
-            controlsContainer.visibility = View.GONE
-            controlButtonsWrapper.visibility = View.GONE
+            controlsContainer.gone()
+            controlButtonsWrapper.gone()
         } else {
             playPauseButton.isEnabled = false
             previousButton.isEnabled = false
@@ -257,9 +240,9 @@ class VideoControlsAlib @JvmOverloads constructor(
         }
 
         isLoading = false
-        loadingProgressBar.visibility = View.GONE
-        controlsContainer.visibility = View.VISIBLE
-        controlButtonsWrapper.visibility = View.VISIBLE
+        loadingProgressBar.gone()
+        controlsContainer.visible()
+        controlButtonsWrapper.visible()
 
         playPauseButton.isEnabled = true
         previousButton.isEnabled = enabledViews.get(com.devbrackets.android.exomedia.R.id.exomedia_controls_previous_btn, true)
@@ -275,7 +258,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             R.drawable.ic_arrow_expand
         }
         controlsFullscreen.apply {
-            setImageDrawable(ContextCompat.getDrawable(context, icRes))
+            setImageDrawable(context.getCompatDrawable(icRes))
         }
     }
 

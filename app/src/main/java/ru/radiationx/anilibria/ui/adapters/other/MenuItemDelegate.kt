@@ -1,49 +1,41 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import kotlinx.android.synthetic.main.item_other_menu.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_other_menu.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
+import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
-class MenuItemDelegate(private val clickListener: (OtherMenuItem) -> Unit) : AdapterDelegate<MutableList<ListItem>>() {
+class MenuItemDelegate(
+        private val clickListener: (OtherMenuItem) -> Unit
+) : AppAdapterDelegate<MenuListItem, ListItem, MenuItemDelegate.ViewHolder>(
+        R.layout.item_other_menu,
+        { it is MenuListItem },
+        { ViewHolder(it, clickListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean
-            = items[position] is MenuListItem
+    override fun bindData(item: MenuListItem, holder: ViewHolder) = holder.bind(item.menuItem)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as MenuListItem
-        (holder as ViewHolder).bind(item.menuItem)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_other_menu, parent, false),
-            clickListener
-    )
-
-    private class ViewHolder(
-            val view: View,
+    class ViewHolder(
+            override val containerView: View,
             val clickListener: (OtherMenuItem) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var item: OtherMenuItem
 
         init {
-            view.setOnClickListener { clickListener(item) }
+            containerView.setOnClickListener { clickListener(item) }
         }
 
         fun bind(menuItem: OtherMenuItem) {
             this.item = menuItem
-            view.run {
-                otherMenuTitle.text = menuItem.title
-                otherMenuIcon.setImageDrawable(AppCompatResources.getDrawable(view.context, menuItem.icon))
-            }
+            otherMenuTitle.text = menuItem.title
+            otherMenuIcon.setCompatDrawable(menuItem.icon)
         }
     }
 }

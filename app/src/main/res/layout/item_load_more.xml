@@ -5,7 +5,7 @@
     android:layout_height="48dp">
 
     <LinearLayout
-        android:id="@+id/nl_lm_container"
+        android:id="@+id/itemLoadMoreContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -32,7 +32,7 @@
 
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/nl_lm_btn"
+        android:id="@+id/itemLoadMoreBtn"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

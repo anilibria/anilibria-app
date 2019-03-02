@@ -3,16 +3,17 @@ package ru.radiationx.anilibria.model.data.remote.api
 import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.*
+import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import javax.inject.Inject
 
 /* Created by radiationx on 31.10.17. */
 
-class ReleaseApi(
+class ReleaseApi @Inject constructor(
         private val client: IClient,
         private val releaseParser: ReleaseParser
 ) {

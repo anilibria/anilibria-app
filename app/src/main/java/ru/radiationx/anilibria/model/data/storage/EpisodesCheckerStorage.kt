@@ -5,13 +5,17 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.02.18.
  */
-class EpisodesCheckerStorage(private val sharedPreferences: SharedPreferences) : EpisodesCheckerHolder {
+class EpisodesCheckerStorage @Inject constructor(
+        @DataPreferences private val sharedPreferences: SharedPreferences
+) : EpisodesCheckerHolder {
 
     companion object {
         private const val LOCAL_EPISODES_KEY = "data.local_episodes"

@@ -6,10 +6,12 @@ import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import javax.inject.Inject
 
-class YoutubeParser(private val apiUtils: IApiUtils) {
+class YoutubeParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     fun parse(jsonResponse: JSONObject): Paginated<List<YoutubeItem>> {
         val result = mutableListOf<YoutubeItem>()

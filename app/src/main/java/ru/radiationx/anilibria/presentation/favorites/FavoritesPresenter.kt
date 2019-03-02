@@ -1,22 +1,19 @@
 package ru.radiationx.anilibria.presentation.favorites
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.entity.app.release.FavoriteData
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.repository.FavoriteRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
 @InjectViewState
-class FavoritesPresenter(
+class FavoritesPresenter @Inject constructor(
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler
@@ -33,7 +30,6 @@ class FavoritesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refreshReleases()
     }
 
@@ -42,7 +38,6 @@ class FavoritesPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("S_DEF_LOG", "loadReleases")
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -104,11 +99,7 @@ class FavoritesPresenter(
     }
 
     fun onItemClick(item: ReleaseItem) {
-        val args = Bundle()
-        args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
-        args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <color name="alib_red">#c40304</color>
     <color name="alib_red_dark">#ac0304</color>
     <color name="alib_gray">#383838</color>
@@ -58,12 +58,8 @@
 
 
     <!-- DARK THEME -->
-    <color name="temp_red1">#ac0304</color>
-    <color name="temp_red2">#c72828</color>
-    <color name="temp_red3">#a32020</color>
     <color name="temp_red4">#8f2929</color>
     <color name="temp_red4_dark">#752222</color>
-    <color name="temp_red5">#933838</color>
 
     <color name="temp_red_">@color/temp_red4</color>
     <color name="dark_colorPrimary">@color/temp_red_</color>

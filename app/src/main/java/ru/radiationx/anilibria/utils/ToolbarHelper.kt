@@ -58,7 +58,7 @@ object ToolbarHelper {
 
     fun isDarkImage(bitmap: Bitmap, onSuccess: Consumer<Boolean>): Disposable = Single
             .fromCallable {
-                val histogram = IntArray(256, { i: Int -> 0 })
+                val histogram = IntArray(256) { 0 }
 
                 for (x in 0 until bitmap.width) {
                     for (y in 0 until bitmap.height) {

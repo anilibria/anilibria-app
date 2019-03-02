@@ -1,24 +1,23 @@
 package ru.radiationx.anilibria.presentation.search
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @InjectViewState
-class FastSearchPresenter(
+class FastSearchPresenter @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
         private val router: Router,
@@ -95,18 +94,15 @@ class FastSearchPresenter(
     fun onItemClick(item: SearchItem) {
         when (item.id) {
             ITEM_ID_GOOGLE -> {
-                val urlQuery = URLEncoder.encode("anilibria ${item.query}", "utf-8");
+                val urlQuery = URLEncoder.encode("anilibria ${item.query}", "utf-8")
                 Utils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {
-                router.navigateTo(Screens.RELEASES_SEARCH)
+                router.navigateTo(Screens.ReleasesSearch())
             }
             else -> {
                 (item as? SuggestionItem)?.also {
-                    val args = Bundle()
-                    args.putInt(ReleaseFragment.ARG_ID, it.id)
-                    args.putString(ReleaseFragment.ARG_ID_CODE, it.code)
-                    router.navigateTo(Screens.RELEASE_DETAILS, args)
+                    router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
                 }
             }
         }

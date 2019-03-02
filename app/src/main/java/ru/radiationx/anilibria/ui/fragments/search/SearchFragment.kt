@@ -11,35 +11,45 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
+import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_releases.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import javax.inject.Inject
 
 
 class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvider, ReleasesAdapter.ItemListener {
 
     companion object {
-        const val ARG_GENRE: String = "genre"
-        const val ARG_YEAR: String = "year"
+        private const val ARG_GENRE: String = "genre"
+        private const val ARG_YEAR: String = "year"
+
+        fun newInstance(
+                genres: String? = null,
+                years: String? = null
+        ) = SearchFragment().putExtra {
+            putString(ARG_GENRE, genres)
+            putString(ARG_YEAR, years)
+        }
     }
 
     private lateinit var genresDialog: GenresDialog
@@ -49,8 +59,8 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
             R.string.placeholder_desc_nodata_search
     ))
 
-    private val appThemeHolder = App.injections.appThemeHolder
-    private var currentAppTheme: AppThemeHolder.AppTheme = appThemeHolder.getTheme()
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
 
     private val fastSearchAdapter = FastSearchAdapter {
         searchView?.close(true)
@@ -64,25 +74,13 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
     lateinit var searchPresenter: FastSearchPresenter
 
     @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = FastSearchPresenter(
-            App.injections.schedulers,
-            App.injections.searchRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun provideSearchPresenter(): FastSearchPresenter = getDependency(screenScope, FastSearchPresenter::class.java)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
-    fun providePresenter(): SearchPresenter {
-        return SearchPresenter(
-                App.injections.searchRepository,
-                (parentFragment as RouterProvider).getRouter(),
-                App.injections.errorHandler,
-                App.injections.releaseUpdateStorage
-        )
-    }
+    fun providePresenter(): SearchPresenter = getDependency(screenScope, SearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -93,6 +91,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             bundle.getString(ARG_GENRE, null)?.also {
@@ -104,7 +103,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_releases
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -181,7 +180,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
             setVoice(false)
             setShadow(true)
             setDivider(true)
-            setTheme(when (currentAppTheme) {
+            setTheme(when (appThemeHolder.getTheme()) {
                 AppThemeHolder.AppTheme.LIGHT -> com.lapism.searchview.SearchView.THEME_LIGHT
                 AppThemeHolder.AppTheme.DARK -> com.lapism.searchview.SearchView.THEME_DARK
             })
@@ -326,7 +325,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         presenter.onItemLongClick(item)
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(arrayOf("Добавить на главный экран")) { dialog, which ->
+                    .setItems(arrayOf("Добавить на главный экран")) { _, which ->
                         when (which) {
                             0 -> ShortcutHelper.addShortcut(item)
                         }

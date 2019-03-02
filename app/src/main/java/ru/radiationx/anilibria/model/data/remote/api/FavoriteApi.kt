@@ -8,8 +8,9 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
+import javax.inject.Inject
 
-class FavoriteApi(
+class FavoriteApi @Inject constructor(
         private val client: IClient,
         private val releaseParser: ReleaseParser
 ) {

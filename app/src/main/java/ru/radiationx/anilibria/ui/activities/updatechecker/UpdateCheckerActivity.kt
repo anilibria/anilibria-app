@@ -4,47 +4,52 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_updater.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
+import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 24.07.17.
  */
 
 @RuntimePermissions
-class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
+class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
         const val ARG_FORCE = "force"
     }
 
+    @Inject
+    lateinit var apiUtils: IApiUtils
+
     @InjectPresenter
     lateinit var presenter: CheckerPresenter
 
     @ProvidePresenter
-    fun provideCheckerPresenter() = CheckerPresenter(
-            App.injections.checkerRepository,
-            App.injections.errorHandler
-    )
+    fun provideCheckerPresenter() = getDependency(CheckerPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_updater)
 
@@ -68,16 +73,16 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
             addSection("Исправлено", update.fixed)
             addSection("Изменено", update.changed)
 
-            updateInfo.visibility = View.VISIBLE
-            updateButton.visibility = View.VISIBLE
-            divider.visibility = View.VISIBLE
+            updateInfo.visible()
+            updateButton.visible()
+            divider.visible()
         } else {
             updateInfo.text = "Нет обновлений, но вы можете загрузить текущую версию еще раз"
-            updateInfo.visibility = View.VISIBLE
-            updateContent.visibility = View.GONE
-            divider.visibility = View.GONE
+            updateInfo.visible()
+            updateContent.gone()
+            divider.gone()
         }
-        updateButton.visibility = View.VISIBLE
+        updateButton.visible()
         updateButton.setOnClickListener {
             openDownloadDialog(update)
         }
@@ -121,19 +126,11 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {
-        if (isRefreshing) {
-            progressBar.visibility = View.VISIBLE
-            updateInfo.visibility = View.GONE
-            updateContent.visibility = View.GONE
-            updateButton.visibility = View.GONE
-            divider.visibility = View.GONE
-        } else {
-            progressBar.visibility = View.GONE
-            updateInfo.visibility = View.VISIBLE
-            updateContent.visibility = View.VISIBLE
-            updateButton.visibility = View.VISIBLE
-            divider.visibility = View.VISIBLE
-        }
+        progressBar.visible(isRefreshing)
+        updateInfo.gone(isRefreshing)
+        updateContent.gone(isRefreshing)
+        updateButton.gone(isRefreshing)
+        divider.gone(isRefreshing)
     }
 
     private fun addSection(title: String, array: List<String>) {
@@ -148,7 +145,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         sectionTitle.text = title
         sectionTitle.setPadding(0, 0, 0, (resources.displayMetrics.density * 8).toInt())
         sectionTitle.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        sectionTitle.setTextColor(ContextCompat.getColor(this, R.color.light_textDefault))
+        sectionTitle.setTextColor(getCompatColor(R.color.light_textDefault))
         root.addView(sectionTitle)
 
         val stringBuilder = StringBuilder()
@@ -161,9 +158,9 @@ class UpdateCheckerActivity : MvpAppCompatActivity(), CheckerView {
         }
 
         val sectionText = TextView(this)
-        sectionText.text = App.injections.apiUtils.toHtml(stringBuilder.toString())
+        sectionText.text = apiUtils.toHtml(stringBuilder.toString())
         sectionText.setPadding((resources.displayMetrics.density * 8).toInt(), 0, 0, 0)
-        sectionText.setTextColor(ContextCompat.getColor(this, R.color.light_textDefault))
+        sectionText.setTextColor(getCompatColor(R.color.light_textDefault))
         root.addView(sectionText)
 
         updateContent.addView(root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))

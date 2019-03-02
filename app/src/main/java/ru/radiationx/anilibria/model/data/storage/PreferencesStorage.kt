@@ -5,11 +5,12 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.02.18.
  */
-class PreferencesStorage(
+class PreferencesStorage @Inject constructor(
         private val sharedPreferences: SharedPreferences
 ) : PreferencesHolder, AppThemeHolder {
 
@@ -27,7 +28,7 @@ class PreferencesStorage(
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
 
     // Важно, чтобы было вынесено именно в поле
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { preferences, key ->
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             APP_THEME_KEY -> {
                 appThemeRelay.accept(getTheme())

@@ -5,14 +5,14 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.CheckerParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
-class CheckerApi(
+class CheckerApi @Inject constructor(
         private val client: IClient,
         private val checkerParser: CheckerParser
 ) {
@@ -30,11 +30,6 @@ class CheckerApi(
     fun checkUpdateFromRepository(): Single<UpdateData> {
         return client.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/check.json", emptyMap())
                 .map { checkerParser.parse(JSONObject(it)) }
-    }
-
-    fun checkUnderAntiDdos(): Single<String> {
-        val args: MutableMap<String, String> = mutableMapOf("query" to "empty")
-        return client.post(Api.API_URL, args)
     }
 
 }

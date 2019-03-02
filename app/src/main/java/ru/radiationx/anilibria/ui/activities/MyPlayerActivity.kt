@@ -17,12 +17,12 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ContextThemeWrapper
 import android.text.Html
 import android.util.Log
 import android.util.Rational
-import android.view.*
+import android.view.View
+import android.view.WindowManager
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
@@ -33,21 +33,26 @@ import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.isDark
+import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
-import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
 
-class MyPlayerActivity : AppCompatActivity() {
+class MyPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_RELEASE = "release"
@@ -86,9 +91,23 @@ class MyPlayerActivity : AppCompatActivity() {
     private var currentPlaySpeed = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
-    private val vitalRepository: VitalRepository = App.injections.vitalRepository
-    private val releaseInteractor = App.injections.releaseInteractor
-    private val appThemeHolder = App.injections.appThemeHolder
+
+    @Inject
+    lateinit var vitalRepository: VitalRepository
+
+    @Inject
+    lateinit var releaseInteractor: ReleaseInteractor
+
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
+
+    @Inject
+    lateinit var defaultPreferences: SharedPreferences
+
+    @Inject
+    lateinit var appPreferences: PreferencesHolder
+
+
     private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
@@ -97,11 +116,6 @@ class MyPlayerActivity : AppCompatActivity() {
     private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED
 
     private var compositeDisposable = CompositeDisposable()
-    private val scales = listOf(
-            ScaleType.CENTER_CROP,
-            ScaleType.FIT_CENTER,
-            ScaleType.FIT_XY
-    )
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
     private var scaleEnabled = true
@@ -117,6 +131,7 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         createPIPParams()
         loadVital()
@@ -208,12 +223,12 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     private fun loadScale(orientation: Int): ScaleType {
-        val scaleOrdinal = App.injections.defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
+        val scaleOrdinal = defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
         return ScaleType.fromOrdinal(scaleOrdinal)
     }
 
     private fun saveScale(orientation: Int, scale: ScaleType) {
-        App.injections.defaultPreferences.edit().putInt("video_ratio_$orientation", scale.ordinal).apply()
+        defaultPreferences.edit().putInt("video_ratio_$orientation", scale.ordinal).apply()
     }
 
     private fun savePlaySpeed() {
@@ -232,7 +247,7 @@ class MyPlayerActivity : AppCompatActivity() {
         return releaseInteractor.getPIPControl()
     }
 
-    private fun updateScale(scale: ScaleType, fromUser: Boolean) {
+    private fun updateScale(scale: ScaleType) {
         val inMultiWindow = getInMultiWindow()
         Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
@@ -263,7 +278,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
-        App.injections.appPreferences.setQuality(when (newQuality) {
+        appPreferences.setQuality(when (newQuality) {
             MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
             MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
             else -> PreferencesHolder.QUALITY_NO
@@ -276,10 +291,6 @@ class MyPlayerActivity : AppCompatActivity() {
         currentPlaySpeed = newPlaySpeed
         player.playbackSpeed = currentPlaySpeed
         savePlaySpeed()
-    }
-
-    private fun updateScale(newScale: ScaleType) {
-        updateScale(newScale, true)
     }
 
     private fun updatePIPControl(newPipControl: Int = currentPipControl) {
@@ -376,7 +387,7 @@ class MyPlayerActivity : AppCompatActivity() {
     private fun getNextEpisode(): ReleaseFull.Episode? {
         val nextId = currentEpisodeId + 1
         if (checkIndex(nextId)) {
-            Log.e("S_DEF_LOG", "NEXT INDEX " + nextId)
+            Log.e("S_DEF_LOG", "NEXT INDEX $nextId")
             return getEpisode(nextId)
         }
         return null
@@ -385,7 +396,7 @@ class MyPlayerActivity : AppCompatActivity() {
     private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevId = currentEpisodeId - 1
         if (checkIndex(prevId)) {
-            Log.e("S_DEF_LOG", "PREV INDEX " + prevId)
+            Log.e("S_DEF_LOG", "PREV INDEX $prevId")
             return getEpisode(prevId)
         }
         return null
@@ -404,7 +415,7 @@ class MyPlayerActivity : AppCompatActivity() {
                     val titles = arrayOf("К началу", "К последней позиции")
                     AlertDialog.Builder(this)
                             .setTitle("Перемотать")
-                            .setItems(titles) { dialog, which ->
+                            .setItems(titles) { _, which ->
                                 if (which == 1) {
                                     player.seekTo(episode.seek)
                                 }
@@ -444,14 +455,7 @@ class MyPlayerActivity : AppCompatActivity() {
     }
 
     private fun initUiFlags() {
-        var flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_VISIBLE
-
-        flags = flags or (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-
         window.decorView.also {
-            //it.systemUiVisibility = flags
             it.setOnSystemUiVisibilityChangeListener(fullScreenListener)
         }
     }
@@ -460,7 +464,7 @@ class MyPlayerActivity : AppCompatActivity() {
         val scale = loadScale(currentOrientation)
         val inMultiWindow = getInMultiWindow()
 
-        updateScale(if (inMultiWindow) defaultScale else scale, false)
+        updateScale(if (inMultiWindow) defaultScale else scale)
 
         window.decorView.also {
             it.systemUiVisibility = flagsHelper.getFlags(currentOrientation, currentFullscreen)
@@ -506,7 +510,7 @@ class MyPlayerActivity : AppCompatActivity() {
             registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
             //videoControls?.setControlsEnabled(false)
             videoControls?.hide()
-            videoControls?.visibility = View.GONE
+            videoControls?.gone()
             updateByConfig(newConfig)
 
         } else {
@@ -520,7 +524,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
             updateByConfig(newConfig)
             player.showControls()
-            videoControls?.visibility = View.VISIBLE
+            videoControls?.visible()
 
             //player.showControls()
         }
@@ -631,7 +635,7 @@ class MyPlayerActivity : AppCompatActivity() {
         if (checkPipMode()) {
             Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
             pictureInPictureParams?.also {
-                videoControls?.visibility = View.GONE
+                videoControls?.gone()
                 enterPictureInPictureMode(it.build())
             }
         }
@@ -742,7 +746,7 @@ class MyPlayerActivity : AppCompatActivity() {
                     .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setItems(titles, icons) { dialog, which ->
+                    .setItems(titles, icons) { _, which ->
                         when (valuesList[which]) {
                             settingQuality -> showQualityDialog()
                             settingPlaySpeed -> showPlaySpeedDialog()
@@ -784,7 +788,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Скорость воспроизведения")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         updatePlaySpeed(values[which])
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
@@ -811,7 +815,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Качество")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         updateQuality(values[which])
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
@@ -839,7 +843,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Соотношение сторон")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val newScaleType = values[which]
                         updateScale(newScaleType)
                     }
@@ -867,7 +871,7 @@ class MyPlayerActivity : AppCompatActivity() {
 
             BottomSheet.Builder(this@MyPlayerActivity)
                     .setTitle("Режим окна (картинка в картинке)")
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val newPipControl = values[which]
                         updatePIPControl(newPipControl)
                     }

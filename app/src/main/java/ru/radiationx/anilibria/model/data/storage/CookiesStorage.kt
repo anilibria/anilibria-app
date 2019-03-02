@@ -7,11 +7,14 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.CookieHolder.Companion.cookieNames
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class CookiesStorage(private val sharedPreferences: SharedPreferences) : CookieHolder {
+class CookiesStorage @Inject constructor(
+        private val sharedPreferences: SharedPreferences
+) : CookieHolder {
 
     private val clientCookies = mutableMapOf<String, Cookie>()
 
@@ -29,7 +32,10 @@ class CookiesStorage(private val sharedPreferences: SharedPreferences) : CookieH
 
     private fun parseCookie(cookieFields: String): Cookie? {
         val fields = cookieFields.split("\\|:\\|".toRegex())
-        return Cookie.parse(HttpUrl.parse(fields[0]), fields[1])
+        val httpUrl = HttpUrl.parse(fields[0])
+                ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
+        val cookieString = fields[1]
+        return Cookie.parse(httpUrl, cookieString)
     }
 
     private fun convertCookie(url: String, cookie: Cookie): String {

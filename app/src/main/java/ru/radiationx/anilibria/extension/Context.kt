@@ -3,13 +3,10 @@ package ru.radiationx.anilibria.extension
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.support.annotation.AttrRes
-import android.support.annotation.ColorInt
-import android.support.annotation.DrawableRes
-import android.support.annotation.StyleRes
+import android.support.annotation.*
 import android.support.v4.content.ContextCompat
-import android.support.v7.content.res.AppCompatResources
 import android.util.TypedValue
+import android.view.View
 import biz.source_code.miniTemplator.MiniTemplator
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
@@ -34,6 +31,12 @@ fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
     else
         Color.RED
 }
+
+
+fun Context.getCompatDrawable(@DrawableRes icRes: Int): Drawable? = ContextCompat.getDrawable(this, icRes)
+fun View.getCompatDrawable(@DrawableRes icRes: Int): Drawable? = context.getCompatDrawable(icRes)
+fun Context.getCompatColor(@ColorRes icRes: Int): Int = ContextCompat.getColor(this, icRes)
+fun View.getCompatColor(@ColorRes icRes: Int): Int = context.getCompatColor(icRes)
 
 @StyleRes
 fun AppThemeHolder.AppTheme.getMainStyleRes() = when (this) {

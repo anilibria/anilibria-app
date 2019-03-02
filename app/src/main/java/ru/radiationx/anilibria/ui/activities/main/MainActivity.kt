@@ -1,88 +1,110 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
-import android.view.View
-import android.widget.Toast
-import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
+import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
-import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
-import ru.radiationx.anilibria.ui.activities.updatechecker.SimpleUpdateChecker
+import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
-import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.terrakok.cicerone.Navigator
+import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.*
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
+import ru.terrakok.cicerone.commands.Back
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Replace
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.max
 
 
-class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTabsAdapter.Listener {
+class MainActivity : BaseActivity(), MainView, CheckerView {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
+
+        fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    override fun getRouter(): Router = App.navigation.root.router
-    override fun getNavigator(): Navigator = navigatorNew
-    private val navigationHolder = App.navigation.root.holder
+    @Inject
+    lateinit var screenMessenger: SystemMessenger
 
-    private val tabsAdapter = BottomTabsAdapter(this)
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigationHolder: NavigatorHolder
+
+    @Inject
+    lateinit var dimensionsProvider: DimensionsProvider
+
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
+
+    private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
-            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MAIN_RELEASES),
-            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.FAVORITES),
-            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.RELEASES_SEARCH),
-            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MAIN_YOUTUBE),
-            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MAIN_OTHER)
+            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MainReleases()),
+            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
+            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
+            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
+            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
     )
     private val tabs = mutableListOf<Tab>()
 
     private val tabsStack = mutableListOf<String>()
 
-    private val dimensionsProvider = App.injections.dimensionsProvider
-
-    private val appThemeHolder = App.injections.appThemeHolder
-    private var currentAppTheme = appThemeHolder.getTheme()
+    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
     @ProvidePresenter
-    fun provideMainPresenter(): MainPresenter {
-        return MainPresenter(
-                getRouter(),
-                App.injections.errorHandler,
-                App.injections.authRepository,
-                App.injections.checkerRepository,
-                App.injections.antiDdosInteractor,
-                App.injections.appThemeHolder
-        )
-    }
+    fun provideMainPresenter(): MainPresenter = getDependency(MainPresenter::class.java)
+
+
+    @InjectPresenter
+    lateinit var checkerPresenter: CheckerPresenter
+
+    @ProvidePresenter
+    fun provideCheckerPresenter(): CheckerPresenter = getDependency(CheckerPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)
@@ -103,10 +125,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             }
         })
 
-        antiddos_skip?.setOnClickListener {
-            presenter.skipAntiDdos()
-        }
-
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
@@ -123,14 +141,55 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 }
             }
         }
+        checkerPresenter.forceLoad = true
         Log.e("S_DEF_LOG", "main oncreate")
     }
 
-    override fun setAntiDdosVisibility(isVisible: Boolean) {
-        Log.e("MainPresenter", "setAntiDdosVisibility: $isVisible")
-        antiDdosMain.visibility = if (isVisible) View.VISIBLE else View.GONE
-        if (!isVisible) {
-            SimpleUpdateChecker(App.injections.checkerRepository).checkUpdate()
+
+    override fun setRefreshing(refreshing: Boolean) {}
+
+    override fun showUpdateData(update: UpdateData) {
+        val currentVersionCode = BuildConfig.VERSION_CODE
+
+        if (update.code > currentVersionCode) {
+            val context: Context = App.instance
+            val channelId = "anilibria_channel_updates"
+            val channelName = "Обновления"
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+                val manager = context.getSystemService(NotificationManager::class.java)
+                manager?.createNotificationChannel(channel)
+            }
+
+            val mBuilder = NotificationCompat.Builder(context, channelId)
+
+            val mNotificationManager = NotificationManagerCompat.from(context)
+
+            mBuilder.setSmallIcon(R.drawable.ic_notify)
+            mBuilder.color = context.getCompatColor(R.color.alib_red)
+
+            mBuilder.setContentTitle("Обновление AniLibria")
+            mBuilder.setContentText("Новая версия: ${update.name}")
+            mBuilder.setChannelId(channelId)
+
+
+            val notifyIntent = Intent(context, UpdateCheckerActivity::class.java)
+            notifyIntent.action = Intent.ACTION_VIEW
+            val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
+            mBuilder.setContentIntent(notifyPendingIntent)
+
+            mBuilder.setAutoCancel(true)
+
+            mBuilder.priority = NotificationCompat.PRIORITY_DEFAULT
+            mBuilder.setCategory(NotificationCompat.CATEGORY_EVENT)
+
+            var defaults = 0
+            defaults = defaults or NotificationCompat.DEFAULT_SOUND
+            defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
+            mBuilder.setDefaults(defaults)
+
+            mNotificationManager.notify(update.code, mBuilder.build())
         }
     }
 
@@ -177,18 +236,14 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         super.onDestroy()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
-        System.gc()
     }
 
     override fun onBackPressed() {
-        val fragment = if (tabsStack.isEmpty()) {
-            null
-        } else {
-            supportFragmentManager.findFragmentByTag(tabsStack.last())
-        }
-        if (fragment != null
+        val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
+        val check = fragment != null
                 && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed()) {
+                && (fragment as BackButtonListener).onBackPressed()
+        if (check) {
             return
         } else {
             presenter.onBackPressed()
@@ -197,11 +252,12 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
 
     private fun handleIntent(intent: Intent?) {
         Log.e("lalala", "MainActivity, handleIntent $intent")
-        if (intent != null && intent.data != null) {
-            val url = intent.data.toString()
+
+        intent?.data?.also { intentData ->
+            val url = intentData.toString()
             var handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
-                handled = findTabIntentHandler(url, tabs.map { it.screenKey })
+                handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
             Log.e("lalala", "MainActivity, handled $handled")
         }
@@ -225,11 +281,11 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         val fm = supportFragmentManager
         val ta = fm.beginTransaction()
         allTabs.forEach { tab ->
-            var fragment: Fragment? = fm.findFragmentByTag(tab.screenKey)
+            var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
             if (fragment == null) {
-                fragment = TabFragment.newInstance(tab.screenKey)
-                ta.add(R.id.root_container, fragment, tab.screenKey)
-                if (tabsStack.contains(tab.screenKey)) {
+                fragment = Screens.TabScreen(tab.screen).fragment
+                ta.add(R.id.root_container, fragment, tab.screen.screenKey)
+                if (tabsStack.contains(tab.screen.screenKey)) {
                     ta.attach(fragment)
                 } else {
                     ta.detach(fragment)
@@ -250,19 +306,15 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         if (presenter.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
         } else {
-            tabs.addAll(allTabs.filter { it.screenKey != Screens.FAVORITES })
+            tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
         }
         updateBottomTabs()
-    }
-
-    override fun onTabClick(tab: Tab) {
-        presenter.selectTab(tab.screenKey)
     }
 
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
-        getRouter().replaceScreen(screenKey)
+        router.replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
     }
 
     fun addInStack(screenKey: String) {
@@ -274,32 +326,19 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
         tabsStack.remove(screenKey)
     }
 
+    private val tabsListener = object : BottomTabsAdapter.Listener {
+        override fun onTabClick(tab: Tab) {
+            presenter.selectTab(tab.screen.screenKey)
+        }
+    }
+
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
-        override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-            Log.e("S_DEF_LOG", "Create intent " + screenKey)
-            return when (screenKey) {
-                Screens.AUTH -> {
-                    Log.e("S_DEF_LOG", "REAL CREATE INTENT " + screenKey)
-                    Intent(this@MainActivity, AuthActivity::class.java).apply {
-                        val screenExtra = (data as? Bundle?)
-                        putExtra(AuthActivity.ARG_INIT_SCREEN, screenExtra?.getString(AuthActivity.ARG_INIT_SCREEN))
-                        putExtra(AuthActivity.ARG_SCREEN_EXTRA, screenExtra?.getBundle(AuthActivity.ARG_SCREEN_EXTRA))
-                    }
-                }
-                else -> null
-            }
-        }
 
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            Log.e("S_DEF_LOG", "Create fragment " + screenKey)
-            return null
-        }
-
-        override fun applyCommand(command: Command) {
-            Log.e("S_DEF_LOG", "ApplyCommand " + command)
+        override fun applyCommand(command: Command?) {
+            Log.e("S_DEF_LOG", "ApplyCommand $command")
             if (command is Back) {
                 if (tabsStack.size <= 1) {
-                    exit()
+                    activityBack()
                     return
                 }
                 val fm = supportFragmentManager
@@ -311,27 +350,24 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
                 if (tabsStack.isNotEmpty()) {
                     presenter.selectTab(tabsStack.last())
                 } else {
-                    exit()
+                    activityBack()
                 }
                 return
-            } else if (command is SystemMessage) {
-                Toast.makeText(this@MainActivity, command.message, Toast.LENGTH_SHORT).show()
-                return
             } else if (command is Replace) {
-                val inTabs = allTabs.firstOrNull { it.screenKey == command.screenKey } != null
+                val inTabs = allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
                 if (inTabs) {
-                    Log.e("S_DEF_LOG", "Replace " + command.screenKey)
+                    Log.e("S_DEF_LOG", "Replace " + command.screen.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
                     allTabs.forEach {
-                        val fragment = fm.findFragmentByTag(it.screenKey)
+                        val fragment = fm.findFragmentByTag(it.screen.screenKey)
                         if (fragment != null) {
-                            if (it.screenKey == command.screenKey) {
+                            if (it.screen.screenKey == command.screen.screenKey) {
                                 if (fragment.isDetached) {
                                     ta.attach(fragment)
                                 }
                                 ta.show(fragment)
-                                addInStack(it.screenKey)
+                                addInStack(it.screen.screenKey)
                                 Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                             } else {
                                 ta.hide(fragment)
@@ -347,25 +383,14 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
             super.applyCommand(command)
         }
 
-        override fun unknownScreen(command: Command?) {
-            val screenKey = when {
-                command is BackTo -> command.screenKey
-                command is Forward -> command.screenKey
-                command is Replace -> command.screenKey
-                else -> "NO_KEY"
-            }
-            throw RuntimeException("Can't create a screen for passed screenKey $command, $screenKey")
-        }
-
-
         private var exitToastShowed: Boolean = false
-        override fun exit() {
+        override fun activityBack() {
             if (!exitToastShowed) {
-                showSystemMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
+                screenMessenger.showMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true
                 Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
             } else {
-                super.exit()
+                super.activityBack()
             }
         }
     }
@@ -373,6 +398,6 @@ class MainActivity : MvpAppCompatActivity(), MainView, RouterProvider, BottomTab
     class Tab(
             val title: Int,
             val icon: Int,
-            val screenKey: String
+            val screen: BaseAppScreen
     )
 }

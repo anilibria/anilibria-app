@@ -6,14 +6,14 @@ import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.PagesParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class PageApi(
+class PageApi @Inject constructor(
         private val client: IClient,
         private val pagesParser: PagesParser
 ) {

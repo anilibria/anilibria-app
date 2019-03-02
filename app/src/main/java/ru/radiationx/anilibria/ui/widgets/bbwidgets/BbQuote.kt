@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets.bbwidgets
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.widget.TextView
 import ru.radiationx.anilibria.R

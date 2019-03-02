@@ -5,8 +5,9 @@ import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.api.FavoriteApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
-class FavoriteRepository(
+class FavoriteRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val favoriteApi: FavoriteApi
 ) {

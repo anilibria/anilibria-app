@@ -5,16 +5,18 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.02.18.
  */
-class ReleaseUpdateStorage(
-        private val sharedPreferences: SharedPreferences,
+class ReleaseUpdateStorage @Inject constructor(
+        @DataPreferences private val sharedPreferences: SharedPreferences,
         private val schedulers: SchedulersProvider
 ) : ReleaseUpdateHolder {
 
@@ -94,8 +96,8 @@ class ReleaseUpdateStorage(
         val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
-            (0 until jsonEpisodes.length()).forEach {
-                jsonEpisodes.getJSONObject(it).let {
+            (0 until jsonEpisodes.length()).forEach { index ->
+                jsonEpisodes.getJSONObject(index).let {
                     localReleases.add(ReleaseUpdate().apply {
                         id = it.getInt("id")
                         timestamp = it.getInt("timestamp")

@@ -7,19 +7,27 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.ui.common.RouterProvider
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 
 class AuthVkFragment : BaseFragment() {
     companion object {
-        const val ARG_URL = "ARG_SOCIAL_URL"
-        const val RETURN_URL = 1337
+        private const val ARG_URL = "ARG_SOCIAL_URL"
+
+        fun newInstance(url: String) = AuthVkFragment().putExtra {
+            putString(AuthVkFragment.ARG_URL, url)
+        }
     }
 
 
@@ -27,18 +35,19 @@ class AuthVkFragment : BaseFragment() {
     private val resultUrlPattern = Pattern.compile("widget\\.html", Pattern.CASE_INSENSITIVE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            startUrl = it.getString(ARG_URL)
+            startUrl = it.getString(ARG_URL, startUrl)
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+    override fun getLayoutResource(): Int = R.layout.fragment_webview
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appbarLayout.visibility = View.GONE
+        appbarLayout.gone()
 
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
@@ -55,8 +64,9 @@ class AuthVkFragment : BaseFragment() {
             var loadingFinished = true
             var redirect = false
 
+            @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Log.e("S_DEF_LOG", "OverrideUrlLoading: " + url)
+                Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
                 if (!loadingFinished) {
                     redirect = true
                 }
@@ -65,8 +75,10 @@ class AuthVkFragment : BaseFragment() {
 
                 val matcher = resultUrlPattern.matcher(url)
                 if (matcher.find()) {
-                    App.injections.authHolder.changeVkAuth(true)
-                    (activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
+                    getDependency(screenScope, AuthHolder::class.java).changeVkAuth(true)
+                    //todo
+                    //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
+                    getDependency(screenScope, Router::class.java).exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())
@@ -76,7 +88,7 @@ class AuthVkFragment : BaseFragment() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 loadingFinished = false
-                progressBar.visibility = View.VISIBLE
+                progressBarWv.visible()
 
                 Log.e("S_DEF_LOG", "ON onPageStarted")
                 //SHOW LOADING IF IT ISNT ALREADY VISIBLE
@@ -90,7 +102,7 @@ class AuthVkFragment : BaseFragment() {
                 }
 
                 if (loadingFinished && !redirect) {
-                    progressBar.visibility = View.GONE
+                    progressBarWv.gone()
                 } else {
                     redirect = false
                 }
@@ -98,7 +110,7 @@ class AuthVkFragment : BaseFragment() {
 
             override fun onPageCommitVisible(view: WebView?, url: String?) {
                 super.onPageCommitVisible(view, url)
-                progressBar.visibility = View.GONE
+                progressBarWv.gone()
             }
         }
     }

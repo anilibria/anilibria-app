@@ -1,24 +1,21 @@
 package ru.radiationx.anilibria.presentation.release.list
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
 @InjectViewState
-class ReleasesPresenter(
+class ReleasesPresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val vitalRepository: VitalRepository,
         private val router: Router,
@@ -35,7 +32,6 @@ class ReleasesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach")
         refreshReleases()
         loadVital()
 
@@ -46,14 +42,12 @@ class ReleasesPresenter(
                     currentItems.forEach { item ->
                         data.firstOrNull { it.id == item.id }?.also { updItem ->
                             val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                            Log.e("lalalupdata", "check pres ${item.id}, ${item.torrentUpdate} : ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp} : ${item.isNew}, $isNew")
                             if (item.isNew != isNew) {
                                 item.isNew = isNew
                                 itemsNeedUpdate.add(item)
                             }
                         }
                     }
-                    Log.e("lalalupdata", "pres updateReleases: ${itemsNeedUpdate.joinToString { it.id.toString() }}")
 
                     viewState.updateReleases(itemsNeedUpdate)
                 }
@@ -81,7 +75,6 @@ class ReleasesPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("S_DEF_LOG", "loadReleases")
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -118,18 +111,10 @@ class ReleasesPresenter(
     }
 
     fun onItemClick(item: ReleaseItem) {
-        val args = Bundle()
-        args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
-        args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
-    }
-
-    fun openSearch() {
-        router.navigateTo(Screens.RELEASES_SEARCH)
     }
 }

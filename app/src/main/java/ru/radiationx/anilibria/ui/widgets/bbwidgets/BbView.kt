@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.text.Html
 import android.util.AttributeSet
-import android.util.Log
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import ru.radiationx.anilibria.R
@@ -14,7 +14,6 @@ import ru.radiationx.anilibria.utils.bbparser.models.BbOp
 import ru.radiationx.anilibria.utils.bbparser.models.BbTypedOp
 import kotlin.math.max
 import kotlin.math.min
-import android.view.View
 
 
 /**

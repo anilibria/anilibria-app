@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -13,26 +12,30 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import kotlinx.android.synthetic.main.activity_vital.*
 import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 27.01.18.
  */
-class FullScreenActivity : AppCompatActivity() {
+class FullScreenActivity : BaseActivity() {
     companion object {
         const val VITAL_ITEM = "vitalik"
     }
 
     private lateinit var currentVital: VitalItem
 
-    private val appThemeHolder = App.injections.appThemeHolder
+    @Inject
+    lateinit var appThemeHolder: AppThemeHolder
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
         intent?.let {
@@ -76,6 +79,7 @@ class FullScreenActivity : AppCompatActivity() {
                 webSwitcher.displayedChild = 1
             }
 
+            @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 Utils.externalLink(url.toString())
                 return true
@@ -84,7 +88,7 @@ class FullScreenActivity : AppCompatActivity() {
         vitalWebView.settings.apply {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
-        vitalWebView.setOnTouchListener({ _, event -> event.action == MotionEvent.ACTION_MOVE })
+        vitalWebView.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
         vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, currentVital.contentText)
     }
 

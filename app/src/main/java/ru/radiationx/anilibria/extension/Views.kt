@@ -1,11 +1,20 @@
 package ru.radiationx.anilibria.extension
 
+import android.content.res.ColorStateList
+import android.support.annotation.AttrRes
+import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
 import android.support.annotation.LayoutRes
+import android.support.v4.content.ContextCompat
+import android.support.v4.widget.ImageViewCompat
+import android.support.v7.widget.AppCompatImageButton
+import android.support.v7.widget.AppCompatImageView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -39,3 +48,13 @@ fun TextView.addTextChangeListener(action: (String) -> Unit) {
         }
     })
 }
+
+fun ImageView.setCompatDrawable(@DrawableRes icRes: Int) = this.setImageDrawable(context.getCompatDrawable(icRes))
+
+fun AppCompatImageView.setTint(color: Int) = ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+fun AppCompatImageView.setTintColor(@ColorRes colorRes: Int) = setTint(ContextCompat.getColor(context, colorRes))
+fun AppCompatImageView.setTintColorAttr(@AttrRes colorAttr: Int) = setTint(context.getColorFromAttr(colorAttr))
+
+fun AppCompatImageButton.setTint(color: Int) = ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+fun AppCompatImageButton.setTintColor(@ColorRes colorRes: Int) = setTint(ContextCompat.getColor(context, colorRes))
+fun AppCompatImageButton.setTintColorAttr(@AttrRes colorAttr: Int) = setTint(context.getColorFromAttr(colorAttr))

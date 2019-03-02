@@ -1,21 +1,19 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.*
-import ru.radiationx.anilibria.ui.adapters.articles.ArticleItemDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import java.util.*
 
 /* Created by radiationx on 31.10.17. */
 
-open class YoutubeAdapter(
+class YoutubeAdapter(
         var listener: ItemListener,
         private val placeHolder: PlaceholderListItem
-) : ListDelegationAdapter<MutableList<ListItem>>() {
+) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val vitalItems = mutableListOf<VitalItem>()
     private val random = Random()
@@ -30,20 +28,18 @@ open class YoutubeAdapter(
 
     init {
         items = mutableListOf()
-        delegatesManager.run {
-            addDelegate(YoutubeDelegate(listener))
-            addDelegate(LoadMoreDelegate(listener))
-            addDelegate(PlaceholderDelegate())
-            addDelegate(VitalWebItemDelegate())
-            addDelegate(VitalNativeItemDelegate())
-        }
+        addDelegate(YoutubeDelegate(listener))
+        addDelegate(LoadMoreDelegate(listener))
+        addDelegate(PlaceholderDelegate())
+        addDelegate(VitalWebItemDelegate())
+        addDelegate(VitalNativeItemDelegate())
     }
 
     private fun rand(from: Int, to: Int): Int {
         return random.nextInt(to - from) + from
     }
 
-    protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
+    private fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
         if (condition) {
             items.add(placeHolder)
         } else {
@@ -63,7 +59,7 @@ open class YoutubeAdapter(
 
     private fun addLoadMore() {
         if (endless) {
-            this.items.add(LoadMoreListItem())
+            this.items.add(LoadMoreListItem)
         }
     }
 

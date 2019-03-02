@@ -14,8 +14,9 @@ import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.data.holders.YearsHolder
 import ru.radiationx.anilibria.model.data.remote.api.SearchApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
-class SearchRepository(
+class SearchRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val searchApi: SearchApi,
         private val genresHolder: GenresHolder,

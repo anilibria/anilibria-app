@@ -3,66 +3,66 @@ package ru.radiationx.anilibria.ui.adapters.release.list
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.synthetic.main.item_release.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_release.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseItemDelegate(private val itemListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is ReleaseListItem
+class ReleaseItemDelegate(
+        private val itemListener: Listener
+) : AppAdapterDelegate<ReleaseListItem, ListItem, ReleaseItemDelegate.ViewHolder>(
+        R.layout.item_release,
+        { it is ReleaseListItem },
+        { ViewHolder(it, itemListener) }
+), OptimizeDelegate {
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as ReleaseListItem
-        (holder as ViewHolder).bind(item.item, position)
-    }
+    override fun getPoolSize(): Int = 10
 
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_release, parent, false)
-    )
+    override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item.item)
 
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            override val containerView: View,
+            private val itemListener: Listener
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseItem
 
         init {
-            itemView.run {
-                setOnClickListener {
-                    itemListener.onItemClick(layoutPosition, item_image)
-                    itemListener.onItemClick(currentItem, layoutPosition)
-                }
-                setOnLongClickListener {
-                    itemListener.onItemLongClick(currentItem)
-                }
+            containerView.setOnClickListener {
+                itemListener.onItemClick(layoutPosition, item_image)
+                itemListener.onItemClick(currentItem, layoutPosition)
+            }
+            containerView.setOnLongClickListener {
+                itemListener.onItemLongClick(currentItem)
             }
         }
 
-        fun bind(item: ReleaseItem, position: Int) {
+        fun bind(item: ReleaseItem) {
             currentItem = item
-            view.run {
-                if (item.series == null) {
-                    item_title.text = item.title
-                } else {
-                    item_title.text = String.format("%s (%s)", item.title, item.series)
-                }
-                item_desc.text = Html.fromHtml(item.description)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
-                }
-                item_new_indicator.visibility = if(item.isNew) View.VISIBLE else View.GONE
-                ImageLoader.getInstance().displayImage(item.poster, item_image)
+            if (item.series == null) {
+                item_title.text = item.title
+            } else {
+                item_title.text = String.format("%s (%s)", item.title, item.series)
             }
+            item_desc.text = Html.fromHtml(item.description)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
+                item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
+            }
+            item_new_indicator.visible(item.isNew)
+            ImageLoader.getInstance().displayImage(item.poster, item_image)
         }
     }
 

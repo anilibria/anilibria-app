@@ -17,13 +17,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.dialog_file_download.view.*
-import kotlinx.android.synthetic.main.fragment_release.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
@@ -31,7 +31,6 @@ import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import java.net.URLConnection
@@ -44,7 +43,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     companion object {
         const val ARG_ID: String = "release_id"
         const val ARG_ID_CODE: String = "release_id_code"
-        const val ARG_ITEM: String = "release_item"
     }
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy { ReleaseInfoAdapter(adapterListener) }
@@ -53,20 +51,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     lateinit var presenter: ReleaseInfoPresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter = ReleaseInfoPresenter(
-            App.injections.releaseRepository,
-            App.injections.releaseInteractor,
-            App.injections.historyRepository,
-            App.injections.pageRepository,
-            App.injections.vitalRepository,
-            App.injections.authRepository,
-            App.injections.favoriteRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.linkHandler,
-            App.injections.errorHandler
-    )
+    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(screenScope, ReleaseInfoPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
@@ -76,7 +64,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    override fun getBaseLayout(): Int = R.layout.fragment_release
+    override fun getBaseLayout(): Int = R.layout.fragment_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -146,7 +134,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         when (which) {
                             0 -> Utils.externalLink(url)
                             1 -> systemDownloadWithPermissionCheck(url)
@@ -349,7 +337,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         context?.let {
             AlertDialog.Builder(it)
                     .setTitle("Качество")
-                    .setItems(arrayOf("SD", "HD")) { p0, p1 ->
+                    .setItems(arrayOf("SD", "HD")) { _, p1 ->
                         val quality: Int = when (p1) {
                             0 -> MyPlayerActivity.VAL_QUALITY_SD
                             1 -> MyPlayerActivity.VAL_QUALITY_HD
@@ -382,7 +370,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         context?.let {
             AlertDialog.Builder(it)
                     .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-                    .setPositiveButton("Да") { dialog, which -> presenter.openAuth() }
+                    .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
                     .setNegativeButton("Нет", null)
                     .show()
         }

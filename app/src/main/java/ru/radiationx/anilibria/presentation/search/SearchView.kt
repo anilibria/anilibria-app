@@ -5,7 +5,6 @@ import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 
 @StateStrategyType(AddToEndSingleStrategy::class)

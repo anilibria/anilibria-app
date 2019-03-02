@@ -1,23 +1,25 @@
 package ru.radiationx.anilibria.presentation.other
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
+import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class OtherPresenter(
+class OtherPresenter @Inject constructor(
         private val router: Router,
+        private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<OtherView>(router) {
@@ -141,7 +143,6 @@ class OtherPresenter(
         authRepository.observeUser()
                 .subscribe {
                     profileItem = it
-                    Log.e("S_DEF_LOG", "updateUser ${it.nick} : ${profileItem.nick}")
                     updateMenuItems()
                 }
                 .addToDisposable()
@@ -151,7 +152,7 @@ class OtherPresenter(
         authRepository
                 .signOut()
                 .subscribe({
-                    router.showSystemMessage("Данные авторизации удалены")
+                    systemMessenger.showMessage("Данные авторизации удалены")
                 }, {
                     errorHandler.handle(it)
                 })
@@ -160,25 +161,25 @@ class OtherPresenter(
     fun onMenuClick(item: OtherMenuItem) {
         when (item.id) {
             MENU_FAVORITES -> {
-                router.navigateTo(Screens.FAVORITES)
+                router.navigateTo(Screens.Favorites())
             }
             MENU_HISTORY -> {
-                router.navigateTo(Screens.HISTORY)
+                router.navigateTo(Screens.History())
             }
             MENU_TEAM -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_TEAM)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_TEAM))
             }
             MENU_DONATE -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
             }
             MENU_ABOUT_ANILIB -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_ABOUT_ANILIB)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_ABOUT_ANILIB))
             }
             MENU_RULES -> {
-                router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_RULES)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_RULES))
             }
             MENU_SETTINGS -> {
-                router.navigateTo(Screens.SETTINGS)
+                router.navigateTo(Screens.Settings())
             }
             MENU_GROUP_VK -> {
                 Utils.externalLink("https://vk.com/anilibria")
@@ -202,6 +203,10 @@ class OtherPresenter(
     }
 
     fun openAuth() {
-        router.navigateTo(Screens.AUTH)
+        if (profileItem.authState == AuthState.AUTH) {
+            systemMessenger.showMessage("Просмотр профиля недоступен")
+            return
+        }
+        router.navigateTo(Screens.Auth())
     }
 }

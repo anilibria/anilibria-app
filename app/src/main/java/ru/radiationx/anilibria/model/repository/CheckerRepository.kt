@@ -6,11 +6,12 @@ import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.api.CheckerApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
-class CheckerRepository(
+class CheckerRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val checkerApi: CheckerApi
 ) {
@@ -29,14 +30,10 @@ class CheckerRepository(
                 checkerApi.checkUpdateFromRepository()
             }
             .doOnSuccess {
-                Log.e("CHECKER", "doOnSuccess " + it)
+                Log.e("CHECKER", "doOnSuccess $it")
                 currentDataRelay.accept(it)
             }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun checkUnderAntiDdos(): Single<String> = checkerApi
-            .checkUnderAntiDdos()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
 }

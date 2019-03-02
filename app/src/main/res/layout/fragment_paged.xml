@@ -5,12 +5,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/viewPager"
+        android:id="@+id/viewPagerPaged"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progressBarPaged"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:indeterminate="true"

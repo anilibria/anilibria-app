@@ -2,30 +2,31 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.support.design.chip.Chip
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.CoordinatorLayout
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import kotlinx.android.synthetic.main.dialog_genres.view.*
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.util.DisplayMetrics
-import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.design.widget.CoordinatorLayout
-import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
+import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.visible
 
 
 class GenresDialog(
@@ -76,7 +77,7 @@ class GenresDialog(
         listener.onCheckedYears(checkedYears.toList())
     }
 
-    private val sortingListener = RadioGroup.OnCheckedChangeListener { group, checkedId ->
+    private val sortingListener = RadioGroup.OnCheckedChangeListener { _, _ ->
         currentSorting = when {
             sortingPopular.isChecked -> "2"
             sortingNew.isChecked -> "1"
@@ -187,7 +188,7 @@ class GenresDialog(
         }
         val allCount = checkedGenres.size + checkedYears.size
         actionButtonCount.text = "$allCount"
-        actionButtonCount.visibility = if (allCount > 0) View.VISIBLE else View.GONE
+        actionButtonCount.visible(allCount > 0)
     }
 
     fun setCheckedGenres(items: List<String>) {

@@ -13,8 +13,9 @@ import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import ru.radiationx.anilibria.model.data.remote.parsers.SearchParser
+import javax.inject.Inject
 
-class SearchApi(
+class SearchApi @Inject constructor(
         private val client: IClient,
         private val releaseParser: ReleaseParser,
         private val searchParser: SearchParser

@@ -9,12 +9,14 @@ import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
-import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthParser(private val apiUtils: IApiUtils) {
+class AuthParser @Inject constructor(
+        private val apiUtils: IApiUtils
+) {
 
     fun authResult(responseText: String): String {
         val responseJson = JSONObject(responseText)

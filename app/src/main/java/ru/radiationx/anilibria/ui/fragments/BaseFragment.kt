@@ -12,19 +12,29 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.arellomobile.mvp.MvpAppCompatFragment
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.Scopes
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.DimensionsProvider
 
 /* Created by radiationx on 18.11.17. */
 
-abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
+abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonListener {
 
-    private val dimensionsProvider = App.injections.dimensionsProvider
-    private var dimensionsDisposable: Disposable? = null
+    companion object {
+        const val ARG_SCREEN_SCOPE = "arg_screen_scope"
+    }
+
+    private val dimensionsProvider = getDependency(DimensionsProvider::class.java)
+    private val disposables = CompositeDisposable()
 
     protected open val needToolbarShadow = true
 
@@ -33,6 +43,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     @LayoutRes
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
+
+    override val screenScope: String by lazy {
+        arguments?.getString(ARG_SCREEN_SCOPE, null) ?: Scopes.APP
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
@@ -46,20 +60,23 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && needToolbarShadow) {
-            toolbar_shadow_prelp?.visibility = View.VISIBLE
+            toolbar_shadow_prelp?.visible()
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dimensionsDisposable = dimensionsProvider.dimensions().subscribe {
-            toolbar?.post {
-                toolbar?.let { _ ->
-                    updateDimens(it)
+        dimensionsProvider
+                .dimensions()
+                .subscribe { dimension ->
+                    toolbar?.post {
+                        toolbar?.let {
+                            updateDimens(dimension)
+                        }
+                    }
+                    updateDimens(dimension)
                 }
-            }
-            updateDimens(it)
-        }
+                .addTo(disposables)
     }
 
     open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -77,10 +94,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     fun setStatusBarVisibility(isVisible: Boolean) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            baseStatusBar?.visibility = View.GONE
+            baseStatusBar?.gone()
             return
         }
-        baseStatusBar?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        baseStatusBar?.visible(isVisible)
     }
 
     protected fun hideSoftwareKeyboard() {
@@ -101,6 +118,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), BackButtonListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        dimensionsDisposable?.dispose()
+        disposables.dispose()
     }
 }

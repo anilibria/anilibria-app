@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="24dp">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/item_placeholder_icon"
         android:layout_width="96dp"
         android:layout_height="96dp"

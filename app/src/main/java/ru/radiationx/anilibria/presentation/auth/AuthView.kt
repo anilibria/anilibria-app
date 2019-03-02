@@ -4,7 +4,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.utils.mvp.IBaseView
+import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**
  * Created by radiationx on 30.12.17.

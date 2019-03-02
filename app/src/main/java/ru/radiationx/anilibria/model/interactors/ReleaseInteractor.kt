@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model.interactors
 
-import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -13,13 +12,13 @@ import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import java.lang.Exception
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.02.18.
  */
-class ReleaseInteractor(
+class ReleaseInteractor @Inject constructor(
         private val releaseRepository: ReleaseRepository,
         private val episodesCheckerStorage: EpisodesCheckerHolder,
         private val preferencesHolder: PreferencesHolder,

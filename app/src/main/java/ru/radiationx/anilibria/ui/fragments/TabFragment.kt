@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments
 
 
-import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.transition.*
@@ -13,79 +11,72 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.ui.activities.SettingsActivity
+import ru.radiationx.anilibria.di.MessengerModule
+import ru.radiationx.anilibria.di.RouterModule
+import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
-import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.ArticlesContainerFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.BlogsFragment
-import ru.radiationx.anilibria.ui.fragments.article.list.VideosFragment
-import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
-import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
-import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
-import ru.radiationx.anilibria.ui.fragments.page.PageFragment
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
-import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
-import ru.terrakok.cicerone.Cicerone
+import ru.radiationx.anilibria.ui.common.ScopeProvider
+import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.terrakok.cicerone.Navigator
+import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
+import javax.inject.Inject
 
-class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandler {
+class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
 
     companion object {
-        const val TRANSITION_MOVE_TIME: Long = 375
-        const val TRANSITION_OTHER_TIME: Long = 225
+        private const val TRANSITION_MOVE_TIME: Long = 375
+        private const val TRANSITION_OTHER_TIME: Long = 225
+        private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
-        private const val LOCAL_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
-
-        fun newInstance(name: String): TabFragment {
-            val fragment = TabFragment()
-            fragment.arguments = Bundle()
-            fragment.arguments?.apply {
-                putString(LOCAL_ROOT_SCREEN, name)
-            }
-            return fragment
+        fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
+            putSerializable(TabFragment.ARG_ROOT_SCREEN, rootScreen)
         }
     }
 
-    lateinit var localRouter: Router
+    @Inject
+    lateinit var screenMessagesObserver: ScreenMessagesObserver
 
-    override fun getRouter(): Router = localRouter
-    override fun getNavigator(): Navigator = navigatorLocal
-    private lateinit var localScreen: String
+    @Inject
+    lateinit var linkHandler: ILinkHandler
 
-    private var ciceroneHolder = App.navigation.local
-    private lateinit var cicerone: Cicerone<Router>
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    private val localScreen: BaseAppScreen by lazy {
+        arguments?.let {
+            (it.getSerializable(ARG_ROOT_SCREEN) as? BaseAppScreen?)
+        } ?: throw NullPointerException("localScreen is null")
+    }
+
+    override val screenScope: String by lazy { localScreen.screenKey }
+
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope, RouterModule(screenScope), MessengerModule())
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(screenMessagesObserver)
         navigationQueue.add(Runnable {
-            cicerone.router.newRootScreen(localScreen)
+            router.newRootScreen(localScreen)
         })
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        arguments?.let {
-            localScreen = it.getString(LOCAL_ROOT_SCREEN, null) ?: throw NullPointerException("localScreen is null")
-        }
-        cicerone = ciceroneHolder.getCicerone(localScreen)
-        localRouter = cicerone.router
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_tab, container, false)
+        return inflater.inflate(R.layout.fragment_tab_root, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,34 +89,34 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     override fun onResume() {
         super.onResume()
-        cicerone.navigatorHolder.setNavigator(navigatorLocal)
+        navigatorHolder.setNavigator(navigatorLocal)
     }
 
     override fun onPause() {
-        cicerone.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        closeDependenciesScope(screenScope)
     }
 
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
-        return if (fragment != null
+        return (fragment != null
                 && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed()) {
-            true
-        } else {
-            //(activity as RouterProvider).localRouter.exit()
-            false
-        }
+                && (fragment as BackButtonListener).onBackPressed())
     }
 
     override fun handle(url: String): Boolean {
-        val linkHandler = App.injections.linkHandler
+        val linkHandler = linkHandler
         Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
             Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
             Log.e("lalala", "handle state $isAdded, $isDetached, $isHidden, $isInLayout, $isMenuVisible, $isRemoving, $isResumed, $isStateSaved, $isVisible")
             navigationQueue.add(Runnable {
-                linkHandler.handle(url, localRouter)
+                linkHandler.handle(url, router)
             })
             updateNavQueue()
             return true
@@ -143,74 +134,27 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
 
     private val navigatorLocal: Navigator by lazy {
         object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
-            override fun createActivityIntent(screenKey: String?, data: Any?): Intent? {
-                return when (screenKey) {
-                    Screens.SETTINGS -> {
-                        Intent(context, SettingsActivity::class.java)
-                    }
-                    else -> null
-                }
-            }
 
-            override fun setupFragmentTransactionAnimation(
+            override fun setupFragmentTransaction(
                     command: Command?,
                     currentFragment: Fragment?,
                     nextFragment: Fragment?,
-                    fragmentTransaction: FragmentTransaction) {
+                    fragmentTransaction: FragmentTransaction
+            ) {
+
+                Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope")
+                val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
+                nextFragment?.putExtra {
+                    putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
+                }
 
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
                     setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
-                }/* else {
-                        currentFragment?.let {
-                            it.enterTransition = null
-                            it.exitTransition = null
-                        }
-                        nextFragment?.let {
-                            it.enterTransition = null
-                            it.exitTransition = null
-                        }
-                    }*/
-            }
-
-            override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-                return when (screenKey) {
-                    Screens.MAIN_RELEASES -> ReleasesFragment()
-                    Screens.MAIN_ARTICLES -> ArticlesContainerFragment()
-                    Screens.MAIN_VIDEOS -> VideosFragment()
-                    Screens.MAIN_BLOGS -> BlogsFragment()
-                    Screens.MAIN_OTHER -> OtherFragment()
-                    Screens.ARTICLE_DETAILS -> ArticleFragment().apply {
-                        if (data is Bundle) arguments = data
-                    }
-                    Screens.RELEASE_DETAILS -> ReleaseFragment().apply {
-                        if (data is Bundle) arguments = data
-                    }
-                    Screens.RELEASES_SEARCH -> SearchFragment().apply {
-                        if (data is Bundle) arguments = data
-                    }
-                    Screens.MAIN_YOUTUBE -> YoutubeFragment()
-
-                    Screens.FAVORITES -> FavoritesFragment()
-                    Screens.HISTORY -> HistoryFragment()
-                    Screens.STATIC_PAGE -> PageFragment().apply {
-                        arguments = Bundle().apply { putString(PageFragment.ARG_ID, data as String) }
-                    }
-                    else -> null as Fragment?
-                }?.also {
-                    Log.e("lalala", "createFragment $screenKey")
                 }
             }
 
-            override fun showSystemMessage(message: String?) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun exit() {
-                (activity as RouterProvider).getRouter().exit()
-            }
-
-            override fun unknownScreen(command: Command?) {
-                (activity as RouterProvider).getNavigator().applyCommand(command)
+            override fun activityBack() {
+                getDependency(Router::class.java).exit()
             }
         }
     }
@@ -218,7 +162,8 @@ class TabFragment : Fragment(), RouterProvider, BackButtonListener, IntentHandle
     private fun setupSharedTransition(
             sharedProvider: SharedProvider,
             sharedReceiver: SharedReceiver,
-            fragmentTransaction: FragmentTransaction) {
+            fragmentTransaction: FragmentTransaction
+    ) {
 
         val currentFragment = sharedProvider as Fragment
         val nextFragment = sharedReceiver as Fragment

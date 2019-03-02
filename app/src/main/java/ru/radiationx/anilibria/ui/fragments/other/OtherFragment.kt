@@ -6,13 +6,12 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import kotlinx.android.synthetic.main.fragment_other.*
-import ru.radiationx.anilibria.App
+import kotlinx.android.synthetic.main.fragment_list.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.Screens
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -22,7 +21,6 @@ import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 
 
@@ -37,17 +35,14 @@ class OtherFragment : BaseFragment(), OtherView {
     lateinit var presenter: OtherPresenter
 
     @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter {
-        return OtherPresenter(
-                (parentFragment as RouterProvider).getRouter(),
-                App.injections.authRepository,
-                App.injections.errorHandler
-        )
+    fun provideOtherPresenter(): OtherPresenter = getDependency(screenScope, OtherPresenter::class.java)
+
+    override fun getBaseLayout(): Int = R.layout.fragment_list
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
+        super.onCreate(savedInstanceState)
     }
-
-    override fun getLayoutResource(): Int = View.NO_ID
-
-    override fun getBaseLayout(): Int = R.layout.fragment_other
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,11 +74,7 @@ class OtherFragment : BaseFragment(), OtherView {
     inner class OtherAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
 
         private val profileClickListener = { item: ProfileItem ->
-            if (item.authState == AuthState.AUTH) {
-                (parentFragment as RouterProvider).getRouter().showSystemMessage("Просмотр профиля недоступен")
-            } else {
-                presenter.openAuth()
-            }
+            presenter.openAuth()
         }
 
         private val logoutClickListener = { presenter.signOut() }
@@ -105,13 +96,13 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun addProfile(profileItem: ProfileItem) {
             items.add(ProfileListItem(profileItem))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem)
         }
 
         fun addMenu(newItems: MutableList<OtherMenuItem>) {
             items.addAll(newItems.map { MenuListItem(it) })
             if (newItems.isNotEmpty()) {
-                items.add(DividerShadowListItem())
+                items.add(DividerShadowListItem)
             }
         }
     }

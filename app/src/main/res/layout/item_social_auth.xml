@@ -6,5 +6,5 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:drawablePadding="8dp"
-    tools:text="@string/auth_patreon"
+    tools:text="Patreon"
     tools:textColor="@color/brand_patreon" />

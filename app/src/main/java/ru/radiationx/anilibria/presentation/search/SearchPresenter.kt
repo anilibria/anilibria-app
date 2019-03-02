@@ -1,19 +1,17 @@
 package ru.radiationx.anilibria.presentation.search
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.SearchRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class SearchPresenter(
+class SearchPresenter @Inject constructor(
         private val searchRepository: SearchRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
@@ -36,7 +34,6 @@ class SearchPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach")
         loadGenres()
         loadYears()
         observeGenres()
@@ -51,7 +48,6 @@ class SearchPresenter(
                     currentItems.forEach { item ->
                         data.firstOrNull { it.id == item.id }?.also { updItem ->
                             val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                            Log.e("lalalupdata", "check pres ${item.id}, ${item.torrentUpdate} : ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp} : ${item.isNew}, $isNew")
                             if (item.isNew != isNew) {
                                 item.isNew = isNew
                                 itemsNeedUpdate.add(item)
@@ -108,7 +104,6 @@ class SearchPresenter(
     }
 
     private fun loadReleases(pageNum: Int) {
-        Log.e("S_DEF_LOG", "loadReleases")
 
         /*if (isEmpty()) {
             viewState.setRefreshing(false)
@@ -197,11 +192,7 @@ class SearchPresenter(
     }
 
     fun onItemClick(item: ReleaseItem) {
-        val args = Bundle()
-        args.putInt(ReleaseFragment.ARG_ID, item.id)
-        args.putString(ReleaseFragment.ARG_ID_CODE, item.code)
-        args.putSerializable(ReleaseFragment.ARG_ITEM, item)
-        router.navigateTo(Screens.RELEASE_DETAILS, args)
+        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

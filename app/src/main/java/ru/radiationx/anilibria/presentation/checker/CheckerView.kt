@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.checker
 
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
-import ru.radiationx.anilibria.utils.mvp.IBaseView
+import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**
  * Created by radiationx on 28.01.18.

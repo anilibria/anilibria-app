@@ -1,23 +1,18 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import android.os.Bundle
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
-import ru.radiationx.anilibria.entity.app.article.ArticleItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.repository.YoutubeRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.ui.fragments.article.details.ArticleFragment
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class YoutubePresenter(
+class YoutubePresenter @Inject constructor(
         private val youtubeRepository: YoutubeRepository,
         private val router: Router,
-        private val linkHandler: LinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<YoutubeView>(router) {
 
@@ -44,9 +39,9 @@ class YoutubePresenter(
         youtubeRepository
                 .getYoutubeList(page)
                 .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ articleItems ->
-                    viewState.setEndless(!articleItems.isEnd())
-                    showData(articleItems.data)
+                .subscribe({ items ->
+                    viewState.setEndless(!items.isEnd())
+                    showData(items.data)
                 }) {
                     errorHandler.handle(it)
                 }

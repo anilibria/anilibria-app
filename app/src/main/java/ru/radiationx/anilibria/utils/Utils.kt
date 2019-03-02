@@ -73,7 +73,7 @@ object Utils {
     }
 
     fun externalLink(url: String) {
-        Log.e("S_DEF_LOG", "externalLink " + url)
+        Log.e("S_DEF_LOG", "externalLink $url")
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK)
         App.instance.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK))
     }

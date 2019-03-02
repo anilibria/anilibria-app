@@ -1,14 +1,6 @@
 package ru.radiationx.anilibria.extension
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 
 fun Bitmap.createAvatar(width: Int = this.width, height: Int = this.height, isCircle: Boolean): Bitmap = if (isCircle) {
     val bitmap = Bitmap.createScaledBitmap(this, width, height, true)

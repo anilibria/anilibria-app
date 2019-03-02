@@ -1,19 +1,17 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.ui.common.RouterProvider
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
-import java.lang.Exception
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 @InjectViewState
-class AuthSocialPresenter(
+class AuthSocialPresenter @Inject constructor(
         private val authRepository: AuthRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler
@@ -60,7 +58,7 @@ class AuthSocialPresenter(
     private fun signSocial(resultUrl: String) {
         currentData?.also { model ->
             authRepository
-                    .signSocial(resultUrl, model)
+                    .signInSocial(resultUrl, model)
                     .subscribe({
                         router.finishChain()
                     }, {

@@ -16,18 +16,13 @@
 
 package ru.radiationx.anilibria.ui.widgets;
 
-import android.content.Context;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 
 /**
  * An animation used to slide {@link com.devbrackets.android.exomedia.ui.widget.VideoControls}

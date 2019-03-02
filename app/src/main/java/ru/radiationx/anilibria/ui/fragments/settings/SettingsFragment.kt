@@ -6,27 +6,33 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import ru.radiationx.anilibria.App
-
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 25.12.16.
  */
 
 class SettingsFragment : BaseSettingFragment() {
+
+    @Inject
+    lateinit var appPreferences: PreferencesHolder
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 
         findPreference("quality")?.apply {
-            val savedQuality = App.injections.appPreferences.getQuality()
+            val savedQuality = appPreferences.getQuality()
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
@@ -39,9 +45,9 @@ class SettingsFragment : BaseSettingFragment() {
                 val titles = values.map { getQualityTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
                         .setTitle(preference.title)
-                        .setItems(titles) { dialog, which ->
+                        .setItems(titles) { _, which ->
                             val quality = values[which]
-                            App.injections.appPreferences.setQuality(quality)
+                            appPreferences.setQuality(quality)
                             icon = getQualityIcon(quality)
                             summary = getQualityTitle(quality)
                         }
@@ -51,8 +57,8 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("player_type")?.apply {
-            val savedPlayerType = App.injections.appPreferences.getPlayerType()
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_circle_outline)
+            val savedPlayerType = appPreferences.getPlayerType()
+            icon = this.context.getCompatDrawable(R.drawable.ic_play_circle_outline)
             summary = getPlayerTypeTitle(savedPlayerType)
             setOnPreferenceClickListener { preference ->
                 val values = arrayOf(
@@ -66,7 +72,7 @@ class SettingsFragment : BaseSettingFragment() {
                         .setTitle(preference.title)
                         .setItems(titles) { dialog, which ->
                             val playerType = values[which]
-                            App.injections.appPreferences.setPlayerType(playerType)
+                            appPreferences.setPlayerType(playerType)
                             summary = getPlayerTypeTitle(playerType)
                         }
                         .show()
@@ -79,16 +85,16 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("about.app_topic_site")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_anilibria)
-            setOnPreferenceClickListener { preference ->
+            icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
+            setOnPreferenceClickListener {
                 Utils.externalLink("${Api.SITE_URL}/pages/app.php")
                 false
             }
         }
 
         findPreference("about.app_topic_4pda")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_4pda)
-            setOnPreferenceClickListener { preference ->
+            icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
+            setOnPreferenceClickListener {
                 Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
                 false
             }
@@ -103,7 +109,7 @@ class SettingsFragment : BaseSettingFragment() {
         }*/
 
         findPreference("about.check_update")?.apply {
-            setOnPreferenceClickListener { preference ->
+            setOnPreferenceClickListener {
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)
                 })

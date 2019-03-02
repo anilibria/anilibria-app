@@ -5,11 +5,13 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.model.data.holders.SocialAuthHolder
+import javax.inject.Inject
 
-class SocialAuthStorage(
-        private val sharedPreferences: SharedPreferences
+class SocialAuthStorage @Inject constructor(
+        @DataPreferences private val sharedPreferences: SharedPreferences
 ) : SocialAuthHolder {
 
     private val dataRelay = BehaviorRelay.createDefault(getSavedData())

@@ -5,22 +5,21 @@ import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.holders.CookieHolder
 import ru.radiationx.anilibria.model.data.holders.SocialAuthHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthRepository constructor(
+class AuthRepository @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val authApi: AuthApi,
         private val userHolder: UserHolder,
-        private val socialAuthHolder: SocialAuthHolder,
-        private val cookieHolder: CookieHolder
+        private val socialAuthHolder: SocialAuthHolder
 ) {
 
     /*private val socialAuthInfo = listOf(SocialAuth(
@@ -46,8 +45,7 @@ class AuthRepository constructor(
         userHolder.saveUser(user)
     }
 
-    fun updateUser(newUser: ProfileItem) {
-        val user = userHolder.getUser()
+    private fun updateUser(newUser: ProfileItem) {
         newUser.authState = AuthState.AUTH
         userHolder.saveUser(newUser)
     }
@@ -67,9 +65,7 @@ class AuthRepository constructor(
 
     fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
             .signIn(login, password, code2fa)
-            .doOnSuccess {
-                userHolder.saveUser(it)
-            }
+            .doOnSuccess { userHolder.saveUser(it) }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
@@ -94,8 +90,9 @@ class AuthRepository constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun signSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> = authApi
-            .signSocial(resultUrl, item)
+    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> = authApi
+            .signInSocial(resultUrl, item)
+            .doOnSuccess { userHolder.saveUser(it) }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

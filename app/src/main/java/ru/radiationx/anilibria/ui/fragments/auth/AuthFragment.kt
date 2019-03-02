@@ -8,16 +8,17 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 
@@ -34,21 +35,18 @@ class AuthFragment : BaseFragment(), AuthView {
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter = AuthPresenter(
-            (activity as RouterProvider).getRouter(),
-            App.injections.authRepository,
-            App.injections.errorHandler
-    )
+    fun provideAuthPresenter(): AuthPresenter = getDependency(screenScope, AuthPresenter::class.java)
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
 
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
-        appbarLayout.visibility = View.GONE
+        appbarLayout.gone()
 
         authSocialList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -72,7 +70,7 @@ class AuthFragment : BaseFragment(), AuthView {
         context?.let {
             AlertDialog.Builder(it)
                     .setMessage("Зарегистрировать аккаунт можно только на сайте.")
-                    .setPositiveButton("Регистрация") { dialog, which ->
+                    .setPositiveButton("Регистрация") { _, _ ->
                         Utils.externalLink("${Api.SITE_URL}/pages/login.php")
                     }
                     .setNeutralButton("Отмена", null)
@@ -99,10 +97,10 @@ class AuthFragment : BaseFragment(), AuthView {
     private fun onSocialClick(item: SocialAuth) {
         AlertDialog.Builder(context!!)
                 .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-                .setPositiveButton("Продолжить"){dialog, which ->
+                .setPositiveButton("Продолжить"){ _, _ ->
                     presenter.onSocialClick(item)
                 }
-                .setNegativeButton("Личный кабинет") { dialog, which ->
+                .setNegativeButton("Личный кабинет") { _, _ ->
                     Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
                 }
                 .show()

@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -11,18 +10,19 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import ru.radiationx.anilibria.App
+import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
-import java.util.regex.Pattern
 
 
 /**
@@ -44,25 +44,22 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     lateinit var presenter: AuthSocialPresenter
 
     @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter = AuthSocialPresenter(
-            App.injections.authRepository,
-            (activity as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun providePresenter(): AuthSocialPresenter = getDependency(screenScope, AuthSocialPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             presenter.argKey = it.getString(ARG_KEY, presenter.argKey)
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+    override fun getLayoutResource(): Int = R.layout.fragment_webview
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appbarLayout.visibility = View.GONE
+        appbarLayout.gone()
 
         setStatusBarVisibility(true)
         setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
@@ -95,9 +92,8 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     override fun showError() {
         AlertDialog.Builder(context!!)
                 .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
-                .setPositiveButton("Перейти") { dialog, which ->
+                .setPositiveButton("Перейти") { _, _ ->
                     Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
-                    dialog.dismiss()
                 }
                 .setNegativeButton("Отмена", null)
                 .show()
@@ -111,6 +107,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         var loadingFinished = true
         var redirect = false
 
+        @Suppress("OverridingDeprecatedMember")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
             if (!loadingFinished) {
@@ -129,7 +126,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             loadingFinished = false
-            progressBar.visibility = View.VISIBLE
+            progressBarWv.visible()
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
@@ -138,7 +135,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             }
 
             if (loadingFinished && !redirect) {
-                progressBar.visibility = View.GONE
+                progressBarWv.gone()
             } else {
                 redirect = false
             }
@@ -146,7 +143,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
         override fun onPageCommitVisible(view: WebView?, url: String?) {
             super.onPageCommitVisible(view, url)
-            progressBar.visibility = View.GONE
+            progressBarWv.gone()
         }
     }
 }

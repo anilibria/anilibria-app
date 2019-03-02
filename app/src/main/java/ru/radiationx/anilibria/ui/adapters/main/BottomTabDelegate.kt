@@ -1,48 +1,42 @@
 package ru.radiationx.anilibria.ui.adapters.main
 
-import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import kotlinx.android.synthetic.main.item_bottom_tab.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_bottom_tab.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.setCompatDrawable
+import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.BottomTabListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
-class BottomTabDelegate(private val clickListener: Listener) : AdapterDelegate<MutableList<ListItem>>() {
+class BottomTabDelegate(private val clickListener: Listener) : AppAdapterDelegate<BottomTabListItem, ListItem, BottomTabDelegate.ViewHolder>(
+        R.layout.item_bottom_tab,
+        { it is BottomTabListItem },
+        { ViewHolder(it, clickListener) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is BottomTabListItem
+    override fun bindData(item: BottomTabListItem, holder: ViewHolder) =
+            holder.bind(item.item, item.selected)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as BottomTabListItem
-        (holder as ViewHolder).bind(item.item, item.selected)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bottom_tab, parent, false))
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+            override val containerView: View,
+            private val clickListener: Listener
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: MainActivity.Tab
 
         init {
-            view.setOnClickListener { clickListener.onTabClick(currentItem) }
+            containerView.setOnClickListener { clickListener.onTabClick(currentItem) }
         }
 
         fun bind(item: MainActivity.Tab, selected: Boolean) {
             this.currentItem = item
-            view.run {
-                tabIcon.setImageDrawable(ContextCompat.getDrawable(context, item.icon))
-                val colorRes = if (selected) R.attr.tab_color_checked else R.attr.tab_color_unchecked
-                tabIcon.setColorFilter(
-                        context.getColorFromAttr(colorRes),
-                        PorterDuff.Mode.SRC_ATOP
-                )
-            }
+            tabIcon.setCompatDrawable(item.icon)
+            val colorRes = if (selected) R.attr.tab_color_checked else R.attr.tab_color_unchecked
+            tabIcon.setTintColorAttr(colorRes)
         }
     }
 

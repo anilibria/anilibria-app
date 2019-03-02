@@ -1,38 +1,29 @@
 package ru.radiationx.anilibria.ui.adapters
 
-import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import kotlinx.android.synthetic.main.item_placeholder.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_placeholder.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.setCompatDrawable
+import ru.radiationx.anilibria.extension.setTintColorAttr
+import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
-class PlaceholderDelegate() : AdapterDelegate<MutableList<ListItem>>() {
+class PlaceholderDelegate : AppAdapterDelegate<PlaceholderListItem, ListItem, PlaceholderDelegate.ViewHolder>(
+        R.layout.item_placeholder,
+        { it is PlaceholderListItem },
+        { ViewHolder(it) }
+) {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean = items[position] is PlaceholderListItem
+    override fun bindData(item: PlaceholderListItem, holder: ViewHolder) =
+            holder.bind(item.icRes, item.titleRes, item.descRes)
 
-    override fun onBindViewHolder(items: MutableList<ListItem>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val item = items[position] as PlaceholderListItem
-        (holder as ViewHolder).bind(item.icRes, item.titleRes, item.descRes)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_placeholder, parent, false))
-
-    private inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
-            view.run {
-                item_placeholder_icon.setImageDrawable(ContextCompat.getDrawable(context, icRes))
-                item_placeholder_icon.drawable?.setColorFilter(
-                        context.getColorFromAttr(R.attr.base_icon),
-                        PorterDuff.Mode.SRC_ATOP
-                )
-                item_placeholder_title.setText(titleRes)
-                item_placeholder_desc.setText(descRes)
-            }
+            item_placeholder_icon.setCompatDrawable(icRes)
+            item_placeholder_icon.setTintColorAttr(R.attr.base_icon)
+            item_placeholder_title.setText(titleRes)
+            item_placeholder_desc.setText(descRes)
         }
     }
 }

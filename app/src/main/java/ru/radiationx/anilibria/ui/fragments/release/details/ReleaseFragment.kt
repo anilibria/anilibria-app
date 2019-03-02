@@ -5,12 +5,12 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -21,33 +21,42 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
-import permissions.dispatcher.RuntimePermissions
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
-import ru.radiationx.anilibria.ui.common.RouterProvider
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
-import ru.radiationx.anilibria.ui.fragments.comments.CommentsFragment
-import ru.radiationx.anilibria.ui.fragments.comments.vk.VkCommentsFragment
+import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.Router
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, SharedReceiver {
+open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     companion object {
-        const val ARG_ID: String = "release_id"
-        const val ARG_ID_CODE: String = "release_id_code"
-        const val ARG_ITEM: String = "release_item"
+        private const val ARG_ID: String = "release_id"
+        private const val ARG_ID_CODE: String = "release_id_code"
+        private const val ARG_ITEM: String = "release_item"
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
+
+        fun newInstance(
+                id: Int = -1,
+                code: String? = null,
+                item: ReleaseItem? = null
+        ) = ReleaseFragment().putExtra {
+            putInt(ReleaseFragment.ARG_ID, id)
+            putString(ReleaseFragment.ARG_ID_CODE, code)
+            putSerializable(ReleaseFragment.ARG_ITEM, item)
+        }
     }
 
     override val needToolbarShadow: Boolean = false
@@ -60,7 +69,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(false)
-            .cacheInMemory()
+            .cacheInMemory(true)
             .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
 
@@ -68,12 +77,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter = ReleasePresenter(
-            App.injections.releaseInteractor,
-            App.injections.historyRepository,
-            (parentFragment as RouterProvider).getRouter(),
-            App.injections.errorHandler
-    )
+    fun provideReleasePresenter(): ReleasePresenter = getDependency(screenScope, ReleasePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -81,13 +85,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         transitionNameLocal = name
     }
 
-    override fun getRouter(): Router = (parentFragment as RouterProvider).getRouter()
-
-    override fun getNavigator(): Navigator = (parentFragment as RouterProvider).getNavigator()
-
     override fun getLayoutResource(): Int = R.layout.fragment_paged
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         Log.e("S_DEF_LOG", "ONCRETE $this")
         Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
@@ -129,8 +130,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
                         false
                     }
         }
-        toolbarInsetShadow.visibility = View.VISIBLE
-        toolbarImage.visibility = View.VISIBLE
+        toolbarInsetShadow.visible()
+        toolbarImage.visible()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbarImage.transitionName = transitionNameLocal
@@ -141,25 +142,24 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
+                toolbarInsetShadow.gone(scrim)
                 if (scrim) {
                     toolbar?.let {
                         it.navigationIcon?.clearColorFilter()
                         it.overflowIcon?.clearColorFilter()
                         it.title = currentTitle
-                        toolbarInsetShadow.visibility = View.GONE
                     }
                 } else {
                     toolbar?.let {
                         it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
-                        toolbarInsetShadow.visibility = View.VISIBLE
                     }
                 }
             }
         })
 
-        viewPager.adapter = pagerAdapter
+        viewPagerPaged.adapter = pagerAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -169,8 +169,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewPager.currentItem > 0) {
-            viewPager.currentItem = viewPager.currentItem - 1
+        if (viewPagerPaged.currentItem > 0) {
+            viewPagerPaged.currentItem = viewPagerPaged.currentItem - 1
             return true
         }
         presenter.onBackPressed()
@@ -178,7 +178,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBar.visibility = if (refreshing) View.VISIBLE else View.GONE
+        progressBarPaged.visible(refreshing)
     }
 
     override fun showRelease(release: ReleaseFull) {
@@ -218,7 +218,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
         super.onDestroyView()
     }
 
-    private inner class CustomPagerAdapter() : FragmentStatePagerAdapter(childFragmentManager) {
+    private inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
 
         private val fragments = listOf<Fragment>(
                 ReleaseInfoFragment()/*,
@@ -228,7 +228,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, RouterProvider, Shared
 
         init {
             fragments.forEach {
-                it.arguments = this@ReleaseFragment.arguments
+                val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
+                it.arguments = newBundle
+                it.putExtra {
+                    putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                }
+                Log.e("lalallala", "CustomPagerAdapter ini $newBundle")
             }
         }
 

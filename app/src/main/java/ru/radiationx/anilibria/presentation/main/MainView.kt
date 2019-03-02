@@ -1,7 +1,8 @@
 package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.*
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 
 /**
@@ -9,8 +10,6 @@ import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface MainView : MvpView {
-    fun setAntiDdosVisibility(isVisible: Boolean)
-
     fun highlightTab(screenKey: String)
     fun updateTabs()
     fun onMainLogicCompleted()

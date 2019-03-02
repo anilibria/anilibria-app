@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.WindowManager
 import android.webkit.WebSettings
@@ -9,19 +8,21 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_moon.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.utils.Utils
 import java.util.*
 import java.util.regex.Pattern
 
 
-class WebPlayerActivity : AppCompatActivity() {
+class WebPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_URL = "iframe_url"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -34,12 +35,13 @@ class WebPlayerActivity : AppCompatActivity() {
             javaScriptEnabled = true
         }
         intent?.let {
-            it.getStringExtra(ARG_URL)?.let {
+            it.getStringExtra(ARG_URL)?.let { argUrl ->
                 val extraHeaders = HashMap<String, String>()
                 extraHeaders["Referer"] = Api.WIDGETS_SITE_URL
-                Log.e("lalala", "load url $it")
-                webView.loadUrl(it, extraHeaders)
+                Log.e("lalala", "load url $argUrl")
+                webView.loadUrl(argUrl, extraHeaders)
                 webView.webViewClient = object : WebViewClient() {
+                    @Suppress("OverridingDeprecatedMember")
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                         val matcher = Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc)").matcher(url)
                         return if (matcher.find()) {

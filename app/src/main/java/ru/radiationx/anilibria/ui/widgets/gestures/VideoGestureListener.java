@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.widgets.gestures;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;

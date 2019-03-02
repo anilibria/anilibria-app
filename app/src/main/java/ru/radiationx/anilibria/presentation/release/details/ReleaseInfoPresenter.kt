@@ -1,34 +1,33 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.os.Bundle
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.Screens
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.presentation.IErrorHandler
-import ru.radiationx.anilibria.presentation.LinkHandler
-import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
+import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.repository.FavoriteRepository
+import ru.radiationx.anilibria.model.repository.HistoryRepository
+import ru.radiationx.anilibria.model.repository.VitalRepository
+import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.anilibria.utils.mvp.BasePresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 @InjectViewState
-class ReleaseInfoPresenter(
-        private val releaseRepository: ReleaseRepository,
+class ReleaseInfoPresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
-        private val pageRepository: PageRepository,
         private val vitalRepository: VitalRepository,
         private val authRepository: AuthRepository,
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
-        private val linkHandler: LinkHandler,
+        private val linkHandler: ILinkHandler,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<ReleaseInfoView>(router) {
 
@@ -38,7 +37,6 @@ class ReleaseInfoPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        Log.e("S_DEF_LOG", "onFirstViewAttach " + this)
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
@@ -96,7 +94,6 @@ class ReleaseInfoPresenter(
     }
 
     private fun observeRelease() {
-        Log.e("S_DEF_LOG", "load release $releaseId : $releaseIdCode : $currentData")
         releaseInteractor
                 .observeFull(releaseId, releaseIdCode)
                 .subscribe({ release ->
@@ -161,7 +158,7 @@ class ReleaseInfoPresenter(
     }
 
     fun onClickDonate() {
-        router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
     }
 
     fun onClickFav() {
@@ -198,14 +195,11 @@ class ReleaseInfoPresenter(
     }
 
     fun openAuth() {
-        router.navigateTo(Screens.AUTH)
+        router.navigateTo(Screens.Auth())
     }
 
     fun openSearch(genre: String) {
-        val args: Bundle = Bundle().apply {
-            putString(SearchFragment.ARG_GENRE, genre)
-        }
-        router.navigateTo(Screens.RELEASES_SEARCH, args)
+        router.navigateTo(Screens.ReleasesSearch(genre))
     }
 
     fun onDownloadLinkSelected(url: String) {
@@ -223,7 +217,7 @@ class ReleaseInfoPresenter(
     }
 
     fun onDialogDonateClick() {
-        router.navigateTo(Screens.STATIC_PAGE, PageApi.PAGE_ID_DONATE)
+        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
     }
 
 }

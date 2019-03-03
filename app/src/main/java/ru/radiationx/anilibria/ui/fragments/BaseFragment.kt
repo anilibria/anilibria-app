@@ -37,6 +37,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     private val disposables = CompositeDisposable()
 
     protected open val needToolbarShadow = true
+    protected open val statusBarVisible = false
 
     @LayoutRes
     protected open fun getLayoutResource(): Int = View.NO_ID
@@ -59,24 +60,37 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && needToolbarShadow) {
-            toolbar_shadow_prelp?.visible()
-        }
+        //updateToolbarShadow(true)
+    }
+
+    protected fun updateToolbarShadow(isVisible: Boolean) {
+        toolbar_shadow_prelp?.visible(isVisible && needToolbarShadow)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setStatusBarVisibility(statusBarVisible)
         dimensionsProvider
-                .dimensions()
+                .observe()
                 .subscribe { dimension ->
                     toolbar?.post {
                         toolbar?.let {
-                            updateDimens(dimension)
+                            localUpdateDimens(dimension)
                         }
                     }
-                    updateDimens(dimension)
+                    localUpdateDimens(dimension)
                 }
                 .addTo(disposables)
+    }
+
+    private fun localUpdateDimens(dimensions: DimensionHelper.Dimensions) {
+        val correctedDimens = dimensions.copy()
+        correctedDimens.statusBar = if (baseStatusBar?.visibility == View.VISIBLE) {
+            0
+        } else {
+            correctedDimens.statusBar
+        }
+        updateDimens(correctedDimens)
     }
 
     open fun updateDimens(dimensions: DimensionHelper.Dimensions) {

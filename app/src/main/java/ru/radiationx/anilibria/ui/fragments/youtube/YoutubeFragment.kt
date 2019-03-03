@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 
 class YoutubeFragment : BaseFragment(), YoutubeView {
@@ -40,6 +41,8 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
     override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
+    override val statusBarVisible: Boolean = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,6 +59,13 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
                     .fullWidth(true)
                     .spacingDp(8f)
             )
+        }
+
+        ToolbarShadowController(
+                recyclerView,
+                appbarLayout
+        ) {
+            updateToolbarShadow(it)
         }
     }
 

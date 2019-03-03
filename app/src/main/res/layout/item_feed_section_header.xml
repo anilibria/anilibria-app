@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/itemFeedScheduleTitle"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center_vertical"
+        android:textColor="?textDefault"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/itemFeedScheduleBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ожидаются сегодня" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/itemFeedScheduleBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawableEnd="@drawable/ic_chevron_right"
+        android:drawablePadding="0dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="0dp"
+        android:text="Расписание"
+        android:textColor="?textLink"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

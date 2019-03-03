@@ -55,3 +55,7 @@ class GenreListItem(val item: GenreItem) : ListItem()
 class YoutubeListItem(val item: YoutubeItem) : ListItem()
 
 class SocialAuthListItem(val item: SocialAuth) : ListItem()
+
+class FeedScheduleListItem(val item: ReleaseItem) : ListItem()
+class FeedSchedulesListItem(val items: List<ReleaseItem>) : ListItem()
+class FeedSectionListItem(val title: String) : ListItem()

@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.Bridge">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -84,13 +84,13 @@
     </style>
 
 
-    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark">
+    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
+    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="elevation">0dp</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>

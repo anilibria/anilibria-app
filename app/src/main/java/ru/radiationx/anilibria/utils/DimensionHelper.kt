@@ -48,12 +48,12 @@ class DimensionHelper(
         }
     }
 
-    class Dimensions {
-        var statusBar = 0
-        var navigationBar = 0
-        var contentHeight = 0
-        var keyboardHeight = 0
-
+    data class Dimensions(
+            var statusBar: Int = 0,
+            var navigationBar: Int = 0,
+            var contentHeight: Int = 0,
+            var keyboardHeight: Int = 0
+    ) {
         override fun toString(): String {
             return "Dimensions:\nto=$statusBar\nbo=$navigationBar\nch=$contentHeight\nkh=$keyboardHeight"
         }

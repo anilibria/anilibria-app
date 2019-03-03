@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -52,6 +53,8 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
     override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
+    override val statusBarVisible: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
@@ -78,6 +81,14 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
                     .spacingDp(8f)
             )
         }
+
+        ToolbarShadowController(
+                recyclerView,
+                appbarLayout
+        ) {
+            updateToolbarShadow(it)
+        }
+
 
         toolbar.inflateMenu(R.menu.search)
         val searchItem = toolbar.menu.findItem(R.id.action_search)

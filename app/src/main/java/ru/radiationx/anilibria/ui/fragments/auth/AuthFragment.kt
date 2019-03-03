@@ -39,12 +39,11 @@ class AuthFragment : BaseFragment(), AuthView {
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
+    override val statusBarVisible: Boolean = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
-
-        setStatusBarVisibility(true)
-        setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
         appbarLayout.gone()
 

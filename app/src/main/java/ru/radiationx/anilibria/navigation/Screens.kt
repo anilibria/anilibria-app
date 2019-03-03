@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
+import ru.radiationx.anilibria.ui.fragments.feed.FeedFragment
 import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.page.PageFragment
@@ -81,6 +82,11 @@ object Screens {
     class MainReleases : BaseAppScreen() {
         override fun getFragment() = ReleasesFragment()
     }
+
+    class MainFeed : BaseAppScreen() {
+        override fun getFragment() = FeedFragment()
+    }
+
 
     class MainYouTube : BaseAppScreen() {
         override fun getFragment() = YoutubeFragment()

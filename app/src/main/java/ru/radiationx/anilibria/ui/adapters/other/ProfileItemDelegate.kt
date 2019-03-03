@@ -45,7 +45,7 @@ class ProfileItemDelegate(
         private lateinit var item: ProfileItem
 
         init {
-            compositeDisposable.add(dimensionsProvider.dimensions().subscribe {
+            compositeDisposable.add(dimensionsProvider.observe().subscribe {
                 containerView.setPadding(
                         containerView.paddingLeft,
                         it.statusBar,

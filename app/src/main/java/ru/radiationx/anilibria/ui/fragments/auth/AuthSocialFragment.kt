@@ -56,13 +56,12 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
     override fun getLayoutResource(): Int = R.layout.fragment_webview
 
+    override val statusBarVisible: Boolean = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         appbarLayout.gone()
-
-        setStatusBarVisibility(true)
-        setStatusBarColor(view.context.getColorFromAttr(R.attr.cardBackground))
 
         webView.apply {
             settings.apply {

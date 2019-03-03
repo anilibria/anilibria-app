@@ -13,29 +13,28 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
 import com.lapism.searchview.SearchView
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
+import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.extension.inflate
+import ru.radiationx.anilibria.extension.invisible
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
-import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
-import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.anilibria.ui.fragments.feed.FeedAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
-import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
@@ -84,7 +83,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, F
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
+    override fun getLayoutResource(): Int = R.layout.fragment_feed
 
     override val statusBarVisible: Boolean = true
 
@@ -105,6 +104,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, F
                     .fullWidth(true)
                     .spacingDp(8f)
             )*/
+            itemAnimator = null
         }
 
         toolbar.apply {
@@ -211,28 +211,63 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, F
 
     /* ReleaseView */
 
-    override fun setEndless(enable: Boolean) {
-
+    private val placeHolder by lazy {
+        PlaceholderDelegate.ViewHolder(placeHolderContainer.inflate(R.layout.item_placeholder, true))
     }
 
-    override fun showReleases(releases: List<ReleaseItem>) {
-        adapter.bindItems(releases)
-        adapter.bindSchedules(releases)
+    override fun showSchedules(items: List<ReleaseItem>) {
+        adapter.bindSchedules(items)
     }
 
-    override fun insertMore(releases: List<ReleaseItem>) {
-        adapter.insertMore(releases)
+    override fun showRefreshProgress(show: Boolean) {
+        Log.d("nonono", "showRefreshProgress $show")
+        refreshLayout.isRefreshing = show
     }
 
-    override fun updateReleases(releases: List<ReleaseItem>) {
+    override fun showEmptyProgress(show: Boolean) {
+        Log.d("nonono", "showEmptyProgress $show")
+        progressBarList.visible(show)
+        refreshLayout.visible(!show)
+        refreshLayout.isRefreshing = false
     }
+
+    override fun showPageProgress(show: Boolean) {
+        Log.d("nonono", "showPageProgress $show")
+        adapter.showProgress(show)
+    }
+
+    override fun showEmptyView(show: Boolean) {
+        placeHolder.bind(
+                R.drawable.ic_releases,
+                R.string.placeholder_title_nodata_base,
+                R.string.placeholder_desc_nodata_base
+        )
+        placeHolderContainer.visible(show)
+        Log.d("nonono", "showEmptyView $show")
+    }
+
+    override fun showEmptyError(show: Boolean, message: String?) {
+        Log.d("nonono", "showEmptyError $show, $message")
+        placeHolder.bind(
+                R.drawable.ic_logo_patreon,
+                R.string.placeholder_title_comments,
+                R.string.placeholder_desc_comments
+        )
+        placeHolderContainer.visible(show)
+    }
+
+    override fun showProjects(show: Boolean, items: List<FeedItem>) {
+        Log.d("nonono", "showProjects $show, ${items.size}")
+        recyclerView.invisible(!show)
+        adapter.bindItems(items)
+    }
+
 
     override fun onLoadMore() {
         presenter.loadMore()
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
     }
 
     override fun onItemClick(position: Int, view: View) {

@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.app.release.GenreItem
@@ -59,3 +60,4 @@ class SocialAuthListItem(val item: SocialAuth) : ListItem()
 class FeedScheduleListItem(val item: ReleaseItem) : ListItem()
 class FeedSchedulesListItem(val items: List<ReleaseItem>) : ListItem()
 class FeedSectionListItem(val title: String) : ListItem()
+class FeedListItem(val item: FeedItem) : ListItem()

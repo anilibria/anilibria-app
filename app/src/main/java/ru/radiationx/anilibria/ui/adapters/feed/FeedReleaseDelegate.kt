@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
+import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -22,15 +23,15 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
  */
 class FeedReleaseDelegate(
         private val itemListener: Listener
-) : AppAdapterDelegate<ReleaseListItem, ListItem, FeedReleaseDelegate.ViewHolder>(
+) : AppAdapterDelegate<FeedListItem, ListItem, FeedReleaseDelegate.ViewHolder>(
         R.layout.item_feed_release,
-        { it is ReleaseListItem },
+        { (it as? FeedListItem)?.item?.release != null },
         { ViewHolder(it, itemListener) }
 ), OptimizeDelegate {
 
-    override fun getPoolSize(): Int = 10
+    override fun getPoolSize(): Int = 5
 
-    override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item.item)
+    override fun bindData(item: FeedListItem, holder: ViewHolder) = holder.bind(item.item.release!!)
 
     class ViewHolder(
             override val containerView: View,

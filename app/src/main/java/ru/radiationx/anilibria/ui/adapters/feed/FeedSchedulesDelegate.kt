@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
 
 /**
@@ -21,7 +22,9 @@ class FeedSchedulesDelegate(
         R.layout.item_feed_schedules,
         { it is FeedSchedulesListItem },
         { ViewHolder(it, itemListener) }
-) {
+), OptimizeDelegate {
+
+    override fun getPoolSize(): Int = 1
 
     override fun bindData(item: FeedSchedulesListItem, holder: ViewHolder) =
             holder.bind(item.items)

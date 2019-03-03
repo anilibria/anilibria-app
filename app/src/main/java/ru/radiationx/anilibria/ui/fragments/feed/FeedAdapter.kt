@@ -28,14 +28,6 @@ class FeedAdapter(
     private val scheduleSection = FeedSectionListItem("Ожидаются сегодня")
     private val feedSection = FeedSectionListItem("Обновления")
 
-    private val sectionsSequence = listOf(scheduleSection, feedSection)
-    private val sectionItemTypes: Map<ListItem, List<KClass<out ListItem>>> = mapOf(
-            scheduleSection to emptyList(),
-            feedSection to listOf(
-                    FeedListItem::class
-            )
-    )
-
     init {
         items = mutableListOf()
         addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
@@ -53,14 +45,14 @@ class FeedAdapter(
                 return false
             }
         }))
-        items.add(FeedSectionListItem("Обновления"))
     }
 
 
     fun bindSchedules(newItems: List<ReleaseItem>) {
-        val index = items.indexOfFirst {
-            (it as? FeedSectionListItem)?.id == SECTION_SCHEDULE
-        }
+        val index = items.indexOf(scheduleSection)
+
+
+        Log.d("kokoko", "bindSchedules before ${items.joinToString { it.javaClass.simpleName }}")
 
         if (newItems.isEmpty()) {
             if (index != -1) {
@@ -71,24 +63,34 @@ class FeedAdapter(
         } else {
             if (index == -1) {
                 items.addAll(0, listOf(
-                        FeedSectionListItem(SECTION_SCHEDULE, "Ожидаются сегодня"),
+                        scheduleSection,
                         FeedSchedulesListItem(newItems)
                 ))
-                notifyItemRangeInserted(0, 2)
+                notifyDataSetChanged()
+                /*notifyItemInserted(0)
+                notifyItemInserted(1)*/
+                //notifyItemRangeInserted(0, 2)
             } else {
                 items[index + 1] = FeedSchedulesListItem(newItems)
                 notifyItemChanged(index + 1)
             }
         }
+
+        Log.d("kokoko", "bindSchedules after ${items.joinToString { it.javaClass.simpleName }}")
     }
 
     fun bindItems(newItems: List<FeedItem>) {
 
         val progress = isProgress()
 
-        var startIndex = items.indexOfLast {
-            (it is FeedSectionListItem)
-        } + 1
+        var startIndex = items.indexOf(feedSection)
+
+        if (startIndex == -1) {
+            startIndex = items.indexOfLast { it is FeedSchedulesListItem }
+            items.add(feedSection)
+            notifyItemInserted(startIndex)
+        }
+        startIndex = items.indexOf(feedSection) + 1
 
         val currentFeedItems = items.filterIsInstance<FeedListItem>()
         val newListItems = newItems.map { FeedListItem(it) }
@@ -160,96 +162,6 @@ class FeedAdapter(
             }
         }
     }
-
-
-
-    // start magic part
-
-    private fun getNearestSectionAnchor(anchor: ListItem): ListItem? {
-        val existIndex = items.indexOf(anchor)
-        if (existIndex == -1) {
-            val seqIndex = sectionsSequence.indexOf(anchor)
-
-            var targetSection: ListItem? = null
-            for (i in seqIndex downTo 0) {
-                val section = sectionsSequence[i]
-                if (items.indexOf(section) != -1) {
-                    targetSection = section
-                    break
-                }
-            }
-            if (targetSection == null) {
-                for (i in seqIndex until sectionsSequence.size) {
-                    val section = sectionsSequence[i]
-                    if (items.indexOf(section) != -1) {
-                        targetSection = section
-                        break
-                    }
-                }
-            }
-
-            targetSection?.also { section ->
-                val sectionTypes = sectionItemTypes.getValue(section)
-                val sectionIndex = items.indexOf(section)
-                var lastAnchor: ListItem = section
-                for (i in sectionIndex until items.size) {
-                    val item = items[i]
-                    if (sectionTypes.any { it == item::class }) {
-                        lastAnchor = item
-                    }
-                }
-                return lastAnchor
-            }
-        } else {
-            return anchor
-        }
-        return null
-    }
-
-    private fun updateSectionHeader(header: ListItem, isVisible: Boolean) {
-        if (isVisible) {
-            removeAndNotify(listOf(header))
-            val anchor = getNearestSectionAnchor(header)
-            insertAndNotify(anchor, listOf(header))
-        } else {
-            removeAndNotify(listOf(header))
-        }
-    }
-
-    private fun updateSectionItems(header: ListItem, sectionItems: List<ListItem>, isVisible: Boolean) {
-        if (isVisible) {
-            removeAndNotify(sectionItems)
-            val anchor = getNearestSectionAnchor(header)
-            insertAndNotify(anchor, sectionItems)
-        } else {
-            removeAndNotify(sectionItems)
-        }
-    }
-
-    private fun notifyListItemUpdate(item: ListItem) {
-        val index = items.indexOf(item)
-        if (index != -1) {
-            notifyItemChanged(index)
-        }
-    }
-
-    private fun removeAndNotify(itemsToRemove: List<ListItem>) {
-        itemsToRemove.forEach {
-            val index = items.indexOf(it)
-            if (index != -1) {
-                items.removeAt(index)
-                notifyItemRemoved(index)
-            }
-        }
-    }
-
-    private fun insertAndNotify(anchor: ListItem?, newItems: List<ListItem>) {
-        val startIndex = items.indexOf(anchor) + 1
-        items.addAll(startIndex, newItems)
-        notifyItemRangeInserted(startIndex, newItems.size)
-    }
-    // end magic part
-
 
     interface ItemListener : LoadMoreDelegate.Listener, FeedReleaseDelegate.Listener
 }

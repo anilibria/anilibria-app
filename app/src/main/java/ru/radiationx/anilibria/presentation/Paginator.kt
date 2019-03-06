@@ -11,6 +11,10 @@ class Paginator<T>(
         private val viewController: ViewController<T>
 ) {
 
+    companion object {
+        const val FIRST_PAGE = 1
+    }
+
     interface ViewController<T> {
         fun showEmptyProgress(show: Boolean)
         fun showEmptyError(show: Boolean, error: Throwable? = null)
@@ -20,8 +24,6 @@ class Paginator<T>(
         fun showRefreshProgress(show: Boolean)
         fun showPageProgress(show: Boolean)
     }
-
-    private val FIRST_PAGE = 1
 
     private var currentState: State<T> = EMPTY()
     private var currentPage = 0

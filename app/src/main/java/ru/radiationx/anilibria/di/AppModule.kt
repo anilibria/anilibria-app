@@ -103,6 +103,7 @@ class AppModule(context: Context) : Module() {
         bind(HistoryRepository::class.java).singletonInScope()
         bind(FavoriteRepository::class.java).singletonInScope()
         bind(YoutubeRepository::class.java).singletonInScope()
+        bind(ScheduleRepository::class.java).singletonInScope()
 
         bind(ReleaseInteractor::class.java).singletonInScope()
     }

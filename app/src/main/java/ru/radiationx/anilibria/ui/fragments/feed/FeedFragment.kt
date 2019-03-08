@@ -53,7 +53,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     }, releaseLongClickListener = { releaseItem, view ->
         releaseOnLongClick(releaseItem)
     }, youtubeClickListener = { youtubeItem, view ->
-        this.sharedViewLocal = view
+        Utils.externalLink(youtubeItem.link)
     }, scheduleClickListener = { feedScheduleItem, view ->
         this.sharedViewLocal = view
         presenter.onItemClick(feedScheduleItem.releaseItem)

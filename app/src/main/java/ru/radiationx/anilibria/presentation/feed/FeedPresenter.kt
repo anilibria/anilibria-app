@@ -96,6 +96,15 @@ class FeedPresenter @Inject constructor(
                         val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
                         val day = ScheduleDay.fromCalendarDay(calendarDay)
                         val items = schedule.firstOrNull { it.day == day }?.items ?: emptyList()
+                        items.forEach {
+                            val updTime = it.torrentUpdate
+                            val millisTime = (updTime.toLong() * 1000L)
+                            val updDay = Calendar.getInstance().let {
+                                it.timeInMillis = millisTime
+                                it.get(Calendar.DAY_OF_WEEK)
+                            }
+                            Log.d("FeedPresenter", "lolcheckkek, $updTime, $millisTime, $updDay => ${calendarDay == updDay}")
+                        }
                         Log.d("FeedPresenter", "schedule $calendarDay, $day, ${items.size}")
                         viewState.showSchedules(items)
                     }

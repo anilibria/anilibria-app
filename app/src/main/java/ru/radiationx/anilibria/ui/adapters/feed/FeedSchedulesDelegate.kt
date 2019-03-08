@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
+import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -9,6 +10,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
+import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
@@ -33,7 +35,7 @@ class FeedSchedulesDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (FeedScheduleItem, View) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
 
         private val currentItems = mutableListOf<FeedScheduleItem>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
@@ -49,6 +51,18 @@ class FeedSchedulesDelegate(
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)
+        }
+
+        override fun getStateId(): Int {
+            return FeedSchedulesListItem::class.java.simpleName.hashCode()
+        }
+
+        override fun saveState(): Parcelable? {
+            return itemFeedScheduleList.layoutManager?.onSaveInstanceState()
+        }
+
+        override fun restoreState(state: Parcelable?) {
+            state?.also { itemFeedScheduleList.layoutManager?.onRestoreInstanceState(it) }
         }
     }
 }

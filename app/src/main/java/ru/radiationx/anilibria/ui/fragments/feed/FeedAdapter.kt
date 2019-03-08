@@ -1,8 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
+import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
@@ -16,7 +19,6 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedYoutubeDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
-import kotlin.reflect.KClass
 
 /* Created by radiationx on 31.10.17. */
 
@@ -28,6 +30,11 @@ class FeedAdapter(
         scheduleClickListener: (FeedScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
+
+    private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
+
+    private var states: SparseArray<Parcelable?> = SparseArray()
+    private var currentRecyclerView: RecyclerView? = null
 
     private val scheduleSection = FeedSectionListItem("Ожидаются сегодня")
     private val feedSection = FeedSectionListItem("Обновления")
@@ -43,6 +50,65 @@ class FeedAdapter(
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        currentRecyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        currentRecyclerView = null
+    }
+
+    private fun saveState() {
+        (0 until itemCount).forEach { index ->
+            val holder = currentRecyclerView?.findViewHolderForAdapterPosition(index)
+            (holder as? IBundledViewHolder)?.apply {
+                val state = holder.saveState()
+                states.put(getStateId(), state)
+            }
+        }
+    }
+
+    fun saveState(outState: Bundle?) {
+        saveState()
+        outState?.putSparseParcelableArray(bundleNestedStatesKey, states)
+    }
+
+    fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) return
+        savedInstanceState.getSparseParcelableArray<Parcelable?>(bundleNestedStatesKey)?.also {
+            states = it
+        }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        (holder as? IBundledViewHolder)?.apply {
+            val state = holder.saveState()
+            states.put(getStateId(), state)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+
+        val time = System.currentTimeMillis()
+        super.onBindViewHolder(holder, position, payloads)
+
+        Log.d("nonono", "onBindViewHolder pos=$position type=${getItemViewType(position)} time=${System.currentTimeMillis() - time}")
+        val threshold = (items.lastIndex - position)
+        if (threshold <= 3) {
+            Handler().post {
+                loadMoreListener.invoke()
+            }
+        }
+
+        (holder as? IBundledViewHolder)?.apply {
+            val state = states[getStateId()]
+            holder.restoreState(state)
+            states.remove(getStateId())
+        }
+    }
 
     fun bindSchedules(newItems: List<FeedScheduleItem>) {
         val index = items.indexOf(scheduleSection)
@@ -142,20 +208,6 @@ class FeedAdapter(
         val time = System.currentTimeMillis()
         return super.onCreateViewHolder(parent, viewType).also {
             Log.d("nonono", "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}")
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
-
-        val time = System.currentTimeMillis()
-        super.onBindViewHolder(holder, position, payloads)
-
-        Log.d("nonono", "onBindViewHolder pos=$position type=${getItemViewType(position)} time=${System.currentTimeMillis() - time}")
-        val threshold = (items.lastIndex - position)
-        if (threshold <= 3) {
-            Handler().post {
-                loadMoreListener.invoke()
-            }
         }
     }
 

@@ -201,6 +201,21 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         return true
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        adapter.saveState(outState)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        adapter.restoreState(savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        adapter.saveState(null)
+        super.onDestroyView()
+    }
+
     /* FastSearchView */
     override fun showSearchItems(items: List<SearchItem>) {
         searchAdapter.bindItems(items)

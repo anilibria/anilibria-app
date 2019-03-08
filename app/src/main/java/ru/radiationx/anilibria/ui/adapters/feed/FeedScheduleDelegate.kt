@@ -1,25 +1,29 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedule.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class FeedScheduleDelegate(
-        private val itemListener: (ReleaseItem) -> Unit
+        private val clickListener: (FeedScheduleItem, View) -> Unit
 ) : AppAdapterDelegate<FeedScheduleListItem, ListItem, FeedScheduleDelegate.ViewHolder>(
         R.layout.item_feed_schedule,
         { it is FeedScheduleListItem },
-        { ViewHolder(it, itemListener) }
+        { ViewHolder(it, clickListener) }
 ) {
 
     override fun bindData(item: FeedScheduleListItem, holder: ViewHolder) =
@@ -27,20 +31,22 @@ class FeedScheduleDelegate(
 
     class ViewHolder(
             override val containerView: View,
-            private val itemListener: (ReleaseItem) -> Unit
+            private val clickListener: (FeedScheduleItem, View) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private lateinit var currentItem: ReleaseItem
+        private lateinit var currentItem: FeedScheduleItem
 
         init {
             containerView.setOnClickListener {
-                itemListener.invoke(currentItem)
+                clickListener.invoke(currentItem, item_image)
             }
         }
 
-        fun bind(item: ReleaseItem) {
+        fun bind(item: FeedScheduleItem) {
             currentItem = item
-            ImageLoader.getInstance().displayImage(item.poster, item_image)
+
+            ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.releaseItem.id}")
+            ImageLoader.getInstance().displayImage(item.releaseItem.poster, item_image)
         }
     }
 }

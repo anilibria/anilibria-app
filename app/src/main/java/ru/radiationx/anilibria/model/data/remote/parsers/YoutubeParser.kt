@@ -13,19 +13,24 @@ class YoutubeParser @Inject constructor(
         private val apiUtils: IApiUtils
 ) {
 
+    fun youtube(jsonItem: JSONObject): YoutubeItem {
+        val item = YoutubeItem()
+        item.id = jsonItem.getInt("id")
+        item.title = apiUtils.escapeHtml(jsonItem.nullString("title"))
+        item.image = "${Api.BASE_URL_IMAGES}${jsonItem.nullString("image")}"
+        item.vid = jsonItem.nullString("vid")
+        item.views = jsonItem.getInt("views")
+        item.comments = jsonItem.getInt("comments")
+        item.timestamp = jsonItem.getInt("timestamp")
+        return item
+    }
+
     fun parse(jsonResponse: JSONObject): Paginated<List<YoutubeItem>> {
         val result = mutableListOf<YoutubeItem>()
         val jsonItems = jsonResponse.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
             val jsonItem = jsonItems.getJSONObject(i)
-            val item = YoutubeItem()
-            item.id = jsonItem.getInt("id")
-            item.title = apiUtils.escapeHtml(jsonItem.nullString("title"))
-            item.image = "${Api.BASE_URL_IMAGES}${jsonItem.nullString("image")}"
-            item.vid = jsonItem.nullString("vid")
-            item.views = jsonItem.getInt("views")
-            item.comments = jsonItem.getInt("comments")
-            item.timestamp = jsonItem.getInt("timestamp")
+            val item = youtube(jsonItem)
             result.add(item)
         }
 

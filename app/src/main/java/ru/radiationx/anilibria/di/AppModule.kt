@@ -85,6 +85,7 @@ class AppModule(context: Context) : Module() {
         bind(VitalParser::class.java).singletonInScope()
         bind(YoutubeParser::class.java).singletonInScope()
         bind(ScheduleParser::class.java).singletonInScope()
+        bind(FeedParser::class.java).singletonInScope()
 
         bind(AuthApi::class.java).singletonInScope()
         bind(CheckerApi::class.java).singletonInScope()
@@ -95,6 +96,7 @@ class AppModule(context: Context) : Module() {
         bind(VitalApi::class.java).singletonInScope()
         bind(YoutubeApi::class.java).singletonInScope()
         bind(ScheduleApi::class.java).singletonInScope()
+        bind(FeedApi::class.java).singletonInScope()
 
         bind(AuthRepository::class.java).singletonInScope()
         bind(ReleaseRepository::class.java).singletonInScope()
@@ -106,6 +108,7 @@ class AppModule(context: Context) : Module() {
         bind(FavoriteRepository::class.java).singletonInScope()
         bind(YoutubeRepository::class.java).singletonInScope()
         bind(ScheduleRepository::class.java).singletonInScope()
+        bind(FeedRepository::class.java).singletonInScope()
 
         bind(ReleaseInteractor::class.java).singletonInScope()
     }

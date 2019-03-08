@@ -7,6 +7,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
+import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
@@ -14,6 +15,7 @@ import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.model.repository.YoutubeRepository
@@ -31,17 +33,14 @@ import javax.inject.Inject
 
 @InjectViewState
 class FeedPresenter @Inject constructor(
-        private val releaseInteractor: ReleaseInteractor,
-        private val youtubeRepository: YoutubeRepository,
+        private val feedRepository: FeedRepository,
         private val scheduleRepository: ScheduleRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val releaseUpdateHolder: ReleaseUpdateHolder,
-        private val systemMessenger: SystemMessenger
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<FeedView>(router) {
 
     private val paginator = Paginator({
-        loadFeed(it).delay(1000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
+        loadFeed(it)/*.delay(1000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())*/
     }, object : Paginator.ViewController<FeedItem> {
 
         override fun showEmptyProgress(show: Boolean) {
@@ -84,38 +83,32 @@ class FeedPresenter @Inject constructor(
         return if (page == Paginator.FIRST_PAGE) {
             Single
                     .zip(
-                            releaseInteractor.loadReleases(page).map { it.data },
+                            feedRepository.getFeed(page),
                             scheduleRepository.loadSchedule(),
-                            BiFunction<List<ReleaseItem>, List<ScheduleDay>, Pair<List<ReleaseItem>, List<ScheduleDay>>> { t1, t2 ->
+                            BiFunction<List<FeedItem>, List<ScheduleDay>, Pair<List<FeedItem>, List<ScheduleDay>>> { t1, t2 ->
                                 Pair(t1, t2)
                             }
                     )
                     .doOnSuccess {
-                        Log.d("FeedPresenter", "${it.second.joinToString { "schedule{${it.day}, ${it.items.size}}" }}")
-                        val schedule = it.second
                         val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
                         val day = ScheduleDay.fromCalendarDay(calendarDay)
-                        val items = schedule.firstOrNull { it.day == day }?.items ?: emptyList()
-                        items.forEach {
+
+                        val items = it.second.firstOrNull { it.day == day }?.items ?: emptyList()
+
+                        val feedSchedule = items.map {
                             val updTime = it.torrentUpdate
                             val millisTime = (updTime.toLong() * 1000L)
                             val updDay = Calendar.getInstance().let {
                                 it.timeInMillis = millisTime
                                 it.get(Calendar.DAY_OF_WEEK)
                             }
-                            Log.d("FeedPresenter", "lolcheckkek, $updTime, $millisTime, $updDay => ${calendarDay == updDay}")
+                            FeedScheduleItem(it, calendarDay == updDay)
                         }
-                        Log.d("FeedPresenter", "schedule $calendarDay, $day, ${items.size}")
-                        viewState.showSchedules(items)
+                        viewState.showSchedules(feedSchedule)
                     }
-                    .map {
-                        it.first.map { FeedItem(it) }
-                    }
+                    .map { it.first }
         } else {
-            releaseInteractor
-                    .loadReleases(page)
-                    .map { it.data.map { FeedItem(it) } }
-
+            feedRepository.getFeed(page)
         }
     }
 

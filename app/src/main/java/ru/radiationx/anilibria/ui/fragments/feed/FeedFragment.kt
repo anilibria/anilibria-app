@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
+import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.inflate
@@ -42,15 +43,21 @@ import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, FeedAdapter.ItemListener {
+class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
-    private val adapter = FeedAdapter(this, {
-
-    }, PlaceholderListItem(
-            R.drawable.ic_releases,
-            R.string.placeholder_title_nodata_base,
-            R.string.placeholder_desc_nodata_base
-    ))
+    private val adapter = FeedAdapter({
+        presenter.loadMore()
+    }, releaseClickListener = { releaseItem, view ->
+        this.sharedViewLocal = view
+        presenter.onItemClick(releaseItem)
+    }, releaseLongClickListener = { releaseItem, view ->
+        releaseOnLongClick(releaseItem)
+    }, youtubeClickListener = { youtubeItem, view ->
+        this.sharedViewLocal = view
+    }, scheduleClickListener = { feedScheduleItem, view ->
+        this.sharedViewLocal = view
+        presenter.onItemClick(feedScheduleItem.releaseItem)
+    })
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -215,7 +222,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, F
         PlaceholderDelegate.ViewHolder(placeHolderContainer.inflate(R.layout.item_placeholder, true))
     }
 
-    override fun showSchedules(items: List<ReleaseItem>) {
+    override fun showSchedules(items: List<FeedScheduleItem>) {
         adapter.bindSchedules(items)
     }
 
@@ -262,42 +269,21 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView, F
         adapter.bindItems(items)
     }
 
+    override fun setRefreshing(refreshing: Boolean) {}
 
-    override fun onLoadMore() {
-        presenter.loadMore()
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view
-    }
-
-    override fun onItemClick(item: ReleaseItem, position: Int) {
-        presenter.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItem): Boolean {
-        context?.let {
-            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-            AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
-                        when (which) {
-                            0 -> {
-                                Utils.copyToClipBoard(item.link.orEmpty())
-                                Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                            }
-                            1 -> Utils.shareText(item.link.orEmpty())
-                            2 -> ShortcutHelper.addShortcut(item)
+    private fun releaseOnLongClick(item: ReleaseItem) {
+        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
+        AlertDialog.Builder(context!!)
+                .setItems(titles) { dialog, which ->
+                    when (which) {
+                        0 -> {
+                            Utils.copyToClipBoard(item.link.orEmpty())
+                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
+                        1 -> Utils.shareText(item.link.orEmpty())
+                        2 -> ShortcutHelper.addShortcut(item)
                     }
-                    .show()
-        }
-        return false
+                }
+                .show()
     }
-
-    /*override fun onItemLongClick(item: ReleaseItem): Boolean {
-        return presenter.onItemLongClick(item)
-    }*/
 }

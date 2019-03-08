@@ -3,8 +3,10 @@ package ru.radiationx.anilibria.ui.fragments.feed
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
+import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.*
@@ -19,9 +21,11 @@ import kotlin.reflect.KClass
 /* Created by radiationx on 31.10.17. */
 
 class FeedAdapter(
-        private val listener: ItemListener,
-        private val scheduleListener: (ReleaseItem) -> Unit,
-        private val placeHolder: PlaceholderListItem
+        val loadMoreListener: () -> Unit,
+        releaseClickListener: (ReleaseItem, View) -> Unit,
+        releaseLongClickListener: (ReleaseItem, View) -> Unit,
+        youtubeClickListener: (YoutubeItem, View) -> Unit,
+        scheduleClickListener: (FeedScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
 
@@ -34,21 +38,13 @@ class FeedAdapter(
             override fun onLoadMore() {}
         }))
         addDelegate(FeedSectionDelegate())
-        addDelegate(FeedSchedulesDelegate(scheduleListener))
-        addDelegate(FeedReleaseDelegate(listener))
-        addDelegate(FeedYoutubeDelegate(object : FeedYoutubeDelegate.Listener {
-            override fun onItemClick(item: YoutubeItem, position: Int) {
-
-            }
-
-            override fun onItemLongClick(item: YoutubeItem): Boolean {
-                return false
-            }
-        }))
+        addDelegate(FeedSchedulesDelegate(scheduleClickListener))
+        addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
+        addDelegate(FeedYoutubeDelegate(youtubeClickListener))
     }
 
 
-    fun bindSchedules(newItems: List<ReleaseItem>) {
+    fun bindSchedules(newItems: List<FeedScheduleItem>) {
         val index = items.indexOf(scheduleSection)
 
 
@@ -158,10 +154,9 @@ class FeedAdapter(
         val threshold = (items.lastIndex - position)
         if (threshold <= 3) {
             Handler().post {
-                listener.onLoadMore()
+                loadMoreListener.invoke()
             }
         }
     }
 
-    interface ItemListener : LoadMoreDelegate.Listener, FeedReleaseDelegate.Listener
 }

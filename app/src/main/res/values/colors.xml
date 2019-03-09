@@ -42,6 +42,7 @@
     <color name="light_tab_color_unchecked">@color/light_base_icon</color>
 
     <color name="light_toolbar_icon">@color/light_base_icon</color>
+    <color name="light_contrast_icon">@color/white</color>
     <color name="light_base_icon">#757575</color>
 
     <color name="light_release_tag_color">@color/alib_red</color>
@@ -76,6 +77,7 @@
     <color name="dark_release_fav_btn">#414141</color>
 
     <color name="dark_toolbar_icon">@color/white</color>
+    <color name="dark_contrast_icon">@color/white</color>
     <color name="dark_base_icon">#909090</color>
 
     <color name="dark_release_tag_color">@color/dark_colorAccent</color>

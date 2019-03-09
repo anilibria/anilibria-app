@@ -38,6 +38,7 @@
         <item name="tab_color_unchecked">@color/light_tab_color_unchecked</item>
 
         <item name="toolbar_icon">@color/light_toolbar_icon</item>
+        <item name="contrast_icon">@color/light_contrast_icon</item>
         <item name="base_icon">@color/light_base_icon</item>
 
         <item name="release_tag_color">@color/light_release_tag_color</item>
@@ -134,6 +135,7 @@
         <item name="tab_color_unchecked">@color/dark_tab_color_unchecked</item>
 
         <item name="toolbar_icon">@color/dark_toolbar_icon</item>
+        <item name="contrast_icon">@color/dark_contrast_icon</item>
         <item name="base_icon">@color/dark_base_icon</item>
 
         <item name="release_tag_color">@color/dark_release_tag_color</item>

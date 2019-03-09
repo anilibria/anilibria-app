@@ -57,7 +57,9 @@ class AuthRepository @Inject constructor(
             .doOnError {
                 it.printStackTrace()
                 (it as? ApiError)?.also {
-                    userHolder.delete()
+                    if (it.code == 401) {
+                        userHolder.delete()
+                    }
                 }
             }
             .subscribeOn(schedulers.io())

@@ -33,6 +33,7 @@
     <attr name="tab_color_unchecked" extension="reference" format="color" />
 
     <attr name="toolbar_icon" extension="reference" format="color" />
+    <attr name="contrast_icon" extension="reference" format="color" />
     <attr name="base_icon" extension="reference" format="color" />
 
     <attr name="release_tag_color" extension="reference" format="color" />

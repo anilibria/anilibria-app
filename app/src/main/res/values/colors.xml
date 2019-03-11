@@ -48,6 +48,7 @@
     <color name="light_release_tag_color">@color/alib_red</color>
     <color name="light_release_tag_color_press">@color/alib_red_dark</color>
     <color name="light_release_fav_btn">#999</color>
+    <color name="light_release_day_btn">#cccccc</color>
 
     <color name="light_episode_even">#f4f4f4</color>
     <color name="light_comment_quote">#11000000</color>
@@ -75,6 +76,7 @@
     <color name="dark_tab_color_checked">#fff</color>
     <color name="dark_tab_color_unchecked">@color/dark_base_icon</color>
     <color name="dark_release_fav_btn">#414141</color>
+    <color name="dark_release_day_btn">#414141</color>
 
     <color name="dark_toolbar_icon">@color/white</color>
     <color name="dark_contrast_icon">@color/white</color>

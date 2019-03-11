@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="@color/light_colorAccent" />
+            <corners android:radius="100dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@color/light_release_day_btn" />
+            <corners android:radius="100dp" />
+        </shape>
+    </item>
+</selector>

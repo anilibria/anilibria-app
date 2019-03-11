@@ -46,6 +46,8 @@ class ReleaseParser @Inject constructor(
         item.status = jsonItem.nullString("status")
         item.description = jsonItem.nullString("description")?.trim()
 
+        item.announce = jsonItem.nullString("announce")?.trim()
+
         jsonItem.nullString("type")?.also {
             item.types.add(it)
         }

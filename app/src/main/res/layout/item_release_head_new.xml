@@ -30,9 +30,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/full_fav_btn"
             android:textColor="?textDefault"
             android:textSize="20sp"
@@ -42,11 +42,11 @@
             android:id="@+id/full_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_below="@id/full_title"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="6"
             android:textColor="?textDefault"
@@ -59,14 +59,14 @@
             android:id="@+id/full_fav_btn"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:layout_marginEnd="16dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="9dp"
+            android:layout_marginEnd="16dp"
             android:background="?bg_fav_btn"
             android:orientation="horizontal"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp">
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
 
             <TextView
                 android:id="@+id/full_fav_count"
@@ -75,8 +75,8 @@
                 android:layout_gravity="center_vertical"
                 android:fontFamily="@font/medium"
                 android:gravity="center_vertical"
-                android:paddingEnd="4dp"
                 android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:textColor="?textColoredButton"
                 android:textSize="13sp" />
 
@@ -97,9 +97,9 @@
         android:id="@+id/full_tags"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         tagview:lineMargin="8dp"
         tagview:tagMargin="8dp"
         tagview:textPaddingBottom="5dp"
@@ -110,19 +110,49 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="?divider_line" />
+
+    <ru.radiationx.anilibria.ui.widgets.DaysBar
+        android:id="@+id/full_days_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/full_announce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textColor="?textSecond"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:text="Серия задержится. Ориентировочно выйдет в ночь с понедельника на вторник."
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
     <TextView
         android:id="@+id/full_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:textColor="?textDefault"
         android:textSize="16sp"
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
@@ -130,10 +160,10 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
     <android.support.v7.widget.AppCompatButton
@@ -142,8 +172,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/download_torrent" />
 
     <android.support.v7.widget.AppCompatButton
@@ -151,8 +181,8 @@
         style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/watch_web" />
 
     <!--<View

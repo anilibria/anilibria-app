@@ -19,6 +19,7 @@ open class ReleaseItem : Serializable {
     val seasons = mutableListOf<String>()
     val days = mutableListOf<String>()
     var description: String? = null
+    var announce: String? = null
     val favoriteInfo = FavoriteInfo()
 
     var isNew: Boolean = false

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="android.support.constraint.ConstraintLayout">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="пн"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day2"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day2"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="вт"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day3"
+        app:layout_constraintStart_toEndOf="@id/day1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day3"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="ср"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day4"
+        app:layout_constraintStart_toEndOf="@id/day2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day4"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="чт"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day5"
+        app:layout_constraintStart_toEndOf="@id/day3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day5"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="пт"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day6"
+        app:layout_constraintStart_toEndOf="@id/day4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day6"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="сб"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/day7"
+        app:layout_constraintStart_toEndOf="@id/day5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/day7"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_schedule_day_light"
+        android:gravity="center"
+        android:text="вс"
+        android:textAllCaps="true"
+        android:textColor="?textColoredButton"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/day6"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</merge>

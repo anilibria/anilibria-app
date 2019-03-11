@@ -9,8 +9,10 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.setCompatDrawable
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -102,6 +104,10 @@ class ReleaseHeadDelegate(
             full_button_watch_web.isEnabled = hasMoonwalk
 
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
+
+            full_days_bar.selectDays(item.days.map { ScheduleDay.toCalendarDay(it) })
+            full_announce.visible(item.announce != null)
+            full_announce.text = item.announce
 
             item.favoriteInfo.let {
                 full_fav_count.text = it.rating.toString()

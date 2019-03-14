@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -20,6 +21,13 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
 
 class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
+
+    companion object {
+        private const val ARG_DAY = "arg day"
+        fun newInstance(day: Int = -1) = ScheduleFragment().putExtra {
+            putInt(ARG_DAY, day)
+        }
+    }
 
     private val scheduleAdapter = ScheduleAdapter { item, view ->
         this.sharedViewLocal = view
@@ -47,6 +55,9 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
+        arguments?.apply {
+            presenter.argDay = getInt(ARG_DAY, presenter.argDay)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

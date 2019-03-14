@@ -63,6 +63,10 @@ class ReleaseHeadDelegate(
             full_fav_btn.setOnClickListener {
                 itemListener.onClickFav()
             }
+
+            full_days_bar.clickListener = {
+                itemListener.onScheduleClick(it)
+            }
         }
 
         fun bind(item: ReleaseFull) {
@@ -136,5 +140,7 @@ class ReleaseHeadDelegate(
         fun onClickWatchWeb()
 
         fun onClickFav()
+
+        fun onScheduleClick(day: Int)
     }
 }

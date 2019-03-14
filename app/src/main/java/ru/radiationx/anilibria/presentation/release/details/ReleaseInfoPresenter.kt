@@ -194,6 +194,10 @@ class ReleaseInfoPresenter @Inject constructor(
                 .addToDisposable()
     }
 
+    fun onScheduleClick(day: Int) {
+        router.navigateTo(Screens.Schedule(day))
+    }
+
     fun openAuth() {
         router.navigateTo(Screens.Auth())
     }

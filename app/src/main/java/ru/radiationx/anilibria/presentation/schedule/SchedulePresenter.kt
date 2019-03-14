@@ -20,6 +20,8 @@ class SchedulePresenter @Inject constructor(
         private val errorHandler: ErrorHandler
 ) : BasePresenter<ScheduleView>(router) {
 
+    var argDay: Int = -1
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         scheduleRepository
@@ -35,7 +37,11 @@ class SchedulePresenter @Inject constructor(
                     }
                     viewState.showSchedules(items)
 
-                    val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+                    val currentDay = if (argDay != -1) {
+                        argDay
+                    } else {
+                        Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+                    }
                     val index = it.indexOfFirst { ScheduleDay.toCalendarDay(it.day) == currentDay }
                     if (index != -1) {
                         viewState.scrollToDay(items[index])

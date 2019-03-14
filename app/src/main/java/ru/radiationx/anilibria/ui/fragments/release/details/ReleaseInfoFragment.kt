@@ -426,5 +426,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             presenter.onClickWatchWeb()
         }
 
+        override fun onScheduleClick(day: Int) {
+            presenter.onScheduleClick(day)
+        }
     }
 }

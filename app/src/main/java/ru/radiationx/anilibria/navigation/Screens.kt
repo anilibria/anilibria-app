@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.navigation
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -16,6 +17,7 @@ import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.page.PageFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
+import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 
@@ -62,6 +64,10 @@ object Screens {
 
     class History : BaseAppScreen() {
         override fun getFragment() = HistoryFragment()
+    }
+
+    class Schedule : BaseAppScreen() {
+        override fun getFragment(): Fragment = ScheduleFragment()
     }
 
     class ReleaseDetails(

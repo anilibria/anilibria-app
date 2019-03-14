@@ -7,6 +7,7 @@
     <string name="fragment_title_favorites">Избранное</string>
     <string name="fragment_title_youtube">YouTube</string>
     <string name="fragment_title_search">Поиск</string>
+    <string name="fragment_title_schedule">Расписание</string>
 
     <string name="download_torrent">Скачать торрент</string>
     <string name="watch_web">Веб-плеер</string>

@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.model.repository
 
+import com.jakewharton.rxrelay2.BehaviorRelay
+import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
@@ -16,8 +18,17 @@ class ScheduleRepository @Inject constructor(
         private val scheduleApi: ScheduleApi
 ) {
 
+    private val dataRelay = BehaviorRelay.create<List<ScheduleDay>>()
+
+    fun observeSchedule(): Observable<List<ScheduleDay>> = dataRelay
+            .hide()
+            .observeOn(schedulers.ui())
+
     fun loadSchedule(): Single<List<ScheduleDay>> = scheduleApi
             .getSchedule()
+            .doOnSuccess {
+                dataRelay.accept(it)
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 }

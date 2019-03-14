@@ -31,12 +31,6 @@ class FeedAdapter(
         scheduleClickListener: (FeedScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
-
-    private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
-
-    private var states: SparseArray<Parcelable?> = SparseArray()
-    private var currentRecyclerView: RecyclerView? = null
-
     private val scheduleSection = FeedSectionListItem("Ожидаются сегодня", "Расписание")
     private val feedSection = FeedSectionListItem("Обновления")
 
@@ -57,46 +51,6 @@ class FeedAdapter(
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        currentRecyclerView = recyclerView
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        currentRecyclerView = null
-    }
-
-    private fun saveState() {
-        (0 until itemCount).forEach { index ->
-            val holder = currentRecyclerView?.findViewHolderForAdapterPosition(index)
-            (holder as? IBundledViewHolder)?.apply {
-                val state = holder.saveState()
-                states.put(getStateId(), state)
-            }
-        }
-    }
-
-    fun saveState(outState: Bundle?) {
-        saveState()
-        outState?.putSparseParcelableArray(bundleNestedStatesKey, states)
-    }
-
-    fun restoreState(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) return
-        savedInstanceState.getSparseParcelableArray<Parcelable?>(bundleNestedStatesKey)?.also {
-            states = it
-        }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        super.onViewRecycled(holder)
-        (holder as? IBundledViewHolder)?.apply {
-            val state = holder.saveState()
-            states.put(getStateId(), state)
-        }
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
 
         val time = System.currentTimeMillis()
@@ -108,12 +62,6 @@ class FeedAdapter(
             Handler().post {
                 loadMoreListener.invoke()
             }
-        }
-
-        (holder as? IBundledViewHolder)?.apply {
-            val state = states[getStateId()]
-            holder.restoreState(state)
-            states.remove(getStateId())
         }
     }
 

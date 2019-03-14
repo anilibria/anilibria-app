@@ -24,6 +24,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 
 class FeedAdapter(
         val loadMoreListener: () -> Unit,
+        schedulesClickListener: () -> Unit,
         releaseClickListener: (ReleaseItem, View) -> Unit,
         releaseLongClickListener: (ReleaseItem, View) -> Unit,
         youtubeClickListener: (YoutubeItem, View) -> Unit,
@@ -36,15 +37,21 @@ class FeedAdapter(
     private var states: SparseArray<Parcelable?> = SparseArray()
     private var currentRecyclerView: RecyclerView? = null
 
-    private val scheduleSection = FeedSectionListItem("Ожидаются сегодня")
+    private val scheduleSection = FeedSectionListItem("Ожидаются сегодня", "Расписание")
     private val feedSection = FeedSectionListItem("Обновления")
+
+    private val sectionClickListener = { item: FeedSectionListItem ->
+        if (item == scheduleSection) {
+            schedulesClickListener.invoke()
+        }
+    }
 
     init {
         items = mutableListOf()
         addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
             override fun onLoadMore() {}
         }))
-        addDelegate(FeedSectionDelegate())
+        addDelegate(FeedSectionDelegate(sectionClickListener))
         addDelegate(FeedSchedulesDelegate(scheduleClickListener))
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))

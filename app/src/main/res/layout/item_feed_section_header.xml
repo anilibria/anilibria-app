@@ -4,14 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp">
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingTop="8dp">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/itemFeedScheduleTitle"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:textColor="?textDefault"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -23,19 +28,19 @@
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/itemFeedScheduleBtn"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:background="?selectableItemBackground"
-        android:clickable="true"
-        android:drawableEnd="@drawable/ic_chevron_right"
         android:drawablePadding="0dp"
-        android:focusable="true"
         android:gravity="center_vertical"
         android:paddingStart="4dp"
+        android:paddingTop="8dp"
         android:paddingEnd="0dp"
-        android:text="Расписание"
+        android:paddingBottom="8dp"
         android:textColor="?textLink"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:drawableEnd="@drawable/ic_chevron_right"
+        tools:text="Расписание"
+        tools:visibility="visible" />
 </android.support.constraint.ConstraintLayout>

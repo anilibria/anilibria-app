@@ -47,6 +47,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     private val adapter = FeedAdapter({
         presenter.loadMore()
+    }, schedulesClickListener = {
+        presenter.onSchedulesClick()
     }, releaseClickListener = { releaseItem, view ->
         this.sharedViewLocal = view
         presenter.onItemClick(releaseItem)

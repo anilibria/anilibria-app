@@ -60,5 +60,5 @@ class SocialAuthListItem(val item: SocialAuth) : ListItem()
 
 class FeedScheduleListItem(val item: FeedScheduleItem) : ListItem()
 class FeedSchedulesListItem(val items: List<FeedScheduleItem>) : ListItem()
-class FeedSectionListItem(val title: String) : ListItem()
+class FeedSectionListItem(val title: String, val route: String? = null) : ListItem()
 class FeedListItem(val item: FeedItem) : ListItem()

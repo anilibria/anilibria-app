@@ -134,6 +134,10 @@ class FeedPresenter @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
+    fun onSchedulesClick(){
+
+    }
+
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }

@@ -15,7 +15,7 @@ abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
 
     open fun bindData(item: I, holder: VH) {}
 
-    open fun applyPayloads(item: I, payloads: MutableList<Any>, holder: RecyclerView.ViewHolder) {}
+    open fun applyPayloads(item: I, payloads: MutableList<Any>, holder: VH) {}
 
     // Использовать только если нужна кастомная логика или viewChecker == null
     override fun isForViewType(item: T, items: MutableList<T>, position: Int): Boolean {
@@ -24,9 +24,10 @@ abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
 
     // Использовать только если нужна кастомная логика
     override fun onBindViewHolder(item: I, viewHolder: VH, payloads: MutableList<Any>) {
-        bindData(item, viewHolder)
         if (payloads.isNotEmpty()) {
             applyPayloads(item, payloads, viewHolder)
+        } else {
+            bindData(item, viewHolder)
         }
     }
 

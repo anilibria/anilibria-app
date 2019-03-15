@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
@@ -18,6 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedSchedulesDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedYoutubeDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
+import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 
 /* Created by radiationx on 31.10.17. */
@@ -32,7 +30,7 @@ class FeedAdapter(
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val scheduleSection = FeedSectionListItem("Ожидаются сегодня", "Расписание")
-    private val feedSection = FeedSectionListItem("Обновления")
+    private val feedSection = FeedSectionListItem("Обновления", hasBg = true)
 
     private val sectionClickListener = { item: FeedSectionListItem ->
         if (item == scheduleSection) {
@@ -49,6 +47,7 @@ class FeedAdapter(
         addDelegate(FeedSchedulesDelegate(scheduleClickListener))
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
+        addDelegate(DividerShadowItemDelegate())
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
@@ -102,32 +101,56 @@ class FeedAdapter(
 
         var startIndex = items.indexOf(feedSection)
 
+        Log.e("ninini", "beforekek  $startIndex ")
+
         if (startIndex == -1) {
             startIndex = items.indexOfLast { it is FeedSchedulesListItem }
+            //items.add(DividerShadowListItem())
             items.add(feedSection)
-            notifyItemInserted(startIndex)
+            notifyItemRangeInserted(startIndex, 1)
         }
         startIndex = items.indexOf(feedSection) + 1
 
-        val currentFeedItems = items.filterIsInstance<FeedListItem>()
-        val newListItems = newItems.map { FeedListItem(it) }
+        Log.e("ninini", "afterkek  $startIndex = ${items.joinToString()}")
+
+        val currentFeedItems = (startIndex until itemCount)
+                .filter { index ->
+                    Log.e("ninini", "current index = $index => ${items[index]}")
+                    val listItem = items[index]
+                    listItem is FeedListItem || listItem is DividerShadowListItem
+                }
+                .map { items[it] }
+        val newListItems = mutableListOf<ListItem>()
+
+        var lastFeedItem: FeedListItem? = null
+        newItems.forEach { feedItem ->
+            lastFeedItem?.also {
+                if (it.item.release == null && feedItem.release != null
+                        || it.item.youtube == null && feedItem.youtube != null) {
+                    newListItems.add(DividerShadowListItem())
+                }
+            }
+            newListItems.add(FeedListItem(feedItem).also {
+                lastFeedItem = it
+            })
+        }
 
         currentFeedItems.forEach { items.remove(it) }
         items.addAll(startIndex, newListItems)
-
+        //notifyDataSetChanged()
 
         when {
             currentFeedItems.size == newListItems.size -> {
-                notifyItemRangeChanged(startIndex, currentFeedItems.size)
+                notifyItemRangeChanged(startIndex, currentFeedItems.size, FeedUpdateDataPayload)
             }
             currentFeedItems.size < newListItems.size -> {
                 val insertIndex = startIndex + currentFeedItems.size
-                notifyItemRangeChanged(startIndex, currentFeedItems.size)
+                notifyItemRangeChanged(startIndex, currentFeedItems.size, FeedUpdateDataPayload)
                 notifyItemRangeInserted(insertIndex, newListItems.size - currentFeedItems.size)
             }
             currentFeedItems.size > newListItems.size -> {
                 val removeIndex = startIndex + newListItems.size
-                notifyItemRangeChanged(startIndex, newListItems.size)
+                notifyItemRangeChanged(startIndex, newListItems.size, FeedUpdateDataPayload)
                 notifyItemRangeRemoved(removeIndex, currentFeedItems.size - newListItems.size)
             }
         }
@@ -140,7 +163,7 @@ class FeedAdapter(
         }
 
         if (progress) {
-            items.add(LoadMoreListItem)
+            items.add(LoadMoreListItem())
             notifyItemInserted(items.size)
         }
     }
@@ -149,7 +172,7 @@ class FeedAdapter(
         val progress = isProgress()
 
         if (isVisible && !progress) {
-            items.add(LoadMoreListItem)
+            items.add(LoadMoreListItem())
             notifyItemInserted(items.lastIndex)
         } else if (!isVisible && progress) {
             items.remove(items.last())

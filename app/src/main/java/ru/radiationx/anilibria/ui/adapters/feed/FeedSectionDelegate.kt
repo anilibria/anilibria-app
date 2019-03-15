@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_section_header.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.*
@@ -51,6 +53,12 @@ class FeedSectionDelegate(
             itemFeedScheduleTitle.text = item.title
             itemFeedScheduleBtn.visible(item.route != null)
             itemFeedScheduleBtn.text = item.route
+
+            containerView.setBackgroundColor(if (item.hasBg) {
+                containerView.context.getColorFromAttr(R.attr.cardBackground)
+            } else {
+                Color.TRANSPARENT
+            })
         }
     }
 }

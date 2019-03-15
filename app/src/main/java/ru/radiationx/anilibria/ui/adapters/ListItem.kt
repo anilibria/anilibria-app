@@ -20,13 +20,13 @@ sealed class ListItem
 
 class ProfileListItem(val profileItem: ProfileItem) : ListItem()
 class MenuListItem(val menuItem: OtherMenuItem) : ListItem()
-object DividerShadowListItem : ListItem()
+class DividerShadowListItem : ListItem()
 
 
 /* Common */
 
-object LoadMoreListItem : ListItem()
-object CommentRouteListItem : ListItem()
+class LoadMoreListItem : ListItem()
+class CommentRouteListItem : ListItem()
 class VitalWebListItem(val item: VitalItem) : ListItem()
 class VitalNativeListItem(val item: VitalItem) : ListItem()
 class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
@@ -42,7 +42,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean) : ListItem()
 class ReleaseEpisodeControlItem(val item: ReleaseFull) : ListItem()
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
-object ReleaseDonateListItem : ListItem()
+class ReleaseDonateListItem : ListItem()
 class ReleaseRemindListItem(val item: String) : ListItem()
 class ReleaseBlockedListItem(val item: ReleaseFull) : ListItem()
 class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
@@ -60,5 +60,5 @@ class SocialAuthListItem(val item: SocialAuth) : ListItem()
 
 class FeedScheduleListItem(val item: FeedScheduleItem) : ListItem()
 class FeedSchedulesListItem(val items: List<FeedScheduleItem>) : ListItem()
-class FeedSectionListItem(val title: String, val route: String? = null) : ListItem()
+class FeedSectionListItem(val title: String, val route: String? = null, val hasBg: Boolean = false) : ListItem()
 class FeedListItem(val item: FeedItem) : ListItem()

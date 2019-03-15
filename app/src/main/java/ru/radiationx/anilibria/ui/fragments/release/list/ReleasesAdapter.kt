@@ -59,7 +59,7 @@ open class ReleasesAdapter(
 
     protected fun addLoadMore() {
         if (endless) {
-            this.items.add(LoadMoreListItem)
+            this.items.add(LoadMoreListItem())
         }
     }
 

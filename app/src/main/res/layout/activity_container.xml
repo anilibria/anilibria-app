@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:background="#f6f7f9">
+        android:background="#f0f1f2">
         <!--
         Эта вьюха нужна, чтобы фрагменты нормально вставлялись.
         Если её не будет, то нулевой фрагмент не уйдёт под статусбар, а другие будут норм.

@@ -4,10 +4,12 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -22,9 +24,7 @@ import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.extension.inflate
-import ru.radiationx.anilibria.extension.invisible
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
@@ -40,6 +40,10 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
+import android.R.attr.data
+import android.util.TypedValue
+import com.lapism.searchview.SearchEditText
+
 
 /* Created by radiationx on 05.11.17. */
 
@@ -113,7 +117,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                     .fullWidth(true)
                     .spacingDp(8f)
             )*/
-            itemAnimator = null
+            //itemAnimator = null
         }
 
         toolbar.apply {
@@ -126,9 +130,18 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+
+            layoutParams = layoutParams.apply {
+                val tv = TypedValue()
+                if (context.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                    val actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
+
+                    height = actionBarHeight + dpToPx(8)
+                }
+            }
         }
 
-        ToolbarShadowController(
+        FeedToolbarShadowController(
                 recyclerView,
                 appbarLayout
         ) {
@@ -140,31 +153,34 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
             width = CoordinatorLayout.LayoutParams.MATCH_PARENT
             height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+
             behavior = SearchBehavior()
         }
         searchView?.apply {
+            //isFocusableInTouchMode = true
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 z = 16f
             }
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            close(false)
+            setNavigationIcon(R.drawable.ic_toolbar_search)
+            close(true)
             setVoice(false)
-            setShadow(true)
-            setDivider(true)
+            setShadow(false)
+            setDivider(false)
             setTheme(when (appThemeHolder.getTheme()) {
                 AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
                 AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
             })
             shouldClearOnClose = true
-            version = SearchView.VERSION_MENU_ITEM
-            setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM)
+            version = SearchView.VERSION_TOOLBAR
+            setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG)
 
-            hint = "Название релиза"
+            hint = "Поиск по названию"
 
             setOnOpenCloseListener(object : SearchView.OnOpenCloseListener {
                 override fun onOpen(): Boolean {
                     showSuggestions()
-                    return false
+                    setShadow(true)
+                    return true
                 }
 
                 override fun onClose(): Boolean {
@@ -187,7 +203,28 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             })
 
             adapter = searchAdapter
+
+            val cardview = findViewById<CardView>(com.lapism.searchview.R.id.cardView)
+            cardview.apply {
+                radius = dpToPx(8).toFloat()
+                cardElevation = dpToPx(2).toFloat()
+                setCardBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
+                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    marginStart = dpToPx(16)
+                    marginEnd = dpToPx(16)
+                    bottomMargin = dpToPx(8)
+                }
+            }
+
+
+            val searchEditText = findViewById<SearchEditText>(com.lapism.searchview.R.id.searchEditText_input)
+            searchEditText.apply {
+                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    marginStart = dpToPx(12)
+                }
+            }
         }
+        //searchView?.open(false)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {

@@ -9,10 +9,7 @@ import kotlinx.android.synthetic.main.item_youtube.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
-import ru.radiationx.anilibria.ui.adapters.BaseItemListener
-import ru.radiationx.anilibria.ui.adapters.FeedListItem
-import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
+import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
@@ -31,6 +28,12 @@ class FeedYoutubeDelegate(
     override fun getPoolSize(): Int = 5
 
     override fun bindData(item: FeedListItem, holder: ViewHolder) = holder.bind(item.item.youtube!!)
+
+    override fun applyPayloads(item: FeedListItem, payloads: MutableList<Any>, holder: ViewHolder) {
+        payloads.filterIsInstance<FeedUpdateDataPayload>().forEach {
+            holder.updateItem(item.item.youtube!!)
+        }
+    }
 
     class ViewHolder(
             val view: View,
@@ -58,6 +61,10 @@ class FeedYoutubeDelegate(
                 ImageLoader.getInstance().displayImage(item.image, item_image)
                 ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.id}")
             }
+        }
+
+        fun updateItem(item: YoutubeItem) {
+            currentItem = item
         }
     }
 }

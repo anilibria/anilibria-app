@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:top="-1dp">
+    <item android:gravity="top">
 
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-            android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:endColor="#0000"
-                android:startColor="#22000000"
-                android:type="linear" />
+        <shape android:shape="rectangle">
+            <solid android:color="#1000" />
+            <size android:height="1dp" />
 
+        </shape>
+    </item>
+    <item android:gravity="bottom">
+
+        <shape android:shape="rectangle">
+            <solid android:color="#1000" />
+            <size android:height="1dp" />
         </shape>
     </item>
 </layer-list>

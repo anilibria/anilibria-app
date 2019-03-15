@@ -10,11 +10,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_release.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.ui.adapters.BaseItemListener
-import ru.radiationx.anilibria.ui.adapters.FeedListItem
-import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
@@ -34,6 +32,13 @@ class FeedReleaseDelegate(
     override fun getPoolSize(): Int = 5
 
     override fun bindData(item: FeedListItem, holder: ViewHolder) = holder.bind(item.item.release!!)
+
+
+    override fun applyPayloads(item: FeedListItem, payloads: MutableList<Any>, holder: ViewHolder) {
+        payloads.filterIsInstance<FeedUpdateDataPayload>().forEach {
+            holder.updateItem(item.item.release!!)
+        }
+    }
 
     class ViewHolder(
             override val containerView: View,
@@ -64,6 +69,10 @@ class FeedReleaseDelegate(
             ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.id}")
             item_new_indicator.visible(item.isNew)
             ImageLoader.getInstance().displayImage(item.poster, item_image)
+        }
+
+        fun updateItem(item: ReleaseItem) {
+            currentItem = item
         }
     }
 }

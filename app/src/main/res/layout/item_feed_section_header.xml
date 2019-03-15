@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground"
+    android:foreground="?selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:paddingTop="8dp">
@@ -29,7 +29,7 @@
         android:id="@+id/itemFeedScheduleBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
         android:drawablePadding="0dp"
         android:gravity="center_vertical"
         android:paddingStart="4dp"

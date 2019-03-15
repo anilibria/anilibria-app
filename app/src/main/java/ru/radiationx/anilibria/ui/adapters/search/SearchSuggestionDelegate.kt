@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -44,6 +45,7 @@ class SearchSuggestionDelegate(
                 clickListener.invoke(currentItem)
             }
             view.item_image.scaleType = ImageView.ScaleType.CENTER_CROP
+            //view.item_subtitle.visible()
         }
 
         fun bind(item: SuggestionItem) {
@@ -51,14 +53,18 @@ class SearchSuggestionDelegate(
             view.run {
                 ImageLoader.getInstance().cancelDisplayTask(item_image)
                 ImageLoader.getInstance().displayImage(item.poster, item_image)
-                val title = item.names.joinToString(" / ")
-                val matcher = Pattern.compile(item.query, Pattern.CASE_INSENSITIVE).matcher(title)
-                val s = SpannableString(title)
-                while (matcher.find()) {
-                    s.setSpan(StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                }
-                item_title.setText(s, TextView.BufferType.SPANNABLE)
+                setText(item_title, item, item.names[0])
+                //setText(item_subtitle, item, item.names[1])
             }
+        }
+
+        fun setText(textView: TextView, item: SuggestionItem, title: String) {
+            val matcher = Pattern.compile(item.query, Pattern.CASE_INSENSITIVE).matcher(title)
+            val s = SpannableString(title)
+            while (matcher.find()) {
+                s.setSpan(StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            textView.setText(s, TextView.BufferType.SPANNABLE)
         }
     }
 }

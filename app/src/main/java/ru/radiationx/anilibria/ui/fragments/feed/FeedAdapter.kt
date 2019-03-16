@@ -95,6 +95,37 @@ class FeedAdapter(
         Log.d("kokoko", "bindSchedules after ${items.joinToString { it.javaClass.simpleName }}")
     }
 
+    fun updateItems(updItems: List<FeedItem>) {
+        val updListItems = items
+                .filterIsInstance<FeedListItem>()
+                .filter { feedListItem ->
+                    val releaseItem = feedListItem.item.release
+                    val youtubeItem = feedListItem.item.youtube
+                    when {
+                        releaseItem != null -> updItems.firstOrNull { it.release?.id == releaseItem.id } != null
+                        youtubeItem != null -> updItems.firstOrNull { it.youtube?.id == youtubeItem.id } != null
+                        else -> false
+                    }
+                }
+
+        updListItems.forEach { feedListItem ->
+            val index = items.indexOf(feedListItem)
+            val updItem = updItems.firstOrNull { feedItem ->
+                val releaseItem = feedListItem.item.release
+                val youtubeItem = feedListItem.item.youtube
+                when {
+                    releaseItem != null -> feedItem.release?.id == releaseItem.id
+                    youtubeItem != null -> feedItem.youtube?.id == youtubeItem.id
+                    else -> false
+                }
+            }
+            if (index != -1 && updItem != null) {
+                items[index] = FeedListItem(updItem)
+                notifyItemChanged(index)
+            }
+        }
+    }
+
     fun bindItems(newItems: List<FeedItem>) {
 
         val progress = isProgress()

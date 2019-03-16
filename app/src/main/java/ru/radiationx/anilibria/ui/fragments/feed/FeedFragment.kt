@@ -320,6 +320,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         adapter.bindItems(items)
     }
 
+    override fun updateItems(items: List<FeedItem>) {
+        adapter.updateItems(items)
+    }
+
     override fun setRefreshing(refreshing: Boolean) {}
 
     private fun releaseOnLongClick(item: ReleaseItem) {

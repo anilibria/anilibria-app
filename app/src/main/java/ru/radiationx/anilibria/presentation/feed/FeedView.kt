@@ -19,5 +19,6 @@ interface FeedView : IBaseView {
     fun showEmptyView(show: Boolean)
     fun showEmptyError(show: Boolean, message: String?)
     fun showProjects(show: Boolean, items: List<FeedItem>)
+    fun updateItems(items: List<FeedItem>)
 
 }

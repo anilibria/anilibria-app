@@ -83,7 +83,7 @@ class OtherFragment : BaseFragment(), OtherView {
 
         init {
             items = mutableListOf()
-            delegatesManager.run {
+            delegatesManager.apply {
                 addDelegate(ProfileItemDelegate(profileClickListener, logoutClickListener))
                 addDelegate(DividerShadowItemDelegate())
                 addDelegate(MenuItemDelegate(menuClickListener))

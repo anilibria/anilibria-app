@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
@@ -69,9 +70,11 @@ class ProfileItemDelegate(
             if (profileItem.authState == AuthState.AUTH) {
                 profileNick.text = profileItem.nick
                 profileDesc.text = "Перейти в профиль"
+                profileDesc.gone()
             } else {
                 profileNick.text = "Гость"
                 profileDesc.text = "Авторизоваться"
+                profileDesc.visible()
             }
         }
 

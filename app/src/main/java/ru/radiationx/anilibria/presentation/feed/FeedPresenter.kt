@@ -6,6 +6,7 @@ import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
+import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
@@ -22,9 +23,12 @@ import javax.inject.Inject
 class FeedPresenter @Inject constructor(
         private val feedRepository: FeedRepository,
         private val scheduleRepository: ScheduleRepository,
+        private val releaseUpdateHolder: ReleaseUpdateHolder,
         private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FeedView>(router) {
+
+    private val currentItems = mutableListOf<FeedItem>()
 
     private val paginator = Paginator({
         loadFeed(it)/*.delay(1000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())*/
@@ -53,6 +57,8 @@ class FeedPresenter @Inject constructor(
         }
 
         override fun showData(show: Boolean, data: List<FeedItem>) {
+            currentItems.clear()
+            currentItems.addAll(data)
             viewState.showProjects(show, data)
         }
 
@@ -90,6 +96,26 @@ class FeedPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         refreshReleases()
+
+
+        releaseUpdateHolder
+                .observeEpisodes()
+                .subscribe { data ->
+                    val itemsNeedUpdate = mutableListOf<FeedItem>()
+                    currentItems.forEach { item ->
+                        data.firstOrNull { it.id == item.release?.id }?.also { updItem ->
+                            val release = item.release!!
+                            val isNew = release.torrentUpdate > updItem.lastOpenTimestamp || release.torrentUpdate > updItem.timestamp
+                            if (release.isNew != isNew) {
+                                release.isNew = isNew
+                                itemsNeedUpdate.add(item)
+                            }
+                        }
+                    }
+
+                    viewState.updateItems(itemsNeedUpdate)
+                }
+                .addToDisposable()
     }
 
     fun refreshReleases() {

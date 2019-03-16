@@ -28,7 +28,12 @@ class SchedulePresenter @Inject constructor(
                 .observeSchedule()
                 .subscribe {
                     val items = it.map {
-                        Pair(getDayName(it.day), it.items)
+                        val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+                        var dayName = getDayName(it.day)
+                        if (it.day == calendarDay) {
+                            dayName+=" (сегодня)"
+                        }
+                        Pair(dayName, it.items)
                     }
                     viewState.showSchedules(items)
 

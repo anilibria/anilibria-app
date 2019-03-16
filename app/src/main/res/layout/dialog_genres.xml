@@ -10,6 +10,31 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/filtersTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:text="Фильтр"
+            android:textColor="?textSecond"
+            android:textSize="16sp" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/filterComplete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:checked="true"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="Релиз завершен"
+            android:textColor="?textDefault"
+            android:textSize="16sp" />
+
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/typeTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

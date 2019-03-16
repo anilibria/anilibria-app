@@ -129,6 +129,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
                 override fun onChangeSorting(sorting: String) {
                     presenter.onChangeSorting(sorting)
                 }
+
+                override fun onChangeComplete(complete: Boolean) {
+                    presenter.onChangeComplete(complete)
+                }
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
@@ -290,6 +294,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun setSorting(sorting: String) {
         genresDialog.setSorting(sorting)
+    }
+
+    override fun setComplete(complete: Boolean) {
+        genresDialog.setComplete(complete)
     }
 
     override fun updateInfo(sort: String, filters: Int) {

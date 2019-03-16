@@ -16,6 +16,7 @@ interface SearchView : ReleasesView {
     fun selectGenres(genres: List<String>)
     fun selectYears(years: List<String>)
     fun setSorting(sorting: String)
+    fun setComplete(complete: Boolean)
 
     @StateStrategyType(SkipStrategy::class)
     fun showDialog()

@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.*
@@ -26,7 +26,7 @@ class FeedAdapter(
         releaseClickListener: (ReleaseItem, View) -> Unit,
         releaseLongClickListener: (ReleaseItem, View) -> Unit,
         youtubeClickListener: (YoutubeItem, View) -> Unit,
-        scheduleClickListener: (FeedScheduleItem, View) -> Unit
+        scheduleClickListener: (ScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val scheduleSection = FeedSectionListItem("Ожидаются сегодня", "Расписание")
@@ -64,7 +64,7 @@ class FeedAdapter(
         }
     }
 
-    fun bindSchedules(newItems: List<FeedScheduleItem>) {
+    fun bindSchedules(newItems: List<ScheduleItem>) {
         val index = items.indexOf(scheduleSection)
 
 

@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
@@ -15,9 +16,10 @@ class ScheduleParser @Inject constructor(
         for (i in 0 until jsonResponse.length()) {
             val jsonItem = jsonResponse.getJSONObject(i)
             val releases = releaseParser.releases(jsonItem.getJSONArray("items"))
+            val strDay = jsonItem.getString("day")
             val item = ScheduleDay(
-                    jsonItem.getString("day"),
-                    releases
+                    ScheduleDay.toCalendarDay(strDay),
+                    releases.map { ScheduleItem(it) }
             )
             result.add(item)
         }

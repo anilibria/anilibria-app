@@ -8,21 +8,19 @@ import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedules.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.extension.inflate
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class FeedSchedulesDelegate(
-        private val clickListener: (FeedScheduleItem, View) -> Unit
+        private val clickListener: (ScheduleItem, View) -> Unit
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
         R.layout.item_feed_schedules,
         { it is FeedSchedulesListItem },
@@ -44,11 +42,11 @@ class FeedSchedulesDelegate(
 
     class ViewHolder(
             override val containerView: View,
-            private val clickListener: (FeedScheduleItem, View) -> Unit,
+            private val clickListener: (ScheduleItem, View) -> Unit,
             private val viewPool: RecyclerView.RecycledViewPool? = null
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
 
-        private val currentItems = mutableListOf<FeedScheduleItem>()
+        private val currentItems = mutableListOf<ScheduleItem>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
 
         init {
@@ -63,7 +61,7 @@ class FeedSchedulesDelegate(
             }
         }
 
-        fun bind(items: List<FeedScheduleItem>) {
+        fun bind(items: List<ScheduleItem>) {
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)

@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.entity.app.feed
 
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 
-class FeedScheduleItem(
+data class ScheduleItem(
         val releaseItem: ReleaseItem,
-        val completed: Boolean
+        val completed: Boolean = false
 )

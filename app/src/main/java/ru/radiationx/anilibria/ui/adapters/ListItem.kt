@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.adapters
 
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.app.release.GenreItem
@@ -58,7 +58,7 @@ class YoutubeListItem(val item: YoutubeItem) : ListItem()
 
 class SocialAuthListItem(val item: SocialAuth) : ListItem()
 
-class FeedScheduleListItem(val item: FeedScheduleItem) : ListItem()
-class FeedSchedulesListItem(val items: List<FeedScheduleItem>) : ListItem()
+class FeedScheduleListItem(val item: ScheduleItem) : ListItem()
+class FeedSchedulesListItem(val items: List<ScheduleItem>) : ListItem()
 class FeedSectionListItem(val title: String, val route: String? = null, val hasBg: Boolean = false) : ListItem()
 class FeedListItem(val item: FeedItem) : ListItem()

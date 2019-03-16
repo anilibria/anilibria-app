@@ -54,6 +54,7 @@ class SearchPresenter @Inject constructor(
                             }
                         }
                     }
+
                     viewState.updateReleases(itemsNeedUpdate)
                 }
                 .addToDisposable()

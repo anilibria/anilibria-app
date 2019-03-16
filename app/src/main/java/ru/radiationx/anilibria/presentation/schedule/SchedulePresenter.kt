@@ -1,9 +1,8 @@
 package ru.radiationx.anilibria.presentation.schedule
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -29,12 +28,7 @@ class SchedulePresenter @Inject constructor(
                 .observeSchedule()
                 .subscribe {
                     val items = it.map {
-                        Pair(
-                                getDayName(ScheduleDay.toCalendarDay(it.day)),
-                                it.items.map {
-                                    FeedScheduleItem(it, false)
-                                }
-                        )
+                        Pair(getDayName(it.day), it.items)
                     }
                     viewState.showSchedules(items)
 
@@ -45,7 +39,7 @@ class SchedulePresenter @Inject constructor(
                         } else {
                             Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
                         }
-                        val index = it.indexOfFirst { ScheduleDay.toCalendarDay(it.day) == currentDay }
+                        val index = it.indexOfFirst { it.day == currentDay }
                         if (index != -1) {
                             viewState.scrollToDay(items[index])
                         }

@@ -7,20 +7,17 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedule.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class FeedScheduleDelegate(
-        private val clickListener: (FeedScheduleItem, View) -> Unit
+        private val clickListener: (ScheduleItem, View) -> Unit
 ) : AppAdapterDelegate<FeedScheduleListItem, ListItem, FeedScheduleDelegate.ViewHolder>(
         R.layout.item_feed_schedule,
         { it is FeedScheduleListItem },
@@ -32,10 +29,10 @@ class FeedScheduleDelegate(
 
     class ViewHolder(
             override val containerView: View,
-            private val clickListener: (FeedScheduleItem, View) -> Unit
+            private val clickListener: (ScheduleItem, View) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private lateinit var currentItem: FeedScheduleItem
+        private lateinit var currentItem: ScheduleItem
 
         init {
             containerView.setOnClickListener {
@@ -43,7 +40,7 @@ class FeedScheduleDelegate(
             }
         }
 
-        fun bind(item: FeedScheduleItem) {
+        fun bind(item: ScheduleItem) {
             currentItem = item
 
             item_complete.visible(item.completed)

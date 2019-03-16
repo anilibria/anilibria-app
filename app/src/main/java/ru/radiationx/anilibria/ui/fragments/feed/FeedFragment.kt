@@ -21,7 +21,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.*
@@ -31,16 +31,13 @@ import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
-import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
-import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
-import android.R.attr.data
 import android.util.TypedValue
 import com.lapism.searchview.SearchEditText
 
@@ -276,7 +273,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         PlaceholderDelegate.ViewHolder(placeHolderContainer.inflate(R.layout.item_placeholder, true))
     }
 
-    override fun showSchedules(items: List<FeedScheduleItem>) {
+    override fun showSchedules(items: List<ScheduleItem>) {
         adapter.bindSchedules(items)
     }
 

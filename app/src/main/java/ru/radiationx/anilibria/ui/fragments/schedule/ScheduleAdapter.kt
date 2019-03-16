@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.view.View
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 
 class ScheduleAdapter(
-        scheduleClickListener: (FeedScheduleItem, View) -> Unit
+        scheduleClickListener: (ScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     init {
@@ -19,7 +19,7 @@ class ScheduleAdapter(
         addDelegate(FeedSchedulesDelegate(scheduleClickListener))
     }
 
-    fun bindItems(newItems: List<Pair<String, List<FeedScheduleItem>>>) {
+    fun bindItems(newItems: List<Pair<String, List<ScheduleItem>>>) {
         items.clear()
         newItems.forEach { pair ->
             items.add(FeedSectionListItem(pair.first))
@@ -28,7 +28,7 @@ class ScheduleAdapter(
         notifyDataSetChanged()
     }
 
-    fun getPositionByDay(item: Pair<String, List<FeedScheduleItem>>): Int {
+    fun getPositionByDay(item: Pair<String, List<ScheduleItem>>): Int {
         return items.indexOfFirst {
             (it as? FeedSectionListItem)?.title == item.first
         }

@@ -4,10 +4,8 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
-import ru.radiationx.anilibria.extension.isSameDay
 import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
@@ -80,20 +78,8 @@ class FeedPresenter @Inject constructor(
                     )
                     .doOnSuccess {
                         val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-                        val day = ScheduleDay.fromCalendarDay(calendarDay)
-
-                        val items = it.second.firstOrNull { it.day == day }?.items ?: emptyList()
-
-                        val feedSchedule = items.map {
-                            val updTime = it.torrentUpdate
-                            val millisTime = (updTime.toLong() * 1000L)
-                            val updDate = Calendar.getInstance().also {
-                                it.timeInMillis = millisTime
-                            }
-                            val isSameDay = updDate.time.isSameDay(Date())
-                            FeedScheduleItem(it, calendarDay == updDate.get(Calendar.DAY_OF_WEEK) && isSameDay)
-                        }
-                        viewState.showSchedules(feedSchedule.sortedWith(compareByDescending<FeedScheduleItem> { it.completed }.then(compareByDescending { it.releaseItem.torrentUpdate })))
+                        val items = it.second.firstOrNull { it.day == calendarDay }?.items
+                        items?.also { viewState.showSchedules(it) }
                     }
                     .map { it.first }
         } else {

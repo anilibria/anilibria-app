@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
+import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
@@ -102,11 +102,11 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         return true
     }
 
-    override fun showSchedules(items: List<Pair<String, List<FeedScheduleItem>>>) {
+    override fun showSchedules(items: List<Pair<String, List<ScheduleItem>>>) {
         scheduleAdapter.bindItems(items)
     }
 
-    override fun scrollToDay(item: Pair<String, List<FeedScheduleItem>>) {
+    override fun scrollToDay(item: Pair<String, List<ScheduleItem>>) {
         val position = scheduleAdapter.getPositionByDay(item)
         Log.e("ninini", "scrollToDay ${item.first} -> $position")
         (recyclerView.layoutManager as? LinearLayoutManager)?.also {

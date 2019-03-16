@@ -1,32 +1,21 @@
 package ru.radiationx.anilibria.presentation.feed
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
-import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.anilibria.extension.isSameDay
 import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
-import ru.radiationx.anilibria.model.repository.VitalRepository
-import ru.radiationx.anilibria.model.repository.YoutubeRepository
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
@@ -98,13 +87,13 @@ class FeedPresenter @Inject constructor(
                         val feedSchedule = items.map {
                             val updTime = it.torrentUpdate
                             val millisTime = (updTime.toLong() * 1000L)
-                            val updDay = Calendar.getInstance().let {
+                            val updDate = Calendar.getInstance().also {
                                 it.timeInMillis = millisTime
-                                it.get(Calendar.DAY_OF_WEEK)
                             }
-                            FeedScheduleItem(it, calendarDay == updDay)
+                            val isSameDay = updDate.time.isSameDay(Date())
+                            FeedScheduleItem(it, calendarDay == updDate.get(Calendar.DAY_OF_WEEK) && isSameDay)
                         }
-                        viewState.showSchedules(feedSchedule)
+                        viewState.showSchedules(feedSchedule.sortedWith(compareByDescending<FeedScheduleItem> { it.completed }.then(compareByDescending { it.releaseItem.torrentUpdate })))
                     }
                     .map { it.first }
         } else {

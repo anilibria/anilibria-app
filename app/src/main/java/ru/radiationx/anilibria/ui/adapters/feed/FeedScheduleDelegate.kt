@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.feed.FeedScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -45,6 +46,7 @@ class FeedScheduleDelegate(
         fun bind(item: FeedScheduleItem) {
             currentItem = item
 
+            item_complete.visible(item.completed)
             ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.releaseItem.id}")
             ImageLoader.getInstance().displayImage(item.releaseItem.poster, item_image)
         }

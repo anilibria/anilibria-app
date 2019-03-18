@@ -2,11 +2,13 @@ package ru.radiationx.anilibria.presentation.feed
 
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Single
+import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
+import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
@@ -22,11 +24,14 @@ import javax.inject.Inject
 @InjectViewState
 class FeedPresenter @Inject constructor(
         private val feedRepository: FeedRepository,
+        private val releaseInteractor: ReleaseInteractor,
         private val scheduleRepository: ScheduleRepository,
         private val releaseUpdateHolder: ReleaseUpdateHolder,
         private val router: Router,
         private val errorHandler: IErrorHandler
 ) : BasePresenter<FeedView>(router) {
+
+    private var randomDisposable = Disposables.disposed()
 
     private val currentItems = mutableListOf<FeedItem>()
 
@@ -137,6 +142,20 @@ class FeedPresenter @Inject constructor(
 
     fun onSchedulesClick() {
         router.navigateTo(Screens.Schedule())
+    }
+
+    fun onRandomClick() {
+        if (!randomDisposable.isDisposed) {
+            return
+        }
+        randomDisposable = releaseInteractor
+                .getRandomRelease()
+                .subscribe({
+                    router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
+                }, {
+                    errorHandler.handle(it)
+                })
+                .addToDisposable()
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

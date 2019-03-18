@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.RandomRelease
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
@@ -18,6 +19,11 @@ import javax.inject.Inject
 class ReleaseParser @Inject constructor(
         private val apiUtils: IApiUtils
 ) {
+
+    fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
+            jsonItem.getInt("id"),
+            jsonItem.getString("code")
+    )
 
     fun parseRelease(jsonItem: JSONObject): ReleaseItem {
         val item = ReleaseItem()

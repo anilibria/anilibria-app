@@ -50,6 +50,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         presenter.loadMore()
     }, schedulesClickListener = {
         presenter.onSchedulesClick()
+    }, randomClickListener = {
+        presenter.onRandomClick()
     }, releaseClickListener = { releaseItem, view ->
         this.sharedViewLocal = view
         presenter.onItemClick(releaseItem)

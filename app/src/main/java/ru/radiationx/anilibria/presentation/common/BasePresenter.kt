@@ -19,8 +19,9 @@ open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPrese
         compositeDisposable.dispose()
     }
 
-    fun Disposable.addToDisposable() {
+    fun Disposable.addToDisposable(): Disposable {
         compositeDisposable.add(this)
+        return this
     }
 
     fun onBackPressed() {

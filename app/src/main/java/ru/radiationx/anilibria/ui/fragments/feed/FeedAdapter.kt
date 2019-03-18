@@ -10,10 +10,7 @@ import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.*
-import ru.radiationx.anilibria.ui.adapters.feed.FeedReleaseDelegate
-import ru.radiationx.anilibria.ui.adapters.feed.FeedSchedulesDelegate
-import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
-import ru.radiationx.anilibria.ui.adapters.feed.FeedYoutubeDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
@@ -23,6 +20,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 class FeedAdapter(
         val loadMoreListener: () -> Unit,
         schedulesClickListener: () -> Unit,
+        randomClickListener: () -> Unit,
         releaseClickListener: (ReleaseItem, View) -> Unit,
         releaseLongClickListener: (ReleaseItem, View) -> Unit,
         youtubeClickListener: (YoutubeItem, View) -> Unit,
@@ -47,6 +45,7 @@ class FeedAdapter(
         addDelegate(FeedSchedulesDelegate(scheduleClickListener))
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
+        addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
     }
 
@@ -138,9 +137,10 @@ class FeedAdapter(
             startIndex = items.indexOfLast { it is FeedSchedulesListItem }
             //items.add(DividerShadowListItem())
             items.add(feedSection)
-            notifyItemRangeInserted(startIndex, 1)
+            items.add(FeedRandomBtnListItem())
+            notifyItemRangeInserted(startIndex, 2)
         }
-        startIndex = items.indexOf(feedSection) + 1
+        startIndex = items.indexOf(feedSection) + 2
 
         Log.e("ninini", "afterkek  $startIndex = ${items.joinToString()}")
 

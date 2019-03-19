@@ -60,6 +60,6 @@ class SocialAuthListItem(val item: SocialAuth) : ListItem()
 
 class FeedScheduleListItem(val item: ScheduleItem) : ListItem()
 class FeedSchedulesListItem(val items: List<ScheduleItem>) : ListItem()
-class FeedSectionListItem(val title: String, val route: String? = null, val hasBg: Boolean = false) : ListItem()
+class FeedSectionListItem(var title: String, val route: String? = null, val hasBg: Boolean = false) : ListItem()
 class FeedListItem(val item: FeedItem) : ListItem()
 class FeedRandomBtnListItem : ListItem()

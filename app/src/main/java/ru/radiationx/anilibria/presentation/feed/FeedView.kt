@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.presentation.common.IBaseView
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface FeedView : IBaseView {
 
-    fun showSchedules(items: List<ScheduleItem>)
+    fun showSchedules(title: String, items: List<ScheduleItem>)
 
     fun showRefreshProgress(show: Boolean)
     fun showEmptyProgress(show: Boolean)

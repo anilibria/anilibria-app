@@ -27,7 +27,7 @@ class FeedAdapter(
         scheduleClickListener: (ScheduleItem, View) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
-    private val scheduleSection = FeedSectionListItem("Ожидаются сегодня", "Расписание")
+    private val scheduleSection = FeedSectionListItem("Ожидаются", "Расписание")
     private val feedSection = FeedSectionListItem("Обновления", hasBg = true)
 
     private val sectionClickListener = { item: FeedSectionListItem ->
@@ -63,8 +63,9 @@ class FeedAdapter(
         }
     }
 
-    fun bindSchedules(newItems: List<ScheduleItem>) {
+    fun bindSchedules(title: String, newItems: List<ScheduleItem>) {
         val index = items.indexOf(scheduleSection)
+        scheduleSection.title = title
 
 
         Log.d("kokoko", "bindSchedules before ${items.joinToString { it.javaClass.simpleName }}")

@@ -275,8 +275,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         PlaceholderDelegate.ViewHolder(placeHolderContainer.inflate(R.layout.item_placeholder, true))
     }
 
-    override fun showSchedules(items: List<ScheduleItem>) {
-        adapter.bindSchedules(items)
+    override fun showSchedules(title: String, items: List<ScheduleItem>) {
+        adapter.bindSchedules(title, items)
     }
 
     override fun showRefreshProgress(show: Boolean) {

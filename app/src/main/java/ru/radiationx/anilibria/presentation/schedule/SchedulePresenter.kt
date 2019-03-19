@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.presentation.schedule
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.extension.asDayName
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -29,9 +30,9 @@ class SchedulePresenter @Inject constructor(
                 .subscribe {
                     val items = it.map {
                         val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-                        var dayName = getDayName(it.day)
+                        var dayName = it.day.asDayName()
                         if (it.day == calendarDay) {
-                            dayName+=" (сегодня)"
+                            dayName += " (сегодня)"
                         }
                         Pair(dayName, it.items)
                     }
@@ -70,18 +71,5 @@ class SchedulePresenter @Inject constructor(
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
-    }
-
-    private fun getDayName(day: Int): String {
-        return when (day) {
-            Calendar.MONDAY -> "Понедельник"
-            Calendar.TUESDAY -> "Вторник"
-            Calendar.WEDNESDAY -> "Среда"
-            Calendar.THURSDAY -> "Четверг"
-            Calendar.FRIDAY -> "Пятница"
-            Calendar.SATURDAY -> "Суббота"
-            Calendar.SUNDAY -> "Воскресенье"
-            else -> throw Exception("Not found schedule day by $day")
-        }
     }
 }

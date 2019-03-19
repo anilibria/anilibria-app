@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.feed
 
+import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Single
 import io.reactivex.disposables.Disposables
@@ -7,6 +8,7 @@ import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
+import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.FeedRepository
@@ -17,6 +19,7 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
@@ -88,9 +91,26 @@ class FeedPresenter @Inject constructor(
                             }
                     )
                     .doOnSuccess {
-                        val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-                        val items = it.second.firstOrNull { it.day == calendarDay }?.items
-                        items?.also { viewState.showSchedules(it) }
+                        val currentTime = System.currentTimeMillis()
+                        val mskTime = System.currentTimeMillis().asMsk()
+
+                        val currentDay = currentTime.getDayOfWeek()
+                        val mskDay = mskTime.getDayOfWeek()
+
+
+                        Log.d("ninini", "check correct = ${Date(currentTime)} :::: ${Date(mskTime)} ${Date(currentTime).isSameDay(Date(mskTime))}")
+
+                        val dayTitle = if (Date(currentTime).isSameDay(Date(mskTime))) {
+                            "Ожидается сегодня"
+                        } else {
+                            "Ожидается ${mskDay.asDayPretext()} ${mskDay.asDayNameDeclension().toLowerCase()} (по МСК)"
+                        }
+
+                        val items = it.second.firstOrNull { it.day == mskDay }?.items
+
+                        items?.also {
+                            viewState.showSchedules(dayTitle, it)
+                        }
                     }
                     .map { it.first }
         } else {

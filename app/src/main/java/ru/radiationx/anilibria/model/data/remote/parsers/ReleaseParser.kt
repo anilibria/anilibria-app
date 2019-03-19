@@ -21,7 +21,6 @@ class ReleaseParser @Inject constructor(
 ) {
 
     fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
-            jsonItem.getInt("id"),
             jsonItem.getString("code")
     )
 

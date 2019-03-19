@@ -151,7 +151,7 @@ class FeedPresenter @Inject constructor(
         randomDisposable = releaseInteractor
                 .getRandomRelease()
                 .subscribe({
-                    router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
+                    router.navigateTo(Screens.ReleaseDetails(code = it.code))
                 }, {
                     errorHandler.handle(it)
                 })

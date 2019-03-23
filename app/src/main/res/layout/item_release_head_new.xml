@@ -108,28 +108,27 @@
         tagview:textPaddingTop="4dp" />
 
     <View
+        android:id="@+id/full_days_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
     <ru.radiationx.anilibria.ui.widgets.DaysBar
         android:id="@+id/full_days_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/full_announce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:textColor="?textSecond"
         android:textSize="14sp"

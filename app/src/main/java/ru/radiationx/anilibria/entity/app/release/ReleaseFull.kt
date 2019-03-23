@@ -12,6 +12,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         poster = item.poster
         torrentUpdate = item.torrentUpdate
         status = item.status
+        statusCode = item.statusCode
         announce = item.announce
         types.addAll(item.types)
         genres.addAll(item.genres)

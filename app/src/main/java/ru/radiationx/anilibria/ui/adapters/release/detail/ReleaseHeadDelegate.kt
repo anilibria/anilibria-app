@@ -9,6 +9,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.setCompatDrawable
@@ -110,6 +111,9 @@ class ReleaseHeadDelegate(
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 
             full_days_bar.selectDays(item.days.map { ScheduleDay.toCalendarDay(it) })
+            full_days_bar.visible(item.statusCode == ReleaseItem.STATUS_CODE_PROGRESS)
+            full_days_divider.visible(item.statusCode == ReleaseItem.STATUS_CODE_PROGRESS || item.announce != null)
+
             full_announce.visible(item.announce != null)
             full_announce.text = item.announce
 

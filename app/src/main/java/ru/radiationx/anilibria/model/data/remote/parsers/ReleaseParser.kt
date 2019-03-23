@@ -49,6 +49,7 @@ class ReleaseParser @Inject constructor(
             }
         } ?: item.torrentUpdate
         item.status = jsonItem.nullString("status")
+        item.statusCode = jsonItem.nullString("statusCode")
         item.description = jsonItem.nullString("description")?.trim()
 
         item.announce = jsonItem.nullString("announce")?.trim()

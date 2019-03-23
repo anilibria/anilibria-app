@@ -13,6 +13,7 @@ open class ReleaseItem : Serializable {
     var poster: String? = null
     var torrentUpdate: Int = 0
     var status: String? = null
+    var statusCode: String? = null
     val types = mutableListOf<String>()
     val genres = mutableListOf<String>()
     val voices = mutableListOf<String>()
@@ -32,4 +33,12 @@ open class ReleaseItem : Serializable {
 
     val titleEng: String?
         get() = names.lastOrNull()
+
+
+    companion object {
+        const val STATUS_CODE_PROGRESS = "1"
+        const val STATUS_CODE_COMPLETE = "2"
+        const val STATUS_CODE_HIDDEN = "3"
+        const val STATUS_CODE_NOT_ONGOING = "4"
+    }
 }

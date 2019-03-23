@@ -31,6 +31,7 @@ import ru.radiationx.anilibria.presentation.history.HistoryView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -70,6 +71,8 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     @ProvidePresenter
     fun provideHistoryPresenter(): HistoryPresenter = getDependency(screenScope, HistoryPresenter::class.java)
 
+    override val statusBarVisible: Boolean = true
+
     override fun getLayoutResource(): Int = R.layout.fragment_list
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,6 +100,13 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
+
+        FeedToolbarShadowController(
+                recyclerView,
+                appbarLayout
+        ) {
+            updateToolbarShadow(it)
         }
 
         recyclerView.apply {

@@ -14,7 +14,7 @@ class PagesParser @Inject constructor(
         private val apiUtils: IApiUtils
 ) {
 
-    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div class=\"clear\">"
+    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div[^>]*?(?:id=\"vk_comments|class=\"[^\"]*?side[^\"]*?\")"
     private val titlePatternSource = "<title>([\\s\\S]*?)<\\/title>"
 
     private val pagePattern: Pattern by lazy {

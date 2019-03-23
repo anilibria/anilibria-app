@@ -69,6 +69,7 @@ class HistoryStorage @Inject constructor(
                 put("poster", it.poster)
                 put("torrentUpdate", it.torrentUpdate)
                 put("status", it.status)
+                put("statusCode", it.statusCode)
                 put("announce", it.announce)
                 put("types", JSONArray(it.types))
                 put("genres", JSONArray(it.genres))
@@ -105,6 +106,7 @@ class HistoryStorage @Inject constructor(
                     poster = jsonRelease.nullString("poster")
                     torrentUpdate = jsonRelease.getInt("torrentUpdate")
                     status = jsonRelease.nullString("status")
+                    statusCode = jsonRelease.nullString("statusCode")
                     announce = jsonRelease.nullString("announce")
                     jsonRelease.getJSONArray("types").also { jsonTypes ->
                         (0 until jsonTypes.length()).mapTo(types) { jsonTypes.getString(it) }

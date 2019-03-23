@@ -96,12 +96,12 @@ class App : Application() {
         val systemMessenger = DI.get(SystemMessenger::class.java)
         val schedulers = DI.get(SchedulersProvider::class.java)
 
-        messengerDisposable = systemMessenger
+        /*messengerDisposable = systemMessenger
                 .observe()
                 .observeOn(schedulers.ui())
                 .subscribe {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
+                }*/
 
         initImageLoader(this)
         appVersionCheck()

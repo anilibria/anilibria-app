@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.extension.asDayName
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.terrakok.cicerone.Router
 import java.lang.Exception
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class SchedulePresenter @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val router: Router,
-        private val errorHandler: ErrorHandler
+        private val errorHandler: IErrorHandler
 ) : BasePresenter<ScheduleView>(router) {
 
     private var firstData = true

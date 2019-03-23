@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class ScreenMessagesObserver @Inject constructor(
         private val context: Context,
-        screenMessenger: SystemMessenger
+        private val screenMessenger: SystemMessenger
 ) : LifecycleObserver {
 
     private val disposables = CompositeDisposable()

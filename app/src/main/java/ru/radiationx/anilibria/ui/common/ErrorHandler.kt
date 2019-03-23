@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.ui.common
 
+import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -21,5 +23,15 @@ class ErrorHandler @Inject constructor(
         }
     }
 
-    private fun getMessage(throwable: Throwable) = throwable.message.orEmpty()
+    private fun getMessage(throwable: Throwable) = when (throwable) {
+        is IOException -> "Нет соединения с интернетом"
+        is ApiError -> throwable.userMessage()
+        else -> throwable.message.orEmpty()
+    }
+
+    private fun ApiError.userMessage() = when {
+        !message.isNullOrBlank() -> message.orEmpty()
+        !description.isNullOrBlank() -> description.orEmpty()
+        else -> "Неизвестная ошибка"
+    }
 }

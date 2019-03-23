@@ -298,7 +298,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun showEmptyView(show: Boolean) {
         placeHolder.bind(
-                R.drawable.ic_releases,
+                R.drawable.ic_newspaper,
                 R.string.placeholder_title_nodata_base,
                 R.string.placeholder_desc_nodata_base
         )
@@ -309,9 +309,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     override fun showEmptyError(show: Boolean, message: String?) {
         Log.d("nonono", "showEmptyError $show, $message")
         placeHolder.bind(
-                R.drawable.ic_logo_patreon,
-                R.string.placeholder_title_comments,
-                R.string.placeholder_desc_comments
+                R.drawable.ic_newspaper,
+                R.string.placeholder_title_errordata_base,
+                R.string.placeholder_desc_nodata_base
         )
         placeHolderContainer.visible(show)
     }

@@ -34,7 +34,7 @@
     <color name="light_colorAccent">@color/alib_red</color>
 
     <color name="light_divider_line">#eee</color>
-    <color name="light_windowBackground">#eee</color>
+    <color name="light_windowBackground">#f0f1f2</color>
     <color name="light_cardBackground">#fff</color>
     <color name="light_cardBackground_alpha">#00ffffff</color>
 
@@ -64,12 +64,12 @@
     <color name="temp_red4_dark">#752222</color>
 
     <color name="temp_red_">@color/temp_red4</color>
-    <color name="dark_colorPrimary">@color/temp_red_</color>
-    <color name="dark_colorPrimaryDark">@color/temp_red4_dark</color>
+    <color name="dark_colorPrimary">#282828</color>
+    <color name="dark_colorPrimaryDark">#282828</color>
     <color name="dark_colorAccent">@color/temp_red_</color>
 
     <color name="dark_divider_line">#414141</color>
-    <color name="dark_windowBackground">#141414</color>
+    <color name="dark_windowBackground">#191b1c</color>
     <color name="dark_cardBackground">#282828</color>
     <color name="dark_cardBackground_alpha">#00282828</color>
 

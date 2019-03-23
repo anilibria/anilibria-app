@@ -141,10 +141,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         recyclerView.apply {
             adapter = this@SearchFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
-            addItemDecoration(UniversalItemDecoration()
+            /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
-            )
+            )*/
         }
 
         ToolbarShadowController(
@@ -169,7 +169,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            add("Settings")
+            add("Фильтры")
                     .setIcon(R.drawable.ic_filter_toolbar)
                     .setOnMenuItemClickListener {
                         presenter.showDialog()

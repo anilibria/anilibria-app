@@ -9,8 +9,7 @@
         android:id="@+id/root_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:background="#f0f1f2">
+        android:fitsSystemWindows="true">
         <!--
         Эта вьюха нужна, чтобы фрагменты нормально вставлялись.
         Если её не будет, то нулевой фрагмент не уйдёт под статусбар, а другие будут норм.
@@ -25,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:visibility="gone"
-            android:background="@drawable/bg_google_pay_gradient" />
+            android:background="@drawable/bg_google_pay_gradient_light" />
     </android.support.design.widget.CoordinatorLayout>
 
 

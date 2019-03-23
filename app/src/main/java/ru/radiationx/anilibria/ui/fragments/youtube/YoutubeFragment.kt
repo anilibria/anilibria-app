@@ -55,10 +55,10 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         recyclerView.apply {
             adapter = youtubeAdapter
             layoutManager = LinearLayoutManager(recyclerView.context)
-            addItemDecoration(UniversalItemDecoration()
+            /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
-            )
+            )*/
         }
 
         ToolbarShadowController(

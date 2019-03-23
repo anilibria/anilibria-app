@@ -122,13 +122,13 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             title = "Лента"
-            menu.add("Поиск")
+            /*menu.add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener {
                         searchView?.open(true, it)
                         false
                     }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
 
             layoutParams = layoutParams.apply {
                 val tv = TypedValue()

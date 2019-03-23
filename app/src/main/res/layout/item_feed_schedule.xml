@@ -51,7 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_checkbox_marked_circle"
-            app:tint="?colorAccent" />
+            app:tint="@color/alib_red" />
     </android.support.constraint.ConstraintLayout>
 
 

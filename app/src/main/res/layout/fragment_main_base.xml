@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:visibility="visible"
-            android:background="@drawable/bg_google_pay_gradient"
+            android:background="?gradientBackground"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <FrameLayout

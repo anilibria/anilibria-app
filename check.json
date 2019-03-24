@@ -1,27 +1,26 @@
 {
   "update": {
-    "version_code": "42",
-    "version_name": "2.3.2",
+    "version_code": "43",
+    "version_name": "2.3.3",
     "version_build": "0",
-    "build_date": "21 февраля 2019 г.",
+    "build_date": "24 марта 2019 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.3.2.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.3.3.apk",
         "type": "file"
       }
     ],
     "important": [],
     "added": [
-      "Авторизация через ВКонтакте",
-      "Двухфакторная авторизация"
+      "Календарь",
+      "Экран \"Лента\" - будут отображаться релизы и видео с Youtube",
+      "Случайный релиз",
+      "Фильтр \"релиз завершен\" в поиске"
     ],
-    "fixed": [
-      "Переход по ссылкам из описания релизов",
-      "Исправлены стили комментариев в тёмной теме"
-    ],
+    "fixed": [],
     "changed": [
-      "Добавлен поиск по названию на вкладке поиска"
+      "Обновлён дизайн"
     ]
   }
 }

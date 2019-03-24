@@ -56,7 +56,10 @@ class OtherFragment : BaseFragment(), OtherView {
         adapter.apply {
             clear()
             addProfile(profileItem)
-            menu.forEach { addMenu(it) }
+            val lastItem = menu.lastOrNull()
+            menu.forEach {
+                addMenu(it, it === lastItem)
+            }
             notifyDataSetChanged()
         }
     }
@@ -99,9 +102,9 @@ class OtherFragment : BaseFragment(), OtherView {
             items.add(DividerShadowListItem())
         }
 
-        fun addMenu(newItems: MutableList<OtherMenuItem>) {
+        fun addMenu(newItems: MutableList<OtherMenuItem>, isLast: Boolean = false) {
             items.addAll(newItems.map { MenuListItem(it) })
-            if (newItems.isNotEmpty()) {
+            if (newItems.isNotEmpty() && !isLast) {
                 items.add(DividerShadowListItem())
             }
         }

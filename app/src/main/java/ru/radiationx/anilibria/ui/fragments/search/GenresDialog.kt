@@ -24,6 +24,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.GenreItem
+import ru.radiationx.anilibria.entity.app.release.SeasonItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.visible
@@ -48,11 +49,16 @@ class GenresDialog(
     private val yearsChipGroup = rootView.yearsChips
     private val yearsChips = mutableListOf<Chip>()
 
+    private val seasonsChipGroup = rootView.seasonsChips
+    private val seasonsChips = mutableListOf<Chip>()
+
     private val genreItems = mutableListOf<GenreItem>()
     private val yearItems = mutableListOf<YearItem>()
+    private val seasonItems = mutableListOf<SeasonItem>()
 
     private val checkedGenres = mutableSetOf<String>()
     private val checkedYears = mutableSetOf<String>()
+    private val checkedSeasons = mutableSetOf<String>()
 
     private var currentSorting = ""
     private var currentComplete = false
@@ -78,6 +84,15 @@ class GenresDialog(
             checkedYears.remove(yearItems.first { it.value.hashCode() == buttonView.id }.value)
         }
         listener.onCheckedYears(checkedYears.toList())
+    }
+
+    private val seasonsChipListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+        if (isChecked) {
+            checkedSeasons.add(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+        } else {
+            checkedSeasons.remove(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+        }
+        listener.onCheckedSeasons(checkedSeasons.toList())
     }
 
     private val sortingListener = RadioGroup.OnCheckedChangeListener { _, _ ->
@@ -148,6 +163,14 @@ class GenresDialog(
         updateChecked()
     }
 
+    fun setSeasons(newItems: List<SeasonItem>) {
+        seasonItems.clear()
+        seasonItems.addAll(newItems)
+
+        updateSeasonViews()
+        updateChecked()
+    }
+
     private fun updateGenreViews() {
         genresChipGroup.removeAllViews()
         genresChips.clear()
@@ -188,6 +211,26 @@ class GenresDialog(
         }
     }
 
+    private fun updateSeasonViews() {
+        seasonsChipGroup.removeAllViews()
+        seasonsChips.clear()
+        seasonItems.forEach { season ->
+            val chip = Chip(seasonsChipGroup.context).also {
+                Log.e("lululu", "set id=${season.value.hashCode()} to '${season.value}'")
+                it.id = season.value.hashCode()
+                it.text = season.title
+                it.isCheckable = true
+                it.isClickable = true
+                it.isChecked = checkedGenres.contains(season.value)
+                it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
+                it.setChipBackgroundColorResource(R.color.bg_chip)
+                it.setOnCheckedChangeListener(seasonsChipListener)
+            }
+            seasonsChipGroup.addView(chip)
+            seasonsChips.add(chip)
+        }
+    }
+
     private fun updateChecked() {
         genresChips.forEach { chip ->
             chip.isChecked = checkedGenres.any { it.hashCode() == chip.id }
@@ -195,7 +238,10 @@ class GenresDialog(
         yearsChips.forEach { chip ->
             chip.isChecked = checkedYears.any { it.hashCode() == chip.id }
         }
-        val allCount = checkedGenres.size + checkedYears.size
+        seasonsChips.forEach { chip ->
+            chip.isChecked = checkedSeasons.any { it.hashCode() == chip.id }
+        }
+        val allCount = checkedGenres.size + checkedYears.size + checkedSeasons.size
         actionButtonCount.text = "$allCount"
         actionButtonCount.visible(allCount > 0)
     }
@@ -209,6 +255,12 @@ class GenresDialog(
     fun setCheckedYears(items: List<String>) {
         checkedYears.clear()
         checkedYears.addAll(items)
+        updateChecked()
+    }
+
+    fun setCheckedSeasons(items: List<String>) {
+        checkedSeasons.clear()
+        checkedSeasons.addAll(items)
         updateChecked()
     }
 
@@ -275,6 +327,7 @@ class GenresDialog(
         fun onAccept()
         fun onCheckedGenres(items: List<String>)
         fun onCheckedYears(items: List<String>)
+        fun onCheckedSeasons(items: List<String>)
         fun onChangeSorting(sorting: String)
         fun onChangeComplete(complete: Boolean)
     }

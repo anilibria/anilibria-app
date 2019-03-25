@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.SeasonItem
 import ru.radiationx.anilibria.entity.app.release.YearItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -124,6 +125,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
                 override fun onCheckedYears(items: List<String>) {
                     presenter.onChangeYears(items)
+                }
+
+                override fun onCheckedSeasons(items: List<String>) {
+                    presenter.onChangeSeasons(items)
                 }
 
                 override fun onChangeSorting(sorting: String) {
@@ -284,12 +289,20 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         genresDialog.setYears(years)
     }
 
+    override fun showSeasons(seasons: List<SeasonItem>) {
+        genresDialog.setSeasons(seasons)
+    }
+
     override fun selectGenres(genres: List<String>) {
         genresDialog.setCheckedGenres(genres)
     }
 
     override fun selectYears(years: List<String>) {
         genresDialog.setCheckedYears(years)
+    }
+
+    override fun selectSeasons(seasons: List<String>) {
+        genresDialog.setCheckedSeasons(seasons)
     }
 
     override fun setSorting(sorting: String) {

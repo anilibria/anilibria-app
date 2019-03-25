@@ -32,8 +32,8 @@ class SearchRepository @Inject constructor(
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 
-    fun searchReleases(genre: String, year: String, sort: String, complete: String, page: Int): Single<Paginated<List<ReleaseItem>>> = searchApi
-            .searchReleases(genre, year, sort, complete, page)
+    fun searchReleases(genre: String, year: String, season: String, sort: String, complete: String, page: Int): Single<Paginated<List<ReleaseItem>>> = searchApi
+            .searchReleases(genre, year, season, sort, complete, page)
             .doOnSuccess {
                 val newItems = mutableListOf<ReleaseItem>()
                 val updItems = mutableListOf<ReleaseUpdate>()

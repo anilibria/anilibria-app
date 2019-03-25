@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.search
 
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.SeasonItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.navigation.Screens
@@ -22,15 +23,20 @@ class SearchPresenter @Inject constructor(
         private const val START_PAGE = 1
     }
 
+    private val staticSeasons = listOf("зима", "весна", "лето", "осень")
+            .map { SeasonItem(it.capitalize(), it) }
+
     private var currentPage = START_PAGE
     private val currentGenres = mutableListOf<String>()
     private val currentYears = mutableListOf<String>()
+    private val currentSeasons = mutableListOf<String>()
     private var currentSorting = "1"
     private var currentComplete = false
     private val currentItems = mutableListOf<ReleaseItem>()
 
     private val beforeOpenDialogGenres = mutableListOf<String>()
     private val beforeOpenDialogYears = mutableListOf<String>()
+    private val beforeOpenDialogSeasons = mutableListOf<String>()
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
@@ -41,6 +47,7 @@ class SearchPresenter @Inject constructor(
         observeGenres()
         observeYears()
         updateInfo()
+        viewState.showSeasons(staticSeasons)
         onChangeSorting(currentSorting)
         onChangeComplete(currentComplete)
         loadReleases(START_PAGE)
@@ -120,9 +127,10 @@ class SearchPresenter @Inject constructor(
         }
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
+        val seasonsQuery = currentSeasons.joinToString(",")
         val completeStr = if (currentComplete) "2" else "1"
         searchRepository
-                .searchReleases(genresQuery, yearsQuery, currentSorting, completeStr, pageNum)
+                .searchReleases(genresQuery, yearsQuery, seasonsQuery, currentSorting, completeStr, pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(releaseItems.data.isNotEmpty())
@@ -160,8 +168,10 @@ class SearchPresenter @Inject constructor(
     fun showDialog() {
         beforeOpenDialogGenres.clear()
         beforeOpenDialogYears.clear()
+        beforeOpenDialogSeasons.clear()
         beforeOpenDialogGenres.addAll(currentGenres)
         beforeOpenDialogYears.addAll(currentYears)
+        beforeOpenDialogSeasons.addAll(currentSeasons)
         beforeOpenDialogSorting = currentSorting
         beforeComplete = currentComplete
         viewState.showDialog()
@@ -171,6 +181,7 @@ class SearchPresenter @Inject constructor(
         if (
                 beforeOpenDialogGenres != currentGenres
                 || beforeOpenDialogYears != currentYears
+                || beforeOpenDialogSeasons != currentSeasons
                 || beforeOpenDialogSorting != currentSorting
                 || beforeComplete != currentComplete
         ) {
@@ -192,6 +203,13 @@ class SearchPresenter @Inject constructor(
         updateInfo()
     }
 
+    fun onChangeSeasons(newSeasons: List<String>) {
+        currentSeasons.clear()
+        currentSeasons.addAll(newSeasons)
+        viewState.selectSeasons(currentSeasons)
+        updateInfo()
+    }
+
     fun onChangeSorting(newSorting: String) {
         currentSorting = newSorting
         viewState.setSorting(currentSorting)
@@ -205,7 +223,7 @@ class SearchPresenter @Inject constructor(
     }
 
     private fun updateInfo() {
-        viewState.updateInfo(currentSorting, currentGenres.size + currentYears.size)
+        viewState.updateInfo(currentSorting, currentGenres.size + currentYears.size + currentSeasons.size)
     }
 
     fun onItemClick(item: ReleaseItem) {

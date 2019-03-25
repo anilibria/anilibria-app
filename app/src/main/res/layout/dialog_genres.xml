@@ -99,6 +99,26 @@
             app:singleSelection="false" />
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/seasonsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:text="Год"
+            android:textColor="?textSecond"
+            android:textSize="16sp" />
+
+        <android.support.design.chip.ChipGroup
+            android:id="@+id/seasonsChips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:singleSelection="false" />
+
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/genresTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,26 +1,23 @@
 {
   "update": {
-    "version_code": "43",
-    "version_name": "2.3.3",
+    "version_code": "44",
+    "version_name": "2.3.4",
     "version_build": "0",
-    "build_date": "24 марта 2019 г.",
+    "build_date": "25 марта 2019 г.",
     "links": [
       {
         "name": "AniLibria",
-        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.3.3.apk",
+        "url": "https://www.anilibria.tv/upload/app/AniLibria_v2.3.4.apk",
         "type": "file"
       }
     ],
     "important": [],
     "added": [
-      "Календарь",
-      "Экран \"Лента\" - будут отображаться релизы и видео с Youtube",
-      "Случайный релиз",
-      "Фильтр \"релиз завершен\" в поиске"
+      "Фильтр \"сезон\" в поиске"
     ],
     "fixed": [],
     "changed": [
-      "Обновлён дизайн"
+      "Повышена стабильность"
     ]
   }
 }

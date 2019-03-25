@@ -515,7 +515,11 @@ class MyPlayerActivity : BaseActivity() {
 
         } else {
             // We are out of PiP mode. We can stop receiving events from it.
-            unregisterReceiver(mReceiver)
+            try {
+                unregisterReceiver(mReceiver)
+            } catch (ignore: Throwable) {
+            }
+
             // Show the video controls if the video is not playing
             /*if (!mMovieView.isPlaying) {
                 mMovieView.showControls()

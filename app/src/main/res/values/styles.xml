@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.Bridge">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -33,11 +33,13 @@
         <item name="divider_line">@color/light_divider_line</item>
         <item name="windowBackground">@color/light_windowBackground</item>
         <item name="cardBackground">@color/light_cardBackground</item>
+        <item name="gradientBackground">@drawable/bg_google_pay_gradient_light</item>
 
         <item name="tab_color_checked">@color/light_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/light_tab_color_unchecked</item>
 
         <item name="toolbar_icon">@color/light_toolbar_icon</item>
+        <item name="contrast_icon">@color/light_contrast_icon</item>
         <item name="base_icon">@color/light_base_icon</item>
 
         <item name="release_tag_color">@color/light_release_tag_color</item>
@@ -48,6 +50,7 @@
         <item name="bg_comment_quote">@drawable/bg_bb_quote_light</item>
         <item name="bg_fav_btn">@drawable/bg_btn_favorite_light</item>
         <item name="bg_release_remind">@drawable/bg_release_remind_light</item>
+        <item name="bg_schedule_day">@drawable/bg_schedule_day_light</item>
 
         <item name="textDefault">@color/light_textDefault</item>
         <item name="textSecond">@color/light_textSecond</item>
@@ -84,13 +87,13 @@
     </style>
 
 
-    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark">
+    <style name="LightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
+    <style name="LightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="elevation">0dp</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
@@ -129,11 +132,13 @@
         <item name="divider_line">@color/dark_divider_line</item>
         <item name="windowBackground">@color/dark_windowBackground</item>
         <item name="cardBackground">@color/dark_cardBackground</item>
+        <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>
 
         <item name="tab_color_checked">@color/dark_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/dark_tab_color_unchecked</item>
 
         <item name="toolbar_icon">@color/dark_toolbar_icon</item>
+        <item name="contrast_icon">@color/dark_contrast_icon</item>
         <item name="base_icon">@color/dark_base_icon</item>
 
         <item name="release_tag_color">@color/dark_release_tag_color</item>
@@ -144,6 +149,7 @@
         <item name="bg_comment_quote">@drawable/bg_bb_quote_dark</item>
         <item name="bg_fav_btn">@drawable/bg_btn_favorite_dark</item>
         <item name="bg_release_remind">@drawable/bg_release_remind_dark</item>
+        <item name="bg_schedule_day">@drawable/bg_schedule_day_dark</item>
 
         <item name="textDefault">@color/dark_textDefault</item>
         <item name="textSecond">@color/dark_textSecond</item>

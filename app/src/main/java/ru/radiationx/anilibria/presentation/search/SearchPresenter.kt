@@ -25,12 +25,14 @@ class SearchPresenter @Inject constructor(
     private var currentPage = START_PAGE
     private val currentGenres = mutableListOf<String>()
     private val currentYears = mutableListOf<String>()
-    private var currentSorting = "2"
-
+    private var currentSorting = "1"
+    private var currentComplete = false
     private val currentItems = mutableListOf<ReleaseItem>()
+
     private val beforeOpenDialogGenres = mutableListOf<String>()
     private val beforeOpenDialogYears = mutableListOf<String>()
     private var beforeOpenDialogSorting = ""
+    private var beforeComplete = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -40,6 +42,7 @@ class SearchPresenter @Inject constructor(
         observeYears()
         updateInfo()
         onChangeSorting(currentSorting)
+        onChangeComplete(currentComplete)
         loadReleases(START_PAGE)
         releaseUpdateHolder
                 .observeEpisodes()
@@ -54,6 +57,7 @@ class SearchPresenter @Inject constructor(
                             }
                         }
                     }
+
                     viewState.updateReleases(itemsNeedUpdate)
                 }
                 .addToDisposable()
@@ -116,8 +120,9 @@ class SearchPresenter @Inject constructor(
         }
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
+        val completeStr = if (currentComplete) "2" else "1"
         searchRepository
-                .searchReleases(genresQuery, yearsQuery, currentSorting, pageNum)
+                .searchReleases(genresQuery, yearsQuery, currentSorting, completeStr, pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
                     viewState.setEndless(releaseItems.data.isNotEmpty())
@@ -158,11 +163,17 @@ class SearchPresenter @Inject constructor(
         beforeOpenDialogGenres.addAll(currentGenres)
         beforeOpenDialogYears.addAll(currentYears)
         beforeOpenDialogSorting = currentSorting
+        beforeComplete = currentComplete
         viewState.showDialog()
     }
 
     fun onCloseDialog() {
-        if (beforeOpenDialogGenres != currentGenres || beforeOpenDialogYears != currentYears || beforeOpenDialogSorting != currentSorting) {
+        if (
+                beforeOpenDialogGenres != currentGenres
+                || beforeOpenDialogYears != currentYears
+                || beforeOpenDialogSorting != currentSorting
+                || beforeComplete != currentComplete
+        ) {
             refreshReleases()
         }
     }
@@ -184,6 +195,12 @@ class SearchPresenter @Inject constructor(
     fun onChangeSorting(newSorting: String) {
         currentSorting = newSorting
         viewState.setSorting(currentSorting)
+        updateInfo()
+    }
+
+    fun onChangeComplete(complete: Boolean) {
+        currentComplete = complete
+        viewState.setComplete(currentComplete)
         updateInfo()
     }
 

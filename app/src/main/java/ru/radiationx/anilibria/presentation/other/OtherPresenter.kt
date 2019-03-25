@@ -170,7 +170,8 @@ class OtherPresenter @Inject constructor(
                 router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_TEAM))
             }
             MENU_DONATE -> {
-                router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+                //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+                Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
             }
             MENU_ABOUT_ANILIB -> {
                 router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_ABOUT_ANILIB))
@@ -204,7 +205,7 @@ class OtherPresenter @Inject constructor(
 
     fun openAuth() {
         if (profileItem.authState == AuthState.AUTH) {
-            systemMessenger.showMessage("Просмотр профиля недоступен")
+            //systemMessenger.showMessage("Просмотр профиля недоступен")
             return
         }
         router.navigateTo(Screens.Auth())

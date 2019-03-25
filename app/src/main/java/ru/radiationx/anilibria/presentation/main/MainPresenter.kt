@@ -23,7 +23,7 @@ class MainPresenter @Inject constructor(
         private val appThemeHolder: AppThemeHolder
 ) : BasePresenter<MainView>(router) {
 
-    var defaultScreen = Screens.MainReleases().screenKey!!
+    var defaultScreen = Screens.MainFeed().screenKey!!
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

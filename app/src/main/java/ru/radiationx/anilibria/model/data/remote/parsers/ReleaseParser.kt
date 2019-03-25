@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
+import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.RandomRelease
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.TorrentItem
@@ -18,7 +20,11 @@ class ReleaseParser @Inject constructor(
         private val apiUtils: IApiUtils
 ) {
 
-    private fun parseRelease(jsonItem: JSONObject): ReleaseItem {
+    fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
+            jsonItem.getString("code")
+    )
+
+    fun parseRelease(jsonItem: JSONObject): ReleaseItem {
         val item = ReleaseItem()
         item.id = jsonItem.getInt("id")
         item.code = jsonItem.getString("code")
@@ -43,7 +49,10 @@ class ReleaseParser @Inject constructor(
             }
         } ?: item.torrentUpdate
         item.status = jsonItem.nullString("status")
+        item.statusCode = jsonItem.nullString("statusCode")
         item.description = jsonItem.nullString("description")?.trim()
+
+        item.announce = jsonItem.nullString("announce")?.trim()
 
         jsonItem.nullString("type")?.also {
             item.types.add(it)
@@ -71,13 +80,18 @@ class ReleaseParser @Inject constructor(
         return item
     }
 
-    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
+    fun releases(jsonItems: JSONArray): List<ReleaseItem> {
         val resItems = mutableListOf<ReleaseItem>()
-        val jsonItems = jsonResponse.getJSONArray("items")
         for (i in 0 until jsonItems.length()) {
             val jsonItem = jsonItems.getJSONObject(i)
             resItems.add(parseRelease(jsonItem))
         }
+        return resItems
+    }
+
+    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
+        val jsonItems = jsonResponse.getJSONArray("items")
+        val resItems = releases(jsonItems)
         val pagination = Paginated(resItems)
         val jsonNav = jsonResponse.getJSONObject("pagination")
         jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
@@ -91,7 +105,7 @@ class ReleaseParser @Inject constructor(
         val baseRelease = parseRelease(jsonResponse)
         val release = ReleaseFull(baseRelease)
 
-        jsonResponse.optJSONObject("blockedInfo")?.also {jsonBlockedInfo->
+        jsonResponse.optJSONObject("blockedInfo")?.also { jsonBlockedInfo ->
             release.blockedInfo.also {
                 it.isBlocked = jsonBlockedInfo.getBoolean("blocked")
                 it.reason = jsonBlockedInfo.nullString("reason")

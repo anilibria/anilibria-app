@@ -20,7 +20,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 class YoutubeDelegate(
         private val itemListener: Listener
 ) : AppAdapterDelegate<YoutubeListItem, ListItem, YoutubeDelegate.ViewHolder>(
-        R.layout.item_youtube,
+        R.layout.item_feed_youtube,
         { it is YoutubeListItem },
         { ViewHolder(it, itemListener) }
 ), OptimizeDelegate {

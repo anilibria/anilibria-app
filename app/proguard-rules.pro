@@ -3,6 +3,8 @@
 -allowaccessmodification
 -dontpreverify
 
+-keepattributes SourceFile,LineNumberTable
+
 -dontnote **
 -dontwarn ru.radiationx.**
 
@@ -33,3 +35,24 @@
 -keep public class * extends android.support.v4.view.ActionProvider {
     public <init>(android.content.Context);
 }
+
+# Note that if we could use kapt to generate registries, possible to get rid of this
+-keepattributes *Annotation*
+# Do not obfuscate classes with Injected Constructors
+-keepnames class * { @javax.inject.Inject <init>(...); }
+-keepclasseswithmembernames class * { @javax.inject.Inject <init>(...); }
+# Do not obfuscate classes with Injected Fields
+-keepclasseswithmembernames class * { @javax.inject.Inject <fields>; }
+# Do not obfuscate classes with Injected Methods
+-keepclasseswithmembernames class * { @javax.inject.Inject <methods>; }
+-keep @android.support.annotation.Keep class *
+-dontwarn javax.inject.**
+-dontwarn javax.annotation.**
+-keep class **__Factory { *; }
+-keep class **__MemberInjector { *; }
+
+-adaptclassstrings
+-keep class toothpick.** { *; }
+
+-keep @javax.inject.Singleton class *
+#You need to keep your custom scopes too

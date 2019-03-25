@@ -78,7 +78,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
-            Tab(R.string.fragment_title_releases, R.drawable.ic_releases, Screens.MainReleases()),
+            Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
             Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
             Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
             Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),

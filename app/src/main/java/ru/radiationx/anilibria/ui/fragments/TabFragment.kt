@@ -150,6 +150,10 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
                     setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+                } else {
+                    currentFragment?.exitTransition = null
+                    nextFragment?.enterTransition = null
+                    nextFragment?.sharedElementEnterTransition = null
                 }
             }
 

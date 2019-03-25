@@ -30,6 +30,7 @@ import ru.radiationx.anilibria.presentation.search.SearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -105,6 +106,8 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
+    override val statusBarVisible: Boolean = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = com.lapism.searchview.SearchView(coordinator_layout.context)
@@ -126,6 +129,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
                 override fun onChangeSorting(sorting: String) {
                     presenter.onChangeSorting(sorting)
                 }
+
+                override fun onChangeComplete(complete: Boolean) {
+                    presenter.onChangeComplete(complete)
+                }
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
@@ -134,10 +141,17 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         recyclerView.apply {
             adapter = this@SearchFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
-            addItemDecoration(UniversalItemDecoration()
+            /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
-            )
+            )*/
+        }
+
+        ToolbarShadowController(
+                recyclerView,
+                appbarLayout
+        ) {
+            updateToolbarShadow(it)
         }
 
         //ToolbarHelper.fixInsets(toolbar)
@@ -155,7 +169,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            add("Settings")
+            add("Фильтры")
                     .setIcon(R.drawable.ic_filter_toolbar)
                     .setOnMenuItemClickListener {
                         presenter.showDialog()
@@ -280,6 +294,10 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun setSorting(sorting: String) {
         genresDialog.setSorting(sorting)
+    }
+
+    override fun setComplete(complete: Boolean) {
+        genresDialog.setComplete(complete)
     }
 
     override fun updateInfo(sort: String, filters: Int) {

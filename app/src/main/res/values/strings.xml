@@ -7,6 +7,7 @@
     <string name="fragment_title_favorites">Избранное</string>
     <string name="fragment_title_youtube">YouTube</string>
     <string name="fragment_title_search">Поиск</string>
+    <string name="fragment_title_schedule">Расписание</string>
 
     <string name="download_torrent">Скачать торрент</string>
     <string name="watch_web">Веб-плеер</string>
@@ -26,6 +27,7 @@
     <string name="loading">Загрузка</string>
 
     <string name="placeholder_title_nodata_base">Нет данных</string>
+    <string name="placeholder_title_errordata_base">Ошибка при загрузке данных</string>
     <string name="placeholder_desc_nodata_base">Потяните вниз, чтобы обновить данные.</string>
     <string name="placeholder_desc_nodata_search">Сформируйте поисковой запрос иначе или потяните вниз, чтобы обновить данные.</string>
     <string name="placeholder_desc_nodata_favorites">Здесь будут отображаться ваши избранные релизы.</string>

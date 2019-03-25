@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
@@ -158,7 +159,8 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickDonate() {
-        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+        Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
     }
 
     fun onClickFav() {
@@ -194,6 +196,10 @@ class ReleaseInfoPresenter @Inject constructor(
                 .addToDisposable()
     }
 
+    fun onScheduleClick(day: Int) {
+        router.navigateTo(Screens.Schedule(day))
+    }
+
     fun openAuth() {
         router.navigateTo(Screens.Auth())
     }
@@ -217,7 +223,8 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogDonateClick() {
-        router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
+        Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
     }
 
 }

@@ -56,7 +56,10 @@ class OtherFragment : BaseFragment(), OtherView {
         adapter.apply {
             clear()
             addProfile(profileItem)
-            menu.forEach { addMenu(it) }
+            val lastItem = menu.lastOrNull()
+            menu.forEach {
+                addMenu(it, it === lastItem)
+            }
             notifyDataSetChanged()
         }
     }
@@ -83,7 +86,7 @@ class OtherFragment : BaseFragment(), OtherView {
 
         init {
             items = mutableListOf()
-            delegatesManager.run {
+            delegatesManager.apply {
                 addDelegate(ProfileItemDelegate(profileClickListener, logoutClickListener))
                 addDelegate(DividerShadowItemDelegate())
                 addDelegate(MenuItemDelegate(menuClickListener))
@@ -96,13 +99,13 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun addProfile(profileItem: ProfileItem) {
             items.add(ProfileListItem(profileItem))
-            items.add(DividerShadowListItem)
+            items.add(DividerShadowListItem())
         }
 
-        fun addMenu(newItems: MutableList<OtherMenuItem>) {
+        fun addMenu(newItems: MutableList<OtherMenuItem>, isLast: Boolean = false) {
             items.addAll(newItems.map { MenuListItem(it) })
-            if (newItems.isNotEmpty()) {
-                items.add(DividerShadowListItem)
+            if (newItems.isNotEmpty() && !isLast) {
+                items.add(DividerShadowListItem())
             }
         }
     }

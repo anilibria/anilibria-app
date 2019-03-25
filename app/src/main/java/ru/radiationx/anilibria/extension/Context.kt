@@ -38,6 +38,9 @@ fun View.getCompatDrawable(@DrawableRes icRes: Int): Drawable? = context.getComp
 fun Context.getCompatColor(@ColorRes icRes: Int): Int = ContextCompat.getColor(this, icRes)
 fun View.getCompatColor(@ColorRes icRes: Int): Int = context.getCompatColor(icRes)
 
+fun Context.dpToPx(dp: Int): Int = (this.resources.displayMetrics.density * dp).toInt()
+fun View.dpToPx(dp: Int): Int = this.context.dpToPx(dp)
+
 @StyleRes
 fun AppThemeHolder.AppTheme.getMainStyleRes() = when (this) {
     AppThemeHolder.AppTheme.LIGHT -> R.style.LightAppTheme_NoActionBar

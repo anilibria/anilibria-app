@@ -50,13 +50,14 @@ class SearchApi @Inject constructor(
                 .map { searchParser.fastSearch(it) }
     }
 
-    fun searchReleases(genre: String, year: String, sort: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
+    fun searchReleases(genre: String, year: String, sort: String, complete: String, page: Int): Single<Paginated<List<ReleaseItem>>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "catalog",
                 "search" to JSONObject().apply {
                     put("genre", genre)
                     put("year", year)
                 }.toString(),
+                "finish" to complete,
                 "xpage" to "catalog",
                 "sort" to sort,
                 "page" to page.toString(),

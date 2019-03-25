@@ -19,6 +19,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:visibility="gone"
+            android:background="@drawable/bg_google_pay_gradient_light" />
     </android.support.design.widget.CoordinatorLayout>
 
 

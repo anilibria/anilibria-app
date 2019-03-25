@@ -36,6 +36,8 @@ class GenresDialog(
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
     private var rootView: View = LayoutInflater.from(context).inflate(ru.radiationx.anilibria.R.layout.dialog_genres, null, false)
 
+    private val filterComplete = rootView.filterComplete
+
     private val sortingGroup = rootView.sortingRadioGroup
     private val sortingPopular = rootView.sortingPopular
     private val sortingNew = rootView.sortingNew
@@ -53,6 +55,7 @@ class GenresDialog(
     private val checkedYears = mutableSetOf<String>()
 
     private var currentSorting = ""
+    private var currentComplete = false
 
     private var actionButton: View
     private var actionButtonText: TextView
@@ -86,6 +89,11 @@ class GenresDialog(
         listener.onChangeSorting(currentSorting)
     }
 
+    private val completeListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
+        currentComplete = isChecked
+        listener.onChangeComplete(currentComplete)
+    }
+
     init {
         dialog.setContentView(rootView)
         val parentView = rootView.parent as FrameLayout
@@ -112,6 +120,7 @@ class GenresDialog(
         }
 
         sortingGroup.setOnCheckedChangeListener(sortingListener)
+        filterComplete.setOnCheckedChangeListener(completeListener)
 
         actionButton.setOnClickListener {
             dialog.dismiss()
@@ -213,6 +222,13 @@ class GenresDialog(
         sortingGroup.setOnCheckedChangeListener(sortingListener)
     }
 
+    fun setComplete(complete: Boolean) {
+        currentComplete = complete
+        filterComplete.setOnCheckedChangeListener(null)
+        filterComplete.isChecked = currentComplete
+        filterComplete.setOnCheckedChangeListener(completeListener)
+    }
+
     fun showDialog() {
         updateGenreViews()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -260,5 +276,6 @@ class GenresDialog(
         fun onCheckedGenres(items: List<String>)
         fun onCheckedYears(items: List<String>)
         fun onChangeSorting(sorting: String)
+        fun onChangeComplete(complete: Boolean)
     }
 }

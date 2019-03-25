@@ -3,22 +3,24 @@
 
     <style name="LightAppTheme.NoActionBar" parent="LightAppTheme.NoActionBarBase">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#33000000</item>
+        <item name="android:statusBarColor">#00000000</item>
         <item name="android:windowContentTransitions">true</item>
 
         <item name="android:navigationBarColor">@color/light_cardBackground</item>
         <item name="android:navigationBarDividerColor">#0000</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="DarkAppTheme.NoActionBar" parent="DarkAppTheme.NoActionBarBase">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#33000000</item>
+        <item name="android:statusBarColor">#00000000</item>
         <item name="android:windowContentTransitions">true</item>
 
         <item name="android:navigationBarColor">@color/dark_cardBackground</item>
         <item name="android:navigationBarDividerColor">#0000</item>
         <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="PreferencesLightAppTheme" parent="BasePreferencesLightAppTheme">

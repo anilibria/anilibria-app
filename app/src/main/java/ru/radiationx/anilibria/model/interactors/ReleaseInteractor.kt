@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.RandomRelease
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.idOrNull
@@ -47,6 +48,8 @@ class ReleaseInteractor @Inject constructor(
 
     private val itemsUpdateTrigger = PublishRelay.create<Boolean>()
     private val fullUpdateTrigger = PublishRelay.create<Boolean>()
+
+    fun getRandomRelease(): Single<RandomRelease> = releaseRepository.getRandomRelease()
 
     private fun loadRelease(releaseId: Int): Observable<ReleaseFull> = releaseRepository
             .getRelease(releaseId)

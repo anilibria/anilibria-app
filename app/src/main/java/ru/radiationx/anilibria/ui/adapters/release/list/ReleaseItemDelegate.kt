@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 class ReleaseItemDelegate(
         private val itemListener: Listener
 ) : AppAdapterDelegate<ReleaseListItem, ListItem, ReleaseItemDelegate.ViewHolder>(
-        R.layout.item_release,
+        R.layout.item_feed_release,
         { it is ReleaseListItem },
         { ViewHolder(it, itemListener) }
 ), OptimizeDelegate {

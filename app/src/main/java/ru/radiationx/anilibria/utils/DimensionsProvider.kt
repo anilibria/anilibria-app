@@ -9,7 +9,8 @@ import javax.inject.Inject
  */
 class DimensionsProvider @Inject constructor() {
     private val relay = BehaviorRelay.createDefault(DimensionHelper.Dimensions())
-    fun dimensions(): Observable<DimensionHelper.Dimensions> = relay
+    fun observe(): Observable<DimensionHelper.Dimensions> = relay
+    fun get() = relay.value!!
 
     fun update(dimensions: DimensionHelper.Dimensions) {
         relay.accept(dimensions)

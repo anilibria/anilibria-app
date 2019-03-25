@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.repository
 import android.util.Log
 import io.reactivex.Single
 import ru.radiationx.anilibria.entity.app.Paginated
+import ru.radiationx.anilibria.entity.app.release.RandomRelease
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
@@ -19,6 +20,11 @@ class ReleaseRepository @Inject constructor(
         private val releaseApi: ReleaseApi,
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
+
+    fun getRandomRelease(): Single<RandomRelease> = releaseApi
+            .getRandomRelease()
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
 
     fun getRelease(releaseId: Int): Single<ReleaseFull> = releaseApi
             .getRelease(releaseId)

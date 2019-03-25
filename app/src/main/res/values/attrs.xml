@@ -28,11 +28,13 @@
     <attr name="divider_line" extension="reference" format="color" />
     <attr name="windowBackground" extension="reference" format="color" />
     <attr name="cardBackground" extension="reference" format="color" />
+    <attr name="gradientBackground" extension="reference" format="color" />
 
     <attr name="tab_color_checked" extension="reference" format="color" />
     <attr name="tab_color_unchecked" extension="reference" format="color" />
 
     <attr name="toolbar_icon" extension="reference" format="color" />
+    <attr name="contrast_icon" extension="reference" format="color" />
     <attr name="base_icon" extension="reference" format="color" />
 
     <attr name="release_tag_color" extension="reference" format="color" />
@@ -44,6 +46,7 @@
     <attr name="bg_comment_quote" extension="reference" />
     <attr name="bg_fav_btn" extension="reference" />
     <attr name="bg_release_remind" extension="reference" />
+    <attr name="bg_schedule_day" extension="reference" />
 
     <attr name="textDefault" extension="reference" format="color" />
     <attr name="textSecond" extension="reference" format="color" />

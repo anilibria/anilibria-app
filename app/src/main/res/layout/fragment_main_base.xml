@@ -10,7 +10,8 @@
         android:id="@+id/baseStatusBar"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="?windowBackground"
+        android:fitsSystemWindows="true"
+        android:background="?colorPrimary"
         android:visibility="gone" />
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,8 +26,8 @@
             android:id="@+id/appbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="?app_bar_overlay"
-            android:stateListAnimator="@null">
+            android:stateListAnimator="@null"
+            android:theme="?app_bar_overlay">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbarLayout"
@@ -55,9 +56,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
-                    app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="?popup_overlay">
+                    app:popupTheme="?popup_overlay"
+                    app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance">
 
                     <FrameLayout
                         android:id="@+id/spinnerContainer"
@@ -89,6 +90,14 @@
         </android.support.design.widget.AppBarLayout>
 
 
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:visibility="visible"
+            android:background="?gradientBackground"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
         <FrameLayout
             android:id="@+id/fragment_content"
             android:layout_width="match_parent"
@@ -98,10 +107,10 @@
         <View
             android:id="@+id/toolbar_shadow_prelp"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="2dp"
             android:background="@drawable/toolbar_shadow_prelp"
             android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </android.support.design.widget.CoordinatorLayout>
 
@@ -122,6 +131,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"/>
+            android:gravity="center" />
     </FrameLayout>
 </LinearLayout>

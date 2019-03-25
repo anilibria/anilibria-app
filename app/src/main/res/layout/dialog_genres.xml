@@ -105,7 +105,7 @@
             android:paddingStart="16dp"
             android:paddingTop="16dp"
             android:paddingBottom="8dp"
-            android:text="Год"
+            android:text="Сезон"
             android:textColor="?textSecond"
             android:textSize="16sp" />
 

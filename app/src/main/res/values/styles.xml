@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.Bridge">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -106,7 +106,7 @@
 
 
     <!-- Base application theme. -->
-    <style name="DarkAppTheme" parent="Theme.MaterialComponents.Bridge">
+    <style name="DarkAppTheme" parent="Theme.MaterialComponents">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->

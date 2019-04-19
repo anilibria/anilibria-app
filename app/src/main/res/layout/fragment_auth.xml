@@ -152,9 +152,8 @@
             android:paddingEnd="24dp"
             android:paddingBottom="16dp">
 
-            <android.support.v7.widget.AppCompatButton
+            <android.support.design.button.MaterialButton
                 android:id="@+id/authSubmit"
-                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
@@ -172,9 +171,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.AppCompatButton
+            <android.support.design.button.MaterialButton
                 android:id="@+id/authRegistration"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
@@ -182,9 +181,9 @@
                 android:layout_weight="1"
                 android:text="Регистрация" />
 
-            <android.support.v7.widget.AppCompatButton
+            <android.support.design.button.MaterialButton
                 android:id="@+id/authSkip"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

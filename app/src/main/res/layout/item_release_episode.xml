@@ -26,11 +26,11 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
         android:layout_toEndOf="@+id/item_title"
         android:padding="3dp"
-        android:layout_marginStart="4dp"
-        app:srcCompat="@drawable/ic_checkbox_marked_circle"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_checkbox_marked_circle" />
 
     <android.support.v7.widget.AppCompatImageButton
         android:id="@+id/quality_sd"

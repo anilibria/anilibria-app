@@ -165,9 +165,8 @@
         android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
-    <android.support.v7.widget.AppCompatButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/full_button_torrent"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -175,9 +174,8 @@
         android:layout_marginEnd="16dp"
         android:text="@string/download_torrent" />
 
-    <android.support.v7.widget.AppCompatButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/full_button_watch_web"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

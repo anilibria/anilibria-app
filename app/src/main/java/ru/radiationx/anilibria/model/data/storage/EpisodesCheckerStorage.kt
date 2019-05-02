@@ -56,6 +56,12 @@ class EpisodesCheckerStorage @Inject constructor(
         return localEpisodes.filter { it.releaseId == releaseId }
     }
 
+    override fun remove(releaseId: Int) {
+        localEpisodes.removeAll { it.releaseId == releaseId }
+        saveAll()
+        localEpisodesRelay.accept(localEpisodes)
+    }
+
     private fun saveAll() {
         val jsonEpisodes = JSONArray()
         localEpisodes.forEach {

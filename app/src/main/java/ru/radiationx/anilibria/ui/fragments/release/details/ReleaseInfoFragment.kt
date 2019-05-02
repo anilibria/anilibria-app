@@ -174,6 +174,20 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
+    override fun showEpisodesMenuDialog() {
+        val context = context ?: return
+        val items = arrayOf(
+                "Сбросить историю просмотров"
+        )
+        AlertDialog.Builder(context)
+                .setItems(items) { _, which ->
+                    when (which) {
+                        0 -> presenter.onResetEpisodesHistoryClick()
+                    }
+                }
+                .show()
+    }
+
     override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
             if (quality == null) {
@@ -400,6 +414,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
         override fun onClickContinue() {
             presenter.onClickContinue()
+        }
+
+        override fun onClickEpisodesMenu() {
+            presenter.onClickEpisodesMenu()
         }
 
         override fun onClickTag(text: String) {

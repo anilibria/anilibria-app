@@ -31,19 +31,21 @@ class ReleaseEpisodeControlDelegate(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
-            full_button_watch_all.setOnClickListener {
-                itemListener.onClickWatchAll()
-            }
-            full_button_continue.setOnClickListener {
-                itemListener.onClickContinue()
-            }
+            full_btn_episodes_menu.setOnClickListener { itemListener.onClickEpisodesMenu() }
         }
 
         fun bind(item: ReleaseFull) {
             val hasEpisodes = !item.episodes.isEmpty()
             val hasViewed = item.episodes.firstOrNull { it.isViewed } != null
-            full_button_watch_all.isEnabled = hasEpisodes
-            full_button_continue.visible(hasViewed)
+            full_button_continue.isEnabled = hasEpisodes
+
+            if (hasViewed) {
+                full_button_continue.text = "Продолжить"
+                full_button_continue.setOnClickListener { itemListener.onClickContinue() }
+            } else {
+                full_button_continue.text = "Начать просмотр"
+                full_button_continue.setOnClickListener { itemListener.onClickWatchAll() }
+            }
         }
     }
 
@@ -51,5 +53,7 @@ class ReleaseEpisodeControlDelegate(
         fun onClickWatchAll()
 
         fun onClickContinue()
+
+        fun onClickEpisodesMenu()
     }
 }

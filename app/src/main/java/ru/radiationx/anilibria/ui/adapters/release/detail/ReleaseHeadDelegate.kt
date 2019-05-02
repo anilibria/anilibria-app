@@ -86,6 +86,7 @@ class ReleaseHeadDelegate(
             full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
 
             full_title.text = item.title
+            full_title_en.text = item.titleEng
             full_description.text = item.description?.let { Html.fromHtml(it) }
 
             full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
@@ -119,7 +120,6 @@ class ReleaseHeadDelegate(
             val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
             val genresHtml = "<b>Жанр:</b> " + item.genres.joinToString(", ") { "<a href=\"$it\">${it.capitalize()}</a>" }
             val arrHtml = arrayOf(
-                    item.titleEng,
                     seasonsHtml,
                     voicesHtml,
                     typesHtml,

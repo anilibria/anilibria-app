@@ -148,6 +148,10 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
+    fun onClickEpisodesMenu() {
+        currentData?.also { viewState.showEpisodesMenuDialog() }
+    }
+
     fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int? = null) {
         currentData?.let {
             viewState.playEpisode(it, episode, null, quality)
@@ -225,6 +229,12 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onDialogDonateClick() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
         Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
+    }
+
+    fun onResetEpisodesHistoryClick() {
+        currentData?.also {
+            releaseInteractor.resetEpisodesHistory(it.id)
+        }
     }
 
 }

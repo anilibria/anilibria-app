@@ -1,10 +1,13 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.graphics.PorterDuff
+import android.support.design.chip.Chip
+import android.support.design.chip.ChipGroup
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.View
-import com.cunoraz.tagview.Tag
+import android.view.ViewGroup
+import at.blogc.android.views.ExpandableTextView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
@@ -55,9 +58,9 @@ class ReleaseHeadDelegate(
             full_button_torrent.setOnClickListener {
                 itemListener.onClickTorrent()
             }
-            full_tags.setOnTagClickListener { tag, _ ->
+            /*full_tags.setOnTagClickListener { tag, _ ->
                 itemListener.onClickTag(tag.text)
-            }
+            }*/
             full_button_watch_web.setOnClickListener {
                 itemListener.onClickWatchWeb()
             }
@@ -73,22 +76,31 @@ class ReleaseHeadDelegate(
         fun bind(item: ReleaseFull) {
             currentItem = item
             full_title.text = item.title
-            full_description.text = Html.fromHtml(item.description)
+            full_description.text = item.description?.let { Html.fromHtml(it) }
 
             full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
 
+            full_description.post {
+                updateDescription()
+            }
+            full_description.addOnExpandListener(object : ExpandableTextView.SimpleOnExpandListener() {
+                override fun onExpand(view: ExpandableTextView) {
+                    super.onExpand(view)
+                    updateDescription(true)
+                }
+
+                override fun onCollapse(view: ExpandableTextView) {
+                    super.onCollapse(view)
+                    updateDescription(false)
+                }
+            })
+            full_description_expander.setOnClickListener {
+                full_description.toggle()
+            }
+
             full_button_torrent.isEnabled = !item.torrents.isEmpty()
 
-            if (full_tags.tags.isEmpty()) {
-                item.genres.forEach {
-                    val tag = Tag(it)
-                    tag.layoutColor = tagColor
-                    tag.layoutColorPress = tagColorPress
-                    tag.tagTextColor = tagColorText
-                    tag.radius = tagRadius
-                    full_tags.addTag(tag)
-                }
-            }
+            updateGenres(item.genres)
 
             val seasonsHtml = "<b>Год:</b> " + item.seasons.joinToString(", ")
             val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
@@ -115,7 +127,7 @@ class ReleaseHeadDelegate(
             full_days_divider.visible(item.statusCode == ReleaseItem.STATUS_CODE_PROGRESS || item.announce != null)
 
             full_announce.visible(item.announce != null)
-            full_announce.text = item.announce
+            full_announce.text = item.announce?.let { Html.fromHtml(it) }
 
             item.favoriteInfo.let {
                 full_fav_count.text = it.rating.toString()
@@ -131,6 +143,34 @@ class ReleaseHeadDelegate(
                 full_fav_btn.isClickable = /*!it.isGuest && */!it.inProgress
             }
 
+        }
+
+        fun updateDescription(isExpanded: Boolean = false) {
+            full_description?.also {
+                full_description_expander.visible(it.lineCount > it.maxLines)
+                full_description_expander.text = if (isExpanded) {
+                    "Скрыть"
+                } else {
+                    "Раскрыть"
+                }
+            }
+        }
+
+        private fun updateGenres(genres: List<String>) {
+            full_tags.removeAllViews()
+            genres.forEach { genre ->
+                val chip = Chip(full_tags.context).also {
+                    it.text = genre
+                    it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
+                    //it.setChipBackgroundColorResource(R.color.bg_chip)
+                    //it.setOnCheckedChangeListener(yearsChipListener)
+                    it.layoutParams = ChipGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                        bottomMargin = 100
+                    }
+                    it.setOnClickListener { itemListener.onClickTag((it as Chip).text.toString()) }
+                }
+                full_tags.addView(chip)
+            }
         }
     }
 

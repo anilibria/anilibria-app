@@ -45,6 +45,7 @@
             android:layout_below="@id/full_title"
             android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
@@ -92,20 +93,15 @@
         </LinearLayout>
     </RelativeLayout>
 
-
-    <com.cunoraz.tagview.TagView xmlns:tagview="http://schemas.android.com/apk/res-auto"
+    <android.support.design.chip.ChipGroup
         android:id="@+id/full_tags"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        tagview:lineMargin="8dp"
-        tagview:tagMargin="8dp"
-        tagview:textPaddingBottom="5dp"
-        tagview:textPaddingLeft="6dp"
-        tagview:textPaddingRight="6dp"
-        tagview:textPaddingTop="4dp" />
+        android:clipChildren="false"
+        android:clipToPadding="false" />
 
     <View
         android:id="@+id/full_days_divider"
@@ -145,16 +141,33 @@
         android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
-    <TextView
+
+    <at.blogc.android.views.ExpandableTextView
         android:id="@+id/full_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLines="10"
         android:textColor="?textDefault"
         android:textSize="16sp"
+        app:animation_duration="225"
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
+
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/full_description_expander"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0dp"
+        android:textSize="12sp"
+        android:paddingTop="0dp"
+        android:paddingBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Раскрыть" />
 
     <View
         android:layout_width="match_parent"
@@ -167,6 +180,7 @@
 
     <android.support.design.button.MaterialButton
         android:id="@+id/full_button_torrent"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -176,6 +190,7 @@
 
     <android.support.design.button.MaterialButton
         android:id="@+id/full_button_watch_web"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

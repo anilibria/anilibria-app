@@ -30,6 +30,7 @@
     <attr name="windowBackground" extension="reference" format="color" />
     <attr name="cardBackground" extension="reference" format="color" />
     <attr name="gradientBackground" extension="reference" format="color" />
+    <attr name="imageBackground" extension="reference" format="color" />
 
     <attr name="tab_color_checked" extension="reference" format="color" />
     <attr name="tab_color_unchecked" extension="reference" format="color" />

@@ -38,6 +38,7 @@
     <color name="light_windowBackground">#f0f1f2</color>
     <color name="light_cardBackground">#fff</color>
     <color name="light_cardBackground_alpha">#00ffffff</color>
+    <color name="light_imageBackground">#1000</color>
 
     <color name="light_tab_color_checked">@color/light_colorAccent</color>
     <color name="light_tab_color_unchecked">@color/light_base_icon</color>
@@ -74,6 +75,7 @@
     <color name="dark_windowBackground">#191b1c</color>
     <color name="dark_cardBackground">#282828</color>
     <color name="dark_cardBackground_alpha">#00282828</color>
+    <color name="dark_imageBackground">#1000</color>
 
     <color name="dark_tab_color_checked">#fff</color>
     <color name="dark_tab_color_unchecked">@color/dark_base_icon</color>

@@ -35,6 +35,7 @@
         <item name="windowBackground">@color/light_windowBackground</item>
         <item name="cardBackground">@color/light_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_light</item>
+        <item name="imageBackground">@color/light_imageBackground</item>
 
         <item name="tab_color_checked">@color/light_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/light_tab_color_unchecked</item>
@@ -135,6 +136,7 @@
         <item name="windowBackground">@color/dark_windowBackground</item>
         <item name="cardBackground">@color/dark_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>
+        <item name="imageBackground">@color/dark_imageBackground</item>
 
         <item name="tab_color_checked">@color/dark_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/dark_tab_color_unchecked</item>

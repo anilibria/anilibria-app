@@ -189,11 +189,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         ImageLoader.getInstance().displayImage(release.poster, toolbarImage, defaultOptionsUIL.build(), object : UILImageListener() {
             override fun onLoadingStarted(imageUri: String?, view: View?) {
                 super.onLoadingStarted(imageUri, view)
-                toolbarImageProgress.visible()
+                toolbarImageProgress?.visible()
             }
 
             override fun onLoadingFinally(imageUrl: String?, view: View?) {
-                toolbarImageProgress.gone()
+                toolbarImageProgress?.gone()
             }
 
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {

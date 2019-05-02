@@ -6,6 +6,7 @@ import android.support.design.chip.ChipGroup
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import at.blogc.android.views.ExpandableTextView
@@ -76,6 +77,14 @@ class ReleaseHeadDelegate(
 
         fun bind(item: ReleaseFull) {
             currentItem = item
+
+            full_info.movementMethod = LinkMovementMethod {
+                itemListener.onClickTag(it)
+                true
+            }
+            full_announce.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
+            full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
+
             full_title.text = item.title
             full_description.text = item.description?.let { Html.fromHtml(it) }
 
@@ -108,7 +117,7 @@ class ReleaseHeadDelegate(
             val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
             val releaseStatus = item.status ?: "Не указано"
             val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
-            val genresHtml = "<b>Жанр:</b> " + item.genres.joinToString(", ") { "<a href=\"#\">${it.capitalize()}</a>" }
+            val genresHtml = "<b>Жанр:</b> " + item.genres.joinToString(", ") { "<a href=\"$it\">${it.capitalize()}</a>" }
             val arrHtml = arrayOf(
                     item.titleEng,
                     seasonsHtml,

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?cardBackground"
@@ -14,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/watch_all" />
+        android:text="@string/watch_all"
+        app:strokeColor="?btn_border" />
 
     <android.support.design.button.MaterialButton
         android:id="@+id/full_button_continue"
@@ -23,7 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Продолжить" />
+        android:text="Продолжить"
+        app:strokeColor="?btn_border" />
 
     <View
         android:layout_width="match_parent"

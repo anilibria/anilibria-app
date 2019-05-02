@@ -56,8 +56,8 @@
 
     <android.support.design.button.MaterialButton
         android:id="@+id/dialogFileDownloadBtn"
-        android:layout_width="0dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="Просто дай мне скачать файл"
@@ -67,6 +67,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/dialogFilePatreonBtn"
         app:layout_constraintStart_toStartOf="@id/dialogFilePatreonBtn"
-        app:layout_constraintTop_toBottomOf="@id/dialogFileDonateBtn" />
+        app:layout_constraintTop_toBottomOf="@id/dialogFileDonateBtn"
+        app:strokeColor="?btn_border" />
 
 </android.support.constraint.ConstraintLayout>

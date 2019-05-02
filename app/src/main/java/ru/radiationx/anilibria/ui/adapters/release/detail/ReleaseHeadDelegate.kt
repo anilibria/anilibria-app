@@ -5,6 +5,7 @@ import android.support.design.chip.Chip
 import android.support.design.chip.ChipGroup
 import android.support.v7.widget.RecyclerView
 import android.text.Html
+import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import at.blogc.android.views.ExpandableTextView
@@ -100,19 +101,21 @@ class ReleaseHeadDelegate(
 
             full_button_torrent.isEnabled = !item.torrents.isEmpty()
 
-            updateGenres(item.genres)
+            //updateGenres(item.genres)
 
             val seasonsHtml = "<b>Год:</b> " + item.seasons.joinToString(", ")
             val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
             val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
             val releaseStatus = item.status ?: "Не указано"
             val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
+            val genresHtml = "<b>Жанр:</b> " + item.genres.joinToString(", ") { "<a href=\"#\">${it.capitalize()}</a>" }
             val arrHtml = arrayOf(
                     item.titleEng,
                     seasonsHtml,
                     voicesHtml,
                     typesHtml,
-                    releaseStatusHtml
+                    releaseStatusHtml,
+                    genresHtml
             )
             full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
@@ -135,12 +138,11 @@ class ReleaseHeadDelegate(
                 val iconRes = if (it.isAdded) R.drawable.ic_fav else R.drawable.ic_fav_border
                 full_fav_icon.setCompatDrawable(iconRes)
 
-                if (it.isAdded && !it.inProgress) {
-                    full_fav_btn.background.setColorFilter(full_fav_btn.context.getColorFromAttr(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP)
-                } else {
-                    full_fav_btn.background.clearColorFilter()
-                }
-                full_fav_btn.isClickable = /*!it.isGuest && */!it.inProgress
+                full_fav_icon.visible(!it.inProgress)
+                full_fav_progress.visible(it.inProgress)
+
+                full_fav_btn.isSelected = it.isAdded
+                full_fav_btn.isClickable = !it.inProgress
             }
 
         }

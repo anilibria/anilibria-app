@@ -31,6 +31,7 @@
 
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
+        <item name="btn_border">@color/light_btn_border</item>
         <item name="windowBackground">@color/light_windowBackground</item>
         <item name="cardBackground">@color/light_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_light</item>
@@ -130,6 +131,7 @@
 
         <!-- Attrs -->
         <item name="divider_line">@color/dark_divider_line</item>
+        <item name="btn_border">@color/dark_btn_border</item>
         <item name="windowBackground">@color/dark_windowBackground</item>
         <item name="cardBackground">@color/dark_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>

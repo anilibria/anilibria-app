@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape>
-            <solid android:color="@color/dark_colorAccent" />
+            <solid android:width="1dp" android:color="@color/dark_colorAccent" />
             <corners android:radius="100dp" />
         </shape>
     </item>
     <item>
         <shape>
-            <solid android:color="@color/dark_release_day_btn" />
+            <stroke android:width="1dp" android:color="@color/dark_release_day_btn" />
             <corners android:radius="100dp" />
         </shape>
     </item>

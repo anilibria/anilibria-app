@@ -48,8 +48,6 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:ellipsize="end"
-            android:maxLines="6"
             android:textColor="?textDefault"
             android:textSize="14sp"
             tools:text="season: blablablabla\nvoices:blablabla,blebleble\ntypes:lanneblablaalbalba" />
@@ -78,17 +76,28 @@
                 android:gravity="center_vertical"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:textColor="?textColoredButton"
-                android:textSize="13sp" />
+                android:textColor="@color/text_fav"
+                android:textSize="13sp"
+                tools:text="100" />
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/full_fav_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@null"
                 android:padding="3dp"
-                app:srcCompat="@drawable/ic_fav_border" />
+                app:srcCompat="@drawable/ic_fav_border"
+                app:tint="@color/icon_fav" />
+
+            <ProgressBar
+                android:id="@+id/full_fav_progress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="@color/icon_fav"
+                android:padding="3dp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -101,7 +110,8 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:clipChildren="false"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/full_days_divider"
@@ -161,12 +171,12 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="0dp"
-        android:textSize="12sp"
-        android:paddingTop="0dp"
-        android:paddingBottom="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:minHeight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
         tools:text="Раскрыть" />
 
     <View
@@ -186,7 +196,8 @@
         android:layout_gravity="end"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/download_torrent" />
+        android:text="@string/download_torrent"
+        app:strokeColor="?btn_border" />
 
     <android.support.design.button.MaterialButton
         android:id="@+id/full_button_watch_web"
@@ -195,7 +206,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/watch_web" />
+        android:text="@string/watch_web"
+        app:strokeColor="?btn_border" />
 
     <!--<View
         android:layout_width="match_parent"

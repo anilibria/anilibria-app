@@ -179,7 +179,8 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Регистрация" />
+                android:text="Регистрация"
+                app:strokeColor="?btn_border" />
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/authSkip"
@@ -189,7 +190,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="24dp"
                 android:layout_weight="1"
-                android:text="@string/auth_skip" />
+                android:text="@string/auth_skip"
+                app:strokeColor="?btn_border" />
         </LinearLayout>
 
 

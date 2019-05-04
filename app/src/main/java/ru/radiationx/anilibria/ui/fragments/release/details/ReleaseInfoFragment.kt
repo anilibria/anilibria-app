@@ -318,10 +318,22 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     private fun selectQuality(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
         val savedQuality = presenter.getQuality()
-        if (forceDialog) {
-            showQualityDialog(episode, onSelect, false)
-        } else {
-            when (savedQuality) {
+
+        var correctQuality = savedQuality
+        if (correctQuality == PreferencesHolder.QUALITY_FULL_HD && episode.urlFullHd == null) {
+            correctQuality = PreferencesHolder.QUALITY_HD
+        }
+        if (correctQuality == PreferencesHolder.QUALITY_HD && episode.urlHd == null) {
+            correctQuality = PreferencesHolder.QUALITY_SD
+        }
+        if (correctQuality == PreferencesHolder.QUALITY_SD && episode.urlSd == null) {
+            correctQuality = PreferencesHolder.QUALITY_NO
+        }
+
+        when {
+            correctQuality != savedQuality -> showQualityDialog(episode, onSelect, true)
+            forceDialog -> showQualityDialog(episode, onSelect, false)
+            else -> when (savedQuality) {
                 PreferencesHolder.QUALITY_NO -> showQualityDialog(episode, onSelect)
                 PreferencesHolder.QUALITY_ALWAYS -> showQualityDialog(episode, onSelect, false)
                 PreferencesHolder.QUALITY_SD -> onSelect(MyPlayerActivity.VAL_QUALITY_SD)
@@ -333,15 +345,27 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     private fun showQualityDialog(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
         val context = context ?: return
+
+        val qualities = mutableListOf<Int>()
+        if (episode.urlSd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
+        if (episode.urlHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
+        if (episode.urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
+
+        val titles = qualities
+                .map {
+                    when (it) {
+                        MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+                        MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+                        MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
+                        else -> "Unknown"
+                    }
+                }
+                .toTypedArray()
+
         AlertDialog.Builder(context)
                 .setTitle("Качество")
-                .setItems(arrayOf("480p", "720p", "1080p")) { _, p1 ->
-                    val quality: Int = when (p1) {
-                        0 -> MyPlayerActivity.VAL_QUALITY_SD
-                        1 -> MyPlayerActivity.VAL_QUALITY_HD
-                        2 -> MyPlayerActivity.VAL_QUALITY_FULL_HD
-                        else -> -1
-                    }
+                .setItems(titles) { _, p1 ->
+                    val quality = qualities[p1]
                     if (quality != -1) {
                         if (saveQuality) {
                             presenter.setQuality(when (quality) {

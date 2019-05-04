@@ -812,11 +812,13 @@ class MyPlayerActivity : BaseActivity() {
         }
 
         fun showQualityDialog() {
-            val values = arrayOf(
-                    MyPlayerActivity.VAL_QUALITY_SD,
-                    MyPlayerActivity.VAL_QUALITY_HD,
-                    MyPlayerActivity.VAL_QUALITY_FULL_HD
-            )
+            val qualities = mutableListOf<Int>()
+            if (getEpisode().urlSd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
+            if (getEpisode().urlHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
+            if (getEpisode().urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
+
+            val values = qualities.toTypedArray()
+
             val activeIndex = values.indexOf(currentQuality)
             val titles = values
                     .mapIndexed { index, s ->

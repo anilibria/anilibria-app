@@ -12,20 +12,35 @@
     <TextView
         android:id="@+id/item_title"
         android:layout_width="0dp"
-        app:layout_constraintWidth_default="wrap"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textColor="?textDefault"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintHorizontal_bias="0"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/item_subtitle"
         app:layout_constraintEnd_toStartOf="@id/item_viewed_state"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintWidth_default="wrap"
         tools:text="Серия 660" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/item_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/item_title"
+        app:layout_constraintTop_toBottomOf="@id/item_title"
+        tools:text="Остановлена на 11:23"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/item_viewed_state"
@@ -35,10 +50,10 @@
         android:layout_marginStart="4dp"
         android:padding="3dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_title"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/item_title"
         app:layout_constraintEnd_toStartOf="@id/quality_sd"
+        app:layout_constraintStart_toEndOf="@id/item_title"
+        app:layout_constraintTop_toTopOf="@id/item_title"
         app:srcCompat="@drawable/ic_checkbox_marked_circle"
         tools:visibility="visible" />
 

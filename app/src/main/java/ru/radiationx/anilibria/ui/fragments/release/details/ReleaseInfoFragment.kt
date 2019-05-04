@@ -407,19 +407,19 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     private val adapterListener = object : ReleaseInfoAdapter.ItemListener {
 
         override fun onClickSd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_SD)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_SD)
         }
 
         override fun onClickHd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_HD)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_HD)
         }
 
         override fun onClickFullHd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_FULL_HD)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_FULL_HD)
         }
 
         override fun onClickEpisode(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
         }
 
         override fun onClickTorrent() {

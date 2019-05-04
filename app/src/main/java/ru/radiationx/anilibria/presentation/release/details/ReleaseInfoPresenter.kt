@@ -155,9 +155,9 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
-    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int? = null) {
+    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null) {
         currentData?.let {
-            viewState.playEpisode(it, episode, null, quality)
+            viewState.playEpisode(it, episode, playFlag, quality)
         }
     }
 

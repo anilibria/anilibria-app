@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.extension.asTimeSecString
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.extension.visible
@@ -13,6 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import java.util.*
 
 /**
  * Created by radiationx on 13.01.18.
@@ -57,6 +60,11 @@ class ReleaseEpisodeDelegate(
         fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
             currentItem = item
             item_title.text = item.title
+
+            Log.e("jojojo", "${item.id}=>${item.seek}")
+            item_subtitle.text = "Остановлена на ${Date(item.seek).asTimeSecString()}"
+            item_subtitle.visible(item.isViewed && item.seek > 0)
+
             item_viewed_state.visible(item.isViewed)
 
             quality_sd.visible(item.urlSd != null)

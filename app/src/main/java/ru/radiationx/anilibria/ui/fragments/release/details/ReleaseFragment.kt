@@ -103,7 +103,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarImage.transitionName = transitionNameLocal
+        }
+        postponeEnterTransition()
         ToolbarHelper.setTransparent(toolbar, appbarLayout)
         ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
@@ -136,9 +139,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         toolbarInsetShadow.visible()
         toolbarImage.visible()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarImage.transitionName = transitionNameLocal
-        }
+
 
         toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
@@ -194,6 +195,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
             override fun onLoadingFinally(imageUrl: String?, view: View?) {
                 toolbarImageProgress?.gone()
+                startPostponedEnterTransition()
             }
 
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {

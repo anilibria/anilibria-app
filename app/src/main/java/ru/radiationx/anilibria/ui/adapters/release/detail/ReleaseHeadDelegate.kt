@@ -132,6 +132,7 @@ class ReleaseHeadDelegate(
             //full_button_watch_all.isEnabled = hasEpisodes
             full_button_torrent.gone()
             full_button_watch_web.visible( item.moonwalkLink != null)
+            full_button_watch_web.gone()
 
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 

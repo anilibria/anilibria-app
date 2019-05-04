@@ -354,6 +354,7 @@ class MyPlayerActivity : BaseActivity() {
         releaseInteractor.putEpisode(getEpisode().apply {
             Log.e("SUKA", "Set posistion seek: ${player.currentPosition}")
             seek = player.currentPosition
+            lastAccess = System.currentTimeMillis()
             isViewed = true
         })
     }
@@ -437,7 +438,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
-        toolbar.subtitle = episode.title
+        toolbar.subtitle = "${episode.title} [${dialogController.getQualityTitle(currentQuality)}]"
         currentEpisodeId = getEpisodeId(episode)
         val videoPath = when (currentQuality) {
             VAL_QUALITY_SD -> episode.urlSd
@@ -661,27 +662,27 @@ class MyPlayerActivity : BaseActivity() {
 
         private fun BottomSheet.register() = openedDialogs.add(this)
 
-        private fun getQualityTitle(quality: Int) = when (quality) {
+        fun getQualityTitle(quality: Int) = when (quality) {
             MyPlayerActivity.VAL_QUALITY_SD -> "480p"
             MyPlayerActivity.VAL_QUALITY_HD -> "720p"
             MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
             else -> "Вероятнее всего 480p"
         }
 
-        private fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
+        fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
             "Обычная"
         } else {
             "${"$speed".trimEnd('0').trimEnd('.').trimEnd(',')}x"
         }
 
-        private fun getScaleTitle(scale: ScaleType) = when (scale) {
+        fun getScaleTitle(scale: ScaleType) = when (scale) {
             ScaleType.FIT_CENTER -> "Оптимально"
             ScaleType.CENTER_CROP -> "Обрезать"
             ScaleType.FIT_XY -> "Растянуть"
             else -> "Одному лишь богу известно"
         }
 
-        private fun getPIPTitle(pipControl: Int) = when (pipControl) {
+        fun getPIPTitle(pipControl: Int) = when (pipControl) {
             PreferencesHolder.PIP_AUTO -> "При скрытии экрана"
             PreferencesHolder.PIP_BUTTON -> "По кнопке"
             else -> "Одному лишь богу известно"

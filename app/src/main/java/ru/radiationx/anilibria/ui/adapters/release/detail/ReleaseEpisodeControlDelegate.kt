@@ -23,7 +23,7 @@ class ReleaseEpisodeControlDelegate(
 ) {
 
     override fun bindData(item: ReleaseEpisodeControlItem, holder: ViewHolder) =
-            holder.bind(item.item)
+            holder.bind(item.item, item.hasWeb)
 
     class ViewHolder(
             override val containerView: View,
@@ -34,13 +34,16 @@ class ReleaseEpisodeControlDelegate(
             full_btn_episodes_menu.setOnClickListener { itemListener.onClickEpisodesMenu() }
         }
 
-        fun bind(item: ReleaseFull) {
+        fun bind(item: ReleaseFull, hasWeb: Boolean) {
             val hasEpisodes = !item.episodes.isEmpty()
             val hasViewed = item.episodes.firstOrNull { it.isViewed } != null
             full_button_continue.isEnabled = hasEpisodes
+            full_button_web.visible(hasWeb)
+
+            val lastViewed = item.episodes.asReversed().maxBy { it.lastAccess }
 
             if (hasViewed) {
-                full_button_continue.text = "Продолжить"
+                full_button_continue.text = "Продолжить c ${lastViewed?.id} серии"
                 full_button_continue.setOnClickListener { itemListener.onClickContinue() }
             } else {
                 full_button_continue.text = "Начать просмотр"

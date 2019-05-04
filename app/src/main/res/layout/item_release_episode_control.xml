@@ -9,16 +9,32 @@
     android:paddingTop="8dp">
 
     <android.support.design.button.MaterialButton
+        android:id="@+id/full_button_web"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="4dp"
+        android:text="Веб плеер"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/full_btn_episodes_menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?btn_border" />
+
+    <android.support.design.button.MaterialButton
         android:id="@+id/full_button_continue"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"
-        android:text="Продолжить"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Продолжить с 100 серии"
         app:layout_constraintEnd_toStartOf="@id/full_btn_episodes_menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/full_button_web"
         app:strokeColor="?btn_border" />
 
     <android.support.design.button.MaterialButton
@@ -44,7 +60,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="?divider_line"
-        app:layout_constraintTop_toBottomOf="@id/full_button_continue"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/full_button_continue" />
 
 </android.support.constraint.ConstraintLayout>

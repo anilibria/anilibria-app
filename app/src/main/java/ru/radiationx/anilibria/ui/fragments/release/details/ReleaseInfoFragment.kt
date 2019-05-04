@@ -45,7 +45,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         const val ARG_ID_CODE: String = "release_id_code"
     }
 
-    private val releaseInfoAdapter: ReleaseInfoAdapter by lazy { ReleaseInfoAdapter(adapterListener) }
+    private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
+        ReleaseInfoAdapter(adapterListener) {
+            loadTorrent(it)
+        }
+    }
 
     @InjectPresenter
     lateinit var presenter: ReleaseInfoPresenter

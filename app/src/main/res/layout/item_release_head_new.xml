@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:background="?cardBackground"
     android:clipToPadding="false"
-    android:orientation="vertical"
-    android:paddingBottom="16dp">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/full_item"
@@ -196,6 +195,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="?divider_line" />
@@ -209,6 +209,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/download_torrent"
+        android:visibility="gone"
         app:strokeColor="?btn_border" />
 
     <android.support.design.button.MaterialButton
@@ -219,6 +220,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/watch_web"
+        android:visibility="gone"
         app:strokeColor="?btn_border" />
 
     <!--<View

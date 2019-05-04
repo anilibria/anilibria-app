@@ -16,10 +16,12 @@ import java.util.*
 /**
  * Created by radiationx on 13.01.18.
  */
-class ReleaseTorrentDelegate() : AppAdapterDelegate<ReleaseTorrentListItem, ListItem, ReleaseTorrentDelegate.ViewHolder>(
+class ReleaseTorrentDelegate(
+        private val clickListener: (TorrentItem) -> Unit
+) : AppAdapterDelegate<ReleaseTorrentListItem, ListItem, ReleaseTorrentDelegate.ViewHolder>(
         R.layout.item_release_torrent,
         { it is ReleaseTorrentListItem },
-        { ViewHolder(it) }
+        { ViewHolder(it, clickListener) }
 ), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 20
@@ -28,13 +30,14 @@ class ReleaseTorrentDelegate() : AppAdapterDelegate<ReleaseTorrentListItem, List
             holder.bind(item.item)
 
     class ViewHolder(
-            override val containerView: View
+            override val containerView: View,
+            private val clickListener: (TorrentItem) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: TorrentItem
 
         init {
-
+            containerView.setOnClickListener { clickListener.invoke(currentItem) }
         }
 
         fun bind(item: TorrentItem) {

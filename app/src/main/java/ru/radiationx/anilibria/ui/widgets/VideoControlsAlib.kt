@@ -111,7 +111,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private fun handleStartTapSeek() {
                 tapDisposable.dispose()
                 tapDisposable = tapRelay
-                        .debounce(100L, TimeUnit.MILLISECONDS)
+                        //.debounce(100L, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { handleTapSeek(it) }
             }

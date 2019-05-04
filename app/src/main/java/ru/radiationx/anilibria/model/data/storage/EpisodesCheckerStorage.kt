@@ -31,7 +31,6 @@ class EpisodesCheckerStorage @Inject constructor(
     override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
 
     override fun putEpisode(episode: ReleaseFull.Episode) {
-        episode.lastAccess = System.currentTimeMillis()
         localEpisodes
                 .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
                 ?.let { localEpisodes.remove(it) }
@@ -42,7 +41,6 @@ class EpisodesCheckerStorage @Inject constructor(
 
     override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
         episodes.forEach { episode ->
-            episode.lastAccess = System.currentTimeMillis()
             localEpisodes
                     .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
                     ?.let { localEpisodes.remove(it) }

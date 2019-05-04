@@ -127,6 +127,7 @@ class ReleaseParser @Inject constructor(
                     it.title = episodeTitle
                     it.urlSd = jsonEpisode.nullString("sd")
                     it.urlHd = jsonEpisode.nullString("hd")
+                    it.urlFullHd = jsonEpisode.nullString("fullhd")
                     it.type = ReleaseFull.Episode.Type.ONLINE
                     release.episodes.add(it)
                 }
@@ -137,6 +138,7 @@ class ReleaseParser @Inject constructor(
                     it.title = episodeTitle
                     it.urlSd = jsonEpisode.nullString("srcSd")
                     it.urlHd = jsonEpisode.nullString("srcHd")
+                    it.urlFullHd = jsonEpisode.nullString("srcFullHd")
                     it.type = ReleaseFull.Episode.Type.SOURCE
                     release.episodesSource.add(it)
                 }

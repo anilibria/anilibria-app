@@ -39,6 +39,7 @@ class SettingsFragment : BaseSettingFragment() {
                 val values = arrayOf(
                         PreferencesHolder.QUALITY_SD,
                         PreferencesHolder.QUALITY_HD,
+                        PreferencesHolder.QUALITY_FULL_HD,
                         PreferencesHolder.QUALITY_NO,
                         PreferencesHolder.QUALITY_ALWAYS
                 )
@@ -120,26 +121,19 @@ class SettingsFragment : BaseSettingFragment() {
 
     private fun getQualityIcon(quality: Int): Drawable? {
         val iconRes = when (quality) {
-            PreferencesHolder.QUALITY_SD -> R.drawable.ic_quality_sd
-            PreferencesHolder.QUALITY_HD -> R.drawable.ic_quality_hd
-            else -> {
-                return null
-            }
+            PreferencesHolder.QUALITY_SD -> R.drawable.ic_quality_sd_base
+            PreferencesHolder.QUALITY_HD -> R.drawable.ic_quality_hd_base
+            PreferencesHolder.QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
+            else -> return null
         }
-        return context?.let {
-            ContextCompat.getDrawable(it, iconRes)?.mutate()?.apply {
-                setColorFilter(
-                        it.getColorFromAttr(R.attr.base_icon),
-                        PorterDuff.Mode.SRC_ATOP
-                )
-            }
-        }
+        return context?.let { ContextCompat.getDrawable(it, iconRes) }
     }
 
     private fun getQualityTitle(quality: Int): String {
         return when (quality) {
-            PreferencesHolder.QUALITY_SD -> "SD"
-            PreferencesHolder.QUALITY_HD -> "HD"
+            PreferencesHolder.QUALITY_SD -> "480p"
+            PreferencesHolder.QUALITY_HD -> "720p"
+            PreferencesHolder.QUALITY_FULL_HD -> "1080p"
             PreferencesHolder.QUALITY_NO -> "Не выбрано"
             PreferencesHolder.QUALITY_ALWAYS -> "Спрашивать всегда"
             else -> ""

@@ -46,6 +46,9 @@ class ReleaseEpisodeDelegate(
             quality_hd.setOnClickListener {
                 itemListener.onClickHd(currentItem)
             }
+            quality_full_hd.setOnClickListener {
+                itemListener.onClickFullHd(currentItem)
+            }
             containerView.setOnClickListener {
                 itemListener.onClickEpisode(currentItem)
             }
@@ -56,10 +59,9 @@ class ReleaseEpisodeDelegate(
             item_title.text = item.title
             item_viewed_state.visible(item.isViewed)
 
-            quality_sd.isEnabled = item.urlSd != null
-            quality_hd.isEnabled = item.urlHd != null
-            quality_sd.setTintColorAttr(if (item.urlSd != null) enableColor else disableColor)
-            quality_hd.setTintColorAttr(if (item.urlHd != null) enableColor else disableColor)
+            quality_sd.visible(item.urlSd != null)
+            quality_hd.visible(item.urlHd != null)
+            quality_full_hd.visible(item.urlFullHd != null)
 
             val bgColor = if (isEven) {
                 containerView.context.getColorFromAttr(R.attr.cardBackground)
@@ -74,6 +76,8 @@ class ReleaseEpisodeDelegate(
         fun onClickSd(episode: ReleaseFull.Episode)
 
         fun onClickHd(episode: ReleaseFull.Episode)
+
+        fun onClickFullHd(episode: ReleaseFull.Episode)
 
         fun onClickEpisode(episode: ReleaseFull.Episode)
     }

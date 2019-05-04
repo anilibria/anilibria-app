@@ -9,6 +9,7 @@ interface PreferencesHolder {
         const val QUALITY_SD = 0
         const val QUALITY_HD = 1
         const val QUALITY_ALWAYS = 2
+        const val QUALITY_FULL_HD = 3
 
         const val PLAYER_TYPE_NO = -1
         const val PLAYER_TYPE_EXTERNAL = 0

@@ -139,7 +139,7 @@ class ReleaseInfoAdapter(
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
             if (release.episodes.isNotEmpty()) {
-                items.add(ReleaseEpisodeControlItem(release, true))
+                items.add(ReleaseEpisodeControlItem(release, release.moonwalkLink != null))
             }
             if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))

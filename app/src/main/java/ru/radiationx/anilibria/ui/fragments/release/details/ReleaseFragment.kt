@@ -253,7 +253,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
         override fun getItem(position: Int): Fragment = fragments[position]
 
-        override fun getCount(): Int = fragments.size - 1
+        override fun getCount(): Int = fragments.size
 
     }
 }

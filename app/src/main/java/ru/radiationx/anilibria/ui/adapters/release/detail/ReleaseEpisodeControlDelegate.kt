@@ -32,6 +32,7 @@ class ReleaseEpisodeControlDelegate(
 
         init {
             full_btn_episodes_menu.setOnClickListener { itemListener.onClickEpisodesMenu() }
+            full_button_web.setOnClickListener { itemListener.onClickWatchWeb() }
         }
 
         fun bind(item: ReleaseFull, hasWeb: Boolean) {
@@ -53,6 +54,9 @@ class ReleaseEpisodeControlDelegate(
     }
 
     interface Listener {
+
+        fun onClickWatchWeb()
+
         fun onClickWatchAll()
 
         fun onClickContinue()

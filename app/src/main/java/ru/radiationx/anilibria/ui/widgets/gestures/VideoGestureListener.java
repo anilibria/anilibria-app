@@ -23,11 +23,16 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
         return super.onSingleTapUp(e);
     }
 
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        //listener.onTap(e);
+        return super.onSingleTapConfirmed(e);
+    }
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
         listener.onDoubleTap(e);
-        return super.onDoubleTap(e);
+        return true;
     }
 
     @Override

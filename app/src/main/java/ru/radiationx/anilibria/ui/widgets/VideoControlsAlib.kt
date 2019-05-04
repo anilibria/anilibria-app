@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
+import com.devbrackets.android.exomedia.listener.VideoControlsSeekListener
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
@@ -49,6 +50,13 @@ class VideoControlsAlib @JvmOverloads constructor(
     fun setPictureInPictureEnabled(enabled: Boolean) {
         pictureInPictureMenuItem?.isVisible = enabled
     }
+
+    /*override fun updateProgress(position: Long, duration: Long, bufferPercent: Int) {
+        super.updateProgress(position, duration, bufferPercent)
+        val percent = position.toFloat() / duration.toFloat()
+        controlMinusOpening.visible(percent < 0.3)
+        controlPlusOpening.visible(percent < 0.3)
+    }*/
 
     override fun getLayoutResource() = R.layout.view_video_control
 
@@ -121,7 +129,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             private fun handleEndTapSeek() {
                 tapSeekHandler.removeCallbacks(tapSeekRunnable)
-                tapSeekHandler.postDelayed(tapSeekRunnable, 500)
+                tapSeekHandler.postDelayed(tapSeekRunnable, 350)
             }
 
             private fun applyPlayerSeek() {

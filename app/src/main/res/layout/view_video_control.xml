@@ -17,9 +17,9 @@
             android:id="@+id/gesturesControllerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:focusable="true" />
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbarLayout"
@@ -28,8 +28,8 @@
             android:layout_alignParentTop="true"
             android:background="@drawable/bg_video_toolbar"
             android:elevation="0dp"
-            android:theme="?app_bar_overlay"
             android:stateListAnimator="@null"
+            android:theme="?app_bar_overlay"
             app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar
@@ -93,53 +93,51 @@
             android:theme="@style/Theme.AppCompat"
             tools:background="#1000">
 
-            <LinearLayout
-                android:id="@+id/controlButton"
-                android:layout_width="match_parent"
+
+            <ImageButton
+                android:id="@+id/exomedia_controls_previous_btn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_marginRight="@dimen/exomedia_min_button_height"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/exomedia_controls_play_pause_btn"
+                app:layout_constraintEnd_toStartOf="@id/exomedia_controls_play_pause_btn"
+                app:layout_constraintTop_toTopOf="@id/exomedia_controls_play_pause_btn"
+                app:srcCompat="@drawable/exomedia_ic_skip_previous_white"
+                tools:ignore="ContentDescription,RtlHardcoded"
+                tools:visibility="visible" />
 
-                <ImageButton
-                    android:id="@+id/exomedia_controls_previous_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/exomedia_min_button_height"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:minWidth="@dimen/exomedia_min_button_height"
-                    android:minHeight="@dimen/exomedia_min_button_height"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/exomedia_ic_skip_previous_white"
-                    tools:ignore="ContentDescription,RtlHardcoded"
-                    tools:visibility="visible" />
+            <ImageButton
+                android:id="@+id/exomedia_controls_play_pause_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/exomedia_ic_play_arrow_white"
+                tools:ignore="ContentDescription" />
 
-                <ImageButton
-                    android:id="@+id/exomedia_controls_play_pause_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:minWidth="@dimen/exomedia_min_button_height"
-                    android:minHeight="@dimen/exomedia_min_button_height"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/exomedia_ic_play_arrow_white"
-                    tools:ignore="ContentDescription" />
-
-                <ImageButton
-                    android:id="@+id/exomedia_controls_next_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/exomedia_min_button_height"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:minWidth="@dimen/exomedia_min_button_height"
-                    android:minHeight="@dimen/exomedia_min_button_height"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/exomedia_ic_skip_next_white"
-                    tools:ignore="ContentDescription,RtlHardcoded"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/exomedia_controls_next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/exomedia_min_button_height"
+                android:background="?selectableItemBackgroundBorderless"
+                android:minWidth="@dimen/exomedia_min_button_height"
+                android:minHeight="@dimen/exomedia_min_button_height"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/exomedia_controls_play_pause_btn"
+                app:layout_constraintStart_toEndOf="@id/exomedia_controls_play_pause_btn"
+                app:layout_constraintTop_toTopOf="@id/exomedia_controls_play_pause_btn"
+                app:srcCompat="@drawable/exomedia_ic_skip_next_white"
+                tools:ignore="ContentDescription,RtlHardcoded"
+                tools:visibility="visible" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/controlMinusOpening"
@@ -148,15 +146,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="80dp"
                 android:fontFamily="monospace"
-                android:text="- 1:30"
+                android:text="-1:30"
                 android:textColor="#fff"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@id/controlPlusOpening"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/controlButton" />
+                app:layout_constraintStart_toStartOf="@id/exomedia_controls_previous_btn"
+                app:layout_constraintTop_toBottomOf="@id/exomedia_controls_previous_btn" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/controlPlusOpening"
@@ -164,14 +160,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
-                android:text="1:30 +"
+                android:text="+1:30"
                 android:textColor="#fff"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/controlMinusOpening"
-                app:layout_constraintTop_toBottomOf="@id/controlButton" />
+                app:layout_constraintEnd_toEndOf="@id/exomedia_controls_next_btn"
+                app:layout_constraintTop_toBottomOf="@id/exomedia_controls_next_btn" />
         </android.support.constraint.ConstraintLayout>
 
         <TextView
@@ -249,10 +244,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_toStartOf="@id/controlsFullscreen"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:layout_marginEnd="8dp"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:typeface="monospace"

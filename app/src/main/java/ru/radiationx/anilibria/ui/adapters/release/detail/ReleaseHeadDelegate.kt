@@ -128,9 +128,8 @@ class ReleaseHeadDelegate(
             )
             full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
-            val hasMoonwalk = item.moonwalkLink != null
             //full_button_watch_all.isEnabled = hasEpisodes
-            full_button_watch_web.isEnabled = hasMoonwalk
+            full_button_watch_web.visible( item.moonwalkLink != null)
 
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 

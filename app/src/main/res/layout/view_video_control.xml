@@ -16,7 +16,10 @@
         <ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureControllerView
             android:id="@+id/gesturesControllerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackgroundBorderless"/>
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbarLayout"

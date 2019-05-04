@@ -4,7 +4,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
-public class VideoGestureListener implements GestureDetector.OnGestureListener {
+public class VideoGestureListener extends GestureDetector.SimpleOnGestureListener {
 
     private static final int SWIPE_THRESHOLD = 100;
     private final int minFlingVelocity;
@@ -19,8 +19,15 @@ public class VideoGestureListener implements GestureDetector.OnGestureListener {
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        listener.onTap();
-        return false;
+        listener.onTap(e);
+        return super.onSingleTapUp(e);
+    }
+
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        listener.onDoubleTap(e);
+        return super.onDoubleTap(e);
     }
 
     @Override

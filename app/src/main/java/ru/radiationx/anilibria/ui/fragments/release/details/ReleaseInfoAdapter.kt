@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
@@ -50,7 +51,9 @@ class ReleaseInfoAdapter(
     init {
         items = mutableListOf()
         addDelegate(ReleaseHeadDelegate(itemListener))
+        addDelegate(FeedSectionDelegate({}))
         addDelegate(ReleaseEpisodeDelegate(itemListener))
+        addDelegate(ReleaseTorrentDelegate())
         addDelegate(ReleaseEpisodeControlDelegate(itemListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
         addDelegate(ReleaseDonateDelegate(itemListener))
@@ -82,6 +85,12 @@ class ReleaseInfoAdapter(
         items.clear()
         currentRelease = release
         items.add(ReleaseHeadListItem(release))
+        items.add(DividerShadowListItem())
+
+        items.add(FeedSectionListItem("Раздачи", hasBg = true))
+        release.torrents.asReversed().forEach {
+            items.add(ReleaseTorrentListItem(it))
+        }
         items.add(DividerShadowListItem())
 
         if (release.blockedInfo.isBlocked) {

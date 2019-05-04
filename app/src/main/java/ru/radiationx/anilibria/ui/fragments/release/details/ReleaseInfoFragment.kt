@@ -176,12 +176,14 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun showEpisodesMenuDialog() {
         val context = context ?: return
         val items = arrayOf(
-                "Сбросить историю просмотров"
+                "Сбросить историю просмотров",
+                "Отметить все как просмотренные"
         )
         AlertDialog.Builder(context)
                 .setItems(items) { _, which ->
                     when (which) {
                         0 -> presenter.onResetEpisodesHistoryClick()
+                        1 -> presenter.onCheckAllEpisodesHistoryClick()
                     }
                 }
                 .show()

@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -129,6 +130,7 @@ class ReleaseHeadDelegate(
             full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
             //full_button_watch_all.isEnabled = hasEpisodes
+            full_button_torrent.gone()
             full_button_watch_web.visible( item.moonwalkLink != null)
 
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE

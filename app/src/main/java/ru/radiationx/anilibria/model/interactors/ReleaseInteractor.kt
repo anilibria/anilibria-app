@@ -141,6 +141,8 @@ class ReleaseInteractor @Inject constructor(
     /* Common */
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
 
+    fun putEpisodes(episodes: List<ReleaseFull.Episode>) = episodesCheckerStorage.putAllEpisode(episodes)
+
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
 
     fun resetEpisodesHistory(releaseId: Int) {

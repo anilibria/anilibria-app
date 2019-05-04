@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
@@ -40,6 +41,7 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 /* Release detail screen */
 
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean) : ListItem()
+class ReleaseTorrentListItem(val item: TorrentItem) : ListItem()
 class ReleaseEpisodeControlItem(val item: ReleaseFull) : ListItem()
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
 class ReleaseDonateListItem : ListItem()

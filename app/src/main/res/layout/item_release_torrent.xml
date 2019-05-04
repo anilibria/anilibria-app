@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?cardBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?selectableItemBackground">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+
+        app:flexWrap="wrap"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/itemTorrentDownload"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textSize="16sp"
+            android:textColor="?textDefault"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Серия 1-112" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?textSecond"
+            android:layout_marginTop="1dp"
+            android:textSize="14sp"
+            tools:text="[BDRip 1080p-LQ HEVC]" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="2dp"
+            android:textColor="?textSecond"
+            android:textSize="14sp"
+            app:layout_wrapBefore="true"
+            tools:text="430.1 MB" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="2dp"
+            app:srcCompat="@drawable/ic_file_upload"
+            app:tint="#4caf50" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentSeeders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="2dp"
+            android:textColor="?textSecond"
+            android:textSize="14sp"
+            tools:text="42" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="2dp"
+            app:srcCompat="@drawable/ic_file_download"
+            app:tint="#f44336" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentLeechers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="?textSecond"
+            android:textSize="14sp"
+            tools:text="10" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/itemTorrentDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?textSecond"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="04.05.2019 13:43" />
+    </com.google.android.flexbox.FlexboxLayout>
+
+
+    <ImageView
+        android:id="@+id/itemTorrentDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:minWidth="0dp"
+        android:tint="?colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_file_download" />
+
+</android.support.constraint.ConstraintLayout>

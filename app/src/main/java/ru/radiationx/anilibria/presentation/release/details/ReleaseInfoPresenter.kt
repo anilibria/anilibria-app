@@ -237,4 +237,13 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
+    fun onCheckAllEpisodesHistoryClick() {
+        currentData?.also {
+            it.episodes.forEach {
+                it.isViewed = true
+            }
+            releaseInteractor.putEpisodes(it.episodes)
+        }
+    }
+
 }

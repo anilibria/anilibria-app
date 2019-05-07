@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -114,6 +115,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun markEpisodeViewed(episode: ReleaseFull.Episode) {
         episode.isViewed = true
+        episode.lastAccess = System.currentTimeMillis()
         releaseInteractor.putEpisode(episode)
     }
 
@@ -141,16 +143,21 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickContinue() {
-        currentData?.let { release ->
-            release.episodes.maxBy { it.lastAccess }?.let { episode ->
+        currentData?.also { release ->
+            Log.e("jojojo", release.episodes.joinToString { "${it.id}=>${it.lastAccess}" })
+            release.episodes.asReversed().maxBy { it.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
             }
         }
     }
 
-    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, quality: Int? = null) {
+    fun onClickEpisodesMenu() {
+        currentData?.also { viewState.showEpisodesMenuDialog() }
+    }
+
+    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null) {
         currentData?.let {
-            viewState.playEpisode(it, episode, null, quality)
+            viewState.playEpisode(it, episode, playFlag, quality)
         }
     }
 
@@ -225,6 +232,21 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onDialogDonateClick() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
         Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
+    }
+
+    fun onResetEpisodesHistoryClick() {
+        currentData?.also {
+            releaseInteractor.resetEpisodesHistory(it.id)
+        }
+    }
+
+    fun onCheckAllEpisodesHistoryClick() {
+        currentData?.also {
+            it.episodes.forEach {
+                it.isViewed = true
+            }
+            releaseInteractor.putEpisodes(it.episodes)
+        }
     }
 
 }

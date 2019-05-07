@@ -16,6 +16,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
@@ -35,6 +36,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
+import ru.radiationx.anilibria.ui.widgets.UILImageListener
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
@@ -71,6 +73,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             .resetViewBeforeLoading(false)
             .cacheInMemory(true)
             .cacheOnDisk(true)
+            .displayer(FadeInBitmapDisplayer(1000, true, false, false))
             .bitmapConfig(Bitmap.Config.ARGB_8888)
 
     @InjectPresenter
@@ -100,7 +103,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarImage.transitionName = transitionNameLocal
+        }
+        postponeEnterTransition()
         ToolbarHelper.setTransparent(toolbar, appbarLayout)
         ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
@@ -133,9 +139,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         toolbarInsetShadow.visible()
         toolbarImage.visible()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarImage.transitionName = transitionNameLocal
-        }
+
 
         toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
@@ -183,7 +187,17 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     override fun showRelease(release: ReleaseFull) {
         Log.e("S_DEF_LOG", "showRelease")
-        ImageLoader.getInstance().displayImage(release.poster, toolbarImage, defaultOptionsUIL.build(), object : SimpleImageLoadingListener() {
+        ImageLoader.getInstance().displayImage(release.poster, toolbarImage, defaultOptionsUIL.build(), object : UILImageListener() {
+            override fun onLoadingStarted(imageUri: String?, view: View?) {
+                super.onLoadingStarted(imageUri, view)
+                toolbarImageProgress?.visible()
+            }
+
+            override fun onLoadingFinally(imageUrl: String?, view: View?) {
+                toolbarImageProgress?.gone()
+                startPostponedEnterTransition()
+            }
+
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 super.onLoadingComplete(imageUri, view, loadedImage)
                 if (toolbarHelperDisposable == null) {

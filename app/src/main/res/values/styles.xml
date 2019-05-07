@@ -10,7 +10,7 @@
     <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
-    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light.Bridge">
+    <style name="LightAppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -31,9 +31,11 @@
 
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
+        <item name="btn_border">@color/light_btn_border</item>
         <item name="windowBackground">@color/light_windowBackground</item>
         <item name="cardBackground">@color/light_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_light</item>
+        <item name="imageBackground">@color/light_imageBackground</item>
 
         <item name="tab_color_checked">@color/light_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/light_tab_color_unchecked</item>
@@ -106,7 +108,7 @@
 
 
     <!-- Base application theme. -->
-    <style name="DarkAppTheme" parent="Theme.MaterialComponents.Bridge">
+    <style name="DarkAppTheme" parent="Theme.MaterialComponents">
         <!-- Base color settings-->
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <!-- Чтобы не было видно статусбара -->
@@ -130,9 +132,11 @@
 
         <!-- Attrs -->
         <item name="divider_line">@color/dark_divider_line</item>
+        <item name="btn_border">@color/dark_btn_border</item>
         <item name="windowBackground">@color/dark_windowBackground</item>
         <item name="cardBackground">@color/dark_cardBackground</item>
         <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>
+        <item name="imageBackground">@color/dark_imageBackground</item>
 
         <item name="tab_color_checked">@color/dark_tab_color_checked</item>
         <item name="tab_color_unchecked">@color/dark_tab_color_unchecked</item>

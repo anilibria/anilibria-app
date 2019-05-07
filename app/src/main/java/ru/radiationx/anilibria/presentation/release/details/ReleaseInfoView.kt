@@ -42,4 +42,7 @@ interface ReleaseInfoView: IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun showFileDonateDialog(url: String)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showEpisodesMenuDialog()
 }

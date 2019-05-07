@@ -27,12 +27,12 @@ class ReleaseInteractor @Inject constructor(
 ) {
 
     private val checkerCombiner = BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { release, savedEpisodes ->
-        savedEpisodes.filter { it.releaseId == release.id }.forEach { localEpisode ->
-            release.episodes.firstOrNull { it.id == localEpisode.id }?.also {
-                it.isViewed = localEpisode.isViewed
-                it.seek = localEpisode.seek
-                it.lastAccess = localEpisode.lastAccess
-            }
+        val localEpisodes = savedEpisodes.filter { it.releaseId == release.id }
+        release.episodes.forEach { newEpisode ->
+            val localEpisode = localEpisodes.firstOrNull { it.id == newEpisode.id }
+            newEpisode.isViewed = localEpisode?.isViewed ?: false
+            newEpisode.seek = localEpisode?.seek ?: 0
+            newEpisode.lastAccess = localEpisode?.lastAccess ?: 0
         }
         release
     }
@@ -141,7 +141,13 @@ class ReleaseInteractor @Inject constructor(
     /* Common */
     fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
 
+    fun putEpisodes(episodes: List<ReleaseFull.Episode>) = episodesCheckerStorage.putAllEpisode(episodes)
+
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
+
+    fun resetEpisodesHistory(releaseId: Int) {
+        episodesCheckerStorage.remove(releaseId)
+    }
 
     fun getQuality() = preferencesHolder.getQuality()
 

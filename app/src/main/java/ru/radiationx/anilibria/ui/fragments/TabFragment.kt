@@ -142,17 +142,34 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
                     fragmentTransaction: FragmentTransaction
             ) {
 
-                Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope")
+                Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}")
                 val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
                 nextFragment?.putExtra {
                     putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
                 }
 
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
-                    setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+                    if (currentFragment.sharedViewLocal == null) {
+                        currentFragment.exitTransition = Fade().apply {
+                            duration = TRANSITION_OTHER_TIME
+                        }
+                        //nextFragment.enterTransition = Slide()
+                        nextFragment.returnTransition = Explode().apply {
+                            duration = TRANSITION_MOVE_TIME
+                        }
+                        //nextFragment.exitTransition = Slide()
+                    } else {
+                        //nextFragment.returnTransition = null
+                        setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+                    }
+                } else if (command is Forward && currentFragment is SharedReceiver && nextFragment is SharedReceiver) {
+                    nextFragment.returnTransition = Explode().apply {
+                        duration = TRANSITION_MOVE_TIME
+                    }
                 } else {
                     currentFragment?.exitTransition = null
                     nextFragment?.enterTransition = null
+                    nextFragment?.returnTransition = null
                     nextFragment?.sharedElementEnterTransition = null
                 }
             }

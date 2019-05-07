@@ -63,6 +63,7 @@ class MyPlayerActivity : BaseActivity() {
 
         const val VAL_QUALITY_SD = 0
         const val VAL_QUALITY_HD = 1
+        const val VAL_QUALITY_FULL_HD = 2
 
         const val PLAY_FLAG_DEFAULT = 0
         const val PLAY_FLAG_FORCE_START = 1
@@ -281,6 +282,7 @@ class MyPlayerActivity : BaseActivity() {
         appPreferences.setQuality(when (newQuality) {
             MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
             MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+            MyPlayerActivity.VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
             else -> PreferencesHolder.QUALITY_NO
         })
         saveEpisode()
@@ -352,6 +354,7 @@ class MyPlayerActivity : BaseActivity() {
         releaseInteractor.putEpisode(getEpisode().apply {
             Log.e("SUKA", "Set posistion seek: ${player.currentPosition}")
             seek = player.currentPosition
+            lastAccess = System.currentTimeMillis()
             isViewed = true
         })
     }
@@ -435,12 +438,16 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
-        toolbar.subtitle = episode.title
+        toolbar.subtitle = "${episode.title} [${dialogController.getQualityTitle(currentQuality)}]"
         currentEpisodeId = getEpisodeId(episode)
-        if (currentQuality == VAL_QUALITY_SD) {
-            player.setVideoPath(episode.urlSd)
-        } else if (currentQuality == VAL_QUALITY_HD) {
-            player.setVideoPath(episode.urlHd)
+        val videoPath = when (currentQuality) {
+            VAL_QUALITY_SD -> episode.urlSd
+            VAL_QUALITY_HD -> episode.urlHd
+            VAL_QUALITY_FULL_HD -> episode.urlFullHd
+            else -> null
+        }
+        videoPath?.also {
+            player.setVideoPath(it)
         }
     }
 
@@ -655,26 +662,27 @@ class MyPlayerActivity : BaseActivity() {
 
         private fun BottomSheet.register() = openedDialogs.add(this)
 
-        private fun getQualityTitle(quality: Int) = when (quality) {
+        fun getQualityTitle(quality: Int) = when (quality) {
             MyPlayerActivity.VAL_QUALITY_SD -> "480p"
             MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+            MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
             else -> "Вероятнее всего 480p"
         }
 
-        private fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
+        fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
             "Обычная"
         } else {
             "${"$speed".trimEnd('0').trimEnd('.').trimEnd(',')}x"
         }
 
-        private fun getScaleTitle(scale: ScaleType) = when (scale) {
+        fun getScaleTitle(scale: ScaleType) = when (scale) {
             ScaleType.FIT_CENTER -> "Оптимально"
             ScaleType.CENTER_CROP -> "Обрезать"
             ScaleType.FIT_XY -> "Растянуть"
             else -> "Одному лишь богу известно"
         }
 
-        private fun getPIPTitle(pipControl: Int) = when (pipControl) {
+        fun getPIPTitle(pipControl: Int) = when (pipControl) {
             PreferencesHolder.PIP_AUTO -> "При скрытии экрана"
             PreferencesHolder.PIP_BUTTON -> "По кнопке"
             else -> "Одному лишь богу известно"
@@ -730,6 +738,7 @@ class MyPlayerActivity : BaseActivity() {
             val icQualityRes = when (currentQuality) {
                 MyPlayerActivity.VAL_QUALITY_SD -> R.drawable.ic_quality_sd_base
                 MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd_base
+                MyPlayerActivity.VAL_QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
                 else -> R.drawable.ic_settings
             }
             val icons = valuesList
@@ -804,10 +813,13 @@ class MyPlayerActivity : BaseActivity() {
         }
 
         fun showQualityDialog() {
-            val values = arrayOf(
-                    MyPlayerActivity.VAL_QUALITY_SD,
-                    MyPlayerActivity.VAL_QUALITY_HD
-            )
+            val qualities = mutableListOf<Int>()
+            if (getEpisode().urlSd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
+            if (getEpisode().urlHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
+            if (getEpisode().urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
+
+            val values = qualities.toTypedArray()
+
             val activeIndex = values.indexOf(currentQuality)
             val titles = values
                     .mapIndexed { index, s ->

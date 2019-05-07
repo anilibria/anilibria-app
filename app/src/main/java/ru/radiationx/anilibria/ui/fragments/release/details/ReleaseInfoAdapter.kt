@@ -4,9 +4,11 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
@@ -14,7 +16,8 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import java.util.*
 
 class ReleaseInfoAdapter(
-        private var itemListener: ItemListener
+        private var itemListener: ItemListener,
+        private val torrentClickListener: (TorrentItem) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
@@ -24,6 +27,11 @@ class ReleaseInfoAdapter(
 
     private var currentRelease: ReleaseFull? = null
     private var currentTabTag = ReleaseEpisodesHeadDelegate.TAG_ONLINE
+
+    private var currentTorrentsExpand = false
+
+    private val torrentsListItem = ReleaseExpandListItem("Показать все")
+
     private var reverseEpisodes = appPreferences.getEpisodesIsReverse()
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
@@ -50,7 +58,17 @@ class ReleaseInfoAdapter(
     init {
         items = mutableListOf()
         addDelegate(ReleaseHeadDelegate(itemListener))
+        addDelegate(FeedSectionDelegate {})
+        addDelegate(ReleaseExpandDelegate {
+            when (it) {
+                torrentsListItem -> {
+                    currentTorrentsExpand = true
+                    currentRelease?.also { it1 -> setRelease(it1) }
+                }
+            }
+        })
         addDelegate(ReleaseEpisodeDelegate(itemListener))
+        addDelegate(ReleaseTorrentDelegate(torrentClickListener))
         addDelegate(ReleaseEpisodeControlDelegate(itemListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
         addDelegate(ReleaseDonateDelegate(itemListener))
@@ -81,6 +99,7 @@ class ReleaseInfoAdapter(
     fun setRelease(release: ReleaseFull) {
         items.clear()
         currentRelease = release
+        items.add(ReleaseEpisodeControlItem(release, false))
         items.add(ReleaseHeadListItem(release))
         items.add(DividerShadowListItem())
 
@@ -101,6 +120,18 @@ class ReleaseInfoAdapter(
             items.add(DividerShadowListItem())
         }
 
+        val torrents = release.torrents.asReversed()
+        if (torrents.isNotEmpty()) {
+            items.add(FeedSectionListItem("Раздачи", hasBg = true))
+            if (!currentTorrentsExpand && release.torrents.size > 3) {
+                items.addAll(torrents.take(3).map { ReleaseTorrentListItem(it) })
+                items.add(torrentsListItem)
+            } else {
+                items.addAll(torrents.map { ReleaseTorrentListItem(it) })
+            }
+            items.add(DividerShadowListItem())
+        }
+
         if (!release.blockedInfo.isBlocked && appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
             items.add(DividerShadowListItem())
@@ -108,7 +139,7 @@ class ReleaseInfoAdapter(
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
             if (release.episodes.isNotEmpty()) {
-                items.add(ReleaseEpisodeControlItem(release))
+                items.add(ReleaseEpisodeControlItem(release, release.moonwalkLink != null))
             }
             if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))

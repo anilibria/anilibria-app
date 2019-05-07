@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:background="?cardBackground"
     android:clipToPadding="false"
-    android:orientation="vertical"
-    android:paddingBottom="16dp">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/full_item"
@@ -36,19 +35,30 @@
             android:layout_toStartOf="@+id/full_fav_btn"
             android:textColor="?textDefault"
             android:textSize="20sp"
-            tools:text="Title releaseData long title lol jsla d ;kfjasdf" />
+            tools:text="Длинное название какого-то релиза в пару строк" />
 
         <TextView
-            android:id="@+id/full_info"
+            android:id="@+id/full_title_en"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/full_title"
             android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:textColor="?textDefault"
+            android:textSize="14sp"
+            tools:text="Typical short en title" />
+
+        <TextView
+            android:id="@+id/full_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/full_title_en"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:ellipsize="end"
-            android:maxLines="6"
             android:textColor="?textDefault"
             android:textSize="14sp"
             tools:text="season: blablablabla\nvoices:blablabla,blebleble\ntypes:lanneblablaalbalba" />
@@ -77,35 +87,42 @@
                 android:gravity="center_vertical"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:textColor="?textColoredButton"
-                android:textSize="13sp" />
+                android:textColor="@color/text_fav"
+                android:textSize="13sp"
+                tools:text="100" />
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/full_fav_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@null"
                 android:padding="3dp"
-                app:srcCompat="@drawable/ic_fav_border" />
+                app:srcCompat="@drawable/ic_fav_border"
+                app:tint="@color/icon_fav" />
+
+            <ProgressBar
+                android:id="@+id/full_fav_progress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="@color/icon_fav"
+                android:padding="3dp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </RelativeLayout>
 
-
-    <com.cunoraz.tagview.TagView xmlns:tagview="http://schemas.android.com/apk/res-auto"
+    <android.support.design.chip.ChipGroup
         android:id="@+id/full_tags"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        tagview:lineMargin="8dp"
-        tagview:tagMargin="8dp"
-        tagview:textPaddingBottom="5dp"
-        tagview:textPaddingLeft="6dp"
-        tagview:textPaddingRight="6dp"
-        tagview:textPaddingTop="4dp" />
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/full_days_divider"
@@ -145,44 +162,66 @@
         android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
-    <TextView
+
+    <at.blogc.android.views.ExpandableTextView
         android:id="@+id/full_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLines="10"
         android:textColor="?textDefault"
         android:textSize="16sp"
+        app:animation_duration="225"
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
+
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/full_description_expander"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
+        tools:text="Раскрыть" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="?divider_line" />
 
-    <android.support.v7.widget.AppCompatButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/full_button_torrent"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/download_torrent" />
+        android:text="@string/download_torrent"
+        android:visibility="gone"
+        app:strokeColor="?btn_border" />
 
-    <android.support.v7.widget.AppCompatButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/full_button_watch_web"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/watch_web" />
+        android:text="@string/watch_web"
+        android:visibility="gone"
+        app:strokeColor="?btn_border" />
 
     <!--<View
         android:layout_width="match_parent"

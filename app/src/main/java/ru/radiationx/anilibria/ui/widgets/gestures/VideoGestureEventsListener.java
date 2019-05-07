@@ -8,7 +8,9 @@ public interface VideoGestureEventsListener {
 
     void onEnd();
 
-    void onTap();
+    void onTap(MotionEvent event);
+
+    void onDoubleTap(MotionEvent event);
 
     void onHorizontalScroll(MotionEvent event, float delta);
 

@@ -26,9 +26,11 @@
 
 
     <attr name="divider_line" extension="reference" format="color" />
+    <attr name="btn_border" extension="reference" format="color" />
     <attr name="windowBackground" extension="reference" format="color" />
     <attr name="cardBackground" extension="reference" format="color" />
     <attr name="gradientBackground" extension="reference" format="color" />
+    <attr name="imageBackground" extension="reference" format="color" />
 
     <attr name="tab_color_checked" extension="reference" format="color" />
     <attr name="tab_color_unchecked" extension="reference" format="color" />
@@ -52,6 +54,7 @@
     <attr name="textSecond" extension="reference" format="color" />
     <attr name="textColoredButton" extension="reference" format="color" />
     <attr name="textLink" extension="reference" format="color" />
+
 
     <attr name="playerColorPrimary" extension="reference" format="color" />
 

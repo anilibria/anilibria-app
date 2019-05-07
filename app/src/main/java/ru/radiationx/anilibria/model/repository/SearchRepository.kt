@@ -24,8 +24,13 @@ class SearchRepository @Inject constructor(
         private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
-    fun observeGenres(): Observable<MutableList<GenreItem>> = genresHolder.observeGenres()
-    fun observeYears(): Observable<MutableList<YearItem>> = yearsHolder.observeYears()
+    fun observeGenres(): Observable<MutableList<GenreItem>> = genresHolder
+            .observeGenres()
+            .observeOn(schedulers.ui())
+
+    fun observeYears(): Observable<MutableList<YearItem>> = yearsHolder
+            .observeYears()
+            .observeOn(schedulers.ui())
 
     fun fastSearch(query: String): Single<List<SearchItem>> = searchApi
             .fastSearch(query)

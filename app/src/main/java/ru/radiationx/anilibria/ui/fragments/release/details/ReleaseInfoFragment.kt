@@ -45,7 +45,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         const val ARG_ID_CODE: String = "release_id_code"
     }
 
-    private val releaseInfoAdapter: ReleaseInfoAdapter by lazy { ReleaseInfoAdapter(adapterListener) }
+    private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
+        ReleaseInfoAdapter(adapterListener) {
+            loadTorrent(it)
+        }
+    }
 
     @InjectPresenter
     lateinit var presenter: ReleaseInfoPresenter
@@ -97,14 +101,13 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun showTorrentDialog(torrents: List<TorrentItem>) {
+        val context = context ?: return
         val titles = torrents.map { "Серия ${it.series} [${it.quality}][${readableFileSize(it.size)}]" }.toTypedArray()
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
-                        loadTorrent(torrents[which])
-                    }
-                    .show()
-        }
+        AlertDialog.Builder(context)
+                .setItems(titles) { dialog, which ->
+                    loadTorrent(torrents[which])
+                }
+                .show()
     }
 
     private fun readableFileSize(size: Long): String {
@@ -124,24 +127,24 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     private fun getUrlByQuality(episode: ReleaseFull.Episode, quality: Int): String {
         return when (quality) {
-            0 -> episode.urlSd
-            1 -> episode.urlHd
+            MyPlayerActivity.VAL_QUALITY_SD -> episode.urlSd
+            MyPlayerActivity.VAL_QUALITY_HD -> episode.urlHd
+            MyPlayerActivity.VAL_QUALITY_FULL_HD -> episode.urlFullHd
             else -> episode.urlSd
         }.orEmpty()
     }
 
     override fun showDownloadDialog(url: String) {
+        val context = context ?: return
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setItems(titles) { _, which ->
-                        when (which) {
-                            0 -> Utils.externalLink(url)
-                            1 -> systemDownloadWithPermissionCheck(url)
-                        }
+        AlertDialog.Builder(context)
+                .setItems(titles) { _, which ->
+                    when (which) {
+                        0 -> Utils.externalLink(url)
+                        1 -> systemDownloadWithPermissionCheck(url)
                     }
-                    .show()
-        }
+                }
+                .show()
     }
 
     override fun showFileDonateDialog(url: String) {
@@ -172,6 +175,22 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             showDownloadDialog(url)
             dialog.dismiss()
         }
+    }
+
+    override fun showEpisodesMenuDialog() {
+        val context = context ?: return
+        val items = arrayOf(
+                "Сбросить историю просмотров",
+                "Отметить все как просмотренные"
+        )
+        AlertDialog.Builder(context)
+                .setItems(items) { _, which ->
+                    when (which) {
+                        0 -> presenter.onResetEpisodesHistoryClick()
+                        1 -> presenter.onCheckAllEpisodesHistoryClick()
+                    }
+                }
+                .show()
     }
 
     override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
@@ -232,33 +251,33 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     private fun showSelectPlayerDialog(onSelect: (playerType: Int) -> Unit, savePlayerType: Boolean = true) {
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
-                        val playerType = when (which) {
-                            0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
-                            1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
-                            else -> -1
-                        }
-                        if (playerType != -1) {
-                            if (savePlayerType) {
-                                presenter.setPlayerType(playerType)
-                            }
-                            onSelect.invoke(playerType)
-                        }
+        val context = context ?: return
+        AlertDialog.Builder(context)
+                .setItems(titles) { dialog, which ->
+                    val playerType = when (which) {
+                        0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
+                        1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
+                        else -> -1
                     }
-                    .show()
-        }
+                    if (playerType != -1) {
+                        if (savePlayerType) {
+                            presenter.setPlayerType(playerType)
+                        }
+                        onSelect.invoke(playerType)
+                    }
+                }
+                .show()
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun systemDownload(url: String) {
+        val context = context ?: return
         var fileName = Utils.getFileNameFromUrl(url)
         val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
         if (matcher.find()) {
             fileName = matcher.group(1)
         }
-        this.context?.let { Utils.systemDownloader(it, url, fileName) }
+        Utils.systemDownloader(context, url, fileName)
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
@@ -281,8 +300,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     private fun playExternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
         presenter.markEpisodeViewed(episode)
         val url = when (quality) {
-            0 -> episode.urlSd
-            1 -> episode.urlHd
+            MyPlayerActivity.VAL_QUALITY_SD -> episode.urlSd
+            MyPlayerActivity.VAL_QUALITY_HD -> episode.urlHd
+            MyPlayerActivity.VAL_QUALITY_FULL_HD -> episode.urlFullHd
             else -> episode.urlSd
         }
         val fileUri = Uri.parse(url)
@@ -297,65 +317,74 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun playWeb(link: String) {
-        //Utils.externalLink(link)
         startActivity(Intent(context, WebPlayerActivity::class.java).apply {
             putExtra(WebPlayerActivity.ARG_URL, link)
         })
     }
 
     private fun selectQuality(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
-        if (episode.urlSd == null || episode.urlHd == null) {
-            if (episode.urlSd != null) {
-                onSelect(MyPlayerActivity.VAL_QUALITY_SD)
-            } else if (episode.urlHd != null) {
-                onSelect(MyPlayerActivity.VAL_QUALITY_HD)
-            }
-            return
+        val savedQuality = presenter.getQuality()
+
+        var correctQuality = savedQuality
+        if (correctQuality == PreferencesHolder.QUALITY_FULL_HD && episode.urlFullHd == null) {
+            correctQuality = PreferencesHolder.QUALITY_HD
         }
-        if (forceDialog) {
-            showQualityDialog(episode, onSelect, false)
-        } else {
-            val savedQuality = presenter.getQuality()
-            when (savedQuality) {
-                PreferencesHolder.QUALITY_NO -> {
-                    showQualityDialog(episode, onSelect)
-                }
-                PreferencesHolder.QUALITY_ALWAYS -> {
-                    showQualityDialog(episode, onSelect, false)
-                }
-                PreferencesHolder.QUALITY_SD -> {
-                    onSelect(MyPlayerActivity.VAL_QUALITY_SD)
-                }
-                PreferencesHolder.QUALITY_HD -> {
-                    onSelect(MyPlayerActivity.VAL_QUALITY_HD)
-                }
+        if (correctQuality == PreferencesHolder.QUALITY_HD && episode.urlHd == null) {
+            correctQuality = PreferencesHolder.QUALITY_SD
+        }
+        if (correctQuality == PreferencesHolder.QUALITY_SD && episode.urlSd == null) {
+            correctQuality = PreferencesHolder.QUALITY_NO
+        }
+
+        when {
+            correctQuality != savedQuality -> showQualityDialog(episode, onSelect, true)
+            forceDialog -> showQualityDialog(episode, onSelect, false)
+            else -> when (savedQuality) {
+                PreferencesHolder.QUALITY_NO -> showQualityDialog(episode, onSelect)
+                PreferencesHolder.QUALITY_ALWAYS -> showQualityDialog(episode, onSelect, false)
+                PreferencesHolder.QUALITY_SD -> onSelect(MyPlayerActivity.VAL_QUALITY_SD)
+                PreferencesHolder.QUALITY_HD -> onSelect(MyPlayerActivity.VAL_QUALITY_HD)
+                PreferencesHolder.QUALITY_FULL_HD -> onSelect(MyPlayerActivity.VAL_QUALITY_FULL_HD)
             }
         }
     }
 
     private fun showQualityDialog(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setTitle("Качество")
-                    .setItems(arrayOf("SD", "HD")) { _, p1 ->
-                        val quality: Int = when (p1) {
-                            0 -> MyPlayerActivity.VAL_QUALITY_SD
-                            1 -> MyPlayerActivity.VAL_QUALITY_HD
-                            else -> -1
-                        }
-                        if (quality != -1) {
-                            if (saveQuality) {
-                                presenter.setQuality(when (quality) {
-                                    MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
-                                    MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
-                                    else -> PreferencesHolder.QUALITY_NO
-                                })
-                            }
-                            onSelect.invoke(quality)
-                        }
+        val context = context ?: return
+
+        val qualities = mutableListOf<Int>()
+        if (episode.urlSd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
+        if (episode.urlHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
+        if (episode.urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
+
+        val titles = qualities
+                .map {
+                    when (it) {
+                        MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+                        MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+                        MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
+                        else -> "Unknown"
                     }
-                    .show()
-        }
+                }
+                .toTypedArray()
+
+        AlertDialog.Builder(context)
+                .setTitle("Качество")
+                .setItems(titles) { _, p1 ->
+                    val quality = qualities[p1]
+                    if (quality != -1) {
+                        if (saveQuality) {
+                            presenter.setQuality(when (quality) {
+                                MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+                                MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+                                MyPlayerActivity.VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
+                                else -> PreferencesHolder.QUALITY_NO
+                            })
+                        }
+                        onSelect.invoke(quality)
+                    }
+                }
+                .show()
     }
 
     override fun updateFavCounter() {
@@ -367,27 +396,30 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun showFavoriteDialog() {
-        context?.let {
-            AlertDialog.Builder(it)
-                    .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-                    .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
-                    .setNegativeButton("Нет", null)
-                    .show()
-        }
+        val context = context ?: return
+        AlertDialog.Builder(context)
+                .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
+                .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
+                .setNegativeButton("Нет", null)
+                .show()
     }
 
     private val adapterListener = object : ReleaseInfoAdapter.ItemListener {
 
         override fun onClickSd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_SD)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_SD)
         }
 
         override fun onClickHd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.VAL_QUALITY_HD)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_HD)
+        }
+
+        override fun onClickFullHd(episode: ReleaseFull.Episode) {
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_FULL_HD)
         }
 
         override fun onClickEpisode(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode)
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
         }
 
         override fun onClickTorrent() {
@@ -400,6 +432,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
         override fun onClickContinue() {
             presenter.onClickContinue()
+        }
+
+        override fun onClickEpisodesMenu() {
+            presenter.onClickEpisodesMenu()
         }
 
         override fun onClickTag(text: String) {

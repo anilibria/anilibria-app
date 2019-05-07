@@ -1,10 +1,15 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.graphics.PorterDuff
+import android.support.design.chip.Chip
+import android.support.design.chip.ChipGroup
 import android.support.v7.widget.RecyclerView
 import android.text.Html
+import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
-import com.cunoraz.tagview.Tag
+import android.view.ViewGroup
+import at.blogc.android.views.ExpandableTextView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
@@ -12,6 +17,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -55,9 +61,9 @@ class ReleaseHeadDelegate(
             full_button_torrent.setOnClickListener {
                 itemListener.onClickTorrent()
             }
-            full_tags.setOnTagClickListener { tag, _ ->
+            /*full_tags.setOnTagClickListener { tag, _ ->
                 itemListener.onClickTag(tag.text)
-            }
+            }*/
             full_button_watch_web.setOnClickListener {
                 itemListener.onClickWatchWeb()
             }
@@ -72,41 +78,61 @@ class ReleaseHeadDelegate(
 
         fun bind(item: ReleaseFull) {
             currentItem = item
+
+            full_info.movementMethod = LinkMovementMethod {
+                itemListener.onClickTag(it)
+                true
+            }
+            full_announce.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
+            full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
+
             full_title.text = item.title
-            full_description.text = Html.fromHtml(item.description)
+            full_title_en.text = item.titleEng
+            full_description.text = item.description?.let { Html.fromHtml(it) }
 
             full_description.movementMethod = LinkMovementMethod { itemListener.onClickSomeLink(it) }
 
+            full_description.post {
+                updateDescription()
+            }
+            full_description.addOnExpandListener(object : ExpandableTextView.SimpleOnExpandListener() {
+                override fun onExpand(view: ExpandableTextView) {
+                    super.onExpand(view)
+                    updateDescription(true)
+                }
+
+                override fun onCollapse(view: ExpandableTextView) {
+                    super.onCollapse(view)
+                    updateDescription(false)
+                }
+            })
+            full_description_expander.setOnClickListener {
+                full_description.toggle()
+            }
+
             full_button_torrent.isEnabled = !item.torrents.isEmpty()
 
-            if (full_tags.tags.isEmpty()) {
-                item.genres.forEach {
-                    val tag = Tag(it)
-                    tag.layoutColor = tagColor
-                    tag.layoutColorPress = tagColorPress
-                    tag.tagTextColor = tagColorText
-                    tag.radius = tagRadius
-                    full_tags.addTag(tag)
-                }
-            }
+            //updateGenres(item.genres)
 
             val seasonsHtml = "<b>Год:</b> " + item.seasons.joinToString(", ")
             val voicesHtml = "<b>Голоса:</b> " + item.voices.joinToString(", ")
             val typesHtml = "<b>Тип:</b> " + item.types.joinToString(", ")
             val releaseStatus = item.status ?: "Не указано"
             val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
+            val genresHtml = "<b>Жанр:</b> " + item.genres.joinToString(", ") { "<a href=\"$it\">${it.capitalize()}</a>" }
             val arrHtml = arrayOf(
-                    item.titleEng,
                     seasonsHtml,
                     voicesHtml,
                     typesHtml,
-                    releaseStatusHtml
+                    releaseStatusHtml,
+                    genresHtml
             )
             full_info.text = Html.fromHtml(arrHtml.joinToString("<br>"))
 
-            val hasMoonwalk = item.moonwalkLink != null
             //full_button_watch_all.isEnabled = hasEpisodes
-            full_button_watch_web.isEnabled = hasMoonwalk
+            full_button_torrent.gone()
+            full_button_watch_web.visible( item.moonwalkLink != null)
+            full_button_watch_web.gone()
 
             //full_button_watch_all.visibility = if (hasEpisodes || hasMoonwalk) View.VISIBLE else View.GONE
 
@@ -115,7 +141,7 @@ class ReleaseHeadDelegate(
             full_days_divider.visible(item.statusCode == ReleaseItem.STATUS_CODE_PROGRESS || item.announce != null)
 
             full_announce.visible(item.announce != null)
-            full_announce.text = item.announce
+            full_announce.text = item.announce?.let { Html.fromHtml(it) }
 
             item.favoriteInfo.let {
                 full_fav_count.text = it.rating.toString()
@@ -123,14 +149,41 @@ class ReleaseHeadDelegate(
                 val iconRes = if (it.isAdded) R.drawable.ic_fav else R.drawable.ic_fav_border
                 full_fav_icon.setCompatDrawable(iconRes)
 
-                if (it.isAdded && !it.inProgress) {
-                    full_fav_btn.background.setColorFilter(full_fav_btn.context.getColorFromAttr(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP)
-                } else {
-                    full_fav_btn.background.clearColorFilter()
-                }
-                full_fav_btn.isClickable = /*!it.isGuest && */!it.inProgress
+                full_fav_icon.visible(!it.inProgress)
+                full_fav_progress.visible(it.inProgress)
+
+                full_fav_btn.isSelected = it.isAdded
+                full_fav_btn.isClickable = !it.inProgress
             }
 
+        }
+
+        fun updateDescription(isExpanded: Boolean = false) {
+            full_description?.also {
+                full_description_expander.visible(it.lineCount > it.maxLines)
+                full_description_expander.text = if (isExpanded) {
+                    "Скрыть"
+                } else {
+                    "Раскрыть"
+                }
+            }
+        }
+
+        private fun updateGenres(genres: List<String>) {
+            full_tags.removeAllViews()
+            genres.forEach { genre ->
+                val chip = Chip(full_tags.context).also {
+                    it.text = genre
+                    it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
+                    //it.setChipBackgroundColorResource(R.color.bg_chip)
+                    //it.setOnCheckedChangeListener(yearsChipListener)
+                    it.layoutParams = ChipGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                        bottomMargin = 100
+                    }
+                    it.setOnClickListener { itemListener.onClickTag((it as Chip).text.toString()) }
+                }
+                full_tags.addView(chip)
+            }
         }
     }
 

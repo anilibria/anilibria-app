@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_section_header.*
@@ -51,6 +52,11 @@ class FeedSectionDelegate(
         fun bind(item: FeedSectionListItem) {
             currentItem = item
             itemFeedScheduleTitle.text = item.title
+            itemFeedScheduleTitle.gravity = if (item.center) {
+                Gravity.CENTER
+            } else {
+                Gravity.START or Gravity.CENTER_VERTICAL
+            }
             itemFeedScheduleBtn.visible(item.route != null)
             itemFeedScheduleBtn.text = item.route
 

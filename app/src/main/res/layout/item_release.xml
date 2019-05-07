@@ -22,11 +22,11 @@
             android:layout_width="96dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+            android:background="?imageBackground"
             android:scaleType="centerCrop"
             app:aspectRatio="1.456"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="#1f00" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/item_new_indicator"

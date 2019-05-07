@@ -37,8 +37,8 @@
                 android:id="@+id/item_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:background="#1f00" />
+                android:background="?imageBackground"
+                android:scaleType="centerCrop" />
         </android.support.v7.widget.CardView>
 
         <TextView

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?cardBackground">
 
     <android.support.design.button.MaterialButton
-        android:id="@+id/item_random_btn"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/item_expand_title"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Случайный релиз"
-        android:textColor="?textLink"
-        app:strokeColor="?btn_border" />
+        android:minHeight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
+        tools:text="Раскрыть" />
 </FrameLayout>

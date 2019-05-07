@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.extension.asTimeSecString
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.extension.visible
@@ -13,6 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import java.util.*
 
 /**
  * Created by radiationx on 13.01.18.
@@ -46,6 +49,9 @@ class ReleaseEpisodeDelegate(
             quality_hd.setOnClickListener {
                 itemListener.onClickHd(currentItem)
             }
+            quality_full_hd.setOnClickListener {
+                itemListener.onClickFullHd(currentItem)
+            }
             containerView.setOnClickListener {
                 itemListener.onClickEpisode(currentItem)
             }
@@ -54,12 +60,16 @@ class ReleaseEpisodeDelegate(
         fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
             currentItem = item
             item_title.text = item.title
+
+            Log.e("jojojo", "${item.id}=>${item.seek}")
+            item_subtitle.text = "Остановлена на ${Date(item.seek).asTimeSecString()}"
+            item_subtitle.visible(item.isViewed && item.seek > 0)
+
             item_viewed_state.visible(item.isViewed)
 
-            quality_sd.isEnabled = item.urlSd != null
-            quality_hd.isEnabled = item.urlHd != null
-            quality_sd.setTintColorAttr(if (item.urlSd != null) enableColor else disableColor)
-            quality_hd.setTintColorAttr(if (item.urlHd != null) enableColor else disableColor)
+            quality_sd.visible(item.urlSd != null)
+            quality_hd.visible(item.urlHd != null)
+            quality_full_hd.visible(item.urlFullHd != null)
 
             val bgColor = if (isEven) {
                 containerView.context.getColorFromAttr(R.attr.cardBackground)
@@ -74,6 +84,8 @@ class ReleaseEpisodeDelegate(
         fun onClickSd(episode: ReleaseFull.Episode)
 
         fun onClickHd(episode: ReleaseFull.Episode)
+
+        fun onClickFullHd(episode: ReleaseFull.Episode)
 
         fun onClickEpisode(episode: ReleaseFull.Episode)
     }

@@ -8,4 +8,5 @@ interface EpisodesCheckerHolder {
     fun putEpisode(episode: ReleaseFull.Episode)
     fun putAllEpisode(episodes: List<ReleaseFull.Episode>)
     fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode>
+    fun remove(releaseId: Int)
 }

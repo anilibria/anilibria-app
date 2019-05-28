@@ -12,7 +12,17 @@ object Api {
     const val BASE_URL = "https://www.anilibria.tv"
     const val API_URL = "https://www.anilibria.tv/public/api/index.php"
     val DEFAULT_IP_ADDRESSES = listOf("37.1.217.18")
-    val DEFAULT_PROXIES = emptyList<ApiProxy>()
+    val DEFAULT_PROXIES = listOf<ApiProxy>(
+            ApiProxy(
+                    "default",
+                    "Стандартный прокси",
+                    null,
+                    "5.187.0.24",
+                    3128,
+                    null,
+                    null
+            )
+    )
 
     val DEFAULT_ADDRESS = ApiAddress(
             "default",

@@ -27,7 +27,7 @@ class ConfigurationApi @Inject constructor(
         return client.post(apiUrl, args)
                 .compose(ApiResponse.fetchResult<Any>())
                 .doOnSuccess {
-                    //throw WrongHostException("allalalla")
+                    throw WrongHostException("allalalla")
                 }
                 .map { true }
                 .onErrorReturn {
@@ -47,6 +47,7 @@ class ConfigurationApi @Inject constructor(
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { configurationParser.parse(it) }
                 .doOnSuccess { apiConfig.setAddresses(it) }
+                .onErrorReturn { emptyList() }
     }
 
     fun getReserve(): Single<List<ApiAddress>> {

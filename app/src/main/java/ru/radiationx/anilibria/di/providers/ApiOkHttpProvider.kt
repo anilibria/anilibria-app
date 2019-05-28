@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.di.providers
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
@@ -19,13 +20,16 @@ class ApiOkHttpProvider @Inject constructor(
 
     override fun get(): ClientWrapper = OkHttpClient.Builder()
             .apply {
-                apiConfig.proxies.firstOrNull()?.also {
+                val proxy = apiConfig.proxies.sortedBy { it.ping }.firstOrNull()
+                Log.d("bobobo", "create OkHttpClient with proxy $proxy")
+                proxy?.also {
                     proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(it.ip, it.port)))
                 }
 
                 addNetworkInterceptor {
                     val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
-                    if (!apiConfig.ips.contains(hostAddress)) {
+                    Log.d("boboob", "hostAddress $hostAddress, possible=${apiConfig.getPossibleIps()}")
+                    if (!apiConfig.getPossibleIps().contains(hostAddress)) {
                         throw WrongHostException(hostAddress)
                     }
                     it.proceed(it.request()).newBuilder()

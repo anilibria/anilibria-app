@@ -3,10 +3,9 @@ package ru.radiationx.anilibria.model.system
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
-import ru.radiationx.anilibria.model.data.holders.CookieHolder
-import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.NetworkResponse
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -14,8 +13,8 @@ import javax.inject.Inject
 
 
 class Client @Inject constructor(
-        private val cookieHolder: CookieHolder,
-        private val userHolder: UserHolder
+        private val appCookieJar: AppCookieJar,
+        private val apiConfig: ApiConfig
 ) : IClient {
 
     companion object {
@@ -23,54 +22,37 @@ class Client @Inject constructor(
         const val METHOD_POST = "POST"
         const val METHOD_PUT = "PUT"
         const val METHOD_DELETE = "DELETE"
-    }
 
-    private val cookieJar = object : CookieJar {
-
-        override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-            Log.e("IClient", "saveFromResponse ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
-            var authDestroyed = false
-            for (cookie in cookies) {
-                if (cookie.value() == "deleted") {
-                    if (cookie.name() == CookieHolder.PHPSESSID) {
-                        authDestroyed = true
-                    }
-                    cookieHolder.removeCookie(cookie.name())
-                } else {
-                    cookieHolder.putCookie(url.toString(), cookie)
-                }
-            }
-            if (authDestroyed) {
-                userHolder.delete()
-            }
-        }
-
-        override fun loadForRequest(url: HttpUrl): List<Cookie> {
-            return cookieHolder.getCookies().values.map { it }
-        }
+        const val USER_AGENT = "mobileApp Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68"
     }
 
     private val client = OkHttpClient.Builder()
-            /*.addNetworkInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })*/
-            .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("5.187.0.24", 3128)))
-            .addNetworkInterceptor {
-                val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
-                val request = it.request().newBuilder()
-                        .header("Remote Address", hostAddress)
-                        .build()
-                it.proceed(request)
+            .apply {
+                apiConfig.proxies.firstOrNull()?.also {
+                    //proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(it.ip, it.port)))
+                }
+
+                addNetworkInterceptor {
+                    val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
+                    if (!apiConfig.ips.contains(hostAddress)) {
+                        throw WrongHostException(hostAddress)
+                    }
+                    it.proceed(it.request()).newBuilder()
+                            .header("Remote-Address", hostAddress)
+                            .build()
+                }
+
+                addInterceptor {
+                    val userAgentRequest = it.request()
+                            .newBuilder()
+                            .header("mobileApp", "true")
+                            .header("User-Agent", USER_AGENT)
+                            .build()
+                    it.proceed(userAgentRequest)
+                }
+
+                cookieJar(appCookieJar)
             }
-            .addInterceptor {
-                val userAgentRequest = it.request()
-                        .newBuilder()
-                        .header("mobileApp", "true")
-                        .header("User-Agent", "mobileApp Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68")
-                        .build()
-                it.proceed(userAgentRequest)
-            }
-            .cookieJar(cookieJar)
             .build()
 
     override fun get(url: String, args: Map<String, String>): Single<String> = getFull(url, args)
@@ -146,7 +128,7 @@ class Client @Inject constructor(
         var responseBody: ResponseBody? = null
         try {
             okHttpResponse = client.newCall(request).execute()
-            Log.d("bobobo", "headers=${okHttpResponse?.request()?.headers()}")
+            //Log.d("bobobo", "headers=${okHttpResponse?.request()?.headers()}")
 
             if (!okHttpResponse!!.isSuccessful) {
                 throw IOException("Unexpected code $okHttpResponse")

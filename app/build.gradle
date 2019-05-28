@@ -137,5 +137,7 @@ dependencies {
     kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:2.1.0'
 
     implementation 'at.blogc:expandabletextview:1.0.5'
+
+    implementation 'com.github.stealthcopter:AndroidNetworkTools:0.4.3'
 }
 

@@ -14,6 +14,9 @@ interface MainView : MvpView {
     fun updateTabs()
     fun onMainLogicCompleted()
 
+    fun showConfiguring()
+    fun hideConfiguring()
+
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun changeTheme(appTheme: AppThemeHolder.AppTheme)
 }

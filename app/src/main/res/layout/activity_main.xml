@@ -43,4 +43,11 @@
         android:overScrollMode="never"
         android:transitionGroup="true" />
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/configuring_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?cardBackground"
+        android:visibility="gone" />
+
 </RelativeLayout>

@@ -22,12 +22,7 @@ class CheckerPresenter @Inject constructor(
 
     private var compositeDisposable = CompositeDisposable()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        checkUpdate()
-    }
-
-    private fun checkUpdate() {
+    fun checkUpdate() {
         checkerRepository
                 .checkUpdate(BuildConfig.VERSION_CODE, forceLoad)
                 .doOnSubscribe { viewState.setRefreshing(true) }

@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
@@ -20,7 +21,7 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class AuthApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val authParser: AuthParser,
         private val apiConfig: ApiConfig
 ) {

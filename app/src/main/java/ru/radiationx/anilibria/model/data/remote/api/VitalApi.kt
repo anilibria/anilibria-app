@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IClient
@@ -12,7 +13,7 @@ import javax.inject.Inject
  * Created by radiationx on 28.01.18.
  */
 class VitalApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val vitalParser: VitalParser,
         private val apiConfig: ApiConfig
 ) {

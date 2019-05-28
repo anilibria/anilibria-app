@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -15,7 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 13.01.18.
  */
 class PageApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val pagesParser: PagesParser,
         private val apiConfig: ApiConfig
 ) {

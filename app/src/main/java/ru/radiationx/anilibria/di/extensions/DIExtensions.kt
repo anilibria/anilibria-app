@@ -11,10 +11,10 @@ import toothpick.config.Module
 object DI {
     private const val DEFAULT_SCOPE = Scopes.APP
 
-    fun <T> get(clazz: Class<T>): T = get(DEFAULT_SCOPE, clazz)
-    fun <T> get(scope: String, clazz: Class<T>): T {
+    fun <T> get(clazz: Class<T>, name: String? = null): T = get(DEFAULT_SCOPE, clazz, name)
+    fun <T> get(scope: String, clazz: Class<T>, name: String? = null): T {
         Log.d("ToothDI", "get in '$scope' class '$clazz'")
-        return openScope(scope).getInstance(clazz)
+        return openScope(scope).getInstance(clazz, name)
     }
 
     fun inject(target: Any) = DI.inject(target, DEFAULT_SCOPE)
@@ -42,11 +42,11 @@ object DI {
     fun close(scope: String) = Toothpick.closeScope(scope)
 }
 
-fun <T> Fragment.getDependency(clazz: Class<T>): T = DI.get(clazz)
-fun <T> Fragment.getDependency(scope: String, clazz: Class<T>): T = DI.get(scope, clazz)
+fun <T> Fragment.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
+fun <T> Fragment.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
 
-fun <T> Activity.getDependency(clazz: Class<T>): T = DI.get(clazz)
-fun <T> Activity.getDependency(scope: String, clazz: Class<T>): T = DI.get(scope, clazz)
+fun <T> Activity.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
+fun <T> Activity.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
 
 fun Fragment.injectDependencies() = DI.inject(this)
 fun Fragment.injectDependencies(scope: String) = DI.inject(this, scope)

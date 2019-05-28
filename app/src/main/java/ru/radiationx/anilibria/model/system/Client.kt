@@ -12,7 +12,8 @@ import java.net.Proxy
 import javax.inject.Inject
 
 
-class Client @Inject constructor(
+open class Client @Inject constructor(
+        private val clientWrapper: ClientWrapper,
         private val appCookieJar: AppCookieJar,
         private val apiConfig: ApiConfig
 ) : IClient {
@@ -127,7 +128,7 @@ class Client @Inject constructor(
         var okHttpResponse: Response? = null
         var responseBody: ResponseBody? = null
         try {
-            okHttpResponse = client.newCall(request).execute()
+            okHttpResponse = clientWrapper.get().newCall(request).execute()
             //Log.d("bobobo", "headers=${okHttpResponse?.request()?.headers()}")
 
             if (!okHttpResponse!!.isSuccessful) {

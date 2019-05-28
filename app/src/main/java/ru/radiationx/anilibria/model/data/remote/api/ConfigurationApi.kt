@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
+import ru.radiationx.anilibria.di.qualifier.MainClient
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.address.ApiAddress
@@ -12,7 +14,8 @@ import java.net.InetAddress
 import javax.inject.Inject
 
 class ConfigurationApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
+        @MainClient private val mainClient: IClient,
         private val configurationParser: ConfigurationParser,
         private val apiConfig: ApiConfig
 ) {
@@ -47,7 +50,7 @@ class ConfigurationApi @Inject constructor(
     }
 
     fun getReserve(): Single<List<ApiAddress>> {
-        return client.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/check.json", emptyMap())
+        return mainClient.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/check.json", emptyMap())
                 .map { JSONObject(it) }
                 .map { configurationParser.parse(it) }
                 .doOnSuccess { apiConfig.setAddresses(it) }

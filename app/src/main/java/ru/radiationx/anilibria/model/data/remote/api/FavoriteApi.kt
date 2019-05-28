@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
@@ -12,7 +13,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import javax.inject.Inject
 
 class FavoriteApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val releaseParser: ReleaseParser,
         private val apiConfig: ApiConfig
 ) {

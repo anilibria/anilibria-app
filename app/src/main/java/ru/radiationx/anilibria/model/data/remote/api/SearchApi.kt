@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.GenreItem
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
@@ -17,7 +18,7 @@ import ru.radiationx.anilibria.model.data.remote.parsers.SearchParser
 import javax.inject.Inject
 
 class SearchApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val releaseParser: ReleaseParser,
         private val searchParser: SearchParser,
         private val apiConfig: ApiConfig

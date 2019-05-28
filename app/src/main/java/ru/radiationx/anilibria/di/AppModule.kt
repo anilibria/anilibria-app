@@ -4,7 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import okhttp3.CookieJar
+import okhttp3.OkHttpClient
+import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
+import ru.radiationx.anilibria.di.providers.MainOkHttpProvider
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
+import ru.radiationx.anilibria.di.qualifier.MainClient
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
@@ -31,6 +36,7 @@ class AppModule(context: Context) : Module() {
 
     init {
         bind(Context::class.java).toInstance(context)
+
 
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
@@ -73,7 +79,15 @@ class AppModule(context: Context) : Module() {
 
         bind(AppCookieJar::class.java).singletonInScope()
         bind(ApiConfig::class.java).singletonInScope()
-        bind(IClient::class.java).to(Client::class.java).singletonInScope()
+
+
+        bind(ClientWrapper::class.java).withName(MainClient::class.java).toProvider(MainOkHttpProvider::class.java).providesSingletonInScope()
+        bind(ClientWrapper::class.java).withName(ApiClient::class.java).toProvider(ApiOkHttpProvider::class.java).providesSingletonInScope()
+
+
+        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java)
+        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java)
+
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singletonInScope()
 
         bind(AuthParser::class.java).singletonInScope()

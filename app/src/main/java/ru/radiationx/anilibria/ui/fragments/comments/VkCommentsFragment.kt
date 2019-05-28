@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.di.qualifier.MainClient
 import ru.radiationx.anilibria.entity.app.page.VkComments
 import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
@@ -187,7 +188,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         @Suppress("DEPRECATION", "OverridingDeprecatedMember")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
-                val client = getDependency(screenScope, IClient::class.java)
+                val client = getDependency(screenScope, IClient::class.java, MainClient::class.java.name)
                 Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = try {
                     client.get(url.orEmpty(), emptyMap()).blockingGet()

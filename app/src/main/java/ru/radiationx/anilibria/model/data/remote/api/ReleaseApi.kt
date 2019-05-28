@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.api
 
 import io.reactivex.Single
 import org.json.JSONObject
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.Paginated
 import ru.radiationx.anilibria.entity.app.release.RandomRelease
 import ru.radiationx.anilibria.entity.app.release.ReleaseFull
@@ -16,7 +17,7 @@ import javax.inject.Inject
 /* Created by radiationx on 31.10.17. */
 
 class ReleaseApi @Inject constructor(
-        private val client: IClient,
+        @ApiClient private val client: IClient,
         private val releaseParser: ReleaseParser,
         private val apiConfig: ApiConfig
 ) {

@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
@@ -30,7 +31,8 @@ class ReleaseInfoPresenter @Inject constructor(
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val apiConfig: ApiConfig
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -167,7 +169,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickDonate() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
     }
 
     fun onClickFav() {
@@ -231,7 +233,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onDialogDonateClick() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
     }
 
     fun onResetEpisodesHistoryClick() {

@@ -8,6 +8,8 @@ import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.NetworkResponse
 import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Proxy
 import javax.inject.Inject
 
 
@@ -52,6 +54,14 @@ class Client @Inject constructor(
             /*.addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })*/
+            .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("5.187.0.24", 3128)))
+            .addNetworkInterceptor {
+                val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
+                val request = it.request().newBuilder()
+                        .header("Remote Address", hostAddress)
+                        .build()
+                it.proceed(request)
+            }
             .addInterceptor {
                 val userAgentRequest = it.request()
                         .newBuilder()
@@ -136,8 +146,11 @@ class Client @Inject constructor(
         var responseBody: ResponseBody? = null
         try {
             okHttpResponse = client.newCall(request).execute()
-            if (!okHttpResponse!!.isSuccessful)
+            Log.d("bobobo", "headers=${okHttpResponse?.request()?.headers()}")
+
+            if (!okHttpResponse!!.isSuccessful) {
                 throw IOException("Unexpected code $okHttpResponse")
+            }
             responseBody = okHttpResponse.body()
 
             response.code = okHttpResponse.code()

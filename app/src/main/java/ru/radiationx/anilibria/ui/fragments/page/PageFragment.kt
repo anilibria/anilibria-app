@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
 import ru.radiationx.anilibria.presentation.page.PageView
@@ -40,6 +41,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
+
+    @Inject
+    lateinit var apiConfig: ApiConfig
 
     private val disposables = CompositeDisposable()
 
@@ -89,7 +93,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = App.instance.staticPageTemplate
-        webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))
+        webView.easyLoadData(apiConfig.siteUrl, template.generateWithTheme(appThemeHolder.getTheme()))
 
         disposables.add(
                 appThemeHolder

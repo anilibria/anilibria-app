@@ -189,7 +189,12 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             return if (url?.contains("widget_comments.css") == true) {
                 val client = getDependency(screenScope, IClient::class.java)
                 Log.d("S_DEF_LOG", "CHANGE CSS")
-                val cssSrc = client.get(url.orEmpty(), emptyMap()).blockingGet()
+                val cssSrc = try {
+                    client.get(url.orEmpty(), emptyMap()).blockingGet()
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                    return WebResourceResponse("text/css", "utf-8", ByteArrayInputStream(ex.message.orEmpty().toByteArray(StandardCharsets.UTF_8)))
+                }
                 var newCss = cssSrc
 
                 val fixCss = if (appThemeHolder.getTheme().isDark()) {

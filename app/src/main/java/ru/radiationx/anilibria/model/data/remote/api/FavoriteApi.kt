@@ -7,12 +7,14 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import javax.inject.Inject
 
 class FavoriteApi @Inject constructor(
         private val client: IClient,
-        private val releaseParser: ReleaseParser
+        private val releaseParser: ReleaseParser,
+        private val apiConfig: ApiConfig
 ) {
 
     fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> {
@@ -22,7 +24,7 @@ class FavoriteApi @Inject constructor(
                 "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
                 "rm" to "true"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.releases(it) }
     }
@@ -33,7 +35,7 @@ class FavoriteApi @Inject constructor(
                 "action" to "add",
                 "id" to releaseId.toString()
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.release(it) }
     }
@@ -44,7 +46,7 @@ class FavoriteApi @Inject constructor(
                 "action" to "delete",
                 "id" to releaseId.toString()
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.release(it) }
     }

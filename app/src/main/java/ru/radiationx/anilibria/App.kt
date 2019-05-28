@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.multidex.MultiDex
@@ -14,10 +15,13 @@ import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
+import com.nostra13.universalimageloader.core.DefaultConfigurationFactory
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader
+import com.nostra13.universalimageloader.core.download.ImageDownloader
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.disposables.Disposables
@@ -31,6 +35,8 @@ import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.io.InputStream
+import java.net.*
 import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
@@ -194,6 +200,26 @@ class App : Application() {
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
+                .imageDownloader(object : BaseImageDownloader(context) {
+                    override fun createConnection(url: String?, extra: Any?): HttpURLConnection {
+                        val encodedUrl = Uri.encode(url, ALLOWED_URI_CHARS)
+                        val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("5.187.0.24", 3128))
+                        val conn = URL(encodedUrl).openConnection(proxy) as HttpURLConnection
+                        /*val authenticator = object : Authenticator() {
+                            override fun getPasswordAuthentication(): PasswordAuthentication {
+                                return PasswordAuthentication(
+                                        "user",
+                                        "password".toCharArray()
+                                )
+                            }
+                        }
+                        Authenticator.setDefault(authenticator)*/
+
+                        conn.connectTimeout = connectTimeout
+                        conn.readTimeout = readTimeout
+                        return conn
+                    }
+                })
                 .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
                 .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
                 .defaultDisplayImageOptions(defaultOptionsUIL.build())

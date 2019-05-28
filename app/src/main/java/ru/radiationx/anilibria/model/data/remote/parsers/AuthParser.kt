@@ -9,13 +9,15 @@ import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.12.17.
  */
 class AuthParser @Inject constructor(
-        private val apiUtils: IApiUtils
+        private val apiUtils: IApiUtils,
+        private val apiConfig: ApiConfig
 ) {
 
     fun authResult(responseText: String): String {
@@ -34,7 +36,7 @@ class AuthParser @Inject constructor(
         user.id = responseJson.getInt("id")
         user.nick = responseJson.nullString("login").orEmpty()
         user.avatarUrl = responseJson.nullString("avatar")?.let {
-            "${Api.BASE_URL_IMAGES}$it"
+            "${apiConfig.baseImagesUrl}$it"
         }
         user.authState = AuthState.AUTH
         return user

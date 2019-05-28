@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import javax.inject.Inject
 
@@ -16,14 +17,15 @@ import javax.inject.Inject
 
 class ReleaseApi @Inject constructor(
         private val client: IClient,
-        private val releaseParser: ReleaseParser
+        private val releaseParser: ReleaseParser,
+        private val apiConfig: ApiConfig
 ) {
 
     fun getRandomRelease(): Single<RandomRelease> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "random_release"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.parseRandomRelease(it) }
     }
@@ -33,7 +35,7 @@ class ReleaseApi @Inject constructor(
                 "query" to "release",
                 "id" to releaseId.toString()
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.release(it) }
     }
@@ -43,7 +45,7 @@ class ReleaseApi @Inject constructor(
                 "query" to "release",
                 "code" to releaseCode
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.release(it) }
     }
@@ -55,7 +57,7 @@ class ReleaseApi @Inject constructor(
                 "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
                 "rm" to "true"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.releases(it) }
     }

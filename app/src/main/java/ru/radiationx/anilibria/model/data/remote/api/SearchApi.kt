@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.entity.app.search.SearchItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.parsers.ReleaseParser
 import ru.radiationx.anilibria.model.data.remote.parsers.SearchParser
 import javax.inject.Inject
@@ -18,14 +19,15 @@ import javax.inject.Inject
 class SearchApi @Inject constructor(
         private val client: IClient,
         private val releaseParser: ReleaseParser,
-        private val searchParser: SearchParser
+        private val searchParser: SearchParser,
+        private val apiConfig: ApiConfig
 ) {
 
     fun getGenres(): Single<List<GenreItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "genres"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { searchParser.genres(it) }
     }
@@ -34,7 +36,7 @@ class SearchApi @Inject constructor(
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "years"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { searchParser.years(it) }
     }
@@ -45,7 +47,7 @@ class SearchApi @Inject constructor(
                 "search" to name,
                 "filter" to "id,code,names,poster"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { searchParser.fastSearch(it) }
     }
@@ -65,7 +67,7 @@ class SearchApi @Inject constructor(
                 "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
                 "rm" to "true"
         )
-        return client.post(Api.API_URL, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { releaseParser.releases(it) }
     }

@@ -7,17 +7,19 @@ import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import javax.inject.Inject
 
 class YoutubeParser @Inject constructor(
-        private val apiUtils: IApiUtils
+        private val apiUtils: IApiUtils,
+        private val apiConfig: ApiConfig
 ) {
 
     fun youtube(jsonItem: JSONObject): YoutubeItem {
         val item = YoutubeItem()
         item.id = jsonItem.getInt("id")
         item.title = apiUtils.escapeHtml(jsonItem.nullString("title"))
-        item.image = "${Api.BASE_URL_IMAGES}${jsonItem.nullString("image")}"
+        item.image = "${apiConfig.baseImagesUrl}${jsonItem.nullString("image")}"
         item.vid = jsonItem.nullString("vid")
         item.views = jsonItem.getInt("views")
         item.comments = jsonItem.getInt("comments")

@@ -7,10 +7,12 @@ import ru.radiationx.anilibria.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import javax.inject.Inject
 
 class SearchParser @Inject constructor(
-        private val apiUtils: IApiUtils
+        private val apiUtils: IApiUtils,
+        private val apiConfig: ApiConfig
 ) {
 
     fun fastSearch(jsonResponse: JSONArray): List<SuggestionItem> {
@@ -26,7 +28,7 @@ class SearchParser @Inject constructor(
                     apiUtils.escapeHtml(names.getString(it)).toString()
                 }
             })
-            item.poster = Api.BASE_URL_IMAGES + jsonItem.nullString("poster")
+            item.poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}"
             result.add(item)
         }
         return result

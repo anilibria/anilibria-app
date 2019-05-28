@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.di.qualifier.DataPreferences
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.remote.parsers.*
 import ru.radiationx.anilibria.model.data.storage.*
@@ -73,6 +74,7 @@ class AppModule(context: Context) : Module() {
         bind(AuthHolder::class.java).to(AuthStorage::class.java).singletonInScope()
 
 
+        bind(ApiConfig::class.java).singletonInScope()
         bind(IClient::class.java).to(Client::class.java).singletonInScope()
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singletonInScope()
 

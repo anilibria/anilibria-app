@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
@@ -25,6 +26,9 @@ class SettingsFragment : BaseSettingFragment() {
 
     @Inject
     lateinit var appPreferences: PreferencesHolder
+
+    @Inject
+    lateinit var apiConfig: ApiConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -88,7 +92,7 @@ class SettingsFragment : BaseSettingFragment() {
         findPreference("about.app_topic_site")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
             setOnPreferenceClickListener {
-                Utils.externalLink("${Api.SITE_URL}/pages/app.php")
+                Utils.externalLink("${apiConfig.siteUrl}/pages/app.php")
                 false
             }
         }

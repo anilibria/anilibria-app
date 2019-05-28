@@ -13,14 +13,14 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
@@ -30,6 +30,9 @@ class AuthFragment : BaseFragment(), AuthView {
     private val socialAuthAdapter = SocialAuthAdapter {
         onSocialClick(it)
     }
+
+    @Inject
+    lateinit var apiConfig: ApiConfig
 
     @InjectPresenter
     lateinit var presenter: AuthPresenter
@@ -70,7 +73,7 @@ class AuthFragment : BaseFragment(), AuthView {
             AlertDialog.Builder(it)
                     .setMessage("Зарегистрировать аккаунт можно только на сайте.")
                     .setPositiveButton("Регистрация") { _, _ ->
-                        Utils.externalLink("${Api.SITE_URL}/pages/login.php")
+                        Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
                     }
                     .setNeutralButton("Отмена", null)
                     .show()
@@ -96,11 +99,11 @@ class AuthFragment : BaseFragment(), AuthView {
     private fun onSocialClick(item: SocialAuth) {
         AlertDialog.Builder(context!!)
                 .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-                .setPositiveButton("Продолжить"){ _, _ ->
+                .setPositiveButton("Продолжить") { _, _ ->
                     presenter.onSocialClick(item)
                 }
                 .setNegativeButton("Личный кабинет") { _, _ ->
-                    Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
+                    Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
                 }
                 .show()
     }

@@ -1,30 +1,28 @@
 package ru.radiationx.anilibria.model.data.remote.address
 
-import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
-import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
-import ru.radiationx.anilibria.di.providers.MainOkHttpProvider
-import ru.radiationx.anilibria.di.qualifier.ApiClient
-import ru.radiationx.anilibria.di.qualifier.MainClient
 import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.system.ClientWrapper
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
+        private val configChanger: ApiConfigChanger
 ) {
 
     private val addresses = mutableListOf<ApiAddress>()
     private var activeAddressTag: String = ""
     private val possibleIps = mutableListOf<String>()
     private val proxyPings = mutableMapOf<String, Float>()
+    private val availableAddresses = mutableListOf<String>()
 
     private val needConfigRelay = PublishRelay.create<Boolean>()
     var needConfig = true
 
     init {
         activeAddressTag = Api.DEFAULT_ADDRESS.tag
-        setAddresses(listOf(Api.DEFAULT_ADDRESS))
+        val defaultAddresses = listOf(Api.DEFAULT_ADDRESS)
+        setAddresses(defaultAddresses)
+        setAvailableAddresses(defaultAddresses)
     }
 
     fun observeNeedConfig(): Observable<Boolean> = needConfigRelay.hide()
@@ -36,12 +34,17 @@ class ApiConfig @Inject constructor(
 
     fun updateActiveAddress(address: ApiAddress) {
         activeAddressTag = address.tag
-        //apiClientWrapper.set(apiOkHttpProvider.get().get())
+        configChanger.onChange()
     }
 
     fun setProxyPing(proxy: ApiProxy, ping: Float) {
         proxyPings[proxy.tag] = ping
         proxy.ping = ping
+    }
+
+    fun setAvailableAddresses(items: List<ApiAddress>) {
+        availableAddresses.clear()
+        availableAddresses.addAll(items.map { it.tag })
     }
 
     @Synchronized
@@ -70,6 +73,9 @@ class ApiConfig @Inject constructor(
 
     @Synchronized
     fun getPossibleIps(): List<String> = possibleIps.toList()
+
+    @Synchronized
+    fun getAvailableAddresses(): List<String> = availableAddresses.toList()
 
     val active: ApiAddress
         get() = addresses.firstOrNull { it.tag == activeAddressTag } ?: Api.DEFAULT_ADDRESS

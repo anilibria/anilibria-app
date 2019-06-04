@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
+import android.util.Log
 import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
@@ -24,18 +25,20 @@ class ConfigurationApi @Inject constructor(
         val args = mapOf(
                 "query" to "empty"
         )
-        return client.post(apiUrl, args)
-                .compose(ApiResponse.fetchResult<Any>())
+        return mainClient.postFull(apiUrl, args)
                 .doOnSuccess {
-                    throw WrongHostException("allalalla")
+                    val hostIp = it.hostIp.orEmpty()
+                    if (!apiConfig.getPossibleIps().contains(it.hostIp)) {
+                        throw WrongHostException(hostIp)
+                    }
+                }
+                .doOnSuccess {
+                    throw Exception("allalalla")
                 }
                 .map { true }
                 .onErrorReturn {
-                    if (it is WrongHostException) {
-                        false
-                    } else {
-                        throw it
-                    }
+                    Log.d("bobobo", "error ${it.message}")
+                    false
                 }
     }
 

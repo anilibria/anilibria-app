@@ -1,18 +1,16 @@
 package ru.radiationx.anilibria.di.providers
 
+import android.util.Log
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.model.system.AppCookieJar
-import ru.radiationx.anilibria.model.system.ClientWrapper
-import ru.radiationx.anilibria.model.system.WrongHostException
 import javax.inject.Inject
 import javax.inject.Provider
 
 class MainOkHttpProvider @Inject constructor(
         private val appCookieJar: AppCookieJar
-) : Provider<ClientWrapper> {
+) : Provider<OkHttpClient> {
 
-    override fun get(): ClientWrapper = OkHttpClient.Builder()
+    override fun get(): OkHttpClient = OkHttpClient.Builder()
             .addNetworkInterceptor {
                 val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
                 it.proceed(it.request()).newBuilder()
@@ -21,5 +19,7 @@ class MainOkHttpProvider @Inject constructor(
             }
             .cookieJar(appCookieJar)
             .build()
-            .let { ClientWrapper(it) }
+            .also {
+                Log.e("bobobo", "MainOkHttpProvider provide $it")
+            }
 }

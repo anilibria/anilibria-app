@@ -41,10 +41,10 @@ class ConfiguringPresenter @Inject constructor(
                 .subscribe({
                     val addresses = apiConfig.getAddresses()
                     val proxies = addresses.sumBy { it.proxies.size }
-                    viewState.showStatus("Загружено адресов: ${addresses.size}; прокси: $proxies")
+                    viewState.showStatus("Загружено адресов: ${addresses.size}; прокси: $proxies".also { Log.e("bobobo", it) })
                     checkAvail()
                 }, {
-                    viewState.showStatus("Ошибка загрузки данных")
+                    viewState.showStatus("Ошибка загрузки данных".also { Log.e("bobobo", it) })
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
@@ -62,16 +62,17 @@ class ConfiguringPresenter @Inject constructor(
                 .toList()
                 .observeOn(schedulers.ui())
                 .subscribe({
-                    viewState.showStatus("Доступнные адреса: ${it.size}")
+                    viewState.showStatus("Доступнные адреса: ${it.size}".also { Log.e("bobobo", it) })
                     Log.e("boboob", "checkAvail ${it.joinToString()}")
+                    apiConfig.setAvailableAddresses(it)
                     if (it.isNotEmpty()) {
-                        apiConfig.updateActiveAddress(it.first())
+                        apiConfig.updateActiveAddress(it.random())
                         apiConfig.updateNeedConfig(false)
                     } else {
                         checkProxies()
                     }
                 }, {
-                    viewState.showStatus("Ошибка проверки доступности адресов")
+                    viewState.showStatus("Ошибка проверки доступности адресов".also { Log.e("bobobo", it) })
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
@@ -92,12 +93,15 @@ class ConfiguringPresenter @Inject constructor(
                         apiConfig.setProxyPing(it.first, it.second.timeTaken)
                     }
                     val bestProxy = it.minBy { it.second.timeTaken }
-                    if (bestProxy != null) {
-                        apiConfig.updateNeedConfig(false)
+                    val addressByProxy = apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
+                    if (bestProxy != null && addressByProxy != null) {
+                        apiConfig.updateActiveAddress(addressByProxy)
+                        viewState.showStatus("Доступнные прокси: ${it.size}; будет использован ${bestProxy.first.tag} адреса ${addressByProxy.tag}".also { Log.e("bobobo", it) })
                     }
-                    viewState.showStatus("Доступнные прокси: ${it.size}; будет использован ${bestProxy?.first}")
+
+                    apiConfig.updateNeedConfig(false)
                 }, {
-                    viewState.showStatus("Ошибка проверки доступности прокси-серверов")
+                    viewState.showStatus("Ошибка проверки доступности прокси-серверов".also { Log.e("bobobo", it) })
                     errorHandler.handle(it)
                 })
                 .addToDisposable()

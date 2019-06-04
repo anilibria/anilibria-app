@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
+import android.util.Log
 import io.reactivex.Single
 import org.json.JSONArray
 import ru.radiationx.anilibria.di.qualifier.ApiClient
@@ -31,6 +32,9 @@ class FeedApi @Inject constructor(
         return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { feedParser.feed(it, releaseParser, youtubeParser) }
+                .doOnError {
+                    Log.e("bobobo", "catch error $it")
+                }
     }
 
 }

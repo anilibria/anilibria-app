@@ -90,6 +90,7 @@ class AppModule(context: Context) : Module() {
 
         bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java).singletonInScope()
         bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java).singletonInScope()
+        bind(OkHttpImageDownloader::class.java).singletonInScope()
 
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singletonInScope()
 

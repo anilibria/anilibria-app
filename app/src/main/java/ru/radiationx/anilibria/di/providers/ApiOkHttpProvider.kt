@@ -61,7 +61,9 @@ class ApiOkHttpProvider @Inject constructor(
                             .header("mobileApp", "true")
                             .header("User-Agent", Client.USER_AGENT)
                             .build()
-                    it.proceed(userAgentRequest)
+                    it.proceed(userAgentRequest.also {
+                        Log.e("bobobo","request url ${it.url()}")
+                    })
                 }
 
                 cookieJar(appCookieJar)

@@ -29,6 +29,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import toothpick.Toothpick
@@ -196,30 +197,12 @@ class App : Application() {
             .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
     private fun initImageLoader(context: Context) {
+        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
         val config = ImageLoaderConfiguration.Builder(context)
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
-                .imageDownloader(object : BaseImageDownloader(context) {
-                    override fun createConnection(url: String?, extra: Any?): HttpURLConnection {
-                        val encodedUrl = Uri.encode(url, ALLOWED_URI_CHARS)
-                        val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("5.187.0.24", 3128))
-                        val conn = URL(encodedUrl).openConnection(proxy) as HttpURLConnection
-                        /*val authenticator = object : Authenticator() {
-                            override fun getPasswordAuthentication(): PasswordAuthentication {
-                                return PasswordAuthentication(
-                                        "user",
-                                        "password".toCharArray()
-                                )
-                            }
-                        }
-                        Authenticator.setDefault(authenticator)*/
-
-                        conn.connectTimeout = connectTimeout
-                        conn.readTimeout = readTimeout
-                        return conn
-                    }
-                })
+                .imageDownloader(imageDownloader)
                 .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
                 .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
                 .defaultDisplayImageOptions(defaultOptionsUIL.build())

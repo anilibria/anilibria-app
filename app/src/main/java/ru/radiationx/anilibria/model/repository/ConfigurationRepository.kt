@@ -9,6 +9,7 @@ import com.stealthcopter.networktools.ping.PingTools
 import io.reactivex.Single
 import ru.radiationx.anilibria.model.data.remote.address.ApiAddress
 import ru.radiationx.anilibria.model.data.remote.api.ConfigurationApi
+import ru.radiationx.anilibria.model.data.storage.ApiConfigStorage
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import java.lang.Exception
 import java.net.InetAddress
@@ -26,7 +27,6 @@ class ConfigurationRepository @Inject constructor(
 
     fun getConfiguration(): Single<List<ApiAddress>> = configurationApi
             .getConfiguration()
-            .onErrorResumeNext { configurationApi.getReserve() }
             .subscribeOn(schedulers.io())
 
     fun getPingHost(host: String): Single<PingResult> = Single

@@ -3,10 +3,12 @@ package ru.radiationx.anilibria.model.data.remote.address
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.storage.ApiConfigStorage
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
-        private val configChanger: ApiConfigChanger
+        private val configChanger: ApiConfigChanger,
+        private val apiConfigStorage: ApiConfigStorage
 ) {
 
     private val addresses = mutableListOf<ApiAddress>()
@@ -19,10 +21,10 @@ class ApiConfig @Inject constructor(
     var needConfig = true
 
     init {
-        activeAddressTag = Api.DEFAULT_ADDRESS.tag
-        val defaultAddresses = listOf(Api.DEFAULT_ADDRESS)
-        setAddresses(defaultAddresses)
-        setAvailableAddresses(defaultAddresses)
+        activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
+        val initAddresses = apiConfigStorage.get() ?: listOf(Api.DEFAULT_ADDRESS)
+        setAddresses(initAddresses)
+        setAvailableAddresses(initAddresses)
     }
 
     fun observeNeedConfig(): Observable<Boolean> = needConfigRelay.hide()
@@ -34,6 +36,7 @@ class ApiConfig @Inject constructor(
 
     fun updateActiveAddress(address: ApiAddress) {
         activeAddressTag = address.tag
+        apiConfigStorage.setActive(activeAddressTag)
         configChanger.onChange()
     }
 

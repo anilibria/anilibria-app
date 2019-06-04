@@ -80,6 +80,7 @@ class AppModule(context: Context) : Module() {
 
         bind(AppCookieJar::class.java).singletonInScope()
         bind(ApiConfig::class.java).singletonInScope()
+        bind(ApiConfigStorage::class.java).singletonInScope()
 
 
         bind(MainOkHttpProvider::class.java).singletonInScope()

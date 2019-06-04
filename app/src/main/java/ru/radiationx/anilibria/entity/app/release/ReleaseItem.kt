@@ -25,8 +25,7 @@ open class ReleaseItem : Serializable {
 
     var isNew: Boolean = false
 
-    val link: String?
-        get() = code?.let { "${Api.SITE_URL}/release/$it.html" }
+    var link: String? = null
 
     val title: String?
         get() = names.firstOrNull()

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.multidex.MultiDex
@@ -14,10 +15,13 @@ import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
+import com.nostra13.universalimageloader.core.DefaultConfigurationFactory
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader
+import com.nostra13.universalimageloader.core.download.ImageDownloader
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.disposables.Disposables
@@ -25,12 +29,15 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.io.InputStream
+import java.net.*
 import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
@@ -190,10 +197,12 @@ class App : Application() {
             .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
     private fun initImageLoader(context: Context) {
+        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
         val config = ImageLoaderConfiguration.Builder(context)
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
+                .imageDownloader(imageDownloader)
                 .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
                 .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
                 .defaultDisplayImageOptions(defaultOptionsUIL.build())

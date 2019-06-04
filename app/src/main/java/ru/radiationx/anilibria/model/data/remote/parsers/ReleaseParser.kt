@@ -11,13 +11,15 @@ import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.12.17.
  */
 class ReleaseParser @Inject constructor(
-        private val apiUtils: IApiUtils
+        private val apiUtils: IApiUtils,
+        private val apiConfig: ApiConfig
 ) {
 
     fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
@@ -28,13 +30,14 @@ class ReleaseParser @Inject constructor(
         val item = ReleaseItem()
         item.id = jsonItem.getInt("id")
         item.code = jsonItem.getString("code")
+        item.link = "${apiConfig.siteUrl}/release/${item.code}.html"
         item.names.addAll(jsonItem.getJSONArray("names").let { names ->
             (0 until names.length()).map {
                 apiUtils.escapeHtml(names.getString(it)).toString()
             }
         })
         item.series = jsonItem.nullString("series")
-        item.poster = Api.BASE_URL_IMAGES + jsonItem.nullString("poster")
+        item.poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}"
         jsonItem.optJSONObject("favorite")?.also { jsonFavorite ->
             item.favoriteInfo.also {
                 it.rating = jsonFavorite.getInt("rating")
@@ -157,7 +160,7 @@ class ReleaseParser @Inject constructor(
                         quality = jsonTorrent.nullString("quality")
                         series = jsonTorrent.nullString("series")
                         size = jsonTorrent.optLong("size")
-                        url = "${Api.SITE_URL}${jsonTorrent.nullString("url")}"
+                        url = "${apiConfig.siteUrl}${jsonTorrent.nullString("url")}"
                     })
                 }
             }

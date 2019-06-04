@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 import ru.radiationx.anilibria.entity.app.profile.Profile
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -11,7 +12,8 @@ import javax.inject.Inject
  * Created by radiationx on 03.01.18.
  */
 class ProfileParser @Inject constructor(
-        private val apiUtils: IApiUtils
+        private val apiUtils: IApiUtils,
+        private val apiConfig: ApiConfig
 ) {
 
     /*
@@ -53,7 +55,7 @@ class ProfileParser @Inject constructor(
         if (matcher.find()) {
             result.apply {
                 nick = matcher.group(1)
-                avatarUrl = Api.BASE_URL_IMAGES + matcher.group(2)
+                avatarUrl = "${apiConfig.baseImagesUrl}${matcher.group(2)}"
                 status = matcher.group(3).run {
                     if (this.equals("Online", true)) Profile.Status.ONLINE else Profile.Status.OFFLINE
                 }

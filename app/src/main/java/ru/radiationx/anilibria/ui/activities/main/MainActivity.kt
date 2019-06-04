@@ -27,6 +27,8 @@ import ru.radiationx.anilibria.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
@@ -39,6 +41,7 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
+import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.terrakok.cicerone.NavigatorHolder
@@ -90,6 +93,8 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
+    private var dimensionHelper: DimensionHelper? = null
+
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
@@ -110,7 +115,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
+        dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
                 Log.e("lalala", "Dim: $dimensions")
                 root_container.post {
@@ -220,6 +225,25 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun onMainLogicCompleted() {
         Log.e("lalala", "MainActivity, onMainLogicCompleted $intent")
         handleIntent(intent)
+        checkerPresenter.checkUpdate()
+    }
+
+    override fun showConfiguring() {
+        configuring_container.visible()
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.configuring_container, ConfiguringFragment())
+                .commitNow()
+    }
+
+    override fun hideConfiguring() {
+        configuring_container.gone()
+        supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
+            supportFragmentManager
+                    .beginTransaction()
+                    .remove(it)
+                    .commitNow()
+        }
     }
 
     override fun onPause() {
@@ -234,6 +258,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     override fun onDestroy() {
         super.onDestroy()
+        dimensionHelper?.destroy()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
     }

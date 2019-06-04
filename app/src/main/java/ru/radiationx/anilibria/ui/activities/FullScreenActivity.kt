@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
 
@@ -34,10 +34,13 @@ class FullScreenActivity : BaseActivity() {
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
 
+    @Inject
+    lateinit var apiConfig: ApiConfig
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
-        super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        super.onCreate(savedInstanceState)
         intent?.let {
             val vital = it.getSerializableExtra(VITAL_ITEM) as VitalItem?
             if (vital != null) {
@@ -89,7 +92,7 @@ class FullScreenActivity : BaseActivity() {
             layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
         }
         vitalWebView.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
-        vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, currentVital.contentText)
+        vitalWebView.easyLoadData(apiConfig.widgetsSiteUrl, currentVital.contentText)
     }
 
     private fun initImage() {

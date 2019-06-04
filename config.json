@@ -1,0 +1,28 @@
+{
+  "addresses": [
+    {
+      "tag": "api0",
+      "name": "Основной домен",
+      "desc": null,
+      "widgetsSite": "https://www.anilibria.tv",
+      "site": "https://www.anilibria.tv",
+      "baseImages": "http://www.anilibria.tv/",
+      "base": "https://www.anilibria.tv",
+      "api": "https://www.anilibria.tv/public/api/index.php",
+      "ips": [
+        "37.1.217.18"
+      ],
+      "proxies": [
+        {
+          "tag": "api0_proxy0",
+          "name": "Основная прокся",
+          "desc": null,
+          "ip": "5.187.0.24",
+          "port": 3128,
+          "user": null,
+          "password": null
+        }
+      ]
+    }
+  ]
+}

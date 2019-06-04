@@ -27,9 +27,9 @@ class SettingsActivity : BaseActivity() {
     private lateinit var currentAppTheme: AppThemeHolder.AppTheme
     override fun onCreate(savedInstanceState: Bundle?) {
         this.injectDependencies()
-        super.onCreate(savedInstanceState)
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getPrefStyleRes())
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
         val actionBar = supportActionBar

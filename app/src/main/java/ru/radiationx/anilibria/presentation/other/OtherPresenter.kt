@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
@@ -21,7 +22,8 @@ class OtherPresenter @Inject constructor(
         private val router: Router,
         private val systemMessenger: SystemMessenger,
         private val authRepository: AuthRepository,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val apiConfig: ApiConfig
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -171,7 +173,7 @@ class OtherPresenter @Inject constructor(
             }
             MENU_DONATE -> {
                 //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-                Utils.externalLink("${Api.BASE_URL}/${PageApi.PAGE_ID_DONATE}")
+                Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
             }
             MENU_ABOUT_ANILIB -> {
                 router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_ABOUT_ANILIB))
@@ -198,7 +200,7 @@ class OtherPresenter @Inject constructor(
                 Utils.externalLink("https://discordapp.com/invite/anilibria")
             }
             MENU_SITE_ANILIB -> {
-                Utils.externalLink(Api.SITE_URL)
+                Utils.externalLink(apiConfig.siteUrl)
             }
         }
     }

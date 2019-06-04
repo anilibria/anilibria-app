@@ -3,19 +3,22 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
+import ru.radiationx.anilibria.di.providers.MainOkHttpProvider
+import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
+import ru.radiationx.anilibria.di.qualifier.MainClient
 import ru.radiationx.anilibria.model.data.holders.*
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.IClient
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfigChanger
 import ru.radiationx.anilibria.model.data.remote.api.*
 import ru.radiationx.anilibria.model.data.remote.parsers.*
 import ru.radiationx.anilibria.model.data.storage.*
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.model.system.ApiUtils
-import ru.radiationx.anilibria.model.system.AppSchedulers
-import ru.radiationx.anilibria.model.system.Client
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.model.system.*
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -32,6 +35,7 @@ class AppModule(context: Context) : Module() {
 
     init {
         bind(Context::class.java).toInstance(context)
+
 
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
@@ -72,12 +76,28 @@ class AppModule(context: Context) : Module() {
         bind(UserHolder::class.java).to(UserStorage::class.java).singletonInScope()
         bind(AuthHolder::class.java).to(AuthStorage::class.java).singletonInScope()
 
+        bind(ApiConfigChanger::class.java).singletonInScope()
 
-        bind(IClient::class.java).to(Client::class.java).singletonInScope()
+        bind(AppCookieJar::class.java).singletonInScope()
+        bind(ApiConfig::class.java).singletonInScope()
+        bind(ApiConfigStorage::class.java).singletonInScope()
+
+
+        bind(MainOkHttpProvider::class.java).singletonInScope()
+        bind(ApiOkHttpProvider::class.java).singletonInScope()
+
+        bind(MainClientWrapper::class.java).singletonInScope()
+        bind(ApiClientWrapper::class.java).singletonInScope()
+
+        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java).singletonInScope()
+        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java).singletonInScope()
+        bind(OkHttpImageDownloader::class.java).singletonInScope()
+
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singletonInScope()
 
         bind(AuthParser::class.java).singletonInScope()
         bind(CheckerParser::class.java).singletonInScope()
+        bind(ConfigurationParser::class.java).singletonInScope()
         bind(PagesParser::class.java).singletonInScope()
         bind(ProfileParser::class.java).singletonInScope()
         bind(ReleaseParser::class.java).singletonInScope()
@@ -89,6 +109,7 @@ class AppModule(context: Context) : Module() {
 
         bind(AuthApi::class.java).singletonInScope()
         bind(CheckerApi::class.java).singletonInScope()
+        bind(ConfigurationApi::class.java).singletonInScope()
         bind(FavoriteApi::class.java).singletonInScope()
         bind(ReleaseApi::class.java).singletonInScope()
         bind(SearchApi::class.java).singletonInScope()
@@ -100,6 +121,7 @@ class AppModule(context: Context) : Module() {
 
         bind(AuthRepository::class.java).singletonInScope()
         bind(ReleaseRepository::class.java).singletonInScope()
+        bind(ConfigurationRepository::class.java).singletonInScope()
         bind(SearchRepository::class.java).singletonInScope()
         bind(PageRepository::class.java).singletonInScope()
         bind(VitalRepository::class.java).singletonInScope()

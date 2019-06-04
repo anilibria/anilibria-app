@@ -7,6 +7,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
     constructor(item: ReleaseItem) : this() {
         id = item.id
         code = item.code
+        link = item.link
         names.addAll(item.names)
         series = item.series
         poster = item.poster

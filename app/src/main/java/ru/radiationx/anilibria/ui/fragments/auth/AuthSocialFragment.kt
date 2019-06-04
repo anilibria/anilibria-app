@@ -15,14 +15,14 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
+import javax.inject.Inject
 
 
 /**
@@ -39,6 +39,9 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             }
         }
     }
+
+    @Inject
+    lateinit var apiConfig: ApiConfig
 
     @InjectPresenter
     lateinit var presenter: AuthSocialPresenter
@@ -92,7 +95,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         AlertDialog.Builder(context!!)
                 .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
                 .setPositiveButton("Перейти") { _, _ ->
-                    Utils.externalLink("${Api.SITE_URL}/pages/cp.php")
+                    Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
                 }
                 .setNegativeButton("Отмена", null)
                 .show()

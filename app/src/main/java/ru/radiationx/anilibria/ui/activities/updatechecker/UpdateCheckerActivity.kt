@@ -56,6 +56,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         intent?.let {
             presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
         }
+        presenter.checkUpdate()
 
         toolbar.setNavigationOnClickListener { finish() }
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
@@ -77,7 +78,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
             updateButton.visible()
             divider.visible()
         } else {
-            updateInfo.text = "Нет обновлений, но вы можете загрузить текущую версию еще раз"
+            updateInfo.text = "Обновлений нет, но вы можете загрузить текущую версию еще раз"
             updateInfo.visible()
             updateContent.gone()
             divider.gone()

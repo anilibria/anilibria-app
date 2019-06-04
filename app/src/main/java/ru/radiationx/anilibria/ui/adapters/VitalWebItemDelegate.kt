@@ -11,8 +11,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_vital_web.*
 import kotlinx.android.synthetic.main.item_vital_web_card.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils
 
@@ -65,7 +66,8 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegate<V
         fun bind(item: VitalItem) {
             if (!::currentItem.isInitialized || currentItem != item) {
                 currentItem = item
-                vitalWebView.easyLoadData(Api.WIDGETS_SITE_URL, item.contentText)
+                val apiConfig = DI.get(ApiConfig::class.java)
+                vitalWebView.easyLoadData(apiConfig.widgetsSiteUrl, item.contentText)
             }
         }
     }

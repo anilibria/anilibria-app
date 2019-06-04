@@ -64,6 +64,7 @@ class HistoryStorage @Inject constructor(
             jsonEpisodes.put(JSONObject().apply {
                 put("id", it.id)
                 put("code", it.code)
+                put("link", it.link)
                 put("names", JSONArray(it.names))
                 put("series", it.series)
                 put("poster", it.poster)
@@ -99,6 +100,7 @@ class HistoryStorage @Inject constructor(
                 val release = ReleaseItem().apply {
                     id = jsonRelease.getInt("id")
                     code = jsonRelease.nullString("code")
+                    link = jsonRelease.nullString("link")
                     jsonRelease.getJSONArray("names").also { jsonNames ->
                         (0 until jsonNames.length()).mapTo(names) { jsonNames.getString(it) }
                     }

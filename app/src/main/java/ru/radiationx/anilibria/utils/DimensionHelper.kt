@@ -7,9 +7,9 @@ import android.view.View
  * Created by radiationx on 30.12.17.
  */
 class DimensionHelper(
-        measurer: View,
-        private val container: View,
-        private val listener: DimensionsListener
+        private var measurer: View?,
+        private var container: View?,
+        private var listener: DimensionsListener?
 ) {
 
     private val dimension = Dimensions()
@@ -19,33 +19,43 @@ class DimensionHelper(
     private var lastCh = 0
     private var lastKh = 0
 
-    init {
-        measurer.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.e("S_DEF_LOG", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
-            var anyChanges = false
-            if (dimension.contentHeight == 0) {
-                dimension.statusBar = v.top
-                dimension.navigationBar = container.bottom - v.bottom
-            }
-
-            dimension.contentHeight = v.height
-            dimension.keyboardHeight = container.height - dimension.contentHeight - dimension.statusBar - dimension.navigationBar
-
-            dimension.let {
-                if (it.statusBar != lastSb
-                        || it.navigationBar != lastNb
-                        || it.contentHeight != lastCh
-                        || it.keyboardHeight != lastKh) {
-
-                    lastSb = it.statusBar
-                    lastNb = it.navigationBar
-                    lastCh = it.contentHeight
-                    lastKh = it.keyboardHeight
-                    listener.onDimensionsChange(it)
-                }
-            }
-
+    private val layoutListener = View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        Log.e("S_DEF_LOG", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
+        val container = this.container ?: return@OnLayoutChangeListener
+        val listener = this.listener ?: return@OnLayoutChangeListener
+        var anyChanges = false
+        if (dimension.contentHeight == 0) {
+            dimension.statusBar = v.top
+            dimension.navigationBar = container.bottom - v.bottom
         }
+
+        dimension.contentHeight = v.height
+        dimension.keyboardHeight = container.height - dimension.contentHeight - dimension.statusBar - dimension.navigationBar
+
+        dimension.let {
+            if (it.statusBar != lastSb
+                    || it.navigationBar != lastNb
+                    || it.contentHeight != lastCh
+                    || it.keyboardHeight != lastKh) {
+
+                lastSb = it.statusBar
+                lastNb = it.navigationBar
+                lastCh = it.contentHeight
+                lastKh = it.keyboardHeight
+                listener.onDimensionsChange(it)
+            }
+        }
+    }
+
+    init {
+        measurer?.addOnLayoutChangeListener(layoutListener)
+    }
+
+    fun destroy() {
+        measurer?.removeOnLayoutChangeListener(layoutListener)
+        measurer = null
+        container = null
+        listener = null
     }
 
     data class Dimensions(

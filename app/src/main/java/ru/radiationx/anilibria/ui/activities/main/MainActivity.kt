@@ -93,6 +93,8 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
+    private var dimensionHelper: DimensionHelper? = null
+
     @InjectPresenter
     lateinit var presenter: MainPresenter
 
@@ -113,7 +115,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
+        dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
                 Log.e("lalala", "Dim: $dimensions")
                 root_container.post {
@@ -256,6 +258,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     override fun onDestroy() {
         super.onDestroy()
+        dimensionHelper?.destroy()
         ImageLoader.getInstance().clearMemoryCache()
         ImageLoader.getInstance().stop()
     }

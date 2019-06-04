@@ -27,12 +27,14 @@
         <item name="android:navigationBarColor">@color/light_cardBackground</item>
         <item name="android:navigationBarDividerColor">#1000</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="PreferencesDarkAppTheme" parent="BasePreferencesDarkAppTheme">
         <item name="android:navigationBarColor">@color/dark_cardBackground</item>
         <item name="android:navigationBarDividerColor">#2FFF</item>
         <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="PlayerTheme" parent="BasePlayerTheme">

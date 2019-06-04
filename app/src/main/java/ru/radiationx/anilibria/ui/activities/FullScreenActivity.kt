@@ -39,8 +39,8 @@ class FullScreenActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
-        super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        super.onCreate(savedInstanceState)
         intent?.let {
             val vital = it.getSerializableExtra(VITAL_ITEM) as VitalItem?
             if (vital != null) {

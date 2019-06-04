@@ -46,17 +46,19 @@ class AuthActivity : BaseActivity() {
     @Inject
     lateinit var dimensionsProvider: DimensionsProvider
 
+    private var dimensionHelper: DimensionHelper? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
-        super.onCreate(savedInstanceState)
         setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
         bottomShadow.gone()
         tabsRecycler.gone()
 
-        DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
+        dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
             override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
                 root_container.post {
                     root_container.setPadding(
@@ -85,6 +87,11 @@ class AuthActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         navigationHolder.removeNavigator()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dimensionHelper?.destroy()
     }
 
     private val navigatorNew by lazy {

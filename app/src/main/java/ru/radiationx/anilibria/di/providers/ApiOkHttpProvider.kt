@@ -12,6 +12,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import android.R.attr.password
 import okhttp3.Credentials
+import ru.radiationx.anilibria.BuildConfig
 
 
 class ApiOkHttpProvider @Inject constructor(
@@ -59,10 +60,15 @@ class ApiOkHttpProvider @Inject constructor(
                     val userAgentRequest = it.request()
                             .newBuilder()
                             .header("mobileApp", "true")
+                            .apply {
+                                if (BuildConfig.FLAVOR == "store") {
+                                    header("Store-Published", "Google")
+                                }
+                            }
                             .header("User-Agent", Client.USER_AGENT)
                             .build()
                     it.proceed(userAgentRequest.also {
-                        Log.e("bobobo","request url ${it.url()}")
+                        Log.e("bobobo", "request url ${it.url()}")
                     })
                 }
 

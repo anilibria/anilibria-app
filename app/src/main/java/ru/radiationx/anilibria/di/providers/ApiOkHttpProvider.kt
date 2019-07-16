@@ -65,6 +65,9 @@ class ApiOkHttpProvider @Inject constructor(
                                     header("Store-Published", "Google")
                                 }
                             }
+                            .header("App-Id", BuildConfig.APPLICATION_ID)
+                            .header("App-Ver-Name", BuildConfig.VERSION_NAME)
+                            .header("App-Ver-Code", BuildConfig.VERSION_CODE.toString())
                             .header("User-Agent", Client.USER_AGENT)
                             .build()
                     it.proceed(userAgentRequest.also {

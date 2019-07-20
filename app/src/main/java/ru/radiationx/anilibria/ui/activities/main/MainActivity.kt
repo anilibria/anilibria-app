@@ -123,7 +123,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)
 
-        if (!LocaleHolder.AVAIL_COUNTRIES.contains(locale.country)) {
+        if (BuildConfig.FLAVOR == "store" && !LocaleHolder.checkAvail(locale.country)) {
             startActivity(Screens.BlockedCountry().getActivityIntent(this))
             finish()
             return

@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_country_blocked.*
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.di.Scopes
@@ -31,7 +32,7 @@ class CountryBlockedActivity : BaseActivity() {
         } else {
             resources.configuration.locale
         }
-        if (LocaleHolder.AVAIL_COUNTRIES.contains(locale.country)) {
+        if (BuildConfig.FLAVOR == "store" && LocaleHolder.checkAvail(locale.country)) {
             startActivity(Screens.Main().getActivityIntent(this))
             finish()
             return

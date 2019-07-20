@@ -21,6 +21,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.di.LocaleModule
+import ru.radiationx.anilibria.di.Scopes
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.updater.UpdateData
@@ -30,6 +33,7 @@ import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
@@ -109,10 +113,22 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     fun provideCheckerPresenter(): CheckerPresenter = getDependency(CheckerPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales[0]
+        } else {
+            resources.configuration.locale
+        }
+        injectDependencies(Scopes.APP, LocaleModule(locale))
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)
+
+        if (!LocaleHolder.AVAIL_COUNTRIES.contains(locale.country)) {
+            startActivity(Screens.BlockedCountry().getActivityIntent(this))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
         dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {

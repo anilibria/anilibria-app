@@ -34,4 +34,7 @@
     <string name="placeholder_desc_nodata_history">Здесь будет отображаться локальная история просмотра релизов.</string>
     <string name="placeholder_title_comments">Нет комментариев</string>
     <string name="placeholder_desc_comments">Стань первым ;)</string>
+
+    <string name="country_blocked_title">This application is not available in your country</string>
+    <string name="country_blocked_exit">Close app</string>
 </resources>

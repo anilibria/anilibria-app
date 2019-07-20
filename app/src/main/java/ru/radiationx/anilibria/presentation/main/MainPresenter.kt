@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
@@ -24,7 +25,8 @@ class MainPresenter @Inject constructor(
         private val authRepository: AuthRepository,
         private val appThemeHolder: AppThemeHolder,
         private val apiConfig: ApiConfig,
-        private val schedulers: SchedulersProvider
+        private val schedulers: SchedulersProvider,
+        private val localeHolder: LocaleHolder
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!

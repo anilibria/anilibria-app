@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria.navigation
 
 import android.content.Context
+import android.content.Intent
 import android.support.v4.app.Fragment
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
@@ -100,5 +102,9 @@ object Screens {
 
     class MainOther : BaseAppScreen() {
         override fun getFragment() = OtherFragment()
+    }
+
+    class BlockedCountry : BaseAppScreen() {
+        override fun getActivityIntent(context: Context?): Intent = Intent(context, CountryBlockedActivity::class.java)
     }
 }

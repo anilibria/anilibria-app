@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.presentation.other
 
 import com.arellomobile.mvp.InjectViewState
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
@@ -46,6 +46,8 @@ class OtherPresenter @Inject constructor(
 
         const val MENU_HISTORY = 13
 
+        const val MENU_RIGHT_HOLDERS = 14
+
         val GROUP_MAIN = arrayOf(
                 //MENU_FAVORITES,
                 MENU_HISTORY,
@@ -59,6 +61,7 @@ class OtherPresenter @Inject constructor(
         val GROUP_SYSTEM = arrayOf(MENU_SETTINGS)
 
         val GROUP_LINK = arrayOf(
+                MENU_RIGHT_HOLDERS,
                 MENU_GROUP_VK,
                 MENU_CANAL_YT,
                 MENU_PATREON,
@@ -90,6 +93,7 @@ class OtherPresenter @Inject constructor(
 
         menuMap[MENU_SETTINGS] = OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings)
 
+        menuMap[MENU_RIGHT_HOLDERS] = OtherMenuItem(MENU_RIGHT_HOLDERS, "Правообладателям", R.drawable.ic_copyright)
         menuMap[MENU_GROUP_VK] = OtherMenuItem(MENU_GROUP_VK, "Группа VK", R.drawable.ic_logo_vk)
         menuMap[MENU_CANAL_YT] = OtherMenuItem(MENU_CANAL_YT, "Канал YouTube", R.drawable.ic_logo_youtube)
         menuMap[MENU_PATREON] = OtherMenuItem(MENU_PATREON, "Patreon", R.drawable.ic_logo_patreon)
@@ -118,6 +122,12 @@ class OtherPresenter @Inject constructor(
             blockedMenu.remove(MENU_FAVORITES)
         } else {
             blockedMenu.add(MENU_FAVORITES)
+        }
+
+        if (BuildConfig.FLAVOR == "store") {
+            blockedMenu.remove(MENU_RIGHT_HOLDERS)
+        } else {
+            blockedMenu.add(MENU_RIGHT_HOLDERS)
         }
 
         GROUP_MAIN.forEach {
@@ -201,6 +211,9 @@ class OtherPresenter @Inject constructor(
             }
             MENU_SITE_ANILIB -> {
                 Utils.externalLink(apiConfig.siteUrl)
+            }
+            MENU_RIGHT_HOLDERS -> {
+                Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_RIGHT_HOLDERS}")
             }
         }
     }

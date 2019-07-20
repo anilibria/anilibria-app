@@ -86,7 +86,12 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("about.application")?.apply {
-            summary = "Версия ${BuildConfig.VERSION_NAME}"
+            val appendix = if (BuildConfig.FLAVOR == "store") {
+                " для PlayMarket"
+            } else {
+                ""
+            }
+            summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
         }
 
         findPreference("about.app_topic_site")?.apply {

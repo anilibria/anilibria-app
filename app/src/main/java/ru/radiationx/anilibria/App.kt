@@ -72,8 +72,8 @@ class App : Application() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        if (BuildConfig.FLAVOR.equals("appDev")) {
-            MultiDex.install(this)
+        when (BuildConfig.FLAVOR) {
+            "appDev", "store" -> MultiDex.install(this)
         }
     }
 

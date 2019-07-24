@@ -17,7 +17,7 @@ class MainOkHttpProvider @Inject constructor(
                         .header("Remote-Address", hostAddress)
                         .build()
             }
-            .cookieJar(appCookieJar)
+            //.cookieJar(appCookieJar)
             .build()
             .also {
                 Log.e("bobobo", "MainOkHttpProvider provide $it")

@@ -26,7 +26,7 @@ class PageApi @Inject constructor(
         const val PAGE_ID_DONATE = "pages/donate.php"
         const val PAGE_ID_ABOUT_ANILIB = "anilibria.php"
         const val PAGE_ID_RULES = "pravila.php"
-        const val PAGE_ID_RIGHT_HOLDERS = "rightholders.php"
+        const val PAGE_ID_RIGHT_HOLDERS = "pages/rightholders.php"
 
         val PAGE_IDS = listOf(
                 PAGE_ID_TEAM,

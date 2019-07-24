@@ -32,6 +32,9 @@ class AppCookieJar @Inject constructor(
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-        return cookieHolder.getCookies().values.map { it }
+        return cookieHolder.getCookies().values.map { it }.also {cookies->
+            Log.e("IClient", "loadForRequest ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
+
+        }
     }
 }

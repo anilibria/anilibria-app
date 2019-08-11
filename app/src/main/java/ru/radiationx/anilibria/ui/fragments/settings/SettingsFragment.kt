@@ -86,7 +86,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference("about.application")?.apply {
-            val appendix = if (BuildConfig.FLAVOR == "store") {
+            val appendix = if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
                 " для Play Market"
             } else {
                 ""

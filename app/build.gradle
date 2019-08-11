@@ -41,6 +41,10 @@ android {
     }
     flavorDimensions "wtf"
     productFlavors {
+        /*
+        * Для приложений в сторе нужно добавить id аппки в
+        * ru.radiationx.anilibria.model.data.remote.Api
+        * */
         stable {
             dimension "wtf"
         }

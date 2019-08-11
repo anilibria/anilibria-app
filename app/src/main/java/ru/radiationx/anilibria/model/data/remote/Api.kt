@@ -11,6 +11,10 @@ object Api {
     const val BASE_URL_IMAGES = "http://www.anilibria.tv/"
     const val BASE_URL = "https://www.anilibria.tv"
     const val API_URL = "https://www.anilibria.tv/public/api/index.php"
+    val STORE_APP_IDS = arrayOf<String>(
+            //"tv.anilibria.store"
+    )
+
     val DEFAULT_IP_ADDRESSES = listOf("37.1.217.18")
     val DEFAULT_PROXIES = listOf<ApiProxy>(
             ApiProxy(

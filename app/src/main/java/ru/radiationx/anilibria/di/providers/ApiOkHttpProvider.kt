@@ -13,6 +13,7 @@ import javax.inject.Provider
 import android.R.attr.password
 import okhttp3.Credentials
 import ru.radiationx.anilibria.BuildConfig
+import ru.radiationx.anilibria.model.data.remote.Api
 
 
 class ApiOkHttpProvider @Inject constructor(
@@ -61,7 +62,7 @@ class ApiOkHttpProvider @Inject constructor(
                             .newBuilder()
                             .header("mobileApp", "true")
                             .apply {
-                                if (BuildConfig.FLAVOR == "store") {
+                                if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
                                     header("Store-Published", "Google")
                                 }
                             }

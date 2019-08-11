@@ -33,6 +33,7 @@ import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
@@ -123,7 +124,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)
 
-        if (BuildConfig.FLAVOR == "store" && !LocaleHolder.checkAvail(locale.country)) {
+        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(locale.country)) {
             startActivity(Screens.BlockedCountry().getActivityIntent(this))
             finish()
             return

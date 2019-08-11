@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.navigation.Screens
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class CountryBlockedActivity : BaseActivity() {
         } else {
             resources.configuration.locale
         }
-        if (BuildConfig.FLAVOR == "store" && LocaleHolder.checkAvail(locale.country)) {
+        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && LocaleHolder.checkAvail(locale.country)) {
             startActivity(Screens.Main().getActivityIntent(this))
             finish()
             return

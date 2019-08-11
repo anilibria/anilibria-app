@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.AuthRepository
@@ -124,7 +125,7 @@ class OtherPresenter @Inject constructor(
             blockedMenu.add(MENU_FAVORITES)
         }
 
-        if (BuildConfig.FLAVOR == "store") {
+        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
             blockedMenu.remove(MENU_RIGHT_HOLDERS)
         } else {
             blockedMenu.add(MENU_RIGHT_HOLDERS)

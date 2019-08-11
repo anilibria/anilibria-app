@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="?cardBackground"
     android:clipToPadding="false"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
 
     <RelativeLayout
         android:id="@+id/full_item"
@@ -195,10 +196,10 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:visibility="gone"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:background="?divider_line" />
+        android:background="?divider_line"
+        android:visibility="gone" />
 
     <android.support.design.button.MaterialButton
         android:id="@+id/full_button_torrent"

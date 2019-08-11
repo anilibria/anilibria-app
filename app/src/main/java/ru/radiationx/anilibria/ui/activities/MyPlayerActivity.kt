@@ -900,6 +900,30 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
+    private fun showSeasonFinishDialog() {
+        val titles = arrayOf(
+                "Начать серию заново",
+                "Начать с первой серии",
+                "Закрыть плеер"
+        )
+        BottomSheet.Builder(this@MyPlayerActivity)
+                .setTitle("Серия полностью просмотрена")
+                .setItems(titles) { _, which ->
+                    when (which) {
+                        0 -> hardPlayEpisode(getEpisode(currentEpisodeId))
+                        1 -> releaseData.episodes.lastOrNull()?.also {
+                            hardPlayEpisode(it)
+                        }
+                        2 -> finish()
+                    }
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .show()
+    }
+
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
 
         override fun onPIPClick() {
@@ -949,7 +973,7 @@ class MyPlayerActivity : BaseActivity() {
 
         override fun onCompletion() {
             if (!controlsListener.onNextClicked()) {
-                finish()
+                showSeasonFinishDialog()
             }
         }
 

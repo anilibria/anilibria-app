@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.extension
 
+import android.util.Log
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -11,15 +12,23 @@ private object DateFormats {
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     val timeSecFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
     val timeHourMinuteSecFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    val timeSecFormatUtc = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
+    val timeHourMinuteSecFormatUtc = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
 }
 
 fun Date.asDateTimeString(): String = DateFormats.dateTimeFormat.format(this)
 fun Date.asDateString(): String = DateFormats.dateFormat.format(this)
 fun Date.asTimeString(): String = DateFormats.timeFormat.format(this)
-fun Date.asTimeSecString(): String = if (time >= TimeUnit.HOURS.toMillis(1)) {
-    DateFormats.timeHourMinuteSecFormat.format(this)
-} else {
-    DateFormats.timeSecFormat.format(this)
+fun Date.asTimeSecString(): String {
+    return if (time >= TimeUnit.HOURS.toMillis(1)) {
+        DateFormats.timeHourMinuteSecFormatUtc.format(this)
+    } else {
+        DateFormats.timeSecFormatUtc.format(this)
+    }
 }
 
 fun Long.asUtcTime(): Long = this - TimeZone.getDefault().rawOffset / 1000

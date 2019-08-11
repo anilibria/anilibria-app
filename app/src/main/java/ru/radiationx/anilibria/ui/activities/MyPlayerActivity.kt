@@ -910,7 +910,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setTitle("Серия полностью просмотрена")
                 .setItems(titles) { _, which ->
                     when (which) {
-                        0 -> hardPlayEpisode(getEpisode(currentEpisodeId))
+                        0 -> hardPlayEpisode(getEpisode())
                         1 -> releaseData.episodes.lastOrNull()?.also {
                             hardPlayEpisode(it)
                         }

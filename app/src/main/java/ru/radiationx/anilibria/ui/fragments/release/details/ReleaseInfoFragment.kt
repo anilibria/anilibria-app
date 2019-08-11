@@ -337,7 +337,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
 
         when {
-            correctQuality != savedQuality -> showQualityDialog(episode, onSelect, true)
+            correctQuality != savedQuality -> showQualityDialog(episode, onSelect, false)
             forceDialog -> showQualityDialog(episode, onSelect, false)
             else -> when (savedQuality) {
                 PreferencesHolder.QUALITY_NO -> showQualityDialog(episode, onSelect)

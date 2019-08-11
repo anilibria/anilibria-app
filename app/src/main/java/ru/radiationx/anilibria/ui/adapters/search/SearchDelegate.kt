@@ -47,6 +47,7 @@ class SearchDelegate(
             currentItem = item
             item_image.setCompatDrawable(item.icRes)
             item_image.setTintColorAttr(R.attr.base_icon)
+            item_image.background = null
             item_title.text = item.title
         }
 

@@ -70,26 +70,19 @@ class FeedAdapter(
 
         Log.d("kokoko", "bindSchedules before ${items.joinToString { it.javaClass.simpleName }}")
 
-        if (newItems.isEmpty()) {
-            if (index != -1) {
-                items.removeAt(index)
-                items.removeAt(index)
-                notifyItemRangeRemoved(index, 2)
-            }
+
+        if (index == -1) {
+            items.addAll(0, listOf(
+                    scheduleSection,
+                    FeedSchedulesListItem(newItems)
+            ))
+            notifyDataSetChanged()
+            /*notifyItemInserted(0)
+            notifyItemInserted(1)*/
+            //notifyItemRangeInserted(0, 2)
         } else {
-            if (index == -1) {
-                items.addAll(0, listOf(
-                        scheduleSection,
-                        FeedSchedulesListItem(newItems)
-                ))
-                notifyDataSetChanged()
-                /*notifyItemInserted(0)
-                notifyItemInserted(1)*/
-                //notifyItemRangeInserted(0, 2)
-            } else {
-                items[index + 1] = FeedSchedulesListItem(newItems)
-                notifyItemChanged(index + 1)
-            }
+            items[index + 1] = FeedSchedulesListItem(newItems)
+            notifyItemChanged(index + 1)
         }
 
         Log.d("kokoko", "bindSchedules after ${items.joinToString { it.javaClass.simpleName }}")

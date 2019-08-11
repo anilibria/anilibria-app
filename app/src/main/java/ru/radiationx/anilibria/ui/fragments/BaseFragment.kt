@@ -85,10 +85,13 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
 
     private fun localUpdateDimens(dimensions: DimensionHelper.Dimensions) {
         val correctedDimens = dimensions.copy()
-        correctedDimens.statusBar = if (baseStatusBar?.visibility == View.VISIBLE) {
-            0
-        } else {
-            correctedDimens.statusBar
+        baseStatusBar?.apply {
+            layoutParams = layoutParams.apply {
+                height = correctedDimens.statusBar
+            }
+        }
+        if (statusBarVisible) {
+            correctedDimens.statusBar = 0
         }
         updateDimens(correctedDimens)
     }

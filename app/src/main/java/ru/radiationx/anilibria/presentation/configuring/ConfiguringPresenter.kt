@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.repository.ConfigurationRepository
 import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.anilibria.model.system.WrongHostException
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
@@ -60,9 +61,14 @@ class ConfiguringPresenter @Inject constructor(
                         loadConfig()
                     }
                 }, {
-                    it.printStackTrace()
-                    viewState.showStatus("Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) })
-                    viewState.showRefresh(true)
+                    when (it) {
+                        is WrongHostException -> loadConfig()
+                        else -> {
+                            it.printStackTrace()
+                            viewState.showStatus("Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) })
+                            viewState.showRefresh(true)
+                        }
+                    }
                 })
                 .addToDisposable()
     }
@@ -83,7 +89,7 @@ class ConfiguringPresenter @Inject constructor(
                     checkAvail()
                 }, {
                     it.printStackTrace()
-                    viewState.showStatus("Ошибка загрузки данных: ${it.message}".also { Log.e("bobobo", it) })
+                    viewState.showStatus("Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) })
                     viewState.showRefresh(true)
                 })
                 .addToDisposable()

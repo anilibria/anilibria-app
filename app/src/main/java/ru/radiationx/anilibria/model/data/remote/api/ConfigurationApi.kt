@@ -28,14 +28,13 @@ class ConfigurationApi @Inject constructor(
                 "query" to "empty"
         )
         return mainClient.postFull(apiUrl, args)
-                .doOnSuccess {
+                .map {
                     val hostIp = it.hostIp.orEmpty()
                     if (!apiConfig.getPossibleIps().contains(it.hostIp)) {
                         throw WrongHostException(hostIp)
                     }
+                    true
                 }
-                .map { true }
-                .onErrorReturn { false }
     }
 
     fun getConfiguration(): Single<List<ApiAddress>> {

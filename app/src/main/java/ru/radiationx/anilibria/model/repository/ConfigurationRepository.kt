@@ -25,6 +25,10 @@ class ConfigurationRepository @Inject constructor(
             .checkAvailable(apiUrl)
             .subscribeOn(schedulers.io())
 
+    fun checkApiAvailable(apiUrl: String): Single<Boolean> = configurationApi
+            .checkApiAvailable(apiUrl)
+            .subscribeOn(schedulers.io())
+
     fun getConfiguration(): Single<List<ApiAddress>> = configurationApi
             .getConfiguration()
             .subscribeOn(schedulers.io())

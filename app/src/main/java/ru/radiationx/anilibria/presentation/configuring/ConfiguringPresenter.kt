@@ -46,8 +46,12 @@ class ConfiguringPresenter @Inject constructor(
 
     private fun checkLast() {
         currentState = State.CHECK_LAST
+        Log.e("bobobo", "active address ${apiConfig.active}")
+        Log.e("bobobo", "getAddresses ${apiConfig.getAddresses()}")
+        Log.e("bobobo", "getAvailableAddresses ${apiConfig.getAvailableAddresses()}")
         configurationRepository
                 .checkAvailable(apiConfig.apiUrl)
+                .flatMap { configurationRepository.checkApiAvailable(apiConfig.apiUrl) }
                 .observeOn(schedulers.ui())
                 .doOnSubscribe {
                     viewState.showStatus("Проверка доступности сервера")
@@ -61,10 +65,11 @@ class ConfiguringPresenter @Inject constructor(
                         loadConfig()
                     }
                 }, {
+                    Log.e("bobobo", "error on $currentState: $it")
+                    it.printStackTrace()
                     when (it) {
                         is WrongHostException -> loadConfig()
                         else -> {
-                            it.printStackTrace()
                             viewState.showStatus("Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) })
                             viewState.showRefresh(true)
                         }
@@ -88,6 +93,7 @@ class ConfiguringPresenter @Inject constructor(
                     viewState.showStatus("Загружено адресов: ${addresses.size}; прокси: $proxies".also { Log.e("bobobo", it) })
                     checkAvail()
                 }, {
+                    Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
                     viewState.showStatus("Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) })
                     viewState.showRefresh(true)
@@ -122,6 +128,7 @@ class ConfiguringPresenter @Inject constructor(
                         checkProxies()
                     }
                 }, {
+                    Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
                     viewState.showStatus("Ошибка проверки доступности адресов: ${it.message}".also { Log.e("bobobo", it) })
                     viewState.showRefresh(true)
@@ -158,6 +165,7 @@ class ConfiguringPresenter @Inject constructor(
 
                     apiConfig.updateNeedConfig(false)
                 }, {
+                    Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
                     viewState.showStatus("Ошибка проверки доступности прокси-серверов: ${it.message}".also { Log.e("bobobo", it) })
                     viewState.showRefresh(true)

@@ -23,19 +23,10 @@ class ConfigurationApi @Inject constructor(
         private val apiConfigStorage: ApiConfigStorage
 ) {
 
-    fun checkAvailable(apiUrl: String): Single<Boolean> {
-        val args = mapOf(
-                "query" to "empty"
-        )
-        return mainClient.postFull(apiUrl, args)
-                .map {
-                    val hostIp = it.hostIp.orEmpty()
-                    if (!apiConfig.getPossibleIps().contains(it.hostIp)) {
-                        throw WrongHostException(hostIp)
-                    }
-                    true
-                }
-    }
+    fun checkAvailable(apiUrl: String): Single<Boolean> = check(mainClient, apiUrl)
+
+    fun checkApiAvailable(apiUrl: String): Single<Boolean> = check(client, apiUrl)
+            .onErrorReturnItem(false)
 
     fun getConfiguration(): Single<List<ApiAddress>> {
         val args = mapOf(
@@ -48,6 +39,16 @@ class ConfigurationApi @Inject constructor(
                 .doOnSuccess { apiConfig.setAddresses(it) }
                 .onErrorResumeNext { getReserve() }
     }
+
+    private fun check(client: IClient, apiUrl: String): Single<Boolean> =
+            client.postFull(apiUrl, mapOf("query" to "empty"))
+                    .map {
+                        val hostIp = it.hostIp.orEmpty()
+                        if (!apiConfig.getPossibleIps().contains(it.hostIp)) {
+                            throw WrongHostException(hostIp)
+                        }
+                        true
+                    }
 
     private fun getReserve(): Single<List<ApiAddress>> {
         return mainClient.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json", emptyMap())

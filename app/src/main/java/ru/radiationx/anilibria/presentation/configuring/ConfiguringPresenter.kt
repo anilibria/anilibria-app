@@ -107,7 +107,9 @@ class ConfiguringPresenter @Inject constructor(
         Observable
                 .fromIterable(addresses)
                 .concatMapSingle { address ->
-                    configurationRepository.checkAvailable(address.api).map { Pair(address, it) }
+                    configurationRepository.checkAvailable(address.api)
+                            .onErrorReturnItem(false)
+                            .map { Pair(address, it) }
                 }
                 .filter { it.second }
                 .map { it.first }

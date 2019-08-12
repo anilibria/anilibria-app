@@ -8,12 +8,12 @@
       {
         "name": "AniLibria App (Красная иконка)",
         "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_v2.4.2.apk",
-        "type": "site"
+        "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
         "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_Lite_v2.4.2.apk",
-        "type": "site"
+        "type": "file"
       }
     ],
     "important": [

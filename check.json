@@ -7,12 +7,12 @@
     "links": [
       {
         "name": "AniLibria App (Красная иконка)",
-        "url": "https://drive.google.com/open?id=1gATuJ3aGd4uLnnjMZIfAsX1qYwa54jZd",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_v2.4.2.apk",
         "type": "site"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://drive.google.com/open?id=1aELhTBrOAgIhF649jcAEE-h62HDWsJ1l",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_Lite_v2.4.2.apk",
         "type": "site"
       }
     ],

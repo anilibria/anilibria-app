@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.multidex.MultiDex
@@ -13,15 +13,13 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
+import com.google.firebase.messaging.FirebaseMessaging
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
-import com.nostra13.universalimageloader.core.DefaultConfigurationFactory
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader
-import com.nostra13.universalimageloader.core.download.ImageDownloader
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.disposables.Disposables
@@ -36,8 +34,6 @@ import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.io.InputStream
-import java.net.*
 import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
@@ -80,12 +76,21 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        initYandexAppMetrica()
 
-        //Fabric.with(this, Crashlytics())
+        if (isMainProcess()) {
+            initInMainProcess()
+        }
+    }
+
+    private fun initYandexAppMetrica() {
+        if (BuildConfig.DEBUG) return
         val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
+    }
 
+    private fun initInMainProcess() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
@@ -112,6 +117,12 @@ class App : Application() {
 
         initImageLoader(this)
         appVersionCheck()
+
+        FirebaseMessaging.getInstance().apply {
+            isAutoInitEnabled = true
+            subscribeToTopic("all")
+            subscribeToTopic("android_all")
+        }
     }
 
     private fun initDependencies() {
@@ -208,6 +219,16 @@ class App : Application() {
                 .defaultDisplayImageOptions(defaultOptionsUIL.build())
                 .build()
         ImageLoader.getInstance().init(config)
+    }
+
+
+    private fun isMainProcess() = packageName == getCurrentProcessName()
+
+    private fun getCurrentProcessName(): String? {
+        val mypid = android.os.Process.myPid()
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val processes = manager.runningAppProcesses
+        return processes.firstOrNull { it.pid == mypid }?.processName
     }
 
 }

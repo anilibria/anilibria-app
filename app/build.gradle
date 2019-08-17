@@ -5,7 +5,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 
 
 static def getDateTime() {
@@ -144,5 +143,10 @@ dependencies {
     implementation 'at.blogc:expandabletextview:1.0.5'
 
     implementation 'com.github.stealthcopter:AndroidNetworkTools:0.4.3'
+
+
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
 }
 
+apply plugin: 'com.google.gms.google-services'

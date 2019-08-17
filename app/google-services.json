@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "500586946614",
+    "firebase_url": "https://anilibria-app.firebaseio.com",
+    "project_id": "anilibria-app",
+    "storage_bucket": "anilibria-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500586946614:android:fb589f3c4b9fbe33",
+        "android_client_info": {
+          "package_name": "tv.anilibria.store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500586946614-3uadklhgga8vdgoh3c3tsdlcjavam7hb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0hPAsvfeyVEUq9HlXPtKOghw2mVxc798"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500586946614-3uadklhgga8vdgoh3c3tsdlcjavam7hb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "500586946614-0irscohmlv6ocmvrac4395l67sh0907c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "tv.anilibria.anilibria"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

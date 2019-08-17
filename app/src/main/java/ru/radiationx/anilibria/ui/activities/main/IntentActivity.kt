@@ -6,6 +6,7 @@ import android.util.Log
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
 
 /**
@@ -27,6 +28,8 @@ class IntentActivity : BaseActivity() {
                 startActivity(Intent(this@IntentActivity, MainActivity::class.java).apply {
                     data = intentUri
                 })
+            } else {
+                Utils.externalLink(intentUri.toString())
             }
         }
         finish()

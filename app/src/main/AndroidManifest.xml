@@ -98,8 +98,18 @@
             android:theme="@style/Splash.LightAppTheme" />
 
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="c9fe0be2960a17da9205646f7a0c5e5a9f17c65f" />
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_push_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/alib_red" />
+
+        <service android:name=".NotificationService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

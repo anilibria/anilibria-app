@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.net.ssl.*
 
 @InjectViewState
 class ConfiguringPresenter @Inject constructor(
@@ -69,6 +70,11 @@ class ConfiguringPresenter @Inject constructor(
                     it.printStackTrace()
                     when (it) {
                         is WrongHostException -> loadConfig()
+                        is SSLException,
+                        is SSLHandshakeException,
+                        is SSLKeyException,
+                        is SSLProtocolException,
+                        is SSLPeerUnverifiedException -> loadConfig()
                         else -> {
                             viewState.showStatus("Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) })
                             viewState.showRefresh(true)

@@ -37,7 +37,8 @@ class ConfigurationApi @Inject constructor(
                 .doOnSuccess { apiConfigStorage.saveJson(it) }
                 .map { configurationParser.parse(it) }
                 .doOnSuccess { apiConfig.setAddresses(it) }
-                .onErrorResumeNext { getReserve() }
+                .onErrorResumeNext { getReserve("https://raw.githubusercontent.com/anilibria/anilibria-app/master/config.json") }
+                .onErrorResumeNext { getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json") }
     }
 
     private fun check(client: IClient, apiUrl: String): Single<Boolean> =
@@ -50,12 +51,10 @@ class ConfigurationApi @Inject constructor(
                         true
                     }
 
-    private fun getReserve(): Single<List<ApiAddress>> {
-        return mainClient.get("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json", emptyMap())
-                .map { JSONObject(it) }
-                .doOnSuccess { apiConfigStorage.saveJson(it) }
-                .map { configurationParser.parse(it) }
-                .doOnSuccess { apiConfig.setAddresses(it) }
-    }
+    private fun getReserve(url: String): Single<List<ApiAddress>> = mainClient.get(url, emptyMap())
+            .map { JSONObject(it) }
+            .doOnSuccess { apiConfigStorage.saveJson(it) }
+            .map { configurationParser.parse(it) }
+            .doOnSuccess { apiConfig.setAddresses(it) }
 
 }

@@ -34,20 +34,20 @@ class NotificationService : FirebaseMessagingService() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = message.notification
-
-        if (notification != null) {
-            manager.notify((System.currentTimeMillis() / 1000).toInt(), getNotification(Data(
+        val data = if (notification != null) {
+            Data(
                     notification.title.orEmpty(),
                     notification.body.orEmpty(),
-                    notification.clickAction
-            )))
+                    notification.link?.toString()
+            )
         } else {
-            manager.notify((System.currentTimeMillis() / 1000).toInt(), getNotification(Data(
+            Data(
                     message.data["title"].orEmpty(),
                     message.data["body"].orEmpty(),
-                    message.data["click_action"]
-            )))
+                    message.data["link"]
+            )
         }
+        manager.notify((System.currentTimeMillis() / 1000).toInt(), getNotification(data))
         /*Log.e("NotificationService", "new message ${notification.let {
             "${it.title}, ${it.body}, ${it.color}, ${it.icon}, ${it.sound}, ${it.clickAction}, ${it.link}, ${it.imageUrl}, ${it.tag}, ${it.channelId}"
         }}")*/

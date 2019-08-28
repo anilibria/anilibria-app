@@ -3,9 +3,6 @@ package ru.radiationx.anilibria.di.providers
 import android.util.Log
 import okhttp3.OkHttpClient
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.system.AppCookieJar
-import ru.radiationx.anilibria.model.system.Client
-import ru.radiationx.anilibria.model.system.WrongHostException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import javax.inject.Inject
@@ -14,6 +11,7 @@ import android.R.attr.password
 import okhttp3.Credentials
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.system.*
 
 
 class ApiOkHttpProvider @Inject constructor(
@@ -22,6 +20,7 @@ class ApiOkHttpProvider @Inject constructor(
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
+            .connectionSpecs(OkHttpConfig.connectionSpec)
             .apply {
                 val availableAddress = apiConfig.getAvailableAddresses().contains(apiConfig.active.tag)
 

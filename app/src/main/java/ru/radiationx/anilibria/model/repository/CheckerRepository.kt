@@ -26,9 +26,6 @@ class CheckerRepository @Inject constructor(
                 else
                     checkerApi.checkUpdate(versionCode).blockingGet()
             }
-            .onErrorResumeNext {
-                checkerApi.checkUpdateFromRepository()
-            }
             .doOnSuccess {
                 Log.e("CHECKER", "doOnSuccess $it")
                 currentDataRelay.accept(it)

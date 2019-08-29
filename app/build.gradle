@@ -31,7 +31,24 @@ android {
         experimental = true
     }
 
+    // Поиграться в случае "Unable to load publicsuffixes.gz resource from the classpath."
+   /* packagingOptions {
+        pickFirst  'META-INF/*'
+        doNotStrip "okhttp3/internal/publicsuffix/publicsuffixes.gz"
+    }*/
+
+    /*sourceSets {
+        main {
+            resources.srcDirs = ['src/main/resources', 'src/main/resources/okhttp3/internal/publicsuffix']
+        }
+    }*/
+
     buildTypes {
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled true
             shrinkResources true

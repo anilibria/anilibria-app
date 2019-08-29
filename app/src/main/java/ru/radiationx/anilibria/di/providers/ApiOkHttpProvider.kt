@@ -9,6 +9,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import android.R.attr.password
 import okhttp3.Credentials
+import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.system.*
@@ -20,7 +21,8 @@ class ApiOkHttpProvider @Inject constructor(
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
-            .connectionSpecs(OkHttpConfig.connectionSpec)
+            .appendConnectionSpecs()
+            .appendSocketFactoryIfNeeded()
             .apply {
                 val availableAddress = apiConfig.getAvailableAddresses().contains(apiConfig.active.tag)
 
@@ -76,7 +78,13 @@ class ApiOkHttpProvider @Inject constructor(
                 }
 
                 cookieJar(appCookieJar)
-            }
+            }/*
+            .addNetworkInterceptor(
+                    HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+                        Log.d("logging", it)
+                    })
+                            .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
+            )*/
             .build()
             .also {
                 Log.e("bobobo", "ApiOkHttpProvider provide $it")

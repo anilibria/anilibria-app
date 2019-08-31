@@ -347,13 +347,13 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
-    private fun saveEpisode() {
-        if (player.currentPosition <= 0) {
+    private fun saveEpisode(position: Long = player.currentPosition) {
+        if (position < 0) {
             return
         }
         releaseInteractor.putEpisode(getEpisode().apply {
-            Log.e("SUKA", "Set posistion seek: ${player.currentPosition}")
-            seek = player.currentPosition
+            Log.e("SUKA", "Set posistion seek: ${position}")
+            seek = position
             lastAccess = System.currentTimeMillis()
             isViewed = true
         })
@@ -910,7 +910,10 @@ class MyPlayerActivity : BaseActivity() {
                 .setTitle("Серия полностью просмотрена")
                 .setItems(titles) { _, which ->
                     when (which) {
-                        0 -> hardPlayEpisode(getEpisode())
+                        0 -> {
+                            saveEpisode(0)
+                            hardPlayEpisode(getEpisode())
+                        }
                         1 -> releaseData.episodes.lastOrNull()?.also {
                             hardPlayEpisode(it)
                         }
@@ -923,6 +926,30 @@ class MyPlayerActivity : BaseActivity() {
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
                 .show()
     }
+
+    private fun showEpisodeFinishDialog() {
+        val titles = arrayOf(
+                "Начать серию заново",
+                "Включить следущую серию"
+        )
+        BottomSheet.Builder(this@MyPlayerActivity)
+                .setTitle("Серия полностью просмотрена")
+                .setItems(titles) { _, which ->
+                    when (which) {
+                        0 -> {
+                            saveEpisode(0)
+                            hardPlayEpisode(getEpisode())
+                        }
+                        1 -> getNextEpisode()?.also { hardPlayEpisode(it) }
+                    }
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .show()
+    }
+
 
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
 
@@ -968,7 +995,17 @@ class MyPlayerActivity : BaseActivity() {
 
     private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {
         override fun onPrepared() {
-            player.start()
+            val episode = getEpisode()
+            if (episode.seek >= player.duration) {
+                player.stopPlayback()
+                if (getNextEpisode() == null) {
+                    showSeasonFinishDialog()
+                } else {
+                    showEpisodeFinishDialog()
+                }
+            } else {
+                player.start()
+            }
         }
 
         override fun onCompletion() {

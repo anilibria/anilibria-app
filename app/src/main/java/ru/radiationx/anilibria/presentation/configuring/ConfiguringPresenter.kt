@@ -12,6 +12,8 @@ import ru.radiationx.anilibria.model.system.WrongHostException
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
+import java.io.IOException
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.net.ssl.*
@@ -66,10 +68,11 @@ class ConfiguringPresenter @Inject constructor(
                         loadConfig()
                     }
                 }, {
-                    Log.e("bobobo", "error on $currentState: $it")
+                    Log.e("bobobo", "error on $currentState: $it, ${it is IOException}")
                     it.printStackTrace()
                     when (it) {
                         is WrongHostException -> loadConfig()
+                        is IOException,
                         is SSLException,
                         is SSLHandshakeException,
                         is SSLKeyException,

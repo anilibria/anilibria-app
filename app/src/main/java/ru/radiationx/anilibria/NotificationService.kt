@@ -74,6 +74,7 @@ class NotificationService : FirebaseMessagingService() {
                 .setContentTitle(remote.title)
                 .setAutoCancel(true)
                 .setContentText(remote.body)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(remote.body))
                 .setContentIntent(PendingIntent.getActivities(this, System.currentTimeMillis().toInt(), arrayOf(Intent(this, IntentActivity::class.java).apply {
                     remote.url?.also {
                         data = Uri.parse(it)

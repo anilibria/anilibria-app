@@ -44,10 +44,10 @@ class ConfigurationApi @Inject constructor(
     private fun check(client: IClient, apiUrl: String): Single<Boolean> =
             client.postFull(apiUrl, mapOf("query" to "empty"))
                     .map {
-                        val hostIp = it.hostIp.orEmpty()
+                        /*val hostIp = it.hostIp.orEmpty()
                         if (!apiConfig.getPossibleIps().contains(it.hostIp)) {
                             throw WrongHostException(hostIp)
-                        }
+                        }*/
                         true
                     }
 

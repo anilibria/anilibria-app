@@ -22,11 +22,13 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
@@ -120,9 +122,26 @@ class App : Application() {
 
         FirebaseMessaging.getInstance().apply {
             isAutoInitEnabled = true
-            subscribeToTopic("all")
-            subscribeToTopic("android_all")
         }
+
+        val preferencesHolder = DI.get(PreferencesHolder::class.java)
+        val disposable = preferencesHolder
+                .observeNotificationsAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ enabled ->
+                    FirebaseMessaging.getInstance().apply {
+                        if (enabled) {
+                            subscribeToTopic("all")
+                            subscribeToTopic("android_all")
+                        } else {
+                            unsubscribeFromTopic("all")
+                            unsubscribeFromTopic("android_all")
+                        }
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+
     }
 
     private fun initDependencies() {

@@ -23,15 +23,20 @@ class PreferencesStorage @Inject constructor(
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PIP_CONTROL_KEY = "pip_control"
         private const val APP_THEME_KEY = "app_theme_dark"
+        private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
     }
 
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
+    private val notificationsAllRelay = BehaviorRelay.createDefault<Boolean>(notificationsAll)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             APP_THEME_KEY -> {
                 appThemeRelay.accept(getTheme())
+            }
+            NOTIFICATIONS_ALL_KEY -> {
+                notificationsAllRelay.accept(notificationsAll)
             }
         }
     }
@@ -98,4 +103,10 @@ class PreferencesStorage @Inject constructor(
     }
 
     override fun observeTheme(): Observable<AppThemeHolder.AppTheme> = appThemeRelay.hide()
+
+    override var notificationsAll: Boolean
+        get() = sharedPreferences.getBoolean(NOTIFICATIONS_ALL_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(NOTIFICATIONS_ALL_KEY, value).apply()
+
+    override fun observeNotificationsAll(): Observable<Boolean> = notificationsAllRelay.hide()
 }

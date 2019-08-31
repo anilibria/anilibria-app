@@ -4,6 +4,19 @@
     <Preference android:layout="@layout/preference_shadow_top" />
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
+        android:title="Уведомления">
+
+        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications.all"
+            android:layout="@layout/preference_custom"
+            android:title="Общие" />
+
+    </PreferenceCategory>
+
+    <Preference android:layout="@layout/preference_shadow_top" />
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
         android:title="Общие">
 
         <ru.radiationx.anilibria.ui.widgets.SwitchPreference

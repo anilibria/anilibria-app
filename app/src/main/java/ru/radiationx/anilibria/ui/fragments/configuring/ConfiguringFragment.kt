@@ -35,19 +35,21 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
         super.onViewCreated(view, savedInstanceState)
         config_refresh.setOnClickListener { presenter.continueCheck() }
         config_skip.setOnClickListener { presenter.skipCheck() }
+        config_next.setOnClickListener { presenter.nextCheck() }
     }
 
-    override fun showStatus(status: String) {
-        config_status.text = status
-    }
+    override fun updateScreen(screenState: ConfiguringPresenter.ScreenState) {
+        config_status.text = screenState.status
+        config_next.text = screenState.nextButton
 
-    override fun showRefresh(isVisible: Boolean) {
         TransitionManager.beginDelayedTransition(constraint, AutoTransition().apply {
             duration = 225
             ordering = TransitionSet.ORDERING_TOGETHER
         })
+        val isVisible = screenState.refresh
         config_refresh.visible(isVisible)
         config_skip.visible(isVisible)
+        config_next.visible(isVisible && screenState.nextButton != null)
         config_progress.gone(isVisible)
     }
 

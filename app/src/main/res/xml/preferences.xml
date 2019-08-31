@@ -10,7 +10,15 @@
             android:defaultValue="true"
             android:key="notifications.all"
             android:layout="@layout/preference_custom"
+            android:summary="Уведомления о новых сериях и YouTube роликах"
             android:title="Общие" />
+
+        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications.service"
+            android:layout="@layout/preference_custom"
+            android:summary="Важные уведомления о проекте, об обновлении приложения и т.д. \nОтключать не рекомендуется"
+            android:title="Сервисные" />
 
     </PreferenceCategory>
 
@@ -68,10 +76,10 @@
             android:layout="@layout/preference_custom"
             android:title="Обсуждение на 4PDA" />
 
-       <!--setting <Preference
-            android:key="about.app_play_market"
-            android:layout="@layout/preference_custom"
-            android:title="Play Market" />-->
+        <!--setting <Preference
+             android:key="about.app_play_market"
+             android:layout="@layout/preference_custom"
+             android:title="Play Market" />-->
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_bottom" />

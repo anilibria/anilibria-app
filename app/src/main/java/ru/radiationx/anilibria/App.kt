@@ -23,11 +23,13 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.anilibria.extension.addTo
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
@@ -125,23 +127,41 @@ class App : Application() {
         }
 
         val preferencesHolder = DI.get(PreferencesHolder::class.java)
-        val disposable = preferencesHolder
+        val disposables = CompositeDisposable()
+        preferencesHolder
                 .observeNotificationsAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ enabled ->
-                    FirebaseMessaging.getInstance().apply {
-                        if (enabled) {
-                            subscribeToTopic("all")
-                            subscribeToTopic("android_all")
-                        } else {
-                            unsubscribeFromTopic("all")
-                            unsubscribeFromTopic("android_all")
-                        }
-                    }
+                    changeSubscribeStatus(enabled, "all")
                 }, {
                     it.printStackTrace()
                 })
+                .addTo(disposables)
 
+        preferencesHolder
+                .observeNotificationsService()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ enabled ->
+                    changeSubscribeStatus(enabled, "service")
+                    changeSubscribeStatus(enabled, "app_update")
+                    changeSubscribeStatus(enabled, "config")
+                }, {
+                    it.printStackTrace()
+                })
+                .addTo(disposables)
+
+    }
+
+    private fun changeSubscribeStatus(enabled: Boolean, topic: String) {
+        FirebaseMessaging.getInstance().apply {
+            if (enabled) {
+                subscribeToTopic(topic)
+                subscribeToTopic("android_$topic")
+            } else {
+                unsubscribeFromTopic(topic)
+                unsubscribeFromTopic("android_$topic")
+            }
+        }
     }
 
     private fun initDependencies() {

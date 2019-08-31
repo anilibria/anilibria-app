@@ -45,4 +45,7 @@ interface PreferencesHolder {
     var notificationsAll: Boolean
     fun observeNotificationsAll(): Observable<Boolean>
 
+    var notificationsService: Boolean
+    fun observeNotificationsService(): Observable<Boolean>
+
 }

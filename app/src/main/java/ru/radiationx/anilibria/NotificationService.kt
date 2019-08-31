@@ -12,21 +12,34 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONObject
+import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.data.remote.parsers.ConfigurationParser
+import ru.radiationx.anilibria.model.data.storage.ApiConfigStorage
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
+import java.lang.Exception
 
 class NotificationService : FirebaseMessagingService() {
 
     companion object {
         private const val CALL_CHANNEL_ID = "main"
         private const val CALL_CHANNEL_NAME = "Общие"
+
+
+        private const val CUSTOM_TYPE_APP_UPDATE = "app_update"
+        private const val CUSTOM_TYPE_CONFIG = "config"
     }
 
     private data class Data(
             val title: String,
             val body: String,
-            val url: String?
+            val url: String? = null,
+            val type: String? = null,
+            val payload: String? = null
     )
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -36,24 +49,44 @@ class NotificationService : FirebaseMessagingService() {
         val notification = message.notification
         val data = if (notification != null) {
             Data(
-                    notification.title.orEmpty(),
-                    notification.body.orEmpty(),
+                    notification.title.defaultTitle(),
+                    notification.body.defaultBody(),
                     notification.link?.toString()
             )
         } else {
             Data(
-                    message.data["title"].orEmpty(),
-                    message.data["body"].orEmpty(),
-                    message.data["link"]
+                    message.data["title"].defaultTitle(),
+                    message.data["body"].defaultBody(),
+                    message.data["link"],
+                    message.data["push_type"],
+                    message.data["push_data"]
             )
         }
         manager.notify((System.currentTimeMillis() / 1000).toInt(), getNotification(data))
-        /*Log.e("NotificationService", "new message ${notification.let {
-            "${it.title}, ${it.body}, ${it.color}, ${it.icon}, ${it.sound}, ${it.clickAction}, ${it.link}, ${it.imageUrl}, ${it.tag}, ${it.channelId}"
-        }}")*/
 
 
+        if (data.type == CUSTOM_TYPE_CONFIG) {
+            try {
+                val configurationParser = DI.get(ConfigurationParser::class.java)
+                val apiConfig = DI.get(ApiConfig::class.java)
+                val apiConfigStorage = DI.get(ApiConfigStorage::class.java)
+
+                apiConfig.updateNeedConfig(true)
+
+                val payload = data.payload.orEmpty()
+                val jsonObject = JSONObject(payload)
+                apiConfigStorage.saveJson(jsonObject)
+                val addresses = configurationParser.parse(jsonObject)
+                apiConfig.setAddresses(addresses)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
     }
+
+    private fun String?.defaultTitle() = this ?: "Заголовок уведомления"
+    private fun String?.defaultBody() = this
+            ?: "Тело уведомления. Похоже кто-то забыл указать указать правильные данные ¯\\_(ツ)_/¯"
 
     private fun getNotification(remote: Data): Notification {
         Log.e("NotificationService", "getNotification $remote")
@@ -75,13 +108,30 @@ class NotificationService : FirebaseMessagingService() {
                 .setAutoCancel(true)
                 .setContentText(remote.body)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(remote.body))
-                .setContentIntent(PendingIntent.getActivities(this, System.currentTimeMillis().toInt(), arrayOf(Intent(this, IntentActivity::class.java).apply {
-                    remote.url?.also {
-                        data = Uri.parse(it)
-                    }
-                    action = Intent.ACTION_VIEW
-                }), PendingIntent.FLAG_UPDATE_CURRENT))
+                .setContentIntent(getPendingIntent(getDefaultIntent(remote)))
                 .setChannelId(CALL_CHANNEL_ID)
                 .build()
     }
+
+    private fun getDefaultIntent(remote: Data): Intent {
+        return when (remote.type) {
+            CUSTOM_TYPE_APP_UPDATE -> Intent(this, UpdateCheckerActivity::class.java).apply {
+                putExtra(UpdateCheckerActivity.ARG_FORCE, true)
+                action = Intent.ACTION_VIEW
+            }
+            CUSTOM_TYPE_CONFIG -> Intent(this, MainActivity::class.java)
+            else -> Intent(this, IntentActivity::class.java).apply {
+                remote.url?.also { data = Uri.parse(it) }
+                action = Intent.ACTION_VIEW
+            }
+        }
+    }
+
+    private fun getPendingIntent(defaultIntent: Intent): PendingIntent = PendingIntent
+            .getActivities(
+                    this,
+                    System.currentTimeMillis().toInt(),
+                    arrayOf(defaultIntent),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
 }

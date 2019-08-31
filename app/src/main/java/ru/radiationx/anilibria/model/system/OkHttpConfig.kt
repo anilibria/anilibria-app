@@ -7,14 +7,40 @@ import android.widget.Toast
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import ru.radiationx.anilibria.App
-import javax.net.ssl.HttpsURLConnection
 import android.widget.TextView
 import android.view.ViewGroup
 import okhttp3.OkHttpClient
 import java.lang.Exception
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.*
 
+object OkHttpConfig {
+
+    class DummyHostnameVerifier : HostnameVerifier {
+        override fun verify(hostname: String?, session: SSLSession?): Boolean {
+            //Log.e("DummyHost", "verify $hostname, $session")
+            return true
+        }
+    }
+
+    class DummyTrustManager : X509TrustManager {
+        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+            //Log.e("DummyTrust", "checkClientTrusted ${chain?.size}, $authType")
+        }
+
+        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+            //Log.e("DummyTrust", "checkServerTrusted ${chain?.size}, $authType")
+        }
+
+        override fun getAcceptedIssuers(): Array<X509Certificate> {
+            //Log.e("DummyTrust", "getAcceptedIssuers")
+            return emptyArray()
+        }
+    }
+}
 
 fun OkHttpClient.Builder.appendConnectionSpecs(): OkHttpClient.Builder {
     val cipherSuites = mutableListOf<CipherSuite>()
@@ -37,10 +63,13 @@ fun OkHttpClient.Builder.appendConnectionSpecs(): OkHttpClient.Builder {
 }
 
 fun OkHttpClient.Builder.appendSocketFactoryIfNeeded(): OkHttpClient.Builder {
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
         try {
-            this.sslSocketFactory(TLSSocketFactory()).build()
+            val trustManager = OkHttpConfig.DummyTrustManager()
+            sslSocketFactory(TLSSocketFactory(), trustManager)
+            hostnameVerifier(OkHttpConfig.DummyHostnameVerifier())
         } catch (ex: Exception) {
+            //Log.e("DummyException", "Hello: ${ex.message}")
             ex.printStackTrace()
         }
     }

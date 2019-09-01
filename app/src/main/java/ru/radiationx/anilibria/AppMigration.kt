@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria
 
+import android.util.Log
+import com.nostra13.universalimageloader.core.ImageLoader
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import javax.inject.Inject
@@ -23,6 +25,9 @@ class AppMigration(
     fun start() {
         if (current == 20) {
             appPreferences.setReleaseRemind(true)
+        }
+        if (last <= 52) {
+            ImageLoader.getInstance().clearDiskCache()
         }
     }
 }

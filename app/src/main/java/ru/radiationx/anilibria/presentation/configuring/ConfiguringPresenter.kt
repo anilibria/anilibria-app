@@ -12,8 +12,11 @@ import ru.radiationx.anilibria.model.system.WrongHostException
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
+import java.io.IOException
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.net.ssl.*
 
 @InjectViewState
 class ConfiguringPresenter @Inject constructor(
@@ -26,26 +29,63 @@ class ConfiguringPresenter @Inject constructor(
 
     private var currentState = State.CHECK_LAST
 
+    private val screenState = ScreenState()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        updateState(currentState)
         doByState()
     }
 
     fun continueCheck() = doByState()
 
+    fun nextCheck() {
+        getNextState()?.also { doByState(it) }
+    }
+
     fun skipCheck() {
         apiConfig.updateNeedConfig(false)
     }
 
-    private fun doByState() = when (currentState) {
+
+    private fun notifyScreenChanged() {
+        viewState.updateScreen(screenState)
+    }
+
+    private fun updateState(newState: State) {
+        currentState = newState
+        if (getNextState() == null) {
+            screenState.nextButton = null
+        } else {
+            screenState.nextButton = "Следующий шаг"
+        }
+        notifyScreenChanged()
+    }
+
+    private fun doByState(anchor: State = currentState) = when (anchor) {
         State.CHECK_LAST -> checkLast()
         State.LOAD_CONFIG -> loadConfig()
         State.CHECK_AVAIL -> checkAvail()
         State.CHECK_PROXIES -> checkProxies()
     }
 
+    private fun getNextState(anchor: State = currentState): State? = when (anchor) {
+        State.CHECK_LAST -> State.LOAD_CONFIG
+        State.LOAD_CONFIG -> State.CHECK_AVAIL
+        State.CHECK_AVAIL -> State.CHECK_PROXIES
+        State.CHECK_PROXIES -> null
+    }
+
+    private fun getTitleByState(state: State?): String? = when (state) {
+        State.CHECK_LAST -> "Проверка текущих адресов"
+        State.LOAD_CONFIG -> "Загрузка новых адресов"
+        State.CHECK_AVAIL -> "Проверка новых адресов"
+        State.CHECK_PROXIES -> "Проверка прокси-серверов"
+        else -> null
+    }
+
     private fun checkLast() {
-        currentState = State.CHECK_LAST
+        updateState(State.CHECK_LAST)
         Log.e("bobobo", "active address ${apiConfig.active}")
         Log.e("bobobo", "getAddresses ${apiConfig.getAddresses()}")
         Log.e("bobobo", "getAvailableAddresses ${apiConfig.getAvailableAddresses()}")
@@ -54,24 +94,33 @@ class ConfiguringPresenter @Inject constructor(
                 .flatMap { configurationRepository.checkApiAvailable(apiConfig.apiUrl) }
                 .observeOn(schedulers.ui())
                 .doOnSubscribe {
-                    viewState.showStatus("Проверка доступности сервера")
-                    viewState.showRefresh(false)
+                    screenState.status = "Проверка доступности сервера"
+                    screenState.refresh = false
+                    notifyScreenChanged()
                 }
                 .subscribe({
                     if (it) {
-                        viewState.showStatus("Сервер доступен")
+                        screenState.status = "Сервер доступен"
+                        notifyScreenChanged()
                         apiConfig.updateNeedConfig(false)
                     } else {
                         loadConfig()
                     }
                 }, {
-                    Log.e("bobobo", "error on $currentState: $it")
+                    Log.e("bobobo", "error on $currentState: $it, ${it is IOException}")
                     it.printStackTrace()
                     when (it) {
                         is WrongHostException -> loadConfig()
+                        is IOException,
+                        is SSLException,
+                        is SSLHandshakeException,
+                        is SSLKeyException,
+                        is SSLProtocolException,
+                        is SSLPeerUnverifiedException -> loadConfig()
                         else -> {
-                            viewState.showStatus("Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) })
-                            viewState.showRefresh(true)
+                            screenState.status = "Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) }
+                            screenState.refresh = true
+                            notifyScreenChanged()
                         }
                     }
                 })
@@ -79,30 +128,33 @@ class ConfiguringPresenter @Inject constructor(
     }
 
     private fun loadConfig() {
-        currentState = State.LOAD_CONFIG
+        updateState(State.LOAD_CONFIG)
         configurationRepository
                 .getConfiguration()
                 .observeOn(schedulers.ui())
                 .doOnSubscribe {
-                    viewState.showStatus("Загрузка списка адресов")
-                    viewState.showRefresh(false)
+                    screenState.status = "Загрузка списка адресов"
+                    screenState.refresh = false
+                    notifyScreenChanged()
                 }
                 .subscribe({
                     val addresses = apiConfig.getAddresses()
                     val proxies = addresses.sumBy { it.proxies.size }
-                    viewState.showStatus("Загружено адресов: ${addresses.size}; прокси: $proxies".also { Log.e("bobobo", it) })
+                    screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies".also { Log.e("bobobo", it) }
+                    notifyScreenChanged()
                     checkAvail()
                 }, {
                     Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
-                    viewState.showStatus("Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) })
-                    viewState.showRefresh(true)
+                    screenState.status = "Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) }
+                    screenState.refresh = true
+                    notifyScreenChanged()
                 })
                 .addToDisposable()
     }
 
     private fun checkAvail() {
-        currentState = State.CHECK_AVAIL
+        updateState(State.CHECK_AVAIL)
         val addresses = apiConfig.getAddresses()
         Observable
                 .fromIterable(addresses)
@@ -116,11 +168,13 @@ class ConfiguringPresenter @Inject constructor(
                 .toList()
                 .observeOn(schedulers.ui())
                 .doOnSubscribe {
-                    viewState.showStatus("Проверка доступных адресов")
-                    viewState.showRefresh(false)
+                    screenState.status = "Проверка доступных адресов"
+                    screenState.refresh = false
+                    notifyScreenChanged()
                 }
                 .subscribe({
-                    viewState.showStatus("Доступнные адреса: ${it.size}".also { Log.e("bobobo", it) })
+                    screenState.status = "Доступнные адреса: ${it.size}".also { Log.e("bobobo", it) }
+                    notifyScreenChanged()
                     Log.e("boboob", "checkAvail ${it.joinToString()}")
                     apiConfig.setAvailableAddresses(it)
                     if (it.isNotEmpty()) {
@@ -132,15 +186,16 @@ class ConfiguringPresenter @Inject constructor(
                 }, {
                     Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
-                    viewState.showStatus("Ошибка проверки доступности адресов: ${it.message}".also { Log.e("bobobo", it) })
-                    viewState.showRefresh(true)
+                    screenState.status = "Ошибка проверки доступности адресов: ${it.message}".also { Log.e("bobobo", it) }
+                    screenState.refresh = true
+                    notifyScreenChanged()
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
     }
 
     private fun checkProxies() {
-        currentState = State.CHECK_PROXIES
+        updateState(State.CHECK_PROXIES)
         val proxies = apiConfig.getAddresses().map { it.proxies }.reduce { acc, list -> acc.plus(list) }
         Observable
                 .fromIterable(proxies)
@@ -151,8 +206,9 @@ class ConfiguringPresenter @Inject constructor(
                 .toList()
                 .observeOn(schedulers.ui())
                 .doOnSubscribe {
-                    viewState.showStatus("Проверка доступных прокси")
-                    viewState.showRefresh(false)
+                    screenState.status = "Проверка доступных прокси"
+                    screenState.refresh = false
+                    notifyScreenChanged()
                 }
                 .subscribe({
                     it.forEach {
@@ -162,15 +218,17 @@ class ConfiguringPresenter @Inject constructor(
                     val addressByProxy = apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
                     if (bestProxy != null && addressByProxy != null) {
                         apiConfig.updateActiveAddress(addressByProxy)
-                        viewState.showStatus("Доступнные прокси: ${it.size}; будет использован ${bestProxy.first.tag} адреса ${addressByProxy.tag}".also { Log.e("bobobo", it) })
+                        screenState.status = "Доступнные прокси: ${it.size}; будет использован ${bestProxy.first.tag} адреса ${addressByProxy.tag}".also { Log.e("bobobo", it) }
+                        notifyScreenChanged()
                     }
 
                     apiConfig.updateNeedConfig(false)
                 }, {
                     Log.e("bobobo", "error on $currentState: $it")
                     it.printStackTrace()
-                    viewState.showStatus("Ошибка проверки доступности прокси-серверов: ${it.message}".also { Log.e("bobobo", it) })
-                    viewState.showRefresh(true)
+                    screenState.status = "Ошибка проверки доступности прокси-серверов: ${it.message}".also { Log.e("bobobo", it) }
+                    screenState.refresh = true
+                    notifyScreenChanged()
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
@@ -182,5 +240,11 @@ class ConfiguringPresenter @Inject constructor(
         CHECK_AVAIL,
         CHECK_PROXIES
     }
+
+    class ScreenState(
+            var status: String = "",
+            var refresh: Boolean = false,
+            var nextButton: String? = null
+    )
 
 }

@@ -23,15 +23,25 @@ class PreferencesStorage @Inject constructor(
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PIP_CONTROL_KEY = "pip_control"
         private const val APP_THEME_KEY = "app_theme_dark"
+        private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
+        private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
     }
 
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
+    private val notificationsAllRelay = BehaviorRelay.createDefault<Boolean>(notificationsAll)
+    private val notificationsServiceRelay = BehaviorRelay.createDefault<Boolean>(notificationsService)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             APP_THEME_KEY -> {
                 appThemeRelay.accept(getTheme())
+            }
+            NOTIFICATIONS_ALL_KEY -> {
+                notificationsAllRelay.accept(notificationsAll)
+            }
+            NOTIFICATIONS_SERVICE_KEY -> {
+                notificationsServiceRelay.accept(notificationsService)
             }
         }
     }
@@ -98,4 +108,16 @@ class PreferencesStorage @Inject constructor(
     }
 
     override fun observeTheme(): Observable<AppThemeHolder.AppTheme> = appThemeRelay.hide()
+
+    override var notificationsAll: Boolean
+        get() = sharedPreferences.getBoolean(NOTIFICATIONS_ALL_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(NOTIFICATIONS_ALL_KEY, value).apply()
+
+    override fun observeNotificationsAll(): Observable<Boolean> = notificationsAllRelay.hide()
+
+    override var notificationsService: Boolean
+        get() = sharedPreferences.getBoolean(NOTIFICATIONS_SERVICE_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(NOTIFICATIONS_SERVICE_KEY, value).apply()
+
+    override fun observeNotificationsService(): Observable<Boolean> = notificationsServiceRelay.hide()
 }

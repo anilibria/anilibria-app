@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="config_refresh, config_skip" />
+        app:constraint_referenced_ids="config_refresh,config_skip" />
 
     <android.support.design.button.MaterialButton
         android:id="@+id/config_refresh"
@@ -78,9 +78,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="24dp"
         android:text="Повторить"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/config_next"
         app:layout_constraintEnd_toStartOf="@id/config_skip"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="?btn_border" />
@@ -92,11 +91,24 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
         android:text="Пропустить"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/config_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/config_refresh"
+        app:strokeColor="?btn_border" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/config_next"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Следующий шаг"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="?btn_border" />
 
 </android.support.constraint.ConstraintLayout>

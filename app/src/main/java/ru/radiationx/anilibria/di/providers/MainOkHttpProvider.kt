@@ -5,12 +5,19 @@ import okhttp3.OkHttpClient
 import ru.radiationx.anilibria.model.system.AppCookieJar
 import javax.inject.Inject
 import javax.inject.Provider
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
+import ru.radiationx.anilibria.model.system.appendConnectionSpecs
+import ru.radiationx.anilibria.model.system.appendSocketFactoryIfNeeded
+
 
 class MainOkHttpProvider @Inject constructor(
         private val appCookieJar: AppCookieJar
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
+            .appendConnectionSpecs()
+            .appendSocketFactoryIfNeeded()
             .addNetworkInterceptor {
                 val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
                 it.proceed(it.request()).newBuilder()

@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.model.data.holders
 
+import io.reactivex.Observable
+import java.util.*
+
 /**
  * Created by radiationx on 03.02.18.
  */
@@ -37,5 +40,12 @@ interface PreferencesHolder {
     var playSpeed: Float
 
     var pipControl: Int
+
+
+    var notificationsAll: Boolean
+    fun observeNotificationsAll(): Observable<Boolean>
+
+    var notificationsService: Boolean
+    fun observeNotificationsService(): Observable<Boolean>
 
 }

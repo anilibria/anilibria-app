@@ -3,17 +3,16 @@ package ru.radiationx.anilibria.di.providers
 import android.util.Log
 import okhttp3.OkHttpClient
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.system.AppCookieJar
-import ru.radiationx.anilibria.model.system.Client
-import ru.radiationx.anilibria.model.system.WrongHostException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import javax.inject.Inject
 import javax.inject.Provider
 import android.R.attr.password
 import okhttp3.Credentials
+import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.system.*
 
 
 class ApiOkHttpProvider @Inject constructor(
@@ -22,6 +21,8 @@ class ApiOkHttpProvider @Inject constructor(
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
+            .appendConnectionSpecs()
+            .appendSocketFactoryIfNeeded()
             .apply {
                 val availableAddress = apiConfig.getAvailableAddresses().contains(apiConfig.active.tag)
 
@@ -47,11 +48,11 @@ class ApiOkHttpProvider @Inject constructor(
 
                 addNetworkInterceptor {
                     val hostAddress = it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
-                    Log.d("boboob", "hostAddress $hostAddress, possible=${apiConfig.getPossibleIps()}")
-                    if (!apiConfig.getPossibleIps().contains(hostAddress)) {
+                    Log.d("boboob", "hostAddress $hostAddress")
+                    /*if (!apiConfig.getPossibleIps().contains(hostAddress)) {
                         apiConfig.updateNeedConfig(true)
                         throw WrongHostException(hostAddress)
-                    }
+                    }*/
                     it.proceed(it.request()).newBuilder()
                             .header("Remote-Address", hostAddress)
                             .build()
@@ -77,7 +78,13 @@ class ApiOkHttpProvider @Inject constructor(
                 }
 
                 cookieJar(appCookieJar)
-            }
+            }/*
+            .addNetworkInterceptor(
+                    HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+                        Log.d("logging", it)
+                    })
+                            .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
+            )*/
             .build()
             .also {
                 Log.e("bobobo", "ApiOkHttpProvider provide $it")

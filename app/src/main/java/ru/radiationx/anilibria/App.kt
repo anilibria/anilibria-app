@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.support.multidex.MultiDex
@@ -13,31 +13,33 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
+import com.google.firebase.messaging.FirebaseMessaging
+import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
-import com.nostra13.universalimageloader.core.DefaultConfigurationFactory
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader
-import com.nostra13.universalimageloader.core.download.ImageDownloader
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.anilibria.utils.ImageFileNameGenerator
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.io.InputStream
-import java.net.*
 import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
@@ -80,12 +82,21 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        initYandexAppMetrica()
 
-        //Fabric.with(this, Crashlytics())
+        if (isMainProcess()) {
+            initInMainProcess()
+        }
+    }
+
+    private fun initYandexAppMetrica() {
+        if (BuildConfig.DEBUG) return
         val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
+    }
 
+    private fun initInMainProcess() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
@@ -112,6 +123,47 @@ class App : Application() {
 
         initImageLoader(this)
         appVersionCheck()
+
+        FirebaseMessaging.getInstance().apply {
+            isAutoInitEnabled = true
+        }
+
+        val preferencesHolder = DI.get(PreferencesHolder::class.java)
+        val disposables = CompositeDisposable()
+        preferencesHolder
+                .observeNotificationsAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ enabled ->
+                    changeSubscribeStatus(enabled, "all")
+                }, {
+                    it.printStackTrace()
+                })
+                .addTo(disposables)
+
+        preferencesHolder
+                .observeNotificationsService()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ enabled ->
+                    changeSubscribeStatus(enabled, "service")
+                    changeSubscribeStatus(enabled, "app_update")
+                    changeSubscribeStatus(enabled, "config")
+                }, {
+                    it.printStackTrace()
+                })
+                .addTo(disposables)
+
+    }
+
+    private fun changeSubscribeStatus(enabled: Boolean, topic: String) {
+        FirebaseMessaging.getInstance().apply {
+            if (enabled) {
+                subscribeToTopic(topic)
+                subscribeToTopic("android_$topic")
+            } else {
+                unsubscribeFromTopic(topic)
+                unsubscribeFromTopic("android_$topic")
+            }
+        }
     }
 
     private fun initDependencies() {
@@ -204,10 +256,21 @@ class App : Application() {
                 .denyCacheImageMultipleSizesInMemory()
                 .imageDownloader(imageDownloader)
                 .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
-                .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
+                .diskCacheSize(25 * 1024 * 1024)
+                .diskCacheFileNameGenerator(ImageFileNameGenerator())
                 .defaultDisplayImageOptions(defaultOptionsUIL.build())
                 .build()
         ImageLoader.getInstance().init(config)
+    }
+
+
+    private fun isMainProcess() = packageName == getCurrentProcessName()
+
+    private fun getCurrentProcessName(): String? {
+        val mypid = android.os.Process.myPid()
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val processes = manager.runningAppProcesses
+        return processes.firstOrNull { it.pid == mypid }?.processName
     }
 
 }

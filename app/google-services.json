@@ -8,6 +8,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:500586946614:android:7d9606acda0283a1",
+        "android_client_info": {
+          "package_name": "ru.radiationx.anilibria.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500586946614-3uadklhgga8vdgoh3c3tsdlcjavam7hb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0hPAsvfeyVEUq9HlXPtKOghw2mVxc798"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500586946614-3uadklhgga8vdgoh3c3tsdlcjavam7hb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "500586946614-0irscohmlv6ocmvrac4395l67sh0907c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "tv.anilibria.anilibria"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:500586946614:android:fb589f3c4b9fbe33",
         "android_client_info": {
           "package_name": "tv.anilibria.store"

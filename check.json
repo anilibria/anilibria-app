@@ -1,32 +1,31 @@
 {
   "update": {
-    "version_code": "52",
-    "version_name": "2.4.2",
+    "version_code": "53",
+    "version_name": "2.4.3",
     "version_build": "0",
-    "build_date": "12 августа 2019 г.",
+    "build_date": "1 сентября 2019 г.",
     "links": [
       {
         "name": "AniLibria App (Красная иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_v2.4.2.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.3/AniLibria_v2.4.3.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.2/AniLibria_Lite_v2.4.2.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.3/AniLibria_Lite_v2.4.3.apk",
         "type": "file"
       }
     ],
-    "important": [
-      "(Актуально на 11-12 августа) Хостинг находится под DDOS атакой, поэтому сайт и приложение не работают, но пока-что можете скачать новую версию приложения :)",
-      "AniLibria Lite была удалена из PlayMarket, теперь там доступен полный функционал"
+    "important": [],
+    "added": [
+      "Пуш-уведомления о новых сериях (уведомления по избранному буду в следующих обновлениях)"
     ],
-    "added": [],
     "fixed": [
-      "Ошибка \"Нет интернет соединения\"",
-      "Небольшие визуальные исправления",
-      "Выбор качества серии больше не влияет на глобальные настройки качества",
-      "Правильное форматирование времени остановки серии"
+      "Некоторые ошибки при \"обновлении конфигурации\" на Android 4.4",
+      "Баг при котором нельзя было еще раз посмотреть уже просмотренную серию"
     ],
-    "changed": []
+    "changed": [
+      "Изменена логика \"обновления конфигурации\". Добавлена кнопка для ручного перехода к следующему шагу"
+    ]
   }
 }

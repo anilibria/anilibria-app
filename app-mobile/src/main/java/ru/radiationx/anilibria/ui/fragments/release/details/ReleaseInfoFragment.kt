@@ -196,7 +196,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode) {
         val context = context ?: return
         val items = arrayOf(
-                "Отметить как непросмотренный"
+                "Отметить как непросмотренная"
         )
         AlertDialog.Builder(context)
                 .setItems(items) { _, which ->

@@ -121,6 +121,12 @@ class ReleaseInfoPresenter @Inject constructor(
         releaseInteractor.putEpisode(episode)
     }
 
+    fun markEpisodeUnviewed(episode: ReleaseFull.Episode) {
+        episode.isViewed = false
+        episode.lastAccess = 0
+        releaseInteractor.putEpisode(episode)
+    }
+
     fun onTorrentClick() {
         currentData?.let {
             when {
@@ -161,6 +167,10 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.let {
             viewState.playEpisode(it, episode, playFlag, quality)
         }
+    }
+
+    fun onLongClickEpisode(episode: ReleaseFull.Episode) {
+        currentData?.also { viewState.showLongPressEpisodeDialog(episode) }
     }
 
     fun onClickLink(url: String): Boolean {

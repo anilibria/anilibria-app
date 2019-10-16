@@ -55,6 +55,10 @@ class ReleaseEpisodeDelegate(
             containerView.setOnClickListener {
                 itemListener.onClickEpisode(currentItem)
             }
+            containerView.setOnLongClickListener {
+                itemListener.onLongClickEpisode(currentItem)
+                true
+            }
         }
 
         fun bind(item: ReleaseFull.Episode, isEven: Boolean) {
@@ -88,5 +92,7 @@ class ReleaseEpisodeDelegate(
         fun onClickFullHd(episode: ReleaseFull.Episode)
 
         fun onClickEpisode(episode: ReleaseFull.Episode)
+
+        fun onLongClickEpisode(episode: ReleaseFull.Episode)
     }
 }

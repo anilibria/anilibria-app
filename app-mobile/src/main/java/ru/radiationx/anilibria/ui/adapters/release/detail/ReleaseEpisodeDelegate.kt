@@ -56,8 +56,13 @@ class ReleaseEpisodeDelegate(
                 itemListener.onClickEpisode(currentItem)
             }
             containerView.setOnLongClickListener {
-                itemListener.onLongClickEpisode(currentItem)
-                true
+                if (currentItem.isViewed)
+                {
+                    itemListener.onLongClickEpisode(currentItem)
+                    true
+                }
+                else
+                    false
             }
         }
 

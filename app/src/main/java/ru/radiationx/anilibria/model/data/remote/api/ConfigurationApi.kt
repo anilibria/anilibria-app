@@ -32,13 +32,14 @@ class ConfigurationApi @Inject constructor(
         val args = mapOf(
                 "query" to "config"
         )
-        return client.post(apiConfig.apiUrl, args)
+        /*return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .doOnSuccess { apiConfigStorage.saveJson(it) }
                 .map { configurationParser.parse(it) }
                 .doOnSuccess { apiConfig.setAddresses(it) }
                 .onErrorResumeNext { getReserve("https://raw.githubusercontent.com/anilibria/anilibria-app/master/config.json") }
-                .onErrorResumeNext { getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json") }
+                .onErrorResumeNext { getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json") }*/
+        return Single.just(emptyList())
     }
 
     private fun check(client: IClient, apiUrl: String): Single<Boolean> =

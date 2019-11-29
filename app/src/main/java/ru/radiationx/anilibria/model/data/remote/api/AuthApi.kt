@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.api
 
+import android.net.Uri
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
@@ -8,7 +9,6 @@ import ru.radiationx.anilibria.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
 import ru.radiationx.anilibria.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.extension.nullString
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
@@ -59,8 +59,13 @@ class AuthApi @Inject constructor(
 
     fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf()
+
+        val fixedUrl = Uri.parse(apiConfig.baseUrl).host?.let { redirectDomain ->
+            resultUrl.replace("www.anilibria.tv", redirectDomain)
+        } ?: resultUrl
+
         return client
-                .getFull(resultUrl, args)
+                .getFull(fixedUrl, args)
                 .doOnSuccess { response ->
                     val matcher = Pattern.compile(item.errorUrlPattern).matcher(response.redirect)
                     if (matcher.find()) {

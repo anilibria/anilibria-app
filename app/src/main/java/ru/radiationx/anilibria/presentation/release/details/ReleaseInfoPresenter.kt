@@ -169,7 +169,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickDonate() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_DONATE}")
     }
 
     fun onClickFav() {
@@ -233,7 +233,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onDialogDonateClick() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_DONATE}")
     }
 
     fun onResetEpisodesHistoryClick() {

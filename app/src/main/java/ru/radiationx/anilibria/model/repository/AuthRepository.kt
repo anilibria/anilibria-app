@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.model.data.holders.SocialAuthHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.api.AuthApi
+import ru.radiationx.anilibria.model.system.HttpException
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject
 
@@ -56,10 +57,9 @@ class AuthRepository @Inject constructor(
             .doOnSuccess { updateUser(it) }
             .doOnError {
                 it.printStackTrace()
-                (it as? ApiError)?.also {
-                    if (it.code == 401) {
-                        userHolder.delete()
-                    }
+                val code = ((it as? ApiError)?.code ?: (it as? HttpException)?.code)
+                if (code == 401) {
+                    userHolder.delete()
                 }
             }
             .subscribeOn(schedulers.io())
@@ -73,6 +73,9 @@ class AuthRepository @Inject constructor(
 
     fun signOut(): Single<String> = authApi
             .signOut()
+            .doOnSuccess {
+                userHolder.delete()
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

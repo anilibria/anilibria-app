@@ -184,7 +184,7 @@ class OtherPresenter @Inject constructor(
             }
             MENU_DONATE -> {
                 //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-                Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_DONATE}")
+                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_DONATE}")
             }
             MENU_ABOUT_ANILIB -> {
                 router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_ABOUT_ANILIB))
@@ -214,7 +214,7 @@ class OtherPresenter @Inject constructor(
                 Utils.externalLink(apiConfig.siteUrl)
             }
             MENU_RIGHT_HOLDERS -> {
-                Utils.externalLink("${apiConfig.baseUrl}/${PageApi.PAGE_ID_RIGHT_HOLDERS}")
+                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_RIGHT_HOLDERS}")
             }
         }
     }

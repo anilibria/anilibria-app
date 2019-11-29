@@ -101,7 +101,8 @@ open class Client @Inject constructor(
             okHttpResponse = clientWrapper.get().newCall(request).execute()
 
             if (!okHttpResponse!!.isSuccessful) {
-                throw IOException("Unexpected code $okHttpResponse")
+                throw HttpException(okHttpResponse.code(), okHttpResponse.message(), okHttpResponse)
+                //throw IOException("Unexpected code $okHttpResponse")
             }
             responseBody = okHttpResponse.body()
 

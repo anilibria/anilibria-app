@@ -133,7 +133,7 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onClickWatchWeb() {
         currentData?.let { release ->
             release.moonwalkLink?.let {
-                viewState.playWeb(it)
+                viewState.playWeb(it, release.code.orEmpty())
             }
         }
     }

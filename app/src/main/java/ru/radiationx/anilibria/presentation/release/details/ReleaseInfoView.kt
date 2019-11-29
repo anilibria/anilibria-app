@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.common.IBaseView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ReleaseInfoView: IBaseView {
+interface ReleaseInfoView : IBaseView {
     fun showVitalItems(vital: List<VitalItem>)
 
     fun updateFavCounter()
@@ -29,7 +29,7 @@ interface ReleaseInfoView: IBaseView {
     fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playWeb(link: String)
+    fun playWeb(link: String, code: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)

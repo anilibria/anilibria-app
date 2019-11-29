@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="file:///android_asset/scripts/base64.js"></script>
+    <script type="text/javascript" src="file:///android_asset/scripts/text-encoder.js"></script>
+    <script type="text/javascript" src="file:///android_asset/scripts/main.js"></script>
+    <!--<script type="text/javascript" src="file:///android_asset/scripts/md_colors.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="file:///android_asset/fonts/roboto/import.css">
+    <!--<link rel="stylesheet" type="text/css" href="file:///android_asset/styles/md_colors.css">-->
+    <link rel="stylesheet" type="text/css"
+          href="file:///android_asset/styles/main_${app_theme}.css">
+    <style>
+        html, body, .wrapper, .content {
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        #video_frame {
+            height: 100vh!important;
+            width: 100%!important;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="content" class="wrapper">
+    <iframe id="video_frame" src="${iframe_url}" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+
+</body>
+
+</html>

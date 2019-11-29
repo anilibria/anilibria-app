@@ -59,6 +59,7 @@ class App : Application() {
 
     lateinit var staticPageTemplate: MiniTemplator
     lateinit var vkCommentsTemplate: MiniTemplator
+    lateinit var videoPageTemplate: MiniTemplator
 
     val vkCommentCssFixLight: String by lazy {
         assets.open("styles/vk_comments_fix_light.css").bufferedReader().use {
@@ -110,6 +111,7 @@ class App : Application() {
 
         findTemplate("static_page")?.let { staticPageTemplate = it }
         findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
+        findTemplate("video_page")?.let { videoPageTemplate = it }
 
         val systemMessenger = DI.get(SystemMessenger::class.java)
         val schedulers = DI.get(SchedulersProvider::class.java)

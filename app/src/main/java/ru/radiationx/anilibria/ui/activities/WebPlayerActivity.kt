@@ -6,12 +6,14 @@ import android.view.WindowManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.activity_moon.*
+import kotlinx.android.synthetic.main.activity_moon.webView
+import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.extension.generateWithTheme
+import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.utils.Utils
-import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -20,7 +22,11 @@ class WebPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_URL = "iframe_url"
+        const val ARG_RELEASE_CODE = "release_code"
     }
+
+    private var argUrl: String = ""
+    private var argReleaseCode: String = ""
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -28,8 +34,19 @@ class WebPlayerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        argUrl = intent?.getStringExtra(ARG_URL).orEmpty()
+        argReleaseCode = intent?.getStringExtra(ARG_RELEASE_CODE).orEmpty()
+
+        if (argUrl.isEmpty()) {
+            finish()
+            return
+        }
+
+        window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(R.layout.activity_moon)
         supportActionBar?.hide()
 
@@ -38,26 +55,28 @@ class WebPlayerActivity : BaseActivity() {
             cacheMode = WebSettings.LOAD_NO_CACHE
             javaScriptEnabled = true
         }
-        intent?.let {
-            it.getStringExtra(ARG_URL)?.let { argUrl ->
-                val extraHeaders = HashMap<String, String>()
-                extraHeaders["Referer"] = apiConfig.widgetsSiteUrl
-                Log.e("lalala", "load url $argUrl")
-                webView.loadUrl(argUrl, extraHeaders)
-                webView.webViewClient = object : WebViewClient() {
-                    @Suppress("OverridingDeprecatedMember")
-                    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                        val matcher = Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc)").matcher(url)
-                        return if (matcher.find()) {
-                            false
-                        } else {
-                            Utils.externalLink(url.orEmpty())
-                            true
-                        }
-                    }
+        webView.webViewClient = object : WebViewClient() {
+            @Suppress("OverridingDeprecatedMember")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                val matcher = Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)").matcher(url)
+                return if (matcher.find()) {
+                    false
+                } else {
+                    Utils.externalLink(url.orEmpty())
+                    true
                 }
-            } ?: finish()
-        } ?: finish()
+            }
+        }
+
+        loadUrl()
     }
 
+    private fun loadUrl() {
+        val releaseUrl = "${apiConfig.widgetsSiteUrl}/release/$argReleaseCode.html\""
+
+        val template = App.instance.videoPageTemplate
+        template.setVariableOpt("iframe_url", argUrl)
+
+        webView.easyLoadData(releaseUrl, template.generateWithTheme(AppThemeHolder.AppTheme.DARK))
+    }
 }

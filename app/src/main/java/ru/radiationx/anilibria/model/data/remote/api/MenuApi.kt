@@ -23,7 +23,7 @@ class MenuApi @Inject constructor(
         val args: Map<String, String> = mapOf(
                 "query" to "link_menu"
         )
-        return client.get(apiConfig.apiUrl, args)
+        return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { menuParse.parse(it) }
     }

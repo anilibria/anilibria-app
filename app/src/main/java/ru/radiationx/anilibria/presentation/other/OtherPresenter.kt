@@ -56,7 +56,6 @@ class OtherPresenter @Inject constructor(
                 .getMenu()
                 .subscribe({}, {
                     it.printStackTrace()
-                    errorHandler.handle(it)
                 })
                 .addToDisposable()
         subscribeUpdate()
@@ -152,6 +151,7 @@ class OtherPresenter @Inject constructor(
         LinkMenuItem.IC_ANILIBRIA -> R.drawable.ic_anilibria
         LinkMenuItem.IC_INFO -> R.drawable.ic_information
         LinkMenuItem.IC_RULES -> R.drawable.ic_book_open_variant
+        LinkMenuItem.IC_PERSON -> R.drawable.ic_person
         LinkMenuItem.IC_SITE -> R.drawable.ic_link
         else -> R.drawable.ic_link
     }

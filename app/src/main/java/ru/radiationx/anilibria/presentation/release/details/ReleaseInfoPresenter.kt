@@ -6,7 +6,6 @@ import ru.radiationx.anilibria.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
@@ -169,7 +168,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickDonate() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
     }
 
     fun onClickFav() {
@@ -233,7 +232,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onDialogDonateClick() {
         //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_ID_DONATE}")
+        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
     }
 
     fun onResetEpisodesHistoryClick() {

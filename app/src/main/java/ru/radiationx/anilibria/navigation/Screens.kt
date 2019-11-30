@@ -60,8 +60,8 @@ object Screens {
         override fun getFragment() = FavoritesFragment()
     }
 
-    class StaticPage(val pageId: String) : BaseAppScreen() {
-        override fun getFragment() = PageFragment.newInstance(pageId)
+    class StaticPage(val pagePath: String, val title: String? = null) : BaseAppScreen() {
+        override fun getFragment() = PageFragment.newInstance(pagePath)
     }
 
     class History : BaseAppScreen() {

@@ -15,8 +15,8 @@ class PageRepository @Inject constructor(
         private val pageApi: PageApi
 ) {
 
-    fun getPage(pageId: String): Single<PageLibria> = pageApi
-            .getPage(pageId)
+    fun getPage(pagePath: String): Single<PageLibria> = pageApi
+            .getPage(pagePath)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
 

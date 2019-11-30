@@ -14,7 +14,6 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
@@ -31,13 +30,17 @@ import javax.inject.Inject
 class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListener {
 
     companion object {
-        private const val ARG_ID: String = "page_id"
+        private const val ARG_PATH: String = "page_path"
+        private const val ARG_TITLE: String = "page_title"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
 
-        fun newInstance(pageId: String) = PageFragment().putExtra {
-            putString(ARG_ID, pageId)
+        fun newInstance(pageTitle: String, title: String? = null) = PageFragment().putExtra {
+            putString(ARG_PATH, pageTitle)
+            putString(ARG_TITLE, title)
         }
     }
+
+    private var pageTitle: String? = null
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -59,7 +62,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.pageId = it.getString(ARG_ID, null)
+            presenter.pagePath = it.getString(ARG_PATH, null)
+            pageTitle = it.getString(ARG_TITLE, null)
         }
     }
 
@@ -74,13 +78,10 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         ToolbarHelper.marqueeTitle(toolbar)
 
         toolbar.apply {
-            title = when (presenter.pageId) {
-                PageApi.PAGE_ID_TEAM -> "Список команды"
-                PageApi.PAGE_ID_BID -> "Подать заявку"
-                PageApi.PAGE_ID_DONATE -> "Поддержать"
-                PageApi.PAGE_ID_ABOUT_ANILIB -> "Об AniLibria"
-                PageApi.PAGE_ID_RULES -> "Правила"
-                else -> "Статическая страница"
+            title = when (presenter.pagePath) {
+                PageApi.PAGE_PATH_TEAM -> "Список команды"
+                PageApi.PAGE_PATH_DONATE -> "Поддержать"
+                else -> pageTitle ?: "Статическая страница"
             }
             setNavigationOnClickListener { presenter.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)

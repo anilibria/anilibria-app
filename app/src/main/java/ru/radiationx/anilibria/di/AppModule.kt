@@ -66,6 +66,7 @@ class AppModule(context: Context) : Module() {
         bind(GenresHolder::class.java).to(GenresStorage::class.java).singletonInScope()
         bind(YearsHolder::class.java).to(YearsStorage::class.java).singletonInScope()
         bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singletonInScope()
+        bind(MenuHolder::class.java).to(MenuStorage::class.java).singletonInScope()
 
 
         bind(ILinkHandler::class.java).to(LinkRouter::class.java).singletonInScope()
@@ -106,6 +107,7 @@ class AppModule(context: Context) : Module() {
         bind(YoutubeParser::class.java).singletonInScope()
         bind(ScheduleParser::class.java).singletonInScope()
         bind(FeedParser::class.java).singletonInScope()
+        bind(MenuParser::class.java).singletonInScope()
 
         bind(AuthApi::class.java).singletonInScope()
         bind(CheckerApi::class.java).singletonInScope()
@@ -118,6 +120,7 @@ class AppModule(context: Context) : Module() {
         bind(YoutubeApi::class.java).singletonInScope()
         bind(ScheduleApi::class.java).singletonInScope()
         bind(FeedApi::class.java).singletonInScope()
+        bind(MenuApi::class.java).singletonInScope()
 
         bind(AuthRepository::class.java).singletonInScope()
         bind(ReleaseRepository::class.java).singletonInScope()
@@ -131,6 +134,7 @@ class AppModule(context: Context) : Module() {
         bind(YoutubeRepository::class.java).singletonInScope()
         bind(ScheduleRepository::class.java).singletonInScope()
         bind(FeedRepository::class.java).singletonInScope()
+        bind(MenuRepository::class.java).singletonInScope()
 
         bind(ReleaseInteractor::class.java).singletonInScope()
     }

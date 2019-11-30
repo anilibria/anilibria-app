@@ -18,21 +18,19 @@ class PagePresenter @Inject constructor(
         private val errorHandler: IErrorHandler
 ) : BasePresenter<PageView>(router) {
 
-    var pageId: String? = null
+    var pagePath: String? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        pageId?.let {
-            if (PageApi.PAGE_IDS.contains(it)) {
-                loadPage(it)
-            }
+        pagePath?.also {
+            loadPage(it)
         }
     }
 
-    private fun loadPage(pageId: String) {
+    private fun loadPage(pagePath: String) {
         viewState.setRefreshing(true)
         pageRepository
-                .getPage(pageId)
+                .getPage(pagePath)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ page ->
                     viewState.showPage(page)

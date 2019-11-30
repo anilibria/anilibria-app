@@ -5,7 +5,6 @@ import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.entity.app.page.PageLibria
 import ru.radiationx.anilibria.entity.app.page.VkComments
-import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
@@ -21,25 +20,18 @@ class PageApi @Inject constructor(
         private val apiConfig: ApiConfig
 ) {
     companion object {
-        const val PAGE_ID_TEAM = "pages/team.php"
-        const val PAGE_ID_BID = "zayavka-v-komandu.php"
-        const val PAGE_ID_DONATE = "pages/donate.php"
-        const val PAGE_ID_ABOUT_ANILIB = "anilibria.php"
-        const val PAGE_ID_RULES = "pravila.php"
-        const val PAGE_ID_RIGHT_HOLDERS = "pages/rightholders.php"
+        const val PAGE_PATH_TEAM = "pages/team.php"
+        const val PAGE_PATH_DONATE = "pages/donate.php"
 
         val PAGE_IDS = listOf(
-                PAGE_ID_TEAM,
-                //PAGE_ID_BID,
-                PAGE_ID_DONATE
-                //PAGE_ID_ABOUT_ANILIB,
-                //PAGE_ID_RULES
+                PAGE_PATH_TEAM,
+                PAGE_PATH_DONATE
         )
     }
 
-    fun getPage(pageId: String): Single<PageLibria> {
+    fun getPage(pagePath: String): Single<PageLibria> {
         val args: Map<String, String> = emptyMap()
-        return client.get("${apiConfig.baseUrl}/$pageId", args)
+        return client.get("${apiConfig.baseUrl}/$pagePath", args)
                 .map { pagesParser.baseParse(it) }
     }
 

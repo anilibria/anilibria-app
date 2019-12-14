@@ -9,20 +9,20 @@
       "baseImages": "http://www.anilibria.tv/",
       "base": "https://www.anilibria.tv",
       "api": "https://www.anilibria.tv/public/api/index.php",
-      "ips": [
-        "37.1.217.18"
-      ],
-      "proxies": [
-        {
-          "tag": "api0_proxy0",
-          "name": "Основная прокся",
-          "desc": null,
-          "ip": "5.187.0.24",
-          "port": 3128,
-          "user": null,
-          "password": null
-        }
-      ]
+      "ips": [],
+      "proxies": []
+    },
+    {
+      "tag": "api1",
+      "name": "Апи1",
+      "desc": null,
+      "widgetsSite": "https://www.anilibria.tv",
+      "site": "https://www.anilibria.tv",
+      "baseImages": "https://static.wwnd.space/public/api/index.php",
+      "base": "https://wwnd.space",
+      "api": "https://wwnd.space/public/api/index.php",
+      "ips": [],
+      "proxies": []
     }
   ]
 }

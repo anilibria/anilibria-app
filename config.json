@@ -18,7 +18,7 @@
       "desc": null,
       "widgetsSite": "https://www.anilibria.tv",
       "site": "https://www.anilibria.tv",
-      "baseImages": "https://static.wwnd.space/public/api/index.php",
+      "baseImages": "https://static.wwnd.space/",
       "base": "https://wwnd.space",
       "api": "https://wwnd.space/public/api/index.php",
       "ips": [],

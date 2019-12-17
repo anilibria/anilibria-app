@@ -1,31 +1,27 @@
 {
   "update": {
-    "version_code": "53",
-    "version_name": "2.4.3",
+    "version_code": "54",
+    "version_name": "2.4.4",
     "version_build": "0",
-    "build_date": "1 сентября 2019 г.",
+    "build_date": "17 декабря 2019 г.",
     "links": [
       {
         "name": "AniLibria App (Красная иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.3/AniLibria_v2.4.3.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_v2.4.4.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.3/AniLibria_Lite_v2.4.3.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_Lite_v2.4.4.apk",
         "type": "file"
       }
     ],
     "important": [],
-    "added": [
-      "Пуш-уведомления о новых сериях (уведомления по избранному буду в следующих обновлениях)"
-    ],
+    "added": [],
     "fixed": [
-      "Некоторые ошибки при \"обновлении конфигурации\" на Android 4.4",
-      "Баг при котором нельзя было еще раз посмотреть уже просмотренную серию"
+      "Обновлён веб плеер, теперь должен работать",
+      "Авторизация в приложении (были проблемы после блокировки сайта)"
     ],
-    "changed": [
-      "Изменена логика \"обновления конфигурации\". Добавлена кнопка для ручного перехода к следующему шагу"
-    ]
+    "changed": []
   }
 }

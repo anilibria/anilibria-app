@@ -23,10 +23,10 @@ import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity

@@ -6,7 +6,7 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_blocked.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

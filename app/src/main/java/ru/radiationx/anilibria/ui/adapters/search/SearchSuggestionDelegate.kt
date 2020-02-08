@@ -11,8 +11,8 @@ import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem

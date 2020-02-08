@@ -2,15 +2,15 @@ package ru.radiationx.anilibria.presentation.other
 
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.other.LinkMenuItem
-import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.data.remote.api.PageApi
-import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.model.repository.MenuRepository
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.data.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.app.other.OtherMenuItem
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.MenuRepository
+import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

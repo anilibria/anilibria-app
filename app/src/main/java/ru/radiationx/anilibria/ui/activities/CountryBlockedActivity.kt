@@ -6,13 +6,11 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_country_blocked.*
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.LocaleModule
-import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.Api
-import ru.radiationx.anilibria.model.system.LocaleHolder
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.anilibria.navigation.Screens
 import javax.inject.Inject
 

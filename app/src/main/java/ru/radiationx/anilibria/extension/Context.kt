@@ -9,7 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import biz.source_code.miniTemplator.MiniTemplator
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.data.datasource.holders.AppThemeHolder
 
 @DrawableRes
 fun Context.getDrawableResAttr(@AttrRes attr: Int): Int {

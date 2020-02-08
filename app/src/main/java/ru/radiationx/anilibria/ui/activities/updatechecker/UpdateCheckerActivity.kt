@@ -17,11 +17,11 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity

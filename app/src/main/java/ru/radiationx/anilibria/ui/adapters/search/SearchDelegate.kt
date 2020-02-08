@@ -6,7 +6,7 @@ import android.widget.ImageView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_fast_search.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem

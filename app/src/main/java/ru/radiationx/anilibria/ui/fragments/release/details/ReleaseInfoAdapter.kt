@@ -3,10 +3,10 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 /* Created by radiationx on 18.11.17. */
 
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate

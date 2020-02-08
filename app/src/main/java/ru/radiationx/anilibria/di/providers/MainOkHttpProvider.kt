@@ -2,13 +2,13 @@ package ru.radiationx.anilibria.di.providers
 
 import android.util.Log
 import okhttp3.OkHttpClient
-import ru.radiationx.anilibria.model.system.AppCookieJar
+import ru.radiationx.data.system.AppCookieJar
 import javax.inject.Inject
 import javax.inject.Provider
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
-import ru.radiationx.anilibria.model.system.appendConnectionSpecs
-import ru.radiationx.anilibria.model.system.appendSocketFactoryIfNeeded
+import ru.radiationx.data.system.appendConnectionSpecs
+import ru.radiationx.data.system.appendSocketFactoryIfNeeded
 
 
 class MainOkHttpProvider @Inject constructor(

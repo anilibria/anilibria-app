@@ -5,7 +5,7 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_social_auth.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable

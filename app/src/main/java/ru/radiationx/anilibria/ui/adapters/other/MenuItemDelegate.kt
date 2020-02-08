@@ -5,7 +5,7 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_menu.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
+import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.anilibria.extension.setCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem

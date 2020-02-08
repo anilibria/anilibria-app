@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -11,8 +10,8 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.utils.Utils
 import java.util.regex.Pattern
 import javax.inject.Inject

@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.page
 
-import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.data.entity.app.page.PageLibria
 import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**

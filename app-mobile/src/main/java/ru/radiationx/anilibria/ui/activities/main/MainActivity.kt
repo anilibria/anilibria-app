@@ -34,7 +34,7 @@ import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.data.system.messages.SystemMessenger
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter

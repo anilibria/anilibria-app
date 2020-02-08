@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.di.providers
+package ru.radiationx.data.di.providers
 
 import android.util.Log
 import okhttp3.OkHttpClient
@@ -8,17 +8,17 @@ import java.net.Proxy
 import javax.inject.Inject
 import javax.inject.Provider
 import okhttp3.Credentials
-import ru.radiationx.anilibria.BuildConfig
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.data.system.Client
 import ru.radiationx.data.system.appendConnectionSpecs
 import ru.radiationx.data.system.appendSocketFactoryIfNeeded
 
-
 class ApiOkHttpProvider @Inject constructor(
         private val appCookieJar: AppCookieJar,
-        private val apiConfig: ApiConfig
+        private val apiConfig: ApiConfig,
+        private val sharedBuildConfig: SharedBuildConfig
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
@@ -64,13 +64,13 @@ class ApiOkHttpProvider @Inject constructor(
                             .newBuilder()
                             .header("mobileApp", "true")
                             .apply {
-                                if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
+                                if (Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)) {
                                     header("Store-Published", "Google")
                                 }
                             }
-                            .header("App-Id", BuildConfig.APPLICATION_ID)
-                            .header("App-Ver-Name", BuildConfig.VERSION_NAME)
-                            .header("App-Ver-Code", BuildConfig.VERSION_CODE.toString())
+                            .header("App-Id", sharedBuildConfig.applicationId)
+                            .header("App-Ver-Name", sharedBuildConfig.versionName)
+                            .header("App-Ver-Code", sharedBuildConfig.versionCode.toString())
                             .header("User-Agent", Client.USER_AGENT)
                             .build()
                     it.proceed(userAgentRequest.also {

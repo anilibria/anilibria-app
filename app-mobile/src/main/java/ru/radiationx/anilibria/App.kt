@@ -30,10 +30,11 @@ import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.addTo
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.anilibria.di.providers.OkHttpImageDownloader
+import ru.radiationx.anilibria.utils.OkHttpImageDownloader
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.system.messages.SystemMessenger
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.utils.ImageFileNameGenerator
+import ru.radiationx.data.di.DataModule
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
@@ -169,7 +170,7 @@ class App : Application() {
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(Scopes.APP)
-        scope.installModules(AppModule(this))
+        scope.installModules(AppModule(this), DataModule(this))
 
         Log.e("lalala", "initDependencies ${Toothpick.openScope(Scopes.APP)}")
     }

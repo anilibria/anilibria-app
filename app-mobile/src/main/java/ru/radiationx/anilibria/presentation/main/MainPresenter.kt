@@ -7,7 +7,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.system.messages.SystemMessenger
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

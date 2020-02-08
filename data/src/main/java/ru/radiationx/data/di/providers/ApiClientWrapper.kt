@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.di.providers
+package ru.radiationx.data.di.providers
 
 import android.util.Log
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger

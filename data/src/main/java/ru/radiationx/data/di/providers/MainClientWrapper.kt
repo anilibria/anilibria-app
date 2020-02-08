@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.di.providers
+package ru.radiationx.data.di.providers
 
 import ru.radiationx.data.system.ClientWrapper
 import javax.inject.Inject

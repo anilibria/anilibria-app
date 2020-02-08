@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.configuring
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import io.reactivex.Observable
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.ConfigurationRepository

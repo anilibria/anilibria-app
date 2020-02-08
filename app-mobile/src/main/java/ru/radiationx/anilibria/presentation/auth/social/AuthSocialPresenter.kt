@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository

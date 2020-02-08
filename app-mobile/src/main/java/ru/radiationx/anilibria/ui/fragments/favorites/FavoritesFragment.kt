@@ -10,8 +10,8 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.lapism.searchview.SearchBehavior
 import com.lapism.searchview.SearchEditText
 import com.lapism.searchview.SearchView

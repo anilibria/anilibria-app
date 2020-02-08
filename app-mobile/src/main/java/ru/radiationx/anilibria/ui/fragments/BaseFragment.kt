@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.arellomobile.mvp.MvpAppCompatFragment
+import moxy.MvpAppCompatFragment
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R

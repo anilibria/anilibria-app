@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.search
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder

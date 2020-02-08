@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.main
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig

@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.anilibria.presentation.common.BasePresenter

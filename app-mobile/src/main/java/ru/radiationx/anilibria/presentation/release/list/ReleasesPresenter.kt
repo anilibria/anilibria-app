@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.release.list
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder

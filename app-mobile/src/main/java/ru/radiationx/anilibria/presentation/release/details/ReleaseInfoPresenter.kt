@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem

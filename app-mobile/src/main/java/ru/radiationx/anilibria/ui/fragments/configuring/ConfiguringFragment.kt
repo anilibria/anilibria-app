@@ -5,8 +5,8 @@ import androidx.transition.TransitionSet
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_configuring.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency

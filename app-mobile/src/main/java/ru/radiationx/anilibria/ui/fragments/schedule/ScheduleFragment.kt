@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R

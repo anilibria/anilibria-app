@@ -3,8 +3,8 @@ package ru.radiationx.anilibria.ui.fragments.other
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_list.*
 import ru.radiationx.anilibria.R

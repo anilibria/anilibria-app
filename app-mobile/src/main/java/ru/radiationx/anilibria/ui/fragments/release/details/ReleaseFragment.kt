@@ -11,8 +11,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer

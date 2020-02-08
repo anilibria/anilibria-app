@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.datasource.holders.AuthHolder

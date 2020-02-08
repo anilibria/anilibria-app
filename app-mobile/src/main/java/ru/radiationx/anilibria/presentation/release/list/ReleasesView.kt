@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.release.list
 
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.AddToEndStrategy
+import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.presentation.common.IBaseView

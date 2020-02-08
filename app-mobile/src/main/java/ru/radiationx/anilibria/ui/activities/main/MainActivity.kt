@@ -13,8 +13,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -267,7 +267,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         super.onPause()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
     }

@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.checker
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig

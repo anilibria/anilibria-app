@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.search
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.search.SearchItem

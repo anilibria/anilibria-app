@@ -8,8 +8,8 @@ import android.os.Message
 import android.util.Log
 import android.view.View
 import android.webkit.*
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.App

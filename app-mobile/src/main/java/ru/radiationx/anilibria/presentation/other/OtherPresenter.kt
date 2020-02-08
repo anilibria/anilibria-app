@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.other
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem

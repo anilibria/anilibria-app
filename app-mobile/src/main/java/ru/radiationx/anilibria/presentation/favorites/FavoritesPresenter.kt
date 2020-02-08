@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.favorites
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.anilibria.navigation.Screens

@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.schedule
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.asDayName
 import ru.radiationx.data.repository.ScheduleRepository

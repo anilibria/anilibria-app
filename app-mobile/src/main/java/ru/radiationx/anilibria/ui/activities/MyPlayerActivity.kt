@@ -329,9 +329,9 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        newConfig?.also { config ->
+        newConfig.also { config ->
             updateByConfig(config)
         }
     }

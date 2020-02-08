@@ -8,8 +8,8 @@ import androidx.appcompat.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_updater.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions

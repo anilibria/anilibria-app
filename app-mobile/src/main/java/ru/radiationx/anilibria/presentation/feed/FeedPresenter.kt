@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.feed
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import io.reactivex.Single
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction

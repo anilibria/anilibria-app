@@ -28,6 +28,12 @@ allprojects {
     }
 }
 
+subprojects {
+    pluginManager.withPlugin("kotlin-kapt") {
+        kapt.useBuildCache = true
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

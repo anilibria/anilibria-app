@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.anilibria.extension.nullString
 import javax.inject.Inject
 

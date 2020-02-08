@@ -5,7 +5,7 @@ import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
 import ru.radiationx.anilibria.di.qualifier.MainClient
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient

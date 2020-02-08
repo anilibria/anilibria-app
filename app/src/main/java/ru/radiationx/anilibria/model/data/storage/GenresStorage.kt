@@ -6,7 +6,7 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
-import ru.radiationx.anilibria.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.anilibria.model.data.holders.GenresHolder
 import javax.inject.Inject
 

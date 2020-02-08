@@ -4,8 +4,8 @@ import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
-import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.asMsk
 import ru.radiationx.anilibria.extension.isSameDay
 import ru.radiationx.anilibria.model.data.remote.api.ScheduleApi

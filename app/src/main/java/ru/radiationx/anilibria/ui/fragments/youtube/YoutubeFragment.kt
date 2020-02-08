@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem

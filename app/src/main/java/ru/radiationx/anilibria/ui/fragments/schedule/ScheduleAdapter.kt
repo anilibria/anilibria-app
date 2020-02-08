@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.view.View
-import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem

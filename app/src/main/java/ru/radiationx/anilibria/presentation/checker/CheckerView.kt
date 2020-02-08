@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.presentation.checker
 
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**

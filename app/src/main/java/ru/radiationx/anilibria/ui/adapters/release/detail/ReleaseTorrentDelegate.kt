@@ -5,7 +5,7 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_torrent.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

@@ -2,11 +2,11 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.RandomRelease
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.release.RandomRelease
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api

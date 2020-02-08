@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem

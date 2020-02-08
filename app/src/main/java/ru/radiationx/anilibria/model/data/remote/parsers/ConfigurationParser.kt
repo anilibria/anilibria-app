@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.address.ApiAddress

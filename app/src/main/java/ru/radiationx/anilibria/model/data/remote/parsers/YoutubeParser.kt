@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api

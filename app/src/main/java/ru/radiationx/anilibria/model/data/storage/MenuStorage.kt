@@ -6,7 +6,7 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.DataPreferences
-import ru.radiationx.anilibria.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.holders.MenuHolder
 import javax.inject.Inject

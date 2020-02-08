@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiError

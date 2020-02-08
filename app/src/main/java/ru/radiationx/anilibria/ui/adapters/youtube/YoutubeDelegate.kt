@@ -6,7 +6,7 @@ import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_youtube.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.YoutubeListItem

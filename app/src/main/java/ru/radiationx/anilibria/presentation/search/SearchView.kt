@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.presentation.search
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.entity.app.release.SeasonItem
-import ru.radiationx.anilibria.entity.app.release.YearItem
+import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.release.SeasonItem
+import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 
 @StateStrategyType(AddToEndSingleStrategy::class)

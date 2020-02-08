@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.holders.HistoryHolder
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject

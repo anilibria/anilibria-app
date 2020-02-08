@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedules.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.extension.inflate
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder

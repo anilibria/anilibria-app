@@ -4,7 +4,7 @@ import android.util.Log
 import io.reactivex.Single
 import org.json.JSONArray
 import ru.radiationx.anilibria.di.qualifier.ApiClient
-import ru.radiationx.anilibria.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient

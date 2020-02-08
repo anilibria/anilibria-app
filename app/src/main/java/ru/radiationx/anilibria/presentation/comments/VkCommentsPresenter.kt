@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.comments
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.page.VkComments
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.page.VkComments
+import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.model.data.holders.AuthHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.PageRepository

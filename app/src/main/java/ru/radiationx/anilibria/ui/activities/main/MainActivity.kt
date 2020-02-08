@@ -26,8 +26,8 @@ import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.extension.gone

@@ -9,8 +9,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem

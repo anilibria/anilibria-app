@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import javax.inject.Inject
 

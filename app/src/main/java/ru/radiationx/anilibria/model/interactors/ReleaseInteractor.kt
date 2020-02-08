@@ -4,10 +4,10 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.RandomRelease
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.release.RandomRelease
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.idOrNull
 import ru.radiationx.anilibria.model.data.holders.EpisodesCheckerHolder
 import ru.radiationx.anilibria.model.data.holders.PreferencesHolder

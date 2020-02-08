@@ -4,8 +4,8 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
-import ru.radiationx.anilibria.entity.app.other.LinkMenuItem
-import ru.radiationx.anilibria.entity.app.page.PageLibria
+import ru.radiationx.data.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.app.page.PageLibria
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig

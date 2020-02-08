@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible

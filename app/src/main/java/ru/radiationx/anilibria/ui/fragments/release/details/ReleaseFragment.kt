@@ -25,8 +25,8 @@ import kotlinx.android.synthetic.main.fragment_paged.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.extension.visible

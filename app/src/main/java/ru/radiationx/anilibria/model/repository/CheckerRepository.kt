@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.model.repository
 import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.model.data.remote.api.CheckerApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject

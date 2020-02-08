@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.search
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.SeasonItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.navigation.Screens

@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
-import ru.radiationx.anilibria.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.extension.nullGet
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import javax.inject.Inject

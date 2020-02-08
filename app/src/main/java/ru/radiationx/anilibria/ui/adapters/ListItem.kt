@@ -1,18 +1,18 @@
 package ru.radiationx.anilibria.ui.adapters
 
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
-import ru.radiationx.anilibria.entity.app.other.OtherMenuItem
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.app.release.GenreItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
-import ru.radiationx.anilibria.entity.app.search.SearchItem
-import ru.radiationx.anilibria.entity.app.search.SuggestionItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.other.OtherMenuItem
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 
 sealed class ListItem

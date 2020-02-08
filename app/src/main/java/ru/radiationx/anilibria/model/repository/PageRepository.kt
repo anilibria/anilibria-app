@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.page.PageLibria
-import ru.radiationx.anilibria.entity.app.page.VkComments
+import ru.radiationx.data.entity.app.page.PageLibria
+import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject

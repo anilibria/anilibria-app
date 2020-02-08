@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.presentation.favorites
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /**

@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.page.PageLibria
-import ru.radiationx.anilibria.entity.app.page.VkComments
+import ru.radiationx.data.entity.app.page.PageLibria
+import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import java.util.regex.Pattern
 import javax.inject.Inject

@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.model.data.remote.api.FavoriteApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject

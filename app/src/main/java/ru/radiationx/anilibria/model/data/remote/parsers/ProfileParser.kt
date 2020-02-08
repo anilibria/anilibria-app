@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.model.data.remote.parsers
 
-import ru.radiationx.anilibria.entity.app.profile.Profile
+import ru.radiationx.data.entity.app.profile.Profile
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.IApiUtils
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig

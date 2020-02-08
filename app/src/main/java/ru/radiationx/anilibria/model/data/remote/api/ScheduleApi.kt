@@ -4,9 +4,9 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.model.data.remote.Api
 import ru.radiationx.anilibria.model.data.remote.ApiResponse
 import ru.radiationx.anilibria.model.data.remote.IClient

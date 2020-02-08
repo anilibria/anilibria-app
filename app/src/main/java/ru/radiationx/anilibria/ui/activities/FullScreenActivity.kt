@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig

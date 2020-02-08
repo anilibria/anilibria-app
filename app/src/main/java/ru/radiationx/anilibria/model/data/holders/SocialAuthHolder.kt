@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.data.holders
 
 import io.reactivex.Observable
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.auth.SocialAuth
 
 interface SocialAuthHolder {
     fun get(): List<SocialAuth>

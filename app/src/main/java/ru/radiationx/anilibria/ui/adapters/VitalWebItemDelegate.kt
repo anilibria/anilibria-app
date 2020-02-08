@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.item_vital_web.*
 import kotlinx.android.synthetic.main.item_vital_web_card.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils

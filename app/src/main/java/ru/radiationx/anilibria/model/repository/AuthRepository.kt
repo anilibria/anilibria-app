@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.SocialAuthHolder
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import ru.radiationx.anilibria.model.data.remote.ApiError

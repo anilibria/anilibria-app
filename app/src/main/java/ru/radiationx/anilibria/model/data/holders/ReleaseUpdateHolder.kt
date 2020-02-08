@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.model.data.holders
 
 import io.reactivex.Observable
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseUpdate
 
 interface ReleaseUpdateHolder {
     fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>>

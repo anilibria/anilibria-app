@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.model.repository
 
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.Paginated
-import ru.radiationx.anilibria.entity.app.feed.FeedItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseUpdate
+import ru.radiationx.data.entity.app.Paginated
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.data.remote.api.FeedApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider

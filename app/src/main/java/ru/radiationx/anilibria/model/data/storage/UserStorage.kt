@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import org.json.JSONObject
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.UserHolder
 import javax.inject.Inject
 

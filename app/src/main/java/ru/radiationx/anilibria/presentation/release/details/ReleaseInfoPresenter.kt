@@ -2,10 +2,10 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor

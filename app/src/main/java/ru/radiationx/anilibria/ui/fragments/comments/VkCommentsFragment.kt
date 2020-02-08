@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.di.qualifier.MainClient
-import ru.radiationx.anilibria.entity.app.page.VkComments
+import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.anilibria.extension.*
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.IClient

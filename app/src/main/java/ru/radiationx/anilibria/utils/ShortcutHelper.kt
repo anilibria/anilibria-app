@@ -13,7 +13,7 @@ import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import ru.radiationx.anilibria.App
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.centerCrop
 import ru.radiationx.anilibria.extension.createAvatar
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity

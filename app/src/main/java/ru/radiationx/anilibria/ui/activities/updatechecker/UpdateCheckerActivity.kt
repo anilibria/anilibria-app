@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible

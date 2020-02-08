@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
 import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.repository.AuthRepository

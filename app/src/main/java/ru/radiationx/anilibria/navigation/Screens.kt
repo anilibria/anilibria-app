@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.navigation
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.Fragment
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity

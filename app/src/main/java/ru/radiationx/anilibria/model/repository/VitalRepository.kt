@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.model.repository
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.model.data.remote.api.VitalApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject

@@ -13,9 +13,9 @@ import at.blogc.android.views.ExpandableTextView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.setCompatDrawable

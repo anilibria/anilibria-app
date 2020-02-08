@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.schedule
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.feed.ScheduleItem
-import ru.radiationx.anilibria.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.asDayName
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens

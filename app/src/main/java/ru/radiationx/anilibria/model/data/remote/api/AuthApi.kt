@@ -5,9 +5,9 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.qualifier.ApiClient
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.app.auth.SocialAuthException
-import ru.radiationx.anilibria.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.auth.SocialAuthException
+import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.extension.nullString
 import ru.radiationx.anilibria.model.data.remote.ApiError
 import ru.radiationx.anilibria.model.data.remote.ApiResponse

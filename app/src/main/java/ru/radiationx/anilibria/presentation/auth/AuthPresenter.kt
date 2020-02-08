@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.auth
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.entity.common.AuthState
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens

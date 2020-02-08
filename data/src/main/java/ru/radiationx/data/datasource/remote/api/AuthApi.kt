@@ -8,7 +8,7 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
 import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient

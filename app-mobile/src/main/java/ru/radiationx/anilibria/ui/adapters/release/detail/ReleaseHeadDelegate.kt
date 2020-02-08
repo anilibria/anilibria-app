@@ -1,12 +1,9 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.graphics.PorterDuff
 import android.support.design.chip.Chip
 import android.support.design.chip.ChipGroup
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import at.blogc.android.views.ExpandableTextView
@@ -17,9 +14,9 @@ import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.gone
-import ru.radiationx.anilibria.extension.setCompatDrawable
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.setCompatDrawable
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

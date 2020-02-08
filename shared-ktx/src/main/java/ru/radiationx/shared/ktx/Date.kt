@@ -1,4 +1,4 @@
-package ru.radiationx.data.extension
+package ru.radiationx.shared.ktx
 
 import java.lang.Exception
 import java.text.SimpleDateFormat

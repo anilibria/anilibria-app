@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

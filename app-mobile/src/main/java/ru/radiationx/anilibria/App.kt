@@ -28,7 +28,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.utils.OkHttpImageDownloader
 import ru.radiationx.data.SchedulersProvider

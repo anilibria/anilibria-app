@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.data.extension.*
+import ru.radiationx.shared.ktx.*
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject

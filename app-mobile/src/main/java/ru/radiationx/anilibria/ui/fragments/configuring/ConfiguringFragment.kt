@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.configuring
 
 import android.os.Bundle
-import android.support.transition.Transition
 import android.support.transition.TransitionSet
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -12,8 +11,8 @@ import kotlinx.android.synthetic.main.fragment_configuring.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.extension.gone
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringPresenter
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment

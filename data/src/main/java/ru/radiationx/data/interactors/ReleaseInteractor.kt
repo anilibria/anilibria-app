@@ -8,7 +8,6 @@ import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.extension.idOrNull
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.repository.ReleaseRepository
@@ -167,5 +166,11 @@ class ReleaseInteractor @Inject constructor(
 
     fun setPIPControl(value: Int) {
         preferencesHolder.pipControl = value
+    }
+
+    private fun Int.idOrNull(limit: Int = -1): Int? = if (this > limit) {
+        this
+    } else {
+        null
     }
 }

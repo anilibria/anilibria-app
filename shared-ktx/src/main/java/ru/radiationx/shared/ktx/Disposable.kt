@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.extension
+package ru.radiationx.shared.ktx
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

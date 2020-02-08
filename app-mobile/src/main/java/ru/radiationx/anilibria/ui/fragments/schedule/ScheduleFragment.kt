@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.anilibria.extension.putExtra
+import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment

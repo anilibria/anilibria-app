@@ -1,4 +1,4 @@
-package ru.radiationx.data.extension
+package ru.radiationx.shared.ktx.android
 
 import org.json.JSONArray
 import org.json.JSONObject

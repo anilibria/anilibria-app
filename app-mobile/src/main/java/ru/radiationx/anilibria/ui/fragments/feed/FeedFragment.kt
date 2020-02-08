@@ -39,6 +39,9 @@ import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
 import android.util.TypedValue
 import com.lapism.searchview.SearchEditText
+import ru.radiationx.shared.ktx.android.inflate
+import ru.radiationx.shared.ktx.android.invisible
+import ru.radiationx.shared.ktx.android.visible
 
 
 /* Created by radiationx on 05.11.17. */

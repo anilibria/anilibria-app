@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens

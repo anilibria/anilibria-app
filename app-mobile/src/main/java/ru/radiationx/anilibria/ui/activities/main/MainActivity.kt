@@ -29,8 +29,8 @@ import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.anilibria.extension.gone
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder

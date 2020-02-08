@@ -27,7 +27,7 @@ import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 
 
 class GenresDialog(

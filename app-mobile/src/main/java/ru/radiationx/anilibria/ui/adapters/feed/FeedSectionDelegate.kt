@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.item_feed_section_header.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate

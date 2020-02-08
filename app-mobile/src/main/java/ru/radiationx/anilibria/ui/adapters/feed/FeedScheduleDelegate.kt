@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_feed_schedule.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.extension.dpToPx
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

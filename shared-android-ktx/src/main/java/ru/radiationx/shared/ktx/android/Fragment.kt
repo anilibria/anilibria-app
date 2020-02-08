@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.extension
+package ru.radiationx.shared.ktx.android
 
 import android.os.Bundle
 import android.support.v4.app.Fragment

@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.BehaviorSubject
-import ru.radiationx.anilibria.extension.addTo
+import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.anilibria.utils.messages.SystemMessage
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import javax.inject.Inject

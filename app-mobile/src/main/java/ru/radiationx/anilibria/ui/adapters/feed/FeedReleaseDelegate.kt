@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.os.Build
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -10,12 +9,10 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_release.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 
 /**
  * Created by radiationx on 13.01.18.

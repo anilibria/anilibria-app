@@ -37,9 +37,9 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.gone
+import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.anilibria.extension.isDark
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.interactors.ReleaseInteractor

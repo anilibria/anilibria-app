@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.extension
+package ru.radiationx.shared.ktx.android
 
 import android.util.Base64
 import java.nio.charset.StandardCharsets

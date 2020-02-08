@@ -3,7 +3,7 @@ package ru.radiationx.data.datasource.remote.parsers
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.entity.app.other.LinkMenuItem
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
 class MenuParser @Inject constructor() {

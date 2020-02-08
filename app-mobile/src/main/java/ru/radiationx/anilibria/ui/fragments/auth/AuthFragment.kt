@@ -12,9 +12,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.anilibria.extension.addTextChangeListener
-import ru.radiationx.anilibria.extension.gone
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.addTextChangeListener
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView

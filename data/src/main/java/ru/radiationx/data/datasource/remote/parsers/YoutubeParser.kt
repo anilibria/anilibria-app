@@ -3,8 +3,8 @@ package ru.radiationx.data.datasource.remote.parsers
 import org.json.JSONObject
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.data.extension.nullGet
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullGet
+import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import javax.inject.Inject

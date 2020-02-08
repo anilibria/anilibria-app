@@ -6,7 +6,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode_control.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

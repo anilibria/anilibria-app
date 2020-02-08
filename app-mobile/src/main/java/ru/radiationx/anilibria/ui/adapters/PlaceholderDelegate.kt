@@ -5,8 +5,8 @@ import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_placeholder.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.setCompatDrawable
-import ru.radiationx.anilibria.extension.setTintColorAttr
+import ru.radiationx.shared.ktx.android.setCompatDrawable
+import ru.radiationx.shared.ktx.android.setTintColorAttr
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 
 class PlaceholderDelegate : AppAdapterDelegate<PlaceholderListItem, ListItem, PlaceholderDelegate.ViewHolder>(

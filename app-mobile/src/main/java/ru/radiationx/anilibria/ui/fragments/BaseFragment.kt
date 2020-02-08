@@ -17,9 +17,9 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.extension.gone
-import ru.radiationx.anilibria.extension.visible
+import ru.radiationx.shared.ktx.addTo
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper

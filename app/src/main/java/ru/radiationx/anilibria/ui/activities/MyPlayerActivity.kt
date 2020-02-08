@@ -42,7 +42,7 @@ import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import java.util.*

@@ -15,7 +15,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.datasource.remote.api.*
 import ru.radiationx.data.datasource.remote.parsers.*
 import ru.radiationx.data.datasource.storage.*
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

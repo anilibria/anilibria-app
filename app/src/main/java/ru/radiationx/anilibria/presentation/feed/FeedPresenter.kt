@@ -9,7 +9,7 @@ import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens

@@ -8,7 +8,7 @@ import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.data.repository.HistoryRepository

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.interactors
+package ru.radiationx.data.interactors
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
@@ -8,7 +8,7 @@ import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.extension.idOrNull
+import ru.radiationx.data.extension.idOrNull
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.repository.ReleaseRepository

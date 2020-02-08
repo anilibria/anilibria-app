@@ -24,7 +24,6 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared.ktx.toBase64
 import java.util.*
 import javax.inject.Inject
 

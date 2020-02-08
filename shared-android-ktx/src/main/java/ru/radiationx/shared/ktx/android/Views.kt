@@ -16,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatDrawable
 
 
 fun <T : View> T.visible() {

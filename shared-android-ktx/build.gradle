@@ -36,6 +36,8 @@ ext {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api project(":shared-ktx")
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 

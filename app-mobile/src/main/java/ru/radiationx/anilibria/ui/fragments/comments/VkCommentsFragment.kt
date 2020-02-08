@@ -28,7 +28,6 @@ import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared.ktx.toBase64
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.util.*

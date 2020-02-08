@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.presentation.main
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.holders.AppThemeHolder
 
 /**
  * Created by radiationx on 17.12.17.

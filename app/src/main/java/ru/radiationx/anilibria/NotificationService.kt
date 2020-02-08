@@ -15,9 +15,9 @@ import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.datasource.remote.parsers.ConfigurationParser
-import ru.radiationx.anilibria.model.datasource.storage.ApiConfigStorage
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity

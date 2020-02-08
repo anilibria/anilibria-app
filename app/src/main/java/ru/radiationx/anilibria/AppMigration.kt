@@ -2,7 +2,7 @@ package ru.radiationx.anilibria
 
 import com.nostra13.universalimageloader.core.ImageLoader
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import javax.inject.Inject
 
 /**

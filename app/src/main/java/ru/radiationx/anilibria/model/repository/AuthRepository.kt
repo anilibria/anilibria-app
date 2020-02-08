@@ -5,12 +5,12 @@ import io.reactivex.Single
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.anilibria.model.datasource.holders.SocialAuthHolder
-import ru.radiationx.anilibria.model.datasource.holders.UserHolder
-import ru.radiationx.anilibria.model.datasource.remote.ApiError
-import ru.radiationx.anilibria.model.datasource.remote.api.AuthApi
+import ru.radiationx.data.datasource.holders.SocialAuthHolder
+import ru.radiationx.data.datasource.holders.UserHolder
+import ru.radiationx.data.datasource.remote.ApiError
+import ru.radiationx.data.datasource.remote.api.AuthApi
 import ru.radiationx.anilibria.model.system.HttpException
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 
 /**

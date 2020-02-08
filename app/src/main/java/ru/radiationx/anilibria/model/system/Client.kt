@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.model.system
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
-import ru.radiationx.anilibria.model.datasource.remote.IClient
-import ru.radiationx.anilibria.model.datasource.remote.NetworkResponse
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.NetworkResponse
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import javax.inject.Inject
 
 

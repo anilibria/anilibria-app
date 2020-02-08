@@ -5,9 +5,9 @@ import com.stealthcopter.networktools.ping.PingOptions
 import com.stealthcopter.networktools.ping.PingResult
 import com.stealthcopter.networktools.ping.PingTools
 import io.reactivex.Single
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiAddress
-import ru.radiationx.anilibria.model.datasource.remote.api.ConfigurationApi
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.datasource.remote.address.ApiAddress
+import ru.radiationx.data.datasource.remote.api.ConfigurationApi
+import ru.radiationx.data.SchedulersProvider
 import java.net.InetAddress
 import javax.inject.Inject
 

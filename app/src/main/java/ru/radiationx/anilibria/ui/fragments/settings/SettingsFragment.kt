@@ -9,9 +9,9 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
-import ru.radiationx.anilibria.model.datasource.remote.Api
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject

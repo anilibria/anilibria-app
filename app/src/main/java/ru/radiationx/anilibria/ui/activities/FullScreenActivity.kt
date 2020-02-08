@@ -16,8 +16,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
 

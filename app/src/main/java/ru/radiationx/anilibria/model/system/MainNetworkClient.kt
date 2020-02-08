@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.model.system
 
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import javax.inject.Inject
 
 class MainNetworkClient @Inject constructor(

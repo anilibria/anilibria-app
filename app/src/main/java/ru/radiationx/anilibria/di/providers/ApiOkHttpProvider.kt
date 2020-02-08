@@ -2,14 +2,14 @@ package ru.radiationx.anilibria.di.providers
 
 import android.util.Log
 import okhttp3.OkHttpClient
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import java.net.InetSocketAddress
 import java.net.Proxy
 import javax.inject.Inject
 import javax.inject.Provider
 import okhttp3.Credentials
 import ru.radiationx.anilibria.BuildConfig
-import ru.radiationx.anilibria.model.datasource.remote.Api
+import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.anilibria.model.system.*
 
 

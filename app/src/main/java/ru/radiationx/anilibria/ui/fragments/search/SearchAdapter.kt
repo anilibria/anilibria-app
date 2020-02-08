@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem

@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.model.repository
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.data.entity.app.other.LinkMenuItem
-import ru.radiationx.anilibria.model.datasource.holders.MenuHolder
-import ru.radiationx.anilibria.model.datasource.remote.api.MenuApi
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.datasource.holders.MenuHolder
+import ru.radiationx.data.datasource.remote.api.MenuApi
+import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 
 class MenuRepository @Inject constructor(

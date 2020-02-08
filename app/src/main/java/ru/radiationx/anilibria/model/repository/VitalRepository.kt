@@ -4,8 +4,8 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.model.datasource.remote.api.VitalApi
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.datasource.remote.api.VitalApi
+import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 
 /**

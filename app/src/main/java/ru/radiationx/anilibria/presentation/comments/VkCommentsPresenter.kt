@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.presentation.comments
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.model.datasource.holders.AuthHolder
+import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.PageRepository
 import ru.radiationx.anilibria.navigation.Screens

@@ -9,10 +9,10 @@ import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.idOrNull
-import ru.radiationx.anilibria.model.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.repository.ReleaseRepository
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.SchedulersProvider
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 

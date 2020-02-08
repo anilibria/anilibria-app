@@ -29,9 +29,9 @@ import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.utils.ImageFileNameGenerator
 import toothpick.Toothpick

@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.dpToPx
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem

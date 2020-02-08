@@ -2,11 +2,11 @@ package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.system.LocaleHolder
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

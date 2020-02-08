@@ -22,7 +22,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter

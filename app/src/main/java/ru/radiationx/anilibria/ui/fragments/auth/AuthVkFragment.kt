@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.putExtra
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.datasource.holders.AuthHolder
+import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern

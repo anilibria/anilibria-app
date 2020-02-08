@@ -26,7 +26,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity

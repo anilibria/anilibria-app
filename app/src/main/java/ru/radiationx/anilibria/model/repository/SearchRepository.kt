@@ -9,11 +9,11 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.anilibria.model.datasource.holders.GenresHolder
-import ru.radiationx.anilibria.model.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.anilibria.model.datasource.holders.YearsHolder
-import ru.radiationx.anilibria.model.datasource.remote.api.SearchApi
-import ru.radiationx.anilibria.model.system.SchedulersProvider
+import ru.radiationx.data.datasource.holders.GenresHolder
+import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.datasource.holders.YearsHolder
+import ru.radiationx.data.datasource.remote.api.SearchApi
+import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(

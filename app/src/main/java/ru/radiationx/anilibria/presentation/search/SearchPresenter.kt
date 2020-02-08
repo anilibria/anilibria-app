@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.presentation.search
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
-import ru.radiationx.anilibria.model.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.repository.SearchRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

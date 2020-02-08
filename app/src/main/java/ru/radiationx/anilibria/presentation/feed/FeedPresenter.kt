@@ -9,7 +9,7 @@ import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.*
-import ru.radiationx.anilibria.model.data.holders.ReleaseUpdateHolder
+import ru.radiationx.anilibria.model.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.FeedRepository
 import ru.radiationx.anilibria.model.repository.ScheduleRepository
@@ -19,7 +19,6 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */

@@ -40,8 +40,8 @@ import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.VitalRepository
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib

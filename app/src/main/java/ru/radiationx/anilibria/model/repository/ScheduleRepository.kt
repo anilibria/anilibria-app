@@ -8,7 +8,7 @@ import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.asMsk
 import ru.radiationx.anilibria.extension.isSameDay
-import ru.radiationx.anilibria.model.data.remote.api.ScheduleApi
+import ru.radiationx.anilibria.model.datasource.remote.api.ScheduleApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import java.util.*
 import java.util.concurrent.TimeUnit

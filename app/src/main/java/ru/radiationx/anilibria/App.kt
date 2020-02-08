@@ -14,8 +14,6 @@ import android.util.Log
 import android.widget.Toast
 import biz.source_code.miniTemplator.MiniTemplator
 import com.google.firebase.messaging.FirebaseMessaging
-import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -31,7 +29,7 @@ import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
+import ru.radiationx.anilibria.model.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.model.system.OkHttpImageDownloader
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger

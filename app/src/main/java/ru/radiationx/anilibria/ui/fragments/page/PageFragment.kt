@@ -13,9 +13,9 @@ import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.page.PageLibria
 import ru.radiationx.anilibria.extension.*
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.data.remote.api.PageApi
+import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.datasource.remote.api.PageApi
 import ru.radiationx.anilibria.presentation.page.PagePresenter
 import ru.radiationx.anilibria.presentation.page.PageView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment

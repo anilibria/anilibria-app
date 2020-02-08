@@ -4,8 +4,8 @@ import android.util.Log
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
-import ru.radiationx.anilibria.model.data.holders.CookieHolder
-import ru.radiationx.anilibria.model.data.holders.UserHolder
+import ru.radiationx.anilibria.model.datasource.holders.CookieHolder
+import ru.radiationx.anilibria.model.datasource.holders.UserHolder
 import javax.inject.Inject
 
 class AppCookieJar @Inject constructor(

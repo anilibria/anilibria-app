@@ -21,7 +21,7 @@ import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.datasource.remote.IApiUtils
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity

@@ -23,7 +23,6 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.di.Scopes
-import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.updater.UpdateData
@@ -32,8 +31,8 @@ import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.Api
+import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.datasource.remote.Api
 import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen

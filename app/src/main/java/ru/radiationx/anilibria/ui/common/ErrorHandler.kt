@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.common
 
-import ru.radiationx.anilibria.model.data.remote.ApiError
+import ru.radiationx.anilibria.model.datasource.remote.ApiError
 import ru.radiationx.anilibria.model.system.HttpException
 import ru.radiationx.anilibria.model.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

@@ -1,11 +1,9 @@
 package ru.radiationx.anilibria.model.system
 
 import android.util.Log
-import okhttp3.OkHttpClient
 import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfigChanger
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfigChanger
 import javax.inject.Inject
-import javax.inject.Provider
 
 class ApiClientWrapper @Inject constructor(
         private val provider: ApiOkHttpProvider,

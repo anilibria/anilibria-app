@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria.presentation.main
 
 import com.arellomobile.mvp.InjectViewState
-import io.reactivex.Single
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.system.LocaleHolder
 import ru.radiationx.anilibria.model.system.SchedulersProvider
@@ -13,7 +12,6 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**

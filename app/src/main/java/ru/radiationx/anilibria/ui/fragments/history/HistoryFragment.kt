@@ -1,14 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +22,7 @@ import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.dpToPx
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.model.data.holders.AppThemeHolder
+import ru.radiationx.anilibria.model.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
 import ru.radiationx.anilibria.presentation.history.HistoryView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
@@ -33,7 +30,6 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper

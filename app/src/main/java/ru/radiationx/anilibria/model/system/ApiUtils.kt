@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model.system
 
 import android.text.Html
-import ru.radiationx.anilibria.model.data.remote.IApiUtils
+import ru.radiationx.anilibria.model.datasource.remote.IApiUtils
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")

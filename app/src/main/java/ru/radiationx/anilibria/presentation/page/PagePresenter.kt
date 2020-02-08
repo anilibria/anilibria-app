@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.presentation.page
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.anilibria.model.data.remote.api.PageApi
 import ru.radiationx.anilibria.model.repository.PageRepository
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

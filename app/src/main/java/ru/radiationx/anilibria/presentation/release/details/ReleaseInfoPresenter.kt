@@ -6,8 +6,8 @@ import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.data.remote.api.PageApi
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.datasource.remote.api.PageApi
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.AuthRepository
 import ru.radiationx.anilibria.model.repository.FavoriteRepository

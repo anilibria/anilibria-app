@@ -1,17 +1,13 @@
 package ru.radiationx.anilibria.model.repository
 
-import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.stealthcopter.networktools.Ping
 import com.stealthcopter.networktools.ping.PingOptions
 import com.stealthcopter.networktools.ping.PingResult
 import com.stealthcopter.networktools.ping.PingTools
 import io.reactivex.Single
-import ru.radiationx.anilibria.model.data.remote.address.ApiAddress
-import ru.radiationx.anilibria.model.data.remote.api.ConfigurationApi
-import ru.radiationx.anilibria.model.data.storage.ApiConfigStorage
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiAddress
+import ru.radiationx.anilibria.model.datasource.remote.api.ConfigurationApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
-import java.lang.Exception
 import java.net.InetAddress
 import javax.inject.Inject
 

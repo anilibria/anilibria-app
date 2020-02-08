@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.model.repository
 import io.reactivex.Single
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.model.data.remote.api.FavoriteApi
+import ru.radiationx.anilibria.model.datasource.remote.api.FavoriteApi
 import ru.radiationx.anilibria.model.system.SchedulersProvider
 import javax.inject.Inject
 

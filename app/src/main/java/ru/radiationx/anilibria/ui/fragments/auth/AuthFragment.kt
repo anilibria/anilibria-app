@@ -15,7 +15,7 @@ import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.addTextChangeListener
 import ru.radiationx.anilibria.extension.gone
 import ru.radiationx.anilibria.extension.visible
-import ru.radiationx.anilibria.model.data.remote.address.ApiConfig
+import ru.radiationx.anilibria.model.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment

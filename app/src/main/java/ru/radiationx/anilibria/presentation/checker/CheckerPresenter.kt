@@ -5,7 +5,7 @@ import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.radiationx.anilibria.BuildConfig
-import ru.radiationx.anilibria.model.repository.CheckerRepository
+import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import javax.inject.Inject
 

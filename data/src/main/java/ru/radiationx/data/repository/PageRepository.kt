@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.repository
+package ru.radiationx.data.repository
 
 import io.reactivex.Single
 import ru.radiationx.data.entity.app.page.PageLibria

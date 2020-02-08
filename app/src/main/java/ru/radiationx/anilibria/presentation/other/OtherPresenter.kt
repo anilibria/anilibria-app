@@ -8,8 +8,8 @@ import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.model.repository.MenuRepository
+import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

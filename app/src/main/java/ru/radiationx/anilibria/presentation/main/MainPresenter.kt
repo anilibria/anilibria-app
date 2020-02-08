@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.system.messages.SystemMessenger

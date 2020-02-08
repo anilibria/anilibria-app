@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.repository
+package ru.radiationx.data.repository
 
 import android.util.Log
 import io.reactivex.Single

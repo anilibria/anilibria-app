@@ -1,6 +1,5 @@
-package ru.radiationx.anilibria.extension
+package ru.radiationx.data.extension
 
-import android.util.Log
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*

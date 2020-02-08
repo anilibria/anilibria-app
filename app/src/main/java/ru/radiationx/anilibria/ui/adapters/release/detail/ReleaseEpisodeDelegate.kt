@@ -7,9 +7,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.extension.asTimeSecString
+import ru.radiationx.data.extension.asTimeSecString
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.setTintColorAttr
 import ru.radiationx.anilibria.extension.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem

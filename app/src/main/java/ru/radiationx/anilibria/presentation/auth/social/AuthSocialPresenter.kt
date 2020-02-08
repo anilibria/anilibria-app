@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.presentation.auth.social
 import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
-import ru.radiationx.anilibria.model.repository.AuthRepository
+import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.terrakok.cicerone.Router

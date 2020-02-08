@@ -5,7 +5,7 @@ import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.anilibria.model.repository.SearchRepository
+import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

@@ -16,7 +16,6 @@ import ru.radiationx.data.datasource.remote.api.*
 import ru.radiationx.data.datasource.remote.parsers.*
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
-import ru.radiationx.anilibria.model.repository.*
 import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -25,6 +24,7 @@ import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.*
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

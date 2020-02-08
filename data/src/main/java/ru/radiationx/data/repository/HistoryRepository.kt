@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.repository
+package ru.radiationx.data.repository
 
 import io.reactivex.Observable
 import ru.radiationx.data.entity.app.release.ReleaseItem

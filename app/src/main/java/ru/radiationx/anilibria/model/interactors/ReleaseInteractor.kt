@@ -11,7 +11,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.extension.idOrNull
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.anilibria.model.repository.ReleaseRepository
+import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.data.SchedulersProvider
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject

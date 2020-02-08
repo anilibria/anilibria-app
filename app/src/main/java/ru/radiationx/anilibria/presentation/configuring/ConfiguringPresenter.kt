@@ -4,7 +4,7 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Observable
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.anilibria.model.repository.ConfigurationRepository
+import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.system.WrongHostException
 import ru.radiationx.anilibria.presentation.common.BasePresenter

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.repository
+package ru.radiationx.data.repository
 
 import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay

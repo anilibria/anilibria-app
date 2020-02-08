@@ -1,16 +1,13 @@
 package ru.radiationx.anilibria.presentation.schedule
 
 import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.extension.asDayName
-import ru.radiationx.anilibria.model.repository.ScheduleRepository
+import ru.radiationx.data.extension.asDayName
+import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.terrakok.cicerone.Router
-import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 

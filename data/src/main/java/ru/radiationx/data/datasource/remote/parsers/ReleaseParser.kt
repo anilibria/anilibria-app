@@ -7,8 +7,8 @@ import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.extension.nullGet
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullGet
+import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import javax.inject.Inject

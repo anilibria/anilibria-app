@@ -4,7 +4,7 @@ import org.json.JSONArray
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import javax.inject.Inject

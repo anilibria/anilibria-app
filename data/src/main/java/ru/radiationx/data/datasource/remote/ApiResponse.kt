@@ -3,8 +3,8 @@ package ru.radiationx.data.datasource.remote
 import io.reactivex.Single
 import io.reactivex.SingleTransformer
 import org.json.JSONObject
-import ru.radiationx.data.extension.nullGet
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullGet
+import ru.radiationx.shared.ktx.android.nullString
 
 @Suppress("UNCHECKED_CAST")
 open class ApiResponse<T>(

@@ -3,7 +3,7 @@ package ru.radiationx.data.datasource.remote.parsers
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.extension.nullGet
+import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.data.datasource.remote.IApiUtils
 import javax.inject.Inject
 

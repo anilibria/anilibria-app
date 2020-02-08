@@ -2,7 +2,7 @@ package ru.radiationx.data.datasource.remote.parsers
 
 import org.json.JSONObject
 import ru.radiationx.data.entity.app.updater.UpdateData
-import ru.radiationx.data.extension.nullString
+import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiProxy

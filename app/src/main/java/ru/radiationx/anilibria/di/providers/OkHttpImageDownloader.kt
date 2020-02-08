@@ -1,17 +1,13 @@
-package ru.radiationx.anilibria.model.system
+package ru.radiationx.anilibria.di.providers
 
 import android.content.Context
 
 import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 
-import java.io.IOException
 import java.io.InputStream
 
-import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.ResponseBody
-import java.lang.Exception
 import javax.inject.Inject
 
 class OkHttpImageDownloader @Inject constructor(

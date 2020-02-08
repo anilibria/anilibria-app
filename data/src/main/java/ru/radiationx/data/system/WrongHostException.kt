@@ -1,3 +1,3 @@
-package ru.radiationx.anilibria.model.system
+package ru.radiationx.data.system
 
 class WrongHostException(host: String) : Exception("Неверный IP адрес сервера: '$host'")

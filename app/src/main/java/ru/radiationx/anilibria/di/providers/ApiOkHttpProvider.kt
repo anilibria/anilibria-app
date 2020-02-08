@@ -10,7 +10,10 @@ import javax.inject.Provider
 import okhttp3.Credentials
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.anilibria.model.system.*
+import ru.radiationx.data.system.AppCookieJar
+import ru.radiationx.data.system.Client
+import ru.radiationx.data.system.appendConnectionSpecs
+import ru.radiationx.data.system.appendSocketFactoryIfNeeded
 
 
 class ApiOkHttpProvider @Inject constructor(

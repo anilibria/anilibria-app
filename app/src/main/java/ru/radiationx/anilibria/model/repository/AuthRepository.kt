@@ -9,7 +9,7 @@ import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.api.AuthApi
-import ru.radiationx.anilibria.model.system.HttpException
+import ru.radiationx.data.system.HttpException
 import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 

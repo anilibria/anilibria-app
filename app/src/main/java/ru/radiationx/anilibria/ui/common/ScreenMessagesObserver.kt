@@ -10,8 +10,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.anilibria.extension.addTo
-import ru.radiationx.anilibria.model.system.messages.SystemMessage
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.data.system.messages.SystemMessage
+import ru.radiationx.data.system.messages.SystemMessenger
 import javax.inject.Inject
 
 

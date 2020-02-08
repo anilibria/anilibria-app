@@ -1,8 +1,8 @@
-package ru.radiationx.anilibria.model.system
+package ru.radiationx.anilibria.di.providers
 
 import android.util.Log
-import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
+import ru.radiationx.data.system.ClientWrapper
 import javax.inject.Inject
 
 class ApiClientWrapper @Inject constructor(

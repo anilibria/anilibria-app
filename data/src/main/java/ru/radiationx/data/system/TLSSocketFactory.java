@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.system;
+package ru.radiationx.data.system;
 
 import java.io.IOException;
 import java.net.InetAddress;

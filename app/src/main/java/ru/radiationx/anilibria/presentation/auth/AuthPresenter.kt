@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.model.repository.AuthRepository
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler

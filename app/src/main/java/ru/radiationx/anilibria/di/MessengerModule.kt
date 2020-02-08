@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.di
 
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import toothpick.config.Module

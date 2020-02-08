@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.system
+package ru.radiationx.data.system
 
 import android.text.Html
 import ru.radiationx.data.datasource.remote.IApiUtils

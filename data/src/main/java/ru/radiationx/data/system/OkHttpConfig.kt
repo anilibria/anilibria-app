@@ -1,19 +1,10 @@
-package ru.radiationx.anilibria.model.system
+package ru.radiationx.data.system
 
 import android.os.Build
-import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
-import ru.radiationx.anilibria.App
-import android.widget.TextView
-import android.view.ViewGroup
 import okhttp3.OkHttpClient
 import java.lang.Exception
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
-import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 

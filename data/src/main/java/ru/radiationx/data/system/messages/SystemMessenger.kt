@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.model.system.messages
+package ru.radiationx.data.system.messages
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable

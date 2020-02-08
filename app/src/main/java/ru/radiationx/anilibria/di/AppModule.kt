@@ -3,8 +3,7 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import ru.radiationx.anilibria.di.providers.ApiOkHttpProvider
-import ru.radiationx.anilibria.di.providers.MainOkHttpProvider
+import ru.radiationx.anilibria.di.providers.*
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
@@ -18,8 +17,7 @@ import ru.radiationx.data.datasource.remote.parsers.*
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.anilibria.model.interactors.ReleaseInteractor
 import ru.radiationx.anilibria.model.repository.*
-import ru.radiationx.anilibria.model.system.*
-import ru.radiationx.anilibria.model.system.messages.SystemMessenger
+import ru.radiationx.data.system.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
@@ -27,6 +25,7 @@ import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.system.*
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module

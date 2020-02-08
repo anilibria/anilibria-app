@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="ru.radiationx.anilibria.ui.activities.main.MainActivity">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/measure_root_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include
         layout="@layout/activity_container"
@@ -34,7 +34,7 @@
         android:layout_above="@+id/tabsRecycler"
         android:background="@drawable/bottom_navigation_shadow" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabsRecycler"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -43,7 +43,7 @@
         android:overScrollMode="never"
         android:transitionGroup="true" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/configuring_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?cardBackground">
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/item_expand_title"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"

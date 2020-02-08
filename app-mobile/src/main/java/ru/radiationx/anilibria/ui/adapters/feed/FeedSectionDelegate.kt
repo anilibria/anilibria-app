@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.Gravity
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
@@ -33,7 +33,7 @@ class FeedSectionDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (FeedSectionListItem) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: FeedSectionListItem
 

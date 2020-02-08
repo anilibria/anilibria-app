@@ -8,10 +8,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -147,7 +147,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         })
 
         tabsRecycler.apply {
-            layoutManager = GridLayoutManager(this.context, allTabs.size)
+            layoutManager = androidx.recyclerview.widget.GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
         }
 
@@ -322,7 +322,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         val fm = supportFragmentManager
         val ta = fm.beginTransaction()
         allTabs.forEach { tab ->
-            var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
+            var fragment: androidx.fragment.app.Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
             if (fragment == null) {
                 fragment = Screens.TabScreen(tab.screen).fragment
                 ta.add(R.id.root_container, fragment, tab.screen.screenKey)
@@ -338,7 +338,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private fun updateBottomTabs() {
         tabsAdapter.bindItems(tabs)
-        (tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
+        (tabsRecycler.layoutManager as androidx.recyclerview.widget.GridLayoutManager).spanCount = tabs.size
     }
 
     override fun updateTabs() {

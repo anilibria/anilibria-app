@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -21,7 +21,7 @@ class ReleaseDonateDelegate(
     class ViewHolder(
             val view: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         init {
             view.setOnClickListener {
                 itemListener.onClickDonate()

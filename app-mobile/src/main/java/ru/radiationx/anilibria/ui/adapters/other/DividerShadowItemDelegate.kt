@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -12,5 +12,5 @@ class DividerShadowItemDelegate : AppAdapterDelegate<DividerShadowListItem, List
         { it is DividerShadowListItem },
         { ViewHolder(it) }
 )  {
-     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+     class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view)
 }

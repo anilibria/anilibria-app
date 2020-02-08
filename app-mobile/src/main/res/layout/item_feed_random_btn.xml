@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?cardBackground">
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/item_random_btn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"

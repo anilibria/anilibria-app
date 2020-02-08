@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_menu.*
@@ -24,7 +24,7 @@ class MenuItemDelegate(
     class ViewHolder(
             override val containerView: View,
             val clickListener: (OtherMenuItem) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var item: OtherMenuItem
 

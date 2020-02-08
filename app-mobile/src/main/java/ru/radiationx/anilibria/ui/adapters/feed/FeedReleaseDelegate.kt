@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -41,7 +41,7 @@ class FeedReleaseDelegate(
             override val containerView: View,
             private val clickListener: (ReleaseItem, View) -> Unit,
             private val longClickListener: (ReleaseItem, View) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseItem
 

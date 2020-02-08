@@ -1,19 +1,19 @@
 package ru.radiationx.anilibria.ui.widgets
 
 import android.graphics.Rect
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import ru.radiationx.anilibria.App
 
-class UniversalItemDecoration : RecyclerView.ItemDecoration() {
-    private var manager: GridLayoutManager? = null
+class UniversalItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
+    private var manager: androidx.recyclerview.widget.GridLayoutManager? = null
     private var spanCount: Int = 1
     private var fullWidth: Boolean = false
     private var includeEdge: Boolean = true
     private var spacing: Int = 0
 
-    fun manager(manager: GridLayoutManager): UniversalItemDecoration {
+    fun manager(manager: androidx.recyclerview.widget.GridLayoutManager): UniversalItemDecoration {
         this.manager = manager
         return this
     }
@@ -38,7 +38,7 @@ class UniversalItemDecoration : RecyclerView.ItemDecoration() {
         return this
     }
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: androidx.recyclerview.widget.RecyclerView, state: androidx.recyclerview.widget.RecyclerView.State) {
         manager?.let {
             spanCount = it.spanCount
         }

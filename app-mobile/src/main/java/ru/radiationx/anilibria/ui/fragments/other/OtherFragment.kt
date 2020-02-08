@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.other
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -47,7 +47,7 @@ class OtherFragment : BaseFragment(), OtherView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
             adapter = this@OtherFragment.adapter
         }
     }

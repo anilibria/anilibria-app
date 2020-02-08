@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.global
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.CommentRouteListItem
@@ -15,5 +15,5 @@ class CommentRouteDelegate : AppAdapterDelegate<CommentRouteListItem, ListItem, 
         { it is CommentRouteListItem },
         { ViewHolder(it) }
 ) {
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view)
 }

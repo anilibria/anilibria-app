@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
@@ -24,7 +24,7 @@ class ReleaseBlockedDelegate : AppAdapterDelegate<ReleaseBlockedListItem, ListIt
 
     class ViewHolder(
             override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: ReleaseFull) {
             val defaultReason = """

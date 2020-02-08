@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import android.graphics.Bitmap
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebSettings
@@ -32,7 +32,7 @@ class VitalWebItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegate<V
     class ViewHolder(
             override val containerView: View,
             private val inDetail: Boolean
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: VitalItem
 

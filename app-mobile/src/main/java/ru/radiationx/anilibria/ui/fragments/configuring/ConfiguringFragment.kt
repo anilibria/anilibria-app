@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.configuring
 
 import android.os.Bundle
-import android.support.transition.TransitionSet
+import androidx.transition.TransitionSet
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View

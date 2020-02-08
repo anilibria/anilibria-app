@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode_control.*
@@ -28,7 +28,7 @@ class ReleaseEpisodeControlDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
             full_btn_episodes_menu.setOnClickListener { itemListener.onClickEpisodesMenu() }

@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
@@ -35,7 +35,7 @@ class ReleaseEpisodeDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseFull.Episode
         private val disableColor = R.attr.base_icon

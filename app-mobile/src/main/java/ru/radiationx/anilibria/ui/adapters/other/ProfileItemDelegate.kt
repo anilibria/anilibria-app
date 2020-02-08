@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -27,7 +27,7 @@ class ProfileItemDelegate(
         { ViewHolder(it, clickListener, logoutClickListener) }
 ) {
 
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
         (holder as ViewHolder).onDetach()
     }
@@ -38,7 +38,7 @@ class ProfileItemDelegate(
             override val containerView: View,
             private val clickListener: (ProfileItem) -> Unit,
             private val logoutClickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
         private var compositeDisposable = CompositeDisposable()

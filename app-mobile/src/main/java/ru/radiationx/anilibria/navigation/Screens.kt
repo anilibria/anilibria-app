@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.navigation
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
@@ -69,7 +69,7 @@ object Screens {
     }
 
     class Schedule(val day: Int = -1) : BaseAppScreen() {
-        override fun getFragment(): Fragment = ScheduleFragment.newInstance(day)
+        override fun getFragment(): androidx.fragment.app.Fragment = ScheduleFragment.newInstance(day)
     }
 
     class ReleaseDetails(

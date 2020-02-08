@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.common.adapters
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.util.SparseArray
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
@@ -17,9 +17,9 @@ open class OptimizeAdapter<T : List<*>>(
     private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
     private var states: SparseArray<Parcelable?> = SparseArray()
 
-    private var currentRecyclerView: RecyclerView? = null
+    private var currentRecyclerView: androidx.recyclerview.widget.RecyclerView? = null
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         currentRecyclerView = recyclerView
         recyclerView.recycledViewPool.apply {
@@ -29,13 +29,13 @@ open class OptimizeAdapter<T : List<*>>(
         }
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+    override fun onDetachedFromRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         currentRecyclerView = null
         recyclerView.recycledViewPool.clear()
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+    override fun onViewRecycled(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
         (holder as? IBundledViewHolder)?.apply {
             val state = holder.saveState()
@@ -43,7 +43,7 @@ open class OptimizeAdapter<T : List<*>>(
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
         super.onBindViewHolder(holder, position, payloads)
         (holder as? IBundledViewHolder)?.apply {
             val state = states[getStateId()]

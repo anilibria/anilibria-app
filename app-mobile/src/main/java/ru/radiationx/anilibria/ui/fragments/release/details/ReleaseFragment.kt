@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentStatePagerAdapter
+import com.google.android.material.appbar.AppBarLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -230,9 +230,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         super.onDestroyView()
     }
 
-    private inner class CustomPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
+    private inner class CustomPagerAdapter : androidx.fragment.app.FragmentStatePagerAdapter(childFragmentManager) {
 
-        private val fragments = listOf<Fragment>(
+        private val fragments = listOf<androidx.fragment.app.Fragment>(
                 ReleaseInfoFragment()/*,
                 CommentsFragment()*/,
                 VkCommentsFragment()
@@ -249,7 +249,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             }
         }
 
-        override fun getItem(position: Int): Fragment = fragments[position]
+        override fun getItem(position: Int): androidx.fragment.app.Fragment = fragments[position]
 
         override fun getCount(): Int = fragments.size
 

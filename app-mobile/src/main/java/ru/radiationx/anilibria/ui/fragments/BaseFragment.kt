@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.fragments
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.LayoutRes
-import android.support.design.widget.CollapsingToolbarLayout
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

@@ -6,11 +6,11 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.design.chip.Chip
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.CoordinatorLayout
+import androidx.annotation.RequiresApi
+import com.google.android.material.chip.Chip
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -112,8 +112,8 @@ class GenresDialog(
     init {
         dialog.setContentView(rootView)
         val parentView = rootView.parent as FrameLayout
-        val coordinatorLayout = parentView.parent as CoordinatorLayout
-        val bottomSheetView = coordinatorLayout.findViewById<ViewGroup>(android.support.design.R.id.design_bottom_sheet)
+        val coordinatorLayout = parentView.parent as androidx.coordinatorlayout.widget.CoordinatorLayout
+        val bottomSheetView = coordinatorLayout.findViewById<ViewGroup>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView.apply {
             setPadding(
                     paddingLeft,
@@ -127,7 +127,7 @@ class GenresDialog(
         actionButtonText = actionButton.findViewById(R.id.pickerActionText)
         actionButtonCount = actionButton.findViewById(R.id.pickerActionCounter)
 
-        coordinatorLayout.addView(actionButton, (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
+        coordinatorLayout.addView(actionButton, (actionButton.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams).also {
             it.gravity = Gravity.BOTTOM
         })
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -297,7 +297,7 @@ class GenresDialog(
     }
 
     private fun getBehavior(): BottomSheetBehavior<View>? {
-        val bottomSheetInternal = dialog.findViewById<View>(android.support.design.R.id.design_bottom_sheet)
+        val bottomSheetInternal = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
         return BottomSheetBehavior.from(bottomSheetInternal!!)
     }
 

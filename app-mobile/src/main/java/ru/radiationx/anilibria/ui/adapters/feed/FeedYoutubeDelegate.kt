@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.os.Build
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_youtube.view.*
@@ -38,7 +38,7 @@ class FeedYoutubeDelegate(
     class ViewHolder(
             val view: View,
             private val clickListener: (YoutubeItem, View) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: YoutubeItem
 

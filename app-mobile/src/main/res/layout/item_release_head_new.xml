@@ -92,7 +92,7 @@
                 android:textSize="13sp"
                 tools:text="100" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/full_fav_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -114,7 +114,7 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <android.support.design.chip.ChipGroup
+    <com.google.android.material.chip.ChipGroup
         android:id="@+id/full_tags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -178,7 +178,7 @@
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
 
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/full_description_expander"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
@@ -201,7 +201,7 @@
         android:background="?divider_line"
         android:visibility="gone" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/full_button_torrent"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
@@ -213,7 +213,7 @@
         android:visibility="gone"
         app:strokeColor="?btn_border" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/full_button_watch_web"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"

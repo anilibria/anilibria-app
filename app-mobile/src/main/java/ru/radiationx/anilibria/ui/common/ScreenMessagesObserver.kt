@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.common
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers

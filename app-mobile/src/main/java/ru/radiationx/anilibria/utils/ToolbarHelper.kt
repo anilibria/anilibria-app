@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.utils
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.widget.TextView

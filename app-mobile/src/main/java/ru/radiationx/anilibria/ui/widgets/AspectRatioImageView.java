@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.R;
  * Created by radiationx on 26.08.17.
  */
 
-public class AspectRatioImageView extends android.support.v7.widget.AppCompatImageView {
+public class AspectRatioImageView extends androidx.appcompat.widget.AppCompatImageView {
     private float aspectRatio = 1.0f;
     private boolean enabledAspectRation = true;
 

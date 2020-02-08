@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_placeholder.*
@@ -18,7 +18,7 @@ class PlaceholderDelegate : AppAdapterDelegate<PlaceholderListItem, ListItem, Pl
     override fun bindData(item: PlaceholderListItem, holder: ViewHolder) =
             holder.bind(item.icRes, item.titleRes, item.descRes)
 
-    class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class ViewHolder(override val containerView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
             item_placeholder_icon.setCompatDrawable(icRes)
             item_placeholder_icon.setTintColorAttr(R.attr.base_icon)

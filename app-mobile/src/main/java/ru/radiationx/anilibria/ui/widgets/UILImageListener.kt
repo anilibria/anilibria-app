@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.widgets
 
 import android.graphics.Bitmap
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import android.view.View
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener

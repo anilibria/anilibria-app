@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.search
 
 import android.graphics.Typeface
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
@@ -36,7 +36,7 @@ class SearchSuggestionDelegate(
     class ViewHolder(
             val view: View,
             private val clickListener: (SearchItem) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: SearchItem
 

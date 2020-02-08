@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.os.Parcelable
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
@@ -27,7 +27,7 @@ class FeedSchedulesDelegate(
         null
 ) {
 
-    private val viewPool = RecyclerView.RecycledViewPool()
+    private val viewPool = androidx.recyclerview.widget.RecyclerView.RecycledViewPool()
 
     override fun bindData(item: FeedSchedulesListItem, holder: ViewHolder) =
             holder.bind(item.items)
@@ -43,8 +43,8 @@ class FeedSchedulesDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (ScheduleItem, View) -> Unit,
-            private val viewPool: RecyclerView.RecycledViewPool? = null
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
+            private val viewPool: androidx.recyclerview.widget.RecyclerView.RecycledViewPool? = null
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
 
         private val currentItems = mutableListOf<ScheduleItem>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
@@ -53,7 +53,7 @@ class FeedSchedulesDelegate(
             itemFeedScheduleList.apply {
                 isSaveEnabled = false
                 isNestedScrollingEnabled = false
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
                 adapter = scheduleAdapter
                 viewPool?.also {
                     setRecycledViewPool(it)

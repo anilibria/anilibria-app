@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.ui.widgets;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v7.preference.SwitchPreferenceCompat;
+import androidx.annotation.RequiresApi;
+import androidx.preference.SwitchPreferenceCompat;
 import android.util.AttributeSet;
 
 /**

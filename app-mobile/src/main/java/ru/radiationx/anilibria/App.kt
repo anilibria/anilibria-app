@@ -7,8 +7,8 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Handler
-import android.support.multidex.MultiDex
-import android.support.v7.app.AppCompatDelegate
+import androidx.multidex.MultiDex
+import androidx.appcompat.app.AppCompatDelegate
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast

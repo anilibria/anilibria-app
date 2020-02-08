@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.design.widget.TabLayout
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_episodes.*
@@ -31,7 +31,7 @@ class ReleaseEpisodesHeadDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private val tabListener = object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {

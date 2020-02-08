@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -54,7 +54,7 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
         recyclerView.apply {
             adapter = youtubeAdapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)

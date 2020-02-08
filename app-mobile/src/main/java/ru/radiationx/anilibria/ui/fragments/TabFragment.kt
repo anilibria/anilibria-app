@@ -3,10 +3,10 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
-import android.support.transition.*
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.view.animation.FastOutSlowInInterpolator
+import androidx.transition.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +32,7 @@ import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 import javax.inject.Inject
 
-class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
+class TabFragment : androidx.fragment.app.Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
 
     companion object {
         private const val TRANSITION_MOVE_TIME: Long = 375
@@ -137,9 +137,9 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
             override fun setupFragmentTransaction(
                     command: Command?,
-                    currentFragment: Fragment?,
-                    nextFragment: Fragment?,
-                    fragmentTransaction: FragmentTransaction
+                    currentFragment: androidx.fragment.app.Fragment?,
+                    nextFragment: androidx.fragment.app.Fragment?,
+                    fragmentTransaction: androidx.fragment.app.FragmentTransaction
             ) {
 
                 Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}")
@@ -183,11 +183,11 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     private fun setupSharedTransition(
             sharedProvider: SharedProvider,
             sharedReceiver: SharedReceiver,
-            fragmentTransaction: FragmentTransaction
+            fragmentTransaction: androidx.fragment.app.FragmentTransaction
     ) {
 
-        val currentFragment = sharedProvider as Fragment
-        val nextFragment = sharedReceiver as Fragment
+        val currentFragment = sharedProvider as androidx.fragment.app.Fragment
+        val nextFragment = sharedReceiver as androidx.fragment.app.Fragment
 
         val exitFade = Fade()
         exitFade.duration = TRANSITION_OTHER_TIME

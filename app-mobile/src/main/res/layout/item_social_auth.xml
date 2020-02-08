@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.AppCompatButton xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.AppCompatButton xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/itemSocialBtn"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Widget.AppCompat.Button.Borderless.Colored"

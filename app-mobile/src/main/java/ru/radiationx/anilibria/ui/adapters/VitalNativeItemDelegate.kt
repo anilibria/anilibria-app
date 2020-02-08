@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import android.graphics.Bitmap
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
@@ -29,7 +29,7 @@ class VitalNativeItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegat
     class ViewHolder(
             override val containerView: View,
             inDetail: Boolean
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         lateinit var currentItem: VitalItem
 

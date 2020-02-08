@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Handler
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +49,7 @@ class FeedAdapter(
         addDelegate(DividerShadowItemDelegate())
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
 
         val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
@@ -207,7 +207,7 @@ class FeedAdapter(
 
     private fun isProgress() = items.isNotEmpty() && items.last() is LoadMoreListItem
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         val time = System.currentTimeMillis()
         return super.onCreateViewHolder(parent, viewType).also {
             Log.d("nonono", "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}")

@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
@@ -33,7 +33,7 @@ class FeedScheduleDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (ScheduleItem, View) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ScheduleItem
 

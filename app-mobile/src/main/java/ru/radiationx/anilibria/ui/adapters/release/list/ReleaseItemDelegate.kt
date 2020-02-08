@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
 import android.os.Build
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -35,7 +35,7 @@ class ReleaseItemDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseItem
 

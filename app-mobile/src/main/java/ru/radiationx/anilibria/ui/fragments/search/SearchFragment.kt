@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -144,7 +144,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
         recyclerView.apply {
             adapter = this@SearchFragment.adapter
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
@@ -184,9 +184,9 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
+            width = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
             behavior = SearchBehavior()
         }
         searchView?.apply {
@@ -239,7 +239,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
             topMargin = dimensions.statusBar
         }
         searchView?.requestLayout()

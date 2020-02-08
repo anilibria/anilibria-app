@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_random_btn.*
@@ -27,7 +27,7 @@ class FeedRandomBtnDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
             item_random_btn.setOnClickListener {

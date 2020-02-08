@@ -2,10 +2,10 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -113,7 +113,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
         recyclerView.apply {
             adapter = this@FeedFragment.adapter
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
@@ -151,9 +151,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
+            width = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
 
             behavior = SearchBehavior()
         }
@@ -205,7 +205,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
             adapter = searchAdapter
 
-            val cardview = findViewById<CardView>(com.lapism.searchview.R.id.cardView)
+            val cardview = findViewById<androidx.cardview.widget.CardView>(com.lapism.searchview.R.id.cardView)
             cardview.apply {
                 radius = dpToPx(8).toFloat()
                 cardElevation = dpToPx(2).toFloat()
@@ -230,7 +230,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
             topMargin = dimensions.statusBar
         }
         searchView?.requestLayout()

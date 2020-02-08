@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -74,7 +74,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
 
         recyclerView.apply {
             adapter = scheduleAdapter
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
         }
 
         ToolbarShadowController(recyclerView, appbarLayout) {
@@ -109,7 +109,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     override fun scrollToDay(item: Pair<String, List<ScheduleItem>>) {
         val position = scheduleAdapter.getPositionByDay(item)
         Log.e("ninini", "scrollToDay ${item.first} -> $position")
-        (recyclerView.layoutManager as? LinearLayoutManager)?.also {
+        (recyclerView.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.also {
             it.scrollToPositionWithOffset(position, 0)
         }
     }

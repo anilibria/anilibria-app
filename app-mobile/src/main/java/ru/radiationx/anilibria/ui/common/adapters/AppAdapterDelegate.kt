@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.ui.common.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import java.lang.Exception
 
-abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
+abstract class AppAdapterDelegate<I : T, T, VH : androidx.recyclerview.widget.RecyclerView.ViewHolder>(
         protected val layoutRes: Int? = null,
         protected val viewChecker: ((T) -> Boolean)? = null,
         protected val holderCreator: ((View) -> VH)? = null

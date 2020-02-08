@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.design.chip.Chip
-import android.support.design.chip.ChipGroup
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +38,7 @@ class ReleaseHeadDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private var tagColor = 0
         private var tagColorPress = 0

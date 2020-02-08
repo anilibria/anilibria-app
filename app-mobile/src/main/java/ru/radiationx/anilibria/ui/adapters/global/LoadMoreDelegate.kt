@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.global
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
@@ -28,7 +28,7 @@ class LoadMoreDelegate(
     class ViewHolder(
             override val containerView: View,
             private val listener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
             itemLoadMoreBtn.gone()

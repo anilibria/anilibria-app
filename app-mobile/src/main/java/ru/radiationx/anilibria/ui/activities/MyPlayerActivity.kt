@@ -769,9 +769,9 @@ class MyPlayerActivity : BaseActivity() {
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
-                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
+                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -807,7 +807,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -837,7 +837,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -866,7 +866,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -894,7 +894,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -923,7 +923,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setDarkTheme(appThemeHolder.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                 .show()
     }
 
@@ -946,7 +946,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setDarkTheme(appThemeHolder.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                 .show()
     }
 

@@ -18,7 +18,7 @@
         android:clickable="true"
         android:focusable="true"
         app:fabSize="mini"
-        app:backgroundTint="?cardBackground"
+        app:backgroundTint="?colorSurface"
         app:srcCompat="@drawable/ic_close" />
 
 </FrameLayout>

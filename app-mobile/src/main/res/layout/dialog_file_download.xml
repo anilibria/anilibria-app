@@ -62,7 +62,7 @@
         android:layout_marginBottom="10dp"
         android:text="Просто дай мне скачать файл"
         android:textAllCaps="false"
-        android:textColor="?textLink"
+        android:textColor="?colorSecondary"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/dialogFilePatreonBtn"

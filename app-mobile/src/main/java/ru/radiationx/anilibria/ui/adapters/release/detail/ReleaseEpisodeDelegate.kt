@@ -38,8 +38,6 @@ class ReleaseEpisodeDelegate(
     ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseFull.Episode
-        private val disableColor = R.attr.base_icon
-        private val enableColor = R.attr.colorAccent
 
         init {
             quality_sd.setOnClickListener {
@@ -71,7 +69,7 @@ class ReleaseEpisodeDelegate(
             quality_full_hd.visible(item.urlFullHd != null)
 
             val bgColor = if (isEven) {
-                containerView.context.getColorFromAttr(R.attr.cardBackground)
+                containerView.context.getColorFromAttr(R.attr.colorSurface)
             } else {
                 containerView.context.getColorFromAttr(R.attr.episode_even)
             }

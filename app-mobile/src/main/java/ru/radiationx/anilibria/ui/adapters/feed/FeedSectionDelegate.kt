@@ -61,7 +61,7 @@ class FeedSectionDelegate(
             itemFeedScheduleBtn.text = item.route
 
             containerView.setBackgroundColor(if (item.hasBg) {
-                containerView.context.getColorFromAttr(R.attr.cardBackground)
+                containerView.context.getColorFromAttr(R.attr.colorSurface)
             } else {
                 Color.TRANSPARENT
             })

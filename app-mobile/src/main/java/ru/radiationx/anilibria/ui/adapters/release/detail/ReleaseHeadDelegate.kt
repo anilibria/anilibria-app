@@ -40,21 +40,9 @@ class ReleaseHeadDelegate(
             private val itemListener: Listener
     ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private var tagColor = 0
-        private var tagColorPress = 0
-        private var tagColorText = 0
-        private var tagRadius = 0f
-
         private lateinit var currentItem: ReleaseFull
 
         init {
-            containerView.context.let {
-                tagColor = it.getColorFromAttr(R.attr.release_tag_color)
-                tagColorPress = it.getColorFromAttr(R.attr.release_tag_color_press)
-                tagColorText = it.getColorFromAttr(R.attr.textColoredButton)
-                tagRadius = 2 * it.resources.displayMetrics.density
-            }
-
             full_button_torrent.setOnClickListener {
                 itemListener.onClickTorrent()
             }

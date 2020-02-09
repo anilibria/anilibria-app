@@ -112,7 +112,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         }
         //setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
         //setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
-        setBackgroundColor(ContextKt.getColorFromAttr(getContext(), R.attr.windowBackground));
+        setBackgroundColor(ContextKt.getColorFromAttr(getContext(), android.R.attr.colorBackground));
     }
 
     public void easyLoadData(String baseUrl, String data) {

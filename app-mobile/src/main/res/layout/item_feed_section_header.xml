@@ -36,7 +36,7 @@
         android:paddingTop="8dp"
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
-        android:textColor="?textLink"
+        android:textColor="?colorSecondary"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

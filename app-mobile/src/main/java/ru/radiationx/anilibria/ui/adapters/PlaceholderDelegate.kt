@@ -21,7 +21,7 @@ class PlaceholderDelegate : AppAdapterDelegate<PlaceholderListItem, ListItem, Pl
     class ViewHolder(override val containerView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
             item_placeholder_icon.setCompatDrawable(icRes)
-            item_placeholder_icon.setTintColorAttr(R.attr.base_icon)
+            item_placeholder_icon.setTintColorAttr(R.attr.colorOnSurface)
             item_placeholder_title.setText(titleRes)
             item_placeholder_desc.setText(descRes)
         }

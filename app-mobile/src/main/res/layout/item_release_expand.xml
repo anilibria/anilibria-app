@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?cardBackground">
+    android:background="?colorSurface">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/item_expand_title"

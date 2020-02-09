@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:background="?cardBackground"
+        android:background="?colorSurface"
         android:overScrollMode="never"
         android:transitionGroup="true" />
 
@@ -47,7 +47,7 @@
         android:id="@+id/configuring_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?cardBackground"
+        android:background="?colorSurface"
         android:visibility="gone" />
 
 </RelativeLayout>

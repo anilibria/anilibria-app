@@ -46,7 +46,7 @@ class SearchDelegate(
         fun bind(item: SearchItem) {
             currentItem = item
             item_image.setCompatDrawable(item.icRes)
-            item_image.setTintColorAttr(R.attr.base_icon)
+            item_image.setTintColorAttr(R.attr.colorOnSurface)
             item_image.background = null
             item_title.text = item.title
         }

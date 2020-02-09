@@ -312,7 +312,7 @@ class GenresDialog(
 
             val navigationBarDrawable = GradientDrawable()
             navigationBarDrawable.shape = GradientDrawable.RECTANGLE
-            navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.cardBackground))
+            navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.colorSurface))
 
             val layers = arrayOf<Drawable>(dimDrawable, navigationBarDrawable)
 

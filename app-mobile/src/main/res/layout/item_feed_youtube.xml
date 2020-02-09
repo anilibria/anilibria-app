@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?cardBackground"
+    android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
@@ -12,7 +12,7 @@
     android:paddingTop="12dp"
     android:paddingEnd="16dp"
     android:paddingBottom="12dp"
-    app:cardBackgroundColor="?cardBackground"
+    app:cardBackgroundColor="?colorSurface"
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp">
 

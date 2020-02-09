@@ -4,7 +4,7 @@
     <style name="BasePlayerTheme" parent="DarkAppTheme.NoActionBar">
         <!--<item name="colorPrimary">@color/light_colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>-->
-        <item name="windowBackground">#000</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
     </style>
 
     <style name="PlayerTheme" parent="BasePlayerTheme" />

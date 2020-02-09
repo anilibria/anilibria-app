@@ -10,11 +10,12 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchMenuItem
+import com.lapism.search.widget.SearchView
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import com.lapism.searchview.SearchBehavior
-import com.lapism.searchview.SearchEditText
-import com.lapism.searchview.SearchView
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
@@ -39,15 +40,18 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, ReleasesAdapter.ItemListener {
-    private val adapter: ReleasesAdapter = ReleasesAdapter(this, PlaceholderListItem(
+class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
+    ReleasesAdapter.ItemListener {
+    private val adapter: ReleasesAdapter = ReleasesAdapter(
+        this, PlaceholderListItem(
             R.drawable.ic_fav_border,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_favorites
-    ))
+        )
+    )
 
 
-    private var searchView: SearchView? = null
+    private var searchView: SearchMenuItem? = null
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -56,7 +60,8 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     lateinit var presenter: FavoritesPresenter
 
     @ProvidePresenter
-    fun provideFavoritesPresenter(): FavoritesPresenter = getDependency(screenScope, FavoritesPresenter::class.java)
+    fun provideFavoritesPresenter(): FavoritesPresenter =
+        getDependency(screenScope, FavoritesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -80,7 +85,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
 
         //ToolbarHelper.fixInsets(toolbar)
 
-        searchView = SearchView(coordinator_layout.context)
+        searchView = SearchMenuItem(coordinator_layout.context)
 
         toolbar.apply {
             title = getString(R.string.fragment_title_favorites)
@@ -100,116 +105,65 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
         }
 
         ToolbarShadowController(
-                recyclerView,
-                appbarLayout
+            recyclerView,
+            appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
         toolbar.menu.apply {
             add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setIcon(R.drawable.ic_toolbar_search)
+                .setOnMenuItemClickListener {
+                    searchView?.requestFocus(it)
+                    false
+                }
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-            width = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            behavior = SearchBehavior()
-        }
-        searchView?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                z = 16f
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                width =
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT
+                height =
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                behavior = SearchBehavior<SearchMenuItem>()
             }
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            close(false)
-            setVoice(false)
-            setShadow(false)
-            setDivider(false)
-            setTheme(when (appThemeHolder.getTheme()) {
-                AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
-                AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
-            })
-            shouldClearOnClose = true
-            version = SearchView.VERSION_MENU_ITEM
-            setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM)
-
-            hint = "Название релиза"
-
-            /*setOnOpenCloseListener(object : SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    return false
-                }
-
-                override fun onClose(): Boolean {
-                    return false
-                }
-            })*/
-
-
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
+        searchView?.apply {
+            setTextHint("Название релиза")
+            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: CharSequence): Boolean {
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    presenter.localSearch(newText.orEmpty())
+                override fun onQueryTextChange(newText: CharSequence): Boolean {
+                    presenter.localSearch(newText.toString())
                     return false
                 }
             })
-            val cardview = findViewById<androidx.cardview.widget.CardView>(com.lapism.searchview.R.id.cardView)
-            cardview.apply {
-                radius = dpToPx(8).toFloat()
-                cardElevation = dpToPx(2).toFloat()
-                setCardBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(16)
-                    marginEnd = dpToPx(16)
-                    bottomMargin = dpToPx(8)
-                }
-            }
 
-
-            val searchEditText = findViewById<SearchEditText>(com.lapism.searchview.R.id.searchEditText_input)
-            searchEditText.apply {
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(12)
-                }
-            }
+            setAdapter(adapter)
         }
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-            topMargin = dimensions.statusBar
-        }
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                topMargin = dimensions.statusBar
+            }
         searchView?.requestLayout()
     }
 
-    private fun closeSearch(): Boolean {
-        if (searchView?.isSearchOpen == true) {
-            searchView?.close(true)
-            return true
-        }
-        return false
-    }
-
     override fun onBackPressed(): Boolean {
-        if (closeSearch())
-            return true
         presenter.onBackPressed()
         return true
     }
 
     override fun onDestroyView() {
-        closeSearch()
+        searchView?.clearFocus()
         super.onDestroyView()
     }
 
@@ -249,13 +203,13 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView, Release
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(arrayOf("Удалить"/*, "Добавить на главный экран"*/)) { dialog, which ->
-                        when (which) {
-                            0 -> presenter.deleteFav(item.id)
-                            1 -> ShortcutHelper.addShortcut(item)
-                        }
+                .setItems(arrayOf("Удалить"/*, "Добавить на главный экран"*/)) { dialog, which ->
+                    when (which) {
+                        0 -> presenter.deleteFav(item.id)
+                        1 -> ShortcutHelper.addShortcut(item)
                     }
-                    .show()
+                }
+                .show()
         }
         return false
     }

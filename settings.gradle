@@ -1,1 +1,1 @@
-include ':app-mobile', ':bottomsheet', ':data', ':shared-ktx', ':shared-android-ktx'
+include ':app-mobile', ':bottomsheet', ':data', ':shared-ktx', ':shared-android-ktx', ':lapism-search'

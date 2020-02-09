@@ -9,7 +9,7 @@ import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface SearchView : ReleasesView {
+interface SearchCatalogView : ReleasesView {
     fun updateInfo(sort: String, filters: Int)
 
     fun showGenres(genres: List<GenreItem>)

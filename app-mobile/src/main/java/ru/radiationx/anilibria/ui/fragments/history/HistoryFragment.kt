@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchMenuItem
+import com.lapism.search.widget.SearchView
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import com.lapism.searchview.SearchBehavior
-import com.lapism.searchview.SearchEditText
-import com.lapism.searchview.SearchView
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
@@ -49,7 +50,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     }
 
 
-    private var searchView: SearchView? = null
+    private var searchView: SearchMenuItem? = null
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -79,7 +80,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchView = SearchView(coordinator_layout.context)
+        searchView = SearchMenuItem(coordinator_layout.context)
         ToolbarHelper.fixInsets(toolbar)
 
         toolbar.apply {
@@ -92,7 +93,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
             add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
+                        searchView?.requestFocus(it)
                         false
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -116,99 +117,39 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-            width = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            behavior = SearchBehavior()
+        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+            behavior = SearchBehavior<SearchView>()
         }
         searchView?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                z = 16f
-            }
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            close(false)
-            setVoice(false)
-            setShadow(false)
-            setDivider(false)
-            setTheme(when (appThemeHolder.getTheme()) {
-                AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
-                AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
-            })
-            shouldClearOnClose = true
-            version = SearchView.VERSION_MENU_ITEM
-            setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM)
-
-            hint = "Название релиза"
-
-            /*setOnOpenCloseListener(object : SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    return false
-                }
-
-                override fun onClose(): Boolean {
-                    return false
-                }
-            })*/
-
-
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
+            setTextHint("Название релиза")
+            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: CharSequence): Boolean {
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    presenter.localSearch(newText.orEmpty())
+                override fun onQueryTextChange(newText: CharSequence): Boolean {
+                    presenter.localSearch(newText.toString())
                     return false
                 }
             })
-            val cardview = findViewById<androidx.cardview.widget.CardView>(com.lapism.searchview.R.id.cardView)
-            cardview.apply {
-                radius = dpToPx(8).toFloat()
-                cardElevation = dpToPx(2).toFloat()
-                setCardBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(16)
-                    marginEnd = dpToPx(16)
-                    bottomMargin = dpToPx(8)
-                }
-            }
 
-
-            val searchEditText = findViewById<SearchEditText>(com.lapism.searchview.R.id.searchEditText_input)
-            searchEditText.apply {
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(12)
-                }
-            }
+            setAdapter(adapter)
         }
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
+        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
             topMargin = dimensions.statusBar
         }
         searchView?.requestLayout()
     }
 
-    private fun closeSearch(): Boolean {
-        if (searchView?.isSearchOpen == true) {
-            searchView?.close(true)
-            return true
-        }
-        return false
-    }
-
     override fun onBackPressed(): Boolean {
-        if (closeSearch())
-            return true
         presenter.onBackPressed()
         return true
-    }
-
-    override fun onDestroyView() {
-        closeSearch()
-        super.onDestroyView()
     }
 
     override fun setRefreshing(refreshing: Boolean) {}

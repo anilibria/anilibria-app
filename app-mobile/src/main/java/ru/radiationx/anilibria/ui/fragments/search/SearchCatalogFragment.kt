@@ -2,15 +2,16 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Build
 import android.os.Bundle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchMenuItem
+import com.lapism.search.widget.SearchView
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import com.lapism.searchview.SearchBehavior
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import ru.radiationx.anilibria.R
@@ -27,7 +28,7 @@ import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
-import ru.radiationx.anilibria.presentation.search.SearchView
+import ru.radiationx.anilibria.presentation.search.SearchCatalogView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -38,50 +39,55 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import javax.inject.Inject
 
 
-class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvider, ReleasesAdapter.ItemListener {
+class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView, SharedProvider,
+    ReleasesAdapter.ItemListener {
 
     companion object {
         private const val ARG_GENRE: String = "genre"
         private const val ARG_YEAR: String = "year"
 
         fun newInstance(
-                genres: String? = null,
-                years: String? = null
-        ) = SearchFragment().putExtra {
+            genres: String? = null,
+            years: String? = null
+        ) = SearchCatalogFragment().putExtra {
             putString(ARG_GENRE, genres)
             putString(ARG_YEAR, years)
         }
     }
 
     private lateinit var genresDialog: GenresDialog
-    private val adapter = SearchAdapter(this, PlaceholderListItem(
+    private val adapter = SearchAdapter(
+        this, PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
-    ))
+        )
+    )
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
 
     private val fastSearchAdapter = FastSearchAdapter {
-        searchView?.close(true)
+        //searchView?.close(true)
         searchPresenter.onItemClick(it)
     }.apply {
         setHasStableIds(true)
     }
-    private var searchView: com.lapism.searchview.SearchView? = null
+    private var searchView: SearchMenuItem? = null
 
     @InjectPresenter
     lateinit var searchPresenter: FastSearchPresenter
 
     @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = getDependency(screenScope, FastSearchPresenter::class.java)
+    fun provideSearchPresenter(): FastSearchPresenter =
+        getDependency(screenScope, FastSearchPresenter::class.java)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
-    fun providePresenter(): SearchPresenter = getDependency(screenScope, SearchPresenter::class.java)
+    fun providePresenter(): SearchPresenter =
+        getDependency(screenScope, SearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -110,7 +116,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = com.lapism.searchview.SearchView(coordinator_layout.context)
+        searchView = SearchMenuItem(coordinator_layout.context)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onAccept() {
@@ -143,7 +149,7 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
-            adapter = this@SearchFragment.adapter
+            adapter = this@SearchCatalogFragment.adapter
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
@@ -152,8 +158,8 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         }
 
         ToolbarShadowController(
-                recyclerView,
-                appbarLayout
+            recyclerView,
+            appbarLayout
         ) {
             updateToolbarShadow(it)
         }
@@ -167,81 +173,62 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
         toolbar.menu.apply {
             add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setIcon(R.drawable.ic_toolbar_search)
+                .setOnMenuItemClickListener {
+                    searchView?.requestFocus(it)
+                    false
+                }
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
             add("Фильтры")
-                    .setIcon(R.drawable.ic_filter_toolbar)
-                    .setOnMenuItemClickListener {
-                        presenter.showDialog()
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setIcon(R.drawable.ic_filter_toolbar)
+                .setOnMenuItemClickListener {
+                    presenter.showDialog()
+                    false
+                }
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-            width = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            behavior = SearchBehavior()
-        }
-        searchView?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                z = 16f
+        searchView?.layoutParams =
+            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
+                width =
+                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
+                height =
+                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                behavior = SearchBehavior<SearchMenuItem>()
             }
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            close(false)
-            setVoice(false)
-            setShadow(true)
-            setDivider(true)
-            setTheme(when (appThemeHolder.getTheme()) {
-                AppThemeHolder.AppTheme.LIGHT -> com.lapism.searchview.SearchView.THEME_LIGHT
-                AppThemeHolder.AppTheme.DARK -> com.lapism.searchview.SearchView.THEME_DARK
-            })
-            shouldClearOnClose = true
-            version = com.lapism.searchview.SearchView.VERSION_MENU_ITEM
-            setVersionMargins(com.lapism.searchview.SearchView.VERSION_MARGINS_MENU_ITEM)
-
-            hint = "Название релиза"
-
-            setOnOpenCloseListener(object : com.lapism.searchview.SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    showSuggestions()
-                    return false
+        (searchView as SearchLayout?)?.apply {
+            setTextHint("Название релиза")
+            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
+                override fun onFocusChange(hasFocus: Boolean) {
+                    if (!hasFocus) {
+                        searchPresenter.onClose()
+                    }
                 }
 
-                override fun onClose(): Boolean {
-                    hideSuggestions()
-                    searchPresenter.onClose()
-                    return false
-                }
             })
-
-
-            setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
+            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: CharSequence): Boolean {
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchPresenter.onQueryChange(newText.orEmpty())
+                override fun onQueryTextChange(newText: CharSequence): Boolean {
+                    searchPresenter.onQueryChange(newText.toString())
                     return false
                 }
             })
 
-            adapter = fastSearchAdapter
+            setAdapter(fastSearchAdapter)
         }
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-            topMargin = dimensions.statusBar
-        }
+        searchView?.layoutParams =
+            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
+                topMargin = dimensions.statusBar
+            }
         searchView?.requestLayout()
     }
 
@@ -256,11 +243,11 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
 
     override fun setSearchProgress(isProgress: Boolean) {
         searchView?.also {
-            if (isProgress) {
+            /*if (isProgress) {
                 it.showProgress()
             } else {
                 it.hideProgress()
-            }
+            }*/
         }
     }
 
@@ -355,12 +342,12 @@ class SearchFragment : BaseFragment(), SearchView, FastSearchView, SharedProvide
         presenter.onItemLongClick(item)
         context?.let {
             AlertDialog.Builder(it)
-                    .setItems(arrayOf("Добавить на главный экран")) { _, which ->
-                        when (which) {
-                            0 -> ShortcutHelper.addShortcut(item)
-                        }
+                .setItems(arrayOf("Добавить на главный экран")) { _, which ->
+                    when (which) {
+                        0 -> ShortcutHelper.addShortcut(item)
                     }
-                    .show()
+                }
+                .show()
         }
         return false
     }

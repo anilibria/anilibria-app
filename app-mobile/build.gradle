@@ -45,8 +45,8 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
@@ -128,7 +128,10 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation 'com.lapism:searchview:4.0'
+    //implementation 'com.lapism:searchview:4.0'
+    //implementation 'com.lapism:search:1.0.0'
+    implementation project(":lapism-search")
+
     implementation 'com.google.android:flexbox:1.1.0'
 
     implementation 'com.devbrackets.android:exomedia:4.3.0'

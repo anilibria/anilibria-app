@@ -17,7 +17,7 @@ class SearchPresenter @Inject constructor(
         private val router: Router,
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder
-) : BasePresenter<SearchView>(router) {
+) : BasePresenter<SearchCatalogView>(router) {
 
     companion object {
         private const val START_PAGE = 1

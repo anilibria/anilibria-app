@@ -6,7 +6,7 @@ import android.text.Html
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release.*
+import kotlinx.android.synthetic.main.item_feed_release.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.visible

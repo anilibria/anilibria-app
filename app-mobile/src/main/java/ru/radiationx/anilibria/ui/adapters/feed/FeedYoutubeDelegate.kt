@@ -5,7 +5,7 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.synthetic.main.item_youtube.view.*
+import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem

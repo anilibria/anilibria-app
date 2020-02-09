@@ -11,7 +11,6 @@
 
     <string name="download_torrent">Скачать торрент</string>
     <string name="watch_web">Веб-плеер</string>
-    <string name="watch_all">Смотреть онлайн</string>
     <string name="item_donate">Понравилась озвучка?\nПоддержи проект :3</string>
     <string name="updater_download">Загрузить</string>
     <string name="auth_sign_with">Войти через</string>
@@ -32,8 +31,6 @@
     <string name="placeholder_desc_nodata_search">Сформируйте поисковой запрос иначе или потяните вниз, чтобы обновить данные.</string>
     <string name="placeholder_desc_nodata_favorites">Здесь будут отображаться ваши избранные релизы.</string>
     <string name="placeholder_desc_nodata_history">Здесь будет отображаться локальная история просмотра релизов.</string>
-    <string name="placeholder_title_comments">Нет комментариев</string>
-    <string name="placeholder_desc_comments">Стань первым ;)</string>
 
     <string name="country_blocked_title">This application is not available in your country</string>
     <string name="country_blocked_exit">Close app</string>

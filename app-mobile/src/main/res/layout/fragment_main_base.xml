@@ -26,7 +26,6 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbarLayout"
             android:layout_width="match_parent"
-            android:background="#f00"
             android:layout_height="wrap_content"
             android:stateListAnimator="@null"
             android:theme="?app_bar_overlay">
@@ -35,7 +34,7 @@
                 android:id="@+id/toolbarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:contentScrim="?colorPrimary"
+                app:contentScrim="?colorSurface"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:scrimAnimationDuration="335"
                 app:scrimVisibleHeightTrigger="96dp"

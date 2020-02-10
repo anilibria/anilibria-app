@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <attr name="colorSecondarySoft" extension="reference" format="color" />
+
     <attr name="divider_line" extension="reference" format="color" />
     <attr name="btn_border" extension="reference" format="color" />
     <attr name="gradientBackground" extension="reference" format="color" />

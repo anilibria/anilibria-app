@@ -132,15 +132,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
 
-            layoutParams = layoutParams.apply {
-                val tv = TypedValue()
-                if (context.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-                    val actionBarHeight =
-                        TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
 
-                    height = actionBarHeight + dpToPx(8)
-                }
-            }
         }
 
         FeedToolbarShadowController(

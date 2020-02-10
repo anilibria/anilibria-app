@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import java.util.*
 
 /* Created by radiationx on 31.10.17. */

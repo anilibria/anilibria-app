@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import com.arellomobile.mvp.MvpAppCompatActivity
+import moxy.MvpAppCompatActivity
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import javax.inject.Inject
 

@@ -1,17 +1,15 @@
 package ru.radiationx.anilibria.ui.fragments.other
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_list.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -22,6 +20,8 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.data.entity.app.other.OtherMenuItem
+import ru.radiationx.data.entity.app.other.ProfileItem
 
 
 /**

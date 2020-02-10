@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.utils
 
-import android.util.Log
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
-import java.lang.Exception
 import java.util.regex.Pattern
 
 class ImageFileNameGenerator : HashCodeFileNameGenerator() {

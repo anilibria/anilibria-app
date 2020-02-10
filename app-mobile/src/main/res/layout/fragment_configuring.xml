@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraint"
@@ -8,7 +8,7 @@
     tools:backgorund="#fff">
 
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/config_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,14 +64,14 @@
         app:layout_constraintVertical_bias="1"
         tools:text="Лалала тут пишется название какого-то действия" />
 
-    <android.support.constraint.Barrier
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/config_buttons_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
         app:constraint_referenced_ids="config_refresh,config_skip" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/config_refresh"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
@@ -84,7 +84,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="?btn_border" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/config_skip"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
@@ -97,7 +97,7 @@
         app:layout_constraintStart_toEndOf="@id/config_refresh"
         app:strokeColor="?btn_border" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/config_next"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
@@ -111,4 +111,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="?btn_border" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

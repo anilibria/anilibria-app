@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_card"
     android:layout_width="match_parent"
@@ -9,9 +9,9 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="?cardBackground"
+    app:cardBackgroundColor="?colorSurface"
     app:cardCornerRadius="0dp"
     app:cardElevation="1dp">
 
     <include layout="@layout/item_vital_web" />
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

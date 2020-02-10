@@ -12,11 +12,11 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.holders.AuthHolder
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 
@@ -25,7 +25,7 @@ class AuthVkFragment : BaseFragment() {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
         fun newInstance(url: String) = AuthVkFragment().putExtra {
-            putString(AuthVkFragment.ARG_URL, url)
+            putString(ARG_URL, url)
         }
     }
 

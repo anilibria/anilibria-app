@@ -1,22 +1,21 @@
 package ru.radiationx.anilibria.ui.adapters.search
 
 import android.graphics.Typeface
-import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_fast_search.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import java.util.regex.Pattern
 
 /**

@@ -3,16 +3,16 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 /* Created by radiationx on 18.11.17. */
 
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 import java.util.*
 
 class ReleaseInfoAdapter(

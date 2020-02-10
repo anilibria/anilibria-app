@@ -2,12 +2,12 @@ package ru.radiationx.anilibria.utils
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

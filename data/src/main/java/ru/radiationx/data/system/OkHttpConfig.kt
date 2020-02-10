@@ -4,9 +4,10 @@ import android.os.Build
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
-import java.lang.Exception
 import java.security.cert.X509Certificate
-import javax.net.ssl.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLSession
+import javax.net.ssl.X509TrustManager
 
 object OkHttpConfig {
 

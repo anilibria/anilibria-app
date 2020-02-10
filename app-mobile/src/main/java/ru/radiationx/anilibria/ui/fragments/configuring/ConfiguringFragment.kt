@@ -1,21 +1,21 @@
 package ru.radiationx.anilibria.ui.fragments.configuring
 
 import android.os.Bundle
-import android.support.transition.TransitionSet
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.transition.TransitionSet
 import kotlinx.android.synthetic.main.fragment_configuring.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringPresenter
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 class ConfiguringFragment : BaseFragment(), ConfiguringView {
 

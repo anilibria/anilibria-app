@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:parentTag="android.support.constraint.ConstraintLayout">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day1"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -24,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day2"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -42,7 +42,7 @@
         app:layout_constraintStart_toEndOf="@id/day1"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day3"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day4"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -79,7 +79,7 @@
         app:layout_constraintStart_toEndOf="@id/day3"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day5"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -97,7 +97,7 @@
         app:layout_constraintStart_toEndOf="@id/day4"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day6"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -115,7 +115,7 @@
         app:layout_constraintStart_toEndOf="@id/day5"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/day7"
         android:layout_width="36dp"
         android:layout_height="36dp"

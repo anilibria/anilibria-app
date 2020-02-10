@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments
 
-import android.support.design.widget.AppBarLayout
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 
 open class ToolbarShadowController(
         protected val recyclerView: RecyclerView,

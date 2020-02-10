@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_remind.*
 import ru.radiationx.anilibria.R

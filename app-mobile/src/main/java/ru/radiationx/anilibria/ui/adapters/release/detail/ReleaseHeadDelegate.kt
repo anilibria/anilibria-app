@@ -1,26 +1,26 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.design.chip.Chip
-import android.support.design.chip.ChipGroup
-import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import at.blogc.android.views.ExpandableTextView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.setCompatDrawable
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.setCompatDrawable
+import ru.radiationx.shared.ktx.android.visible
 
 /**
  * Created by radiationx on 13.01.18.
@@ -40,21 +40,9 @@ class ReleaseHeadDelegate(
             private val itemListener: Listener
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private var tagColor = 0
-        private var tagColorPress = 0
-        private var tagColorText = 0
-        private var tagRadius = 0f
-
         private lateinit var currentItem: ReleaseFull
 
         init {
-            containerView.context.let {
-                tagColor = it.getColorFromAttr(R.attr.release_tag_color)
-                tagColorPress = it.getColorFromAttr(R.attr.release_tag_color_press)
-                tagColorText = it.getColorFromAttr(R.attr.textColoredButton)
-                tagRadius = 2 * it.resources.displayMetrics.density
-            }
-
             full_button_torrent.setOnClickListener {
                 itemListener.onClickTorrent()
             }

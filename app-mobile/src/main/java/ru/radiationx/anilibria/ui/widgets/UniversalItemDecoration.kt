@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.ui.widgets
 
 import android.graphics.Rect
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.App
 
 class UniversalItemDecoration : RecyclerView.ItemDecoration() {

@@ -6,11 +6,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.design.chip.Chip
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.CoordinatorLayout
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -21,12 +16,17 @@ import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.shared.ktx.android.visible
 
 
@@ -35,7 +35,7 @@ class GenresDialog(
         private val listener: ClickListener
 ) {
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
-    private var rootView: View = LayoutInflater.from(context).inflate(ru.radiationx.anilibria.R.layout.dialog_genres, null, false)
+    private var rootView: View = LayoutInflater.from(context).inflate(R.layout.dialog_genres, null, false)
 
     private val filterComplete = rootView.filterComplete
 
@@ -113,7 +113,7 @@ class GenresDialog(
         dialog.setContentView(rootView)
         val parentView = rootView.parent as FrameLayout
         val coordinatorLayout = parentView.parent as CoordinatorLayout
-        val bottomSheetView = coordinatorLayout.findViewById<ViewGroup>(android.support.design.R.id.design_bottom_sheet)
+        val bottomSheetView = coordinatorLayout.findViewById<ViewGroup>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView.apply {
             setPadding(
                     paddingLeft,
@@ -297,7 +297,7 @@ class GenresDialog(
     }
 
     private fun getBehavior(): BottomSheetBehavior<View>? {
-        val bottomSheetInternal = dialog.findViewById<View>(android.support.design.R.id.design_bottom_sheet)
+        val bottomSheetInternal = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
         return BottomSheetBehavior.from(bottomSheetInternal!!)
     }
 
@@ -312,7 +312,7 @@ class GenresDialog(
 
             val navigationBarDrawable = GradientDrawable()
             navigationBarDrawable.shape = GradientDrawable.RECTANGLE
-            navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.cardBackground))
+            navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.colorSurface))
 
             val layers = arrayOf<Drawable>(dimDrawable, navigationBarDrawable)
 

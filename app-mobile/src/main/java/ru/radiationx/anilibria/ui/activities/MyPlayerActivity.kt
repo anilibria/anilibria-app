@@ -15,14 +15,14 @@ import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.view.ContextThemeWrapper
 import android.text.Html
 import android.util.Log
 import android.util.Rational
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.content.ContextCompat
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
@@ -34,17 +34,17 @@ import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.anilibria.extension.isDark
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.VitalRepository
-import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -280,9 +280,9 @@ class MyPlayerActivity : BaseActivity() {
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
         appPreferences.setQuality(when (newQuality) {
-            MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
-            MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
-            MyPlayerActivity.VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
+            VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+            VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+            VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
             else -> PreferencesHolder.QUALITY_NO
         })
         saveEpisode()
@@ -329,9 +329,9 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        newConfig?.also { config ->
+        newConfig.also { config ->
             updateByConfig(config)
         }
     }
@@ -663,9 +663,9 @@ class MyPlayerActivity : BaseActivity() {
         private fun BottomSheet.register() = openedDialogs.add(this)
 
         fun getQualityTitle(quality: Int) = when (quality) {
-            MyPlayerActivity.VAL_QUALITY_SD -> "480p"
-            MyPlayerActivity.VAL_QUALITY_HD -> "720p"
-            MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
+            VAL_QUALITY_SD -> "480p"
+            VAL_QUALITY_HD -> "720p"
+            VAL_QUALITY_FULL_HD -> "1080p"
             else -> "Вероятнее всего 480p"
         }
 
@@ -736,9 +736,9 @@ class MyPlayerActivity : BaseActivity() {
                     .toTypedArray()
 
             val icQualityRes = when (currentQuality) {
-                MyPlayerActivity.VAL_QUALITY_SD -> R.drawable.ic_quality_sd_base
-                MyPlayerActivity.VAL_QUALITY_HD -> R.drawable.ic_quality_hd_base
-                MyPlayerActivity.VAL_QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
+                VAL_QUALITY_SD -> R.drawable.ic_quality_sd_base
+                VAL_QUALITY_HD -> R.drawable.ic_quality_hd_base
+                VAL_QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
                 else -> R.drawable.ic_settings
             }
             val icons = valuesList
@@ -769,9 +769,9 @@ class MyPlayerActivity : BaseActivity() {
                     }
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
-                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.base_icon))
+                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -807,16 +807,16 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
 
         fun showQualityDialog() {
             val qualities = mutableListOf<Int>()
-            if (getEpisode().urlSd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
-            if (getEpisode().urlHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
-            if (getEpisode().urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
+            if (getEpisode().urlSd != null) qualities.add(VAL_QUALITY_SD)
+            if (getEpisode().urlHd != null) qualities.add(VAL_QUALITY_HD)
+            if (getEpisode().urlFullHd != null) qualities.add(VAL_QUALITY_FULL_HD)
 
             val values = qualities.toTypedArray()
 
@@ -837,7 +837,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -866,7 +866,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -894,7 +894,7 @@ class MyPlayerActivity : BaseActivity() {
                     .setDarkTheme(appThemeHolder.getTheme().isDark())
                     .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                     .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                     .show()
                     .register()
         }
@@ -923,7 +923,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setDarkTheme(appThemeHolder.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                 .show()
     }
 
@@ -946,7 +946,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setDarkTheme(appThemeHolder.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.cardBackground))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
                 .show()
     }
 

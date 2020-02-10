@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.data.repository.YoutubeRepository
+import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.repository.YoutubeRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

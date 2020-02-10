@@ -8,10 +8,10 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.anilibria.navigation.Screens
 import javax.inject.Inject
 
 class CountryBlockedActivity : BaseActivity() {

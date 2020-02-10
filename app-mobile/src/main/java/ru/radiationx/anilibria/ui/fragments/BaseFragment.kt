@@ -3,27 +3,27 @@ package ru.radiationx.anilibria.ui.fragments
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.LayoutRes
-import android.support.design.widget.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.arellomobile.mvp.MvpAppCompatFragment
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.MvpAppCompatFragment
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.shared.ktx.addTo
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.shared.ktx.addTo
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 /* Created by radiationx on 18.11.17. */
 

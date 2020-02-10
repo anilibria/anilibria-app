@@ -1,14 +1,14 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import com.arellomobile.mvp.InjectViewState
-import ru.radiationx.data.entity.app.page.VkComments
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.datasource.holders.AuthHolder
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.PageRepository
+import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.data.entity.app.page.VkComments
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

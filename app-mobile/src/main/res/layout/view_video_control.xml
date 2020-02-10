@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/videoControlsRoot"
@@ -21,7 +21,7 @@
             android:clickable="true"
             android:focusable="true" />
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,13 +32,13 @@
             android:theme="?app_bar_overlay"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?actionBarSize"
                 app:popupTheme="?popup_overlay" />
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
             android:id="@+id/exomedia_controls_text_container"
@@ -81,7 +81,7 @@
         </LinearLayout>
 
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controlButtonsWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                 tools:ignore="ContentDescription,RtlHardcoded"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/controlMinusOpening"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
@@ -154,7 +154,7 @@
                 app:layout_constraintStart_toStartOf="@id/exomedia_controls_previous_btn"
                 app:layout_constraintTop_toBottomOf="@id/exomedia_controls_previous_btn" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/controlPlusOpening"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
@@ -167,7 +167,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/exomedia_controls_next_btn"
                 app:layout_constraintTop_toBottomOf="@id/exomedia_controls_next_btn" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/gestureSeekValue"
@@ -203,7 +203,7 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/timeControlsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -256,7 +256,7 @@
                 tools:ignore="RtlHardcoded"
                 tools:text="1:23:49" />
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/controlsFullscreen"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="48dp"
@@ -269,7 +269,7 @@
                 app:srcCompat="@drawable/ic_arrow_expand"
                 app:tint="#fff" />
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/controlsSettings"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="48dp"
@@ -289,7 +289,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 tools:ignore="RtlHardcoded,UselessLeaf" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ProgressBar
             android:id="@+id/exomedia_controls_video_loading"
@@ -299,4 +299,4 @@
             android:layout_centerInParent="true"
             android:visibility="gone" />
     </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

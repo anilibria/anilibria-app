@@ -1,9 +1,9 @@
 package ru.radiationx.data.repository
 
 import io.reactivex.Observable
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.datasource.holders.HistoryHolder
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
 /**

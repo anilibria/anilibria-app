@@ -3,10 +3,10 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
+import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.IClient
@@ -15,10 +15,12 @@ import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.datasource.remote.api.*
 import ru.radiationx.data.datasource.remote.parsers.*
 import ru.radiationx.data.datasource.storage.*
+import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.repository.*
-import ru.radiationx.data.system.*
+import ru.radiationx.data.system.ApiUtils
+import ru.radiationx.data.system.AppCookieJar
+import ru.radiationx.data.system.AppSchedulers
 import toothpick.config.Module
 
 class DataModule(context: Context) : Module() {

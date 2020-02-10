@@ -1,22 +1,21 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 class YoutubeFragment : BaseFragment(), YoutubeView {
 

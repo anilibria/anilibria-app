@@ -1,28 +1,24 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
-import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.lapism.searchview.SearchBehavior
-import com.lapism.searchview.SearchView
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchMenuItem
+import com.lapism.search.widget.SearchView
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -35,28 +31,36 @@ import ru.radiationx.anilibria.ui.widgets.UniversalItemDecoration
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.shared.ktx.android.visible
 import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
-class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearchView, ReleasesAdapter.ItemListener {
+class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearchView,
+    ReleasesAdapter.ItemListener {
 
-    private val adapter: ReleasesAdapter = ReleasesAdapter(this, PlaceholderListItem(
+    private val adapter: ReleasesAdapter = ReleasesAdapter(
+        this, PlaceholderListItem(
             R.drawable.ic_releases,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_base
-    ))
+        )
+    )
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
 
     private val searchAdapter = FastSearchAdapter {
-        searchView?.close(true)
+        //searchView?.close(true)
         searchPresenter.onItemClick(it)
     }.apply {
         setHasStableIds(true)
     }
-    private var searchView: SearchView? = null
+    private var searchView: SearchMenuItem? = null
 
     @InjectPresenter
     lateinit var searchPresenter: FastSearchPresenter
@@ -65,10 +69,12 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     lateinit var presenter: ReleasesPresenter
 
     @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = getDependency(screenScope, FastSearchPresenter::class.java)
+    fun provideSearchPresenter(): FastSearchPresenter =
+        getDependency(screenScope, FastSearchPresenter::class.java)
 
     @ProvidePresenter
-    fun provideReleasesPresenter(): ReleasesPresenter = getDependency(screenScope, ReleasesPresenter::class.java)
+    fun provideReleasesPresenter(): ReleasesPresenter =
+        getDependency(screenScope, ReleasesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -88,13 +94,14 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.e("S_DEF_LOG", "TEST onViewCreated $this")
-        searchView = SearchView(coordinator_layout.context)
+        searchView = SearchMenuItem(coordinator_layout.context)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
         recyclerView.apply {
             adapter = this@ReleasesFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
-            addItemDecoration(UniversalItemDecoration()
+            addItemDecoration(
+                UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)
             )
@@ -103,73 +110,54 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
         toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             menu.add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setIcon(R.drawable.ic_toolbar_search)
+                .setOnMenuItemClickListener {
+                    searchView?.requestFocus(it)
+                    false
+                }
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            behavior = SearchBehavior()
-        }
-        searchView?.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                z = 16f
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                width =
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT
+                height =
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                behavior = SearchBehavior<SearchMenuItem>()
             }
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
-            close(false)
-            setVoice(false)
-            setShadow(true)
-            setDivider(true)
-            setTheme(when (appThemeHolder.getTheme()) {
-                AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
-                AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
-            })
-            shouldClearOnClose = true
-            version = SearchView.VERSION_MENU_ITEM
-            setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM)
-
-            hint = "Название релиза"
-
-            setOnOpenCloseListener(object : SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    showSuggestions()
-                    return false
+        searchView?.apply {
+            setTextHint("Название релиза")
+            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
+                override fun onFocusChange(hasFocus: Boolean) {
+                    if (!hasFocus) {
+                        searchPresenter.onClose()
+                    }
                 }
 
-                override fun onClose(): Boolean {
-                    hideSuggestions()
-                    searchPresenter.onClose()
-                    return false
-                }
             })
-
-
-            setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
+            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: CharSequence): Boolean {
                     return true
                 }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchPresenter.onQueryChange(newText.orEmpty())
+                override fun onQueryTextChange(newText: CharSequence): Boolean {
+                    searchPresenter.onQueryChange(newText.toString())
                     return false
                 }
             })
 
-            adapter = searchAdapter
+            setAdapter(searchAdapter)
         }
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            topMargin = dimensions.statusBar
-        }
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                topMargin = dimensions.statusBar
+            }
         searchView?.requestLayout()
     }
 
@@ -185,11 +173,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
 
     override fun setSearchProgress(isProgress: Boolean) {
         searchView?.also {
-            if (isProgress) {
+            /*if (isProgress) {
                 it.showProgress()
             } else {
                 it.hideProgress()
-            }
+            }*/
         }
     }
 
@@ -238,17 +226,17 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
         context?.let {
             val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
             AlertDialog.Builder(it)
-                    .setItems(titles) { dialog, which ->
-                        when (which) {
-                            0 -> {
-                                Utils.copyToClipBoard(item.link.orEmpty())
-                                Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                            }
-                            1 -> Utils.shareText(item.link.orEmpty())
-                            2 -> ShortcutHelper.addShortcut(item)
+                .setItems(titles) { dialog, which ->
+                    when (which) {
+                        0 -> {
+                            Utils.copyToClipBoard(item.link.orEmpty())
+                            Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
+                        1 -> Utils.shareText(item.link.orEmpty())
+                        2 -> ShortcutHelper.addShortcut(item)
                     }
-                    .show()
+                }
+                .show()
         }
         return false
     }

@@ -1,14 +1,14 @@
 package ru.radiationx.anilibria.presentation.configuring
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Observable
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.repository.ConfigurationRepository
-import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.system.WrongHostException
+import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.repository.ConfigurationRepository
+import ru.radiationx.data.system.WrongHostException
 import ru.terrakok.cicerone.Router
 import java.io.IOException
 import javax.inject.Inject

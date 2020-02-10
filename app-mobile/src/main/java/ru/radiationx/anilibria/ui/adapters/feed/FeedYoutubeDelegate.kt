@@ -1,18 +1,17 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.os.Build
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.synthetic.main.item_youtube.view.*
+import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.FeedListItem
+import ru.radiationx.anilibria.ui.adapters.FeedUpdateDataPayload
+import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /**
  * Created by radiationx on 13.01.18.

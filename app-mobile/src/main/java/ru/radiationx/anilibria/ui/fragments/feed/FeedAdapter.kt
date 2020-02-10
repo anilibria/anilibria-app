@@ -1,19 +1,19 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Handler
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /* Created by radiationx on 31.10.17. */
 

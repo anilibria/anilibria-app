@@ -1,20 +1,20 @@
 package ru.radiationx.anilibria.presentation.other
 
-import com.arellomobile.mvp.InjectViewState
+import moxy.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.other.LinkMenuItem
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.MenuRepository
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.data.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.app.other.OtherMenuItem
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.MenuRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

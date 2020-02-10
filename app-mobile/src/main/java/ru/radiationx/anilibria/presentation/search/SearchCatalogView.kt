@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.presentation.search
 
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface SearchView : ReleasesView {
+interface SearchCatalogView : ReleasesView {
     fun updateInfo(sort: String, filters: Int)
 
     fun showGenres(genres: List<GenreItem>)

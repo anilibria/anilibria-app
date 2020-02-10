@@ -8,16 +8,16 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.widget.GridLayoutManager
 import android.util.Log
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
@@ -25,16 +25,8 @@ import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.updater.UpdateData
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
@@ -48,6 +40,14 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -267,7 +267,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         super.onPause()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
     }

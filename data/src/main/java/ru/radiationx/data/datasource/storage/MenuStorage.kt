@@ -6,9 +6,9 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.holders.MenuHolder
 import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.shared.ktx.android.nullString
-import ru.radiationx.data.datasource.holders.MenuHolder
 import javax.inject.Inject
 
 class MenuStorage @Inject constructor(

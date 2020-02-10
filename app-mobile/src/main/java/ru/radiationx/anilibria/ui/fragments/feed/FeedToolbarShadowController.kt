@@ -1,8 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.support.design.widget.AppBarLayout
-import android.support.v7.widget.RecyclerView
-import android.util.Log
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 
 class FeedToolbarShadowController(

@@ -1,19 +1,19 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared.ktx.asTimeSecString
 import java.util.*
 
 /**
@@ -38,8 +38,6 @@ class ReleaseEpisodeDelegate(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseFull.Episode
-        private val disableColor = R.attr.base_icon
-        private val enableColor = R.attr.colorAccent
 
         init {
             quality_sd.setOnClickListener {
@@ -71,7 +69,7 @@ class ReleaseEpisodeDelegate(
             quality_full_hd.visible(item.urlFullHd != null)
 
             val bgColor = if (isEven) {
-                containerView.context.getColorFromAttr(R.attr.cardBackground)
+                containerView.context.getColorFromAttr(R.attr.colorSurface)
             } else {
                 containerView.context.getColorFromAttr(R.attr.episode_even)
             }

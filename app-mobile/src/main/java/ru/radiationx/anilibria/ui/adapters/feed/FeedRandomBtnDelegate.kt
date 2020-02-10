@@ -1,11 +1,10 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_random_btn.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.FeedRandomBtnListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

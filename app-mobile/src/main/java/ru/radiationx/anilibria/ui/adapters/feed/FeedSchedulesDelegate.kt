@@ -1,20 +1,20 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.os.Parcelable
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedules.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.shared.ktx.android.inflate
 
 /**
  * Created by radiationx on 13.01.18.

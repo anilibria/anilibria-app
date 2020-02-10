@@ -3,27 +3,27 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
-import android.support.transition.*
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
 import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
+import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -40,7 +40,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
         fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
-            putSerializable(TabFragment.ARG_ROOT_SCREEN, rootScreen)
+            putSerializable(ARG_ROOT_SCREEN, rootScreen)
         }
     }
 

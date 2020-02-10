@@ -5,14 +5,14 @@ import android.view.WindowManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.activity_moon.webView
+import kotlinx.android.synthetic.main.activity_moon.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.anilibria.utils.Utils
 import java.util.regex.Pattern
 import javax.inject.Inject
 

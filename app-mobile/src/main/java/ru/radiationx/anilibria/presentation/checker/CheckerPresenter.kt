@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.presentation.checker
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import ru.radiationx.anilibria.BuildConfig
-import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.repository.CheckerRepository
 import javax.inject.Inject
 
 /**

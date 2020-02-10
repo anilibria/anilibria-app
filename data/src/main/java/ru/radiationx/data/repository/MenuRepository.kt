@@ -2,10 +2,10 @@ package ru.radiationx.data.repository
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.radiationx.data.entity.app.other.LinkMenuItem
+import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.MenuHolder
 import ru.radiationx.data.datasource.remote.api.MenuApi
-import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.entity.app.other.LinkMenuItem
 import javax.inject.Inject
 
 class MenuRepository @Inject constructor(

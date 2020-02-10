@@ -1,22 +1,22 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 class ProfileItemDelegate(
         private val clickListener: (ProfileItem) -> Unit,

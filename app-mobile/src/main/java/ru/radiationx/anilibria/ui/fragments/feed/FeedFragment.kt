@@ -1,30 +1,25 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.CardView
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.lapism.searchview.SearchBehavior
-import com.lapism.searchview.SearchView
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.lapism.search.SearchUtils
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchView
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.anilibria.extension.*
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.extension.dpToPx
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -36,12 +31,15 @@ import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
-import javax.inject.Inject
-import android.util.TypedValue
-import com.lapism.searchview.SearchEditText
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.shared.ktx.android.invisible
 import ru.radiationx.shared.ktx.android.visible
+import javax.inject.Inject
 
 
 /* Created by radiationx on 05.11.17. */
@@ -70,7 +68,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     lateinit var appThemeHolder: AppThemeHolder
 
     private val searchAdapter = FastSearchAdapter {
-        searchView?.close(true)
+        //searchView?.close(true)
+
         searchPresenter.onItemClick(it)
     }.apply {
         setHasStableIds(true)
@@ -84,7 +83,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     lateinit var presenter: FeedPresenter
 
     @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter = getDependency(screenScope, FastSearchPresenter::class.java)
+    fun provideSearchPresenter(): FastSearchPresenter =
+        getDependency(screenScope, FastSearchPresenter::class.java)
 
     @ProvidePresenter
     fun provideFeedPresenter() = getDependency(screenScope, FeedPresenter::class.java)
@@ -132,107 +132,60 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                     }
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
 
-            layoutParams = layoutParams.apply {
-                val tv = TypedValue()
-                if (context.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-                    val actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
 
-                    height = actionBarHeight + dpToPx(8)
-                }
-            }
         }
 
         FeedToolbarShadowController(
-                recyclerView,
-                appbarLayout
+            recyclerView,
+            appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
 
         coordinator_layout.addView(searchView)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                width =
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT
+                height =
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
 
-            behavior = SearchBehavior()
-        }
+                behavior = SearchBehavior<SearchView>()
+            }
         searchView?.apply {
-            //isFocusableInTouchMode = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                z = 16f
-            }
-            setNavigationIcon(R.drawable.ic_toolbar_search)
-            close(true)
-            setVoice(false)
-            setShadow(false)
-            setDivider(false)
-            setTheme(when (appThemeHolder.getTheme()) {
-                AppThemeHolder.AppTheme.LIGHT -> SearchView.THEME_LIGHT
-                AppThemeHolder.AppTheme.DARK -> SearchView.THEME_DARK
+            setTextHint("Поиск по названию")
+            navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
+            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
+                override fun onFocusChange(hasFocus: Boolean) {
+                    if (!hasFocus) {
+                        searchPresenter.onClose()
+                    }
+                }
             })
-            shouldClearOnClose = true
-            version = SearchView.VERSION_TOOLBAR
-            setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG)
-
-            hint = "Поиск по названию"
-
-            setOnOpenCloseListener(object : SearchView.OnOpenCloseListener {
-                override fun onOpen(): Boolean {
-                    showSuggestions()
-                    setShadow(true)
+            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: CharSequence): Boolean {
                     return true
                 }
 
-                override fun onClose(): Boolean {
-                    hideSuggestions()
-                    searchPresenter.onClose()
+                override fun onQueryTextChange(newText: CharSequence): Boolean {
+                    searchPresenter.onQueryChange(newText.toString())
                     return false
                 }
             })
 
-
-            setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchPresenter.onQueryChange(newText.orEmpty())
-                    return false
-                }
-            })
-
-            adapter = searchAdapter
-
-            val cardview = findViewById<CardView>(com.lapism.searchview.R.id.cardView)
-            cardview.apply {
-                radius = dpToPx(8).toFloat()
-                cardElevation = dpToPx(2).toFloat()
-                setCardBackgroundColor(context.getColorFromAttr(R.attr.cardBackground))
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(16)
-                    marginEnd = dpToPx(16)
-                    bottomMargin = dpToPx(8)
-                }
-            }
+            setAdapter(searchAdapter)
 
 
-            val searchEditText = findViewById<SearchEditText>(com.lapism.searchview.R.id.searchEditText_input)
-            searchEditText.apply {
-                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = dpToPx(12)
-                }
-            }
         }
-        //searchView?.open(false)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-            topMargin = dimensions.statusBar
-        }
+        searchView?.layoutParams =
+            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
+                topMargin = dimensions.statusBar
+            }
         searchView?.requestLayout()
     }
 
@@ -263,18 +216,23 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun setSearchProgress(isProgress: Boolean) {
         searchView?.also {
-            if (isProgress) {
+            /*if (isProgress) {
                 it.showProgress()
             } else {
                 it.hideProgress()
-            }
+            }*/
         }
     }
 
     /* ReleaseView */
 
     private val placeHolder by lazy {
-        PlaceholderDelegate.ViewHolder(placeHolderContainer.inflate(R.layout.item_placeholder, true))
+        PlaceholderDelegate.ViewHolder(
+            placeHolderContainer.inflate(
+                R.layout.item_placeholder,
+                true
+            )
+        )
     }
 
     override fun showSchedules(title: String, items: List<ScheduleItem>) {
@@ -300,9 +258,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun showEmptyView(show: Boolean) {
         placeHolder.bind(
-                R.drawable.ic_newspaper,
-                R.string.placeholder_title_nodata_base,
-                R.string.placeholder_desc_nodata_base
+            R.drawable.ic_newspaper,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_base
         )
         placeHolderContainer.visible(show)
         Log.d("nonono", "showEmptyView $show")
@@ -311,9 +269,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     override fun showEmptyError(show: Boolean, message: String?) {
         Log.d("nonono", "showEmptyError $show, $message")
         placeHolder.bind(
-                R.drawable.ic_newspaper,
-                R.string.placeholder_title_errordata_base,
-                R.string.placeholder_desc_nodata_base
+            R.drawable.ic_newspaper,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
         placeHolderContainer.visible(show)
     }
@@ -333,16 +291,16 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     private fun releaseOnLongClick(item: ReleaseItem) {
         val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
         AlertDialog.Builder(context!!)
-                .setItems(titles) { dialog, which ->
-                    when (which) {
-                        0 -> {
-                            Utils.copyToClipBoard(item.link.orEmpty())
-                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                        }
-                        1 -> Utils.shareText(item.link.orEmpty())
-                        2 -> ShortcutHelper.addShortcut(item)
+            .setItems(titles) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        Utils.copyToClipBoard(item.link.orEmpty())
+                        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
+                    1 -> Utils.shareText(item.link.orEmpty())
+                    2 -> ShortcutHelper.addShortcut(item)
                 }
-                .show()
+            }
+            .show()
     }
 }

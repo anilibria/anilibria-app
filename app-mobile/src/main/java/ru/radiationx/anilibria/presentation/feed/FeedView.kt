@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.presentation.feed
 
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.anilibria.presentation.common.IBaseView
 
 /* Created by radiationx on 16.11.17. */
 

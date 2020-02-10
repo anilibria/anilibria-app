@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.di.extensions
 
 import android.app.Activity
-import android.support.v4.app.Fragment
 import android.util.Log
+import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.di.Scopes
 import toothpick.Scope
 import toothpick.Toothpick
@@ -17,7 +17,7 @@ object DI {
         return openScope(scope).getInstance(clazz, name)
     }
 
-    fun inject(target: Any) = DI.inject(target, DEFAULT_SCOPE)
+    fun inject(target: Any) = inject(target, DEFAULT_SCOPE)
     fun inject(target: Any, scope: String) {
         Log.d("ToothDI", "inject in '$scope' to '$target'")
         return Toothpick.inject(target, openScope(scope))

@@ -4,11 +4,11 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Handler
-import android.support.graphics.drawable.ArgbEvaluator
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
@@ -18,7 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.view_video_control.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.*
+import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible

@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_torrent.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.data.entity.app.release.TorrentItem
 import java.text.DecimalFormat
 import java.util.*
 

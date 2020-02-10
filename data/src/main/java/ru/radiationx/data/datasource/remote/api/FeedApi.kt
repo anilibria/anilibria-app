@@ -4,13 +4,13 @@ import android.util.Log
 import io.reactivex.Single
 import org.json.JSONArray
 import ru.radiationx.data.ApiClient
-import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.FeedParser
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.datasource.remote.parsers.YoutubeParser
+import ru.radiationx.data.entity.app.feed.FeedItem
 import javax.inject.Inject
 
 class FeedApi @Inject constructor(

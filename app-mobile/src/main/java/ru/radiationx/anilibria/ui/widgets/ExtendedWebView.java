@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.extension.ContextKt;
 
 /**
@@ -112,7 +111,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         }
         //setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
         //setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
-        setBackgroundColor(ContextKt.getColorFromAttr(getContext(), R.attr.windowBackground));
+        setBackgroundColor(ContextKt.getColorFromAttr(getContext(), android.R.attr.colorBackground));
     }
 
     public void easyLoadData(String baseUrl, String data) {

@@ -8,13 +8,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.shared.ktx.android.gone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -30,7 +30,7 @@ class AuthActivity : BaseActivity() {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
         fun createIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent = Intent(context, AuthActivity::class.java).apply {
-            putExtra(AuthActivity.ARG_INIT_SCREEN, rootScreen)
+            putExtra(ARG_INIT_SCREEN, rootScreen)
         }
     }
 

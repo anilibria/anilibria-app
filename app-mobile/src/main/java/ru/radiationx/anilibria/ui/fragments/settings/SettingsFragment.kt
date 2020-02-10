@@ -3,17 +3,18 @@ package ru.radiationx.anilibria.ui.fragments.settings
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.preference.Preference
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
-import ru.radiationx.anilibria.utils.Utils
 import javax.inject.Inject
 
 /**
@@ -33,7 +34,7 @@ class SettingsFragment : BaseSettingFragment() {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 
-        findPreference("quality")?.apply {
+        findPreference<Preference>("quality")?.apply {
             val savedQuality = appPreferences.getQuality()
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
@@ -59,7 +60,7 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
-        findPreference("player_type")?.apply {
+        findPreference<Preference>("player_type")?.apply {
             val savedPlayerType = appPreferences.getPlayerType()
             icon = this.context.getCompatDrawable(R.drawable.ic_play_circle_outline)
             summary = getPlayerTypeTitle(savedPlayerType)
@@ -83,7 +84,7 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
-        findPreference("about.application")?.apply {
+        findPreference<Preference>("about.application")?.apply {
             val appendix = if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
                 " для Play Market"
             } else {
@@ -92,7 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
             summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
         }
 
-        findPreference("about.app_topic_site")?.apply {
+        findPreference<Preference>("about.app_topic_site")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
             setOnPreferenceClickListener {
                 Utils.externalLink("${apiConfig.siteUrl}/pages/app.php")
@@ -100,7 +101,7 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
-        findPreference("about.app_topic_4pda")?.apply {
+        findPreference<Preference>("about.app_topic_4pda")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
             setOnPreferenceClickListener {
                 Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
@@ -116,7 +117,7 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }*/
 
-        findPreference("about.check_update")?.apply {
+        findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)

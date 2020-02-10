@@ -1,11 +1,9 @@
 package ru.radiationx.anilibria.ui.common.adapters
 
 import android.os.Bundle
-import android.os.Handler
 import android.os.Parcelable
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.util.SparseArray
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder

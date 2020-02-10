@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.common
 
-import com.arellomobile.mvp.MvpPresenter
-import com.arellomobile.mvp.MvpView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import moxy.MvpPresenter
+import moxy.MvpView
 import ru.terrakok.cicerone.Router
 
 /**

@@ -1,16 +1,16 @@
 package ru.radiationx.anilibria.presentation.search
 
-import com.arellomobile.mvp.InjectViewState
 import com.jakewharton.rxrelay2.PublishRelay
+import moxy.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.repository.SearchRepository
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit

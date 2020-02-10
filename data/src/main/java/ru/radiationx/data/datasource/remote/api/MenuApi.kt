@@ -3,11 +3,11 @@ package ru.radiationx.data.datasource.remote.api
 import io.reactivex.Single
 import org.json.JSONArray
 import ru.radiationx.data.ApiClient
-import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.MenuParser
+import ru.radiationx.data.entity.app.other.LinkMenuItem
 import javax.inject.Inject
 
 class MenuApi @Inject constructor(

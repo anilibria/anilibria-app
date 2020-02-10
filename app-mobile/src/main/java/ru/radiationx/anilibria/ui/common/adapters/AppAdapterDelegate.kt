@@ -1,11 +1,10 @@
 package ru.radiationx.anilibria.ui.common.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
-import java.lang.Exception
 
 abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
         protected val layoutRes: Int? = null,

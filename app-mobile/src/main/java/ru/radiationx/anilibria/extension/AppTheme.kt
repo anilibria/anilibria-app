@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.extension
 
-import android.support.annotation.StyleRes
+import androidx.annotation.StyleRes
 import biz.source_code.miniTemplator.MiniTemplator
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.datasource.holders.AppThemeHolder

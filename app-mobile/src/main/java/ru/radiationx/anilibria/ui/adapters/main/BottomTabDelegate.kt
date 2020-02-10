@@ -35,7 +35,7 @@ class BottomTabDelegate(private val clickListener: Listener) : AppAdapterDelegat
         fun bind(item: MainActivity.Tab, selected: Boolean) {
             this.currentItem = item
             tabIcon.setCompatDrawable(item.icon)
-            val colorRes = if (selected) R.attr.colorSecondary else R.attr.colorOnBackground
+            val colorRes = if (selected) R.attr.colorOnPrimary else R.attr.colorOnBackground
             tabIcon.setTintColorAttr(colorRes)
         }
     }

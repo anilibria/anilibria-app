@@ -3,12 +3,10 @@ package ru.radiationx.data.di.providers
 import android.util.Log
 import okhttp3.OkHttpClient
 import ru.radiationx.data.system.AppCookieJar
-import javax.inject.Inject
-import javax.inject.Provider
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
 import ru.radiationx.data.system.appendConnectionSpecs
 import ru.radiationx.data.system.appendSocketFactoryIfNeeded
+import javax.inject.Inject
+import javax.inject.Provider
 
 
 class MainOkHttpProvider @Inject constructor(

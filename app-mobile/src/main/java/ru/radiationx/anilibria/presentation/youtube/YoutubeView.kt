@@ -3,8 +3,8 @@ package ru.radiationx.anilibria.presentation.youtube
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.presentation.common.IBaseView
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface YoutubeView : IBaseView {

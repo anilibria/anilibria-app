@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments
 
-import com.google.android.material.appbar.AppBarLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 
 open class ToolbarShadowController(
-        protected val recyclerView: androidx.recyclerview.widget.RecyclerView,
+        protected val recyclerView: RecyclerView,
         protected val appBarLayout: AppBarLayout? = null,
         protected val visibleListener: (Boolean) -> Unit
 ) {
@@ -14,8 +14,8 @@ open class ToolbarShadowController(
     protected var lastVisible = false
 
     init {
-        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 listScrollY = recyclerView.computeVerticalScrollOffset()
                 updateToolbarShadow()

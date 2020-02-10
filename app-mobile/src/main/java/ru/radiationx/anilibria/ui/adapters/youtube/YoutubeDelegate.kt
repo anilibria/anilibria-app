@@ -1,18 +1,18 @@
 package ru.radiationx.anilibria.ui.adapters.youtube
 
 import android.os.Build
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /**
  * Created by radiationx on 13.01.18.
@@ -32,7 +32,7 @@ class YoutubeDelegate(
     class ViewHolder(
             val view: View,
             private val itemListener: Listener
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: YoutubeItem
 

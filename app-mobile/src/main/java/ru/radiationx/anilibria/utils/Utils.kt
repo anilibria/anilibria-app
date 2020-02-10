@@ -53,7 +53,7 @@ object Utils {
     }
 
     fun readFromClipboard(): String? {
-        val clipboard = App.instance.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = App.instance.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         if (clipboard.hasPrimaryClip()) {
             val description = clipboard.primaryClipDescription
             val data = clipboard.primaryClip

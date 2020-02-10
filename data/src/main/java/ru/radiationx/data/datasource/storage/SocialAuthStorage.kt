@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
+import ru.radiationx.data.entity.app.auth.SocialAuth
 import javax.inject.Inject
 
 class SocialAuthStorage @Inject constructor(

@@ -8,20 +8,19 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.core.app.NotificationCompat
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 import ru.radiationx.anilibria.di.extensions.DI
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
-import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
-import java.lang.Exception
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import ru.radiationx.data.datasource.storage.ApiConfigStorage
 
 class NotificationService : FirebaseMessagingService() {
 

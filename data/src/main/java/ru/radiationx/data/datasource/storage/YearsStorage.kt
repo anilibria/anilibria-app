@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.datasource.holders.YearsHolder
+import ru.radiationx.data.entity.app.release.YearItem
 import javax.inject.Inject
 
 /**

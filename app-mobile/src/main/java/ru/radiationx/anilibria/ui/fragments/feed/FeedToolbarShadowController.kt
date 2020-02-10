@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import com.google.android.material.appbar.AppBarLayout
 import androidx.recyclerview.widget.RecyclerView
-import android.util.Log
+import com.google.android.material.appbar.AppBarLayout
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 
 class FeedToolbarShadowController(
-        recyclerView: androidx.recyclerview.widget.RecyclerView,
+        recyclerView: RecyclerView,
         appBarLayout: AppBarLayout? = null,
         visibleListener: (Boolean) -> Unit
 ) : ToolbarShadowController(recyclerView, appBarLayout, visibleListener) {

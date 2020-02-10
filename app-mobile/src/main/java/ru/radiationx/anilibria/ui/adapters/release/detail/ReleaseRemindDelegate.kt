@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_remind.*
 import ru.radiationx.anilibria.R
@@ -25,7 +25,7 @@ class ReleaseRemindDelegate(
     class ViewHolder(
             override val containerView: View,
             private val itemListener: Listener
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
         init {
             remindClose.setOnClickListener {
                 itemListener.onClickClose(layoutPosition)

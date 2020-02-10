@@ -1,18 +1,18 @@
 package ru.radiationx.anilibria.ui.adapters.search
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_fast_search.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.shared.ktx.android.setCompatDrawable
-import ru.radiationx.shared.ktx.android.setTintColorAttr
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.shared.ktx.android.setCompatDrawable
+import ru.radiationx.shared.ktx.android.setTintColorAttr
 
 /**
  * Created by radiationx on 13.01.18.
@@ -32,7 +32,7 @@ class SearchDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (SearchItem) -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: SearchItem
 

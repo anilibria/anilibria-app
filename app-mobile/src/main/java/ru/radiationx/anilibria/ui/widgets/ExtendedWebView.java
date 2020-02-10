@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import ru.radiationx.anilibria.R;
 import ru.radiationx.anilibria.extension.ContextKt;
 
 /**

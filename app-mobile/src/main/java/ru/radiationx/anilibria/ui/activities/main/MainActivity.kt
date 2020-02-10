@@ -8,16 +8,16 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import android.util.Log
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
@@ -25,16 +25,8 @@ import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.di.Scopes
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.updater.UpdateData
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
@@ -48,6 +40,14 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -147,7 +147,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         })
 
         tabsRecycler.apply {
-            layoutManager = androidx.recyclerview.widget.GridLayoutManager(this.context, allTabs.size)
+            layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
         }
 
@@ -322,7 +322,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         val fm = supportFragmentManager
         val ta = fm.beginTransaction()
         allTabs.forEach { tab ->
-            var fragment: androidx.fragment.app.Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
+            var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
             if (fragment == null) {
                 fragment = Screens.TabScreen(tab.screen).fragment
                 ta.add(R.id.root_container, fragment, tab.screen.screenKey)
@@ -338,7 +338,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private fun updateBottomTabs() {
         tabsAdapter.bindItems(tabs)
-        (tabsRecycler.layoutManager as androidx.recyclerview.widget.GridLayoutManager).spanCount = tabs.size
+        (tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
     }
 
     override fun updateTabs() {

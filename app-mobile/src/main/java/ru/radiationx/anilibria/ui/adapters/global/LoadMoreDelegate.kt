@@ -1,16 +1,16 @@
 package ru.radiationx.anilibria.ui.adapters.global
 
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_load_more.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 /**
  * Created by radiationx on 13.01.18.
@@ -28,7 +28,7 @@ class LoadMoreDelegate(
     class ViewHolder(
             override val containerView: View,
             private val listener: Listener
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
             itemLoadMoreBtn.gone()

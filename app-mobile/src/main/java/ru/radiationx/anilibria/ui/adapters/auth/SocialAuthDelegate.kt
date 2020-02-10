@@ -1,17 +1,17 @@
 package ru.radiationx.anilibria.ui.adapters.auth
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_social_auth.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.data.entity.app.auth.SocialAuth
 
 class SocialAuthDelegate(
         private val clickListener: (SocialAuth) -> Unit
@@ -26,7 +26,7 @@ class SocialAuthDelegate(
     class ViewHolder(
             override val containerView: View,
             private val clickListener: (SocialAuth) -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: SocialAuth
 

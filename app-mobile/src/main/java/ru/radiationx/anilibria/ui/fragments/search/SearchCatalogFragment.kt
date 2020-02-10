@@ -1,34 +1,24 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import com.lapism.search.widget.SearchView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.SeasonItem
-import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
-import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.presentation.search.SearchCatalogView
+import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -36,6 +26,14 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.SeasonItem
+import ru.radiationx.data.entity.app.release.YearItem
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.shared.ktx.android.putExtra
 import javax.inject.Inject
 
 

@@ -1,30 +1,22 @@
 package ru.radiationx.anilibria.ui.fragments.favorites
 
-import android.os.Build
 import android.os.Bundle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import com.lapism.search.widget.SearchView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.extension.dpToPx
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
@@ -34,6 +26,8 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
 
@@ -97,7 +91,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
 
         recyclerView.apply {
             adapter = this@FavoritesFragment.adapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(this.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)

@@ -15,7 +15,7 @@ open class BaseSettingFragment : PreferenceFragmentCompat() {
         super.onActivityCreated(savedInstanceState)
         val rootView = view
         view?.let {
-            it.findViewById<androidx.recyclerview.widget.RecyclerView>(androidx.preference.R.id.recycler_view)?.setPadding(0, 0, 0, 0)
+            it.findViewById<RecyclerView>(androidx.preference.R.id.recycler_view)?.setPadding(0, 0, 0, 0)
         }
         setDividerHeight(0)
     }

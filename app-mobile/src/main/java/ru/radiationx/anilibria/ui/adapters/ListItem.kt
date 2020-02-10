@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters
 
+import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
@@ -13,7 +14,6 @@ import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
 
 sealed class ListItem
 

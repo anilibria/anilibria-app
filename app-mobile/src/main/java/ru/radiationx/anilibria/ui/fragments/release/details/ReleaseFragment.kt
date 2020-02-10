@@ -5,14 +5,11 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
@@ -20,14 +17,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -38,6 +32,11 @@ import ru.radiationx.anilibria.ui.widgets.UILImageListener
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.visible
 
 
 /* Created by radiationx on 16.11.17. */
@@ -53,9 +52,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 code: String? = null,
                 item: ReleaseItem? = null
         ) = ReleaseFragment().putExtra {
-            putInt(ReleaseFragment.ARG_ID, id)
-            putString(ReleaseFragment.ARG_ID_CODE, code)
-            putSerializable(ReleaseFragment.ARG_ITEM, item)
+            putInt(ARG_ID, id)
+            putString(ARG_ID_CODE, code)
+            putSerializable(ARG_ITEM, item)
         }
     }
 
@@ -232,7 +231,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     private inner class CustomPagerAdapter : androidx.fragment.app.FragmentStatePagerAdapter(childFragmentManager) {
 
-        private val fragments = listOf<androidx.fragment.app.Fragment>(
+        private val fragments = listOf<Fragment>(
                 ReleaseInfoFragment()/*,
                 CommentsFragment()*/,
                 VkCommentsFragment()
@@ -243,13 +242,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
                 it.arguments = newBundle
                 it.putExtra {
-                    putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                    putString(ARG_SCREEN_SCOPE, screenScope)
                 }
                 Log.e("lalallala", "CustomPagerAdapter ini $newBundle")
             }
         }
 
-        override fun getItem(position: Int): androidx.fragment.app.Fragment = fragments[position]
+        override fun getItem(position: Int): Fragment = fragments[position]
 
         override fun getCount(): Int = fragments.size
 

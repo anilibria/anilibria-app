@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.view.View
-import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSchedulesDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.entity.app.feed.ScheduleItem
 
 class ScheduleAdapter(
         scheduleClickListener: (ScheduleItem, View) -> Unit

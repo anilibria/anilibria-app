@@ -1,19 +1,19 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Handler
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /* Created by radiationx on 31.10.17. */
 
@@ -49,7 +49,7 @@ class FeedAdapter(
         addDelegate(DividerShadowItemDelegate())
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
 
         val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
@@ -207,7 +207,7 @@ class FeedAdapter(
 
     private fun isProgress() = items.isNotEmpty() && items.last() is LoadMoreListItem
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val time = System.currentTimeMillis()
         return super.onCreateViewHolder(parent, viewType).also {
             Log.d("nonono", "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}")

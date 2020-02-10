@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.common
 
-import moxy.MvpPresenter
-import moxy.MvpView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import moxy.MvpPresenter
+import moxy.MvpView
 import ru.terrakok.cicerone.Router
 
 /**

@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_blocked.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.data.entity.app.release.ReleaseFull
 
 /**
  * Created by radiationx on 21.01.18.
@@ -24,7 +24,7 @@ class ReleaseBlockedDelegate : AppAdapterDelegate<ReleaseBlockedListItem, ListIt
 
     class ViewHolder(
             override val containerView: View
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: ReleaseFull) {
             val defaultReason = """

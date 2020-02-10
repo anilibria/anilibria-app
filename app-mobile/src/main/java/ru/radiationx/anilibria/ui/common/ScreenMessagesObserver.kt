@@ -1,17 +1,17 @@
 package ru.radiationx.anilibria.ui.common
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import android.content.Context
-import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.subjects.BehaviorSubject
-import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.anilibria.utils.messages.SystemMessage
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.shared.ktx.addTo
 import javax.inject.Inject
 
 

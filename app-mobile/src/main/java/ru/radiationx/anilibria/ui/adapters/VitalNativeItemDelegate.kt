@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import android.graphics.Bitmap
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -10,9 +10,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_native_card.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.entity.app.vital.VitalItem
 
 
 /**
@@ -29,7 +29,7 @@ class VitalNativeItemDelegate(val inDetail: Boolean = false) : AppAdapterDelegat
     class ViewHolder(
             override val containerView: View,
             inDetail: Boolean
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         lateinit var currentItem: VitalItem
 

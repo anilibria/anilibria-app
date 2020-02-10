@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SearchListItem
 import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
 import ru.radiationx.anilibria.ui.adapters.search.SearchDelegate
 import ru.radiationx.anilibria.ui.adapters.search.SearchSuggestionDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
+import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 
 /**
  * Created by radiationx on 24.12.17.

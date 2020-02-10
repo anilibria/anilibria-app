@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.page
 
 import moxy.InjectViewState
-import ru.radiationx.data.repository.PageRepository
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

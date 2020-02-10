@@ -1,8 +1,6 @@
 package ru.radiationx.data.entity.app.schedule
 
 import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import java.lang.Exception
 import java.util.*
 
 data class ScheduleDay(

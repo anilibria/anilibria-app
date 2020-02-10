@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.presentation.favorites
 
 import moxy.InjectViewState
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

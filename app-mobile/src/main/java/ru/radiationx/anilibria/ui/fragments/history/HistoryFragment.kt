@@ -1,29 +1,22 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
-import android.os.Build
 import android.os.Bundle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import com.lapism.search.widget.SearchView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.anilibria.extension.dpToPx
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
 import ru.radiationx.anilibria.presentation.history.HistoryView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
@@ -34,6 +27,8 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
 /**
@@ -107,7 +102,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         }
 
         recyclerView.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(this.context)
             adapter = this@HistoryFragment.adapter
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)

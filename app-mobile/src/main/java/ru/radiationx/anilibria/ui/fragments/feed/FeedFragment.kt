@@ -1,28 +1,25 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.os.Build
 import android.os.Bundle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.lapism.search.SearchUtils
+import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.SearchLayout
+import com.lapism.search.widget.SearchView
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.anilibria.extension.*
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.extension.dpToPx
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -34,16 +31,15 @@ import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
-import javax.inject.Inject
-import android.util.TypedValue
-import com.google.android.material.card.MaterialCardView
-import com.lapism.search.SearchUtils
-import com.lapism.search.behavior.SearchBehavior
-import com.lapism.search.internal.SearchLayout
-import com.lapism.search.widget.SearchView
+import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.shared.ktx.android.invisible
 import ru.radiationx.shared.ktx.android.visible
+import javax.inject.Inject
 
 
 /* Created by radiationx on 05.11.17. */
@@ -117,7 +113,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
         recyclerView.apply {
             adapter = this@FeedFragment.adapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(this.context)
             /*addItemDecoration(UniversalItemDecoration()
                     .fullWidth(true)
                     .spacingDp(8f)

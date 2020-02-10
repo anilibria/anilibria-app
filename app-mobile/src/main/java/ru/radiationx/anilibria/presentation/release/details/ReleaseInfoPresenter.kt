@@ -2,22 +2,22 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import android.util.Log
 import moxy.InjectViewState
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.FavoriteRepository
-import ru.radiationx.data.repository.HistoryRepository
-import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.FavoriteRepository
+import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.repository.VitalRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

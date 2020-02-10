@@ -1,19 +1,19 @@
 package ru.radiationx.data.di.providers
 
 import android.util.Log
-import okhttp3.OkHttpClient
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import java.net.InetSocketAddress
-import java.net.Proxy
-import javax.inject.Inject
-import javax.inject.Provider
 import okhttp3.Credentials
+import okhttp3.OkHttpClient
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.data.system.Client
 import ru.radiationx.data.system.appendConnectionSpecs
 import ru.radiationx.data.system.appendSocketFactoryIfNeeded
+import java.net.InetSocketAddress
+import java.net.Proxy
+import javax.inject.Inject
+import javax.inject.Provider
 
 class ApiOkHttpProvider @Inject constructor(
         private val appCookieJar: AppCookieJar,

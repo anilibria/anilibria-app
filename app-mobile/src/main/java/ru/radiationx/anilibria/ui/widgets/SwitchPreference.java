@@ -2,9 +2,10 @@ package ru.radiationx.anilibria.ui.widgets;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.AttributeSet;
+
 import androidx.annotation.RequiresApi;
 import androidx.preference.SwitchPreferenceCompat;
-import android.util.AttributeSet;
 
 /**
  * Created by radiationx on 26.07.17.

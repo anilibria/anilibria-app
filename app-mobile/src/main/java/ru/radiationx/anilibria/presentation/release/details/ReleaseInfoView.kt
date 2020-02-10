@@ -3,10 +3,10 @@ package ru.radiationx.anilibria.presentation.release.details
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.anilibria.presentation.common.IBaseView
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseInfoView : IBaseView {

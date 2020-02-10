@@ -1,24 +1,24 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.shared.ktx.android.putExtra
 
 class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
 
@@ -74,7 +74,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
 
         recyclerView.apply {
             adapter = scheduleAdapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(this.context)
         }
 
         ToolbarShadowController(recyclerView, appbarLayout) {
@@ -109,7 +109,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     override fun scrollToDay(item: Pair<String, List<ScheduleItem>>) {
         val position = scheduleAdapter.getPositionByDay(item)
         Log.e("ninini", "scrollToDay ${item.first} -> $position")
-        (recyclerView.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.also {
+        (recyclerView.layoutManager as? LinearLayoutManager)?.also {
             it.scrollToPositionWithOffset(position, 0)
         }
     }

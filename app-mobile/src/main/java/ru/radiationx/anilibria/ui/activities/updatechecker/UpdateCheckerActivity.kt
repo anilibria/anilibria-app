@@ -4,28 +4,28 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import kotlinx.android.synthetic.main.activity_updater.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import kotlinx.android.synthetic.main.activity_updater.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.datasource.remote.IApiUtils
+import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import javax.inject.Inject
 
 /**

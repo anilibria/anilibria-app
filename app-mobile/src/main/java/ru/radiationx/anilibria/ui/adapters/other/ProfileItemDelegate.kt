@@ -1,22 +1,22 @@
 package ru.radiationx.anilibria.ui.adapters.other
 
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 class ProfileItemDelegate(
         private val clickListener: (ProfileItem) -> Unit,
@@ -27,7 +27,7 @@ class ProfileItemDelegate(
         { ViewHolder(it, clickListener, logoutClickListener) }
 ) {
 
-    override fun onViewDetachedFromWindow(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
         (holder as ViewHolder).onDetach()
     }
@@ -38,7 +38,7 @@ class ProfileItemDelegate(
             override val containerView: View,
             private val clickListener: (ProfileItem) -> Unit,
             private val logoutClickListener: () -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
         private var compositeDisposable = CompositeDisposable()

@@ -8,8 +8,8 @@ import io.reactivex.disposables.CompositeDisposable
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.injectDependencies
 import ru.radiationx.anilibria.extension.getPrefStyleRes
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
+import ru.radiationx.data.datasource.holders.AppThemeHolder
 import javax.inject.Inject
 
 

@@ -3,17 +3,17 @@ package ru.radiationx.data.repository
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
+import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.datasource.holders.GenresHolder
+import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.datasource.holders.YearsHolder
+import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.datasource.holders.GenresHolder
-import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.datasource.holders.YearsHolder
-import ru.radiationx.data.datasource.remote.api.SearchApi
-import ru.radiationx.data.SchedulersProvider
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(

@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.navigation
 
 import android.content.Context
 import android.content.Intent
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -21,6 +20,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
+import ru.radiationx.data.entity.app.release.ReleaseItem
 
 /**
  * Created by radiationx on 17.11.17.

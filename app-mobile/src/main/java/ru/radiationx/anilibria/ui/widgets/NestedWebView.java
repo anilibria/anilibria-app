@@ -2,14 +2,15 @@ package ru.radiationx.anilibria.ui.widgets;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.NestedScrollingChild;
-import androidx.core.view.NestedScrollingChildHelper;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.webkit.WebView;
+
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.ViewCompat;
 
 
 /*

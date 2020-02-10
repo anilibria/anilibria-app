@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.di.extensions
 
 import android.app.Activity
-import androidx.fragment.app.Fragment
 import android.util.Log
+import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.di.Scopes
 import toothpick.Scope
 import toothpick.Toothpick
@@ -17,7 +17,7 @@ object DI {
         return openScope(scope).getInstance(clazz, name)
     }
 
-    fun inject(target: Any) = DI.inject(target, DEFAULT_SCOPE)
+    fun inject(target: Any) = inject(target, DEFAULT_SCOPE)
     fun inject(target: Any, scope: String) {
         Log.d("ToothDI", "inject in '$scope' to '$target'")
         return Toothpick.inject(target, openScope(scope))
@@ -42,20 +42,20 @@ object DI {
     fun close(scope: String) = Toothpick.closeScope(scope)
 }
 
-fun <T> androidx.fragment.app.Fragment.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
-fun <T> androidx.fragment.app.Fragment.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
+fun <T> Fragment.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
+fun <T> Fragment.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
 
 fun <T> Activity.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
 fun <T> Activity.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
 
-fun androidx.fragment.app.Fragment.injectDependencies() = DI.inject(this)
-fun androidx.fragment.app.Fragment.injectDependencies(scope: String) = DI.inject(this, scope)
-fun androidx.fragment.app.Fragment.injectDependencies(scope: String, vararg modules: Module) = DI.inject(this, scope, *modules)
+fun Fragment.injectDependencies() = DI.inject(this)
+fun Fragment.injectDependencies(scope: String) = DI.inject(this, scope)
+fun Fragment.injectDependencies(scope: String, vararg modules: Module) = DI.inject(this, scope, *modules)
 
 fun Activity.injectDependencies() = DI.inject(this)
 fun Activity.injectDependencies(scope: String) = DI.inject(this, scope)
 fun Activity.injectDependencies(scope: String, vararg modules: Module) = DI.inject(this, scope, *modules)
 
-fun androidx.fragment.app.Fragment.closeDependenciesScope(scope: String) = DI.close(scope)
+fun Fragment.closeDependenciesScope(scope: String) = DI.close(scope)
 fun Activity.closeDependenciesScope(scope: String) = DI.close(scope)
 

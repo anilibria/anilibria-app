@@ -4,11 +4,11 @@ import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.CheckerParser
+import ru.radiationx.data.entity.app.updater.UpdateData
 import javax.inject.Inject
 
 /**

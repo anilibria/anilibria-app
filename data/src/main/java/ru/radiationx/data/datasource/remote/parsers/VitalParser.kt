@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.remote.parsers
 
 import org.json.JSONObject
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.datasource.remote.IApiUtils
+import ru.radiationx.data.entity.app.vital.VitalItem
 import javax.inject.Inject
 
 /**

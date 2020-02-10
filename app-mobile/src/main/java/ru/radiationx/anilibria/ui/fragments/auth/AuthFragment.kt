@@ -1,25 +1,25 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.View
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.fragment_auth.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.shared.ktx.android.addTextChangeListener
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.shared.ktx.android.addTextChangeListener
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 import javax.inject.Inject
 
 /**
@@ -51,7 +51,7 @@ class AuthFragment : BaseFragment(), AuthView {
         appbarLayout.gone()
 
         authSocialList.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = socialAuthAdapter
         }
 

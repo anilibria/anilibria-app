@@ -3,27 +3,27 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
-import androidx.transition.*
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
 import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
 import ru.radiationx.anilibria.di.extensions.getDependency
 import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
+import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -32,7 +32,7 @@ import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
 import javax.inject.Inject
 
-class TabFragment : androidx.fragment.app.Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
+class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
 
     companion object {
         private const val TRANSITION_MOVE_TIME: Long = 375
@@ -40,7 +40,7 @@ class TabFragment : androidx.fragment.app.Fragment(), ScopeProvider, BackButtonL
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
         fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
-            putSerializable(TabFragment.ARG_ROOT_SCREEN, rootScreen)
+            putSerializable(ARG_ROOT_SCREEN, rootScreen)
         }
     }
 
@@ -137,9 +137,9 @@ class TabFragment : androidx.fragment.app.Fragment(), ScopeProvider, BackButtonL
 
             override fun setupFragmentTransaction(
                     command: Command?,
-                    currentFragment: androidx.fragment.app.Fragment?,
-                    nextFragment: androidx.fragment.app.Fragment?,
-                    fragmentTransaction: androidx.fragment.app.FragmentTransaction
+                    currentFragment: Fragment?,
+                    nextFragment: Fragment?,
+                    fragmentTransaction: FragmentTransaction
             ) {
 
                 Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}")
@@ -183,11 +183,11 @@ class TabFragment : androidx.fragment.app.Fragment(), ScopeProvider, BackButtonL
     private fun setupSharedTransition(
             sharedProvider: SharedProvider,
             sharedReceiver: SharedReceiver,
-            fragmentTransaction: androidx.fragment.app.FragmentTransaction
+            fragmentTransaction: FragmentTransaction
     ) {
 
-        val currentFragment = sharedProvider as androidx.fragment.app.Fragment
-        val nextFragment = sharedReceiver as androidx.fragment.app.Fragment
+        val currentFragment = sharedProvider as Fragment
+        val nextFragment = sharedReceiver as Fragment
 
         val exitFade = Fade()
         exitFade.duration = TRANSITION_OTHER_TIME

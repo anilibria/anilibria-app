@@ -1,9 +1,9 @@
 package ru.radiationx.data.datasource.remote.parsers
 
 import org.json.JSONArray
+import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
-import ru.radiationx.data.datasource.remote.IApiUtils
 import javax.inject.Inject
 
 class ScheduleParser @Inject constructor(

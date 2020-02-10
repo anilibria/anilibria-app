@@ -125,7 +125,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                     CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height =
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchView>()
+                behavior = SearchBehavior<SearchMenuItem>()
             }
         searchView?.apply {
             setTextHint("Название релиза")

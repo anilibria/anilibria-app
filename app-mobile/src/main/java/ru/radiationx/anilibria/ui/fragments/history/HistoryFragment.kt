@@ -115,7 +115,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         searchView?.layoutParams = (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
             width = CoordinatorLayout.LayoutParams.MATCH_PARENT
             height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            behavior = SearchBehavior<SearchView>()
+            behavior = SearchBehavior<SearchMenuItem>()
         }
         searchView?.apply {
             setTextHint("Название релиза")

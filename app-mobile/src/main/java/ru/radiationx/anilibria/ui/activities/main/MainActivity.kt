@@ -22,9 +22,9 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
-import ru.radiationx.anilibria.di.Scopes
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.Scopes
+import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen

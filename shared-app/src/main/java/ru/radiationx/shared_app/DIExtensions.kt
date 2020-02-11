@@ -1,9 +1,8 @@
-package ru.radiationx.anilibria.di.extensions
+package ru.radiationx.shared_app
 
 import android.app.Activity
 import android.util.Log
 import androidx.fragment.app.Fragment
-import ru.radiationx.anilibria.di.Scopes
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
@@ -12,19 +11,24 @@ object DI {
     private const val DEFAULT_SCOPE = Scopes.APP
 
     fun <T> get(clazz: Class<T>, name: String? = null): T = get(DEFAULT_SCOPE, clazz, name)
+
     fun <T> get(scope: String, clazz: Class<T>, name: String? = null): T {
         Log.d("ToothDI", "get in '$scope' class '$clazz'")
         return openScope(scope).getInstance(clazz, name)
     }
 
     fun inject(target: Any) = inject(target, DEFAULT_SCOPE)
+
     fun inject(target: Any, scope: String) {
         Log.d("ToothDI", "inject in '$scope' to '$target'")
         return Toothpick.inject(target, openScope(scope))
     }
 
     fun inject(target: Any, scope: String, vararg modules: Module) {
-        Log.d("ToothDI", "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName?.toString().orEmpty() }}'")
+        Log.d(
+            "ToothDI",
+            "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName?.toString().orEmpty() }}'"
+        )
         return Toothpick.inject(target, openScope(scope).apply {
             installModules(*modules)
         })

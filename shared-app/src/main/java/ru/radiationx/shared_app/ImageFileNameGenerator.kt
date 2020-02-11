@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.shared_app
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import java.util.regex.Pattern

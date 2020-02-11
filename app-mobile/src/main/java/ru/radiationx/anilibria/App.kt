@@ -26,15 +26,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
-import ru.radiationx.anilibria.di.Scopes
-import ru.radiationx.anilibria.di.extensions.DI
-import ru.radiationx.anilibria.utils.ImageFileNameGenerator
-import ru.radiationx.anilibria.utils.OkHttpImageDownloader
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared.ktx.addTo
+import ru.radiationx.shared_app.*
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
@@ -122,7 +119,8 @@ class App : Application() {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }*/
 
-        initImageLoader(this)
+        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
+        ImageLoaderConfig.init(this, imageDownloader)
         appVersionCheck()
 
         FirebaseMessaging.getInstance().apply {
@@ -132,26 +130,26 @@ class App : Application() {
         val preferencesHolder = DI.get(PreferencesHolder::class.java)
         val disposables = CompositeDisposable()
         preferencesHolder
-                .observeNotificationsAll()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ enabled ->
-                    changeSubscribeStatus(enabled, "all")
-                }, {
-                    it.printStackTrace()
-                })
-                .addTo(disposables)
+            .observeNotificationsAll()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ enabled ->
+                changeSubscribeStatus(enabled, "all")
+            }, {
+                it.printStackTrace()
+            })
+            .addTo(disposables)
 
         preferencesHolder
-                .observeNotificationsService()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ enabled ->
-                    changeSubscribeStatus(enabled, "service")
-                    changeSubscribeStatus(enabled, "app_update")
-                    changeSubscribeStatus(enabled, "config")
-                }, {
-                    it.printStackTrace()
-                })
-                .addTo(disposables)
+            .observeNotificationsService()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ enabled ->
+                changeSubscribeStatus(enabled, "service")
+                changeSubscribeStatus(enabled, "app_update")
+                changeSubscribeStatus(enabled, "config")
+            }, {
+                it.printStackTrace()
+            })
+            .addTo(disposables)
 
     }
 
@@ -180,11 +178,11 @@ class App : Application() {
             val prefKey = "app.versions.history"
             val defaultPreferences = DI.get(SharedPreferences::class.java)
             val history = defaultPreferences
-                    .getString(prefKey, "")
-                    ?.split(";")
-                    ?.filter { it.isNotBlank() }
-                    ?.map { it.toInt() }
-                    ?: emptyList()
+                .getString(prefKey, "")
+                ?.split(";")
+                ?.filter { it.isNotBlank() }
+                ?.map { it.toInt() }
+                ?: emptyList()
 
 
             var lastAppCode = 0
@@ -207,9 +205,9 @@ class App : Application() {
                 val list = history.map { it.toString() }.toMutableList()
                 list.add(currentAppCode.toString())
                 defaultPreferences
-                        .edit()
-                        .putString(prefKey, TextUtils.join(";", list))
-                        .apply()
+                    .edit()
+                    .putString(prefKey, TextUtils.join(";", list))
+                    .apply()
             }
             if (disorder) {
                 val errMsg = "AniLibria: Нарушение порядка версий, программа может работать не стабильно!"
@@ -240,30 +238,6 @@ class App : Application() {
         }
         return template
     }
-
-    private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
-            .cacheInMemory(true)
-            .resetViewBeforeLoading(true)
-            .cacheOnDisk(true)
-            .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .handler(Handler())
-            .displayer(FadeInBitmapDisplayer(500, true, true, false))
-
-    private fun initImageLoader(context: Context) {
-        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
-        val config = ImageLoaderConfiguration.Builder(context)
-                .threadPoolSize(5)
-                .threadPriority(Thread.MIN_PRIORITY)
-                .denyCacheImageMultipleSizesInMemory()
-                .imageDownloader(imageDownloader)
-                .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
-                .diskCacheSize(25 * 1024 * 1024)
-                .diskCacheFileNameGenerator(ImageFileNameGenerator())
-                .defaultDisplayImageOptions(defaultOptionsUIL.build())
-                .build()
-        ImageLoader.getInstance().init(config)
-    }
-
 
     private fun isMainProcess() = packageName == getCurrentProcessName()
 

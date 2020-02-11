@@ -14,9 +14,9 @@ import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.closeDependenciesScope
+import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener

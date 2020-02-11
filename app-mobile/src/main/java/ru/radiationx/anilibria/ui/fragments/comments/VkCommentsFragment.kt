@@ -14,8 +14,8 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark

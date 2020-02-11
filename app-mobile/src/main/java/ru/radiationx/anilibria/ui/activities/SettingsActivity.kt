@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.extension.getPrefStyleRes
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
 import ru.radiationx.data.datasource.holders.AppThemeHolder

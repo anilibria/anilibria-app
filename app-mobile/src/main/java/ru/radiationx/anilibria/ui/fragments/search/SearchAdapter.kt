@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.shared_app.DI
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem

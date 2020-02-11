@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        applicationId "ru.radiationx.anilibria"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    implementation project(":data")
+    implementation project(":shared-android-ktx")
+    implementation project(":shared-app")
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "androidx.leanback:leanback:1.1.0-alpha03"
+    implementation "androidx.leanback:leanback-preference:1.1.0-alpha03"
+    //implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
+    implementation "com.github.moxy-community:moxy:2.1.1"
+    implementation 'com.github.moxy-community:moxy-androidx:2.1.1'
+    kapt 'com.github.moxy-community:moxy-compiler:2.1.1'
+
+    implementation 'ru.terrakok.cicerone:cicerone:5.0.0'
+
+    implementation 'com.google.android:flexbox:1.1.0'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    implementation 'com.github.stephanenicolas.toothpick:toothpick-runtime:2.1.0'
+    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:2.1.0'
+}

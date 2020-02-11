@@ -8,8 +8,8 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem

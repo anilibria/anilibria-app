@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,9 +16,8 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.extension.dpToPx
+import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter

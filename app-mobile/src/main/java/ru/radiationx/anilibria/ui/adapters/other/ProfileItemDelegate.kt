@@ -8,7 +8,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.shared_app.DI
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

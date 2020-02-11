@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils

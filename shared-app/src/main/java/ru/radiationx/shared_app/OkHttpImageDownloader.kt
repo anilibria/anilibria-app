@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.shared_app
 
 import android.content.Context
 import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream

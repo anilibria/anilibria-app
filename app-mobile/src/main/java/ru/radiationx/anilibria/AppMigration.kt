@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria
 
 import com.nostra13.universalimageloader.core.ImageLoader
-import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.shared_app.DI
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import javax.inject.Inject
 

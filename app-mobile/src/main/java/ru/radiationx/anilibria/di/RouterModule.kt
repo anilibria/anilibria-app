@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.di
 
 import android.util.Log
-import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.shared_app.DI
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

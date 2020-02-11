@@ -43,12 +43,13 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.leanback.app.BrowseSupportFragment
 import com.nostra13.universalimageloader.core.ImageLoader
 
 /**
  * Loads a grid of cards with movies to browse.
  */
-class MainFragment : BrowseFragment() {
+class MainFragment : BrowseSupportFragment() {
 
     private val mHandler = Handler()
     private lateinit var mBackgroundManager: BackgroundManager
@@ -78,11 +79,11 @@ class MainFragment : BrowseFragment() {
 
     private fun prepareBackgroundManager() {
 
-        mBackgroundManager = BackgroundManager.getInstance(activity)
-        mBackgroundManager.attach(activity.window)
-        mDefaultBackground = ContextCompat.getDrawable(activity, R.drawable.default_background)
+        mBackgroundManager = BackgroundManager.getInstance(requireActivity())
+        mBackgroundManager.attach(requireActivity().window)
+        mDefaultBackground = ContextCompat.getDrawable(requireActivity(), R.drawable.default_background)
         mMetrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(mMetrics)
+        requireActivity().windowManager.defaultDisplay.getMetrics(mMetrics)
     }
 
     private fun setupUIElements() {
@@ -92,9 +93,9 @@ class MainFragment : BrowseFragment() {
         isHeadersTransitionOnBackEnabled = true
 
         // set fastLane (or headers) background color
-        brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
+        brandColor = ContextCompat.getColor(requireActivity(), R.color.fastlane_background)
         // set search icon color
-        searchAffordanceColor = ContextCompat.getColor(activity, R.color.search_opaque)
+        searchAffordanceColor = ContextCompat.getColor(requireActivity(), R.color.search_opaque)
     }
 
     private fun loadRows() {
@@ -129,7 +130,7 @@ class MainFragment : BrowseFragment() {
 
     private fun setupEventListeners() {
         setOnSearchClickedListener {
-            Toast.makeText(activity, "Implement your own in-app search", Toast.LENGTH_LONG)
+            Toast.makeText(requireActivity(), "Implement your own in-app search", Toast.LENGTH_LONG)
                 .show()
         }
 
@@ -147,22 +148,22 @@ class MainFragment : BrowseFragment() {
 
             if (item is Movie) {
                 Log.d(TAG, "Item: " + item.toString())
-                val intent = Intent(activity, DetailsActivity::class.java)
+                val intent = Intent(requireActivity(), DetailsActivity::class.java)
                 intent.putExtra(DetailsActivity.MOVIE, item)
 
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    activity,
+                    requireActivity(),
                     (itemViewHolder.view as ImageCardView).mainImageView,
                     DetailsActivity.SHARED_ELEMENT_NAME
                 )
                     .toBundle()
-                activity.startActivity(intent, bundle)
+                requireActivity().startActivity(intent, bundle)
             } else if (item is String) {
                 if (item.contains(getString(R.string.error_fragment))) {
-                    val intent = Intent(activity, BrowseErrorActivity::class.java)
+                    val intent = Intent(requireActivity(), BrowseErrorActivity::class.java)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), item, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -205,7 +206,7 @@ class MainFragment : BrowseFragment() {
             view.layoutParams = ViewGroup.LayoutParams(GRID_ITEM_WIDTH, GRID_ITEM_HEIGHT)
             view.isFocusable = true
             view.isFocusableInTouchMode = true
-            view.setBackgroundColor(ContextCompat.getColor(activity, R.color.default_background))
+            view.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.default_background))
             view.setTextColor(Color.WHITE)
             view.gravity = Gravity.CENTER
             return Presenter.ViewHolder(view)

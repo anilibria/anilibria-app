@@ -40,6 +40,8 @@ import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.leanback.app.DetailsSupportFragment
+import androidx.leanback.app.DetailsSupportFragmentBackgroundController
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 
@@ -50,11 +52,11 @@ import java.util.Collections
  * A wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its metadata plus related videos.
  */
-class VideoDetailsFragment : DetailsFragment() {
+class VideoDetailsFragment : DetailsSupportFragment() {
 
     private var mSelectedMovie: Movie? = null
 
-    private lateinit var mDetailsBackground: DetailsFragmentBackgroundController
+    private lateinit var mDetailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var mPresenterSelector: ClassPresenterSelector
     private lateinit var mAdapter: ArrayObjectAdapter
 
@@ -62,9 +64,9 @@ class VideoDetailsFragment : DetailsFragment() {
         Log.d(TAG, "onCreate DetailsFragment")
         super.onCreate(savedInstanceState)
 
-        mDetailsBackground = DetailsFragmentBackgroundController(this)
+        mDetailsBackground = DetailsSupportFragmentBackgroundController(this)
 
-        mSelectedMovie = activity.intent.getSerializableExtra(DetailsActivity.MOVIE) as Movie
+        mSelectedMovie = requireActivity().intent.getSerializableExtra(DetailsActivity.MOVIE) as Movie
         if (mSelectedMovie != null) {
             mPresenterSelector = ClassPresenterSelector()
             mAdapter = ArrayObjectAdapter(mPresenterSelector)
@@ -75,7 +77,7 @@ class VideoDetailsFragment : DetailsFragment() {
             initializeBackground(mSelectedMovie)
             onItemViewClickedListener = ItemViewClickedListener()
         } else {
-            val intent = Intent(activity, MainActivity::class.java)
+            val intent = Intent(requireActivity(), MainActivity::class.java)
             startActivity(intent)
         }
     }
@@ -95,13 +97,13 @@ class VideoDetailsFragment : DetailsFragment() {
     private fun setupDetailsOverviewRow() {
         Log.d(TAG, "doInBackground: " + mSelectedMovie?.toString())
         val row = DetailsOverviewRow(mSelectedMovie)
-        row.imageDrawable = ContextCompat.getDrawable(activity, R.drawable.default_background)
-        val width = convertDpToPixel(activity, DETAIL_THUMB_WIDTH)
-        val height = convertDpToPixel(activity, DETAIL_THUMB_HEIGHT)
+        row.imageDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.default_background)
+        val width = convertDpToPixel(requireActivity(), DETAIL_THUMB_WIDTH)
+        val height = convertDpToPixel(requireActivity(), DETAIL_THUMB_HEIGHT)
 
         ImageLoader.getInstance().loadImage(mSelectedMovie?.cardImageUrl, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                row.setImageBitmap(activity, loadedImage)
+                row.setImageBitmap(requireActivity(), loadedImage)
                 mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size())
             }
         })
@@ -138,23 +140,23 @@ class VideoDetailsFragment : DetailsFragment() {
         // Set detail background.
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(DetailsDescriptionPresenter())
         detailsPresenter.backgroundColor =
-            ContextCompat.getColor(activity, R.color.selected_background)
+            ContextCompat.getColor(requireActivity(), R.color.selected_background)
 
         // Hook up transition element.
         val sharedElementHelper = FullWidthDetailsOverviewSharedElementHelper()
         sharedElementHelper.setSharedElementEnterTransition(
-            activity, DetailsActivity.SHARED_ELEMENT_NAME
+            requireActivity(), DetailsActivity.SHARED_ELEMENT_NAME
         )
         detailsPresenter.setListener(sharedElementHelper)
         detailsPresenter.isParticipatingEntranceTransition = true
 
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
             if (action.id == ACTION_WATCH_TRAILER) {
-                val intent = Intent(activity, PlaybackActivity::class.java)
+                val intent = Intent(requireActivity(), PlaybackActivity::class.java)
                 intent.putExtra(DetailsActivity.MOVIE, mSelectedMovie)
                 startActivity(intent)
             } else {
-                Toast.makeText(activity, action.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), action.toString(), Toast.LENGTH_SHORT).show()
             }
         }
         mPresenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
@@ -189,17 +191,17 @@ class VideoDetailsFragment : DetailsFragment() {
         ) {
             if (item is Movie) {
                 Log.d(TAG, "Item: " + item.toString())
-                val intent = Intent(activity, DetailsActivity::class.java)
+                val intent = Intent(requireActivity(), DetailsActivity::class.java)
                 intent.putExtra(resources.getString(R.string.movie), mSelectedMovie)
 
                 val bundle =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        activity,
+                        requireActivity(),
                         (itemViewHolder?.view as ImageCardView).mainImageView,
                         DetailsActivity.SHARED_ELEMENT_NAME
                     )
                         .toBundle()
-                activity.startActivity(intent, bundle)
+                requireActivity().startActivity(intent, bundle)
             }
         }
     }

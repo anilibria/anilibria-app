@@ -9,11 +9,14 @@ import java.io.InputStream
 import javax.inject.Inject
 
 class OkHttpImageDownloader @Inject constructor(
-        private val context: Context,
-        private val clientWrapper: ApiClientWrapper
+    private val context: Context,
+    private val clientWrapper: ApiClientWrapper
 ) : BaseImageDownloader(context) {
 
     override fun getStreamFromNetwork(imageUri: String, extra: Any?): InputStream {
+        if (!imageUri.contains("static.anilibria.tv")) {
+            return super.getStreamFromNetwork(imageUri, extra)
+        }
         val request = Request.Builder().url(imageUri).build()
         val response = clientWrapper.get().newCall(request).execute()
         val responseBody = response.body()

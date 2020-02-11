@@ -20,7 +20,7 @@ import android.view.View
 /**
  * This class demonstrates how to extend [androidx.leanback.app.ErrorFragment].
  */
-class ErrorFragment : androidx.leanback.app.ErrorFragment() {
+class ErrorFragment : androidx.leanback.app.ErrorSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +28,13 @@ class ErrorFragment : androidx.leanback.app.ErrorFragment() {
     }
 
     internal fun setErrorContent() {
-        imageDrawable = ContextCompat.getDrawable(activity, R.drawable.lb_ic_sad_cloud)
+        imageDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.lb_ic_sad_cloud)
         message = resources.getString(R.string.error_fragment_message)
         setDefaultBackground(TRANSLUCENT)
 
         buttonText = resources.getString(R.string.dismiss_error)
         buttonClickListener = View.OnClickListener {
-            fragmentManager.beginTransaction().remove(this@ErrorFragment).commit()
+            requireFragmentManager().beginTransaction().remove(this@ErrorFragment).commit()
         }
     }
 

@@ -13,8 +13,6 @@
  */
 package ru.radiationx.anilibria
 
-import android.app.Activity
-import android.app.Fragment
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
@@ -23,11 +21,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * BrowseErrorActivity shows how to use ErrorFragment.
  */
-class BrowseErrorActivity : Activity() {
+class BrowseErrorActivity : FragmentActivity() {
 
     private lateinit var mErrorFragment: ErrorFragment
     private lateinit var mSpinnerFragment: SpinnerFragment
@@ -41,20 +41,20 @@ class BrowseErrorActivity : Activity() {
 
     private fun testError() {
         mErrorFragment = ErrorFragment()
-        fragmentManager
+        supportFragmentManager
             .beginTransaction()
             .add(R.id.main_browse_fragment, mErrorFragment)
             .commit()
 
         mSpinnerFragment = SpinnerFragment()
-        fragmentManager
+        supportFragmentManager
             .beginTransaction()
             .add(R.id.main_browse_fragment, mSpinnerFragment)
             .commit()
 
         val handler = Handler()
         handler.postDelayed({
-            fragmentManager
+            supportFragmentManager
                 .beginTransaction()
                 .remove(mSpinnerFragment)
                 .commit()

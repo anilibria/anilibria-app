@@ -1,6 +1,7 @@
-package ru.radiationx.anilibria
+package ru.radiationx.anilibria.di
 
 import android.content.Context
+import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.shared_app.OkHttpImageDownloader
 import toothpick.config.Module

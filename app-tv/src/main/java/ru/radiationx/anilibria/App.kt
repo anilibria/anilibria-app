@@ -3,16 +3,10 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.graphics.Bitmap
-import android.os.Handler
 import android.util.Log
 import androidx.multidex.MultiDex
-import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
-import com.nostra13.universalimageloader.core.DisplayImageOptions
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared_app.*
 import toothpick.Toothpick

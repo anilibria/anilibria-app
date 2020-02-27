@@ -30,7 +30,7 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mainConstraint.post {
-            //mainConstraint?.transitionToEnd()
+            mainConstraint?.transitionToEnd()
         }
 
     }

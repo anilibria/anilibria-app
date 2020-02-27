@@ -10,32 +10,30 @@
     tools:deviceIds="tv"
     tools:ignore="MergeRootFrame">
 
-    <ImageView
-        android:id="@+id/anilogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_anilibria_splash"
-        app:layout_constraintBottom_toBottomOf="@id/bottombarrier"
-        app:layout_constraintEnd_toStartOf="@id/anitext"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/anitext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="end"
         android:maxLines="1"
         android:text="AniLibria"
         android:textColor="#fff"
-        android:textSize="96sp"
-        app:layout_constraintBottom_toBottomOf="@id/bottombarrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/anilogo"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="96sp" />
+
+    <View
+        android:id="@+id/anifakebg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#212121"/>
+
+    <ImageView
+        android:id="@+id/anilogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_anilibria_splash" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottombarrier"
@@ -48,14 +46,12 @@
         android:id="@+id/progressBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
+        android:paddingBottom="24dp">
 
         <ProgressBar
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:indeterminateTint="#757575"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

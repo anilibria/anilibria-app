@@ -14,11 +14,13 @@
 
 package ru.radiationx.anilibria
 
-import android.app.Activity
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.FragmentActivity
+import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.visible
 
 /**
  * Loads [MainFragment].
@@ -33,6 +35,31 @@ class MainActivity : FragmentActivity() {
             mainConstraint?.transitionToEnd()
         }
 
+        Handler().postDelayed({
+            errorState()
+        }, 3000)
+
+        configActionRepeat.setOnClickListener {
+            normalState()
+            Handler().postDelayed({
+                errorState()
+            }, 3000)
+        }
+    }
+
+    private fun errorState() {
+        TransitionManager.beginDelayedTransition(mainConstraint)
+        configErrorGroup.visible()
+        configProgressBar.gone()
+        configActionRepeat.post {
+            configActionRepeat.requestFocus()
+        }
+    }
+
+    private fun normalState() {
+        TransitionManager.beginDelayedTransition(mainConstraint)
+        configErrorGroup.gone()
+        configProgressBar.visible()
     }
 
     override fun onResume() {

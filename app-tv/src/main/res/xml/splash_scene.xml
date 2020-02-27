@@ -11,7 +11,7 @@
         motion:motionInterpolator="easeInOut">
         <OnClick
             motion:clickAction="toggle"
-            motion:targetId="@id/anilogo" />
+            motion:targetId="@id/configLogo" />
     </Transition>
 
     <Transition
@@ -26,17 +26,17 @@
     <ConstraintSet android:id="@+id/logo_start">
 
         <Constraint
-            android:id="@+id/anifakebg"
+            android:id="@+id/configLogoBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="48dp"
-            motion:layout_constraintBottom_toBottomOf="@id/anilogo"
-            motion:layout_constraintEnd_toEndOf="@id/anilogo"
+            motion:layout_constraintBottom_toBottomOf="@id/configLogo"
+            motion:layout_constraintEnd_toEndOf="@id/configLogo"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="@id/anilogo" />
+            motion:layout_constraintTop_toTopOf="@id/configLogo" />
 
         <Constraint
-            android:id="@+id/anilogo"
+            android:id="@+id/configLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
@@ -45,16 +45,16 @@
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/anitext"
+            android:id="@+id/configLogoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
-            motion:layout_constraintEnd_toEndOf="@id/anilogo"
+            motion:layout_constraintEnd_toEndOf="@id/configLogo"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/progressBar"
+            android:id="@+id/configController"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -65,38 +65,38 @@
     <ConstraintSet android:id="@+id/logo_end">
 
         <Constraint
-            android:id="@+id/anifakebg"
+            android:id="@+id/configLogoBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="48dp"
-            motion:layout_constraintBottom_toBottomOf="@id/anilogo"
-            motion:layout_constraintEnd_toEndOf="@id/anilogo"
+            motion:layout_constraintBottom_toBottomOf="@id/configLogo"
+            motion:layout_constraintEnd_toEndOf="@id/configLogo"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="@id/anilogo" />
+            motion:layout_constraintTop_toTopOf="@id/configLogo" />
 
         <Constraint
-            android:id="@+id/anilogo"
+            android:id="@+id/configLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
-            motion:layout_constraintEnd_toStartOf="@id/anitext"
+            motion:layout_constraintEnd_toStartOf="@id/configLogoName"
             motion:layout_constraintHorizontal_chainStyle="packed"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/anitext"
+            android:id="@+id/configLogoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:alpha="1"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toEndOf="@id/anilogo"
+            motion:layout_constraintStart_toEndOf="@id/configLogo"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/progressBar"
+            android:id="@+id/configController"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -107,39 +107,39 @@
     <ConstraintSet android:id="@+id/logo_end_progress">
 
         <Constraint
-            android:id="@+id/anifakebg"
+            android:id="@+id/configLogoBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="48dp"
-            motion:layout_constraintBottom_toBottomOf="@id/anilogo"
-            motion:layout_constraintEnd_toEndOf="@id/anilogo"
+            motion:layout_constraintBottom_toBottomOf="@id/configLogo"
+            motion:layout_constraintEnd_toEndOf="@id/configLogo"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="@id/anilogo" />
+            motion:layout_constraintTop_toTopOf="@id/configLogo" />
 
         <Constraint
-            android:id="@+id/anilogo"
+            android:id="@+id/configLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="1"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
-            motion:layout_constraintEnd_toStartOf="@id/anitext"
+            motion:layout_constraintEnd_toStartOf="@id/configLogoName"
             motion:layout_constraintHorizontal_chainStyle="packed"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/anitext"
+            android:id="@+id/configLogoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:alpha="1"
             motion:layout_constraintBottom_toBottomOf="@id/bottombarrier"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toEndOf="@id/anilogo"
+            motion:layout_constraintStart_toEndOf="@id/configLogo"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/progressBar"
+            android:id="@+id/configController"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             motion:layout_constraintBottom_toBottomOf="parent"

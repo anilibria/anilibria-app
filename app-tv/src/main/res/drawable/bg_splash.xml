@@ -10,6 +10,7 @@
 
     <item>
         <bitmap
+            android:tint="@color/dark_colorAccent"
             android:gravity="center"
             android:src="@drawable/ic_anilibria_splash" />
     </item>

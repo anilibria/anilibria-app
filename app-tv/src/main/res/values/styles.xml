@@ -7,9 +7,34 @@
         <item name="android:colorAccent">@color/dark_colorAccent</item>
         <item name="android:colorBackground">@color/dark_windowBackground</item>
         <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
+
+    <style name="AppTheme.Material" parent="Theme.MaterialComponents">
+
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
+
+    </style>
+
 </resources>

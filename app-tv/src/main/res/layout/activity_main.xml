@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/splash_scene"
-    app:showPaths="true"
     tools:deviceIds="tv"
     tools:ignore="MergeRootFrame">
 
@@ -19,14 +18,14 @@
         android:gravity="end"
         android:maxLines="1"
         android:text="AniLibria"
-        android:textColor="#fff"
+        android:textColor="@color/dark_textDefault"
         android:textSize="96sp" />
 
     <View
         android:id="@+id/anifakebg"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#212121"/>
+        android:background="?android:colorBackground" />
 
     <ImageView
         android:id="@+id/anilogo"
@@ -51,7 +50,7 @@
         <ProgressBar
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:indeterminateTint="#757575"
+            android:indeterminateTint="@color/dark_base_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

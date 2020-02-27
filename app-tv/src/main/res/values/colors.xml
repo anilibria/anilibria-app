@@ -1,1 +1,45 @@
-<resources></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="alib_red">#c40304</color>
+    <color name="alib_gray">#383838</color>
+    <color name="alib_gray_dark">#282828</color>
+    <color name="alib_red_launcher">@color/alib_red</color>
+    <color name="alib_white_launcher">#fff</color>
+    <color name="white">#fff</color>
+
+    <color name="playerColorPrimary">#66000000</color>
+
+    <color name="brand_patreon">#F96854</color>
+    <color name="brand_patreon_1">#052a49</color>
+    <color name="brand_vk">#45668e</color>
+    <color name="brand_youtube">#fc0d1c</color>
+    <color name="brand_discord">#7289DA</color>
+    <color name="brand_telegram">#35a6de</color>
+
+    <!-- DARK THEME -->
+    <color name="temp_red4">#8f2929</color>
+
+    <color name="temp_red_">@color/temp_red4</color>
+    <color name="dark_colorPrimary">@color/dark_cardBackground</color>
+    <color name="dark_colorPrimaryDark">@color/dark_cardBackground</color>
+    <color name="dark_colorAccent">@color/temp_red_</color>
+
+    <color name="dark_divider_line">#414141</color>
+    <color name="dark_btn_border">#1Effffff</color>
+    <color name="dark_windowBackground">#191b1c</color>
+    <color name="dark_cardBackground">#282828</color>
+    <color name="dark_cardBackground_alpha">#00282828</color>
+    <color name="dark_imageBackground">#1000</color>
+
+    <color name="dark_release_day_btn">#414141</color>
+
+    <color name="dark_contrast_icon">@color/white</color>
+    <color name="dark_base_icon">#909090</color>
+
+    <color name="dark_episode_even">#303030</color>
+
+    <color name="dark_textDefault">#FFFFFF</color>
+    <color name="dark_textSecond">#B2B2B2</color>
+    <color name="dark_textLink">#c23838</color>
+
+</resources>

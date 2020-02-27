@@ -2,9 +2,11 @@
 <resources>
 
     <style name="AppTheme" parent="@style/Theme.Leanback">
-        <item name="android:colorPrimary">#00f</item>
-        <item name="android:colorAccent">#0f0</item>
-        <item name="android:colorBackground">#212121</item>
+        <item name="android:colorPrimary">@color/dark_colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/dark_colorAccent</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">

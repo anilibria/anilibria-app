@@ -16,7 +16,9 @@ package ru.radiationx.anilibria
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.FragmentActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * Loads [MainFragment].
@@ -24,7 +26,16 @@ import androidx.fragment.app.FragmentActivity
 class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mainConstraint.post {
+            //mainConstraint?.transitionToEnd()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 }

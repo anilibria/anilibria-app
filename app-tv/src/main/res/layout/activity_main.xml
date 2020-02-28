@@ -49,14 +49,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp"
         android:theme="@style/AppTheme.Material">
 
         <ProgressBar
             android:id="@+id/configProgressBar"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginBottom="48dp"
             android:indeterminateTint="@color/dark_base_icon"
             app:layout_constraintBottom_toBottomOf="@id/configActionsBarrier"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,9 +72,11 @@
             android:layout_marginBottom="24dp"
             android:ellipsize="end"
             android:maxLines="3"
+            android:textAppearance="?textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="@id/configActionsBarrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="wrap"
             tools:text="Описание ошибки" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -92,7 +95,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/configActionRepeat"
-            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"

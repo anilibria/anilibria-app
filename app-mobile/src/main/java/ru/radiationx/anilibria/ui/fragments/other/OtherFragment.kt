@@ -35,7 +35,7 @@ class OtherFragment : BaseFragment(), OtherView {
     lateinit var presenter: OtherPresenter
 
     @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter = getDependency(screenScope, OtherPresenter::class.java)
+    fun provideOtherPresenter(): OtherPresenter = getDependency(OtherPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_list
 

@@ -10,12 +10,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.MvpAppCompatFragment
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.Scopes
 import ru.radiationx.shared_app.getDependency
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
@@ -24,6 +24,7 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.DI
 
 /* Created by radiationx on 18.11.17. */
 
@@ -46,7 +47,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     protected open fun getBaseLayout(): Int = R.layout.fragment_main_base
 
     override val screenScope: String by lazy {
-        arguments?.getString(ARG_SCREEN_SCOPE, null) ?: Scopes.APP
+        arguments?.getString(ARG_SCREEN_SCOPE, null) ?: DI.DEFAULT_SCOPE
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,16 +72,16 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
         super.onActivityCreated(savedInstanceState)
         setStatusBarVisibility(statusBarVisible)
         dimensionsProvider
-                .observe()
-                .subscribe { dimension ->
-                    toolbar?.post {
-                        toolbar?.let {
-                            localUpdateDimens(dimension)
-                        }
+            .observe()
+            .subscribe { dimension ->
+                toolbar?.post {
+                    toolbar?.let {
+                        localUpdateDimens(dimension)
                     }
-                    localUpdateDimens(dimension)
                 }
-                .addTo(disposables)
+                localUpdateDimens(dimension)
+            }
+            .addTo(disposables)
     }
 
     private fun localUpdateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -137,4 +138,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
         super.onDestroy()
         disposables.dispose()
     }
+
+    fun <T> Fragment.getDependency(clazz: Class<T>, scope: String): T = DI.get(clazz, DI.DEFAULT_SCOPE, scope)
 }

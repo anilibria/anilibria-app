@@ -69,11 +69,11 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(screenScope, FastSearchPresenter::class.java)
+        getDependency(FastSearchPresenter::class.java, screenScope)
 
     @ProvidePresenter
     fun provideReleasesPresenter(): ReleasesPresenter =
-        getDependency(screenScope, ReleasesPresenter::class.java)
+        getDependency(ReleasesPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

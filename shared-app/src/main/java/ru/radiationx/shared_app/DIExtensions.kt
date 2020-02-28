@@ -1,71 +1,100 @@
 package ru.radiationx.shared_app
 
-import android.app.Activity
-import android.util.Log
+import android.content.Intent
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
-import toothpick.smoothie.lifecycle.closeOnDestroy
-import toothpick.smoothie.viewmodel.closeOnViewModelCleared
 
 object DI {
-    private const val DEFAULT_SCOPE = Scopes.APP
+    const val DEFAULT_SCOPE = "app_scope"
 
-    fun <T> get(clazz: Class<T>, name: String? = null): T = get(DEFAULT_SCOPE, clazz, name)
+    fun <T> get(clazz: Class<T>, vararg scopes: String): T = openScopes(*scopes).getInstance(clazz)
 
-    fun <T> get(scope: String, clazz: Class<T>, name: String? = null): T {
-        Log.d("ToothDI", "get in '$scope' class '$clazz'")
-        return openScope(scope).getInstance(clazz, name)
+    fun inject(target: Any, vararg scopes: String): Scope = openScopes(*scopes).also { scope ->
+        Toothpick.inject(target, scope)
     }
 
-    fun inject(target: Any): Scope = inject(target, DEFAULT_SCOPE)
-
-    fun inject(target: Any, scope: String): Scope {
-        Log.d("ToothDI", "inject in '$scope' to '$target'")
-        return openScope(scope).apply {
-            Toothpick.inject(target, this)
+    fun inject(target: Any, modules: Array<out Module>, vararg scopes: String): Scope = openScopes(*scopes)
+        .withModules(*modules)
+        .also { scope ->
+            Toothpick.inject(target, scope)
         }
+
+    fun Scope.withModules(vararg modules: Module) = apply { installModules(*modules) }
+
+    // Open DEFAULT_SCOPE and more
+    fun openScopes(vararg scopes: String): Scope = if (scopes.isEmpty()) {
+        Toothpick.openScopes(DEFAULT_SCOPE)
+    } else {
+        Toothpick.openScopes(*scopes)
     }
 
-    fun inject(target: Any, scope: String, vararg modules: Module): Scope {
-        Log.d(
-            "ToothDI",
-            "inject in '$scope' to '$target' with modules '${modules.joinToString { it.javaClass.canonicalName?.toString().orEmpty() }}'"
-        )
-        return openScope(scope).apply {
-            installModules(*modules)
-            Toothpick.inject(target, this)
-        }
-    }
-
-    private fun openScope(scope: String): Scope = Toothpick.openScopes(*(toScopes(scope).also {
-        Log.d("ToothDI", "toscopes '$scope' -> '${it.joinToString()}'")
-    }))
-
-    private fun toScopes(newScope: String): Array<String> = if (newScope == DEFAULT_SCOPE)
-        arrayOf(DEFAULT_SCOPE)
-    else
-        arrayOf(DEFAULT_SCOPE, newScope)
-
-    fun close(scope: String) = Toothpick.closeScope(scope)
+    fun close(vararg scopes: String) = scopes.forEach { Toothpick.closeScope(it) }
 }
 
-fun <T> Fragment.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
-fun <T> Fragment.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
+fun Any.objectScopeName() = "${javaClass.simpleName}_${hashCode()}"
 
-fun <T> FragmentActivity.getDependency(clazz: Class<T>, name: String? = null): T = DI.get(clazz, name)
-fun <T> FragmentActivity.getDependency(scope: String, clazz: Class<T>, name: String? = null): T = DI.get(scope, clazz, name)
+fun <T> Fragment.getDependency(clazz: Class<T>, vararg scopes: String): T = DI.get(clazz, *scopes)
+fun <T> FragmentActivity.getDependency(clazz: Class<T>, vararg scopes: String): T = DI.get(clazz, *scopes)
 
-fun Fragment.injectDependencies() = DI.inject(this).closeOnDestroy(this)
-fun Fragment.injectDependencies(scope: String) = DI.inject(this, scope).closeOnDestroy(this)
-fun Fragment.injectDependencies(scope: String, vararg modules: Module) = DI.inject(this, scope, *modules).closeOnDestroy(this)
+fun Fragment.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
+fun Fragment.injectDependencies(module: Module, vararg scopes: String) = DI.inject(this, arrayOf(module), *scopes)
+fun Fragment.injectDependencies(modules: Array<out Module>, vararg scopes: String) = DI.inject(this, modules, *scopes)
 
-fun FragmentActivity.injectDependencies() = DI.inject(this).closeOnDestroy(this)
-fun FragmentActivity.injectDependencies(scope: String) = DI.inject(this, scope).closeOnDestroy(this)
-fun FragmentActivity.injectDependencies(scope: String, vararg modules: Module) = DI.inject(this, scope, *modules).closeOnDestroy(this)
+fun FragmentActivity.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
+fun FragmentActivity.injectDependencies(module: Module, vararg scopes: String) = DI.inject(this, arrayOf(module), *scopes)
+fun FragmentActivity.injectDependencies(modules: Array<out Module>, vararg scopes: String) = DI.inject(this, modules, *scopes)
 
-fun Fragment.closeDependenciesScope(scope: String) = DI.close(scope)
-fun FragmentActivity.closeDependenciesScope(scope: String) = DI.close(scope)
+fun Fragment.closeDependenciesScopes(vararg scopes: String) = DI.close(*scopes)
+fun FragmentActivity.closeDependenciesScopes(vararg scopes: String) = DI.close(*scopes)
+
+fun <T> Fragment.getScopedDependency(clazz: Class<T>): T = when (this) {
+    is ScopeProvider -> getDependency(clazz, screenScopeTag)
+    else -> getDependency(clazz)
+}
+
+fun <T> FragmentActivity.getScopedDependency(clazz: Class<T>): T = when (this) {
+    is ScopeProvider -> getDependency(clazz, screenScopeTag)
+    else -> getDependency(clazz)
+}
+
+inline fun <reified T : ViewModel> Fragment.viewModel(): Lazy<T> = lazy {
+    ViewModelProviders
+        .of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                this@viewModel.getScopedDependency(modelClass)
+        })
+        .get(T::class.java)
+}
+
+inline fun <reified T : ViewModel> FragmentActivity.viewModel(): Lazy<T> = lazy {
+    ViewModelProviders
+        .of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                this@viewModel.getScopedDependency(modelClass)
+        })
+        .get(T::class.java)
+}
+
+fun <T : Fragment> T.putScopeArgument(scope: String?): T {
+    arguments = (arguments ?: Bundle()).apply {
+        scope?.also {
+            putString(ScopeProvider.ARG_PARENT_SCOPE, it)
+        }
+    }
+    return this
+}
+
+fun Intent.putScopeArgument(scopesProvider: ScopeProvider?): Intent {
+    scopesProvider?.screenScopeTag?.also {
+        putExtra(ScopeProvider.ARG_PARENT_SCOPE, it)
+    }
+    return this
+}
 

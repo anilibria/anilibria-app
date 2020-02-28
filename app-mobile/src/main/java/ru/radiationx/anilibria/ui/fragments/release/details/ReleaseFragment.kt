@@ -77,7 +77,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     lateinit var presenter: ReleasePresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter = getDependency(screenScope, ReleasePresenter::class.java)
+    fun provideReleasePresenter(): ReleasePresenter = getDependency(ReleasePresenter::class.java, screenScope)
 
     override var transitionNameLocal = ""
 

@@ -38,7 +38,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     lateinit var presenter: SchedulePresenter
 
     @ProvidePresenter
-    fun providePresenter(): SchedulePresenter = getDependency(screenScope, SchedulePresenter::class.java)
+    fun providePresenter(): SchedulePresenter = getDependency(SchedulePresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

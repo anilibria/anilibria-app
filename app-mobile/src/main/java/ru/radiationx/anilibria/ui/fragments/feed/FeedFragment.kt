@@ -82,10 +82,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(screenScope, FastSearchPresenter::class.java)
+        getDependency(FastSearchPresenter::class.java, screenScope)
 
     @ProvidePresenter
-    fun provideFeedPresenter() = getDependency(screenScope, FeedPresenter::class.java)
+    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

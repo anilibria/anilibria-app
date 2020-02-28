@@ -60,7 +60,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     lateinit var presenter: PagePresenter
 
     @ProvidePresenter
-    fun providePagePresenter(): PagePresenter = getDependency(screenScope, PagePresenter::class.java)
+    fun providePagePresenter(): PagePresenter = getDependency(PagePresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

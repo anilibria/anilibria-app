@@ -55,7 +55,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     lateinit var presenter: ReleaseInfoPresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(screenScope, ReleaseInfoPresenter::class.java)
+    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(ReleaseInfoPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

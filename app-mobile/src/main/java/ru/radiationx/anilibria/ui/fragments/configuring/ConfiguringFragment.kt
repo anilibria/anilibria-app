@@ -23,7 +23,7 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
     lateinit var presenter: ConfiguringPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(screenScope, ConfiguringPresenter::class.java)
+    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(ConfiguringPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_configuring
 

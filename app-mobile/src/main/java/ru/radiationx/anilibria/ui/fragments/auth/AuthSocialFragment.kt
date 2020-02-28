@@ -47,7 +47,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     lateinit var presenter: AuthSocialPresenter
 
     @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter = getDependency(screenScope, AuthSocialPresenter::class.java)
+    fun providePresenter(): AuthSocialPresenter = getDependency(AuthSocialPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

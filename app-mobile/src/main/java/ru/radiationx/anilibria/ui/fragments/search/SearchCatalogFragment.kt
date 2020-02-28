@@ -78,14 +78,14 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(screenScope, FastSearchPresenter::class.java)
+        getDependency(FastSearchPresenter::class.java, screenScope)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
     fun providePresenter(): SearchPresenter =
-        getDependency(screenScope, SearchPresenter::class.java)
+        getDependency(SearchPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

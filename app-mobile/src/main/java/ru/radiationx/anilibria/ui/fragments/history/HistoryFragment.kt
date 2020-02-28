@@ -60,7 +60,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     lateinit var presenter: HistoryPresenter
 
     @ProvidePresenter
-    fun provideHistoryPresenter(): HistoryPresenter = getDependency(screenScope, HistoryPresenter::class.java)
+    fun provideHistoryPresenter(): HistoryPresenter = getDependency(HistoryPresenter::class.java, screenScope)
 
     override val statusBarVisible: Boolean = true
 

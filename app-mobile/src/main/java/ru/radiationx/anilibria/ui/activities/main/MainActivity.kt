@@ -22,7 +22,6 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
-import ru.radiationx.shared_app.Scopes
 import ru.radiationx.shared_app.getDependency
 import ru.radiationx.shared_app.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatColor
@@ -48,6 +47,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.DI
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -118,7 +118,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         } else {
             resources.configuration.locale
         }
-        injectDependencies(Scopes.APP, LocaleModule(locale))
+        injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
         currentAppTheme = appThemeHolder.getTheme()
         setTheme(currentAppTheme.getMainStyleRes())
         super.onCreate(savedInstanceState)

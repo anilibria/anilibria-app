@@ -73,10 +73,10 @@ class AuthVkFragment : BaseFragment() {
 
                 val matcher = resultUrlPattern.matcher(url)
                 if (matcher.find()) {
-                    getDependency(screenScope, AuthHolder::class.java).changeVkAuth(true)
+                    getDependency(AuthHolder::class.java, screenScope).changeVkAuth(true)
                     //todo
                     //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
-                    getDependency(screenScope, Router::class.java).exit()
+                    getDependency(Router::class.java, screenScope).exit()
                     return true
                 }
                 //view.loadUrl(request.url.toString())

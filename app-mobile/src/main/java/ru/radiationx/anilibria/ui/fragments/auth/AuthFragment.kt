@@ -38,7 +38,7 @@ class AuthFragment : BaseFragment(), AuthView {
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter = getDependency(screenScope, AuthPresenter::class.java)
+    fun provideAuthPresenter(): AuthPresenter = getDependency(AuthPresenter::class.java, screenScope)
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
@@ -71,12 +71,12 @@ class AuthFragment : BaseFragment(), AuthView {
     override fun showRegistrationDialog() {
         context?.let {
             AlertDialog.Builder(it)
-                    .setMessage("Зарегистрировать аккаунт можно только на сайте.")
-                    .setPositiveButton("Регистрация") { _, _ ->
-                        Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
-                    }
-                    .setNeutralButton("Отмена", null)
-                    .show()
+                .setMessage("Зарегистрировать аккаунт можно только на сайте.")
+                .setPositiveButton("Регистрация") { _, _ ->
+                    Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
+                }
+                .setNeutralButton("Отмена", null)
+                .show()
         }
     }
 
@@ -98,14 +98,14 @@ class AuthFragment : BaseFragment(), AuthView {
 
     private fun onSocialClick(item: SocialAuth) {
         AlertDialog.Builder(context!!)
-                .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-                .setPositiveButton("Продолжить") { _, _ ->
-                    presenter.onSocialClick(item)
-                }
-                .setNegativeButton("Личный кабинет") { _, _ ->
-                    Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
-                }
-                .show()
+            .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
+            .setPositiveButton("Продолжить") { _, _ ->
+                presenter.onSocialClick(item)
+            }
+            .setNegativeButton("Личный кабинет") { _, _ ->
+                Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
+            }
+            .show()
     }
 
 }

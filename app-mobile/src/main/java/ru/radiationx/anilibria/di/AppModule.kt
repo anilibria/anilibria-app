@@ -21,9 +21,9 @@ class AppModule(context: Context) : Module() {
     init {
         bind(Context::class.java).toInstance(context)
 
-        bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singletonInScope()
+        bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singleton()
 
-        bind(SystemMessenger::class.java).singletonInScope()
+        bind(SystemMessenger::class.java).singleton()
 
         val ciceroneHolder = CiceroneHolder()
         bind(CiceroneHolder::class.java).toInstance(ciceroneHolder)
@@ -33,11 +33,11 @@ class AppModule(context: Context) : Module() {
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
 
 
-        bind(DimensionsProvider::class.java).singletonInScope()
+        bind(DimensionsProvider::class.java).singleton()
 
-        bind(ILinkHandler::class.java).to(LinkRouter::class.java).singletonInScope()
-        bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singletonInScope()
-        bind(OkHttpImageDownloader::class.java).singletonInScope()
+        bind(ILinkHandler::class.java).to(LinkRouter::class.java).singleton()
+        bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
+        bind(OkHttpImageDownloader::class.java).singleton()
 
     }
 

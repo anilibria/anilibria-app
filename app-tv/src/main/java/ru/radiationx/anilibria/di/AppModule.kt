@@ -11,8 +11,8 @@ class AppModule(context: Context) : Module() {
 
     init {
         bind(Context::class.java).toInstance(context)
-        bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singletonInScope()
-        bind(OkHttpImageDownloader::class.java).singletonInScope()
+        bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singleton()
+        bind(OkHttpImageDownloader::class.java).singleton()
     }
 
 }

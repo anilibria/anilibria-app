@@ -35,6 +35,10 @@ dependencies {
     implementation project(":shared-android-ktx")
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    implementation 'com.github.stephanenicolas.toothpick:toothpick-runtime:2.1.0'
-    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:2.1.0'
+
+    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:ktp:3.1.0"
+    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0"
 }

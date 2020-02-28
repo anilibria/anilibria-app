@@ -8,8 +8,8 @@ import toothpick.config.Module
 class MessengerModule : Module() {
 
     init {
-        bind(SystemMessenger::class.java).singletonInScope()
-        bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singletonInScope()
+        bind(SystemMessenger::class.java).singleton()
+        bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
     }
 
 }

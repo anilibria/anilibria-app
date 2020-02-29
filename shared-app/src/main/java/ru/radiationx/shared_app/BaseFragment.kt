@@ -11,7 +11,7 @@ import toothpick.smoothie.lifecycle.closeOnDestroy
 
 open class BaseFragment(@LayoutRes layoutId: Int = 0) : Fragment(layoutId), ScopeProvider {
 
-    protected val dependencyInjector by lazy { DependencyInjector() }
+    protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 
     private val scopeCloseChecker by lazy { FragmentScopeCloseChecker(this) }
 
@@ -19,7 +19,7 @@ open class BaseFragment(@LayoutRes layoutId: Int = 0) : Fragment(layoutId), Scop
         get() = dependencyInjector.screenScopeTag
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        dependencyInjector.onCreate(this, arguments, savedInstanceState).closeOnDestroy(this)
+        dependencyInjector.onCreate(this, savedInstanceState).closeOnDestroy(this)
         super.onCreate(savedInstanceState)
     }
 

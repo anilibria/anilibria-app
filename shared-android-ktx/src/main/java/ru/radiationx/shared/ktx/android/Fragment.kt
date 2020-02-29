@@ -11,10 +11,10 @@ fun <T : Fragment> T.putExtra(block: Bundle.() -> Unit): T {
     return this
 }
 
-fun <T : Fragment> T.attachBackPressed(enabled: Boolean = true, block: () -> Unit): OnBackPressedCallback {
+fun <T : Fragment> T.attachBackPressed(enabled: Boolean = true, block: OnBackPressedCallback.() -> Unit): OnBackPressedCallback {
     val callback: OnBackPressedCallback = object : OnBackPressedCallback(enabled) {
         override fun handleOnBackPressed() {
-            block.invoke()
+            block.invoke(this)
         }
     }
     requireActivity().onBackPressedDispatcher.addCallback(this, callback)

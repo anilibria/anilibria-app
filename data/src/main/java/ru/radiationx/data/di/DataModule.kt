@@ -16,6 +16,7 @@ import ru.radiationx.data.datasource.remote.api.*
 import ru.radiationx.data.datasource.remote.parsers.*
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
+import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
@@ -111,6 +112,7 @@ class DataModule(context: Context) : Module() {
         bind(MenuRepository::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
+        bind(ConfiguringInteractor::class.java).singleton()
     }
 
 }

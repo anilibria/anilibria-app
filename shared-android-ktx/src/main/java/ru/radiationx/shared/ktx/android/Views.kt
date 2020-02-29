@@ -19,23 +19,28 @@ import android.widget.TextView
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
-
+@Deprecated("Use androidx pls")
 fun <T : View> T.visible() {
     this.visibility = View.VISIBLE
 }
 
+@Deprecated("Use androidx pls")
 fun <T : View> T.gone() {
     this.visibility = View.GONE
 }
 
+@Deprecated("Use androidx pls")
 fun <T : View> T.invisible() {
     this.visibility = View.INVISIBLE
 }
 
+@Deprecated("Use androidx pls")
 fun <T : View> T.visible(isVisible: Boolean) = if (isVisible) visible() else gone()
 
+@Deprecated("Use androidx pls")
 fun <T : View> T.gone(isGone: Boolean) = visible(!isGone)
 
+@Deprecated("Use androidx pls")
 fun <T : View> T.invisible(isInvisible: Boolean) = if (isInvisible) invisible() else visible()
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View =

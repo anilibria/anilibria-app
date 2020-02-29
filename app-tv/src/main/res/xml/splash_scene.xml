@@ -4,24 +4,16 @@
     android:id="@+id/mainConstraint">
 
     <Transition
-        android:id="@+id/logoTransition"
         motion:constraintSetEnd="@+id/logo_end"
         motion:constraintSetStart="@+id/logo_start"
         motion:duration="500"
-        motion:motionInterpolator="easeInOut">
-        <OnClick
-            motion:clickAction="toggle"
-            motion:targetId="@id/configLogo" />
-    </Transition>
+        motion:motionInterpolator="easeInOut" />
 
     <Transition
-        motion:autoTransition="animateToEnd"
         motion:constraintSetEnd="@+id/logo_end_progress"
         motion:constraintSetStart="@+id/logo_end"
         motion:duration="250"
-        motion:motionInterpolator="easeIn">
-
-    </Transition>
+        motion:motionInterpolator="easeIn" />
 
     <ConstraintSet android:id="@+id/logo_start">
 

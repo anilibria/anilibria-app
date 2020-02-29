@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_config.*
+import ru.radiationx.anilibria.screen.launcher.AppLauncherViewModel
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -20,6 +21,8 @@ import javax.inject.Inject
 
 class MainActivity : BaseFragmentActivity() {
 
+    private val viewModel: AppLauncherViewModel by viewModel()
+
     private val navigator by lazy { ScopedAppNavigator(this, R.id.fragmentContainer, scopeProvider = this) }
 
     @Inject
@@ -32,10 +35,7 @@ class MainActivity : BaseFragmentActivity() {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (savedInstanceState == null) {
-            router.newRootScreen(FlowScreen())
-        }
+        lifecycle.addObserver(viewModel)
     }
 
     override fun onResumeFragments() {

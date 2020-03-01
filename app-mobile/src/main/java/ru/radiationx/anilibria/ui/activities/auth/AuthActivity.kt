@@ -6,7 +6,7 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens

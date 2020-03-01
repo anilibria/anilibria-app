@@ -4,9 +4,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Bitmap
 import android.os.Build
-import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
@@ -14,11 +12,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
 import biz.source_code.miniTemplator.MiniTemplator
 import com.google.firebase.messaging.FirebaseMessaging
-import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
-import com.nostra13.universalimageloader.core.DisplayImageOptions
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,7 +24,9 @@ import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared.ktx.addTo
-import ru.radiationx.shared_app.*
+import ru.radiationx.shared_app.common.ImageLoaderConfig
+import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream

@@ -8,7 +8,7 @@ import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_moon.*
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder

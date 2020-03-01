@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.di
 
 import androidx.fragment.app.FragmentActivity
 

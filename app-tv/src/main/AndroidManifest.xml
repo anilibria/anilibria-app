@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.radiationx.anilibria">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
@@ -22,7 +21,7 @@
         android:theme="@style/AppTheme.Splash"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name=".screen.launcher.MainActivity"
             android:banner="@drawable/app_icon_your_company"
             android:icon="@drawable/app_icon_your_company"
             android:label="@string/app_name"

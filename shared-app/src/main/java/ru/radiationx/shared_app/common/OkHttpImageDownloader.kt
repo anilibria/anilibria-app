@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.common
 
 import android.content.Context
 import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream

@@ -14,8 +14,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.getDependency
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
@@ -30,7 +29,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.DI
+import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets

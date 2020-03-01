@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.di
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +20,9 @@ object DI {
         Toothpick.inject(target, scope)
     }
 
-    fun inject(target: Any, modules: Array<out Module>, vararg scopes: String): Scope = openScopes(*scopes)
+    fun inject(target: Any, modules: Array<out Module>, vararg scopes: String): Scope = openScopes(
+        *scopes
+    )
         .withModules(*modules)
         .also { scope ->
             Toothpick.inject(target, scope)
@@ -40,16 +42,22 @@ object DI {
 
 fun Any.objectScopeName() = "${javaClass.simpleName}_${hashCode()}"
 
-fun <T> Fragment.getDependency(clazz: Class<T>, vararg scopes: String): T = DI.get(clazz, *scopes)
-fun <T> FragmentActivity.getDependency(clazz: Class<T>, vararg scopes: String): T = DI.get(clazz, *scopes)
+fun <T> Fragment.getDependency(clazz: Class<T>, vararg scopes: String): T =
+    DI.get(clazz, *scopes)
+fun <T> FragmentActivity.getDependency(clazz: Class<T>, vararg scopes: String): T =
+    DI.get(clazz, *scopes)
 
 fun Fragment.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
-fun Fragment.injectDependencies(module: Module, vararg scopes: String) = DI.inject(this, arrayOf(module), *scopes)
-fun Fragment.injectDependencies(modules: Array<out Module>, vararg scopes: String) = DI.inject(this, modules, *scopes)
+fun Fragment.injectDependencies(module: Module, vararg scopes: String) =
+    DI.inject(this, arrayOf(module), *scopes)
+fun Fragment.injectDependencies(modules: Array<out Module>, vararg scopes: String) =
+    DI.inject(this, modules, *scopes)
 
 fun FragmentActivity.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
-fun FragmentActivity.injectDependencies(module: Module, vararg scopes: String) = DI.inject(this, arrayOf(module), *scopes)
-fun FragmentActivity.injectDependencies(modules: Array<out Module>, vararg scopes: String) = DI.inject(this, modules, *scopes)
+fun FragmentActivity.injectDependencies(module: Module, vararg scopes: String) =
+    DI.inject(this, arrayOf(module), *scopes)
+fun FragmentActivity.injectDependencies(modules: Array<out Module>, vararg scopes: String) =
+    DI.inject(this, modules, *scopes)
 
 fun Fragment.closeDependenciesScopes(vararg scopes: String) = DI.close(*scopes)
 fun FragmentActivity.closeDependenciesScopes(vararg scopes: String) = DI.close(*scopes)

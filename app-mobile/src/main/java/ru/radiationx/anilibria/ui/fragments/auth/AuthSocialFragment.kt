@@ -13,8 +13,7 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.getDependency
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment

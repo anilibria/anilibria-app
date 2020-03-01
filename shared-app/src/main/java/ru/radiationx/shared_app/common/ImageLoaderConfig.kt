@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.common
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,6 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.nostra13.universalimageloader.core.download.ImageDownloader
+import ru.radiationx.shared_app.common.ImageFileNameGenerator
 
 object ImageLoaderConfig {
 

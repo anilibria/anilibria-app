@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.config
 
 import androidx.lifecycle.MutableLiveData
-import ru.radiationx.anilibria.FlowScreen
+import ru.radiationx.anilibria.screen.FlowScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.address.ApiConfig

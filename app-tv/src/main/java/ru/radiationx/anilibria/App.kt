@@ -8,7 +8,9 @@ import androidx.multidex.MultiDex
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
-import ru.radiationx.shared_app.*
+import ru.radiationx.shared_app.common.ImageLoaderConfig
+import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 

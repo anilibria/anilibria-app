@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import moxy.MvpAppCompatActivity
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
-import ru.radiationx.shared_app.DI
+import ru.radiationx.shared_app.di.DI
 import javax.inject.Inject
 
 @SuppressLint("Registered")

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria
+package ru.radiationx.anilibria.common
 
 import androidx.constraintlayout.motion.widget.MotionLayout
 

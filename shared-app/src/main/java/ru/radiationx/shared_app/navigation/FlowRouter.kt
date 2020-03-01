@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.navigation
 
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppScreen

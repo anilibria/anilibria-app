@@ -16,7 +16,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.MvpAppCompatFragment
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.getDependency
+import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.DI
+import ru.radiationx.shared_app.di.DI
 
 /* Created by radiationx on 18.11.17. */
 

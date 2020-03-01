@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.common
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import java.util.regex.Pattern

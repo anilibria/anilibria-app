@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib

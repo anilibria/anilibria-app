@@ -14,8 +14,8 @@ import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.shared_app.getDependency
-import ru.radiationx.shared_app.injectDependencies
+import ru.radiationx.shared_app.di.getDependency
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.DI
+import ru.radiationx.shared_app.di.DI
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

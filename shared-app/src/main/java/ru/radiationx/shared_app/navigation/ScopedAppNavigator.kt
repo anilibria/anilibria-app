@@ -1,9 +1,11 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.navigation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import ru.radiationx.shared_app.di.ScopeProvider
+import ru.radiationx.shared_app.di.putScopeArgument
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 

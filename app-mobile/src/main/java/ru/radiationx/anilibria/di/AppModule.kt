@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.shared_app.OkHttpImageDownloader
+import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.terrakok.cicerone.NavigatorHolder

@@ -1,5 +1,6 @@
-package ru.radiationx.shared_app
+package ru.radiationx.shared_app.di
 
+import ru.radiationx.shared_app.navigation.FlowRouter
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
-import ru.radiationx.shared_app.DI
+import ru.radiationx.shared_app.di.DI
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity

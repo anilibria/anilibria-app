@@ -70,7 +70,7 @@ class ConfigFragment : BaseFragment(R.layout.fragment_config) {
     private fun startCompleteTransition() {
         mainConstraint.post {
             mainConstraint?.transitionToState(R.id.logo_end)
-            mainConstraint.setTransitionListener(completeTransitionListener)
+            mainConstraint?.setTransitionListener(completeTransitionListener)
         }
     }
 }

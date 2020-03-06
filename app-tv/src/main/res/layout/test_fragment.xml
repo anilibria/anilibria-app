@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:theme="@style/AppTheme.Material"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme.Material">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnback"
@@ -11,13 +11,20 @@
         android:text="Back" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btndialog"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dialog" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnfwd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:focusedByDefault="true"
         android:text="Forward">
 
-        <requestFocus />
     </com.google.android.material.button.MaterialButton>
 
     <TextView

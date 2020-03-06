@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.di
 
 import android.content.Context
 import ru.radiationx.anilibria.AppBuildConfig
+import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.terrakok.cicerone.Cicerone
@@ -19,8 +20,9 @@ class AppModule(context: Context) : Module() {
 
 
         // Navigation
-        val cicerone = Cicerone.create()
+        val cicerone = Cicerone.create(DialogRouter())
         bind(Router::class.java).toInstance(cicerone.router)
+        bind(DialogRouter::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
     }
 

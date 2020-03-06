@@ -11,6 +11,8 @@
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
+
+        <item name="guidedStepTheme">@style/Theme.Example.LeanbackWizard</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">
@@ -35,6 +37,13 @@
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
+    </style>
+
+
+    <style name="Theme.Example.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
+        <item name="guidedStepBackground">@color/app_guidedstep_actions_background1</item>
+        <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
+        <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
     </style>
 
 </resources>

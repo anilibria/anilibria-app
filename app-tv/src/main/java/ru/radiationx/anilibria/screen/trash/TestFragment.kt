@@ -3,8 +3,12 @@ package ru.radiationx.anilibria.screen.trash
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.leanback.app.GuidedStepSupportFragment
 import kotlinx.android.synthetic.main.test_fragment.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.fragment.DialogRouter
+import ru.radiationx.anilibria.screen.DialogExampleFragment
+import ru.radiationx.anilibria.screen.TestGuidedStepScreen
 import ru.radiationx.anilibria.screen.TestScreen
 import ru.radiationx.shared.ktx.android.attachBackPressed
 import ru.radiationx.shared_app.screen.BaseFragment
@@ -15,6 +19,9 @@ class TestFragment : BaseFragment(R.layout.test_fragment) {
 
     @Inject
     lateinit var router: Router
+
+    @Inject
+    lateinit var dialogRouter: DialogRouter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +41,10 @@ class TestFragment : BaseFragment(R.layout.test_fragment) {
         }
         btnfwd.setOnClickListener {
             router.navigateTo(TestScreen())
+        }
+
+        btndialog.setOnClickListener {
+            dialogRouter.navigateTo(TestGuidedStepScreen())
         }
     }
 }

@@ -7,5 +7,5 @@ import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 open class DialogAppScreen : SupportAppScreen() {
 
-    override fun getFragment(): GuidedStepSupportFragment? = null
+    override fun getFragment(): GuidedStepFragmentHelper.AppGuidedStepSupportFragment? = null
 }

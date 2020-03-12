@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.GuidedStepSupportFragment
 import ru.radiationx.anilibria.common.fragment.DialogAppScreen
+import ru.radiationx.anilibria.common.fragment.GuidedStepFragmentHelper
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
@@ -30,7 +31,7 @@ class TestScreen() : SupportAppScreen() {
 }
 
 class TestGuidedStepScreen : DialogAppScreen() {
-    override fun getFragment(): GuidedStepSupportFragment? {
+    override fun getFragment(): GuidedStepFragmentHelper.AppGuidedStepSupportFragment? {
         return DialogExampleFragment()
     }
 }

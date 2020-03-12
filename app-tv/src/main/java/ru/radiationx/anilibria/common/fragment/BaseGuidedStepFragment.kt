@@ -7,13 +7,11 @@ import ru.radiationx.shared.ktx.android.attachBackPressed
 import ru.radiationx.shared_app.di.DependencyInjector
 import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
+import ru.radiationx.shared_app.di.getScopedDependency
 import toothpick.smoothie.lifecycle.closeOnDestroy
 import javax.inject.Inject
 
-open class BaseGuidedStepFragment : GuidedStepSupportFragment(), ScopeProvider {
-
-    @Inject
-    lateinit var dialogRouter: DialogRouter
+open class BaseGuidedStepFragment : GuidedStepFragmentHelper.AppGuidedStepSupportFragment(), ScopeProvider {
 
     protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 
@@ -27,7 +25,7 @@ open class BaseGuidedStepFragment : GuidedStepSupportFragment(), ScopeProvider {
         super.onCreate(savedInstanceState)
         attachBackPressed {
             if (isEnabled) {
-                dialogRouter.exit()
+                getScopedDependency(DialogRouter::class.java).exit()
                 isEnabled = false
             }
         }

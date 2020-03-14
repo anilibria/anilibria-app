@@ -20,7 +20,7 @@ object GuidedStepFragmentHelper {
         else -> ""
     }
 
-    fun add(fragmentManager: FragmentManager, fragment: AppGuidedStepSupportFragment, containerId: Int = android.R.id.content): Int {
+    fun add(fragmentManager: FragmentManager, fragment: FakeGuidedStepFragment, containerId: Int = android.R.id.content): Int {
         val current = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
         val inGuidedStep = current != null
         val ft = fragmentManager.beginTransaction()
@@ -33,7 +33,7 @@ object GuidedStepFragmentHelper {
         return ft.replace(containerId, fragment, TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit()
     }
 
-    fun prepare(fragmentManager: FragmentManager, fragmentTransaction: FragmentTransaction, fragment: AppGuidedStepSupportFragment) {
+    fun prepare(fragmentManager: FragmentManager, fragmentTransaction: FragmentTransaction, fragment: FakeGuidedStepFragment) {
         val current = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
         val inGuidedStep = current != null
 
@@ -41,13 +41,6 @@ object GuidedStepFragmentHelper {
         fragmentTransaction.addToBackStack(generateStackEntryName(fragment))
         if (current != null) {
             fragment.fakeOnAddSharedElementTransition(fragmentTransaction, current)
-        }
-    }
-
-    open class AppGuidedStepSupportFragment : GuidedStepSupportFragment() {
-
-        fun fakeOnAddSharedElementTransition(transaction: FragmentTransaction, disappearingFragment: GuidedStepSupportFragment) {
-            onAddSharedElementTransition(transaction, disappearingFragment)
         }
     }
 

@@ -24,6 +24,7 @@
             android:name=".screen.launcher.MainActivity"
             android:banner="@drawable/app_icon_your_company"
             android:icon="@drawable/app_icon_your_company"
+            android:launchMode="singleTask"
             android:label="@string/app_name"
             android:logo="@drawable/app_icon_your_company"
             android:screenOrientation="landscape"

@@ -8,6 +8,11 @@
         <item name="android:colorBackground">@color/dark_windowBackground</item>
         <item name="android:windowBackground">@color/dark_windowBackground</item>
 
+        <item name="defaultBrandColor">@color/dark_colorPrimary</item>
+        <item name="defaultSearchColor">@color/dark_colorAccent</item>
+        <item name="defaultSearchIconColor">@color/dark_contrast_icon</item>
+        <item name="defaultSearchBrightColor">@color/dark_textLink</item>
+
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>

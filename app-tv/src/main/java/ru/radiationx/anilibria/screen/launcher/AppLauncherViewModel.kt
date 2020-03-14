@@ -48,10 +48,10 @@ class AppLauncherViewModel(
 
     private fun initMain() {
         firstLaunch = false
-        router.newRootScreen(TestScreen())
-        if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+        router.newRootScreen(MainScreen())
+        /*if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(TestGuidedStepScreen())
-        }
+        }*/
     }
 
 }

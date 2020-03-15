@@ -1,11 +1,10 @@
-package ru.radiationx.anilibria.screen.main
+package ru.radiationx.anilibria.screen.mainpages
 
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.widget.ImageViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -13,17 +12,14 @@ import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.PageRow
-import androidx.transition.AutoTransition
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.BaseBrowseFragment
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
-class MainFragment : BaseBrowseFragment() {
+class MainPagesFragment : BaseBrowseFragment() {
 
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
@@ -40,7 +36,7 @@ class MainFragment : BaseBrowseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainFragmentRegistry.registerFragment(PageRow::class.java, MainFragmentFactory())
+        mainFragmentRegistry.registerFragment(PageRow::class.java, MainPagesFragmentFactory())
 
         setupUi()
         showMenu()

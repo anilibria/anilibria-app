@@ -1,11 +1,10 @@
-package ru.radiationx.anilibria.screen.main
+package ru.radiationx.anilibria.screen.mainpages
 
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.Row
-import ru.radiationx.anilibria.screen.trash.TestFragment
 
-class MainFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>() {
+class MainPagesFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>() {
 
     private val fragments = mutableMapOf<Any, Fragment>()
 

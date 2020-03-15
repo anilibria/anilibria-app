@@ -24,15 +24,7 @@ class MainPagesFragment : BaseBrowseFragment() {
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
 
-    val variant1 = listOf(
-        "Главная",
-        "Я смотрю",
-        "Сериалы",
-        "Фильмы",
-        "Поиск",
-        "YouTube",
-        "Профиль"
-    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +58,7 @@ class MainPagesFragment : BaseBrowseFragment() {
                 } else {
                     null
                 }
-                title = variant1[selectedPosition]
+                title = MainPagesFragmentFactory.ids[selectedPosition].let { MainPagesFragmentFactory.variant1[it] }
                 Log.e("lalala", "onHeadersTransitionStop $withHeaders")
             }
         })
@@ -99,8 +91,8 @@ class MainPagesFragment : BaseBrowseFragment() {
 
         adapter = menuAdapter
 
-        variant1.forEachIndexed { index, s ->
-            menuAdapter.add(PageRow(HeaderItem(index.toLong(), s)))
+        MainPagesFragmentFactory.ids.forEach {
+            menuAdapter.add(PageRow(HeaderItem(it, MainPagesFragmentFactory.variant1[it])))
         }
         //startEntranceTransition()
     }

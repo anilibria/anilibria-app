@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.di
 
 import android.content.Context
 import ru.radiationx.anilibria.AppBuildConfig
+import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
@@ -18,6 +19,7 @@ class AppModule(context: Context) : Module() {
         bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singleton()
         bind(OkHttpImageDownloader::class.java).singleton()
 
+        bind(MockData::class.java).singleton()
 
         // Navigation
         val cicerone = Cicerone.create(DialogRouter())

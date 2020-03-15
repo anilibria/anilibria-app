@@ -15,7 +15,7 @@ class ConfigScreen() : SupportAppScreen() {
     }
 }
 
-class MainScreen() : SupportAppScreen() {
+class MainPagesScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return MainPagesFragment()
     }

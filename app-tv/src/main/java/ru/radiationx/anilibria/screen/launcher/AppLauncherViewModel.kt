@@ -1,16 +1,11 @@
 package ru.radiationx.anilibria.screen.launcher
 
-import io.reactivex.Observable
-import io.reactivex.Single
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class AppLauncherViewModel(
@@ -48,7 +43,7 @@ class AppLauncherViewModel(
 
     private fun initMain() {
         firstLaunch = false
-        router.newRootScreen(MainScreen())
+        router.newRootScreen(MainPagesScreen())
         /*if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(TestGuidedStepScreen())
         }*/

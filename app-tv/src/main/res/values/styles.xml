@@ -18,6 +18,7 @@
         <item name="android:textColorLink">@color/dark_textLink</item>
 
         <item name="guidedStepTheme">@style/Theme.Example.LeanbackWizard</item>
+        <item name="imageCardViewStyle">@style/ImageCardViewStyle</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">
@@ -51,4 +52,7 @@
         <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
     </style>
 
+    <style name="ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
+        <item name="cardType">mainOnly</item>
+    </style>
 </resources>

@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.widget.ImageViewCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.PageRow
 import androidx.transition.AutoTransition
+import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import ru.radiationx.anilibria.R
@@ -60,8 +62,8 @@ class MainFragment : BaseBrowseFragment() {
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
 
-                TransitionManager.beginDelayedTransition(titleView as ViewGroup, AutoTransition().apply {
-                    //ordering = TransitionSet.ORDERING_TOGETHER
+                TransitionManager.beginDelayedTransition(titleView as ViewGroup, Fade(Fade.IN).apply {
+                    interpolator = FastOutSlowInInterpolator()
                 })
                 badgeDrawable = if (withHeaders) {
                     requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.main
 
-import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -19,18 +18,18 @@ import androidx.leanback.widget.*
 import androidx.palette.graphics.Palette
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.assist.ImageSize
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
+import ru.radiationx.anilibria.LinkCard
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.BaseRowsFragment
-import ru.radiationx.anilibria.ui.presenter.ReleaseCardPresenter
+import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
+import ru.radiationx.anilibria.ui.presenter.LibriaCardPresenter
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import java.time.DayOfWeek
 import java.util.*
 import javax.inject.Inject
 
@@ -181,14 +180,16 @@ class MainFragment : BaseRowsFragment() {
         mBackgroundManager.clearDrawable()
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
     }
 
     private fun createRow1() {
-        val presenterSelector = ReleaseCardPresenter()
+        val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
             addAll(0, mockData.feed.shuffled().map { it.toCard() })
+            add(LinkCard("Смотреть всю ленту"))
         }
         val headerItem = HeaderItem("Самое актуальное")
 
@@ -196,11 +197,12 @@ class MainFragment : BaseRowsFragment() {
     }
 
     private fun createRow2() {
-        val presenterSelector = ReleaseCardPresenter()
+        val presenterSelector = CardPresenterSelector()
         val day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
         val items = mockData.schedule.first { it.day == day }.items
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
             addAll(0, items.shuffled().map { it.releaseItem.toCard() })
+            add(LinkCard("Открыть расписание"))
         }
         val headerItem = HeaderItem("Ожидается сегодня")
 
@@ -208,9 +210,10 @@ class MainFragment : BaseRowsFragment() {
     }
 
     private fun createRow3() {
-        val presenterSelector = ReleaseCardPresenter()
+        val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
             addAll(0, mockData.releases.shuffled().map { it.toCard() })
+            add(LinkCard("Открыть избранное"))
         }
         val headerItem = HeaderItem("Обновления в избранном")
 
@@ -218,9 +221,10 @@ class MainFragment : BaseRowsFragment() {
     }
 
     private fun createRow4() {
-        val presenterSelector = ReleaseCardPresenter()
+        val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
             addAll(0, mockData.youtube.shuffled().map { it.toCard() })
+            add(LinkCard("Открыть ролики YouTube"))
         }
         val headerItem = HeaderItem("Обновления на YouTube")
 
@@ -264,11 +268,19 @@ class MainFragment : BaseRowsFragment() {
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
             rowViewHolder: RowPresenter.ViewHolder, row: Row
         ) {
-            if (item is LibriaCard && rowViewHolder is CustomListRowViewHolder) {
-                rowViewHolder.setDescription(item.title, item.description)
-                mBackgroundUri = item.image
-                startBackgroundTimer()
+            if (rowViewHolder is CustomListRowViewHolder) {
+                when (item) {
+                    is LibriaCard -> {
+                        rowViewHolder.setDescription(item.title, item.description)
+                        mBackgroundUri = item.image
+                        startBackgroundTimer()
+                    }
+                    is LinkCard -> {
+                        rowViewHolder.setDescription(item.title, "")
+                    }
+                }
             }
+
         }
     }
 

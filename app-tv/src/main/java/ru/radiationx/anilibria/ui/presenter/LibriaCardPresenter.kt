@@ -1,35 +1,32 @@
 package ru.radiationx.anilibria.ui.presenter
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.data.entity.app.release.ReleaseItem
 
-class ReleaseCardPresenter : Presenter() {
-
+class LibriaCardPresenter : Presenter() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
         val cardView = ImageCardView(parent.context)
-        return ReleaseViewHolder(cardView)
+        return LibriaCardViewHolder(cardView)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
         item as LibriaCard
-        viewHolder as ReleaseViewHolder
+        viewHolder as LibriaCardViewHolder
         viewHolder.bind(item)
     }
 
     override fun onUnbindViewHolder(viewHolder: ViewHolder) {
-        viewHolder as ReleaseViewHolder
+        viewHolder as LibriaCardViewHolder
         viewHolder.unbind()
     }
 }
 
-class ReleaseViewHolder(
+class LibriaCardViewHolder(
     override val containerView: ImageCardView
 ) : Presenter.ViewHolder(containerView), LayoutContainer {
 

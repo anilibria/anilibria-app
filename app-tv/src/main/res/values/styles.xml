@@ -54,5 +54,6 @@
 
     <style name="ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardType">mainOnly</item>
+        <item name="cardBackground">?android:colorPrimary</item>
     </style>
 </resources>

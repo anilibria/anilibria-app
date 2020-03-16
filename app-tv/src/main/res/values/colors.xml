@@ -21,6 +21,7 @@
 
     <color name="temp_red_">@color/temp_red4</color>
     <color name="dark_colorPrimary">@color/dark_cardBackground</color>
+    <color name="dark_colorPrimary1">#33000000</color>
     <color name="dark_colorPrimaryDark">@color/dark_cardBackground</color>
     <color name="dark_colorAccent">@color/temp_red_</color>
 

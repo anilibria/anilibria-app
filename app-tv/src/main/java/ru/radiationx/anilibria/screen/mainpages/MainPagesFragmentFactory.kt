@@ -42,6 +42,7 @@ class MainPagesFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>
 
     private fun getFragmentByRow(row: Row): Fragment = when (row.id) {
         ID_MAIN -> MainFragment()
+        ID_MY -> MainFragment()
         else -> EmptyFragment()
     }
 }

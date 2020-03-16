@@ -17,6 +17,7 @@ import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.BaseBrowseFragment
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
 class MainPagesFragment : BaseBrowseFragment() {
@@ -82,7 +83,7 @@ class MainPagesFragment : BaseBrowseFragment() {
 
         ImageViewCompat.setImageTintList(
             titleView.findViewById(R.id.title_badge),
-            ColorStateList.valueOf(titleView.context.getColorFromAttr(android.R.attr.colorAccent))
+            ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
         )
 
     }

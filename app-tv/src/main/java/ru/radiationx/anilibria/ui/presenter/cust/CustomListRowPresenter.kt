@@ -20,6 +20,11 @@ open class CustomListRowPresenter @JvmOverloads constructor(
         (holder as CustomListRowViewHolder).isExpanded = expanded
     }
 
+    override fun onRowViewSelected(holder: RowPresenter.ViewHolder?, selected: Boolean) {
+        super.onRowViewSelected(holder, selected)
+        (holder as CustomListRowViewHolder).isSelected = selected
+    }
+
     override fun createRowViewHolder(parent: ViewGroup): RowPresenter.ViewHolder {
         initStatics(parent.context)
         val rowView = ListRowView(parent.context)

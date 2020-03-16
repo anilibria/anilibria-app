@@ -22,7 +22,7 @@ class CustomListRowViewHolder(
         cardDescriptionView.updatePadding(
             left = gridView.paddingLeft,
             right = gridView.paddingRight,
-            bottom = gridView.paddingBottom * 4
+            bottom = gridView.paddingBottom * 5
         )
         rootView.addView(cardDescriptionView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
@@ -33,6 +33,10 @@ class CustomListRowViewHolder(
     }
 
     fun setExpanded(expanded: Boolean) {
-        cardDescriptionView.isVisible = expanded
+        cardDescriptionView.isVisible = expanded && isSelected
+    }
+
+    fun setSelected(selected: Boolean) {
+        cardDescriptionView.isVisible = selected && isExpanded
     }
 }

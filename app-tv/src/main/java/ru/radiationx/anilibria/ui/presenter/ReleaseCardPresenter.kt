@@ -52,6 +52,7 @@ class ReleaseViewHolder(
             LibriaCard.Type.YOUTUBE -> containerView.setMainImageDimensions(CARD_WIDTH_1, CARD_HEIGHT_1)
         }
         ImageLoader.getInstance().displayImage(item.image, containerView.mainImageView)
+        containerView.cameraDistance = 1f
     }
 
     fun unbind() {

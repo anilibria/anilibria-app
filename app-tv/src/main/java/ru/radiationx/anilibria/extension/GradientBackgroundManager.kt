@@ -9,5 +9,5 @@ fun GradientBackgroundManager.applyCard(card: Any?) = when (card) {
     is LibriaCard -> applyImage(card.image)
     is LinkCard -> applyDefault()
     is LoadingCard -> applyDefault()
-    else -> clearGradient()
+    else -> applyDefault()
 }

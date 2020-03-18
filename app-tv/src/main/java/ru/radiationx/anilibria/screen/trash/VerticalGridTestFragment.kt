@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -98,7 +99,7 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
         this.cardDescriptionView = cardDescriptionView
 
         shadowView.setBackgroundResource(R.drawable.bg_grid_description_shadow)
-        shadowView.isGone = true
+        shadowView.isInvisible = true
 
         dockView.addView(
             shadowView,
@@ -118,11 +119,13 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
         )
 
         gridView.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            val newWidth = v.width - v.paddingLeft - v.paddingRight
+            val newWidth = max(v.width - v.paddingLeft - v.paddingRight, cardDescriptionView.minimumWidth)
             val currentWidth = cardDescriptionView.layoutParams.width
             Log.e("kekeke", "addOnLayoutChangeListener $currentWidth, $newWidth, ${cardDescriptionView.minimumWidth}")
-            cardDescriptionView.updateLayoutParams {
-                width = max(newWidth, cardDescriptionView.minimumWidth)
+            if (currentWidth != newWidth) {
+                cardDescriptionView.updateLayoutParams {
+                    width = newWidth
+                }
             }
         }
     }
@@ -143,6 +146,10 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
             setTitle(title)
             setSubtitle(subtitle)
             isVisible = isFilled()
+        }
+
+        cardDescriptionView?.post {
+            cardDescriptionView?.requestLayout()
         }
     }
 

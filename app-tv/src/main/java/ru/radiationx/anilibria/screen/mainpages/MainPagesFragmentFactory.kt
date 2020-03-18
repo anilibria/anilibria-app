@@ -33,16 +33,22 @@ class MainPagesFragmentFactory(
         )
     }
 
-    private val fragments = mutableMapOf<Any, Fragment>()
+    private val fragments = mutableMapOf<Long, Fragment>()
 
     override fun createFragment(rowObj: Any): Fragment {
         val row = rowObj as Row
-        val fragment = fragments[row]
-        if (fragment == null) {
-            fragments[row] = getFragmentByRow(row).putScopeArgument(scopeProvider.screenScopeTag)
-        }
-        return fragments.getValue(row)
+        return getFromMap(row)
     }
+
+    private fun getFromMap(row: Row): Fragment {
+        val fragment = fragments[row.id]
+        if (fragment == null) {
+            fragments[row.id] = getCompleteFragment(row)
+        }
+        return fragments.getValue(row.id)
+    }
+
+    private fun getCompleteFragment(row: Row): Fragment = getFragmentByRow(row).putScopeArgument(scopeProvider.screenScopeTag)
 
     private fun getFragmentByRow(row: Row): Fragment = when (row.id) {
         ID_MAIN -> MainFragment()

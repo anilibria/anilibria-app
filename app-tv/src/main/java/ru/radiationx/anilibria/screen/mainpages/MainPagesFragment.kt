@@ -2,11 +2,16 @@ package ru.radiationx.anilibria.screen.mainpages
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.postDelayed
 import androidx.core.widget.ImageViewCompat
+import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
@@ -24,12 +29,12 @@ class MainPagesFragment : BaseBrowseFragment() {
 
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
-
+    private var lastSelectedPosition = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             mainFragmentRegistry.registerFragment(PageRow::class.java, MainPagesFragmentFactory(this))
         }
 
@@ -62,6 +67,7 @@ class MainPagesFragment : BaseBrowseFragment() {
                     null
                 }
                 title = MainPagesFragmentFactory.ids[selectedPosition].let { MainPagesFragmentFactory.variant1[it] }
+                lastSelectedPosition = selectedPosition
                 Log.e("lalala", "onHeadersTransitionStop $withHeaders")
             }
         })
@@ -76,11 +82,25 @@ class MainPagesFragment : BaseBrowseFragment() {
         } else {
             null
         }
-        //prepareEntranceTransition()
+        prepareEntranceTransition()
+
+        Handler().postDelayed({
+            startEntranceTransition()
+        }, 500)
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        childFragmentManager.findFragmentById(androidx.leanback.R.id.scale_frame)?.also {
+            childFragmentManager.commitNow {
+                remove(it)
+            }
+        }
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         //progressBarManager.show()
 
@@ -89,15 +109,32 @@ class MainPagesFragment : BaseBrowseFragment() {
             ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
         )
 
+
+        Log.e("kekeke", "onViewCreated $selectedPosition, $savedInstanceState")
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        selectedPosition = lastSelectedPosition
     }
 
     private fun showMenu() {
-
         adapter = menuAdapter
 
+        menuAdapter.clear()
         MainPagesFragmentFactory.ids.forEach {
             menuAdapter.add(PageRow(HeaderItem(it, MainPagesFragmentFactory.variant1[it])))
         }
         //startEntranceTransition()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.e("kekeke", "onSaveInstanceState")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }

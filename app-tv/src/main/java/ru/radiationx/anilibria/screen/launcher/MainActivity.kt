@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.fragment.app.transaction
 import androidx.leanback.app.GuidedStepSupportFragment
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.screen.DialogExampleFragment
@@ -14,6 +16,7 @@ import ru.radiationx.shared_app.navigation.ScopedAppNavigator
 import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
+import toothpick.ktp.binding.module
 import javax.inject.Inject
 
 class MainActivity : BaseFragmentActivity() {
@@ -39,6 +42,10 @@ class MainActivity : BaseFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
+        dependencyInjector.installModules(module {
+            bind(FragmentActivity::class.java).toInstance(this@MainActivity)
+            bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
+        })
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         lifecycle.addObserver(viewModel)

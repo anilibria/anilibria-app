@@ -4,8 +4,12 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.Row
 import ru.radiationx.anilibria.screen.main.MainFragment
+import ru.radiationx.shared_app.di.ScopeProvider
+import ru.radiationx.shared_app.di.putScopeArgument
 
-class MainPagesFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>() {
+class MainPagesFragmentFactory(
+    private val scopeProvider: ScopeProvider
+) : BrowseSupportFragment.FragmentFactory<Fragment>() {
 
     companion object {
         const val ID_MAIN = 1L
@@ -35,7 +39,7 @@ class MainPagesFragmentFactory : BrowseSupportFragment.FragmentFactory<Fragment>
         val row = rowObj as Row
         val fragment = fragments[row]
         if (fragment == null) {
-            fragments[row] = getFragmentByRow(row)
+            fragments[row] = getFragmentByRow(row).putScopeArgument(scopeProvider.screenScopeTag)
         }
         return fragments.getValue(row)
     }

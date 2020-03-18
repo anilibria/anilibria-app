@@ -29,7 +29,9 @@ class MainPagesFragment : BaseBrowseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainFragmentRegistry.registerFragment(PageRow::class.java, MainPagesFragmentFactory())
+        if(savedInstanceState==null){
+            mainFragmentRegistry.registerFragment(PageRow::class.java, MainPagesFragmentFactory(this))
+        }
 
         setupUi()
         showMenu()

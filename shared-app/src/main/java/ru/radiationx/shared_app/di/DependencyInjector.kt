@@ -1,6 +1,7 @@
 package ru.radiationx.shared_app.di
 
 import android.os.Bundle
+import android.util.Log
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
@@ -20,7 +21,7 @@ class DependencyInjector(arguments: Bundle?) {
 
     fun onCreate(target: Any, savedInstanceState: Bundle?): Scope {
         screenScopeTag = savedInstanceState?.getString(ScopeProvider.STATE_SCREEN_SCOPE) ?: screenScopeTag
-        return if (savedInstanceState == null || !Toothpick.isScopeOpen(screenScopeTag)) {
+        return if (needInstallModule(savedInstanceState)) {
             DI.inject(target, modules.toTypedArray(), parentScopeTag, screenScopeTag)
         } else {
             DI.inject(target, screenScopeTag)
@@ -34,4 +35,6 @@ class DependencyInjector(arguments: Bundle?) {
     fun closeScope() {
         DI.close(screenScopeTag)
     }
+
+    fun needInstallModule(savedInstanceState: Bundle?): Boolean = savedInstanceState == null || !Toothpick.isScopeOpen(screenScopeTag)
 }

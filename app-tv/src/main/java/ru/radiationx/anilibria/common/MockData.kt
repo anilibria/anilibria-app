@@ -33,10 +33,5 @@ class MockData(
 
     private fun getFromRaw(@RawRes id: Int): String = context.resources.openRawResource(id)
         .bufferedReader()
-        .use {
-            it.readText()
-        }
-        .also {
-            Log.e("lalala", "readed $it")
-        }
+        .use { it.readText() }
 }

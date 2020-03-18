@@ -20,6 +20,10 @@
         <item name="guidedStepTheme">@style/AppTheme.LeanbackWizard</item>
         <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
         <item name="headersVerticalGridStyle">@style/AppTheme.Widget.Leanback.Headers.VerticalGridView</item>
+        <item name="itemsVerticalGridStyle">@style/AppTheme.Widget.Leanback.GridItems.VerticalGridView</item>
+
+        <item name="rowHorizontalDescriptionStyle">@style/AppTheme.Widget.Description.Row</item>
+        <item name="itemsVerticalDescriptionStyle">@style/AppTheme.Widget.Description.Grid</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">
@@ -64,8 +68,32 @@
         <item name="android:background">@drawable/bg_browse_headers</item>
     </style>
 
+    <style name="AppTheme.Widget.Leanback.GridItems.VerticalGridView" parent="Widget.Leanback.GridItems.VerticalGridView">
+        <item name="android:paddingBottom">120dp</item>
+    </style>
+
     <style name="AppTheme.ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardType">mainOnly</item>
         <item name="cardBackground">?android:colorPrimary</item>
     </style>
+
+    <style name="AppTheme.Widget.Description.Row">
+        <item name="android:paddingStart">?attr/browsePaddingStart</item>
+        <item name="android:paddingEnd">?attr/browsePaddingEnd</item>
+        <item name="android:paddingBottom">32dp</item>
+    </style>
+
+    <style name="AppTheme.Widget.Description.Grid">
+        <!--<item name="android:paddingStart">?attr/browsePaddingStart</item>
+        <item name="android:paddingEnd">?attr/browsePaddingEnd</item>-->
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:minWidth">480dp</item>
+    </style>
+
+    <style name="AppTheme.Widget" />
+
+    <style name="AppTheme.Widget.Description" />
 </resources>

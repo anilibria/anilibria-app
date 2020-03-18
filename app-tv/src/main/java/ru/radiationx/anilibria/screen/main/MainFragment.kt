@@ -46,7 +46,7 @@ import javax.inject.Inject
 
 class MainFragment : BaseRowsFragment() {
 
-
+    private val instantLoading = true
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
@@ -79,6 +79,12 @@ class MainFragment : BaseRowsFragment() {
         }
     }
 
+    private fun getLoadDelay() = if (instantLoading) {
+        0L
+    } else {
+        (100..3000).random().toLong()
+    }
+
     private fun createRow1() {
         val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
@@ -94,7 +100,7 @@ class MainFragment : BaseRowsFragment() {
                 addAll(0, mockData.feed.shuffled().map { it.toCard(requireContext()) } + LinkCard("Смотреть всю ленту"))
 
             }
-        }, (100..3000).random().toLong())
+        }, getLoadDelay())
     }
 
     private fun createRow2() {
@@ -114,7 +120,7 @@ class MainFragment : BaseRowsFragment() {
                 addAll(0, items.shuffled().map { it.releaseItem.toCard(requireContext()) })
                 add(LinkCard("Открыть расписание"))
             }
-        }, (100..3000).random().toLong())
+        }, getLoadDelay())
     }
 
     private fun createRow3() {
@@ -132,7 +138,7 @@ class MainFragment : BaseRowsFragment() {
                 addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) })
                 add(LinkCard("Открыть избранное"))
             }
-        }, (100..3000).random().toLong())
+        }, getLoadDelay())
     }
 
     private fun createRow4() {
@@ -150,7 +156,7 @@ class MainFragment : BaseRowsFragment() {
                 addAll(0, mockData.youtube.shuffled().map { it.toCard(requireContext()) })
                 add(LinkCard("Открыть ролики YouTube"))
             }
-        }, (100..3000).random().toLong())
+        }, getLoadDelay())
     }
 
 

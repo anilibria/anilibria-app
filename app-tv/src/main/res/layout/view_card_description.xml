@@ -2,19 +2,23 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:parentTag="LinearLayout">
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat">
 
     <TextView
         android:id="@+id/cardDescriptionTitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/dark_textDefault"
         android:textSize="20sp" />
 
     <TextView
         android:id="@+id/cardDescriptionSubtitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/dark_textSecond"
         android:textSize="16sp" />
 

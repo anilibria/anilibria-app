@@ -8,6 +8,7 @@ import androidx.core.view.updatePadding
 import androidx.leanback.widget.HorizontalGridView
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.ListRowView
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.widget.CardDescriptionView
 
 class CustomListRowViewHolder(
@@ -16,14 +17,9 @@ class CustomListRowViewHolder(
     presenter: ListRowPresenter
 ) : ListRowPresenter.ViewHolder(rootView, gridView, presenter) {
 
-    private val cardDescriptionView = CardDescriptionView(rootView.context)
+    private val cardDescriptionView = CardDescriptionView(rootView.context, defStyleAttr = R.attr.rowHorizontalDescriptionStyle)
 
     init {
-        cardDescriptionView.updatePadding(
-            left = gridView.paddingLeft,
-            right = gridView.paddingRight,
-            bottom = gridView.paddingBottom * 5
-        )
         rootView.addView(cardDescriptionView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 

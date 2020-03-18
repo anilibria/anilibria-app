@@ -17,8 +17,9 @@
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
-        <item name="guidedStepTheme">@style/Theme.Example.LeanbackWizard</item>
-        <item name="imageCardViewStyle">@style/ImageCardViewStyle</item>
+        <item name="guidedStepTheme">@style/AppTheme.LeanbackWizard</item>
+        <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
+        <item name="headersVerticalGridStyle">@style/AppTheme.Widget.Leanback.Headers.VerticalGridView</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">
@@ -46,13 +47,24 @@
     </style>
 
 
-    <style name="Theme.Example.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
+    <style name="AppTheme.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
         <item name="guidedStepBackground">@color/app_guidedstep_actions_background1</item>
         <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
     </style>
 
-    <style name="ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
+    <style name="AppTheme.Widget.Leanback.Headers.VerticalGridView" parent="Widget.Leanback.Headers.VerticalGridView">
+        <!--<item name="android:background">@drawable/ic_refresh_black_24dp</item>-->
+        <!--<item name="android:layout_margin">16dp</item>-->
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:background">@drawable/bg_browse_headers</item>
+    </style>
+
+    <style name="AppTheme.ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardType">mainOnly</item>
         <item name="cardBackground">?android:colorPrimary</item>
     </style>

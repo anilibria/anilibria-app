@@ -80,6 +80,7 @@ class MainPagesFragment : BaseBrowseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //progressBarManager.show()
 
         ImageViewCompat.setImageTintList(
             titleView.findViewById(R.id.title_badge),

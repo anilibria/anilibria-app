@@ -22,9 +22,12 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.BaseRowsFragment
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.presenter.LibriaCardPresenter
 import ru.radiationx.data.entity.app.feed.FeedItem
@@ -95,7 +98,13 @@ class MainFragment : BaseRowsFragment() {
         val vibrant = palette.getVibrantColor(lightVibrant)
         val newColor = palette.getMutedColor(default)
         val dark = palette.getDarkMutedColor(Color.BLACK)
+        applyNewColor(newColor)
+    }
 
+    private fun applyNewColor(newColor: Int) {
+        if (mBackgroundManager.drawable == null) {
+            mBackgroundManager.drawable = layerDrawable
+        }
         primaryColorAnimator?.cancel()
 
 
@@ -188,12 +197,19 @@ class MainFragment : BaseRowsFragment() {
     private fun createRow1() {
         val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            addAll(0, mockData.feed.shuffled().map { it.toCard() })
-            add(LinkCard("Смотреть всю ленту"))
+            add(LoadingCard())
         }
         val headerItem = HeaderItem("Самое актуальное")
-
         rowsAdapter.add(ListRow(headerItem, adapter))
+
+        Handler().postDelayed({
+            adapter.apply {
+                clear()
+                //add(LoadingCard("Erororr", "Oh got wtf is goin on"))
+                addAll(0, mockData.feed.shuffled().map { it.toCard() }+LinkCard("Смотреть всю ленту"))
+
+            }
+        }, (100..3000).random().toLong())
     }
 
     private fun createRow2() {
@@ -201,34 +217,55 @@ class MainFragment : BaseRowsFragment() {
         val day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
         val items = mockData.schedule.first { it.day == day }.items
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            addAll(0, items.shuffled().map { it.releaseItem.toCard() })
-            add(LinkCard("Открыть расписание"))
+            add(LoadingCard())
         }
         val headerItem = HeaderItem("Ожидается сегодня")
 
         rowsAdapter.add(ListRow(headerItem, adapter))
+
+        Handler().postDelayed({
+            adapter.apply {
+                clear()
+                addAll(0, items.shuffled().map { it.releaseItem.toCard() })
+                add(LinkCard("Открыть расписание"))
+            }
+        }, (100..3000).random().toLong())
     }
 
     private fun createRow3() {
         val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            addAll(0, mockData.releases.shuffled().map { it.toCard() })
-            add(LinkCard("Открыть избранное"))
+            add(LoadingCard())
         }
         val headerItem = HeaderItem("Обновления в избранном")
 
         rowsAdapter.add(ListRow(headerItem, adapter))
+
+        Handler().postDelayed({
+            adapter.apply {
+                clear()
+                addAll(0, mockData.releases.shuffled().map { it.toCard() })
+                add(LinkCard("Открыть избранное"))
+            }
+        }, (100..3000).random().toLong())
     }
 
     private fun createRow4() {
         val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            addAll(0, mockData.youtube.shuffled().map { it.toCard() })
-            add(LinkCard("Открыть ролики YouTube"))
+            add(LoadingCard())
         }
         val headerItem = HeaderItem("Обновления на YouTube")
 
         rowsAdapter.add(ListRow(headerItem, adapter))
+
+        Handler().postDelayed({
+            adapter.apply {
+                clear()
+                addAll(0, mockData.youtube.shuffled().map { it.toCard() })
+                add(LinkCard("Открыть ролики YouTube"))
+            }
+        }, (100..3000).random().toLong())
     }
 
     @SuppressLint("DefaultLocale")
@@ -277,6 +314,15 @@ class MainFragment : BaseRowsFragment() {
                     }
                     is LinkCard -> {
                         rowViewHolder.setDescription(item.title, "")
+                        mBackgroundManager.clearDrawable()
+                    }
+                    is LoadingCard -> {
+                        rowViewHolder.setDescription(item.errorTitle, item.errorDescription)
+                        mBackgroundManager.clearDrawable()
+                    }
+                    else -> {
+                        rowViewHolder.setDescription("", "")
+                        mBackgroundManager.clearDrawable()
                     }
                 }
             }

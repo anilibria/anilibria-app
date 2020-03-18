@@ -25,4 +25,6 @@ class CardDescriptionView @JvmOverloads constructor(
     fun setSubtitle(subtitle: CharSequence) {
         cardDescriptionSubtitle.text = subtitle
     }
+
+    fun isFilled(): Boolean = cardDescriptionTitle.text.isNotEmpty() || cardDescriptionSubtitle.text.isNotEmpty()
 }

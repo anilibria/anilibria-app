@@ -20,7 +20,7 @@ class AppLauncherViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        apiConfig
+        /*apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .observeOn(schedulersProvider.ui())
@@ -32,9 +32,9 @@ class AppLauncherViewModel(
                         initMain()
                     }
                 }
-            }
+            }*/
 
-        if (apiConfig.needConfig) {
+        if (false && apiConfig.needConfig) {
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()

@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:shadowColor="#000"
+        android:shadowRadius="4"
         android:textColor="@color/dark_textDefault"
         android:textSize="20sp" />
 
@@ -19,6 +21,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:shadowColor="#000"
+        android:shadowRadius="4"
         android:textColor="@color/dark_textSecond"
         android:textSize="16sp" />
 

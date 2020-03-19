@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
+import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.GridScreen
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.data.entity.app.feed.FeedItem
@@ -54,8 +55,11 @@ class MainFragment : ScopedRowsFragment() {
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
-
-                router.navigateTo(GridScreen())
+                if (item is LibriaCard) {
+                    router.navigateTo(DetailsScreen())
+                } else {
+                    router.navigateTo(GridScreen())
+                }
             }
         }
     }
@@ -208,7 +212,7 @@ fun FeedItem.toCard(context: Context): LibriaCard = when {
     else -> throw RuntimeException("WataFuq")
 }
 
-private fun Date.relativeDate(context: Context) = DateUtils.getRelativeDateTimeString(
+fun Date.relativeDate(context: Context) = DateUtils.getRelativeDateTimeString(
     context,
     time,
     DateUtils.MINUTE_IN_MILLIS,

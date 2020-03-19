@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.common.fragment.DialogAppScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
+import ru.radiationx.anilibria.screen.trash.TestDetailFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
@@ -25,6 +26,12 @@ class MainPagesScreen() : SupportAppScreen() {
 class GridScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return VerticalGridTestFragment()
+    }
+}
+
+class DetailsScreen() : SupportAppScreen() {
+    override fun getFragment(): Fragment {
+        return TestDetailFragment()
     }
 }
 

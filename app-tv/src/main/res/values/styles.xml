@@ -21,6 +21,7 @@
         <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
         <item name="headersVerticalGridStyle">@style/AppTheme.Widget.Leanback.Headers.VerticalGridView</item>
         <item name="itemsVerticalGridStyle">@style/AppTheme.Widget.Leanback.GridItems.VerticalGridView</item>
+        <item name="detailsActionButtonStyle">@style/AppTheme.Widget.Leanback.DetailsActionButtonStyle</item>
 
         <item name="rowHorizontalDescriptionStyle">@style/AppTheme.Widget.Description.Row</item>
         <item name="itemsVerticalDescriptionStyle">@style/AppTheme.Widget.Description.Grid</item>
@@ -75,6 +76,12 @@
     <style name="AppTheme.ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
         <item name="cardType">mainOnly</item>
         <item name="cardBackground">?android:colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.Widget.Leanback.DetailsActionButtonStyle" parent="Widget.Leanback.DetailsActionButtonStyle">
+        <item name="android:background">@drawable/bg_lb_action</item>
+        <item name="android:stateListAnimator">@animator/button_animator</item>
+        <item name="android:textColor">@color/text_button_color</item>
     </style>
 
     <style name="AppTheme.Widget.Description.Row">

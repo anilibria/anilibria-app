@@ -1,18 +1,19 @@
-package ru.radiationx.anilibria.common.fragment
+package ru.radiationx.shared_app.screen
 
 import android.os.Bundle
-import ru.radiationx.shared.ktx.android.attachBackPressed
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.FragmentActivity
 import ru.radiationx.shared_app.di.DependencyInjector
-import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
-import ru.radiationx.shared_app.di.getScopedDependency
+import ru.radiationx.shared_app.di.ActivityScopeCloseChecker
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-open class BaseGuidedStepFragment : FakeGuidedStepFragment(), ScopeProvider {
+open class ScopedFragmentActivity(@LayoutRes layoutId: Int = 0) : FragmentActivity(layoutId),
+    ScopeProvider {
 
-    protected val dependencyInjector by lazy { DependencyInjector(arguments) }
+    protected val dependencyInjector by lazy { DependencyInjector(intent.extras) }
 
-    private val scopeCloseChecker by lazy { FragmentScopeCloseChecker(this) }
+    private val scopeCloseChecker by lazy { ActivityScopeCloseChecker(this) }
 
     override val screenScopeTag: String
         get() = dependencyInjector.screenScopeTag
@@ -20,22 +21,10 @@ open class BaseGuidedStepFragment : FakeGuidedStepFragment(), ScopeProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         dependencyInjector.onCreate(this, savedInstanceState).closeOnDestroy(this)
         super.onCreate(savedInstanceState)
-        attachBackPressed {
-            if (isEnabled) {
-                getScopedDependency(DialogRouter::class.java).exit()
-                isEnabled = false
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        scopeCloseChecker.onResume()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        scopeCloseChecker.onSaveInstanceState()
         dependencyInjector.onSaveInstanceState(outState)
     }
 

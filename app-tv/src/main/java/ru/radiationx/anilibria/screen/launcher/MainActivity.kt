@@ -2,24 +2,18 @@ package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
-import androidx.fragment.app.transaction
-import androidx.leanback.app.GuidedStepSupportFragment
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
-import ru.radiationx.anilibria.screen.DialogExampleFragment
-import ru.radiationx.anilibria.screen.TestGuidedStepScreen
-import ru.radiationx.shared_app.screen.BaseFragmentActivity
-import ru.radiationx.shared_app.navigation.ScopedAppNavigator
+import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.ktp.binding.module
 import javax.inject.Inject
 
-class MainActivity : BaseFragmentActivity() {
+class MainActivity : ScopedFragmentActivity() {
 
     private val viewModel: AppLauncherViewModel by viewModel()
 

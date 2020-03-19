@@ -11,7 +11,7 @@ import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
-open class FlowFragment(@LayoutRes layoutId: Int = R.layout.fragment_tab_root) : BaseFragment(layoutId) {
+open class FlowFragment(@LayoutRes layoutId: Int = R.layout.fragment_tab_root) : ScopedFragment(layoutId) {
 
     private val parentRouter by lazy { getDependency(Router::class.java, dependencyInjector.parentScopeTag) }
     private val navigatorLocal by lazy { FlowNavigator(this, parentRouter) }

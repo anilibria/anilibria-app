@@ -1,19 +1,17 @@
-package ru.radiationx.shared_app.screen
+package ru.radiationx.anilibria.common.fragment.scoped
 
 import android.os.Bundle
-import androidx.annotation.LayoutRes
-import androidx.fragment.app.FragmentActivity
+import androidx.leanback.app.RowsSupportFragment
 import ru.radiationx.shared_app.di.DependencyInjector
+import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
-import ru.radiationx.shared_app.di.ActivityScopeCloseChecker
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-open class BaseFragmentActivity(@LayoutRes layoutId: Int = 0) : FragmentActivity(layoutId),
-    ScopeProvider {
+open class ScopedRowsFragment : RowsSupportFragment(), ScopeProvider {
 
-    protected val dependencyInjector by lazy { DependencyInjector(intent.extras) }
+    protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 
-    private val scopeCloseChecker by lazy { ActivityScopeCloseChecker(this) }
+    private val scopeCloseChecker by lazy { FragmentScopeCloseChecker(this) }
 
     override val screenScopeTag: String
         get() = dependencyInjector.screenScopeTag
@@ -23,8 +21,14 @@ open class BaseFragmentActivity(@LayoutRes layoutId: Int = 0) : FragmentActivity
         super.onCreate(savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        scopeCloseChecker.onResume()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        scopeCloseChecker.onSaveInstanceState()
         dependencyInjector.onSaveInstanceState(outState)
     }
 

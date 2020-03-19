@@ -3,13 +3,13 @@ package ru.radiationx.anilibria.screen
 import android.os.Bundle
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
-import ru.radiationx.anilibria.common.fragment.BaseGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject
 
-class DialogExampleFragment : BaseGuidedStepFragment() {
+class DialogExampleFragment : ScopedGuidedStepFragment() {
 
     companion object {
         private const val ACTION_ID_POSITIVE = 1

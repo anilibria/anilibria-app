@@ -1,13 +1,15 @@
-package ru.radiationx.anilibria.common.fragment
+package ru.radiationx.shared_app.screen
 
 import android.os.Bundle
-import androidx.leanback.app.RowsSupportFragment
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import ru.radiationx.shared_app.di.DependencyInjector
 import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-open class BaseRowsFragment : RowsSupportFragment(), ScopeProvider {
+
+open class ScopedFragment(@LayoutRes layoutId: Int = 0) : Fragment(layoutId), ScopeProvider {
 
     protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 

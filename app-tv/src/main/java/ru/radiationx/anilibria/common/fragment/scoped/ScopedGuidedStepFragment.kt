@@ -1,15 +1,16 @@
-package ru.radiationx.shared_app.screen
+package ru.radiationx.anilibria.common.fragment.scoped
 
 import android.os.Bundle
-import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
+import ru.radiationx.anilibria.common.fragment.DialogRouter
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
+import ru.radiationx.shared.ktx.android.attachBackPressed
 import ru.radiationx.shared_app.di.DependencyInjector
 import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
+import ru.radiationx.shared_app.di.getScopedDependency
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-
-open class BaseFragment(@LayoutRes layoutId: Int = 0) : Fragment(layoutId), ScopeProvider {
+open class ScopedGuidedStepFragment : FakeGuidedStepFragment(), ScopeProvider {
 
     protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 
@@ -21,6 +22,12 @@ open class BaseFragment(@LayoutRes layoutId: Int = 0) : Fragment(layoutId), Scop
     override fun onCreate(savedInstanceState: Bundle?) {
         dependencyInjector.onCreate(this, savedInstanceState).closeOnDestroy(this)
         super.onCreate(savedInstanceState)
+        attachBackPressed {
+            if (isEnabled) {
+                getScopedDependency(DialogRouter::class.java).exit()
+                isEnabled = false
+            }
+        }
     }
 
     override fun onResume() {

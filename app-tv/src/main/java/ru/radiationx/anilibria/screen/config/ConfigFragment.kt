@@ -11,10 +11,10 @@ import ru.radiationx.anilibria.common.MotionLayoutListener
 import ru.radiationx.anilibria.R
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.screen.BaseFragment
+import ru.radiationx.shared_app.screen.ScopedFragment
 import ru.radiationx.shared_app.di.viewModel
 
-class ConfigFragment : BaseFragment(R.layout.fragment_config) {
+class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
 
     private val viewModel: ConfiguringViewModel by viewModel()
 

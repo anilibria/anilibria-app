@@ -1,50 +1,31 @@
 package ru.radiationx.anilibria.screen.main
 
-import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import androidx.leanback.app.BackgroundManager
 import androidx.leanback.widget.*
-import androidx.palette.graphics.Palette
-import com.google.android.material.animation.ArgbEvaluatorCompat
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.LinkCard
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.MockData
-import ru.radiationx.anilibria.common.fragment.BaseRowsFragment
+import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
-import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.screen.GridScreen
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
-import ru.radiationx.anilibria.ui.presenter.LibriaCardPresenter
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.shared_app.di.DI
 import ru.terrakok.cicerone.Router
-import toothpick.Toothpick
 import java.util.*
 import javax.inject.Inject
 
-class MainFragment : BaseRowsFragment() {
+class MainFragment : ScopedRowsFragment() {
 
     private val instantLoading = true
     private val rowsPresenter by lazy { CustomListRowPresenter() }

@@ -1,15 +1,13 @@
-package ru.radiationx.anilibria.common.fragment
+package ru.radiationx.anilibria.common.fragment.scoped
 
 import android.os.Bundle
-import androidx.leanback.app.BrowseSupportFragment
-import ru.radiationx.shared.ktx.android.attachBackPressed
+import androidx.leanback.app.VerticalGridSupportFragment
 import ru.radiationx.shared_app.di.DependencyInjector
 import ru.radiationx.shared_app.di.FragmentScopeCloseChecker
 import ru.radiationx.shared_app.di.ScopeProvider
-import ru.radiationx.shared_app.di.getScopedDependency
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-open class BaseBrowseFragment : BrowseSupportFragment(), ScopeProvider {
+open class ScopedVerticalGridFragment : VerticalGridSupportFragment(), ScopeProvider {
 
     protected val dependencyInjector by lazy { DependencyInjector(arguments) }
 

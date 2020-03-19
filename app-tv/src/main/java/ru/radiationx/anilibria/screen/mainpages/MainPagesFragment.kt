@@ -8,9 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.postDelayed
 import androidx.core.widget.ImageViewCompat
-import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -20,12 +18,11 @@ import androidx.leanback.widget.PageRow
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.BaseBrowseFragment
-import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
-class MainPagesFragment : BaseBrowseFragment() {
+class MainPagesFragment : ScopedBrowseFragment() {
 
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }

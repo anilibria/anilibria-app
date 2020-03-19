@@ -50,6 +50,9 @@ class MainActivity : BaseFragmentActivity() {
         setContentView(R.layout.activity_main)
         lifecycle.addObserver(viewModel)
 
+        if (savedInstanceState == null) {
+            viewModel.coldLaunch()
+        }
         /* supportFragmentManager
              .beginTransaction()
              .add(R.id.fragmentContainer, DialogExampleFragment())

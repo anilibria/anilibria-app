@@ -30,13 +30,13 @@ class MainPagesFragment : BaseBrowseFragment() {
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
     private var lastSelectedPosition = -1
+    private val fragmentFactory by lazy { MainPagesFragmentFactory(this) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            mainFragmentRegistry.registerFragment(PageRow::class.java, MainPagesFragmentFactory(this))
-        }
+        Log.e("kekeke", "onCreate $this, $savedInstanceState")
+        mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
 
         setupUi()
         showMenu()
@@ -91,13 +91,16 @@ class MainPagesFragment : BaseBrowseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        childFragmentManager.findFragmentById(androidx.leanback.R.id.scale_frame)?.also {
-            childFragmentManager.commitNow {
-                remove(it)
+        if (savedInstanceState == null) {
+            childFragmentManager.findFragmentById(androidx.leanback.R.id.scale_frame)?.also {
+                childFragmentManager.commitNow {
+                    remove(it)
+                }
             }
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

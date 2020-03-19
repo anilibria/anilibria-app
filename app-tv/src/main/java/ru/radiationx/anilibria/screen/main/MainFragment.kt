@@ -67,14 +67,8 @@ class MainFragment : BaseRowsFragment() {
         super.onCreate(savedInstanceState)
 
         Log.e("kekeke", "$this oncreate $savedInstanceState")
-        if (rowsAdapter.size() == 0) {
-            createRow1()
-            createRow2()
-            createRow3()
-            createRow4()
-        }
+
         adapter = rowsAdapter
-        mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
         onItemViewSelectedListener = ItemViewSelectedListener()
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
@@ -85,6 +79,21 @@ class MainFragment : BaseRowsFragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (rowsAdapter.size() == 0) {
+            createRow1()
+            createRow2()
+            createRow3()
+            createRow4()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
+    }
 
     private fun getLoadDelay() = if (instantLoading) {
         0L

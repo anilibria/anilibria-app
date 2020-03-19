@@ -34,11 +34,15 @@ class AppLauncherViewModel(
                 }
             }*/
 
-        if (false && apiConfig.needConfig) {
+        /*if (false && apiConfig.needConfig) {
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()
-        }
+        }*/
+    }
+
+    fun coldLaunch() {
+        initMain()
     }
 
     private fun initMain() {

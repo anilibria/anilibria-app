@@ -45,7 +45,7 @@ class ReleaseDetailsPresenter : RowPresenter() {
             rowReleaseAnnounce.text = details.announce
             rowReleaseDescriptionCard.setOnClickListener {  }
 
-            ImageLoader.getInstance().displayImage(details.image, rowReleaseImage)
+            ImageLoader.getInstance().displayImage(details.image, rowReleaseImageCard)
         }
     }
 

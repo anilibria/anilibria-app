@@ -129,8 +129,8 @@ fun ReleaseItem.toDetail(context: Context) = LibriaDetails(
     title.orEmpty(),
     titleEng.orEmpty(),
     listOf(
-        "${seasons.firstOrNull()} год",
         genres.firstOrNull()?.capitalize()?.trim(),
+        "${seasons.firstOrNull()} год",
         types.firstOrNull()?.trim(),
         "Серии: ${series?.trim()}"
     ).joinToString(" • "),

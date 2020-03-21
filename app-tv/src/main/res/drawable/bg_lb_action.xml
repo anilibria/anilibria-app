@@ -20,6 +20,7 @@
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
             <corners android:radius="24dp" />
+            <solid android:color="?android:attr/colorControlHighlight" />
         </shape>
     </item>
 

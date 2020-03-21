@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.text.Html
+import android.text.format.DateFormat
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -22,7 +24,9 @@ import ru.radiationx.anilibria.screen.main.toCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.terrakok.cicerone.Router
+import java.time.YearMonth
 import java.util.*
 import javax.inject.Inject
 
@@ -90,6 +94,7 @@ class TestDetailFragment : ScopedRowsFragment() {
         if (rowsAdapter.size() == 0) {
             createDetailRow()
             createRow1()
+            createRow2()
         }
     }
 
@@ -103,12 +108,20 @@ class TestDetailFragment : ScopedRowsFragment() {
     private fun createRow1() {
         val presenterSelector = CardPresenterSelector()
         val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            addAll(0, mockData.feed.shuffled().map { it.toCard(requireContext()) } + LinkCard("Смотреть всю ленту"))
+            addAll(0, mockData.releases.shuffled().take(4).map { it.toCard(requireContext()) })
         }
-        val headerItem = HeaderItem("Самое актуальное")
+        val headerItem = HeaderItem("Связанные релизы")
         rowsAdapter.add(ListRow(headerItem, adapter))
     }
 
+    private fun createRow2() {
+        val presenterSelector = CardPresenterSelector()
+        val adapter = ArrayObjectAdapter(presenterSelector).apply {
+            addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) } + LinkCard("Смотреть всю ленту"))
+        }
+        val headerItem = HeaderItem("Похожие релизы")
+        rowsAdapter.add(ListRow(headerItem, adapter))
+    }
 }
 
 fun ReleaseItem.toDetail(context: Context) = LibriaDetails(
@@ -116,12 +129,54 @@ fun ReleaseItem.toDetail(context: Context) = LibriaDetails(
     title.orEmpty(),
     titleEng.orEmpty(),
     listOf(
-        "${seasons.firstOrNull()} года",
+        "${seasons.firstOrNull()} год",
         genres.firstOrNull()?.capitalize()?.trim(),
         types.firstOrNull()?.trim(),
         "Серии: ${series?.trim()}"
     ).joinToString(" • "),
-    Html.fromHtml(description.orEmpty()).toString().trim(),
-    announce.orEmpty(),
+    Html.fromHtml(description.orEmpty()).toString().trim().trim('"').let { it + it + it },
+    announce?.trim()?.trim('.')?.capitalize() ?: days.firstOrNull()?.toAnnounce2().orEmpty(),
     poster.orEmpty()
 )
+
+fun String.toAnnounce(): String {
+    val calendarDay = ScheduleDay.toCalendarDay(this)
+    val displayDay = Calendar.getInstance().let {
+        it.set(Calendar.DAY_OF_WEEK, calendarDay)
+        it.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
+    }.orEmpty()
+    val prefix = calendarDay.dayIterationPrefix()
+    return "Новая серия $prefix $displayDay"
+}
+
+fun String.toAnnounce2(): String {
+    val calendarDay = ScheduleDay.toCalendarDay(this)
+    val displayDay = Calendar.getInstance().let {
+        it.set(Calendar.DAY_OF_WEEK, calendarDay)
+        it.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
+    }.orEmpty()
+    val prefix = calendarDay.dayIterationPrefix2()
+    return "Серии выходят $prefix"
+}
+
+fun Int.dayIterationPrefix(): String = when (this) {
+    Calendar.MONDAY,
+    Calendar.TUESDAY,
+    Calendar.THURSDAY -> "каждый"
+    Calendar.WEDNESDAY,
+    Calendar.FRIDAY,
+    Calendar.SATURDAY -> "каждую"
+    Calendar.SUNDAY -> "каждое"
+    else -> throw Exception("Not found day by $this")
+}
+
+fun Int.dayIterationPrefix2(): String = when (this) {
+    Calendar.MONDAY -> "в понедельник"
+    Calendar.TUESDAY -> "во вторник"
+    Calendar.WEDNESDAY -> "в среду"
+    Calendar.THURSDAY -> "в четверг"
+    Calendar.FRIDAY -> "в пятницу"
+    Calendar.SATURDAY -> "в субботу"
+    Calendar.SUNDAY -> "в воскресенье"
+    else -> throw Exception("Not found day by $this")
+}

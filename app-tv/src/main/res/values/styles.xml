@@ -100,6 +100,11 @@
         <item name="android:minWidth">480dp</item>
     </style>
 
+    <style name="AppTheme.RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="AppTheme.Widget" />
 
     <style name="AppTheme.Widget.Description" />

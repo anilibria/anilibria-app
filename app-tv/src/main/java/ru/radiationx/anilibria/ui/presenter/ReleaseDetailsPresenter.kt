@@ -36,13 +36,14 @@ class ReleaseDetailsPresenter : RowPresenter() {
 
         vh.view?.apply {
             updateLayoutParams {
-                height = context.resources.displayMetrics.heightPixels-1
+                height = context.resources.displayMetrics.heightPixels - 1 // Шобы следующая строка подгрузилась при открытии
             }
             rowReleaseTitleRu.text = details.titleRu
             rowReleaseTitleEn.text = details.titleEn
             rowReleaseExtra.text = details.extra
             rowReleaseDescription.text = details.description
             rowReleaseAnnounce.text = details.announce
+            rowReleaseDescriptionCard.setOnClickListener {  }
 
             ImageLoader.getInstance().displayImage(details.image, rowReleaseImage)
         }

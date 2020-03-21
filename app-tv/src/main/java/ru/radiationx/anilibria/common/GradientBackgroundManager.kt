@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
@@ -34,8 +35,8 @@ class GradientBackgroundManager(
     private val gradientDrawable = GradientDrawable(
         GradientDrawable.Orientation.BL_TR,
         intArrayOf(
-            Color.parseColor("#EE110000"),
-            Color.parseColor("#77000000")
+            Color.parseColor("#ee000000"),
+            Color.parseColor("#55000000")
         )
     )
     private val layerDrawable = LayerDrawable(arrayOf(colorDrawable, gradientDrawable))
@@ -47,22 +48,39 @@ class GradientBackgroundManager(
     private val colorEvaluator = ArgbEvaluatorCompat()
     private val urlColorMap = mutableMapOf<String, Int>()
 
+    private val defaultColorSelector = { palette: Palette ->
+        val lightMuted = palette.getLightMutedColor(defaultColor)
+        val lightVibrant = palette.getLightVibrantColor(lightMuted)
+        val vibrant = palette.getVibrantColor(lightVibrant)
+        val muted = palette.getMutedColor(defaultColor)
+        val dark = palette.getDarkMutedColor(Color.BLACK)
+        muted
+    }
+
+    private val defaultColorModifier = { color: Int -> color }
+
     init {
         if (!backgroundManager.isAttached) {
             backgroundManager.attach(activity.window)
             backgroundManager.isAutoReleaseOnStop = false
         }
+    }
 
+    private fun subscribeColorApplier() {
+        if (!colorApplierDisposable.isDisposed) {
+            colorApplierDisposable.dispose()
+        }
         colorApplierDisposable = colorApplier
             .debounce(250, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
-            .distinctUntilChanged()
             .subscribe {
                 instantApplyColor(it)
             }
     }
 
     fun clearGradient() {
+        imageApplierDisposable.dispose()
+        colorApplierDisposable.dispose()
         backgroundManager.clearDrawable()
     }
 
@@ -70,10 +88,14 @@ class GradientBackgroundManager(
         applyColor(defaultColor)
     }
 
-    fun applyImage(url: String) {
+    fun applyImage(
+        url: String,
+        colorSelector: (Palette) -> Int? = defaultColorSelector,
+        colorModifier: (Int) -> Int = defaultColorModifier
+    ) {
         val color = urlColorMap[url]
-        if (color != null) {
-            applyColor(color)
+        if (colorSelector == defaultColorSelector && color != null) {
+            applyColor(color, colorModifier)
             return
         }
 
@@ -89,28 +111,27 @@ class GradientBackgroundManager(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                urlColorMap[url] = getColorFromPalette(it)
-                applyPalette(it)
+                if (colorSelector == defaultColorSelector) {
+                    urlColorMap[url] = colorSelector(it) ?: defaultColorSelector(it)
+                }
+                applyPalette(it, colorSelector, colorModifier)
             }, {
                 it.printStackTrace()
             })
     }
 
-    fun applyPalette(palette: Palette) {
-        applyColor(getColorFromPalette(palette))
+    fun applyPalette(
+        palette: Palette,
+        colorSelector: (Palette) -> Int? = defaultColorSelector,
+        colorModifier: (Int) -> Int = defaultColorModifier
+    ) {
+        applyColor(colorSelector(palette) ?: defaultColorSelector(palette), colorModifier)
     }
 
-    fun applyColor(@ColorInt color: Int) {
-        colorApplier.accept(color)
-    }
-
-    private fun getColorFromPalette(palette: Palette): Int {
-        val lightMuted = palette.getLightMutedColor(defaultColor)
-        val lightVibrant = palette.getLightVibrantColor(lightMuted)
-        val vibrant = palette.getVibrantColor(lightVibrant)
-        val muted = palette.getMutedColor(defaultColor)
-        val dark = palette.getDarkMutedColor(Color.BLACK)
-        return muted
+    fun applyColor(@ColorInt color: Int, colorModifier: (Int) -> Int = defaultColorModifier) {
+        val finalColor = colorModifier.invoke(color)
+        subscribeColorApplier()
+        colorApplier.accept(finalColor)
     }
 
     private fun instantApplyColor(@ColorInt color: Int) {

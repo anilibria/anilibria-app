@@ -55,8 +55,8 @@ class MainFragment : ScopedRowsFragment() {
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
-                if (item is LibriaCard) {
-                    router.navigateTo(DetailsScreen())
+                if (item is LibriaCard && item.type == LibriaCard.Type.RELEASE) {
+                    router.navigateTo(DetailsScreen(item.id))
                 } else {
                     router.navigateTo(GridScreen())
                 }
@@ -166,6 +166,7 @@ class MainFragment : ScopedRowsFragment() {
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
             rowViewHolder: RowPresenter.ViewHolder, row: Row
         ) {
+            Log.e("kekeke", "onItemSelected $rowViewHolder, $item")
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
                 when (item) {

@@ -1,13 +1,12 @@
 package ru.radiationx.anilibria.screen.trash
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.text.Html
-import android.text.format.DateFormat
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
+import androidx.core.graphics.ColorUtils
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.HeaderItem
@@ -19,14 +18,12 @@ import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.screen.GridScreen
-import ru.radiationx.anilibria.screen.main.relativeDate
 import ru.radiationx.anilibria.screen.main.toCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.terrakok.cicerone.Router
-import java.time.YearMonth
 import java.util.*
 import javax.inject.Inject
 
@@ -35,7 +32,11 @@ class TestDetailFragment : ScopedRowsFragment() {
     private val instantLoading = true
     private val rowsPresenter by lazy { ClassPresenterSelector() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
-    private val details by lazy { mockData.releases.random().toDetail(requireContext()) }
+    private val releaseItem by lazy {
+        mockData.releases.firstOrNull { arguments?.getInt("id") == it.id }
+            ?: mockData.feed.filter { it.release != null }.map { it.release!! }.firstOrNull { arguments?.getInt("id") == it.id }
+    }
+    private val details by lazy { releaseItem!!.toDetail(requireContext()) }
 
     @Inject
     lateinit var mockData: MockData
@@ -61,7 +62,7 @@ class TestDetailFragment : ScopedRowsFragment() {
             if (row is ListRow) {
                 backgroundManager.applyCard(item)
             } else {
-                backgroundManager.applyImage(details.image)
+                applyImage()
             }
             if (rowViewHolder is CustomListRowViewHolder) {
                 when (item) {
@@ -98,10 +99,26 @@ class TestDetailFragment : ScopedRowsFragment() {
         }
     }
 
+    private fun applyImage() {
+        backgroundManager.applyImage(details.image, colorSelector = {
+            val swatch = it.darkVibrantSwatch ?: it.vibrantSwatch
+            val color = swatch?.rgb
+            Log.e("kekeke", "apply detail $color")
+            color
+            null
+        }) {
+            val hslColor = FloatArray(3)
+            ColorUtils.colorToHSL(it, hslColor)
+            hslColor[1] = (hslColor[1] + 0.05f).coerceAtMost(1.0f)
+            hslColor[2] = (hslColor[2] + 0.05f).coerceAtMost(1.0f)
+            ColorUtils.HSLToColor(hslColor)
+        }
+    }
+
 
     private fun createDetailRow() {
 
-        backgroundManager.applyImage(details.image)
+        applyImage()
         rowsAdapter.add(LibriaDetailsRow(details))
     }
 

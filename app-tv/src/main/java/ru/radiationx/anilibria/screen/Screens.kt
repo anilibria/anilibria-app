@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.screen.trash.TestDetailFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
+import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 class ConfigScreen() : SupportAppScreen() {
@@ -29,9 +30,11 @@ class GridScreen() : SupportAppScreen() {
     }
 }
 
-class DetailsScreen() : SupportAppScreen() {
+class DetailsScreen(private val id: Int) : SupportAppScreen() {
     override fun getFragment(): Fragment {
-        return TestDetailFragment()
+        return TestDetailFragment().putExtra {
+            putInt("id", id)
+        }
     }
 }
 

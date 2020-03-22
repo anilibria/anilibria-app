@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import androidx.annotation.ColorInt
+import androidx.core.graphics.alpha
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
 import androidx.palette.graphics.Palette
@@ -29,8 +30,10 @@ class GradientBackgroundManager(
     private val backgroundManager: BackgroundManager by lazy { BackgroundManager.getInstance(activity) }
 
     private val defaultColor = activity.getCompatColor(R.color.dark_colorAccent)
+    private val foregroundColor = activity.getCompatColor(R.color.dark_windowBackground)
 
     private val backgroundDrawable = ColorDrawable(defaultColor)
+    private val foregroundDrawable = ColorDrawable(foregroundColor)
     private val classicGradientDrawable = GradientDrawable(
         GradientDrawable.Orientation.BL_TR,
         intArrayOf(
@@ -47,11 +50,12 @@ class GradientBackgroundManager(
     )
     private val layerDrawable = LayerDrawable(
         arrayOf(
-            backgroundDrawable, customGradientDrawable
+            backgroundDrawable, customGradientDrawable, foregroundDrawable
         )
     )
 
     private var primaryColorAnimator: ValueAnimator? = null
+    private var foregroundColorAnimator: ValueAnimator? = null
     private var imageApplierDisposable = Disposables.disposed()
     private var colorApplierDisposable = Disposables.disposed()
     private val colorApplier = BehaviorRelay.create<Int>()
@@ -71,8 +75,9 @@ class GradientBackgroundManager(
 
     init {
         if (!backgroundManager.isAttached) {
-            backgroundManager.attach(activity.window)
             backgroundManager.isAutoReleaseOnStop = false
+            backgroundManager.attach(activity.window)
+            backgroundManager.drawable = layerDrawable
         }
     }
 
@@ -81,7 +86,7 @@ class GradientBackgroundManager(
             colorApplierDisposable.dispose()
         }
         colorApplierDisposable = colorApplier
-            .debounce(250, TimeUnit.MILLISECONDS)
+            .debounce(200, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 instantApplyColor(it)
@@ -91,7 +96,7 @@ class GradientBackgroundManager(
     fun clearGradient() {
         imageApplierDisposable.dispose()
         colorApplierDisposable.dispose()
-        backgroundManager.clearDrawable()
+        instantApplyForeground(true)
     }
 
     fun applyDefault() {
@@ -146,17 +151,31 @@ class GradientBackgroundManager(
 
     private fun instantApplyColor(@ColorInt color: Int) {
         imageApplierDisposable.dispose()
-        if (backgroundManager.drawable == null) {
-            backgroundManager.drawable = layerDrawable
-        }
-
         primaryColorAnimator?.cancel()
+        if (foregroundDrawable.alpha != 0) {
+            instantApplyForeground(false)
+        }
         primaryColorAnimator = ValueAnimator
             .ofObject(colorEvaluator, backgroundDrawable.color, color)
             .apply {
                 duration = 500
                 addUpdateListener {
                     backgroundDrawable.color = it.animatedValue as Int
+                }
+                start()
+            }
+    }
+
+    private fun instantApplyForeground(visible: Boolean) {
+        val start = foregroundDrawable.alpha
+        val end = if (visible) 255 else 0
+        foregroundColorAnimator?.cancel()
+        foregroundColorAnimator = ValueAnimator
+            .ofInt(start, end)
+            .apply {
+                duration = 500
+                addUpdateListener {
+                    foregroundDrawable.alpha = it.animatedValue as Int
                 }
                 start()
             }

@@ -3,6 +3,7 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
+import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -28,6 +29,8 @@ class HistoryStorage @Inject constructor(
     init {
         loadAll()
     }
+
+    override fun getEpisodes(): Single<List<ReleaseItem>> = Single.fromCallable { localReleases.toList() }
 
     override fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
 

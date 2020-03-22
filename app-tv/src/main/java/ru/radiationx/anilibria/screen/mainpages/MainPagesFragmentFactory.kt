@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.Row
 import ru.radiationx.anilibria.screen.main.MainFragment
+import ru.radiationx.anilibria.screen.watching.WatchingFragment
 import ru.radiationx.shared_app.di.ScopeProvider
 import ru.radiationx.shared_app.di.putScopeArgument
 
@@ -52,7 +53,7 @@ class MainPagesFragmentFactory(
 
     private fun getFragmentByRow(row: Row): Fragment = when (row.id) {
         ID_MAIN -> MainFragment()
-        ID_MY -> MainFragment()
+        ID_MY -> WatchingFragment()
         else -> EmptyFragment()
     }
 }

@@ -1,9 +1,7 @@
 package ru.radiationx.anilibria.screen.main
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
@@ -14,13 +12,11 @@ import ru.radiationx.anilibria.LinkCard
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.screen.GridScreen
-import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import java.util.*
@@ -76,14 +72,19 @@ class MainFragment : ScopedRowsFragment() {
                     YOUTUBE_ROW_ID -> youtubeViewModel
                     else -> null
                 }
-                if (item is LinkCard) {
-                    viewMode?.onLinkCardClick()
-                } else if (item is LoadingCard) {
-                    viewMode?.onLoadingCardClick()
-                } else if (item is LibriaCard) {
-                    viewMode?.onLibriaCardClick(item)
-                } else {
-                    router.navigateTo(GridScreen())
+                when (item) {
+                    is LinkCard -> {
+                        viewMode?.onLinkCardClick()
+                    }
+                    is LoadingCard -> {
+                        viewMode?.onLoadingCardClick()
+                    }
+                    is LibriaCard -> {
+                        viewMode?.onLibriaCardClick(item)
+                    }
+                    else -> {
+                        router.navigateTo(GridScreen())
+                    }
                 }
             }
         }
@@ -92,9 +93,9 @@ class MainFragment : ScopedRowsFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (rowsAdapter.size() == 0) {
-            createRowBy(FEED_ROW_ID, feedViewModel)
-            createRowBy(SCHEDULE_ROW_ID, scheduleViewModel)
-            createRowBy(YOUTUBE_ROW_ID, youtubeViewModel)
+            createCardsRowBy(FEED_ROW_ID, rowsAdapter, feedViewModel)
+            createCardsRowBy(SCHEDULE_ROW_ID, rowsAdapter, scheduleViewModel)
+            createCardsRowBy(YOUTUBE_ROW_ID, rowsAdapter, youtubeViewModel)
             /*createRow1()
             createRow2()*/
             /*createRow2()
@@ -109,60 +110,8 @@ class MainFragment : ScopedRowsFragment() {
         notifyReady()
     }
 
-    private fun notifyReady(){
+    private fun notifyReady() {
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
-
-    }
-
-    private fun getLoadDelay() = if (instantLoading) {
-        0L
-    } else {
-        (100..3000).random().toLong()
-    }
-
-    private val diffCallback = object : DiffCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return oldItem == newItem
-        }
-
-        @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return oldItem == Boolean
-        }
-
-    }
-
-    private fun createRowBy(rowId: Long, viewModel: BaseCardsViewModel) {
-        val presenterSelector = CardPresenterSelector()
-        val adapter = ArrayObjectAdapter(presenterSelector)
-        val row = ListRow(rowId, HeaderItem(viewModel.defaultTitle), adapter)
-        rowsAdapter.add(row)
-        subscribeTo(viewModel.cardsData) {
-            adapter.setItems(it, diffCallback)
-        }
-        subscribeTo(viewModel.rowTitle) {
-            val position = rowsAdapter.indexOf(row)
-            row.headerItem = HeaderItem(it)
-            rowsAdapter.notifyArrayItemRangeChanged(position, 1)
-        }
-    }
-
-    private fun createRow3() {
-        val presenterSelector = CardPresenterSelector()
-        val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            add(LoadingCard())
-        }
-        val headerItem = HeaderItem("Обновления в избранном")
-
-        rowsAdapter.add(ListRow(headerItem, adapter))
-
-        Handler().postDelayed({
-            adapter.apply {
-                clear()
-                addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) })
-                add(LinkCard("Открыть избранное"))
-            }
-        }, getLoadDelay())
     }
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {

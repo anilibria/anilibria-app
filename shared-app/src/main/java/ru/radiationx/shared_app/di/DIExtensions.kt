@@ -44,18 +44,21 @@ fun Any.objectScopeName() = "${javaClass.simpleName}_${hashCode()}"
 
 fun <T> Fragment.getDependency(clazz: Class<T>, vararg scopes: String): T =
     DI.get(clazz, *scopes)
+
 fun <T> FragmentActivity.getDependency(clazz: Class<T>, vararg scopes: String): T =
     DI.get(clazz, *scopes)
 
 fun Fragment.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
 fun Fragment.injectDependencies(module: Module, vararg scopes: String) =
     DI.inject(this, arrayOf(module), *scopes)
+
 fun Fragment.injectDependencies(modules: Array<out Module>, vararg scopes: String) =
     DI.inject(this, modules, *scopes)
 
 fun FragmentActivity.injectDependencies(vararg scopes: String) = DI.inject(this, *scopes)
 fun FragmentActivity.injectDependencies(module: Module, vararg scopes: String) =
     DI.inject(this, arrayOf(module), *scopes)
+
 fun FragmentActivity.injectDependencies(modules: Array<out Module>, vararg scopes: String) =
     DI.inject(this, modules, *scopes)
 
@@ -70,6 +73,15 @@ fun <T> Fragment.getScopedDependency(clazz: Class<T>): T = when (this) {
 fun <T> FragmentActivity.getScopedDependency(clazz: Class<T>): T = when (this) {
     is ScopeProvider -> getDependency(clazz, screenScopeTag)
     else -> getDependency(clazz)
+}
+
+inline fun <reified T : ViewModel> Fragment.viewModelFromParent(): Lazy<T> = lazy {
+    val parent = requireParentFragment()
+    ViewModelProviders
+        .of(parent, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T = parent.getScopedDependency(modelClass)
+        })
+        .get(T::class.java)
 }
 
 inline fun <reified T : ViewModel> Fragment.viewModel(): Lazy<T> = lazy {

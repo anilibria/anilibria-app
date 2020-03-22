@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen
 
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -10,6 +11,11 @@ import io.reactivex.disposables.Disposable
 import ru.radiationx.shared.ktx.addTo
 
 open class LifecycleViewModel : ViewModel(), LifecycleObserver {
+
+    init {
+
+        Log.e("lalala","inited $this")
+    }
 
     private val disposables = CompositeDisposable()
 
@@ -40,6 +46,7 @@ open class LifecycleViewModel : ViewModel(), LifecycleObserver {
     protected fun Disposable.untilDestroy() = this.addTo(disposables)
 
     override fun onCleared() {
+        Log.e("lalala","onCleared $this")
         disposables.dispose()
         super.onCleared()
     }

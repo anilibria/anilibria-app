@@ -21,6 +21,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.shared_app.di.viewModel
+import toothpick.InjectConstructor
 
 class MainPagesFragment : ScopedBrowseFragment() {
 
@@ -28,13 +31,16 @@ class MainPagesFragment : ScopedBrowseFragment() {
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
     private var lastSelectedPosition = -1
     private val fragmentFactory by lazy { MainPagesFragmentFactory(this) }
+    private val viewModel by viewModel<PagesViewModel>()
 
+    @InjectConstructor
+    class PagesViewModel : LifecycleViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("kekeke", "onCreate $this, $savedInstanceState")
         mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
-
+        viewModel.equals(0)
         setupUi()
         showMenu()
     }

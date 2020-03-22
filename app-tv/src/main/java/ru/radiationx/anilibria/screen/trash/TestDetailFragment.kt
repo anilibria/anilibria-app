@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.screen.trash
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -74,7 +73,7 @@ class TestDetailFragment : ScopedRowsFragment() {
                         rowViewHolder.setDescription(item.title, "")
                     }
                     is LoadingCard -> {
-                        rowViewHolder.setDescription(item.errorTitle, item.errorDescription)
+                        rowViewHolder.setDescription(item.title, item.description)
                     }
                     else -> {
                         rowViewHolder.setDescription("", "")

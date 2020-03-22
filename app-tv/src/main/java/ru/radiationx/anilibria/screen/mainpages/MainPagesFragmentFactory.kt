@@ -37,7 +37,7 @@ class MainPagesFragmentFactory(
 
     override fun createFragment(rowObj: Any): Fragment {
         val row = rowObj as Row
-        return getFromMap(row)
+        return getCompleteFragment(row)
     }
 
     private fun getFromMap(row: Row): Fragment {

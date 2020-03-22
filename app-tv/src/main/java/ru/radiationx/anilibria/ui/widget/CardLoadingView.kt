@@ -23,11 +23,11 @@ class CardLoadingView @JvmOverloads constructor(
 
     fun setState(state: State) {
         loadingProgressBar.isVisible = state == State.LOADING
-        loadingRefresh.isVisible = state == State.REFRESH
+        loadingRefresh.isVisible = state == State.ERROR
     }
 
     enum class State {
         LOADING,
-        REFRESH
+        ERROR
     }
 }

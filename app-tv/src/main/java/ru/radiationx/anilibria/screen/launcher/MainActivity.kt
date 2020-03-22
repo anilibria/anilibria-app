@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.launcher
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.DialogRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
@@ -37,8 +38,8 @@ class MainActivity : ScopedFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         dependencyInjector.installModules(module {
-            bind(FragmentActivity::class.java).toInstance(this@MainActivity)
             bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
+            bind(CardsDataConverter::class.java).toInstance(CardsDataConverter(this@MainActivity))
         })
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

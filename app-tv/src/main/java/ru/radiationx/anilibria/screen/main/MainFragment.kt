@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -10,10 +11,7 @@ import androidx.leanback.widget.*
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.LinkCard
-import ru.radiationx.anilibria.common.GradientBackgroundManager
-import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.common.LoadingCard
-import ru.radiationx.anilibria.common.MockData
+import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.screen.DetailsScreen
@@ -22,11 +20,20 @@ import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.shared.ktx.android.subscribeTo
+import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject
 
 class MainFragment : ScopedRowsFragment() {
+
+    companion object {
+        private const val FEED_ROW_ID = 1L
+        private const val SCHEDULE_ROW_ID = 2L
+        private const val FAVORITE_ROW_ID = 3L
+        private const val YOUTUBE_ROW_ID = 4L
+    }
 
     private val instantLoading = true
     private val rowsPresenter by lazy { CustomListRowPresenter() }
@@ -41,12 +48,19 @@ class MainFragment : ScopedRowsFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
+    private val feedViewModel by viewModelFromParent<FeedViewModel>()
+    private val scheduleViewModel by viewModelFromParent<ScheduleViewModel>()
+    private val youtubeViewModel by viewModelFromParent<YouTubeViewModel>()
+
     init {
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(feedViewModel)
+        lifecycle.addObserver(scheduleViewModel)
+        lifecycle.addObserver(youtubeViewModel)
 
         Log.e("kekeke", "$this oncreate $savedInstanceState")
 
@@ -55,8 +69,19 @@ class MainFragment : ScopedRowsFragment() {
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
-                if (item is LibriaCard && item.type == LibriaCard.Type.RELEASE) {
-                    router.navigateTo(DetailsScreen(item.id))
+                Log.e("lalala", "onclick $item")
+                val viewMode: BaseCardsViewModel? = when ((row as ListRow).id) {
+                    FEED_ROW_ID -> feedViewModel
+                    SCHEDULE_ROW_ID -> scheduleViewModel
+                    YOUTUBE_ROW_ID -> youtubeViewModel
+                    else -> null
+                }
+                if (item is LinkCard) {
+                    viewMode?.onLinkCardClick()
+                } else if (item is LoadingCard) {
+                    viewMode?.onLoadingCardClick()
+                } else if (item is LibriaCard) {
+                    viewMode?.onLibriaCardClick(item)
                 } else {
                     router.navigateTo(GridScreen())
                 }
@@ -67,17 +92,26 @@ class MainFragment : ScopedRowsFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (rowsAdapter.size() == 0) {
-            createRow1()
-            createRow2()
+            createRowBy(FEED_ROW_ID, feedViewModel)
+            createRowBy(SCHEDULE_ROW_ID, scheduleViewModel)
+            createRowBy(YOUTUBE_ROW_ID, youtubeViewModel)
+            /*createRow1()
+            createRow2()*/
+            /*createRow2()
             createRow3()
-            createRow4()
+            createRow4()*/
         }
+        //createRow1()
     }
 
     override fun onResume() {
         super.onResume()
+        notifyReady()
+    }
 
+    private fun notifyReady(){
         mainFragmentAdapter.fragmentHost.notifyDataReady(mainFragmentAdapter)
+
     }
 
     private fun getLoadDelay() = if (instantLoading) {
@@ -86,42 +120,31 @@ class MainFragment : ScopedRowsFragment() {
         (100..3000).random().toLong()
     }
 
-    private fun createRow1() {
-        val presenterSelector = CardPresenterSelector()
-        val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            add(LoadingCard())
+    private val diffCallback = object : DiffCallback<Any>() {
+        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return oldItem == newItem
         }
-        val headerItem = HeaderItem("Самое актуальное")
-        rowsAdapter.add(ListRow(headerItem, adapter))
 
-        Handler().postDelayed({
-            adapter.apply {
-                clear()
-                //add(LoadingCard("Erororr", "Oh got wtf is goin on"))
-                addAll(0, mockData.feed.shuffled().map { it.toCard(requireContext()) } + LinkCard("Смотреть всю ленту"))
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return oldItem == Boolean
+        }
 
-            }
-        }, getLoadDelay())
     }
 
-    private fun createRow2() {
+    private fun createRowBy(rowId: Long, viewModel: BaseCardsViewModel) {
         val presenterSelector = CardPresenterSelector()
-        val day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-        val items = mockData.schedule.first { it.day == day }.items
-        val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            add(LoadingCard())
+        val adapter = ArrayObjectAdapter(presenterSelector)
+        val row = ListRow(rowId, HeaderItem(viewModel.defaultTitle), adapter)
+        rowsAdapter.add(row)
+        subscribeTo(viewModel.cardsData) {
+            adapter.setItems(it, diffCallback)
         }
-        val headerItem = HeaderItem("Ожидается сегодня")
-
-        rowsAdapter.add(ListRow(headerItem, adapter))
-
-        Handler().postDelayed({
-            adapter.apply {
-                clear()
-                addAll(0, items.shuffled().map { it.releaseItem.toCard(requireContext()) })
-                add(LinkCard("Открыть расписание"))
-            }
-        }, getLoadDelay())
+        subscribeTo(viewModel.rowTitle) {
+            val position = rowsAdapter.indexOf(row)
+            row.headerItem = HeaderItem(it)
+            rowsAdapter.notifyArrayItemRangeChanged(position, 1)
+        }
     }
 
     private fun createRow3() {
@@ -142,25 +165,6 @@ class MainFragment : ScopedRowsFragment() {
         }, getLoadDelay())
     }
 
-    private fun createRow4() {
-        val presenterSelector = CardPresenterSelector()
-        val adapter = ArrayObjectAdapter(presenterSelector).apply {
-            add(LoadingCard())
-        }
-        val headerItem = HeaderItem("Обновления на YouTube")
-
-        rowsAdapter.add(ListRow(headerItem, adapter))
-
-        Handler().postDelayed({
-            adapter.apply {
-                clear()
-                addAll(0, mockData.youtube.shuffled().map { it.toCard(requireContext()) })
-                add(LinkCard("Открыть ролики YouTube"))
-            }
-        }, getLoadDelay())
-    }
-
-
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
@@ -177,7 +181,7 @@ class MainFragment : ScopedRowsFragment() {
                         rowViewHolder.setDescription(item.title, "")
                     }
                     is LoadingCard -> {
-                        rowViewHolder.setDescription(item.errorTitle, item.errorDescription)
+                        rowViewHolder.setDescription(item.title, item.description)
                     }
                     else -> {
                         rowViewHolder.setDescription("", "")

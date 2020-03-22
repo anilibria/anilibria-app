@@ -26,10 +26,10 @@ class LoadingCardPresenter : Presenter() {
         item as LoadingCard
         val loadingView = (viewHolder.view as CardLoadingView)
         loadingView.setState(
-            if (item.errorTitle.isEmpty()) {
-                CardLoadingView.State.LOADING
+            if (item.isError) {
+                CardLoadingView.State.ERROR
             } else {
-                CardLoadingView.State.REFRESH
+                CardLoadingView.State.LOADING
             }
         )
     }

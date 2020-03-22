@@ -21,10 +21,14 @@ class CardDescriptionView @JvmOverloads constructor(
 
     fun setTitle(title: CharSequence) {
         cardDescriptionTitle.text = title
+        cardDescriptionTitle.requestLayout()
+        cardDescriptionTitle.invalidate()
     }
 
     fun setSubtitle(subtitle: CharSequence) {
         cardDescriptionSubtitle.text = subtitle
+        cardDescriptionSubtitle.requestLayout()
+        cardDescriptionSubtitle.invalidate()
     }
 
     fun isFilled(): Boolean = cardDescriptionTitle.text.isNotEmpty() || cardDescriptionSubtitle.text.isNotEmpty()

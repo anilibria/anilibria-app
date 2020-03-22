@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
@@ -31,15 +30,26 @@ class GradientBackgroundManager(
 
     private val defaultColor = activity.getCompatColor(R.color.dark_colorAccent)
 
-    private val colorDrawable = ColorDrawable(defaultColor)
-    private val gradientDrawable = GradientDrawable(
+    private val backgroundDrawable = ColorDrawable(defaultColor)
+    private val classicGradientDrawable = GradientDrawable(
         GradientDrawable.Orientation.BL_TR,
         intArrayOf(
             Color.parseColor("#ee000000"),
             Color.parseColor("#55000000")
         )
     )
-    private val layerDrawable = LayerDrawable(arrayOf(colorDrawable, gradientDrawable))
+    private val customGradientDrawable = LinearGradientDrawable(
+        190f,
+        intArrayOf(
+            Color.parseColor("#ee000000"),
+            Color.parseColor("#55000000")
+        )
+    )
+    private val layerDrawable = LayerDrawable(
+        arrayOf(
+            backgroundDrawable, customGradientDrawable
+        )
+    )
 
     private var primaryColorAnimator: ValueAnimator? = null
     private var imageApplierDisposable = Disposables.disposed()
@@ -142,11 +152,11 @@ class GradientBackgroundManager(
 
         primaryColorAnimator?.cancel()
         primaryColorAnimator = ValueAnimator
-            .ofObject(colorEvaluator, colorDrawable.color, color)
+            .ofObject(colorEvaluator, backgroundDrawable.color, color)
             .apply {
                 duration = 500
                 addUpdateListener {
-                    colorDrawable.color = it.animatedValue as Int
+                    backgroundDrawable.color = it.animatedValue as Int
                 }
                 start()
             }

@@ -9,7 +9,9 @@ data class LibriaDetails(
     val extra: String,
     val description: String,
     val announce: String,
-    val image: String
+    val image: String,
+    val favoriteCount: String,
+    val hasFullHd: Boolean
 )
 
 class LibriaDetailsRow(val details: LibriaDetails) : Row()

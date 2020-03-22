@@ -7,7 +7,11 @@ import ru.radiationx.anilibria.common.LoadingCard
 
 fun GradientBackgroundManager.applyCard(card: Any?) = when (card) {
     is LibriaCard -> applyImage(card.image)
-    is LinkCard -> applyDefault()
-    is LoadingCard -> applyDefault()
-    else -> applyDefault()
+    is LinkCard -> {
+    }
+    is LoadingCard -> {
+    }
+    null -> {
+    }
+    else -> clearGradient()
 }

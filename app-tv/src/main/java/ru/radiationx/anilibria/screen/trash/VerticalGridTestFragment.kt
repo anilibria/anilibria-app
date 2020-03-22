@@ -43,6 +43,7 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
             numberOfColumns = 5
         }
 
+        backgroundManager.clearGradient()
         setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
             backgroundManager.applyCard(item)
             when (item) {

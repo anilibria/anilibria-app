@@ -24,6 +24,7 @@ import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.terrakok.cicerone.Router
+import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -153,7 +154,10 @@ fun ReleaseItem.toDetail(context: Context) = LibriaDetails(
     ).joinToString(" • "),
     Html.fromHtml(description.orEmpty()).toString().trim().trim('"').let { it + it + it },
     announce?.trim()?.trim('.')?.capitalize() ?: days.firstOrNull()?.toAnnounce2().orEmpty(),
-    poster.orEmpty()
+    poster.orEmpty(),
+
+    NumberFormat.getNumberInstance().format(favoriteInfo.rating),
+    (0..1).random() == 1
 )
 
 fun String.toAnnounce(): String {

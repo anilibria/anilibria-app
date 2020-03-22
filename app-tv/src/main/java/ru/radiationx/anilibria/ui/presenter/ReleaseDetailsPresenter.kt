@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.presenter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.leanback.widget.RowPresenter
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -44,6 +45,8 @@ class ReleaseDetailsPresenter : RowPresenter() {
             rowReleaseDescription.text = details.description
             rowReleaseAnnounce.text = details.announce
             rowReleaseDescriptionCard.setOnClickListener {  }
+            rowReleaseFavoriteCount.text = details.favoriteCount
+            rowReleaseHQMarker.isVisible = details.hasFullHd
 
             ImageLoader.getInstance().displayImage(details.image, rowReleaseImageCard)
         }

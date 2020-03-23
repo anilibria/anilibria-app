@@ -2,11 +2,13 @@ package ru.radiationx.anilibria.screen.details
 
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.HistoryRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailsViewModel(
-    private val releaseInteractor: ReleaseInteractor
+    private val releaseInteractor: ReleaseInteractor,
+    private val historyRepository: HistoryRepository
 ) : BaseRowsViewModel() {
 
     companion object {
@@ -32,6 +34,7 @@ class DetailsViewModel(
 
         releaseInteractor
             .loadRelease(releaseId)
+            .map { historyRepository.putRelease(it) }
             .lifeSubscribe { }
 
 

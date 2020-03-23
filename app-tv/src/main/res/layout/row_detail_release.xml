@@ -111,7 +111,6 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="?browsePaddingEnd"
         android:drawablePadding="2dp"
-        android:fontFamily="sans-serif-condensed"
         android:textColor="@color/dark_textDefault"
         android:textSize="16sp"
         android:theme="@style/AppTheme.Material"

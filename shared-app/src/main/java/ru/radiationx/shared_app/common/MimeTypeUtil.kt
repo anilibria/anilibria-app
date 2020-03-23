@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.shared_app.common
 
 /**
  * Created by radiationx on 23.05.17.
@@ -606,7 +606,9 @@ object MimeTypeUtil {
     }
 
 
-    fun getType(nameOrExtension: String): String? = types[getExtension(nameOrExtension)]
+    fun getType(nameOrExtension: String): String? = types[getExtension(
+            nameOrExtension
+    )]
 
     fun getExtension(name: String): String {
         val cut = name.lastIndexOf('.')

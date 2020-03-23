@@ -12,6 +12,7 @@ import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.lang.RuntimeException
@@ -21,7 +22,8 @@ class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val router: Router,
+    private val systemUtils: SystemUtils
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Самое актуальное"
@@ -41,6 +43,7 @@ class FeedViewModel(
             }
             LibriaCard.Type.YOUTUBE -> {
                 val youtubeItem = card.rawData as YoutubeItem
+                systemUtils.externalLink(youtubeItem.link)
             }
         }
     }

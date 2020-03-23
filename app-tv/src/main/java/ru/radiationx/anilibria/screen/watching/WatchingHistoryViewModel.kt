@@ -12,7 +12,7 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class HistoryViewModel(
+class WatchingHistoryViewModel(
     private val historyRepository: HistoryRepository,
     private val converter: CardsDataConverter,
     private val router: Router
@@ -25,6 +25,8 @@ class HistoryViewModel(
         .map { historyItems ->
             historyItems.map { converter.toCard(it) }
         }
+
+    override fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean = false
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))

@@ -25,9 +25,9 @@ class WatchingFragment : ScopedRowsFragment() {
 
     private val watchingViewModel by viewModelFromParent<WatchingViewModel>()
 
-    private val historyViewModel by viewModelFromParent<HistoryViewModel>()
+    private val historyViewModel by viewModelFromParent<WatchingHistoryViewModel>()
     private val favoritesViewModel by viewModelFromParent<WatchingFavoritesViewModel>()
-    private val recommendsViewModel by viewModelFromParent<RecommendsViewModel>()
+    private val recommendsViewModel by viewModelFromParent<WatchingRecommendsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

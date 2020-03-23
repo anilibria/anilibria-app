@@ -24,8 +24,6 @@ class DetailRecommendsViewModel(
 
     var releaseId: Int = -1
 
-    private var currentGenres = ""
-
     override val loadOnCreate: Boolean = false
 
     override val defaultTitle: String = "Рекомендации"
@@ -37,19 +35,32 @@ class DetailRecommendsViewModel(
 
         releaseInteractor
             .observeFull(releaseId)
-            .map { it.genres.take(3).joinToString() }
             .distinctUntilChanged()
             .lifeSubscribe {
-                currentGenres = it
                 onRefreshClick()
             }
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchRepository
-        .searchReleases(currentGenres, "", "", "2", "1", requestPage)
-        .map { result ->
-            result.data.filter { it.id != releaseId }.map { converter.toCard(it) }
+    private fun searchGenres(genresCount: Int, requestPage: Int): Single<List<ReleaseItem>> = searchRepository
+        .searchReleases(getGenres(genresCount), "", "", "2", "1", requestPage)
+        .map { result -> result.data.filter { it.id != releaseId } }
+
+    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchGenres(3, requestPage)
+        .flatMap {
+            if (it.isEmpty()) {
+                searchGenres(2, requestPage)
+            } else {
+                Single.just(it)
+            }
         }
+        .map { result ->
+            result.map { converter.toCard(it) }
+        }
+
+    private fun getGenres(count: Int): String {
+        val release = releaseInteractor.getFull(releaseId) ?: return ""
+        return release.genres.take(count).joinToString()
+    }
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))

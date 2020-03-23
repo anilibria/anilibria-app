@@ -1,22 +1,18 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.shared_app.common
 
 import android.app.DownloadManager
 import android.content.*
-import android.content.Context.CLIPBOARD_SERVICE
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import ru.radiationx.anilibria.App
-import ru.radiationx.shared_app.common.MimeTypeUtil
+import toothpick.InjectConstructor
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 
-/**
- * Created by isanechek on 30.07.16.
- */
-
-object Utils {
+@InjectConstructor
+class SystemUtils(
+    private val context: Context
+) {
 
     /* PLEASE CHECK STORAGE PERMISSION */
     fun systemDownloader(context: Context, url: String, fileName: String = getFileNameFromUrl(url)) {
@@ -32,7 +28,7 @@ object Utils {
         }
     }
 
-    fun getFileNameFromUrl(url: String): String {
+    private fun getFileNameFromUrl(url: String): String {
         var fileName = url
         try {
             fileName = URLDecoder.decode(url, "CP1251")
@@ -48,13 +44,13 @@ object Utils {
     }
 
     fun copyToClipBoard(s: String) {
-        val clipboard = App.instance.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("label", s)
-        clipboard.primaryClip = clip
+        clipboard.setPrimaryClip(clip)
     }
 
     fun readFromClipboard(): String? {
-        val clipboard = App.instance.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (clipboard.hasPrimaryClip()) {
             val description = clipboard.primaryClipDescription
             val data = clipboard.primaryClip
@@ -69,14 +65,14 @@ object Utils {
         sendIntent.action = Intent.ACTION_SEND
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
-        sendIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-        App.instance.startActivity(Intent.createChooser(sendIntent, "Поделиться").addFlags(FLAG_ACTIVITY_NEW_TASK))
+        sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(Intent.createChooser(sendIntent, "Поделиться").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     fun externalLink(url: String) {
         Log.e("S_DEF_LOG", "externalLink $url")
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK)
-        App.instance.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     fun longLog(msg: String) {

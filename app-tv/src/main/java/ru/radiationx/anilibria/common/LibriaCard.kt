@@ -5,7 +5,8 @@ data class LibriaCard(
     val title: String,
     val description: String,
     val image: String,
-    val type: Type
+    val type: Type,
+    val rawData: Any
 ) {
 
     enum class Type {

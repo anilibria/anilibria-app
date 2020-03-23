@@ -5,11 +5,10 @@ import ru.radiationx.anilibria.common.fragment.DialogAppScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
-import ru.radiationx.anilibria.screen.trash.TestDetailFragment
+import ru.radiationx.anilibria.screen.details.DetailFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
-import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 class ConfigScreen() : SupportAppScreen() {
@@ -30,11 +29,9 @@ class GridScreen() : SupportAppScreen() {
     }
 }
 
-class DetailsScreen(private val id: Int) : SupportAppScreen() {
+class DetailsScreen(private val releaseId: Int) : SupportAppScreen() {
     override fun getFragment(): Fragment {
-        return TestDetailFragment().putExtra {
-            putInt("id", id)
-        }
+        return DetailFragment.newInstance(releaseId)
     }
 }
 

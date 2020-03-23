@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import ru.radiationx.anilibria.DetailDataConverter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.GradientBackgroundManager
@@ -40,6 +41,7 @@ class MainActivity : ScopedFragmentActivity() {
         dependencyInjector.installModules(module {
             bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
             bind(CardsDataConverter::class.java).toInstance(CardsDataConverter(this@MainActivity))
+            bind(DetailDataConverter::class.java).toInstance(DetailDataConverter(this@MainActivity))
         })
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -1,5 +1,6 @@
 package ru.radiationx.data.interactors
 
+import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -19,10 +20,10 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class ReleaseInteractor @Inject constructor(
-        private val releaseRepository: ReleaseRepository,
-        private val episodesCheckerStorage: EpisodesCheckerHolder,
-        private val preferencesHolder: PreferencesHolder,
-        private val schedulers: SchedulersProvider
+    private val releaseRepository: ReleaseRepository,
+    private val episodesCheckerStorage: EpisodesCheckerHolder,
+    private val preferencesHolder: PreferencesHolder,
+    private val schedulers: SchedulersProvider
 ) {
 
     private val checkerCombiner = BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { release, savedEpisodes ->
@@ -51,29 +52,29 @@ class ReleaseInteractor @Inject constructor(
     fun getRandomRelease(): Single<RandomRelease> = releaseRepository.getRandomRelease()
 
     private fun loadRelease(releaseId: Int): Observable<ReleaseFull> = releaseRepository
-            .getRelease(releaseId)
-            .doOnSuccess(this::updateFullCache)
-            .doFinally { fullLoadCacheById.remove(releaseId) }
-            .toObservable()
-            .share()
-            .replay()
-            .autoConnect(1)
-            .also { fullLoadCacheById[releaseId] = it }
+        .getRelease(releaseId)
+        .doOnSuccess(this::updateFullCache)
+        .doFinally { fullLoadCacheById.remove(releaseId) }
+        .toObservable()
+        .share()
+        .replay()
+        .autoConnect(1)
+        .also { fullLoadCacheById[releaseId] = it }
 
     private fun loadRelease(releaseCode: String): Observable<ReleaseFull> = releaseRepository
-            .getRelease(releaseCode)
-            .doOnSuccess(this::updateFullCache)
-            .doFinally { fullLoadCacheByCode.remove(releaseCode) }
-            .toObservable()
-            .share()
-            .replay()
-            .autoConnect(1)
-            .also { fullLoadCacheByCode[releaseCode] = it }
+        .getRelease(releaseCode)
+        .doOnSuccess(this::updateFullCache)
+        .doFinally { fullLoadCacheByCode.remove(releaseCode) }
+        .toObservable()
+        .share()
+        .replay()
+        .autoConnect(1)
+        .also { fullLoadCacheByCode[releaseCode] = it }
 
     fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> {
         val releaseSource = releaseId.idOrNull()
-                ?.let { fullLoadCacheById[it] }
-                ?: releaseCode?.let { fullLoadCacheByCode[it] }
+            ?.let { fullLoadCacheById[it] }
+            ?: releaseCode?.let { fullLoadCacheByCode[it] }
         (releaseSource)?.also {
             return it
         }
@@ -85,41 +86,52 @@ class ReleaseInteractor @Inject constructor(
     }
 
     fun loadReleases(page: Int): Single<Paginated<List<ReleaseItem>>> = releaseRepository
-            .getReleases(page)
-            .doOnSuccess { updateItemsCache(it.data) }
+        .getReleases(page)
+        .doOnSuccess { updateItemsCache(it.data) }
 
     fun getItem(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem? {
         return releaseId.idOrNull()
-                ?.let { releaseItemsById[it] }
-                ?: releaseCode?.let { releaseItemsByCode[it] }
+            ?.let { releaseItemsById[it] }
+            ?: releaseCode?.let { releaseItemsByCode[it] }
     }
 
     fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull? {
         return releaseId.idOrNull()
-                ?.let { releasesById[it] }
-                ?: releaseCode?.let { releasesByCode[it] }
+            ?.let { releasesById[it] }
+            ?: releaseCode?.let { releasesByCode[it] }
     }
 
-    fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseItem> = itemsUpdateTrigger
-            .filter { getItem(releaseId, releaseCode) != null }
-            .map { getItem(releaseId, releaseCode)!! }
-            .repeatWhen { itemsUpdateTrigger }
+    fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseItem> = Observable
+        .just(true)
+        .doOnNext {
+            Log.e("kekeke", "observeItem before filter")
+        }
+        .filter { getItem(releaseId, releaseCode) != null }
+        .doOnNext {
+            Log.e("kekeke", "observeItem before map")
+        }
+        .map { getItem(releaseId, releaseCode)!! }
+        .doOnNext {
+            Log.e("kekeke", "observeItem before repeat")
+        }
+        .repeatWhen { itemsUpdateTrigger }
 
     fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> = Observable
-            .combineLatest(
-                    createFullObservable(releaseId, releaseCode),
-                    episodesCheckerStorage.observeEpisodes(),
-                    checkerCombiner
-            )
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .combineLatest(
+            createFullObservable(releaseId, releaseCode),
+            episodesCheckerStorage.observeEpisodes(),
+            checkerCombiner
+        )
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     private fun createFullObservable(releaseId: Int = -1, releaseCode: String? = null) = fullUpdateTrigger
-            .filter { getFull(releaseId, releaseCode) != null }
-            .map { getFull(releaseId, releaseCode)!! }
-            .repeatWhen { fullUpdateTrigger }
+        .filter { getFull(releaseId, releaseCode) != null }
+        .map { getFull(releaseId, releaseCode)!! }
+        .repeatWhen { fullUpdateTrigger }
 
-    private fun updateItemsCache(items: List<ReleaseItem>) {
+    fun updateItemsCache(items: List<ReleaseItem>) {
+        Log.e("kekeke", "updateItemsCache ${items.size}")
         items.forEach { release ->
             releaseItemsById[release.id] = release
             release.code?.also { code ->
@@ -129,7 +141,7 @@ class ReleaseInteractor @Inject constructor(
         itemsUpdateTrigger.accept(true)
     }
 
-    private fun updateFullCache(release: ReleaseFull) {
+    fun updateFullCache(release: ReleaseFull) {
         releasesById[release.id] = release
         release.code?.also { code ->
             releasesByCode[code] = release

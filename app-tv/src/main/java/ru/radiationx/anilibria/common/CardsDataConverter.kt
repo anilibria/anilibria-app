@@ -18,7 +18,8 @@ class CardsDataConverter(
             "${seasons.firstOrNull()} год • ${genres.firstOrNull()
                 ?.capitalize()} • Серии: ${series} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context).decapitalize()}",
             poster.orEmpty(),
-            LibriaCard.Type.RELEASE
+            LibriaCard.Type.RELEASE,
+            releaseItem
         )
     }
 
@@ -28,7 +29,8 @@ class CardsDataConverter(
             title.orEmpty(),
             "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
             image.orEmpty(),
-            LibriaCard.Type.YOUTUBE
+            LibriaCard.Type.YOUTUBE,
+            youtubeItem
         )
     }
 

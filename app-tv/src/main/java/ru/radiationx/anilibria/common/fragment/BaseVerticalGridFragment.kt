@@ -20,7 +20,6 @@ import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedVerticalGridFragment
 import ru.radiationx.anilibria.extension.applyCard
-import ru.radiationx.anilibria.screen.main.toCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.CardDescriptionView
 import javax.inject.Inject

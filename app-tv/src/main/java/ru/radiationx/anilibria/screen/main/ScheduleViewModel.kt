@@ -5,15 +5,18 @@ import ru.radiationx.anilibria.LinkCard
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
+import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.*
 
 @InjectConstructor
 class ScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
-    private val converter: CardsDataConverter
+    private val converter: CardsDataConverter,
+    private val router: Router
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Ожидается сегодня"
@@ -47,6 +50,9 @@ class ScheduleViewModel(
         return true
     }
 
-    override fun onLinkCardClick() {
+    override fun onLinkCardClick() {}
+
+    override fun onLibriaCardClick(card: LibriaCard) {
+        router.navigateTo(DetailsScreen(card.id))
     }
 }

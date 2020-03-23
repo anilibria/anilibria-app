@@ -14,4 +14,4 @@ data class LibriaDetails(
     val hasFullHd: Boolean
 )
 
-class LibriaDetailsRow(val details: LibriaDetails) : Row()
+class LibriaDetailsRow(id: Long, var details: LibriaDetails? = null) : Row(id, null)

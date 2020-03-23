@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.BaseVerticalGridFragment
 import ru.radiationx.anilibria.extension.applyCard
-import ru.radiationx.anilibria.screen.main.toCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import javax.inject.Inject
 
@@ -58,7 +57,7 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
             adapter.apply {
                 startEntranceTransition()
                 clear()
-                addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) })
+                //addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) })
                 //add(LoadingCard())
                 //add(LinkCard("Открыть избранное"))
             }

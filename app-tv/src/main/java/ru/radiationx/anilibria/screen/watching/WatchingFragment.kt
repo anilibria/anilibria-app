@@ -13,7 +13,6 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class WatchingFragment : ScopedRowsFragment() {
@@ -83,7 +82,7 @@ class WatchingFragment : ScopedRowsFragment() {
                 rowMap[rowId] = row
                 row
             }
-            rowsAdapter.setItems(rows, ListRowDiffCallback)
+            rowsAdapter.setItems(rows, RowDiffCallback)
         }
     }
 }

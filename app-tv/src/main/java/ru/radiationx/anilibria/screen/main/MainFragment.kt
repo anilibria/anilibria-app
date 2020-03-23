@@ -19,7 +19,6 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
-import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject
@@ -97,7 +96,7 @@ class MainFragment : ScopedRowsFragment() {
                 rowMap[rowId] = row
                 row
             }
-            rowsAdapter.setItems(rows, ListRowDiffCallback)
+            rowsAdapter.setItems(rows, RowDiffCallback)
         }
     }
 
@@ -138,34 +137,3 @@ class MainFragment : ScopedRowsFragment() {
     }
 
 }
-
-fun ReleaseItem.toCard(context: Context) = LibriaCard(
-    id,
-    title.orEmpty(),
-    "${seasons.firstOrNull()} год • ${genres.firstOrNull()
-        ?.capitalize()} • Серии: ${series} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context).decapitalize()}",
-    poster.orEmpty(),
-    LibriaCard.Type.RELEASE
-)
-
-fun YoutubeItem.toCard(context: Context) = LibriaCard(
-    id,
-    title.orEmpty(),
-    "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
-    image.orEmpty(),
-    LibriaCard.Type.YOUTUBE
-)
-
-fun FeedItem.toCard(context: Context): LibriaCard = when {
-    release != null -> release!!.toCard(context)
-    youtube != null -> youtube!!.toCard(context)
-    else -> throw RuntimeException("WataFuq")
-}
-
-fun Date.relativeDate(context: Context) = DateUtils.getRelativeDateTimeString(
-    context,
-    time,
-    DateUtils.MINUTE_IN_MILLIS,
-    DateUtils.DAY_IN_MILLIS * 2,
-    DateUtils.FORMAT_SHOW_TIME
-).toString()

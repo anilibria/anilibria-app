@@ -103,17 +103,8 @@ class ReleaseInteractor @Inject constructor(
 
     fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseItem> = Observable
         .just(true)
-        .doOnNext {
-            Log.e("kekeke", "observeItem before filter")
-        }
         .filter { getItem(releaseId, releaseCode) != null }
-        .doOnNext {
-            Log.e("kekeke", "observeItem before map")
-        }
         .map { getItem(releaseId, releaseCode)!! }
-        .doOnNext {
-            Log.e("kekeke", "observeItem before repeat")
-        }
         .repeatWhen { itemsUpdateTrigger }
 
     fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> = Observable
@@ -125,7 +116,8 @@ class ReleaseInteractor @Inject constructor(
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
-    private fun createFullObservable(releaseId: Int = -1, releaseCode: String? = null) = fullUpdateTrigger
+    private fun createFullObservable(releaseId: Int = -1, releaseCode: String? = null) = Observable
+        .just(true)
         .filter { getFull(releaseId, releaseCode) != null }
         .map { getFull(releaseId, releaseCode)!! }
         .repeatWhen { fullUpdateTrigger }

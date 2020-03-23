@@ -17,6 +17,8 @@ import ru.radiationx.anilibria.screen.GridScreen
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.shared.ktx.android.subscribeTo
+import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import java.util.*
@@ -24,14 +26,6 @@ import javax.inject.Inject
 
 class MainFragment : ScopedRowsFragment() {
 
-    companion object {
-        private const val FEED_ROW_ID = 1L
-        private const val SCHEDULE_ROW_ID = 2L
-        private const val FAVORITE_ROW_ID = 3L
-        private const val YOUTUBE_ROW_ID = 4L
-    }
-
-    private val instantLoading = true
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
@@ -44,18 +38,19 @@ class MainFragment : ScopedRowsFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
-    private val feedViewModel by viewModelFromParent<FeedViewModel>()
-    private val scheduleViewModel by viewModelFromParent<ScheduleViewModel>()
-    private val youtubeViewModel by viewModelFromParent<YouTubeViewModel>()
+    private val mainViewModel by viewModel<MainViewModel>()
 
-    init {
-
-    }
+    private val feedViewModel by viewModel<FeedViewModel>()
+    private val scheduleViewModel by viewModel<ScheduleViewModel>()
+    private val favoritesViewModel by viewModel<MainFavoritesViewModel>()
+    private val youtubeViewModel by viewModel<YouTubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(mainViewModel)
         lifecycle.addObserver(feedViewModel)
         lifecycle.addObserver(scheduleViewModel)
+        lifecycle.addObserver(favoritesViewModel)
         lifecycle.addObserver(youtubeViewModel)
 
         Log.e("kekeke", "$this oncreate $savedInstanceState")
@@ -66,12 +61,7 @@ class MainFragment : ScopedRowsFragment() {
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
                 Log.e("lalala", "onclick $item")
-                val viewMode: BaseCardsViewModel? = when ((row as ListRow).id) {
-                    FEED_ROW_ID -> feedViewModel
-                    SCHEDULE_ROW_ID -> scheduleViewModel
-                    YOUTUBE_ROW_ID -> youtubeViewModel
-                    else -> null
-                }
+                val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
                 when (item) {
                     is LinkCard -> {
                         viewMode?.onLinkCardClick()
@@ -90,19 +80,25 @@ class MainFragment : ScopedRowsFragment() {
         }
     }
 
+    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
+        MainViewModel.FEED_ROW_ID -> feedViewModel
+        MainViewModel.SCHEDULE_ROW_ID -> scheduleViewModel
+        MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
+        MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
+        else -> null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (rowsAdapter.size() == 0) {
-            createCardsRowBy(FEED_ROW_ID, rowsAdapter, feedViewModel)
-            createCardsRowBy(SCHEDULE_ROW_ID, rowsAdapter, scheduleViewModel)
-            createCardsRowBy(YOUTUBE_ROW_ID, rowsAdapter, youtubeViewModel)
-            /*createRow1()
-            createRow2()*/
-            /*createRow2()
-            createRow3()
-            createRow4()*/
+        val rowMap = mutableMapOf<Long, ListRow>()
+        subscribeTo(mainViewModel.rowListData) { rowList ->
+            val rows = rowList.map { rowId ->
+                val row = rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                rowMap[rowId] = row
+                row
+            }
+            rowsAdapter.setItems(rows, ListRowDiffCallback)
         }
-        //createRow1()
     }
 
     override fun onResume() {

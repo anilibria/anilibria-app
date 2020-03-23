@@ -87,11 +87,6 @@ open class BaseVerticalGridFragment : ScopedVerticalGridFragment() {
         cardDescriptionView?.apply {
             setTitle(title)
             setSubtitle(subtitle)
-            isVisible = isFilled()
-        }
-
-        cardDescriptionView?.post {
-            cardDescriptionView?.requestLayout()
         }
     }
 

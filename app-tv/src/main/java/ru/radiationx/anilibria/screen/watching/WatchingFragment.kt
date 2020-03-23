@@ -11,18 +11,12 @@ import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
+import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class WatchingFragment : ScopedRowsFragment() {
-
-    companion object {
-        private const val HISTORY_ROW_ID = 1L
-        private const val CONTINUE_ROW_ID = 2L
-        private const val RECOMMENDS_ROW_ID = 3L
-        private const val FAVORITES_ROW_ID = 4L
-    }
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
@@ -30,20 +24,20 @@ class WatchingFragment : ScopedRowsFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
+    private val watchingViewModel by viewModelFromParent<WatchingViewModel>()
+
     private val historyViewModel by viewModelFromParent<HistoryViewModel>()
+    private val favoritesViewModel by viewModelFromParent<WatchingFavoritesViewModel>()
     private val recommendsViewModel by viewModelFromParent<RecommendsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(watchingViewModel)
         lifecycle.addObserver(historyViewModel)
+        lifecycle.addObserver(favoritesViewModel)
         lifecycle.addObserver(recommendsViewModel)
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
-            val viewMode: BaseCardsViewModel? = when ((row as ListRow).id) {
-                HISTORY_ROW_ID -> historyViewModel
-                RECOMMENDS_ROW_ID -> recommendsViewModel
-                else -> null
-            }
-
+            val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
             when (item) {
                 is LinkCard -> viewMode?.onLinkCardClick()
                 is LoadingCard -> viewMode?.onLoadingCardClick()
@@ -73,11 +67,23 @@ class WatchingFragment : ScopedRowsFragment() {
         adapter = rowsAdapter
     }
 
+    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
+        WatchingViewModel.HISTORY_ROW_ID -> historyViewModel
+        WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
+        WatchingViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        else -> null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (rowsAdapter.size() == 0) {
-            createCardsRowBy(HISTORY_ROW_ID, rowsAdapter, historyViewModel)
-            createCardsRowBy(RECOMMENDS_ROW_ID, rowsAdapter, recommendsViewModel)
+        val rowMap = mutableMapOf<Long, ListRow>()
+        subscribeTo(watchingViewModel.rowListData) { rowList ->
+            val rows = rowList.map { rowId ->
+                val row = rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                rowMap[rowId] = row
+                row
+            }
+            rowsAdapter.setItems(rows, ListRowDiffCallback)
         }
     }
 }

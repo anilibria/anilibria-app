@@ -26,18 +26,13 @@ class CustomListRowViewHolder(
     fun setDescription(title: CharSequence, subtitle: CharSequence) {
         cardDescriptionView.setTitle(title)
         cardDescriptionView.setSubtitle(subtitle)
-        updateDescriptionVisibility()
     }
 
     fun setExpanded(expanded: Boolean) {
-        cardDescriptionView.isVisible = expanded && isSelected && cardDescriptionView.isFilled()
+        cardDescriptionView.isVisible = expanded && isSelected
     }
 
     fun setSelected(selected: Boolean) {
-        cardDescriptionView.isVisible = selected && isExpanded && cardDescriptionView.isFilled()
-    }
-
-    fun updateDescriptionVisibility() {
-        cardDescriptionView.isVisible = isSelected && isExpanded && cardDescriptionView.isFilled()
+        cardDescriptionView.isVisible = selected && isExpanded
     }
 }

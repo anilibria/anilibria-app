@@ -10,11 +10,10 @@ import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.shared.ktx.android.subscribeTo
 
-fun Fragment.createCardsRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: BaseCardsViewModel) {
+fun Fragment.createCardsRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: BaseCardsViewModel): ListRow {
     val cardsPresenter = CardPresenterSelector()
     val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
     val row = ListRow(rowId, HeaderItem(viewModel.defaultTitle), cardsAdapter)
-    rowsAdapter.add(row)
     subscribeTo(viewModel.cardsData) {
         cardsAdapter.setItems(it, CardDiffCallback)
     }
@@ -23,4 +22,5 @@ fun Fragment.createCardsRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, view
         row.headerItem = HeaderItem(it)
         rowsAdapter.notifyArrayItemRangeChanged(position, 1)
     }
+    return row
 }

@@ -30,7 +30,10 @@ class DetailDataConverter(
             getAnnounce(),
             poster.orEmpty(),
             NumberFormat.getNumberInstance().format(favoriteInfo.rating),
-            (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false
+            (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false,
+            favoriteInfo.isAdded,
+            false,
+            (releaseItem as? ReleaseFull)?.moonwalkLink != null
         )
     }
 

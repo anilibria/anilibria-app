@@ -40,4 +40,24 @@ class DetailHeaderViewModel(
             }
 
     }
+
+    fun onContinueClick() {
+
+    }
+
+    fun onPlayClick() {
+
+    }
+
+    fun onPlayWebClick() {
+
+    }
+
+    fun onFavoriteClick() {
+
+    }
+
+    fun onDescriptionClick() {
+
+    }
 }

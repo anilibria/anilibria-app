@@ -34,7 +34,20 @@ class DetailFragment : ScopedRowsFragment() {
 
     private val releaseId by lazy { arguments?.getInt(ARG_ID) ?: -1 }
 
-    private val rowsPresenter by lazy { ClassPresenterSelector() }
+    private val rowsPresenter by lazy {
+        ClassPresenterSelector().apply {
+            addClassPresenter(ListRow::class.java, CustomListRowPresenter())
+            addClassPresenter(
+                LibriaDetailsRow::class.java, ReleaseDetailsPresenter(
+                    continueClickListener = headerViewModel::onContinueClick,
+                    playClickListener = headerViewModel::onPlayClick,
+                    playWebClickListener = headerViewModel::onPlayWebClick,
+                    favoriteClickListener = headerViewModel::onFavoriteClick,
+                    descriptionClickListener = headerViewModel::onDescriptionClick
+                )
+            )
+        }
+    }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
     private val detailsViewModel by viewModel<DetailsViewModel>()
@@ -57,8 +70,6 @@ class DetailFragment : ScopedRowsFragment() {
         Log.e("kekeke", "$this oncreate $savedInstanceState")
 
         adapter = rowsAdapter
-        rowsPresenter.addClassPresenter(ListRow::class.java, CustomListRowPresenter())
-        rowsPresenter.addClassPresenter(LibriaDetailsRow::class.java, ReleaseDetailsPresenter())
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id) as? BaseCardsViewModel

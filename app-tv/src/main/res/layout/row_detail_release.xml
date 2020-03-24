@@ -78,6 +78,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/dark_textDefault"
@@ -94,7 +95,7 @@
         android:id="@+id/rowReleaseHQMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ic_fullhd"
         android:tint="@color/dark_textDefault"
         android:visibility="gone"
@@ -108,7 +109,6 @@
         android:id="@+id/rowReleaseFavoriteCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_marginEnd="?browsePaddingEnd"
         android:drawablePadding="2dp"
         android:textColor="@color/dark_textDefault"
@@ -136,7 +136,7 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:nextFocusDown="@id/ActionButton"
+        android:nextFocusDown="@id/rowReleaseActions"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
@@ -182,6 +182,7 @@
         app:constraint_referenced_ids="rowReleaseDescriptionCard, rowReleaseImageCard" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/rowReleaseActions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -198,15 +199,16 @@
         <requestFocus />
 
         <Button
-            android:id="@+id/ActionButton"
+            android:id="@+id/rowReleaseActionContinue"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="Продолжить" />
+            android:text="Продолжить"
+            android:visibility="gone" />
 
         <Button
-            android:id="@+id/ActionButton1"
+            android:id="@+id/rowReleaseActionPlay"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -214,15 +216,16 @@
             android:text="Смотреть" />
 
         <Button
-            android:id="@+id/ActionButton2"
+            android:id="@+id/rowReleaseActionPlayWeb"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="Веб-плеер" />
+            android:text="Веб-плеер"
+            android:visibility="gone" />
 
         <Button
-            android:id="@+id/ActionButton3"
+            android:id="@+id/rowReleaseActionFavorite"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

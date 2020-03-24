@@ -18,9 +18,10 @@ class CardsDataConverter(
             "${seasons.firstOrNull()} год • ${genres.firstOrNull()
                 ?.capitalize()} • Серии: ${series} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context).decapitalize()}",
             poster.orEmpty(),
-            LibriaCard.Type.RELEASE,
-            releaseItem
-        )
+            LibriaCard.Type.RELEASE
+        ).apply {
+            rawData = releaseItem
+        }
     }
 
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
@@ -29,9 +30,10 @@ class CardsDataConverter(
             title.orEmpty(),
             "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
             image.orEmpty(),
-            LibriaCard.Type.YOUTUBE,
-            youtubeItem
-        )
+            LibriaCard.Type.YOUTUBE
+        ).apply {
+            rawData = youtubeItem
+        }
     }
 
     fun toCard(feedItem: FeedItem): LibriaCard = feedItem.run {

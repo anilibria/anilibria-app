@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.details
 
+import android.util.Log
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
@@ -37,9 +38,11 @@ class DetailsViewModel(
             .map { historyRepository.putRelease(it) }
             .lifeSubscribe { }
 
-
-        val release = releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId)
-        val releaseCodes = getReleasesFromDesc(release?.description.orEmpty())
-        updateAvailableRow(RELATED_ROW_ID, releaseCodes.isNotEmpty())
+        releaseInteractor
+            .observeFull(releaseId)
+            .map { getReleasesFromDesc(it.description.orEmpty()) }
+            .lifeSubscribe {
+                updateAvailableRow(RELATED_ROW_ID, it.isNotEmpty())
+            }
     }
 }

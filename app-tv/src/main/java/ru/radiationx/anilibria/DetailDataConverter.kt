@@ -26,13 +26,22 @@ class DetailDataConverter(
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim()}"
             ).joinToString(" • "),
-            Html.fromHtml(description.orEmpty()).toString().trim().trim('"').let { it + it + it },
-            announce?.trim()?.trim('.')?.capitalize() ?: days.firstOrNull()?.toAnnounce2().orEmpty(),
+            Html.fromHtml(description.orEmpty()).toString().trim().trim('"')/*.replace('\n', ' ')*/,
+            getAnnounce(),
             poster.orEmpty(),
-
             NumberFormat.getNumberInstance().format(favoriteInfo.rating),
             (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false
         )
+    }
+
+    fun ReleaseItem.getAnnounce(): String {
+        if (statusCode == ReleaseItem.STATUS_CODE_COMPLETE) {
+            return "Релиз завершен"
+        }
+
+        val originalAnnounce = announce?.trim()?.trim('.')?.capitalize()
+        val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
+        return originalAnnounce ?: scheduleAnnounce
     }
 
     fun String.toAnnounce(): String {

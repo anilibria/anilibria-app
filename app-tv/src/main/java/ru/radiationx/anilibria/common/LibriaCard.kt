@@ -5,9 +5,10 @@ data class LibriaCard(
     val title: String,
     val description: String,
     val image: String,
-    val type: Type,
-    val rawData: Any
+    val type: Type
 ) {
+
+    var rawData: Any? = null
 
     enum class Type {
         RELEASE,

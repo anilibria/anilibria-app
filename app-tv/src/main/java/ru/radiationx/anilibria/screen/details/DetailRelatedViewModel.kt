@@ -24,7 +24,20 @@ class DetailRelatedViewModel(
 
     var releaseId: Int = -1
 
+    override val loadOnCreate: Boolean = false
+
     override val defaultTitle: String = "Связанные релизы"
+
+    override fun onCreate() {
+        super.onCreate()
+
+        releaseInteractor
+            .observeFull(releaseId)
+            .distinctUntilChanged()
+            .lifeSubscribe {
+                onRefreshClick()
+            }
+    }
 
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> {
         val release = releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId)

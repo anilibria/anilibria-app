@@ -46,7 +46,9 @@ class DetailHeaderViewModel(
     }
 
     fun onPlayClick() {
-
+        releaseInteractor.putEpisode(releaseInteractor.getFull(releaseId)!!.episodes.first().apply {
+            lastAccess = System.currentTimeMillis()
+        })
     }
 
     fun onPlayWebClick() {

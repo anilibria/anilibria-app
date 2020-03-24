@@ -26,6 +26,7 @@ class WatchingFragment : ScopedRowsFragment() {
     private val watchingViewModel by viewModelFromParent<WatchingViewModel>()
 
     private val historyViewModel by viewModelFromParent<WatchingHistoryViewModel>()
+    private val continueViewModel by viewModelFromParent<WatchingContinueViewModel>()
     private val favoritesViewModel by viewModelFromParent<WatchingFavoritesViewModel>()
     private val recommendsViewModel by viewModelFromParent<WatchingRecommendsViewModel>()
 
@@ -33,6 +34,7 @@ class WatchingFragment : ScopedRowsFragment() {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(watchingViewModel)
         lifecycle.addObserver(historyViewModel)
+        lifecycle.addObserver(continueViewModel)
         lifecycle.addObserver(favoritesViewModel)
         lifecycle.addObserver(recommendsViewModel)
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
@@ -68,6 +70,7 @@ class WatchingFragment : ScopedRowsFragment() {
 
     private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
         WatchingViewModel.HISTORY_ROW_ID -> historyViewModel
+        WatchingViewModel.CONTINUE_ROW_ID -> continueViewModel
         WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
         WatchingViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
         else -> null

@@ -62,6 +62,7 @@
         <item name="guidedStepBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
+        <item name="guidedActionsElevation">0dp</item>
     </style>
 
     <style name="AppTheme.LeanbackWizard.NoSelector">

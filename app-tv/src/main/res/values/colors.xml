@@ -45,9 +45,8 @@
 
     <!-- Leanback -->
 
-    <color name="app_guidedstep_actions_background">#C03800</color>
-    <color name="app_guidedstep_actions_background1">#44303030</color>
-    <color name="app_guidedstep_subactions_background">#732200</color>
+    <color name="app_guidedstep_actions_background">@color/dark_colorPrimary</color>
+    <color name="app_guidedstep_subactions_background">#1A1A1A</color>
     <color name="app_guidedstep_dialog_actions_background">#263238</color>
 
 </resources>

@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.common.fragment.scoped
 
 import android.os.Bundle
-import ru.radiationx.anilibria.common.fragment.DialogRouter
+import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.shared.ktx.android.attachBackPressed
 import ru.radiationx.shared_app.di.DependencyInjector
@@ -24,7 +24,7 @@ open class ScopedGuidedStepFragment : FakeGuidedStepFragment(), ScopeProvider {
         super.onCreate(savedInstanceState)
         attachBackPressed {
             if (isEnabled) {
-                getScopedDependency(DialogRouter::class.java).exit()
+                getScopedDependency(GuidedRouter::class.java).exit()
                 isEnabled = false
             }
         }

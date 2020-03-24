@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.leanback.widget.NonOverlappingLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/guidedActionItemContainerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/guidedactions_item_progressBar"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_weight="1"
+        android:indeterminate="false" />
+
+    <androidx.leanback.widget.NonOverlappingLinearLayout
+        android:id="@+id/guidedactions_item_content"
+        style="?attr/guidedActionItemContentStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/guidedactions_item_title"
+            style="?attr/guidedActionItemTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Processing..." />
+
+    </androidx.leanback.widget.NonOverlappingLinearLayout>
+
+</androidx.leanback.widget.NonOverlappingLinearLayout>

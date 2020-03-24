@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import ru.radiationx.anilibria.DetailDataConverter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.GradientBackgroundManager
-import ru.radiationx.anilibria.common.fragment.DialogRouter
+import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.screen.ScopedFragmentActivity
@@ -32,7 +31,7 @@ class MainActivity : ScopedFragmentActivity() {
     lateinit var router: Router
 
     @Inject
-    lateinit var dialogRouter: DialogRouter
+    lateinit var guidedRouter: GuidedRouter
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder

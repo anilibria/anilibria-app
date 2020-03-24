@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.leanback.app.BrowseSupportFragment
 import kotlinx.android.synthetic.main.test_fragment.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.DialogRouter
+import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.TestGuidedStepScreen
 import ru.radiationx.anilibria.screen.TestScreen
 import ru.radiationx.shared.ktx.android.attachBackPressed
@@ -22,7 +22,7 @@ class TestFragment : ScopedFragment(R.layout.test_fragment), BrowseSupportFragme
     lateinit var router: Router
 
     @Inject
-    lateinit var dialogRouter: DialogRouter
+    lateinit var guidedRouter: GuidedRouter
 
     override fun getMainFragmentAdapter(): BrowseSupportFragment.MainFragmentAdapter<*> {
         return selfMainFragmentAdapter
@@ -49,7 +49,7 @@ class TestFragment : ScopedFragment(R.layout.test_fragment), BrowseSupportFragme
         }
 
         btndialog.setOnClickListener {
-            dialogRouter.navigateTo(TestGuidedStepScreen())
+            guidedRouter.navigateTo(TestGuidedStepScreen())
         }
     }
 }

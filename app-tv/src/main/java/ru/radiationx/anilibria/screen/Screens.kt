@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria.screen
 
 import androidx.fragment.app.Fragment
-import ru.radiationx.anilibria.common.fragment.DialogAppScreen
+import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
+import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
+import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
@@ -48,7 +50,19 @@ class TestScreen() : SupportAppScreen() {
     }
 }
 
-class TestGuidedStepScreen : DialogAppScreen() {
+class AuthGuidedScreen : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return AuthGuidedFragment()
+    }
+}
+
+class AuthCredentialsGuidedScreen : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return AuthCredentialsGuidedFragment()
+    }
+}
+
+class TestGuidedStepScreen : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment? {
         return DialogExampleFragment()
     }

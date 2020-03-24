@@ -53,9 +53,19 @@
 
 
     <style name="AppTheme.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
-        <item name="guidedStepBackground">@color/app_guidedstep_actions_background1</item>
+        <item name="android:colorPrimary">@color/dark_colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/dark_colorAccent</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="guidedStepBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
+    </style>
+
+    <style name="AppTheme.LeanbackWizard.NoSelector">
+        <item name="guidedActionsSelectorDrawable">@null</item>
     </style>
 
     <style name="AppTheme.Widget.Leanback.Headers.VerticalGridView" parent="Widget.Leanback.Headers.VerticalGridView">

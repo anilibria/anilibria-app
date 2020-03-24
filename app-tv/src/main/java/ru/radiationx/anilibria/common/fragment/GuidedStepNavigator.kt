@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common.fragment
 
-import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -19,7 +18,7 @@ class GuidedStepNavigator(
     private val scopeProvider: ScopeProvider
 ) : ScopedAppNavigator(activity, containerId, fragmentManager, scopeProvider) {
 
-    private val dialogStack = LinkedList<String>()
+    private val guidedStack = LinkedList<String>()
 
     private val activityFragmentManager = activity.supportFragmentManager
 
@@ -29,9 +28,9 @@ class GuidedStepNavigator(
     fun backStackById(id: Int): FragmentManager.BackStackEntry? = backStack.find { it.id == id }
 
     override fun applyCommands(commands: Array<out Command>) {
-        val onlyDialogCommands = commands.all { (it as? Forward)?.screen is DialogAppScreen }
-        Log.e("GuidedStepNavigator", "applyCommands only $onlyDialogCommands")
-        if (onlyDialogCommands) {
+        val onlyGuidedCommands = commands.all { (it as? Forward)?.screen is GuidedAppScreen }
+        Log.e("GuidedStepNavigator", "applyCommands only $onlyGuidedCommands")
+        if (onlyGuidedCommands) {
             for (command in commands) {
                 applyCommand(command)
             }
@@ -44,18 +43,18 @@ class GuidedStepNavigator(
 
         Log.e("GuidedStepNavigator", "applyCommand $command")
         when (command) {
-            is Forward -> dialogForward(command)
-            is Replace -> dialogReplace(command)
-            is BackTo -> dialogBackTo(command)
-            is Back -> dialogBack()
+            is Forward -> guidedForward(command)
+            is Replace -> guidedReplace(command)
+            is BackTo -> guidedBackTo(command)
+            is Back -> guidedBack()
         }
     }
 
-    protected fun dialogForward(command: Forward) {
+    protected fun guidedForward(command: Forward) {
 
-        Log.e("GuidedStepNavigator", "dialogForward ${command.screen}")
-        if (command.screen is DialogAppScreen) {
-            val screen = command.screen as DialogAppScreen
+        Log.e("GuidedStepNavigator", "guidedForward ${command.screen}")
+        if (command.screen is GuidedAppScreen) {
+            val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
             fragment.putScopeArgument(scopeProvider.screenScopeTag)
@@ -69,25 +68,25 @@ class GuidedStepNavigator(
                 .addToBackStack(screen.screenKey)
                 .commit()
 
-            dialogStack.add(screen.screenKey)
+            guidedStack.add(screen.screenKey)
         } else {
             activityForward(command)
         }
     }
 
-    protected fun dialogReplace(command: Replace) {
+    protected fun guidedReplace(command: Replace) {
 
-        Log.e("GuidedStepNavigator", "dialogForward ${command.screen}")
-        if (command.screen is DialogAppScreen) {
-            val screen = command.screen as DialogAppScreen
+        Log.e("GuidedStepNavigator", "guidedForward ${command.screen}")
+        if (command.screen is GuidedAppScreen) {
+            val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
             fragment.putScopeArgument(scopeProvider.screenScopeTag)
 
             val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
-            if (dialogStack.isNotEmpty() && currentFragment != null) {
+            if (guidedStack.isNotEmpty() && currentFragment != null) {
                 fragmentManager.popBackStackImmediate()
-                dialogStack.removeLast()
+                guidedStack.removeLast()
             }
 
             activityFragmentManager
@@ -99,21 +98,21 @@ class GuidedStepNavigator(
                 .addToBackStack(screen.screenKey)
                 .commit()
 
-            dialogStack.add(screen.screenKey)
+            guidedStack.add(screen.screenKey)
         } else {
             activityReplace(command)
         }
     }
 
-    protected fun dialogBackTo(command: BackTo) {
-        if (dialogStack.isNotEmpty()) {
+    protected fun guidedBackTo(command: BackTo) {
+        if (guidedStack.isNotEmpty()) {
             val key = command.screen?.screenKey
-            val index = max(dialogStack.indexOf(key), 0)
-            val range = (0 until dialogStack.size - index)
-            Log.e("GuidedStepNavigator", "dialogBackTo $key, $index, ${dialogStack.size}, $range")
+            val index = max(guidedStack.indexOf(key), 0)
+            val range = (0 until guidedStack.size - index)
+            Log.e("GuidedStepNavigator", "guidedBackTo $key, $index, ${guidedStack.size}, $range")
             range.forEach {
-                Log.e("GuidedStepNavigator", "dialogBackTo remove $it")
-                dialogStack.removeLast()
+                Log.e("GuidedStepNavigator", "guidedBackTo remove $it")
+                guidedStack.removeLast()
                 fragmentManager.popBackStack(key, 0)
             }
         } else {
@@ -121,12 +120,12 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun dialogBack() {
+    protected fun guidedBack() {
         val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
 
         Log.e(
             "GuidedStepNavigator",
-            "dialogBack current = $currentFragment, stack = ${(0 until fragmentManager.backStackEntryCount).map {
+            "guidedBack current = $currentFragment, stack = ${(0 until fragmentManager.backStackEntryCount).map {
                 fragmentManager.getBackStackEntryAt(it)
             }.joinToString()}"
         )

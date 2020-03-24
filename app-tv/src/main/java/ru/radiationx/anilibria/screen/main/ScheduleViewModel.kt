@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
 import ru.terrakok.cicerone.Router
@@ -15,6 +16,7 @@ import java.util.*
 @InjectConstructor
 class ScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
+    private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
     private val router: Router
 ) : BaseCardsViewModel() {
@@ -26,6 +28,10 @@ class ScheduleViewModel(
 
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = scheduleRepository
         .loadSchedule()
+        .doOnSuccess {
+            val allReleases = it.map { it.items.map { it.releaseItem } }.flatten()
+            releaseInteractor.updateItemsCache(allReleases)
+        }
         .map { schedueDays ->
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()

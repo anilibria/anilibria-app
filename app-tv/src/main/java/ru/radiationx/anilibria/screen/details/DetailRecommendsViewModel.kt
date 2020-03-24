@@ -53,6 +53,10 @@ class DetailRecommendsViewModel(
                 Single.just(it)
             }
         }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnSuccess {
+            releaseInteractor.updateItemsCache(it)
+        }
         .map { result ->
             result.map { converter.toCard(it) }
         }

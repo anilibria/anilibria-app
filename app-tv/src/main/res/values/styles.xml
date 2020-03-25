@@ -63,10 +63,18 @@
         <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
         <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
         <item name="guidedActionsElevation">0dp</item>
+
+        <item name="guidanceIconStyle">@style/AppTheme.Widget.GuidanceIconStyle</item>
     </style>
 
     <style name="AppTheme.LeanbackWizard.NoSelector">
         <item name="guidedActionsSelectorDrawable">@null</item>
+    </style>
+
+    <style name="AppTheme.Widget.GuidanceIconStyle" parent="Widget.Leanback.GuidanceIconStyle">
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_height">140dp</item>
+        <item name="android:background">@drawable/bg_auth_qrcode</item>
     </style>
 
     <style name="AppTheme.Widget.Leanback.Headers.VerticalGridView" parent="Widget.Leanback.Headers.VerticalGridView">

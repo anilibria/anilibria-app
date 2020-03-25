@@ -7,6 +7,7 @@ import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.api.AuthApi
+import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
@@ -17,10 +18,10 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class AuthRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val authApi: AuthApi,
-        private val userHolder: UserHolder,
-        private val socialAuthHolder: SocialAuthHolder
+    private val schedulers: SchedulersProvider,
+    private val authApi: AuthApi,
+    private val userHolder: UserHolder,
+    private val socialAuthHolder: SocialAuthHolder
 ) {
 
     /*private val socialAuthInfo = listOf(SocialAuth(
@@ -32,9 +33,9 @@ class AuthRepository @Inject constructor(
     ))*/
 
     fun observeUser(): Observable<ProfileItem> = userHolder
-            .observeUser()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .observeUser()
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getUser() = userHolder.getUser()
 
@@ -53,52 +54,62 @@ class AuthRepository @Inject constructor(
 
     // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.
     fun loadUser(): Single<ProfileItem> = authApi
-            .loadUser()
-            .doOnSuccess { updateUser(it) }
-            .doOnError {
-                it.printStackTrace()
-                val code = ((it as? ApiError)?.code ?: (it as? HttpException)?.code)
-                if (code == 401) {
-                    userHolder.delete()
-                }
-            }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-
-    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
-            .signIn(login, password, code2fa)
-            .doOnSuccess { userHolder.saveUser(it) }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-
-    fun signOut(): Single<String> = authApi
-            .signOut()
-            .doOnSuccess {
+        .loadUser()
+        .doOnSuccess { updateUser(it) }
+        .doOnError {
+            it.printStackTrace()
+            val code = ((it as? ApiError)?.code ?: (it as? HttpException)?.code)
+            if (code == 401) {
                 userHolder.delete()
             }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    fun getOtpInfo(): Single<OtpInfo> = authApi
+        .loadOtpInfo()
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    fun signInOtp(code: String): Single<ProfileItem> = authApi
+        .signInOtp(code)
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
+        .signIn(login, password, code2fa)
+        .doOnSuccess { userHolder.saveUser(it) }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    fun signOut(): Single<String> = authApi
+        .signOut()
+        .doOnSuccess {
+            userHolder.delete()
+        }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun observeSocialAuth(): Observable<List<SocialAuth>> = socialAuthHolder
-            .observe()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .observe()
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun loadSocialAuth(): Single<List<SocialAuth>> = authApi
-            .loadSocialAuth()
-            .doOnSuccess { socialAuthHolder.save(it) }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .loadSocialAuth()
+        .doOnSuccess { socialAuthHolder.save(it) }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getSocialAuth(key: String): Single<SocialAuth> = Single
-            .just(socialAuthHolder.get().first { it.key == key })
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .just(socialAuthHolder.get().first { it.key == key })
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> = authApi
-            .signInSocial(resultUrl, item)
-            .doOnSuccess { userHolder.saveUser(it) }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .signInSocial(resultUrl, item)
+        .doOnSuccess { userHolder.saveUser(it) }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
 }

@@ -25,6 +25,10 @@
             android:layout_height="wrap_content"
             tools:text="Processing..." />
 
+        <androidx.leanback.widget.GuidedActionEditText
+            android:id="@+id/guidedactions_item_description"
+            style="?attr/guidedActionItemDescriptionStyle" />
+
     </androidx.leanback.widget.NonOverlappingLinearLayout>
 
 </androidx.leanback.widget.NonOverlappingLinearLayout>

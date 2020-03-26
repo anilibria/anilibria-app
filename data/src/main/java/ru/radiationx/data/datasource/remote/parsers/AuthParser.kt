@@ -15,8 +15,8 @@ import javax.inject.Inject
  * Created by radiationx on 31.12.17.
  */
 class AuthParser @Inject constructor(
-        private val apiUtils: IApiUtils,
-        private val apiConfig: ApiConfig
+    private val apiUtils: IApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
     fun authResult(responseText: String): String {
@@ -25,7 +25,7 @@ class AuthParser @Inject constructor(
         val message = responseJson.nullString("mes")
         val key = responseJson.nullString("key")
         if (error != "ok" && key != "authorized") {
-            throw ApiError(400, message, null)
+            throw ApiError(400, message ?: key, null)
         }
         return message.orEmpty()
     }
@@ -45,13 +45,15 @@ class AuthParser @Inject constructor(
         val resultItems = mutableListOf<SocialAuth>()
         for (j in 0 until responseJson.length()) {
             val jsonItem = responseJson.getJSONObject(j)
-            resultItems.add(SocialAuth(
+            resultItems.add(
+                SocialAuth(
                     jsonItem.getString("key"),
                     jsonItem.getString("title"),
                     jsonItem.getString("socialUrl"),
                     jsonItem.getString("resultPattern"),
                     jsonItem.getString("errorUrlPattern")
-            ))
+                )
+            )
         }
         return resultItems
     }

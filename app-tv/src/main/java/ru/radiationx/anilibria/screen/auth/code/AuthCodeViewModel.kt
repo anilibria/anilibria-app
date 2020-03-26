@@ -73,7 +73,7 @@ class AuthCodeViewModel(
             .lifeSubscribe({
                 otpInfoData.value = it
                 state.value = ButtonState.Complete(false)
-                startTimer(it)
+                //startTimer(it)
             }, {
                 it.printStackTrace()
                 state.value = ButtonState.Repeat(false)

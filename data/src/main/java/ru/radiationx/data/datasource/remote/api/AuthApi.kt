@@ -1,6 +1,7 @@
 package ru.radiationx.data.datasource.remote.api
 
 import android.net.Uri
+import android.util.Log
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
@@ -39,21 +40,37 @@ class AuthApi @Inject constructor(
             .map { authParser.parseUser(it) }
     }
 
-    fun loadOtpInfo(): Single<OtpInfo> = Single.fromCallable {
-            OtpInfo(
-                String.format("%06d", (0..999999).random()),
-                "Откройте на компьютере или в мобильном приложении свой профиль и введите код.\nМобильное приложение должно быть обновлено до актуальной версии.",
-                Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60L))
-            )
-        }
-        .delay((100L..2000L).random(), TimeUnit.MILLISECONDS)
+    fun loadOtpInfo(): Single<OtpInfo> {
+        val args: MutableMap<String, String> = mutableMapOf(
+            "query" to "auth_get_otp",
+            "deviceId" to "tv"
+        )
+        return client
+            .post(apiConfig.apiUrl, args)
+            .compose(ApiResponse.fetchResult<JSONObject>())
+            .map {
+                Log.e("lalala", "raw json $it")
+                OtpInfo(
+                    it.getString("code"),
+                    it.getString("description"),
+                    Date(it.getInt("expired_at") * 1000L)
+                )
+            }
+    }
 
-    fun signInOtp(code: String): Single<ProfileItem> = Single
-        .timer((100L..2000L).random(), TimeUnit.MILLISECONDS)
-        .map { ProfileItem() }
-        .doOnSuccess {
-            throw Exception("Hehehe. What about NO?")
-        }
+    fun signInOtp(code: String): Single<ProfileItem> {
+        val args: MutableMap<String, String> = mutableMapOf(
+            "query" to "auth_login_otp",
+            "deviceId" to "tv",
+            "code" to code
+        )
+        return client.post(apiConfig.apiUrl, args)
+            .compose(ApiResponse.fetchResult<JSONObject>())
+            .doOnSuccess {
+                Log.e("lalala", "raw json $it")
+            }
+            .flatMap { loadUser() }
+    }
 
     fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf(

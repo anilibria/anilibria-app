@@ -21,7 +21,11 @@ class AppLauncherViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        /*apiConfig
+
+    }
+
+    fun coldLaunch() {
+        apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .observeOn(schedulersProvider.ui())
@@ -33,17 +37,13 @@ class AppLauncherViewModel(
                         initMain()
                     }
                 }
-            }*/
+            }
 
-        /*if (false && apiConfig.needConfig) {
+        if (apiConfig.needConfig) {
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()
-        }*/
-    }
-
-    fun coldLaunch() {
-        initMain()
+        }
     }
 
     private fun initMain() {
@@ -52,6 +52,10 @@ class AppLauncherViewModel(
         if (authRepository.getAuthState() != AuthState.AUTH) {
             router.navigateTo(AuthGuidedScreen())
         }
+
+        authRepository
+            .loadUser()
+            .lifeSubscribe({}, {})
     }
 
 }

@@ -3,6 +3,8 @@ package ru.radiationx.anilibria.ui.fragments.settings
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
@@ -10,11 +12,14 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
+import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.repository.AuthRepository
 import javax.inject.Inject
 
 /**
@@ -29,6 +34,12 @@ class SettingsFragment : BaseSettingFragment() {
     @Inject
     lateinit var apiConfig: ApiConfig
 
+    @Inject
+    lateinit var authRepository: AuthRepository
+
+    @Inject
+    lateinit var errorHandler: IErrorHandler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
@@ -40,22 +51,22 @@ class SettingsFragment : BaseSettingFragment() {
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
                 val values = arrayOf(
-                        PreferencesHolder.QUALITY_SD,
-                        PreferencesHolder.QUALITY_HD,
-                        PreferencesHolder.QUALITY_FULL_HD,
-                        PreferencesHolder.QUALITY_NO,
-                        PreferencesHolder.QUALITY_ALWAYS
+                    PreferencesHolder.QUALITY_SD,
+                    PreferencesHolder.QUALITY_HD,
+                    PreferencesHolder.QUALITY_FULL_HD,
+                    PreferencesHolder.QUALITY_NO,
+                    PreferencesHolder.QUALITY_ALWAYS
                 )
                 val titles = values.map { getQualityTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
-                        .setTitle(preference.title)
-                        .setItems(titles) { _, which ->
-                            val quality = values[which]
-                            appPreferences.setQuality(quality)
-                            icon = getQualityIcon(quality)
-                            summary = getQualityTitle(quality)
-                        }
-                        .show()
+                    .setTitle(preference.title)
+                    .setItems(titles) { _, which ->
+                        val quality = values[which]
+                        appPreferences.setQuality(quality)
+                        icon = getQualityIcon(quality)
+                        summary = getQualityTitle(quality)
+                    }
+                    .show()
                 false
             }
         }
@@ -66,20 +77,20 @@ class SettingsFragment : BaseSettingFragment() {
             summary = getPlayerTypeTitle(savedPlayerType)
             setOnPreferenceClickListener { preference ->
                 val values = arrayOf(
-                        PreferencesHolder.PLAYER_TYPE_EXTERNAL,
-                        PreferencesHolder.PLAYER_TYPE_INTERNAL,
-                        PreferencesHolder.PLAYER_TYPE_NO,
-                        PreferencesHolder.PLAYER_TYPE_ALWAYS
+                    PreferencesHolder.PLAYER_TYPE_EXTERNAL,
+                    PreferencesHolder.PLAYER_TYPE_INTERNAL,
+                    PreferencesHolder.PLAYER_TYPE_NO,
+                    PreferencesHolder.PLAYER_TYPE_ALWAYS
                 )
                 val titles = values.map { getPlayerTypeTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
-                        .setTitle(preference.title)
-                        .setItems(titles) { dialog, which ->
-                            val playerType = values[which]
-                            appPreferences.setPlayerType(playerType)
-                            summary = getPlayerTypeTitle(playerType)
-                        }
-                        .show()
+                    .setTitle(preference.title)
+                    .setItems(titles) { dialog, which ->
+                        val playerType = values[which]
+                        appPreferences.setPlayerType(playerType)
+                        summary = getPlayerTypeTitle(playerType)
+                    }
+                    .show()
                 false
             }
         }
@@ -122,6 +133,24 @@ class SettingsFragment : BaseSettingFragment() {
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)
                 })
+                false
+            }
+        }
+
+        findPreference<Preference>("about.otp_code")?.apply {
+            setOnPreferenceClickListener {
+                val ediText = EditText(requireContext())
+                ediText.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                AlertDialog.Builder(requireContext())
+                    .setView(ediText)
+                    .setPositiveButton("Ok") { dialog, which ->
+                        authRepository
+                            .acceptOtp(ediText.text.toString())
+                            .doOnError { errorHandler.handle(it) }
+                            .subscribe()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
                 false
             }
         }

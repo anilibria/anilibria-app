@@ -57,6 +57,11 @@
         android:title="О программе">
 
         <Preference
+            android:key="about.otp_code"
+            android:layout="@layout/preference_custom"
+            android:title="Ввести код авторизации" />
+
+        <Preference
             android:key="about.application"
             android:layout="@layout/preference_custom"
             android:title="@string/app_name" />

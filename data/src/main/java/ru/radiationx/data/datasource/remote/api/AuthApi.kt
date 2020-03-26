@@ -2,6 +2,7 @@ package ru.radiationx.data.datasource.remote.api
 
 import android.net.Uri
 import android.util.Log
+import io.reactivex.Completable
 import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
@@ -56,6 +57,20 @@ class AuthApi @Inject constructor(
                     Date(it.getInt("expired_at") * 1000L)
                 )
             }
+    }
+
+    fun acceptOtp(code: String): Completable {
+        val args: MutableMap<String, String> = mutableMapOf(
+            "query" to "auth_accept_otp",
+            "code" to code
+        )
+        return client
+            .post(apiConfig.apiUrl, args)
+            .compose(ApiResponse.fetchResult<JSONObject>())
+            .doOnSuccess {
+                Log.e("lalala", "raw json $it")
+            }
+            .ignoreElement()
     }
 
     fun signInOtp(code: String): Single<ProfileItem> {

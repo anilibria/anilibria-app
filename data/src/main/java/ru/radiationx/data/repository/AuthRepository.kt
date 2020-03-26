@@ -1,5 +1,6 @@
 package ru.radiationx.data.repository
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
@@ -71,8 +72,14 @@ class AuthRepository @Inject constructor(
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
+    fun acceptOtp(code: String): Completable = authApi
+        .acceptOtp(code)
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
     fun signInOtp(code: String): Single<ProfileItem> = authApi
         .signInOtp(code)
+        .doOnSuccess { userHolder.saveUser(it) }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 

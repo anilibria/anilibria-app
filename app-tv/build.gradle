@@ -63,4 +63,8 @@ dependencies {
     implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0"
     implementation "com.github.stephanenicolas.toothpick:ktp:3.1.0"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0"
+
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
+    implementation 'com.google.android.exoplayer:extension-leanback:2.11.3'
 }

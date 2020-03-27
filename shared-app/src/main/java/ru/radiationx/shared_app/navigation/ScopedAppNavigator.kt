@@ -1,5 +1,7 @@
 package ru.radiationx.shared_app.navigation
 
+import android.content.Intent
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -25,5 +27,10 @@ open class ScopedAppNavigator(
         super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
         fragmentTransaction.setReorderingAllowed(true)
         nextFragment?.putScopeArgument(scopeProvider.screenScopeTag)
+    }
+
+    override fun createStartActivityOptions(command: Command, activityIntent: Intent): Bundle? {
+        activityIntent.putScopeArgument(scopeProvider)
+        return super.createStartActivityOptions(command, activityIntent)
     }
 }

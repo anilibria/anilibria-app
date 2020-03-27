@@ -8,14 +8,17 @@ import ru.radiationx.anilibria.DetailDataConverter
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.LibriaDetailsRow
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class DetailHeaderViewModel(
     private val releaseInteractor: ReleaseInteractor,
-    private val converter: DetailDataConverter
+    private val converter: DetailDataConverter,
+    private val router: Router
 ) : LifecycleViewModel() {
 
     var releaseId: Int = -1
@@ -46,9 +49,10 @@ class DetailHeaderViewModel(
     }
 
     fun onPlayClick() {
-        releaseInteractor.putEpisode(releaseInteractor.getFull(releaseId)!!.episodes.first().apply {
+        router.navigateTo(PlayerScreen(releaseId))
+        /*releaseInteractor.putEpisode(releaseInteractor.getFull(releaseId)!!.episodes.first().apply {
             lastAccess = System.currentTimeMillis()
-        })
+        })*/
     }
 
     fun onPlayWebClick() {

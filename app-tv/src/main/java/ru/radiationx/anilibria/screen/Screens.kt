@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.screen
 
+import android.content.Context
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
@@ -9,6 +11,7 @@ import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
+import ru.radiationx.anilibria.screen.player.PlayerActivity
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
@@ -66,6 +69,12 @@ class AuthCredentialsGuidedScreen : GuidedAppScreen() {
 class AuthOtpGuidedScreen : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment? {
         return AuthOtpGuidedFragment()
+    }
+}
+
+class PlayerScreen(private val releaseId: Int) : SupportAppScreen() {
+    override fun getActivityIntent(context: Context): Intent {
+        return PlayerActivity.getIntent(context, releaseId)
     }
 }
 

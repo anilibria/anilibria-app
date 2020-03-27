@@ -45,7 +45,7 @@ class MainActivity : ScopedFragmentActivity() {
             bind(DetailDataConverter::class.java).toInstance(DetailDataConverter(this@MainActivity))
         })
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_fragments)
         lifecycle.addObserver(viewModel)
 
         if (savedInstanceState == null) {

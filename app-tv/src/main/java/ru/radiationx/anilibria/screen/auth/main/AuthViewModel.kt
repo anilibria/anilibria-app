@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.auth.main
 
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.anilibria.screen.AuthCodeGuidedScreen
+import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.common.AuthState
@@ -17,7 +17,7 @@ class AuthViewModel(
 ) : LifecycleViewModel() {
 
     fun onCodeClick() {
-        guidedRouter.open(AuthCodeGuidedScreen())
+        guidedRouter.open(AuthOtpGuidedScreen())
     }
 
     fun onClassicClick() {

@@ -13,10 +13,6 @@ class GuidedProgressActionsStylist : GuidedActionsStylist() {
         const val PROGRESS_VIEW_TYPE = 2
     }
 
-    init {
-        setAsButtonActions()
-    }
-
     override fun getItemViewType(action: GuidedAction): Int {
         if (action is GuidedProgressAction) {
             return PROGRESS_VIEW_TYPE

@@ -64,8 +64,8 @@ class AuthCredentialsGuidedFragment : ScopedGuidedStepFragment() {
         null
     )
 
-    override fun onCreateButtonActionsStylist(): GuidedActionsStylist {
-        return GuidedProgressActionsStylist()
+    override fun onCreateButtonActionsStylist(): GuidedActionsStylist = GuidedProgressActionsStylist().apply {
+        setAsButtonActions()
     }
 
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {

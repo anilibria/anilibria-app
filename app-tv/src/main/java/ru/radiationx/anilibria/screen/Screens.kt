@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.screen
 import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
-import ru.radiationx.anilibria.screen.auth.code.AuthCodeGuidedFragment
+import ru.radiationx.anilibria.screen.auth.otp.AuthOtpGuidedFragment
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
 import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
@@ -63,9 +63,9 @@ class AuthCredentialsGuidedScreen : GuidedAppScreen() {
     }
 }
 
-class AuthCodeGuidedScreen : GuidedAppScreen() {
+class AuthOtpGuidedScreen : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment? {
-        return AuthCodeGuidedFragment()
+        return AuthOtpGuidedFragment()
     }
 }
 

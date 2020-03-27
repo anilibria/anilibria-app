@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.auth.code
+package ru.radiationx.anilibria.screen.auth.otp
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +16,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
-class AuthCodeViewModel(
+class AuthOtpViewModel(
     private val authRepository: AuthRepository,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.auth.code
+package ru.radiationx.anilibria.screen.auth.otp
 
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 
-class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
+class AuthOtpGuidedFragment : ScopedGuidedStepFragment() {
 
     companion object {
         private const val COMPLETE_ACTION_ID = 1L
@@ -44,7 +44,7 @@ class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
             .build()
     }
 
-    private val viewModel by viewModel<AuthCodeViewModel>()
+    private val viewModel by viewModel<AuthOtpViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +64,9 @@ class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
         subscribeTo(viewModel.state) {
             Log.e("lalala", "State $it, ${it.progress}")
             val primaryAction = when (it.buttonState) {
-                AuthCodeViewModel.ButtonState.COMPLETE -> completeAction
-                AuthCodeViewModel.ButtonState.EXPIRED -> expiredAction
-                AuthCodeViewModel.ButtonState.REPEAT -> repeatAction
+                AuthOtpViewModel.ButtonState.COMPLETE -> completeAction
+                AuthOtpViewModel.ButtonState.EXPIRED -> expiredAction
+                AuthOtpViewModel.ButtonState.REPEAT -> repeatAction
             }
 
             actions = if (it.error.isEmpty()) {
@@ -87,14 +87,12 @@ class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): GuidanceStylist.Guidance = GuidanceStylist.Guidance(
         "Запрашивается код",
-        null,
+        "Запрашивается код",
         "Авторизация",
         null
     )
 
-    override fun onCreateActionsStylist(): GuidedActionsStylist {
-        return GuidedProgressActionsStylist()
-    }
+    override fun onCreateActionsStylist(): GuidedActionsStylist = GuidedProgressActionsStylist()
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         when (action.id) {
@@ -104,6 +102,11 @@ class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
         }
     }
 
+
+    override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
+        super.onCreateActions(actions, savedInstanceState)
+        actions.add(completeAction)
+    }
     private fun GuidedProgressAction.updateProgress(progress: Boolean) {
         updateAction {
             showProgress = progress

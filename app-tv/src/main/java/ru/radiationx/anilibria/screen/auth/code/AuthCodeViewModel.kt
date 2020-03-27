@@ -8,9 +8,11 @@ import io.reactivex.disposables.Disposables
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.app.auth.OtpInfo
+import ru.radiationx.data.entity.app.auth.OtpNotAcceptedException
+import ru.radiationx.data.entity.app.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
 import toothpick.InjectConstructor
-import java.lang.Exception
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
@@ -20,37 +22,33 @@ class AuthCodeViewModel(
 ) : LifecycleViewModel() {
 
     val otpInfoData = MutableLiveData<OtpInfo>()
-    val state = MutableLiveData<ButtonState>()
+    val state = MutableLiveData<State>()
 
-    private var complete = false
     private var timerDisposable = Disposables.disposed()
     private var signInDisposable = Disposables.disposed()
 
+    init {
+        state.value = State()
+    }
+
     override fun onCreate() {
         super.onCreate()
-        state.value = ButtonState.Complete(true)
         loadOtpInfo()
     }
 
     fun onCompleteClick() {
-        complete = true
-        state.value = ButtonState.Complete(true)
+        updateState(progress = true, error = "")
         signIn()
     }
 
     fun onExpiredClick() {
-        state.value = ButtonState.Expired(true)
+        updateState(progress = true, error = "")
         loadOtpInfo()
     }
 
     fun onRepeatClick() {
-        if (complete) {
-            state.value = ButtonState.Complete(true)
-            signIn()
-        } else {
-            state.value = ButtonState.Complete(true)
-            loadOtpInfo()
-        }
+        updateState(progress = true, error = "")
+        loadOtpInfo()
     }
 
     private fun signIn() {
@@ -60,45 +58,73 @@ class AuthCodeViewModel(
             .lifeSubscribe({
                 guidedRouter.finishGuidedChain()
             }, {
-                it.printStackTrace()
-                state.value = ButtonState.Repeat(false)
+                handleError(it)
             })
     }
 
     private fun loadOtpInfo() {
-        complete = false
-        timerDisposable.dispose()
+        signInDisposable.dispose()
         authRepository
             .getOtpInfo()
             .lifeSubscribe({
                 otpInfoData.value = it
-                state.value = ButtonState.Complete(false)
-                //startTimer(it)
+                startTimer(it)
+                updateState(ButtonState.COMPLETE, false)
             }, {
-                it.printStackTrace()
-                state.value = ButtonState.Repeat(false)
+                handleError(it)
             })
+    }
+
+    private fun handleError(error: Throwable) {
+        error.printStackTrace()
+        val buttonState = when (error) {
+            is OtpNotFoundException -> ButtonState.EXPIRED
+            is OtpNotAcceptedException -> ButtonState.COMPLETE
+            else -> ButtonState.REPEAT
+        }
+        updateState(buttonState, false, error.message.orEmpty())
     }
 
     private fun startTimer(otpInfo: OtpInfo) {
         timerDisposable.dispose()
         val time = otpInfo.expiresAt.time - System.currentTimeMillis()
-        Log.e("lalala", "startTimer for ${time}")
+        Log.e("lalala", "startTimer for ${time}, ${otpInfo.remainingTime}, ${otpInfo.expiresAt} vs ${Date()}")
+        if (time < 0) {
+            setExpired()
+            return
+        }
         timerDisposable = Single
-            .timer(time, TimeUnit.MILLISECONDS)
+            .timer(otpInfo.remainingTime, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .lifeSubscribe({
-                complete = false
-                signInDisposable.dispose()
-                state.value = ButtonState.Expired(false)
+                setExpired()
             }, {
                 it.printStackTrace()
             })
     }
 
-    sealed class ButtonState(val progress: Boolean) {
-        class Complete(progress: Boolean) : ButtonState(progress)
-        class Expired(progress: Boolean) : ButtonState(progress)
-        class Repeat(progress: Boolean) : ButtonState(progress)
+    private fun setExpired() {
+        signInDisposable.dispose()
+        updateState(ButtonState.EXPIRED, false, "")
+    }
+
+    private fun updateState(
+        buttonState: ButtonState = state.value!!.buttonState,
+        progress: Boolean = state.value!!.progress,
+        error: String = state.value!!.error
+    ) {
+        state.value = State(buttonState, progress, error)
+    }
+
+    data class State(
+        val buttonState: ButtonState = ButtonState.COMPLETE,
+        val progress: Boolean = false,
+        val error: String = ""
+    )
+
+    enum class ButtonState {
+        COMPLETE,
+        EXPIRED,
+        REPEAT
     }
 }

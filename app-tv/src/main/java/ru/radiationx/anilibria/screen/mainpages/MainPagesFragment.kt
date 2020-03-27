@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.mainpages
 
+import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +23,8 @@ import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.viewModel
 import toothpick.InjectConstructor
 
@@ -49,7 +52,14 @@ class MainPagesFragment : ScopedBrowseFragment() {
         headersState = HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         setOnSearchClickedListener {
-            Toast.makeText(activity, "Serch clckd", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(requireContext())
+                .setMessage("?")
+                .setPositiveButton("Yep") { dialog, which ->
+                    getDependency(AuthRepository::class.java)
+                        .signOut()
+                        .subscribe()
+                }
+                .show()
         }
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
@@ -77,6 +87,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
         setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
             Log.e("lalala", "setOnItemViewSelectedListener $itemViewHolder, $item, $rowViewHolder, $row")
+
         }
         //brandColor = resources.getColor(R.color.dark_colorAccent)
         title = "AniLibria"

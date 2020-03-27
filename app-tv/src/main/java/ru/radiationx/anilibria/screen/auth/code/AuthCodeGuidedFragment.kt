@@ -9,7 +9,6 @@ import androidx.leanback.widget.GuidedActionsStylist
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
 import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
-import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 
@@ -64,20 +63,25 @@ class AuthCodeGuidedFragment : ScopedGuidedStepFragment() {
 
         subscribeTo(viewModel.state) {
             Log.e("lalala", "State $it, ${it.progress}")
-            when (it) {
-                is AuthCodeViewModel.ButtonState.Complete -> {
-                    actions = listOf(completeAction)
-                    completeAction.updateProgress(it.progress)
-                }
-                is AuthCodeViewModel.ButtonState.Expired -> {
-                    actions = listOf(expiredAction)
-                    expiredAction.updateProgress(it.progress)
-                }
-                is AuthCodeViewModel.ButtonState.Repeat -> {
-                    actions = listOf(repeatAction)
-                    repeatAction.updateProgress(it.progress)
-                }
+            val primaryAction = when (it.buttonState) {
+                AuthCodeViewModel.ButtonState.COMPLETE -> completeAction
+                AuthCodeViewModel.ButtonState.EXPIRED -> expiredAction
+                AuthCodeViewModel.ButtonState.REPEAT -> repeatAction
             }
+
+            actions = if (it.error.isEmpty()) {
+                listOf(primaryAction)
+            } else {
+                val errorAction = GuidedAction.Builder(requireContext())
+                    .title("Ошибка")
+                    .multilineDescription(true)
+                    .description(it.error)
+                    .infoOnly(true)
+                    .focusable(false)
+                    .build()
+                listOf(primaryAction, errorAction)
+            }
+            primaryAction.updateProgress(it.progress)
         }
     }
 

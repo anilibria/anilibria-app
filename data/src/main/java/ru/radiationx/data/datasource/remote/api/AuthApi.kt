@@ -49,14 +49,8 @@ class AuthApi @Inject constructor(
         return client
             .post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .map {
-                Log.e("lalala", "raw json $it")
-                OtpInfo(
-                    it.getString("code"),
-                    it.getString("description"),
-                    Date(it.getInt("expired_at") * 1000L)
-                )
-            }
+            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
+            .map { authParser.parseOtp(it) }
     }
 
     fun acceptOtp(code: String): Completable {
@@ -67,9 +61,7 @@ class AuthApi @Inject constructor(
         return client
             .post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .doOnSuccess {
-                Log.e("lalala", "raw json $it")
-            }
+            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
             .ignoreElement()
     }
 
@@ -81,9 +73,7 @@ class AuthApi @Inject constructor(
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .doOnSuccess {
-                Log.e("lalala", "raw json $it")
-            }
+            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
             .flatMap { loadUser() }
     }
 

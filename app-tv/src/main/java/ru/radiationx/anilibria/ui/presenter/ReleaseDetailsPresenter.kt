@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.TextViewCompat
 import androidx.leanback.widget.RowPresenter
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.row_detail_release.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.LibriaDetailsRow
+import ru.radiationx.anilibria.extension.getCompatDrawable
 
 class ReleaseDetailsPresenter(
     private val continueClickListener: () -> Unit,
@@ -63,6 +65,19 @@ class ReleaseDetailsPresenter(
             rowReleaseAnnounce.text = details.announce
             rowReleaseFavoriteCount.text = details.favoriteCount
             rowReleaseFavoriteCount.isVisible = details.favoriteCount != "0"
+
+            val favoriteDrawable = if (details.isFavorite) {
+                rowReleaseFavoriteCount.getCompatDrawable(R.drawable.ic_details_favorite_filled)
+            } else {
+                rowReleaseFavoriteCount.getCompatDrawable(R.drawable.ic_details_favorite)
+            }
+            TextViewCompat.setCompoundDrawablesRelative(
+                rowReleaseFavoriteCount,
+                null,
+                null,
+                favoriteDrawable,
+                null
+            )
             rowReleaseHQMarker.isVisible = details.hasFullHd
 
             rowReleaseActionContinue.isVisible = details.hasViewed

@@ -102,7 +102,7 @@ open class BasePlayerFragment : ScopedVideoFragment() {
 
     protected fun preparePlayer(url: String) {
         val mediaSource = getMediaSource(url)
-        player?.prepare(mediaSource, true, true)
+        player?.prepare(mediaSource, false, false)
     }
 
     private fun getMediaSource(url: String): MediaSource = Uri.parse(url).let {

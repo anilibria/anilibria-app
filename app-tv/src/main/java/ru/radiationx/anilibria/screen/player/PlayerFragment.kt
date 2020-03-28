@@ -37,11 +37,11 @@ class PlayerFragment : BasePlayerFragment() {
 
         playerGlue?.actionListener = object : VideoPlayerGlue.OnActionClickedListener {
 
-            override fun onPrevious() = viewModel.onPrevClick(getSeek())
-            override fun onNext() = viewModel.onNextClick(getSeek())
-            override fun onQualityClick() = viewModel.onQualityClick()
-            override fun onSpeedClick() = viewModel.onSpeedClick()
-            override fun onEpisodesClick() = viewModel.onEpisodesClick()
+            override fun onPrevious() = viewModel.onPrevClick(getPosition())
+            override fun onNext() = viewModel.onNextClick(getPosition())
+            override fun onQualityClick() = viewModel.onQualityClick(getPosition())
+            override fun onSpeedClick() = viewModel.onSpeedClick(getPosition())
+            override fun onEpisodesClick() = viewModel.onEpisodesClick(getPosition())
         }
 
         subscribeTo(viewModel.videoData) {
@@ -67,9 +67,9 @@ class PlayerFragment : BasePlayerFragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPauseClick(getSeek())
+        viewModel.onPauseClick(getPosition())
     }
 
-    private fun getSeek(): Long = player?.currentPosition ?: 0
+    private fun getPosition(): Long = player?.currentPosition ?: 0
 
 }

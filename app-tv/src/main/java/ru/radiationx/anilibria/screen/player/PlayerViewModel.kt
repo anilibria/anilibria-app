@@ -86,7 +86,7 @@ class PlayerViewModel(
         saveEpisode(position)
     }
 
-    fun onReplayClick() {
+    fun onReplayClick(position: Long) {
 
     }
 
@@ -108,19 +108,21 @@ class PlayerViewModel(
         }
     }
 
-    fun onEpisodesClick() {
+    fun onEpisodesClick(position: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
+        saveEpisode(position)
         guidedRouter.open(PlayerEpisodesGuidedScreen(release.id, episode.id))
     }
 
-    fun onQualityClick() {
+    fun onQualityClick(position: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
+        saveEpisode(position)
         guidedRouter.open(PlayerQualityGuidedScreen(release.id, episode.id))
     }
 
-    fun onSpeedClick() {
+    fun onSpeedClick(position: Long) {
         guidedRouter.open(PlayerSpeedGuidedScreen())
     }
 
@@ -156,7 +158,7 @@ class PlayerViewModel(
             val url = getEpisodeUrl(it, quality)
             Video(url!!, episode.seek, release.title.orEmpty(), it.title.orEmpty())
         }
-        if (videoData.value != newVideo) {
+        if (videoData.value?.url != newVideo.url) {
             videoData.value = newVideo
         }
     }

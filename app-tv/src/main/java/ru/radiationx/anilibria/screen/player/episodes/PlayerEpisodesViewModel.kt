@@ -9,7 +9,9 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
+import java.util.*
 
 @InjectConstructor
 class PlayerEpisodesViewModel(
@@ -21,7 +23,7 @@ class PlayerEpisodesViewModel(
     var argReleaseId = -1
     var argEpisodeId = -1
 
-    val episodesData = MutableLiveData<List<String>>()
+    val episodesData = MutableLiveData<List<Pair<String, String?>>>()
     val selectedIndex = MutableLiveData<Int>()
 
     private val currentEpisodes = mutableListOf<ReleaseFull.Episode>()
@@ -33,7 +35,14 @@ class PlayerEpisodesViewModel(
             currentEpisodes.clear()
             currentEpisodes.addAll(it.episodes.reversed())
         }
-        episodesData.value = currentEpisodes.map { it.title.orEmpty() }
+        episodesData.value = currentEpisodes.map {
+            val description = if (it.isViewed && it.seek > 0) {
+                "Остановлена на ${Date(it.seek).asTimeSecString()}"
+            } else {
+                null
+            }
+            Pair(it.title.orEmpty(), description)
+        }
         selectedIndex.value = currentEpisodes.indexOfLast { it.id == argEpisodeId }
     }
 

@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
 import ru.radiationx.anilibria.screen.player.PlayerActivity
 import ru.radiationx.anilibria.screen.player.quality.PlayerQualityGuidedFragment
+import ru.radiationx.anilibria.screen.player.speed.PlayerSpeedGuidedFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
@@ -82,6 +83,12 @@ class PlayerScreen(val releaseId: Int) : SupportAppScreen() {
 class PlayerQualityGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment? {
         return PlayerQualityGuidedFragment.newInstance(releaseId, episodeId)
+    }
+}
+
+class PlayerSpeedGuidedScreen : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return PlayerSpeedGuidedFragment()
     }
 }
 

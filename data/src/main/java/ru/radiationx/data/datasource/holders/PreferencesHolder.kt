@@ -38,6 +38,7 @@ interface PreferencesHolder {
     fun setPlayerType(value: Int)
 
     var playSpeed: Float
+    fun observePlaySpeed(): Observable<Float>
 
     var pipControl: Int
 

@@ -168,6 +168,8 @@ class ReleaseInteractor @Inject constructor(
         preferencesHolder.playSpeed = value
     }
 
+    fun observePlaySpeed(): Observable<Float> = preferencesHolder.observePlaySpeed()
+
     fun getPIPControl() = preferencesHolder.pipControl
 
     fun setPIPControl(value: Int) {

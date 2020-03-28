@@ -5,6 +5,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerQualityGuidedScreen
+import ru.radiationx.anilibria.screen.PlayerSpeedGuidedScreen
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -43,6 +44,14 @@ class PlayerViewModel(
                 currentQuality = handleRawQuality(it)
                 updateQuality()
                 updateEpisode()
+            }
+
+        releaseInteractor
+            .observePlaySpeed()
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .lifeSubscribe {
+                speedState.value = it
             }
 
         releaseInteractor
@@ -92,7 +101,7 @@ class PlayerViewModel(
     }
 
     fun onSpeedClick() {
-
+        guidedRouter.open(PlayerSpeedGuidedScreen())
     }
 
     private fun updateQuality() {

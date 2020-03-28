@@ -29,6 +29,7 @@ class PreferencesStorage @Inject constructor(
 
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
     private val qualityRelay = BehaviorRelay.createDefault<Int>(getQuality())
+    private val playSpeedRelay = BehaviorRelay.createDefault<Float>(playSpeed)
     private val notificationsAllRelay = BehaviorRelay.createDefault<Boolean>(notificationsAll)
     private val notificationsServiceRelay = BehaviorRelay.createDefault<Boolean>(notificationsService)
 
@@ -39,6 +40,7 @@ class PreferencesStorage @Inject constructor(
             NOTIFICATIONS_ALL_KEY -> notificationsAllRelay.accept(notificationsAll)
             NOTIFICATIONS_SERVICE_KEY -> notificationsServiceRelay.accept(notificationsService)
             QUALITY_KEY -> qualityRelay.accept(getQuality())
+            PLAY_SPEED_KEY -> playSpeedRelay.accept(playSpeed)
         }
     }
 
@@ -89,6 +91,8 @@ class PreferencesStorage @Inject constructor(
         set(value) {
             sharedPreferences.edit().putFloat(PLAY_SPEED_KEY, value).apply()
         }
+
+    override fun observePlaySpeed(): Observable<Float> = playSpeedRelay.hide()
 
     override var pipControl: Int
         get() = sharedPreferences.getInt(PIP_CONTROL_KEY, PreferencesHolder.PIP_BUTTON)

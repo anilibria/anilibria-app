@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerQualityGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerSpeedGuidedScreen
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -14,7 +15,8 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class PlayerViewModel(
     private val releaseInteractor: ReleaseInteractor,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
+    private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
     var argReleaseId = -1
@@ -35,6 +37,15 @@ class PlayerViewModel(
 
         speedState.value = releaseInteractor.getPlaySpeed()
 
+        playerController
+            .selectEpisodeRelay
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .lifeSubscribe { episodeId ->
+                currentEpisode = currentRelease?.episodes?.firstOrNull { it.id == episodeId }
+                updateEpisode()
+                updateQuality()
+            }
 
         releaseInteractor
             .observeQuality()
@@ -91,7 +102,9 @@ class PlayerViewModel(
 
 
     fun onEpisodesClick() {
-
+        val release = currentRelease ?: return
+        val episode = currentEpisode ?: return
+        guidedRouter.open(PlayerEpisodesGuidedScreen(release.id, episode.id))
     }
 
     fun onQualityClick() {

@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.di.ActivityModule
 import ru.radiationx.anilibria.di.NavigationModule
+import ru.radiationx.anilibria.di.PlayerModule
 import ru.radiationx.shared_app.di.putScopeArgument
 import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.terrakok.cicerone.NavigatorHolder
@@ -48,7 +49,8 @@ class PlayerActivity : ScopedFragmentActivity(R.layout.activity_fragments) {
     override fun onCreate(savedInstanceState: Bundle?) {
         dependencyInjector.installModules(
             ActivityModule(this),
-            NavigationModule()
+            NavigationModule(),
+            PlayerModule()
         )
 
         super.onCreate(savedInstanceState)

@@ -43,7 +43,10 @@ class WatchingContinueViewModel(
             releaseInteractor.updateItemsCache(it)
         }
         .map { releases ->
-            releases.map { converter.toCard(it) }
+            releases.map { release ->
+                val lastEpisode = releaseInteractor.getEpisodes(release.id).maxBy { it.lastAccess }
+                converter.toCard(release).copy(description = "Вы остановились на ${lastEpisode?.id} серии")
+            }
         }
 
     override fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean = false

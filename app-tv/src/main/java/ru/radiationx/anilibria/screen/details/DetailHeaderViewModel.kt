@@ -45,14 +45,13 @@ class DetailHeaderViewModel(
     }
 
     fun onContinueClick() {
-
+        releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.also {
+            router.navigateTo(PlayerScreen(releaseId, it.id))
+        }
     }
 
     fun onPlayClick() {
         router.navigateTo(PlayerScreen(releaseId))
-        /*releaseInteractor.putEpisode(releaseInteractor.getFull(releaseId)!!.episodes.first().apply {
-            lastAccess = System.currentTimeMillis()
-        })*/
     }
 
     fun onPlayWebClick() {

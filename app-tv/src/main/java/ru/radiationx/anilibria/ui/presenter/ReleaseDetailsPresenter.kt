@@ -73,6 +73,12 @@ class ReleaseDetailsPresenter(
                 "Добавить в избранное"
             }
 
+            if (details.hasViewed) {
+                rowReleaseActionContinue.requestFocus()
+            } else {
+                rowReleaseActionPlay.requestFocus()
+            }
+
             rowReleaseActionContinue.setOnClickListener { continueClickListener.invoke() }
             rowReleaseActionPlay.setOnClickListener { playClickListener.invoke() }
             rowReleaseActionPlayWeb.setOnClickListener { playWebClickListener.invoke() }

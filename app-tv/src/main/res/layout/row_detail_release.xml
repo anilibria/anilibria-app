@@ -196,8 +196,6 @@
         app:layout_constraintTop_toBottomOf="@id/rowReleaseActions_barrier"
         app:layout_constraintVertical_bias="1">
 
-        <requestFocus />
-
         <Button
             android:id="@+id/rowReleaseActionContinue"
             style="?attr/detailsActionButtonStyle"

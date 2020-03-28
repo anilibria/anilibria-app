@@ -12,10 +12,12 @@ class PlayerFragment : BasePlayerFragment() {
 
     companion object {
 
-        private const val ARG_ID = "id"
+        private const val ARG_RELEASE_ID = "release id"
+        private const val ARG_EPISODE_ID = "episode id"
 
-        fun newInstance(releaseId: Int): PlayerFragment = PlayerFragment().putExtra {
-            putInt(ARG_ID, releaseId)
+        fun newInstance(releaseId: Int, episodeId: Int = -1): PlayerFragment = PlayerFragment().putExtra {
+            putInt(ARG_RELEASE_ID, releaseId)
+            putInt(ARG_EPISODE_ID, episodeId)
         }
     }
 
@@ -24,7 +26,10 @@ class PlayerFragment : BasePlayerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        viewModel.argReleaseId = arguments?.getInt(ARG_ID) ?: viewModel.argReleaseId
+        arguments?.apply {
+            viewModel.argReleaseId = getInt(ARG_RELEASE_ID, viewModel.argReleaseId)
+            viewModel.argEpisodeId = getInt(ARG_EPISODE_ID, viewModel.argEpisodeId)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,8 +37,8 @@ class PlayerFragment : BasePlayerFragment() {
 
         playerGlue?.actionListener = object : VideoPlayerGlue.OnActionClickedListener {
 
-            override fun onPrevious() = viewModel.onPrevClick()
-            override fun onNext() = viewModel.onNextClick()
+            override fun onPrevious() = viewModel.onPrevClick(getSeek())
+            override fun onNext() = viewModel.onNextClick(getSeek())
             override fun onQualityClick() = viewModel.onQualityClick()
             override fun onSpeedClick() = viewModel.onSpeedClick()
             override fun onEpisodesClick() = viewModel.onEpisodesClick()
@@ -58,5 +63,13 @@ class PlayerFragment : BasePlayerFragment() {
             playerGlue?.setQuality(it)
         }
     }
+
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPauseClick(getSeek())
+    }
+
+    private fun getSeek(): Long = player?.currentPosition ?: 0
 
 }

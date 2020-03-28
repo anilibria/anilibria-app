@@ -75,9 +75,9 @@ class AuthOtpGuidedScreen : GuidedAppScreen() {
     }
 }
 
-class PlayerScreen(val releaseId: Int) : SupportAppScreen() {
+class PlayerScreen(val releaseId: Int, val episodeId: Int = -1) : SupportAppScreen() {
     override fun getActivityIntent(context: Context): Intent {
-        return PlayerActivity.getIntent(context, releaseId)
+        return PlayerActivity.getIntent(context, releaseId, episodeId)
     }
 }
 

@@ -20,11 +20,13 @@ class PlayerViewModel(
 ) : LifecycleViewModel() {
 
     var argReleaseId = -1
+    var argEpisodeId = -1
 
     val videoData = MutableLiveData<Video>()
     val qualityState = MutableLiveData<Int>()
     val speedState = MutableLiveData<Float>()
 
+    private var currentEpisodes = mutableListOf<ReleaseFull.Episode>()
     private var currentRelease: ReleaseFull? = null
     private var currentEpisode: ReleaseFull.Episode? = null
     private var currentQuality: Int? = null
@@ -32,9 +34,7 @@ class PlayerViewModel(
     override fun onCreate() {
         super.onCreate()
 
-
         qualityState.value = releaseInteractor.getQuality()
-
         speedState.value = releaseInteractor.getPlaySpeed()
 
         playerController
@@ -69,37 +69,44 @@ class PlayerViewModel(
             .observeFull(argReleaseId)
             .lifeSubscribe { release ->
                 currentRelease = release
-                currentEpisode = release.episodes.last()
+                currentEpisodes.clear()
+                currentEpisodes.addAll(release.episodes.reversed())
+                val episodeId = currentEpisode?.id ?: argEpisodeId
+                currentEpisode = currentEpisodes.firstOrNull { it.id == episodeId } ?: currentEpisodes.firstOrNull()
                 updateQuality()
                 updateEpisode()
             }
     }
 
-
-    fun onSeekChanged(seek: Long) {
-
-    }
-
-    fun onPlayClick() {
+    fun onPlayClick(position: Long) {
 
     }
 
-    fun onPauseClick() {
-
+    fun onPauseClick(position: Long) {
+        saveEpisode(position)
     }
 
     fun onReplayClick() {
 
     }
 
-    fun onNextClick() {
-
+    fun onNextClick(position: Long) {
+        getNextEpisode()?.also {
+            saveEpisode(position)
+            currentEpisode = it
+            updateQuality()
+            updateEpisode()
+        }
     }
 
-    fun onPrevClick() {
-
+    fun onPrevClick(position: Long) {
+        getPrevEpisode()?.also {
+            saveEpisode(position)
+            currentEpisode = it
+            updateQuality()
+            updateEpisode()
+        }
     }
-
 
     fun onEpisodesClick() {
         val release = currentRelease ?: return
@@ -117,6 +124,24 @@ class PlayerViewModel(
         guidedRouter.open(PlayerSpeedGuidedScreen())
     }
 
+    private fun getNextEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
+
+    private fun getPrevEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
+
+    private fun getCurrentEpisodeIndex(): Int = currentEpisodes.indexOfFirst { it.id == currentEpisode?.id }
+
+    private fun saveEpisode(position: Long) {
+        val episode = currentEpisode ?: return
+        if (position < 0) {
+            return
+        }
+        releaseInteractor.putEpisode(episode.apply {
+            seek = position
+            lastAccess = System.currentTimeMillis()
+            isViewed = true
+        })
+    }
+
     private fun updateQuality() {
         val quality = currentQuality ?: return
         qualityState.value = currentEpisode?.let { getEpisodeQuality(it, quality) } ?: quality
@@ -129,7 +154,7 @@ class PlayerViewModel(
 
         val newVideo = episode.let {
             val url = getEpisodeUrl(it, quality)
-            Video(url!!, 0L, release.title.orEmpty(), it.title.orEmpty())
+            Video(url!!, episode.seek, release.title.orEmpty(), it.title.orEmpty())
         }
         if (videoData.value != newVideo) {
             videoData.value = newVideo

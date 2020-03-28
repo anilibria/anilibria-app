@@ -22,10 +22,13 @@ import javax.inject.Inject
 class PlayerActivity : ScopedFragmentActivity(R.layout.activity_fragments) {
 
     companion object {
-        private const val ARG_ID = "id"
 
-        fun getIntent(context: Context, releaseId: Int): Intent = Intent(context, PlayerActivity::class.java).apply {
-            putExtra(ARG_ID, releaseId)
+        private const val ARG_RELEASE_ID = "release id"
+        private const val ARG_EPISODE_ID = "episode id"
+
+        fun getIntent(context: Context, releaseId: Int, episodeId: Int = -1): Intent = Intent(context, PlayerActivity::class.java).apply {
+            putExtra(ARG_RELEASE_ID, releaseId)
+            putExtra(ARG_EPISODE_ID, episodeId)
         }
     }
 
@@ -55,12 +58,13 @@ class PlayerActivity : ScopedFragmentActivity(R.layout.activity_fragments) {
 
         super.onCreate(savedInstanceState)
 
-        val releaseId = intent?.getIntExtra(ARG_ID, -1) ?: -1
+        val releaseId = intent?.getIntExtra(ARG_RELEASE_ID, -1) ?: -1
+        val episodeId = intent?.getIntExtra(ARG_EPISODE_ID, -1) ?: -1
 
         if (savedInstanceState == null) {
             supportFragmentManager.commitNow {
                 val fragment = PlayerFragment
-                    .newInstance(releaseId)
+                    .newInstance(releaseId, episodeId)
                     .putScopeArgument(screenScopeTag)
                 replace(R.id.fragmentContainer, fragment)
             }

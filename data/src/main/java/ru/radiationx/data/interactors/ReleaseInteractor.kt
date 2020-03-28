@@ -156,6 +156,8 @@ class ReleaseInteractor @Inject constructor(
 
     fun setQuality(value: Int) = preferencesHolder.setQuality(value)
 
+    fun observeQuality() = preferencesHolder.observeQuality()
+
     fun getPlayerType() = preferencesHolder.getPlayerType()
 
     fun setPlayerType(value: Int) = preferencesHolder.setPlayerType(value)

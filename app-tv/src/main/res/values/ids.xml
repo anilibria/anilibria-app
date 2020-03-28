@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="player_action_quality" type="id" />
+    <item name="player_action_speed" type="id" />
+    <item name="player_action_episodes" type="id" />
+</resources>

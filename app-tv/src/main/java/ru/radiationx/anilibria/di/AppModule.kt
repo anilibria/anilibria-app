@@ -20,12 +20,6 @@ class AppModule(context: Context) : Module() {
         bind(OkHttpImageDownloader::class.java).singleton()
 
         bind(MockData::class.java).singleton()
-
-        // Navigation
-        val cicerone = Cicerone.create(GuidedRouter())
-        bind(Router::class.java).toInstance(cicerone.router)
-        bind(GuidedRouter::class.java).toInstance(cicerone.router)
-        bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
     }
 
 }

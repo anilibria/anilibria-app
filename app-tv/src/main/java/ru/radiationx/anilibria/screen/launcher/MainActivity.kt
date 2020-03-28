@@ -7,6 +7,8 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
+import ru.radiationx.anilibria.di.ActivityModule
+import ru.radiationx.anilibria.di.NavigationModule
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.radiationx.shared_app.di.viewModel
@@ -38,12 +40,13 @@ class MainActivity : ScopedFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-        dependencyInjector.installModules(module {
-            bind(SystemUtils::class.java).toInstance(SystemUtils(this@MainActivity))
-            bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
-            bind(CardsDataConverter::class.java).toInstance(CardsDataConverter(this@MainActivity))
-            bind(DetailDataConverter::class.java).toInstance(DetailDataConverter(this@MainActivity))
-        })
+        dependencyInjector.installModules(
+            ActivityModule(this),
+            NavigationModule(),
+            module {
+                bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
+            }
+        )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragments)
         lifecycle.addObserver(viewModel)

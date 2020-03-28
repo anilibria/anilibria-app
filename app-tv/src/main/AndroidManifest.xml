@@ -20,12 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Splash"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".screen.launcher.MainActivity"
             android:banner="@drawable/app_icon_your_company"
             android:icon="@drawable/app_icon_your_company"
-            android:launchMode="singleTask"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:logo="@drawable/app_icon_your_company"
             android:screenOrientation="landscape"
             tools:ignore="LockedOrientationActivity">
@@ -36,7 +37,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".screen.player.PlayerActivity" />
+        <activity
+            android:name=".screen.player.PlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Player" />
     </application>
 
 </manifest>

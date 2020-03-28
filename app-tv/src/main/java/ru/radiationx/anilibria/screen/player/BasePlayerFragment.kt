@@ -2,13 +2,16 @@ package ru.radiationx.anilibria.screen.player
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MediaSourceFactory
@@ -58,6 +61,9 @@ open class BasePlayerFragment : ScopedVideoFragment() {
         releasePlayer()
     }
 
+    protected open fun onCompletePlaying() {}
+    protected open fun onPreparePlaying() {}
+
     private fun initializeRows() {
         val playerGlue = this.playerGlue!!
 
@@ -83,12 +89,32 @@ open class BasePlayerFragment : ScopedVideoFragment() {
             .setTrackSelector(trackSelector)
             .build()
 
+        player.addListener(object : Player.EventListener {
 
-        val playerAdapter = LeanbackPlayerAdapter(requireContext(), player, 16)
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+                Log.e("EventListener", "onIsPlayingChanged $isPlaying")
+            }
+
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                super.onPlayerStateChanged(playWhenReady, playbackState)
+                Log.e("EventListener", "onPlayerStateChanged $playWhenReady, ${playbackState}")
+                when (playbackState) {
+                    Player.STATE_ENDED -> onCompletePlaying()
+                    Player.STATE_READY -> onPreparePlaying()
+                    Player.STATE_BUFFERING -> {
+                    }
+                    Player.STATE_IDLE -> {
+                    }
+                }
+            }
+        })
+
+
+        val playerAdapter = LeanbackPlayerAdapter(requireContext(), player, 500)
 
         val playerGlue = VideoPlayerGlue(requireContext(), playerAdapter).apply {
             host = VideoSupportFragmentGlueHost(this@BasePlayerFragment)
-            playWhenPrepared()
         }
 
         this.player = player

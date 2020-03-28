@@ -6,23 +6,14 @@ import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
 import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import java.lang.IllegalStateException
 
-class PlayerQualityGuidedFragment : ScopedGuidedStepFragment() {
-
-    companion object {
-        private const val ARG_RELEASE_ID = "release id"
-        private const val ARG_EPISODE_ID = "episode id"
-
-        fun newInstance(releaseId: Int = -1, episodeId: Int = -1) = PlayerQualityGuidedFragment().putExtra {
-            putInt(ARG_RELEASE_ID, releaseId)
-            putInt(ARG_EPISODE_ID, episodeId)
-        }
-    }
+class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
     private val viewModel by viewModel<PlayerQualityViewModel>()
 
@@ -53,10 +44,8 @@ class PlayerQualityGuidedFragment : ScopedGuidedStepFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        arguments?.apply {
-            viewModel.argReleaseId = getInt(ARG_RELEASE_ID, viewModel.argReleaseId)
-            viewModel.argEpisodeId = getInt(ARG_EPISODE_ID, viewModel.argEpisodeId)
-        }
+        releaseId?.also { viewModel.argReleaseId = it }
+        episodeId?.also { viewModel.argEpisodeId = it }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

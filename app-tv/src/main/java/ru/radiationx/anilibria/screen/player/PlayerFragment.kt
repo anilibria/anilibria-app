@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.player
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.leanback.media.PlaybackGlue
 import com.google.android.exoplayer2.PlaybackParameters
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
@@ -49,9 +50,16 @@ class PlayerFragment : BasePlayerFragment() {
             playerGlue?.apply {
                 title = it.title
                 subtitle = it.subtitle
-                preparePlayer(it.url)
                 seekTo(it.seek)
-                play()
+                preparePlayer(it.url)
+            }
+        }
+
+        subscribeTo(viewModel.playAction) {
+            if (it) {
+                playerGlue?.play()
+            } else {
+                playerGlue?.pause()
             }
         }
 
@@ -64,12 +72,20 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-
     override fun onPause() {
         super.onPause()
         viewModel.onPauseClick(getPosition())
     }
 
+    override fun onCompletePlaying() {
+        viewModel.onComplete(getPosition())
+    }
+
+    override fun onPreparePlaying() {
+        viewModel.onPrepare(getPosition(), getDuration())
+    }
+
     private fun getPosition(): Long = player?.currentPosition ?: 0
 
+    private fun getDuration(): Long = player?.duration ?: 0
 }

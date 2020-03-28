@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 
-class PlayerSpeedGuidedFragment : ScopedGuidedStepFragment() {
+class PlayerSpeedGuidedFragment : BasePlayerGuidedFragment() {
 
     private val viewModel by viewModel<PlayerSpeedViewModel>()
 

@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
@@ -22,6 +23,7 @@ class AuthRepository @Inject constructor(
     private val schedulers: SchedulersProvider,
     private val authApi: AuthApi,
     private val userHolder: UserHolder,
+    private val authHolder: AuthHolder,
     private val socialAuthHolder: SocialAuthHolder
 ) {
 
@@ -68,7 +70,7 @@ class AuthRepository @Inject constructor(
         .observeOn(schedulers.ui())
 
     fun getOtpInfo(): Single<OtpInfo> = authApi
-        .loadOtpInfo()
+        .loadOtpInfo(authHolder.getDeviceId())
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
@@ -78,7 +80,7 @@ class AuthRepository @Inject constructor(
         .observeOn(schedulers.ui())
 
     fun signInOtp(code: String): Single<ProfileItem> = authApi
-        .signInOtp(code)
+        .signInOtp(code, authHolder.getDeviceId())
         .doOnSuccess { userHolder.saveUser(it) }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())

@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.Row
 import ru.radiationx.anilibria.screen.main.MainFragment
+import ru.radiationx.anilibria.screen.profile.ProfileFragment
 import ru.radiationx.anilibria.screen.watching.WatchingFragment
 import ru.radiationx.anilibria.screen.youtube.YoutubeFragment
 import ru.radiationx.shared_app.di.ScopeProvider
@@ -22,7 +23,15 @@ class MainPagesFragmentFactory(
         const val ID_YOUTUBE = 6L
         const val ID_PROFILE = 7L
 
-        val ids = listOf(ID_MAIN, ID_MY, ID_SERIES, ID_MOVIES, ID_SEARCH, ID_PROFILE)
+        val ids = listOf(
+            ID_MAIN,
+            ID_MY,
+            //ID_SERIES,
+            //ID_MOVIES,
+            //ID_SEARCH,
+            //ID_YOUTUBE,
+            ID_PROFILE
+        )
 
         val variant1 = mapOf(
             ID_MAIN to "Главная",
@@ -56,6 +65,7 @@ class MainPagesFragmentFactory(
         ID_MAIN -> MainFragment()
         ID_MY -> WatchingFragment()
         ID_YOUTUBE -> YoutubeFragment()
+        ID_PROFILE -> ProfileFragment()
         else -> EmptyFragment()
     }
 }

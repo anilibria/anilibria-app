@@ -41,10 +41,10 @@ class AuthApi @Inject constructor(
             .map { authParser.parseUser(it) }
     }
 
-    fun loadOtpInfo(): Single<OtpInfo> {
+    fun loadOtpInfo(deviceId: String): Single<OtpInfo> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_get_otp",
-            "deviceId" to "tv"
+            "deviceId" to deviceId
         )
         return client
             .post(apiConfig.apiUrl, args)
@@ -65,10 +65,10 @@ class AuthApi @Inject constructor(
             .ignoreElement()
     }
 
-    fun signInOtp(code: String): Single<ProfileItem> {
+    fun signInOtp(code: String, deviceId: String): Single<ProfileItem> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_login_otp",
-            "deviceId" to "tv",
+            "deviceId" to deviceId,
             "code" to code
         )
         return client.post(apiConfig.apiUrl, args)

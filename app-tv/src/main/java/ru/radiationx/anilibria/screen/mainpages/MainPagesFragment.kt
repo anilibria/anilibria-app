@@ -50,7 +50,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
     private fun setupUi() {
         headersState = HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
-        setOnSearchClickedListener {
+        /*setOnSearchClickedListener {
             AlertDialog.Builder(requireContext())
                 .setMessage("?")
                 .setPositiveButton("Yep") { dialog, which ->
@@ -59,7 +59,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
                         .subscribe()
                 }
                 .show()
-        }
+        }*/
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
             override fun onHeadersTransitionStart(withHeaders: Boolean) {

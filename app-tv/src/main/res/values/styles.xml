@@ -17,6 +17,8 @@
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
+        <item name="browseTitleViewLayout">@layout/lb_titleview</item>
+
         <item name="guidedStepTheme">@style/AppTheme.LeanbackWizard</item>
         <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
         <item name="headersVerticalGridStyle">@style/AppTheme.Widget.Leanback.Headers.VerticalGridView</item>
@@ -55,6 +57,17 @@
 
     </style>
 
+    <style name="AppTheme.Material.Browse" parent="AppTheme.Material">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+    </style>
+
+    <style name="BrowseTitleAlert" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="iconPadding">4dp</item>
+        <item name="icon">@drawable/ic_alert_circle_outline</item>
+        <item name="android:paddingLeft">7dp</item>
+    </style>
 
     <style name="AppTheme.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
         <item name="android:colorPrimary">@color/dark_colorPrimary</item>

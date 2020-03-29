@@ -25,7 +25,7 @@ class AppLauncherViewModel(
     }
 
     fun coldLaunch() {
-        apiConfig
+        /*apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .observeOn(schedulersProvider.ui())
@@ -43,7 +43,8 @@ class AppLauncherViewModel(
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()
-        }
+        }*/
+        initMain()
     }
 
     private fun initMain() {

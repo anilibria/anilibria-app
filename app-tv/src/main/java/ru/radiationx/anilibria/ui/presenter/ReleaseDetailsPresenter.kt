@@ -71,7 +71,7 @@ class ReleaseDetailsPresenter(
             } else {
                 rowReleaseFavoriteCount.getCompatDrawable(R.drawable.ic_details_favorite)
             }
-            TextViewCompat.setCompoundDrawablesRelative(
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 rowReleaseFavoriteCount,
                 null,
                 null,

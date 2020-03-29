@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.commitNow
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -22,11 +21,11 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.ui.widget.BrowseTitleView
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.viewModel
-import toothpick.InjectConstructor
 
 class MainPagesFragment : ScopedBrowseFragment() {
 
@@ -34,13 +33,14 @@ class MainPagesFragment : ScopedBrowseFragment() {
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
     private var lastSelectedPosition = -1
     private val fragmentFactory by lazy { MainPagesFragmentFactory(this) }
-    private val viewModel by viewModel<PagesViewModel>()
 
-    @InjectConstructor
-    class PagesViewModel : LifecycleViewModel()
+    private val viewModel by viewModel<MainPagesViewModel>()
+
+    private var mOnAlertClickedListener: View.OnClickListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(viewModel)
         Log.e("kekeke", "onCreate $this, $savedInstanceState")
         mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
         setupUi()
@@ -50,7 +50,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
     private fun setupUi() {
         headersState = HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
-        /*setOnSearchClickedListener {
+        setOnSearchClickedListener {
             AlertDialog.Builder(requireContext())
                 .setMessage("?")
                 .setPositiveButton("Yep") { dialog, which ->
@@ -59,7 +59,11 @@ class MainPagesFragment : ScopedBrowseFragment() {
                         .subscribe()
                 }
                 .show()
-        }*/
+        }
+
+        setAlertClickListener(View.OnClickListener {
+            viewModel.onAppUpdateClick()
+        })
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
             override fun onHeadersTransitionStart(withHeaders: Boolean) {
@@ -118,6 +122,10 @@ class MainPagesFragment : ScopedBrowseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        subscribeTo(viewModel.hasUpdatesData) {
+            val alert = if (it) "Обновление" else null
+            setAlert(alert)
+        }
         //progressBarManager.show()
 
         ImageViewCompat.setImageTintList(
@@ -152,5 +160,19 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+    }
+
+    override fun setTitleView(titleView: View?) {
+        super.setTitleView(titleView)
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
+    }
+
+    protected fun setAlert(alertText: CharSequence?) {
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setAlert(alertText)
+    }
+
+    protected fun setAlertClickListener(listener: View.OnClickListener?) {
+        mOnAlertClickedListener = listener
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
     }
 }

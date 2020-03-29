@@ -10,7 +10,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class YouTubeViewModel(
+class MainYouTubeViewModel(
     private val youtubeRepository: YoutubeRepository,
     private val converter: CardsDataConverter,
     private val systemUtils: SystemUtils

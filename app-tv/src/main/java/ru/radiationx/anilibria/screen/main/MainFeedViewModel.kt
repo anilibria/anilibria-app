@@ -18,7 +18,7 @@ import toothpick.InjectConstructor
 import java.lang.RuntimeException
 
 @InjectConstructor
-class FeedViewModel(
+class MainFeedViewModel(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

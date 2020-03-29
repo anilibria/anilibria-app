@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.screen.ScheduleScreen
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
@@ -14,7 +15,7 @@ import toothpick.InjectConstructor
 import java.util.*
 
 @InjectConstructor
-class ScheduleViewModel(
+class MainScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
@@ -56,7 +57,9 @@ class ScheduleViewModel(
         return true
     }
 
-    override fun onLinkCardClick() {}
+    override fun onLinkCardClick() {
+        router.navigateTo(ScheduleScreen())
+    }
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))

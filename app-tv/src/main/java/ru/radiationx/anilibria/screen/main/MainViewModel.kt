@@ -23,7 +23,7 @@ class MainViewModel(
 
     }
 
-    override val rowIds: List<Long> = listOf(FEED_ROW_ID, SCHEDULE_ROW_ID, FAVORITE_ROW_ID, YOUTUBE_ROW_ID)
+    override val rowIds: List<Long> = listOf(FEED_ROW_ID, FAVORITE_ROW_ID, SCHEDULE_ROW_ID, YOUTUBE_ROW_ID)
 
     override val availableRows: MutableList<Long> = mutableListOf(FEED_ROW_ID, SCHEDULE_ROW_ID, YOUTUBE_ROW_ID)
 

@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.screen.player.episodes.PlayerEpisodesGuidedFragme
 import ru.radiationx.anilibria.screen.player.putIds
 import ru.radiationx.anilibria.screen.player.quality.PlayerQualityGuidedFragment
 import ru.radiationx.anilibria.screen.player.speed.PlayerSpeedGuidedFragment
+import ru.radiationx.anilibria.screen.schedule.ScheduleFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
@@ -44,6 +45,12 @@ class GridScreen() : SupportAppScreen() {
 class DetailsScreen(private val releaseId: Int) : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return DetailFragment.newInstance(releaseId)
+    }
+}
+
+class ScheduleScreen() : SupportAppScreen() {
+    override fun getFragment(): Fragment {
+        return ScheduleFragment()
     }
 }
 

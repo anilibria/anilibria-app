@@ -43,7 +43,6 @@ class MainPagesFragment : ScopedBrowseFragment() {
         super.onCreate(savedInstanceState)
         Log.e("kekeke", "onCreate $this, $savedInstanceState")
         mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
-        viewModel.equals(0)
         setupUi()
         showMenu()
     }

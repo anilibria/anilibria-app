@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
-import android.content.Context
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import androidx.leanback.widget.*
@@ -14,13 +12,9 @@ import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.screen.GridScreen
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.Router
-import java.util.*
 import javax.inject.Inject
 
 class MainFragment : ScopedRowsFragment() {
@@ -39,10 +33,10 @@ class MainFragment : ScopedRowsFragment() {
 
     private val mainViewModel by viewModel<MainViewModel>()
 
-    private val feedViewModel by viewModel<FeedViewModel>()
-    private val scheduleViewModel by viewModel<ScheduleViewModel>()
+    private val feedViewModel by viewModel<MainFeedViewModel>()
+    private val scheduleViewModel by viewModel<MainScheduleViewModel>()
     private val favoritesViewModel by viewModel<MainFavoritesViewModel>()
-    private val youtubeViewModel by viewModel<YouTubeViewModel>()
+    private val youtubeViewModel by viewModel<MainYouTubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

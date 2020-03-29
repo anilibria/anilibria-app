@@ -19,6 +19,9 @@ object ImageLoaderConfig {
             .resetViewBeforeLoading(true)
             .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .handler(Handler())
+            .displayer(FadeInBitmapDisplayer(500, true, true, false))
+
 
         val config = ImageLoaderConfiguration.Builder(context)
             .threadPoolSize(5)

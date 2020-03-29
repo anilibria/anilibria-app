@@ -30,7 +30,7 @@ class BrowseTitleView @JvmOverloads constructor(
     context: Context?,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.browseTitleViewStyle
-) : ConstraintLayout(context!!, attrs, defStyleAttr), TitleViewAdapter.Provider {
+) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {
 
     private var flags = TitleViewAdapter.FULL_VIEW_VISIBLE
     private var mHasSearchListener = false

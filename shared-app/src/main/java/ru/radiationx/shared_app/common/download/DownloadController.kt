@@ -9,6 +9,7 @@ interface DownloadController {
     fun enqueueDownload(url: String, name: String? = null): DownloadItem
     fun observeState(url: String): Observable<State>
     fun observeProgress(url: String): Observable<Int>
+    fun cancelDownload(url: String)
 
     enum class State {
         PENDING,

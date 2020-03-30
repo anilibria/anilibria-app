@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Html
 import android.view.View
-import android.widget.Toast
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_update.*
 import permissions.dispatcher.*
 import ru.radiationx.anilibria.R
@@ -47,12 +49,29 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
             updateDescription.text = Html.fromHtml(string.toString())
         }
 
+        subscribeTo(viewModel.actionTitle) {
+            updateButton.text = it
+
+        }
+
+        subscribeTo(viewModel.loadingShowState) {
+            TransitionManager.beginDelayedTransition(view as ViewGroup)
+            progressBar.isVisible = it
+            progressText.isVisible = it
+        }
+
+        subscribeTo(viewModel.progressData) {
+            progressBar.isIndeterminate = it == 0
+            progressBar.progress = it
+            progressText.text = "$it%"
+        }
+
         updateButton.setOnClickListener { onUpdateClickWithPermissionCheck() }
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun onUpdateClick() {
-        viewModel.onUpdateClick()
+        viewModel.onActionClick()
     }
 
     @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)

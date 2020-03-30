@@ -5,9 +5,19 @@ import android.content.*
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.os.Handler
+import android.util.Log
+import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
+import org.json.JSONArray
+import org.json.JSONObject
+import ru.radiationx.shared.ktx.android.mapTo
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import toothpick.InjectConstructor
 import java.io.UnsupportedEncodingException
@@ -16,8 +26,9 @@ import java.net.URLDecoder
 
 @InjectConstructor
 class DownloadControllerImpl(
-    private val context: Context
-) : DownloadController {
+    private val context: Context,
+    private val sharedPreferences: SharedPreferences
+) : DownloadController, LifecycleObserver {
 
     private val downloadManager by lazy { context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager }
 
@@ -25,6 +36,7 @@ class DownloadControllerImpl(
     private val completeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
+            Log.e("DownloadController", "onReceive $downloadId")
             updateById(downloadId)
         }
     }
@@ -33,7 +45,6 @@ class DownloadControllerImpl(
     private val observesMap = mutableMapOf<String, ContentObserver>()
 
     private val downloads = mutableListOf<DownloadItem>()
-    private val info = mutableListOf<DownloadRow>()
 
     private val stateMap = mutableMapOf<String, DownloadController.State>()
     private val progressMap = mutableMapOf<String, Int>()
@@ -41,15 +52,52 @@ class DownloadControllerImpl(
     private val statesRelay = BehaviorRelay.create<Map<String, DownloadController.State>>()
     private val progressRelay = BehaviorRelay.create<Map<String, Int>>()
 
+    init {
+        Log.e("DownloadController", "init $context")
+        //restore()
+    }
+
+    private fun restore() {
+        val downloadsStr = sharedPreferences.getString("key_downloads", null) ?: return
+        val downloadsJson = JSONArray(downloadsStr)
+        downloads.clear()
+        for (index in 0 until downloadsJson.length()) {
+            val jsonItem = downloadsJson.getJSONObject(index)
+            downloads.add(
+                DownloadItem(
+                    jsonItem.getLong("downloadId"),
+                    jsonItem.getString("url"),
+                    jsonItem.getString("localUrl")
+                )
+            )
+        }
+    }
+
+    private fun save() {
+        val downloadsJson = JSONArray()
+        downloads.forEach {
+            val jsonItem = JSONObject()
+            jsonItem.put("downloadId", it.downloadId)
+            jsonItem.put("url", it.url)
+            jsonItem.put("localUrl", it.localUrl)
+            downloadsJson.put(jsonItem)
+        }
+        sharedPreferences.edit().putString("key_downloads", downloadsJson.toString()).apply()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun start() {
+        Log.e("DownloadController", "start")
         context.registerReceiver(completeReceiver, completeFilter)
-        info.forEach { registerObserver(it.localUrl) }
+        downloads.forEach { registerObserver(it.localUrl) }
         updateAll()
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stop() {
+        Log.e("DownloadController", "stop")
         context.unregisterReceiver(completeReceiver)
-        info.forEach { unregisterObserver(it.localUrl) }
+        downloads.forEach { unregisterObserver(it.localUrl) }
     }
 
     override fun getDownload(url: String): DownloadItem? = downloads.firstOrNull { it.url == url }
@@ -64,10 +112,12 @@ class DownloadControllerImpl(
             setDescription(fileName)
         }
         val downloadId = downloadManager.enqueue(request)
-        val localUrl = getLocalUrl(downloadId)
+        val downloadRow = getDownloadInfo(downloadId)!!
+        val localUrl = downloadRow.localUrl
         registerObserver(localUrl)
         val downloadItem = DownloadItem(downloadId, url, localUrl)
         downloads.add(downloadItem)
+        save()
         return downloadItem
     }
 
@@ -76,12 +126,25 @@ class DownloadControllerImpl(
         .filter { it[url] != null }
         .map { it.getValue(url) }
         .distinctUntilChanged()
+    /*.doOnSubscribe {
+        val downloadItem = getDownload(url) ?: return@doOnSubscribe
+        registerObserver(downloadItem.localUrl)
+    }*/
 
     override fun observeProgress(url: String): Observable<Int> = progressRelay
         .hide()
         .filter { it[url] != null }
         .map { it.getValue(url) }
         .distinctUntilChanged()
+    /*.doOnSubscribe {
+        val downloadItem = getDownload(url) ?: return@doOnSubscribe
+        registerObserver(downloadItem.localUrl)
+    }*/
+
+    override fun cancelDownload(url: String) {
+        val downloadId = getDownload(url)?.downloadId ?: return
+        downloadManager.remove(downloadId)
+    }
 
     private fun updateState(url: String, state: DownloadController.State) {
         stateMap[url] = state
@@ -165,11 +228,18 @@ class DownloadControllerImpl(
     }
 
     private fun registerObserver(localUrl: String) {
+        Log.e("DownloadController", "registerObserver $localUrl, ${observesMap.contains(localUrl)}")
         val contentObserver = observesMap[localUrl] ?: createContentObserver()
-        context.contentResolver.registerContentObserver(Uri.parse(localUrl), false, contentObserver)
+        try {
+            context.contentResolver.registerContentObserver(Uri.parse(localUrl), false, contentObserver)
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        observesMap[localUrl] = contentObserver
     }
 
     private fun unregisterObserver(localUrl: String) {
+        Log.e("DownloadController", "unregisterObserver $localUrl")
         val contentObserver = observesMap[localUrl] ?: return
         context.contentResolver.unregisterContentObserver(contentObserver)
     }
@@ -211,5 +281,10 @@ class DownloadControllerImpl(
             fileName = fileName.substring(cut + 1)
         }
         return fileName
+    }
+
+    private fun installIntent() {
+
+
     }
 }

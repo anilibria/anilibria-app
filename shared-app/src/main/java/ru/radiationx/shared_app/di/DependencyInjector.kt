@@ -20,6 +20,7 @@ class DependencyInjector(arguments: Bundle?) {
     }
 
     fun onCreate(target: Any, savedInstanceState: Bundle?): Scope {
+        Log.e("DependencyInjector", "onCreate $parentScopeTag -> $screenScopeTag to $target with $savedInstanceState")
         screenScopeTag = savedInstanceState?.getString(ScopeProvider.STATE_SCREEN_SCOPE) ?: screenScopeTag
         return if (needInstallModule(savedInstanceState)) {
             DI.inject(target, modules.toTypedArray(), parentScopeTag, screenScopeTag)

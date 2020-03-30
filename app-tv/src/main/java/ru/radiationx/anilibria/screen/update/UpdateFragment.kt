@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.screen.ScopedFragment
+import toothpick.ktp.binding.module
 
 @RuntimePermissions
 class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
@@ -23,6 +24,9 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
     private val viewModel by viewModel<UpdateViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        dependencyInjector.installModules(module {
+            bind(UpdateController::class.java).singleton()
+        })
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
     }

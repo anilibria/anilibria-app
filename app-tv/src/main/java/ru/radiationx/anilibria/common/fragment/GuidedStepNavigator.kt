@@ -57,7 +57,7 @@ class GuidedStepNavigator(
             val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
-            fragment.putScopeArgument(scopeProvider.screenScopeTag)
+            fragment.putScopeArgument(getActualScopeProvider().screenScopeTag)
 
             activityFragmentManager
                 .beginTransaction()
@@ -81,7 +81,7 @@ class GuidedStepNavigator(
             val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
-            fragment.putScopeArgument(scopeProvider.screenScopeTag)
+            fragment.putScopeArgument(getActualScopeProvider().screenScopeTag)
 
             val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
             if (guidedStack.isNotEmpty() && currentFragment != null) {
@@ -134,5 +134,10 @@ class GuidedStepNavigator(
         } else {
             fragmentBack()
         }
+    }
+
+    private fun getActualScopeProvider(): ScopeProvider {
+        val fragment = fragmentManager.findFragmentById(containerId) as? ScopeProvider?
+        return fragment ?: scopeProvider
     }
 }

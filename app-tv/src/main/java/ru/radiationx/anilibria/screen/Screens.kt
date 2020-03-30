@@ -22,6 +22,9 @@ import ru.radiationx.anilibria.screen.schedule.ScheduleFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
+import ru.radiationx.anilibria.screen.update.UpdateFragment
+import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
+import ru.radiationx.anilibria.screen.update.source.UpdateSourceViewModel
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 class ConfigScreen() : SupportAppScreen() {
@@ -51,6 +54,18 @@ class DetailsScreen(private val releaseId: Int) : SupportAppScreen() {
 class ScheduleScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return ScheduleFragment()
+    }
+}
+
+class UpdateScreen() : SupportAppScreen() {
+    override fun getFragment(): Fragment {
+        return UpdateFragment()
+    }
+}
+
+class UpdateSourceScreen() : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return UpdateSourceGuidedFragment()
     }
 }
 

@@ -67,4 +67,7 @@ dependencies {
 
     implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
     implementation 'com.google.android.exoplayer:extension-leanback:2.11.3'
+
+    implementation("org.permissionsdispatcher:permissionsdispatcher:4.7.0")
+    kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
 }

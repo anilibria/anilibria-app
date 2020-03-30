@@ -15,7 +15,7 @@ class SystemUtils(
 ) {
 
     /* PLEASE CHECK STORAGE PERMISSION */
-    fun systemDownloader(context: Context, url: String, fileName: String = getFileNameFromUrl(url)) {
+    fun systemDownloader(url: String, fileName: String = getFileNameFromUrl(url)) {
         val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         dm?.let {
             val request = DownloadManager.Request(Uri.parse(url))

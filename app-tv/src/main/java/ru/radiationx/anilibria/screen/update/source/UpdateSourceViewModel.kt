@@ -26,7 +26,7 @@ class UpdateSourceViewModel(
         super.onCreate()
 
         checkerRepository
-            .checkUpdate(buildConfig.versionCode, false)
+            .observeUpdate()
             .lifeSubscribe({
                 sourcesData.value = it.links
             }, {

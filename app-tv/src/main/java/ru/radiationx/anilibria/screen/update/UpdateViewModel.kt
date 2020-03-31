@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -28,29 +29,42 @@ class UpdateViewModel(
 ) : LifecycleViewModel() {
 
     val updateData = MutableLiveData<UpdateData>()
-    val loadingShowState = MutableLiveData<Boolean>()
-    val progressData = MutableLiveData<Int>()
-    val actionTitle = MutableLiveData<String>()
+    val progressState = MutableLiveData<Boolean>()
+    val downloadProgressShowState = MutableLiveData<Boolean>()
+    val downloadProgressData = MutableLiveData<Int>()
+    val downloadActionTitle = MutableLiveData<String>()
 
     private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null
     private var pendingInstall = false
 
+    init {
+        progressState.value = true
+        downloadProgressShowState.value = false
+        downloadProgressData.value = 0
+    }
 
     override fun onCreate() {
         super.onCreate()
-        loadingShowState.value = false
-        progressData.value = 0
         updateState()
 
         checkerRepository
-            .checkUpdate(buildConfig.versionCode, true)
-            .lifeSubscribe({
+            .observeUpdate()
+            .observeOn(AndroidSchedulers.mainThread())
+            .lifeSubscribe {
+                progressState.value = false
                 updateData.value = it
-                /*it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
+                it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
                     startDownload(it.url)
-                }*/
-            }, {
+                }
+            }
+
+        checkerRepository
+            .checkUpdate(buildConfig.versionCode, true)
+            .doFinally {
+                progressState.value = false
+            }
+            .lifeSubscribe({}, {
                 it.printStackTrace()
             })
 
@@ -96,6 +110,7 @@ class UpdateViewModel(
             downloadController.startDownload(url)
         } else {
             updateState(downloadItem.state)
+            downloadProgressData.value = downloadItem.progress
         }
 
         downloadController
@@ -103,7 +118,7 @@ class UpdateViewModel(
             .lifeSubscribe {
                 currentDownload = it
                 Log.e("UpdateViewModel", "observeDownload ${currentDownload?.downloadId}, $it")
-                progressData.value = it.progress
+                downloadProgressData.value = it.progress
                 updateState(it.state)
             }
 
@@ -119,13 +134,13 @@ class UpdateViewModel(
 
     private fun updateState(state: DownloadController.State? = downloadState) {
         downloadState = state
-        loadingShowState.value = when (state) {
+        downloadProgressShowState.value = when (state) {
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
             DownloadController.State.PAUSED -> true
             else -> false
         }
-        actionTitle.value = when (state) {
+        downloadActionTitle.value = when (state) {
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
             DownloadController.State.PAUSED -> "Отмена"

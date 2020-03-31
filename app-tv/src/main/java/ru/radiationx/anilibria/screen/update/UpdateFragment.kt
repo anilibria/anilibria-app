@@ -11,6 +11,8 @@ import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.leanback.app.ProgressBarManager
+import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_update.*
 import permissions.dispatcher.*
@@ -22,6 +24,8 @@ import toothpick.ktp.binding.module
 
 @RuntimePermissions
 class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
+
+    private val progressBarManager by lazy { ProgressBarManager() }
 
     private val viewModel by viewModel<UpdateViewModel>()
 
@@ -36,6 +40,8 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        progressBarManager.setRootView(updateRoot)
+
         subscribeTo(viewModel.updateData) {
             val string = StringBuilder().apply {
                 appendParam("Версия", it.name.orEmpty())
@@ -49,21 +55,31 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
             updateDescription.text = Html.fromHtml(string.toString())
         }
 
-        subscribeTo(viewModel.actionTitle) {
+        subscribeTo(viewModel.downloadActionTitle) {
             updateButton.text = it
-
         }
 
-        subscribeTo(viewModel.loadingShowState) {
+        subscribeTo(viewModel.downloadProgressShowState) {
             TransitionManager.beginDelayedTransition(view as ViewGroup)
             progressBar.isVisible = it
             progressText.isVisible = it
         }
 
-        subscribeTo(viewModel.progressData) {
+        subscribeTo(viewModel.downloadProgressData) {
             progressBar.isIndeterminate = it == 0
             progressBar.progress = it
             progressText.text = "$it%"
+        }
+
+        subscribeTo(viewModel.progressState) {
+            if (it) {
+                progressBarManager.show()
+            } else {
+                progressBarManager.hide()
+                updateButton.requestFocus()
+                TransitionManager.beginDelayedTransition(updateRoot, Fade())
+            }
+            updateContainer.isVisible = !it
         }
 
         updateButton.setOnClickListener { onUpdateClickWithPermissionCheck() }

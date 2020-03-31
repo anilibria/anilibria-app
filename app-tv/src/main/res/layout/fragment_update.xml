@@ -1,96 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/updateRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme.Material.Browse">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="120dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/updateButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="?browsePaddingStart"
-        android:layout_marginEnd="?browsePaddingEnd"
-        android:text="Установить"
-        app:cornerRadius="24dp"
-        app:layout_constraintBottom_toTopOf="@id/progressBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:progressBarStyleHorizontal"
-        android:layout_width="200dp"
-        android:layout_height="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="?browsePaddingEnd"
-        android:indeterminate="true"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/updateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_top"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/updateButton"
-        tools:visibility="visible" />
+        tools:visibility="visible">
 
-    <TextView
-        android:id="@+id/progressText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:includeFontPadding="false"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="@id/progressBar"
-        tools:text="100%"
-        tools:visibility="visible" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="120dp" />
 
-    <TextView
-        android:id="@+id/updateTitle"
-        style="?attr/browseTitleTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="?browsePaddingStart"
-        android:layout_marginEnd="?browsePaddingEnd"
-        android:text="Обновление"
-        app:layout_constraintBottom_toTopOf="@id/updateScrollView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/updateButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="?browsePaddingStart"
+            android:layout_marginEnd="?browsePaddingEnd"
+            android:text="Установить"
+            app:cornerRadius="24dp"
+            app:layout_constraintBottom_toTopOf="@id/progressBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/updateScrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="?browsePaddingStart"
-        android:layout_marginEnd="?browsePaddingEnd"
-        android:layout_marginBottom="?browsePaddingBottom"
-        android:fadingEdgeLength="8dp"
-        android:nextFocusRight="@id/updateButton"
-        android:nextFocusUp="@id/updateButton"
-        android:requiresFadingEdge="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline_top">
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="?browsePaddingEnd"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_top"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/updateButton"
+            tools:visibility="visible" />
 
         <TextView
-            android:id="@+id/updateDescription"
-            android:layout_width="match_parent"
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.25"
-            android:textColor="@color/dark_textSecond"
-            android:textSize="16sp"
-            tools:text="@tools:sample/lorem/random" />
+            android:layout_marginBottom="4dp"
+            android:includeFontPadding="false"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="@id/progressBar"
+            tools:text="100%"
+            tools:visibility="visible" />
 
-    </androidx.core.widget.NestedScrollView>
+        <TextView
+            android:id="@+id/updateTitle"
+            style="?attr/browseTitleTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="?browsePaddingStart"
+            android:layout_marginEnd="?browsePaddingEnd"
+            android:text="Обновление"
+            app:layout_constraintBottom_toTopOf="@id/updateScrollView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/updateScrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="?browsePaddingStart"
+            android:layout_marginEnd="?browsePaddingEnd"
+            android:layout_marginBottom="?browsePaddingBottom"
+            android:fadingEdgeLength="8dp"
+            android:nextFocusRight="@id/updateButton"
+            android:nextFocusUp="@id/updateButton"
+            android:requiresFadingEdge="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline_top">
+
+            <TextView
+                android:id="@+id/updateDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.25"
+                android:textColor="@color/dark_textSecond"
+                android:textSize="16sp"
+                tools:text="@tools:sample/lorem/random" />
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

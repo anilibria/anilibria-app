@@ -100,8 +100,8 @@ class DownloadsDataSource(
         Log.e(TAG, "fetchPendingDownloads ids=${downloadIds.size}, fetched=${downloads.size}")
         downloads.forEach {
             updateCache(it)
-            downloadsRelay.accept(it)
             startObserve(it.downloadId)
+            downloadsRelay.accept(it)
             pendingDownloads.remove(it.downloadId)
         }
     }
@@ -134,6 +134,7 @@ class DownloadsDataSource(
         fullUpdateCache(downloads)
         downloads.forEach {
             Log.e(TAG, "updateAll new $it")
+            startObserve(it.downloadId)
             downloadsRelay.accept(it)
         }
     }

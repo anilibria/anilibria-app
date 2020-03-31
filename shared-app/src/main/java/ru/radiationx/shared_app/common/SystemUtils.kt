@@ -28,7 +28,7 @@ class SystemUtils(
         }
     }
 
-    private fun getFileNameFromUrl(url: String): String {
+    fun getFileNameFromUrl(url: String): String {
         var fileName = url
         try {
             fileName = URLDecoder.decode(url, "CP1251")

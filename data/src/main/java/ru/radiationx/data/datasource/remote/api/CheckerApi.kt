@@ -29,7 +29,7 @@ class CheckerApi @Inject constructor(
         return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONObject>())
                 .map { checkerParser.parse(it) }
-                .onErrorResumeNext { getReserve("https://github.com/anilibria/anilibria-app/blob/master/check.json") }
+                //.onErrorResumeNext { getReserve("https://github.com/anilibria/anilibria-app/blob/master/check.json") }
                 .onErrorResumeNext { getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/check.json") }
     }
 

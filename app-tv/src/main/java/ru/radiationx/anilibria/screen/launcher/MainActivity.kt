@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.di.NavigationModule
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
+import ru.radiationx.shared_app.common.download.DownloadsDataSource
 import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
@@ -49,6 +50,7 @@ class MainActivity : ScopedFragmentActivity() {
             ActivityModule(this),
             NavigationModule(),
             module {
+                bind(DownloadsDataSource::class.java).singleton()
                 bind(DownloadControllerImpl::class.java).to(DownloadControllerImpl::class.java).singleton()
                 bind(DownloadController::class.java).to(DownloadControllerImpl::class.java).singleton()
                 bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))

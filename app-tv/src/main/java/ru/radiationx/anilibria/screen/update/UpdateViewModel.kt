@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.update
 
-import android.app.DownloadManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -17,7 +16,6 @@ import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadItem
 import toothpick.InjectConstructor
-import java.io.FileInputStream
 
 @InjectConstructor
 class UpdateViewModel(
@@ -34,8 +32,10 @@ class UpdateViewModel(
     val progressData = MutableLiveData<Int>()
     val actionTitle = MutableLiveData<String>()
 
-    private var downloadItem: DownloadItem? = null
+    private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null
+    private var pendingInstall = false
+
 
     override fun onCreate() {
         super.onCreate()
@@ -47,10 +47,9 @@ class UpdateViewModel(
             .checkUpdate(buildConfig.versionCode, true)
             .lifeSubscribe({
                 updateData.value = it
-                downloadItem = it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()
-                downloadItem?.also {
+                /*it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
                     startDownload(it.url)
-                }
+                }*/
             }, {
                 it.printStackTrace()
             })
@@ -58,32 +57,18 @@ class UpdateViewModel(
         updateController
             .downloadAction
             .lifeSubscribe {
+                pendingInstall = true
                 startDownload(it.url)
             }
     }
 
     fun onActionClick() {
-        downloadItem?.also {
-            val data = Uri.parse(it.localUrl)
-            val type = MimeTypeUtil.getType(it.url)
-            val kek = ContentResolver.SCHEME_FILE.equals(data.getScheme())
-            Log.e("UpdateViewModel", "onActionClick $kek, $type, $data")
-            val install = Intent(Intent.ACTION_VIEW)
-            install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            install.setDataAndType(data, MimeTypeUtil.getType(it.url))
-            //install.data = data
-            context.startActivity(install)
-            return
-        }
         when (downloadState) {
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
             DownloadController.State.PAUSED,
-            DownloadController.State.SUCCESSFUL -> cancelDownloadClick()
-            DownloadController.State.FAILED -> {
-            }
-            null -> downloadClick()
+            DownloadController.State.FAILED -> cancelDownloadClick()
+            else -> downloadClick()
         }
     }
 
@@ -93,13 +78,43 @@ class UpdateViewModel(
             guidedRouter.open(UpdateSourceScreen())
         } else {
             val link = data.links.firstOrNull() ?: return
-            startDownload(link.url)
+            updateController.downloadAction.accept(link)
         }
     }
 
     private fun cancelDownloadClick() {
-        val url = downloadItem?.url ?: return
-        downloadController.cancelDownload(url)
+        val url = currentDownload?.url ?: return
+        downloadController.removeDownload(url)
+    }
+
+    private fun startDownload(url: String) {
+        val downloadItem = downloadController.getDownload(url)
+        currentDownload = downloadItem
+        Log.e("UpdateViewModel", "startDownload by url $url")
+        Log.e("UpdateViewModel", "startDownload item $downloadItem")
+        if (downloadItem == null) {
+            downloadController.startDownload(url)
+        } else {
+            updateState(downloadItem.state)
+        }
+
+        downloadController
+            .observeDownload(url)
+            .lifeSubscribe {
+                currentDownload = it
+                Log.e("UpdateViewModel", "observeDownload ${currentDownload?.downloadId}, $it")
+                progressData.value = it.progress
+                updateState(it.state)
+            }
+
+        downloadController
+            .observeCompleted(url)
+            .lifeSubscribe {
+                currentDownload = null
+                pendingInstall = false
+                updateState(null)
+            }
+
     }
 
     private fun updateState(state: DownloadController.State? = downloadState) {
@@ -116,27 +131,27 @@ class UpdateViewModel(
             DownloadController.State.PAUSED -> "Отмена"
             else -> "Установить"
         }
+
+        if (pendingInstall && state == DownloadController.State.SUCCESSFUL) {
+            pendingInstall = false
+            currentDownload?.also {
+                installAction(it)
+            }
+        }
     }
 
-    private fun startDownload(url: String) {
-        Log.e("UpdateViewModel", "startDownload $url")
-        val downloadItem = downloadController.getDownload(url) ?: downloadController.enqueueDownload(url)
-        Log.e("UpdateViewModel", "downloadItem $downloadItem")
-        this.downloadItem = downloadItem
-
-        downloadController
-            .observeProgress(downloadItem.url)
-            .lifeSubscribe {
-                Log.e("UpdateViewModel", "observeProgress ${downloadItem.downloadId}, $it")
-                progressData.value = it
-            }
-
-        downloadController
-            .observeState(downloadItem.url)
-            .lifeSubscribe {
-                Log.e("UpdateViewModel", "observeState ${downloadItem.downloadId}, $it")
-                updateState(it)
-            }
+    private fun installAction(downloadItem: DownloadItem) {
+        val data = Uri.parse(downloadItem.localUrl)
+        val type = MimeTypeUtil.getType(downloadItem.url)
+        val kek = ContentResolver.SCHEME_FILE.equals(data.getScheme())
+        Log.e("UpdateViewModel", "onActionClick $kek, $type, $data")
+        val install = Intent(Intent.ACTION_VIEW)
+        install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        install.setDataAndType(data, type)
+        //install.data = data
+        context.startActivity(install)
     }
+
 
 }

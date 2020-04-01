@@ -49,22 +49,16 @@ class UpdateViewModel(
         updateState()
 
         checkerRepository
-            .observeUpdate()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .checkUpdate(buildConfig.versionCode, false)
+            .doFinally {
                 progressState.value = false
+            }
+            .lifeSubscribe({
                 updateData.value = it
                 it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
                     startDownload(it.url)
                 }
-            }
-
-        checkerRepository
-            .checkUpdate(buildConfig.versionCode, true)
-            .doFinally {
-                progressState.value = false
-            }
-            .lifeSubscribe({}, {
+            }, {
                 it.printStackTrace()
             })
 

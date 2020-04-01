@@ -5,15 +5,18 @@ import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
+import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class MainPagesViewModel(
     private val checkerRepository: CheckerRepository,
     private val buildConfig: SharedBuildConfig,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
+    private val router: Router
 ) : LifecycleViewModel() {
 
     val hasUpdatesData = MutableLiveData<Boolean>()
@@ -31,6 +34,6 @@ class MainPagesViewModel(
     }
 
     fun onAppUpdateClick() {
-        guidedRouter.open(AuthGuidedScreen())
+        router.navigateTo(UpdateScreen())
     }
 }

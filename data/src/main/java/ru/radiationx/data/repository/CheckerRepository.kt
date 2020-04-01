@@ -29,10 +29,12 @@ class CheckerRepository @Inject constructor(
             else
                 checkerApi.checkUpdate(versionCode).blockingGet()
         }
-        /*.doOnSuccess {
-            it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4.zip"
-            it.links[1].url = "https://github.com/anilibria/anilibria-app/archive/2.4.3.zip"
-        }*/
+        .doOnSuccess {
+            /*it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4.zip"
+            it.links[1].url = "https://github.com/anilibria/anilibria-app/archive/2.4.3.zip"*/
+
+            //it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4s.zip"
+        }
         .doOnSuccess {
             Log.e("CHECKER", "doOnSuccess $it")
             currentDataRelay.accept(it)

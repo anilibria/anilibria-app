@@ -17,15 +17,20 @@ import androidx.transition.TransitionManager
 import kotlinx.android.synthetic.main.fragment_update.*
 import permissions.dispatcher.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.screen.ScopedFragment
 import toothpick.ktp.binding.module
+import javax.inject.Inject
 
 @RuntimePermissions
 class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
 
     private val progressBarManager by lazy { ProgressBarManager() }
+
+    @Inject
+    lateinit var backgroundManager: GradientBackgroundManager
 
     private val viewModel by viewModel<UpdateViewModel>()
 
@@ -39,7 +44,7 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        backgroundManager.clearGradient()
         progressBarManager.setRootView(updateRoot)
 
         subscribeTo(viewModel.updateData) {

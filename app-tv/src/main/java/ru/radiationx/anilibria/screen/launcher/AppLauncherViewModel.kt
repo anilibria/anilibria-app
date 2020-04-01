@@ -25,7 +25,7 @@ class AppLauncherViewModel(
     }
 
     fun coldLaunch() {
-        /*apiConfig
+        apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .observeOn(schedulersProvider.ui())
@@ -43,14 +43,13 @@ class AppLauncherViewModel(
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()
-        }*/
-        initMain()
+        }
+        //initMain()
     }
 
     private fun initMain() {
         firstLaunch = false
-        //router.newRootScreen(MainPagesScreen())
-        router.newRootScreen(UpdateScreen())
+        router.newRootScreen(MainPagesScreen())
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(AuthGuidedScreen())
         }

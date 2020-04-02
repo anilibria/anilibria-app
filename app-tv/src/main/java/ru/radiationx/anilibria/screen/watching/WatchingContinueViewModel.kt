@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -18,7 +19,7 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class WatchingContinueViewModel(
     private val releaseInteractor: ReleaseInteractor,
-    private val releaseRepository: ReleaseRepository,
+    private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val converter: CardsDataConverter,
     private val router: Router
@@ -32,20 +33,24 @@ class WatchingContinueViewModel(
             Log.e("lalala", "episoded ${it.map { it.lastAccess }}")
             it.sortedByDescending { it.lastAccess }.map { it.releaseId }
         }
-        .flatMap {
-            if (it.isEmpty()) {
+        .flatMap { ids ->
+            if (ids.isEmpty()) {
                 return@flatMap Single.just(emptyList<ReleaseFull>())
             }
-            releaseRepository.getReleasesById(it)
+            historyRepository.getReleases().map { releases ->
+                releases.filter { ids.contains(it.id) }
+            }
         }
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnSuccess {
-            releaseInteractor.updateItemsCache(it)
-        }
         .map { releases ->
             releases.map { release ->
                 val lastEpisode = releaseInteractor.getEpisodes(release.id).maxBy { it.lastAccess }
-                converter.toCard(release).copy(description = "Вы остановились на ${lastEpisode?.id} серии")
+                Pair(release, lastEpisode)
+            }
+        }
+        .map {
+            it.sortedByDescending { it.second?.lastAccess }.map {
+                converter.toCard(it.first).copy(description = "Вы остановились на ${it.second?.id} серии")
             }
         }
 

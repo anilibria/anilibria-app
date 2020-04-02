@@ -28,6 +28,10 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     override fun onColdCreate() {
         super.onColdCreate()
         rowTitle.value = defaultTitle
+    }
+
+    override fun onCreate() {
+        super.onCreate()
         if (loadOnCreate) {
             onRefreshClick()
         }

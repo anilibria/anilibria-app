@@ -28,8 +28,11 @@ class MainFeedViewModel(
 
     override val defaultTitle: String = "Самое актуальное"
 
+    override val loadOnCreate: Boolean = false
+
     override fun onColdCreate() {
         super.onColdCreate()
+        onRefreshClick()
         Log.e("kekeke", "onColdCreate ${this::class.java.simpleName}")
     }
 

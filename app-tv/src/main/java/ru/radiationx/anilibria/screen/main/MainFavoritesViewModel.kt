@@ -20,6 +20,13 @@ class MainFavoritesViewModel(
 
     override val defaultTitle: String = "Обновления в избранном"
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onColdCreate() {
+        super.onColdCreate()
+        onRefreshClick()
+    }
+
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = favoriteRepository
         .getFavorites(requestPage)
         .doOnSuccess { releaseInteractor.updateItemsCache(it.data) }

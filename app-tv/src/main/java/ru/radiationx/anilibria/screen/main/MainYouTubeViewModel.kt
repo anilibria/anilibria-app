@@ -18,6 +18,13 @@ class MainYouTubeViewModel(
 
     override val defaultTitle: String = "Обновления на YouTube"
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onColdCreate() {
+        super.onColdCreate()
+        onRefreshClick()
+    }
+
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = youtubeRepository
         .getYoutubeList(requestPage)
         .map { youtubeItems ->

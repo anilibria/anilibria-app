@@ -24,8 +24,14 @@ class MainScheduleViewModel(
 
     override val defaultTitle: String = "Ожидается сегодня"
 
-    override val loadMoreCard: LinkCard
-        get() = LinkCard("Открыть полное расписание")
+    override val loadMoreCard: LinkCard = LinkCard("Открыть полное расписание")
+
+    override val loadOnCreate: Boolean = false
+
+    override fun onColdCreate() {
+        super.onColdCreate()
+        onRefreshClick()
+    }
 
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = scheduleRepository
         .loadSchedule()

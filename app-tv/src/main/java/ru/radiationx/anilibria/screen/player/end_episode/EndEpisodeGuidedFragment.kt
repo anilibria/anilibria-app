@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.screen.player.end_episode
 
 import android.os.Bundle
 import androidx.leanback.widget.GuidedAction
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.shared_app.di.viewModel
 
@@ -13,6 +14,8 @@ class EndEpisodeGuidedFragment : BasePlayerGuidedFragment() {
     }
 
     private val viewModel by viewModel<EndEpisodeViewModel>()
+
+    override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

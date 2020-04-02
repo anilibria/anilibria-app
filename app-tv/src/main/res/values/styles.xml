@@ -29,10 +29,6 @@
         <item name="itemsVerticalDescriptionStyle">@style/AppTheme.Widget.Description.Grid</item>
     </style>
 
-    <style name="AppTheme.Player" parent="AppTheme">
-        <item name="guidedStepTheme">@style/AppTheme.Player.LeanbackWizard</item>
-    </style>
-
     <style name="AppTheme.Splash" parent="AppTheme">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>

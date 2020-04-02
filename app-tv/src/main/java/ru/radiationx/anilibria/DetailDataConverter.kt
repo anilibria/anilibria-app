@@ -33,7 +33,7 @@ class DetailDataConverter(
             (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false,
             favoriteInfo.isAdded,
             (releaseItem as? ReleaseFull)?.episodes?.any { it.isViewed } ?: false,
-            (releaseItem as? ReleaseFull)?.moonwalkLink != null
+            false && (releaseItem as? ReleaseFull)?.moonwalkLink != null
         )
     }
 

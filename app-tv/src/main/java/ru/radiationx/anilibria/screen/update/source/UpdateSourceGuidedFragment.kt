@@ -13,9 +13,7 @@ class UpdateSourceGuidedFragment : ScopedGuidedStepFragment() {
 
     private val viewModel by viewModel<UpdateSourceViewModel>()
 
-    override fun onProvideTheme(): Int {
-        return R.style.AppTheme_Player_LeanbackWizard
-    }
+    override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -26,6 +26,8 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
     private val viewModel by viewModel<PlayerEpisodesViewModel>()
 
+    override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)

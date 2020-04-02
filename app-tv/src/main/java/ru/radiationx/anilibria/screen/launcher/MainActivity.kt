@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
+import android.util.Log
 import ru.radiationx.anilibria.DetailDataConverter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.CardsDataConverter

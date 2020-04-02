@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.leanback.media.PlaybackGlue
 import com.google.android.exoplayer2.PlaybackParameters
+import ru.radiationx.anilibria.di.PlayerModule
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
@@ -25,6 +26,7 @@ class PlayerFragment : BasePlayerFragment() {
     private val viewModel by viewModel<PlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        dependencyInjector.installModules(PlayerModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         arguments?.apply {

@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.multidex.MultiDex
 import io.reactivex.plugins.RxJavaPlugins
@@ -30,6 +32,39 @@ class App : Application() {
         if (isMainProcess()) {
             initInMainProcess()
         }
+
+        registerActivityLifecycleCallbacks(object :ActivityLifecycleCallbacks{
+            override fun onActivityPaused(activity: Activity) {
+                
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+                
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+                Log.e("ActivityLifecycle", "onActivityDestroyed $activity")
+                
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+                
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                Log.e("ActivityLifecycle", "onActivityCreated $activity")
+                
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                
+            }
+
+        })
     }
 
     private fun initInMainProcess() {

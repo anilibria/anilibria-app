@@ -51,8 +51,9 @@ open class BasePlayerFragment : ScopedVideoFragment() {
         initializeRows()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
+        Log.e("kokoko", "onPause BasePlayerFragment, ${playerGlue?.isPlaying}")
         playerGlue?.pause()
     }
 

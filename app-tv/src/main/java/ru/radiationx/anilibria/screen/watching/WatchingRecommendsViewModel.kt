@@ -24,6 +24,13 @@ class WatchingRecommendsViewModel(
 
     override val defaultTitle: String = "Рекомендации"
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onColdCreate() {
+        super.onColdCreate()
+        onRefreshClick()
+    }
+
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = historyRepository
         .getReleases()
         .map { releases ->

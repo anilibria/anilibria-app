@@ -62,6 +62,7 @@ class DetailHeaderViewModel(
     }
 
     fun onPlayClick() {
+        currentRelease ?: return
         router.navigateTo(PlayerScreen(releaseId))
     }
 

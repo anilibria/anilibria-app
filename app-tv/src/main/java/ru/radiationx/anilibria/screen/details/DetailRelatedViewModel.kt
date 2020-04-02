@@ -31,6 +31,8 @@ class DetailRelatedViewModel(
     override fun onCreate() {
         super.onCreate()
 
+        cardsData.value = listOf(loadingCard)
+
         releaseInteractor
             .observeFull(releaseId)
             .distinctUntilChanged()

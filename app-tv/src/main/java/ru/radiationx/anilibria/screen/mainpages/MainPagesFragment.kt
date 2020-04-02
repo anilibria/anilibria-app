@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.commitNow
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -51,14 +52,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
         headersState = HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         setOnSearchClickedListener {
-            AlertDialog.Builder(requireContext())
-                .setMessage("?")
-                .setPositiveButton("Yep") { dialog, which ->
-                    getDependency(AuthRepository::class.java)
-                        .signOut()
-                        .subscribe()
-                }
-                .show()
+            Toast.makeText(requireContext(), "Поиска пока-что нет. Кнопка висит, чтобы не было пусто.", Toast.LENGTH_SHORT).show()
         }
 
         setAlertClickListener(View.OnClickListener {

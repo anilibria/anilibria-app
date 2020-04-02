@@ -31,6 +31,6 @@ abstract class BaseRowsViewModel : LifecycleViewModel() {
         rowListData.value = getRows()
     }
 
-    protected fun getRows(): List<Long> = rowIds.toMutableList().filter { availableRows.contains(it)}
+    protected fun getRows(): List<Long> = rowIds.toMutableList().filter { availableRows.contains(it) }
 
 }

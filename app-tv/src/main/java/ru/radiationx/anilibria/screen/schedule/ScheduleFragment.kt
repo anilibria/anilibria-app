@@ -70,8 +70,8 @@ class ScheduleFragment : ScopedBrowseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeTo(viewModel.scheduleRows) {
-            val cardsPresenter = CardPresenterSelector()
             val rows = it.mapIndexed { index, day ->
+                val cardsPresenter = CardPresenterSelector()
                 val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
                 cardsAdapter.setItems(day.second, CardDiffCallback)
                 ListRow(index.toLong(), HeaderItem(day.first), cardsAdapter)

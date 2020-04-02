@@ -28,6 +28,26 @@ class MainFeedViewModel(
 
     override val defaultTitle: String = "Самое актуальное"
 
+    override fun onColdCreate() {
+        super.onColdCreate()
+        Log.e("kekeke", "onColdCreate ${this::class.java.simpleName}")
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.e("kekeke", "onCreate ${this::class.java.simpleName}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("kekeke", "onDestroy ${this::class.java.simpleName}")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.e("kekeke", "onCleared ${this::class.java.simpleName}")
+    }
+
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = feedRepository
         .getFeed(requestPage)
         .doOnSuccess {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.leanback.widget.*
+import androidx.leanback.widget.ListRowPresenter.SelectItemViewHolderTask
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.LinkCard
@@ -13,9 +14,10 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.screen.GridScreen
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
+
 
 class MainFragment : ScopedRowsFragment() {
 
@@ -31,12 +33,12 @@ class MainFragment : ScopedRowsFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
-    private val mainViewModel by viewModel<MainViewModel>()
+    private val mainViewModel by viewModelFromParent<MainViewModel>()
 
-    private val feedViewModel by viewModel<MainFeedViewModel>()
-    private val scheduleViewModel by viewModel<MainScheduleViewModel>()
-    private val favoritesViewModel by viewModel<MainFavoritesViewModel>()
-    private val youtubeViewModel by viewModel<MainYouTubeViewModel>()
+    private val feedViewModel by viewModelFromParent<MainFeedViewModel>()
+    private val scheduleViewModel by viewModelFromParent<MainScheduleViewModel>()
+    private val favoritesViewModel by viewModelFromParent<MainFavoritesViewModel>()
+    private val youtubeViewModel by viewModelFromParent<MainYouTubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +110,6 @@ class MainFragment : ScopedRowsFragment() {
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
             rowViewHolder: RowPresenter.ViewHolder, row: Row
         ) {
-            Log.e("kekeke", "onItemSelected $rowViewHolder, $item")
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
                 when (item) {

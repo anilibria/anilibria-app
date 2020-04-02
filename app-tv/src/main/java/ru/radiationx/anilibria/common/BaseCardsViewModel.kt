@@ -25,8 +25,8 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
         private set
     private var requestDisposable = Disposables.disposed()
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onColdCreate() {
+        super.onColdCreate()
         rowTitle.value = defaultTitle
         if (loadOnCreate) {
             onRefreshClick()

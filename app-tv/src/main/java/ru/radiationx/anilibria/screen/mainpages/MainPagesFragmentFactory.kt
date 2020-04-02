@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.mainpages
 
 import androidx.fragment.app.Fragment
-import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.Row
+import ru.radiationx.anilibria.common.CachedRowsFragmentFactory
 import ru.radiationx.anilibria.screen.main.MainFragment
 import ru.radiationx.anilibria.screen.profile.ProfileFragment
 import ru.radiationx.anilibria.screen.watching.WatchingFragment
@@ -12,7 +12,7 @@ import ru.radiationx.shared_app.di.putScopeArgument
 
 class MainPagesFragmentFactory(
     private val scopeProvider: ScopeProvider
-) : BrowseSupportFragment.FragmentFactory<Fragment>() {
+) : CachedRowsFragmentFactory() {
 
     companion object {
         const val ID_MAIN = 1L
@@ -44,28 +44,15 @@ class MainPagesFragmentFactory(
         )
     }
 
-    private val fragments = mutableMapOf<Long, Fragment>()
-
-    override fun createFragment(rowObj: Any): Fragment {
-        val row = rowObj as Row
-        return getCompleteFragment(row)
-    }
-
-    private fun getFromMap(row: Row): Fragment {
-        val fragment = fragments[row.id]
-        if (fragment == null) {
-            fragments[row.id] = getCompleteFragment(row)
+    override fun getFragmentByRow(row: Row): Fragment {
+        val fragment = when (row.id) {
+            ID_MAIN -> MainFragment()
+            ID_MY -> WatchingFragment()
+            ID_YOUTUBE -> YoutubeFragment()
+            ID_PROFILE -> ProfileFragment()
+            else -> super.getFragmentByRow(row)
         }
-        return fragments.getValue(row.id)
-    }
-
-    private fun getCompleteFragment(row: Row): Fragment = getFragmentByRow(row).putScopeArgument(scopeProvider.screenScopeTag)
-
-    private fun getFragmentByRow(row: Row): Fragment = when (row.id) {
-        ID_MAIN -> MainFragment()
-        ID_MY -> WatchingFragment()
-        ID_YOUTUBE -> YoutubeFragment()
-        ID_PROFILE -> ProfileFragment()
-        else -> EmptyFragment()
+        fragment.putScopeArgument(scopeProvider.screenScopeTag)
+        return fragment
     }
 }

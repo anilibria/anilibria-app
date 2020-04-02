@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen
 
 import android.util.Log
+import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -14,14 +15,22 @@ open class LifecycleViewModel : ViewModel(), LifecycleObserver {
 
     init {
 
-        Log.e("lalala","inited $this")
+        Log.e("kekeke", "inited $this")
     }
 
     private val disposables = CompositeDisposable()
+    private var created = false
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    @CallSuper
     protected open fun onCreate() {
+        if (!created) {
+            created = true
+            onColdCreate()
+        }
     }
+
+    protected open fun onColdCreate() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     protected open fun onStart() {
@@ -46,7 +55,7 @@ open class LifecycleViewModel : ViewModel(), LifecycleObserver {
     protected fun Disposable.untilDestroy() = this.addTo(disposables)
 
     override fun onCleared() {
-        Log.e("lalala","onCleared $this")
+        Log.e("lalala", "onCleared $this")
         disposables.dispose()
         super.onCleared()
     }

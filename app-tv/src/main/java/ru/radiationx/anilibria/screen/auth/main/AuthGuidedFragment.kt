@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.auth.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
@@ -16,6 +17,11 @@ class AuthGuidedFragment : ScopedGuidedStepFragment() {
     }
 
     private val viewModel by viewModel<AuthViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(viewModel)
+    }
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(
         "Авторизация",

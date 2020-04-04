@@ -24,6 +24,15 @@ class WatchingFavoritesViewModel(
 
     override val defaultTitle: String = "Избранное"
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onCreate() {
+        super.onCreate()
+        if (authRepository.getAuthState() == AuthState.AUTH) {
+            onRefreshClick()
+        }
+    }
+
     override fun onColdCreate() {
         super.onColdCreate()
         authRepository

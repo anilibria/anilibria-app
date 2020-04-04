@@ -137,7 +137,9 @@ class GuidedStepNavigator(
     }
 
     private fun getActualScopeProvider(): ScopeProvider {
-        val fragment = fragmentManager.findFragmentById(containerId) as? ScopeProvider?
-        return fragment ?: scopeProvider
+        // todo Работает не стабильно, т.к. может использоваться старый Scope, который к моменту создания экрана уже будет уничтожен
+        /*val fragment = fragmentManager.findFragmentById(containerId) as? ScopeProvider?
+        return fragment ?: scopeProvider*/
+        return scopeProvider
     }
 }

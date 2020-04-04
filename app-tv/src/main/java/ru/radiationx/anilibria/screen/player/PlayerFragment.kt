@@ -26,7 +26,6 @@ class PlayerFragment : BasePlayerFragment() {
     private val viewModel by viewModel<PlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        dependencyInjector.installModules(PlayerModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         arguments?.apply {

@@ -35,9 +35,6 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
     private val viewModel by viewModel<UpdateViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        dependencyInjector.installModules(module {
-            bind(UpdateController::class.java).singleton()
-        })
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
     }

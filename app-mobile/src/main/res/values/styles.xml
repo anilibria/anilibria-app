@@ -146,7 +146,7 @@
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
-        <item name="bottomSheetDialogTheme">@style/Theme.Design.BottomSheetDialog</item>
+        <item name="bottomSheetDialogTheme">@style/DarkAppTheme.BottomSheetDialog</item>
 
 
         <!-- Attrs -->
@@ -207,6 +207,26 @@
         <item name="colorOnSecondary">@color/dark_contrast_icon</item>
         <item name="colorOnBackground">@color/dark_base_icon</item>
         <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="dialogCornerRadius">8dp</item>
+    </style>
+
+    <style name="DarkAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_cardBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="bottomSheetStyle">@style/DarkAppTheme.BottomSheet</item>
+    </style>
+
+    <style name="DarkAppTheme.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/ShapeAppearanceBottomSheetDialog_Rounded</item>
     </style>
 
 
@@ -225,8 +245,8 @@
 
     <style name="ShapeAppearanceBottomSheetDialog_Rounded">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">16dp</item>
-        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">8dp</item>
+        <item name="cornerSizeTopLeft">8dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>

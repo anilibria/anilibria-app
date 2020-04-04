@@ -1,8 +1,7 @@
-package ru.radiationx.anilibria
+package ru.radiationx.anilibria.common
 
 import android.content.Context
 import android.text.Html
-import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay

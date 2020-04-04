@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.extension
 
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LoadingCard

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.VerticalGridPresenter
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LoadingCard

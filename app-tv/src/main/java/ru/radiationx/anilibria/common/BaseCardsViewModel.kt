@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Single
 import io.reactivex.disposables.Disposables
-import ru.radiationx.anilibria.LinkCard
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {

@@ -4,9 +4,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 

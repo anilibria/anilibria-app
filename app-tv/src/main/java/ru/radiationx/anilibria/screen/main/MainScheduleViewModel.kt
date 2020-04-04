@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.main
 
 import io.reactivex.Single
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -24,7 +24,8 @@ class MainScheduleViewModel(
 
     override val defaultTitle: String = "Ожидается сегодня"
 
-    override val loadMoreCard: LinkCard = LinkCard("Открыть полное расписание")
+    override val loadMoreCard: LinkCard =
+        LinkCard("Открыть полное расписание")
 
     override val loadOnCreate: Boolean = false
 

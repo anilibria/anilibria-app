@@ -1,16 +1,12 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import android.os.Bundle
-import android.util.Log
-import ru.radiationx.anilibria.DetailDataConverter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.di.ActivityModule
 import ru.radiationx.anilibria.di.NavigationModule
-import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
 import ru.radiationx.shared_app.common.download.DownloadsDataSource

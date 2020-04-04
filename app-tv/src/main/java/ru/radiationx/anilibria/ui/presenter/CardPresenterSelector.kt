@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.presenter
 
 import androidx.leanback.widget.Presenter
 import androidx.leanback.widget.PresenterSelector
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LoadingCard
 import java.lang.RuntimeException

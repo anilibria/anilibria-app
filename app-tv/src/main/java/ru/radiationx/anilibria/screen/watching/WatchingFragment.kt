@@ -6,7 +6,7 @@ import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ListRow
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard

@@ -2,11 +2,9 @@ package ru.radiationx.anilibria.screen.details
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import ru.radiationx.anilibria.DetailDataConverter
+import ru.radiationx.anilibria.common.DetailDataConverter
 import ru.radiationx.anilibria.common.LibriaDetails
-import ru.radiationx.anilibria.common.LibriaDetailsRow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -18,7 +16,6 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class DetailHeaderViewModel(

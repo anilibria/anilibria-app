@@ -1,21 +1,15 @@
 package ru.radiationx.anilibria.screen.main
 
-import android.content.Context
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import io.reactivex.Single
-import ru.radiationx.anilibria.LinkCard
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.screen.DetailsScreen
-import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.lang.RuntimeException
 
 @InjectConstructor
 class MainFeedViewModel(

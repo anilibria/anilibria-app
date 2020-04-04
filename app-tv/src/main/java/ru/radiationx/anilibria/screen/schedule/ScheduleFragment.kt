@@ -1,19 +1,15 @@
 package ru.radiationx.anilibria.screen.schedule
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRow
-import androidx.leanback.widget.VerticalGridPresenter
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.LinkCard
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.BaseVerticalGridFragment
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.shared.ktx.android.subscribeTo

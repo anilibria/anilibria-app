@@ -136,24 +136,6 @@ class SettingsFragment : BaseSettingFragment() {
                 false
             }
         }
-
-        findPreference<Preference>("about.otp_code")?.apply {
-            setOnPreferenceClickListener {
-                val ediText = EditText(requireContext())
-                ediText.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                AlertDialog.Builder(requireContext())
-                    .setView(ediText)
-                    .setPositiveButton("Ok") { dialog, which ->
-                        authRepository
-                            .acceptOtp(ediText.text.toString())
-                            .doOnError { errorHandler.handle(it) }
-                            .subscribe()
-                    }
-                    .setNegativeButton("Cancel", null)
-                    .show()
-                false
-            }
-        }
     }
 
     private fun getQualityIcon(quality: Int): Drawable? {

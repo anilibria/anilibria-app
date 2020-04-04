@@ -32,7 +32,7 @@
 
         <item name="android:textColorLink">@color/light_textLink</item>
 
-        <item name="bottomSheetDialogTheme">@style/Theme.Design.Light.BottomSheetDialog</item>
+        <item name="bottomSheetDialogTheme">@style/LightAppTheme.BottomSheetDialog</item>
 
         <!-- Attrs -->
         <item name="divider_line">@color/light_divider_line</item>
@@ -98,6 +98,26 @@
         <item name="colorOnSecondary">@color/light_contrast_icon</item>
         <item name="colorOnBackground">@color/light_base_icon</item>
         <item name="colorOnSurface">@color/light_base_icon</item>
+
+        <item name="dialogCornerRadius">8dp</item>
+    </style>
+
+    <style name="LightAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/light_colorAccent</item>
+        <item name="colorSecondary">@color/light_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/light_colorAccent</item>
+        <item name="android:colorBackground">@color/light_cardBackground</item>
+        <item name="colorSurface">@color/light_cardBackground</item>
+        <item name="colorOnPrimary">@color/light_contrast_icon</item>
+        <item name="colorOnSecondary">@color/light_contrast_icon</item>
+        <item name="colorOnBackground">@color/light_base_icon</item>
+        <item name="colorOnSurface">@color/light_base_icon</item>
+
+        <item name="bottomSheetStyle">@style/LightAppTheme.BottomSheet</item>
+    </style>
+
+    <style name="LightAppTheme.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/ShapeAppearanceBottomSheetDialog_Rounded</item>
     </style>
 
 
@@ -201,6 +221,14 @@
 
     <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ShapeAppearanceBottomSheetDialog_Rounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
 </resources>

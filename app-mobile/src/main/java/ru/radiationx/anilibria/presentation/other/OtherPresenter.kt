@@ -20,12 +20,12 @@ import javax.inject.Inject
 
 @InjectViewState
 class OtherPresenter @Inject constructor(
-        private val router: Router,
-        private val systemMessenger: SystemMessenger,
-        private val authRepository: AuthRepository,
-        private val errorHandler: IErrorHandler,
-        private val apiConfig: ApiConfig,
-        private val menuRepository: MenuRepository
+    private val router: Router,
+    private val systemMessenger: SystemMessenger,
+    private val authRepository: AuthRepository,
+    private val errorHandler: IErrorHandler,
+    private val apiConfig: ApiConfig,
+    private val menuRepository: MenuRepository
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -33,6 +33,7 @@ class OtherPresenter @Inject constructor(
         const val MENU_TEAM = 1
         const val MENU_DONATE = 2
         const val MENU_SETTINGS = 3
+        const val MENU_OTP_CODE = 4
     }
 
     private var currentProfileItem: ProfileItem = authRepository.getUser()
@@ -49,15 +50,16 @@ class OtherPresenter @Inject constructor(
         allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
         allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
         allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
+        allMainMenu.add(OtherMenuItem(MENU_OTP_CODE, "Привязать устройство", R.drawable.ic_devices_other))
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
         menuRepository
-                .getMenu()
-                .subscribe({}, {
-                    it.printStackTrace()
-                })
-                .addToDisposable()
+            .getMenu()
+            .subscribe({}, {
+                it.printStackTrace()
+            })
+            .addToDisposable()
         subscribeUpdate()
         updateMenuItems()
     }
@@ -66,9 +68,9 @@ class OtherPresenter @Inject constructor(
     override fun attachView(view: OtherView?) {
         super.attachView(view)
         authRepository
-                .loadUser()
-                .subscribe({}, {})
-                .addToDisposable()
+            .loadUser()
+            .subscribe({}, {})
+            .addToDisposable()
     }
 
 
@@ -81,12 +83,12 @@ class OtherPresenter @Inject constructor(
 
     fun signOut() {
         val disposable = authRepository
-                .signOut()
-                .subscribe({
-                    systemMessenger.showMessage("Данные авторизации удалены")
-                }, {
-                    errorHandler.handle(it)
-                })
+            .signOut()
+            .subscribe({
+                systemMessenger.showMessage("Данные авторизации удалены")
+            }, {
+                errorHandler.handle(it)
+            })
     }
 
     fun onMenuClick(item: OtherMenuItem) {
@@ -95,6 +97,7 @@ class OtherPresenter @Inject constructor(
             MENU_TEAM -> router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
             MENU_DONATE -> Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
             MENU_SETTINGS -> router.navigateTo(Screens.Settings())
+            MENU_OTP_CODE -> viewState.showOtpCode()
             else -> {
                 linksMap[item.id]?.also { linkItem ->
                     val absoluteLink = linkItem.absoluteLink
@@ -110,27 +113,27 @@ class OtherPresenter @Inject constructor(
 
     private fun subscribeUpdate() {
         authRepository
-                .observeUser()
-                .subscribe {
-                    currentProfileItem = it
-                    updateMenuItems()
-                }
-                .addToDisposable()
+            .observeUser()
+            .subscribe {
+                currentProfileItem = it
+                updateMenuItems()
+            }
+            .addToDisposable()
 
         menuRepository
-                .observeMenu()
-                .subscribe { linkItems ->
-                    currentLinkMenuItems.clear()
-                    currentLinkMenuItems.addAll(linkItems)
-                    allLinkMenu.clear()
-                    allLinkMenu.addAll(linkItems.map {
-                        OtherMenuItem(it.hashCode(), it.title, getResIconByType(it.icon))
-                    })
-                    linksMap.clear()
-                    linksMap.putAll(linkItems.associateBy { it.hashCode() })
-                    updateMenuItems()
-                }
-                .addToDisposable()
+            .observeMenu()
+            .subscribe { linkItems ->
+                currentLinkMenuItems.clear()
+                currentLinkMenuItems.addAll(linkItems)
+                allLinkMenu.clear()
+                allLinkMenu.addAll(linkItems.map {
+                    OtherMenuItem(it.hashCode(), it.title, getResIconByType(it.icon))
+                })
+                linksMap.clear()
+                linksMap.putAll(linkItems.associateBy { it.hashCode() })
+                updateMenuItems()
+            }
+            .addToDisposable()
     }
 
     private fun updateMenuItems() {
@@ -138,6 +141,10 @@ class OtherPresenter @Inject constructor(
         val mainMenu = allMainMenu.toMutableList()
         val systemMenu = allSystemMenu.toMutableList()
         val linkMenu = allLinkMenu.toMutableList()
+
+        if (currentProfileItem.authState != AuthState.AUTH) {
+            mainMenu.removeAll { it.id == MENU_OTP_CODE }
+        }
 
         viewState.showItems(currentProfileItem, listOf(mainMenu, systemMenu, linkMenu).filter { it.isNotEmpty() })
     }

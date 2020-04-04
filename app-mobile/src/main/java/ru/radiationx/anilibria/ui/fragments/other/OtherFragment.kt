@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
 
@@ -65,6 +66,10 @@ class OtherFragment : BaseFragment(), OtherView {
 
     override fun updateProfile() {
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showOtpCode() {
+        OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
     }
 
     override fun setRefreshing(refreshing: Boolean) {}

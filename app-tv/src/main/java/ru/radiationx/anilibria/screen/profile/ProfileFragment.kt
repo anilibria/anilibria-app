@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.radiationx.shared_app.screen.ScopedFragment
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class ProfileFragment : ScopedFragment(R.layout.fragment_profile), BrowseSupport
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
-    private val viewModel by viewModel<ProfileViewModel>()
+    private val viewModel by viewModelFromParent<ProfileViewModel>()
 
     private val selfMainFragmentAdapter by lazy { BrowseSupportFragment.MainFragmentAdapter(this) }
 

@@ -24,7 +24,6 @@ import ru.radiationx.shared_app.screen.ScopedFragment
 import toothpick.ktp.binding.module
 import javax.inject.Inject
 
-@RuntimePermissions
 class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
 
     private val progressBarManager by lazy { ProgressBarManager() }
@@ -84,33 +83,7 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
             updateContainer.isVisible = !it
         }
 
-        updateButton.setOnClickListener { onUpdateClickWithPermissionCheck() }
-    }
-
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun onUpdateClick() {
-        viewModel.onActionClick()
-    }
-
-    @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun onNeverAskAgain() {
-        AlertDialog.Builder(requireContext())
-            .setMessage("Для загрузки обновления необходим доступ к памяти")
-            .setPositiveButton("Настройки") { dialog, which ->
-                val intent = Intent().apply {
-                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    data = Uri.fromParts("package", requireActivity().packageName, null)
-                }
-                requireActivity().startActivity(intent)
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
+        updateButton.setOnClickListener { viewModel.onActionClick() }
     }
 
     private fun StringBuilder.appendParam(title: String, value: String) {

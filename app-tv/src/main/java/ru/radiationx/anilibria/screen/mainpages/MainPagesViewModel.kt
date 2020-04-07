@@ -27,7 +27,8 @@ class MainPagesViewModel(
         checkerRepository
             .checkUpdate(buildConfig.versionCode, true)
             .lifeSubscribe({
-                hasUpdatesData.value = it.code > buildConfig.versionCode
+                //hasUpdatesData.value = it.code > buildConfig.versionCode
+                hasUpdatesData.value = true
             }, {
                 it.printStackTrace()
             })

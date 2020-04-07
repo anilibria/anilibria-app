@@ -1,12 +1,15 @@
 package ru.radiationx.anilibria.screen.update
 
+import android.app.DownloadManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposables
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -37,6 +40,9 @@ class UpdateViewModel(
     private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null
     private var pendingInstall = false
+
+    private var updatesDisposable = Disposables.disposed()
+    private var completedDisposable = Disposables.disposed()
 
     init {
         progressState.value = true
@@ -97,33 +103,64 @@ class UpdateViewModel(
 
     private fun startDownload(url: String) {
         val downloadItem = downloadController.getDownload(url)
-        currentDownload = downloadItem
+        if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
+            return
+        }
         Log.e("UpdateViewModel", "startDownload by url $url")
         Log.e("UpdateViewModel", "startDownload item $downloadItem")
+
+        updatesDisposable.dispose()
+        updatesDisposable = downloadController
+            .observeDownload(url)
+            .lifeSubscribe({
+                handleUpdate(it)
+            }, {
+                it.printStackTrace()
+            })
+
+        completedDisposable.dispose()
+        completedDisposable = downloadController
+            .observeCompleted(url)
+            .lifeSubscribe({
+                handleComplete(it)
+            }, {
+                it.printStackTrace()
+            })
+
         if (downloadItem == null) {
             downloadController.startDownload(url)
         } else {
-            updateState(downloadItem.state)
-            downloadProgressData.value = downloadItem.progress
+            if (downloadItem.state == DownloadController.State.SUCCESSFUL) {
+                handleComplete(downloadItem)
+            } else {
+                handleUpdate(downloadItem)
+            }
         }
 
-        downloadController
-            .observeDownload(url)
-            .lifeSubscribe {
-                currentDownload = it
-                Log.e("UpdateViewModel", "observeDownload ${currentDownload?.downloadId}, $it")
-                downloadProgressData.value = it.progress
-                updateState(it.state)
-            }
 
-        downloadController
-            .observeCompleted(url)
-            .lifeSubscribe {
-                currentDownload = null
-                pendingInstall = false
-                updateState(null)
-            }
+    }
 
+    private fun handleUpdate(downloadItem: DownloadItem) {
+        Log.e("UpdateViewModel", "handleUpdate ${currentDownload?.downloadId}, $downloadItem")
+        currentDownload = downloadItem
+        downloadProgressData.value = downloadItem.progress
+        updateState(downloadItem.state)
+    }
+
+    private fun handleComplete(downloadItem: DownloadItem) {
+        Log.e("UpdateViewModel", "handleComplete $downloadItem")
+        currentDownload = null
+        updateState(null)
+        startPendingInstall(downloadItem)
+        updatesDisposable.dispose()
+        completedDisposable.dispose()
+    }
+
+    private fun startPendingInstall(downloadItem: DownloadItem) {
+        if (pendingInstall && downloadItem.state == DownloadController.State.SUCCESSFUL) {
+            pendingInstall = false
+            installAction(downloadItem)
+        }
     }
 
     private fun updateState(state: DownloadController.State? = downloadState) {
@@ -140,27 +177,23 @@ class UpdateViewModel(
             DownloadController.State.PAUSED -> "Отмена"
             else -> "Установить"
         }
-
-        if (pendingInstall && state == DownloadController.State.SUCCESSFUL) {
-            pendingInstall = false
-            currentDownload?.also {
-                installAction(it)
-            }
-        }
     }
 
     private fun installAction(downloadItem: DownloadItem) {
         val data = Uri.parse(downloadItem.localUrl)
         val type = MimeTypeUtil.getType(downloadItem.url)
-        val kek = ContentResolver.SCHEME_FILE.equals(data.getScheme())
-        Log.e("UpdateViewModel", "onActionClick $kek, $type, $data")
-        val install = Intent(Intent.ACTION_VIEW)
-        install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        install.setDataAndType(data, type)
-        //install.data = data
-        context.startActivity(install)
+        Log.e("UpdateViewModel", "installAction $data, $type")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val install = Intent(Intent.ACTION_VIEW)
+            install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            install.setDataAndType(data, type)
+            context.startActivity(install)
+        } else {
+            val install = Intent(Intent.ACTION_VIEW)
+            install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            install.setDataAndType(data, type)
+            context.startActivity(install)
+        }
     }
-
-
 }

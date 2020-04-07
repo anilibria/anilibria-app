@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.util.Log
 import com.jakewharton.rxrelay2.PublishRelay
@@ -84,9 +85,14 @@ class DownloadsDataSource(
         pendingTimerDisposable = Observable
             .interval(1L, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 fetchPendingDownloads()
-            }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && cachedDownloads.isNotEmpty()) {
+                    updateAll()
+                }
+            }, {
+                it.printStackTrace()
+            })
     }
 
     private fun stopTimer() {
@@ -94,6 +100,7 @@ class DownloadsDataSource(
     }
 
     private fun fetchPendingDownloads() {
+        //Log.e(TAG, "fetchPendingDownloads pending=${pendingDownloads.size}, cached=${cachedDownloads.size}")
         if (pendingDownloads.isEmpty()) {
             return
         }
@@ -101,6 +108,7 @@ class DownloadsDataSource(
         val downloads = fetchDownloadRows(downloadIds)
         Log.e(TAG, "fetchPendingDownloads ids=${downloadIds.size}, fetched=${downloads.size}")
         downloads.forEach {
+            //Log.e(TAG, "fetchPendingDownloads fetched $it}")
             updateCache(it)
             startObserve(it.downloadId)
             downloadsRelay.accept(it)
@@ -152,7 +160,8 @@ class DownloadsDataSource(
 
     private fun updateComplete(downloadId: Long) {
         Log.e(TAG, "updateComplete $downloadId")
-        findCached(downloadId)?.also {
+        (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also {
+            //Log.e(TAG, "updateComplete $it")
             if (it.state != DownloadController.State.SUCCESSFUL) {
                 cachedDownloads.removeAll { it.downloadId == downloadId }
             }
@@ -197,8 +206,8 @@ class DownloadsDataSource(
 
     private fun createContentObserver() = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
-            uri ?: return
             Log.e(TAG, "onChange $uri")
+            uri ?: return
             findCached(uri.toString())?.downloadId?.also { update(it) }
         }
     }

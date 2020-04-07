@@ -3,6 +3,8 @@ package ru.radiationx.shared_app.common.download
 import android.app.DownloadManager
 import android.content.*
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -65,6 +67,9 @@ class DownloadControllerImpl(
         val fileName = name ?: systemUtils.getFileNameFromUrl(url)
         val request = DownloadManager.Request(Uri.parse(url)).apply {
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            }
             setMimeType(MimeTypeUtil.getType(fileName))
             setTitle(fileName)
             setDescription(fileName)

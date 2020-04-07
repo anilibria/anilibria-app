@@ -48,6 +48,7 @@ class DataModule(context: Context) : Module() {
         bind(YearsHolder::class.java).to(YearsStorage::class.java).singleton()
         bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singleton()
         bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
+        bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
         bind(UserHolder::class.java).to(UserStorage::class.java).singleton()

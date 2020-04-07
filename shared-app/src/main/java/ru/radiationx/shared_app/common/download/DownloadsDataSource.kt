@@ -14,12 +14,14 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
+import ru.radiationx.data.datasource.holders.DownloadsHolder
 import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class DownloadsDataSource(
-    private val context: Context
+    private val context: Context,
+    private val downloadsHolder: DownloadsHolder
 ) {
 
     private val TAG = "DownloadsDataSource"
@@ -68,12 +70,12 @@ class DownloadsDataSource(
         if (enabled) {
             startTimer()
             context.registerReceiver(completeReceiver, completeFilter)
-            cachedDownloads.forEach { startObserve(it.downloadId) }
+            downloadsHolder.getDownloads().forEach { startObserve(it) }
             updateAll()
         } else {
             stopTimer()
             context.unregisterReceiver(completeReceiver)
-            cachedDownloads.forEach { stopObserver(it.downloadId) }
+            downloadsHolder.getDownloads().forEach { stopObserver(it) }
         }
     }
 
@@ -125,10 +127,11 @@ class DownloadsDataSource(
     }
 
     private fun updateAll() {
-        /*if (cachedDownloads.isEmpty()) {
+        val savedIds = downloadsHolder.getDownloads()
+        if (savedIds.isEmpty()) {
             return
-        }*/
-        val downloadIds = cachedDownloads.map { it.downloadId }.toLongArray()
+        }
+        val downloadIds = savedIds.toLongArray()
         Log.e(TAG, "updateAll ${downloadIds.joinToString()}")
         val downloads = fetchDownloadRows(downloadIds)
         fullUpdateCache(downloads)
@@ -177,12 +180,14 @@ class DownloadsDataSource(
     private fun fullUpdateCache(items: List<DownloadItem>) {
         cachedDownloads.clear()
         cachedDownloads.addAll(items)
+        downloadsHolder.saveDownloads(cachedDownloads.map { it.downloadId })
         Log.e(TAG, "fullUpdateCache complete ${cachedDownloads.map { it.downloadId }}")
     }
 
     private fun updateCache(downloadItem: DownloadItem) {
         cachedDownloads.removeAll { it.downloadId == downloadItem.downloadId }
         cachedDownloads.add(downloadItem)
+        downloadsHolder.saveDownloads(cachedDownloads.map { it.downloadId })
         Log.e(TAG, "updateCache complete ${cachedDownloads.map { it.downloadId }}")
     }
 

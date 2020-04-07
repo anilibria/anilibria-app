@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.presenter
 
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import kotlinx.android.synthetic.main.row_detail_release.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.LibriaDetailsRow
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
 class ReleaseDetailsPresenter(
@@ -77,6 +80,10 @@ class ReleaseDetailsPresenter(
                 null,
                 favoriteDrawable,
                 null
+            )
+            TextViewCompat.setCompoundDrawableTintList(
+                rowReleaseFavoriteCount,
+                ColorStateList.valueOf(rowReleaseFavoriteCount.getCompatColor(R.color.dark_textDefault))
             )
             rowReleaseHQMarker.isVisible = details.hasFullHd
 

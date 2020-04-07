@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    release = 370f / 260f
+    youtube = 188f / 335f
+    height = 370f
+    -->
+    <item name="ratio_card_release" format="float" type="dimen">1.423</item>
+    <item name="ratio_card_youtube" format="float" type="dimen">0.561</item>
+    <dimen name="card_height">185dp</dimen>
+    <dimen name="card_release_width">130dp</dimen>
+    <dimen name="card_youtube_width">330dp</dimen>
+</resources>

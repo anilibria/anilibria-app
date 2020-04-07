@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria.ui.presenter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
 
 class LibriaCardPresenter : Presenter() {
@@ -30,23 +32,14 @@ class LibriaCardViewHolder(
     override val containerView: ImageCardView
 ) : Presenter.ViewHolder(containerView), LayoutContainer {
 
-    companion object {
-
-        private val cardratio = 370f / 260f
-        private val cardratio_1 = 188f / 335f
-        private val targetHeight = 370f
-
-        private val CARD_WIDTH = (targetHeight / cardratio).toInt()
-        private val CARD_HEIGHT = ((targetHeight / cardratio) * cardratio).toInt()
-
-        private val CARD_WIDTH_1 = (targetHeight / cardratio_1).toInt()
-        private val CARD_HEIGHT_1 = ((targetHeight / cardratio_1) * cardratio_1).toInt()
-    }
+    private val cardHeight by lazy { containerView.context.resources.getDimension(R.dimen.card_height).toInt() }
+    private val cardReleaseWidth by lazy { containerView.context.resources.getDimension(R.dimen.card_release_width).toInt() }
+    private val cardYoutubeWidth by lazy { containerView.context.resources.getDimension(R.dimen.card_youtube_width).toInt() }
 
     fun bind(item: LibriaCard) {
         when (item.type) {
-            LibriaCard.Type.RELEASE -> containerView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
-            LibriaCard.Type.YOUTUBE -> containerView.setMainImageDimensions(CARD_WIDTH_1, CARD_HEIGHT_1)
+            LibriaCard.Type.RELEASE -> containerView.setMainImageDimensions(cardReleaseWidth, cardHeight)
+            LibriaCard.Type.YOUTUBE -> containerView.setMainImageDimensions(cardYoutubeWidth, cardHeight)
         }
         ImageLoader.getInstance().displayImage(item.image, containerView.mainImageView)
     }

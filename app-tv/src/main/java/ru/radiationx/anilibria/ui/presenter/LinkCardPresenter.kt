@@ -10,23 +10,16 @@ import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
 class LinkCardPresenter : Presenter() {
-    companion object {
-
-        private val cardratio = 370f / 260f
-        private val cardratio_1 = 188f / 335f
-        private val targetHeight = 370f
-
-        private val CARD_WIDTH = (targetHeight / cardratio).toInt()
-        private val CARD_HEIGHT = ((targetHeight / cardratio) * cardratio).toInt()
-    }
-
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
+        val cardHeight = parent.context.resources.getDimension(R.dimen.card_height).toInt()
+        val cardReleaseWidth = parent.context.resources.getDimension(R.dimen.card_release_width).toInt()
+
         val cardView = ImageCardView(parent.context)
         cardView.mainImage = cardView.getCompatDrawable(R.drawable.ic_link_card)?.mutate()?.apply {
             setTint(cardView.getCompatColor(R.color.dark_contrast_icon))
         }
-        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
+        cardView.setMainImageDimensions(cardReleaseWidth, cardHeight)
         cardView.setMainImageScaleType(ImageView.ScaleType.CENTER)
         return ViewHolder(cardView)
     }

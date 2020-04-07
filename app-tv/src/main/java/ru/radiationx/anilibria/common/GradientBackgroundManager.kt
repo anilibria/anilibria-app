@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.core.graphics.alpha
 import androidx.fragment.app.FragmentActivity
@@ -20,6 +21,7 @@ import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatColor
 import toothpick.InjectConstructor
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
@@ -117,19 +119,20 @@ class GradientBackgroundManager(
         imageApplierDisposable.dispose()
         imageApplierDisposable = Single
             .fromCallable {
-                ImageLoader.getInstance().loadImageSync(url)
+                ImageLoader.getInstance().loadImageSync(url).wrap()
             }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.computation())
             .map {
-                Palette.Builder(it).generate()
+                it.data?.let { Palette.Builder(it).generate() }.wrap()
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                val palette = it.data ?: return@subscribe
                 if (colorSelector == defaultColorSelector) {
-                    urlColorMap[url] = colorSelector(it) ?: defaultColorSelector(it)
+                    urlColorMap[url] = colorSelector(palette) ?: defaultColorSelector(palette)
                 }
-                applyPalette(it, colorSelector, colorModifier)
+                applyPalette(palette, colorSelector, colorModifier)
             }, {
                 it.printStackTrace()
             })
@@ -181,5 +184,8 @@ class GradientBackgroundManager(
             }
     }
 
+    private class Wrapper<T>(val data: T?)
+
+    private fun <T> T?.wrap(): Wrapper<T> = Wrapper(this)
 
 }

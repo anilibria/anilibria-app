@@ -3,7 +3,7 @@
     <color name="alib_red">#c40304</color>
     <color name="alib_gray">#383838</color>
     <color name="alib_gray_dark">#282828</color>
-    <color name="alib_red_launcher">@color/alib_red</color>
+    <color name="alib_red_launcher">#8f2929</color>
     <color name="alib_white_launcher">#fff</color>
     <color name="white">#fff</color>
 

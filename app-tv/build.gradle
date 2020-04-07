@@ -11,7 +11,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0_RC1"
     }
 
     buildTypes {
@@ -26,6 +26,14 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "AniLibria_TV"
+            def versionName = variant.versionName
+            outputFileName = "${appName}_v${versionName}.apk"
+        }
     }
 }
 
@@ -55,8 +63,6 @@ dependencies {
 
     implementation 'com.google.android:flexbox:1.1.0'
 
-    implementation 'androidx.multidex:multidex:2.0.1'
-
     implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0"
     implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0"
     implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0"
@@ -69,4 +75,6 @@ dependencies {
 
     implementation("org.permissionsdispatcher:permissionsdispatcher:4.7.0")
     kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
+
+    implementation 'com.yandex.android:mobmetricalib:3.13.1'
 }

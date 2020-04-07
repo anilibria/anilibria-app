@@ -6,7 +6,8 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.multidex.MultiDex
+import com.yandex.metrica.YandexMetrica
+import com.yandex.metrica.YandexMetricaConfig
 import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
@@ -18,53 +19,21 @@ import toothpick.configuration.Configuration
 
 class App : Application() {
 
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-        when (BuildConfig.FLAVOR) {
-            "appDev", "store" -> MultiDex.install(this)
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
+
+        initYandexAppMetrica()
 
         if (isMainProcess()) {
             initInMainProcess()
         }
+    }
 
-        registerActivityLifecycleCallbacks(object :ActivityLifecycleCallbacks{
-            override fun onActivityPaused(activity: Activity) {
-                
-            }
-
-            override fun onActivityStarted(activity: Activity) {
-                
-            }
-
-            override fun onActivityDestroyed(activity: Activity) {
-                Log.e("ActivityLifecycle", "onActivityDestroyed $activity")
-                
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-                
-            }
-
-            override fun onActivityStopped(activity: Activity) {
-                
-            }
-
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                Log.e("ActivityLifecycle", "onActivityCreated $activity")
-                
-            }
-
-            override fun onActivityResumed(activity: Activity) {
-                
-            }
-
-        })
+    private fun initYandexAppMetrica() {
+        if (BuildConfig.DEBUG) return
+        val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
+        YandexMetrica.activate(applicationContext, config)
+        YandexMetrica.enableActivityAutoTracking(this)
     }
 
     private fun initInMainProcess() {

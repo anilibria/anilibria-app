@@ -91,6 +91,14 @@ android {
         disable 'RestrictedApi'
         checkReleaseBuilds false
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "AniLibria"
+            def versionName = variant.versionName
+            outputFileName = "${appName}_v${versionName}.apk"
+        }
+    }
 }
 ext {
     supportLibVersion = '28.0.0'

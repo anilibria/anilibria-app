@@ -17,6 +17,7 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:banner="@drawable/anilibria_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -25,17 +26,21 @@
 
         <activity
             android:name=".screen.launcher.MainActivity"
-            android:banner="@drawable/anilibria_banner"
-            android:icon="@drawable/anilibria_banner"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:logo="@drawable/anilibria_banner"
             android:screenOrientation="landscape"
             tools:ignore="LockedOrientationActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

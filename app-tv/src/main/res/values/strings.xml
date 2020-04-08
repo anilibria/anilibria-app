@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AniLibria</string>
+    <string name="app_name">AniLibria TV</string>
     <string name="config_action_repeat">Повторить</string>
     <string name="config_action_skip">Пропустить</string>
     <string name="config_action_next">Следующий шаг</string>

@@ -9,11 +9,11 @@ import kotlinx.android.synthetic.main.fragment_configuring.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringPresenter
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 
@@ -23,7 +23,7 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
     lateinit var presenter: ConfiguringPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(screenScope, ConfiguringPresenter::class.java)
+    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(ConfiguringPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_configuring
 
@@ -37,19 +37,23 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
         config_next.setOnClickListener { presenter.nextCheck() }
     }
 
-    override fun updateScreen(screenState: ConfiguringPresenter.ScreenState) {
+    override fun updateScreen(screenState: ConfigScreenState) {
         config_status.text = screenState.status
-        config_next.text = screenState.nextButton
+        config_next.text = if (screenState.hasNext) {
+            "Следующий шаг"
+        } else {
+            null
+        }
 
         TransitionManager.beginDelayedTransition(constraint, AutoTransition().apply {
             duration = 225
             ordering = TransitionSet.ORDERING_TOGETHER
         })
-        val isVisible = screenState.refresh
-        config_refresh.visible(isVisible)
-        config_skip.visible(isVisible)
-        config_next.visible(isVisible && screenState.nextButton != null)
-        config_progress.gone(isVisible)
+        val needRefresh = screenState.needRefresh
+        config_refresh.visible(needRefresh)
+        config_skip.visible(needRefresh)
+        config_next.visible(needRefresh && screenState.hasNext)
+        config_progress.gone(needRefresh)
     }
 
     override fun onBackPressed(): Boolean {

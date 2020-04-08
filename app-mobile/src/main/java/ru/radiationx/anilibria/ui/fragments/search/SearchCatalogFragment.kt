@@ -13,8 +13,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.presentation.search.SearchCatalogView
@@ -78,14 +77,14 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(screenScope, FastSearchPresenter::class.java)
+        getDependency(FastSearchPresenter::class.java, screenScope)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
     fun providePresenter(): SearchPresenter =
-        getDependency(screenScope, SearchPresenter::class.java)
+        getDependency(SearchPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

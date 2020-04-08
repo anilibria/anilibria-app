@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.activities.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils

@@ -3,6 +3,7 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
+import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -14,7 +15,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class EpisodesCheckerStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : EpisodesCheckerHolder {
 
     companion object {
@@ -30,10 +31,12 @@ class EpisodesCheckerStorage @Inject constructor(
 
     override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
 
+    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> = Single.fromCallable { localEpisodesRelay.value!! }
+
     override fun putEpisode(episode: ReleaseFull.Episode) {
         localEpisodes
-                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-                ?.let { localEpisodes.remove(it) }
+            .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+            ?.let { localEpisodes.remove(it) }
         localEpisodes.add(episode)
         saveAll()
         localEpisodesRelay.accept(localEpisodes)
@@ -42,8 +45,8 @@ class EpisodesCheckerStorage @Inject constructor(
     override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
         episodes.forEach { episode ->
             localEpisodes
-                    .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-                    ?.let { localEpisodes.remove(it) }
+                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                ?.let { localEpisodes.remove(it) }
             localEpisodes.add(episode)
         }
         saveAll()
@@ -72,9 +75,9 @@ class EpisodesCheckerStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_EPISODES_KEY, jsonEpisodes.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_EPISODES_KEY, jsonEpisodes.toString())
+            .apply()
     }
 
     private fun loadAll() {

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_vital.*
 import kotlinx.android.synthetic.main.item_vital_native.*
 import kotlinx.android.synthetic.main.item_vital_web.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder

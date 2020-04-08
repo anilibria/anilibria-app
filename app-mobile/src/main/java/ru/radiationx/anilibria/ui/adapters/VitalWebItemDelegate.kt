@@ -11,7 +11,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_vital_web.*
 import kotlinx.android.synthetic.main.item_vital_web_card.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.DI
+import ru.radiationx.shared_app.di.DI
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig

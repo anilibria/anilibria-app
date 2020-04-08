@@ -13,8 +13,7 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -47,7 +46,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     lateinit var presenter: AuthSocialPresenter
 
     @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter = getDependency(screenScope, AuthSocialPresenter::class.java)
+    fun providePresenter(): AuthSocialPresenter = getDependency(AuthSocialPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

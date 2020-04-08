@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.leanback.widget.BrowseFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.leanback.widget.BrowseFrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusedByDefault="true"
+        android:gravity="center"
+        android:paddingStart="?browsePaddingStart"
+        android:paddingTop="120dp"
+        android:paddingEnd="?browsePaddingEnd"
+        android:paddingBottom="@dimen/lb_vertical_grid_padding_bottom"
+        android:text="Coming soon"
+        android:textSize="32dp" />
+</FrameLayout>

@@ -8,8 +8,7 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -20,6 +19,7 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
 
@@ -35,7 +35,7 @@ class OtherFragment : BaseFragment(), OtherView {
     lateinit var presenter: OtherPresenter
 
     @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter = getDependency(screenScope, OtherPresenter::class.java)
+    fun provideOtherPresenter(): OtherPresenter = getDependency(OtherPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_list
 
@@ -66,6 +66,10 @@ class OtherFragment : BaseFragment(), OtherView {
 
     override fun updateProfile() {
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showOtpCode() {
+        OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
     }
 
     override fun setRefreshing(refreshing: Boolean) {}

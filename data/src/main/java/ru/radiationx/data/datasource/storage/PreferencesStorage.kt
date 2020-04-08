@@ -11,7 +11,7 @@ import javax.inject.Inject
  * Created by radiationx on 03.02.18.
  */
 class PreferencesStorage @Inject constructor(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : PreferencesHolder, AppThemeHolder {
 
     companion object {
@@ -28,21 +28,19 @@ class PreferencesStorage @Inject constructor(
     }
 
     private val appThemeRelay = BehaviorRelay.createDefault<AppThemeHolder.AppTheme>(getTheme())
+    private val qualityRelay = BehaviorRelay.createDefault<Int>(getQuality())
+    private val playSpeedRelay = BehaviorRelay.createDefault<Float>(playSpeed)
     private val notificationsAllRelay = BehaviorRelay.createDefault<Boolean>(notificationsAll)
     private val notificationsServiceRelay = BehaviorRelay.createDefault<Boolean>(notificationsService)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            APP_THEME_KEY -> {
-                appThemeRelay.accept(getTheme())
-            }
-            NOTIFICATIONS_ALL_KEY -> {
-                notificationsAllRelay.accept(notificationsAll)
-            }
-            NOTIFICATIONS_SERVICE_KEY -> {
-                notificationsServiceRelay.accept(notificationsService)
-            }
+            APP_THEME_KEY -> appThemeRelay.accept(getTheme())
+            NOTIFICATIONS_ALL_KEY -> notificationsAllRelay.accept(notificationsAll)
+            NOTIFICATIONS_SERVICE_KEY -> notificationsServiceRelay.accept(notificationsService)
+            QUALITY_KEY -> qualityRelay.accept(getQuality())
+            PLAY_SPEED_KEY -> playSpeedRelay.accept(playSpeed)
         }
     }
 
@@ -78,6 +76,8 @@ class PreferencesStorage @Inject constructor(
         sharedPreferences.edit().putInt(QUALITY_KEY, value).apply()
     }
 
+    override fun observeQuality(): Observable<Int> = qualityRelay.hide()
+
     override fun getPlayerType(): Int {
         return sharedPreferences.getInt(PLAYER_TYPE_KEY, PreferencesHolder.PLAYER_TYPE_NO)
     }
@@ -91,6 +91,8 @@ class PreferencesStorage @Inject constructor(
         set(value) {
             sharedPreferences.edit().putFloat(PLAY_SPEED_KEY, value).apply()
         }
+
+    override fun observePlaySpeed(): Observable<Float> = playSpeedRelay.hide()
 
     override var pipControl: Int
         get() = sharedPreferences.getInt(PIP_CONTROL_KEY, PreferencesHolder.PIP_BUTTON)

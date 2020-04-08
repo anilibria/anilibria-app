@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,9 +16,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
-import ru.radiationx.anilibria.extension.dpToPx
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -84,10 +81,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(screenScope, FastSearchPresenter::class.java)
+        getDependency(FastSearchPresenter::class.java, screenScope)
 
     @ProvidePresenter
-    fun provideFeedPresenter() = getDependency(screenScope, FeedPresenter::class.java)
+    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

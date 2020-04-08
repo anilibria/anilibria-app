@@ -32,11 +32,13 @@ interface PreferencesHolder {
 
     fun getQuality(): Int
     fun setQuality(value: Int)
+    fun observeQuality(): Observable<Int>
 
     fun getPlayerType(): Int
     fun setPlayerType(value: Int)
 
     var playSpeed: Float
+    fun observePlaySpeed(): Observable<Float>
 
     var pipControl: Int
 

@@ -16,51 +16,62 @@ import javax.inject.Inject
  * Created by radiationx on 17.12.17.
  */
 class ReleaseRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val releaseApi: ReleaseApi,
-        private val releaseUpdateHolder: ReleaseUpdateHolder
+    private val schedulers: SchedulersProvider,
+    private val releaseApi: ReleaseApi,
+    private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
     fun getRandomRelease(): Single<RandomRelease> = releaseApi
-            .getRandomRelease()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .getRandomRelease()
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getRelease(releaseId: Int): Single<ReleaseFull> = releaseApi
-            .getRelease(releaseId)
-            .doOnSuccess(this::fillReleaseUpdate)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .getRelease(releaseId)
+        .doOnSuccess(this::fillReleaseUpdate)
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getRelease(releaseIdName: String): Single<ReleaseFull> = releaseApi
-            .getRelease(releaseIdName)
-            .doOnSuccess(this::fillReleaseUpdate)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .getRelease(releaseIdName)
+        .doOnSuccess(this::fillReleaseUpdate)
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    fun getReleasesById(ids: List<Int>): Single<List<ReleaseItem>> = releaseApi
+        .getReleasesByIds(ids)
+        .doOnSuccess { fillReleasesUpdate(it) }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> = releaseApi
-            .getReleases(page)
-            .doOnSuccess {
-                val newItems = mutableListOf<ReleaseItem>()
-                val updItems = mutableListOf<ReleaseUpdate>()
-                it.data.forEach { item ->
-                    val updItem = releaseUpdateHolder.getRelease(item.id)
-                    Log.e("lalalupdata", "${item.id}, ${item.torrentUpdate} : ${updItem?.id}, ${updItem?.timestamp}, ${updItem?.lastOpenTimestamp}")
-                    if (updItem == null) {
-                        newItems.add(item)
-                    } else {
-                        item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                        /*if (item.torrentUpdate > updItem.timestamp) {
-                            updItem.timestamp = item.torrentUpdate
-                            updItems.add(updItem)
-                        }*/
-                    }
-                }
-                releaseUpdateHolder.putAllRelease(newItems)
-                releaseUpdateHolder.updAllRelease(updItems)
+        .getReleases(page)
+        .doOnSuccess { fillReleasesUpdate(it.data) }
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+
+    private fun fillReleasesUpdate(items: List<ReleaseItem>) {
+        val newItems = mutableListOf<ReleaseItem>()
+        val updItems = mutableListOf<ReleaseUpdate>()
+        items.forEach { item ->
+            val updItem = releaseUpdateHolder.getRelease(item.id)
+            Log.e(
+                "lalalupdata",
+                "${item.id}, ${item.torrentUpdate} : ${updItem?.id}, ${updItem?.timestamp}, ${updItem?.lastOpenTimestamp}"
+            )
+            if (updItem == null) {
+                newItems.add(item)
+            } else {
+                item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                /*if (item.torrentUpdate > updItem.timestamp) {
+                    updItem.timestamp = item.torrentUpdate
+                    updItems.add(updItem)
+                }*/
             }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        }
+        releaseUpdateHolder.putAllRelease(newItems)
+        releaseUpdateHolder.updAllRelease(updItems)
+    }
 
     private fun fillReleaseUpdate(item: ReleaseItem) {
         val updItem = releaseUpdateHolder.getRelease(item.id)

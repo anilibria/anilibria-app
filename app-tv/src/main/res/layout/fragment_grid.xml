@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/browse_dummy"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.leanback.widget.BrowseFrameLayout
+        android:id="@+id/grid_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <FrameLayout
+            android:id="@+id/browse_grid_dock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ru.radiationx.anilibria.ui.widget.ShadowDescriptionView
+            android:id="@+id/shadowDescriptionView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
+
+    </androidx.leanback.widget.BrowseFrameLayout>
+</FrameLayout>

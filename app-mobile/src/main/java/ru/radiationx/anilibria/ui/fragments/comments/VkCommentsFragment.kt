@@ -14,8 +14,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
@@ -30,6 +29,8 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.di.DI
+import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -55,7 +56,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     lateinit var presenter: VkCommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): VkCommentsPresenter = getDependency(screenScope, VkCommentsPresenter::class.java)
+    fun providePresenter(): VkCommentsPresenter = getDependency(VkCommentsPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_webview
 
@@ -192,7 +193,8 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         @Suppress("DEPRECATION", "OverridingDeprecatedMember")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
-                val client = getDependency(screenScope, IClient::class.java, MainClient::class.java.name)
+                val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope).getInstance(IClient::class.java, MainClient::class.java.name)
+
                 Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = try {
                     client.get(url.orEmpty(), emptyMap()).blockingGet()

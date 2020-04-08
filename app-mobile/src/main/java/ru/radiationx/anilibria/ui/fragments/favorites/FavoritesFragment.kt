@@ -15,8 +15,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
@@ -55,7 +54,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
 
     @ProvidePresenter
     fun provideFavoritesPresenter(): FavoritesPresenter =
-        getDependency(screenScope, FavoritesPresenter::class.java)
+        getDependency(FavoritesPresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 

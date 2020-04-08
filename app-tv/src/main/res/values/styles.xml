@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="@style/Theme.Leanback">
+        <item name="android:colorPrimary">@color/dark_colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/dark_colorAccent</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="defaultBrandColor">@color/dark_colorPrimary1</item>
+        <item name="defaultSearchColor">@color/dark_colorAccent</item>
+        <item name="defaultSearchIconColor">@color/dark_contrast_icon</item>
+        <item name="defaultSearchBrightColor">@color/dark_textLink</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
+
+        <item name="browseTitleViewLayout">@layout/lb_titleview</item>
+
+        <item name="guidedStepTheme">@style/AppTheme.LeanbackWizard</item>
+        <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
+        <item name="headersVerticalGridStyle">@style/AppTheme.Widget.Leanback.Headers.VerticalGridView</item>
+        <item name="itemsVerticalGridStyle">@style/AppTheme.Widget.Leanback.GridItems.VerticalGridView</item>
+        <item name="detailsActionButtonStyle">@style/AppTheme.Widget.Leanback.DetailsActionButtonStyle</item>
+
+        <item name="rowHorizontalDescriptionStyle">@style/AppTheme.Widget.Description.Row</item>
+        <item name="itemsVerticalDescriptionStyle">@style/AppTheme.Widget.Description.Grid</item>
+    </style>
+
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+    <style name="AppTheme.Material" parent="Theme.MaterialComponents">
+
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
+
+    </style>
+
+    <style name="AppTheme.Material.Browse" parent="AppTheme.Material">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+    </style>
+
+    <style name="BrowseTitleAlert" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="iconPadding">4dp</item>
+        <item name="icon">@drawable/ic_alert_circle_outline</item>
+        <item name="android:paddingLeft">7dp</item>
+    </style>
+
+    <style name="AppTheme.LeanbackWizard" parent="Theme.Leanback.GuidedStep">
+        <item name="android:colorPrimary">@color/dark_colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/dark_colorAccent</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="guidedStepBackground">@color/app_guidedstep_actions_background</item>
+        <item name="guidedActionsBackground">@color/app_guidedstep_actions_background</item>
+        <item name="guidedActionsBackgroundDark">@color/app_guidedstep_subactions_background</item>
+        <item name="guidedActionsElevation">0dp</item>
+
+        <item name="guidanceIconStyle">@style/AppTheme.Widget.GuidanceIconStyle</item>
+    </style>
+
+    <style name="AppTheme.Player.LeanbackWizard" parent="AppTheme.LeanbackWizard">
+        <item name="guidedStepBackground">@color/app_guidedstep_actions_background_player</item>
+        <item name="guidedActionsElevation">@dimen/lb_guidedactions_elevation</item>
+    </style>
+
+    <style name="AppTheme.Widget.GuidanceIconStyle" parent="Widget.Leanback.GuidanceIconStyle">
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_height">140dp</item>
+        <item name="android:background">@drawable/bg_auth_qrcode</item>
+    </style>
+
+    <style name="AppTheme.Widget.Leanback.Headers.VerticalGridView" parent="Widget.Leanback.Headers.VerticalGridView">
+        <!--<item name="android:background">@drawable/ic_refresh_black_24dp</item>-->
+        <!--<item name="android:layout_margin">16dp</item>-->
+        <item name="android:paddingLeft">40dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:background">@drawable/bg_browse_headers</item>
+    </style>
+
+    <style name="AppTheme.Widget.Leanback.GridItems.VerticalGridView" parent="Widget.Leanback.GridItems.VerticalGridView">
+        <item name="android:paddingBottom">120dp</item>
+    </style>
+
+    <style name="AppTheme.ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
+        <item name="cardType">mainOnly</item>
+        <item name="cardBackground">?android:colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.Widget.Leanback.DetailsActionButtonStyle" parent="Widget.Leanback.DetailsActionButtonStyle">
+        <item name="android:background">@drawable/bg_lb_action</item>
+        <item name="android:stateListAnimator">@animator/button_animator</item>
+        <item name="android:textColor">@color/text_button_color</item>
+    </style>
+
+    <style name="AppTheme.Widget.Description.Row">
+        <item name="android:paddingStart">?attr/browsePaddingStart</item>
+        <item name="android:paddingEnd">?attr/browsePaddingEnd</item>
+        <item name="android:paddingBottom">32dp</item>
+    </style>
+
+    <style name="AppTheme.Widget.Description.Grid">
+        <!--<item name="android:paddingStart">?attr/browsePaddingStart</item>
+        <item name="android:paddingEnd">?attr/browsePaddingEnd</item>-->
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">36dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:minWidth">480dp</item>
+    </style>
+
+    <style name="AppTheme.RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="AppTheme.CircleImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="AppTheme.Widget" />
+
+    <style name="AppTheme.Widget.Description" />
+</resources>

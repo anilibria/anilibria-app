@@ -80,12 +80,24 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     lintOptions {
         disable 'RestrictedApi'
         checkReleaseBuilds false
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "AniLibria"
+            def versionName = variant.versionName
+            outputFileName = "${appName}_v${versionName}.apk"
+        }
     }
 }
 ext {
@@ -102,9 +114,10 @@ dependencies {
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
+    implementation project(":shared-app")
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference:1.1.0'
 
@@ -161,8 +174,11 @@ dependencies {
 /*
     implementation 'org.michaelbel:bottomsheet:1.2.3'*/
 
-    implementation 'com.github.stephanenicolas.toothpick:toothpick-runtime:2.1.0'
-    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:2.1.0'
+    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0"
+    implementation "com.github.stephanenicolas.toothpick:ktp:3.1.0"
+    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0"
 
     implementation 'at.blogc:expandabletextview:1.0.5'
 

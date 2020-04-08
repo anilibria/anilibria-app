@@ -21,8 +21,7 @@ import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
@@ -55,7 +54,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     lateinit var presenter: ReleaseInfoPresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(screenScope, ReleaseInfoPresenter::class.java)
+    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(ReleaseInfoPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

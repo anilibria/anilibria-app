@@ -14,9 +14,8 @@ import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.anilibria.di.extensions.closeDependenciesScope
-import ru.radiationx.anilibria.di.extensions.getDependency
-import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.shared_app.di.getDependency
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
@@ -24,6 +23,7 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared_app.di.DI
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -67,7 +67,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope, RouterModule(screenScope), MessengerModule())
+        injectDependencies(arrayOf(RouterModule(screenScope), MessengerModule()), DI.DEFAULT_SCOPE, screenScope)
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(screenMessagesObserver)
         navigationQueue.add(Runnable {
@@ -97,11 +97,6 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         super.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        closeDependenciesScope(screenScope)
-    }
-
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
         return (fragment != null
@@ -114,7 +109,10 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
             Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
-            Log.e("lalala", "handle state $isAdded, $isDetached, $isHidden, $isInLayout, $isMenuVisible, $isRemoving, $isResumed, $isStateSaved, $isVisible")
+            Log.e(
+                "lalala",
+                "handle state $isAdded, $isDetached, $isHidden, $isInLayout, $isMenuVisible, $isRemoving, $isResumed, $isStateSaved, $isVisible"
+            )
             navigationQueue.add(Runnable {
                 linkHandler.handle(url, router)
             })
@@ -136,13 +134,16 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
-                    command: Command?,
-                    currentFragment: Fragment?,
-                    nextFragment: Fragment?,
-                    fragmentTransaction: FragmentTransaction
+                command: Command?,
+                currentFragment: Fragment?,
+                nextFragment: Fragment?,
+                fragmentTransaction: FragmentTransaction
             ) {
 
-                Log.e("lalala", "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}")
+                Log.e(
+                    "lalala",
+                    "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}"
+                )
                 val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
                 nextFragment?.putExtra {
                     putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
@@ -181,9 +182,9 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
     }
 
     private fun setupSharedTransition(
-            sharedProvider: SharedProvider,
-            sharedReceiver: SharedReceiver,
-            fragmentTransaction: FragmentTransaction
+        sharedProvider: SharedProvider,
+        sharedReceiver: SharedReceiver,
+        fragmentTransaction: FragmentTransaction
     ) {
 
         val currentFragment = sharedProvider as Fragment

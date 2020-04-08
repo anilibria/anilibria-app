@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/browse_dummy"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.leanback.widget.BrowseFrameLayout
+        android:id="@+id/grid_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:theme="@style/AppTheme.Material">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profileAvatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/dark_cardBackground"
+                android:elevation="16dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/AppTheme.CircleImageView"
+                tools:shapeAppearanceOverlay="@null"
+                tools:src="@drawable/ic_anilibria_splash" />
+
+            <TextView
+                android:id="@+id/profileNick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/dark_textDefault"
+                android:textSize="22sp"
+                tools:text="Гость" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profileSignIn"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:nextFocusDown="@id/profileSignOut"
+                android:text="Авторизоваться"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileAvatar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profileSignOut"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:nextFocusUp="@id/profileSignIn"
+                android:text="Выйти"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileSignIn" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.leanback.widget.BrowseFrameLayout>
+</FrameLayout>

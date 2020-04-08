@@ -1,0 +1,26 @@
+{
+  "update": {
+    "version_code": "1",
+    "version_name": "1.0.0",
+    "version_build": "0",
+    "build_date": "0 нолебря 0000 г.",
+    "links": [
+      {
+        "name": "Mobile AniLibria App (Красная иконка)",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_v2.4.4.apk",
+        "type": "file"
+      },
+      {
+        "name": "Mobile AniLibria Lite (Белая иконка)",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_Lite_v2.4.4.apk",
+        "type": "file"
+      }
+    ],
+    "important": [
+      "Если по каким-то причинам вы увидели это в приложении, то сообщите разработчику. Так не должно быть"
+    ],
+    "added": [],
+    "fixed": [],
+    "changed": []
+  }
+}

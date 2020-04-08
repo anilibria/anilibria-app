@@ -76,7 +76,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
                 } else {
                     null
                 }
-                title = MainPagesFragmentFactory.ids[selectedPosition].let { MainPagesFragmentFactory.variant1[it] }
+                title = getSelectedTitle()
                 lastSelectedPosition = selectedPosition
                 Log.e("lalala", "onHeadersTransitionStop $withHeaders")
             }
@@ -87,7 +87,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
         }
         //brandColor = resources.getColor(R.color.dark_colorAccent)
-        title = "AniLibria"
+        title = getSelectedTitle()
         badgeDrawable = if (isShowingHeaders) {
             requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
         } else {
@@ -135,6 +135,13 @@ class MainPagesFragment : ScopedBrowseFragment() {
         super.onStart()
 
         selectedPosition = lastSelectedPosition
+    }
+
+    private fun getSelectedTitle(): String {
+        if (selectedPosition != -1) {
+            return MainPagesFragmentFactory.ids.getOrNull(selectedPosition)?.let { MainPagesFragmentFactory.variant1[it] }.orEmpty()
+        }
+        return "AniLibria"
     }
 
     private fun showMenu() {

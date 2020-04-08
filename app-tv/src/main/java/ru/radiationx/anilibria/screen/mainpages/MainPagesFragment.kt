@@ -138,10 +138,14 @@ class MainPagesFragment : ScopedBrowseFragment() {
     }
 
     private fun getSelectedTitle(): String {
+        var title = "AniLibria"
         if (selectedPosition != -1) {
-            return MainPagesFragmentFactory.ids.getOrNull(selectedPosition)?.let { MainPagesFragmentFactory.variant1[it] }.orEmpty()
+            MainPagesFragmentFactory.ids
+                .getOrNull(selectedPosition)
+                ?.let { MainPagesFragmentFactory.variant1[it] }
+                ?.also { title = it }
         }
-        return "AniLibria"
+        return title
     }
 
     private fun showMenu() {

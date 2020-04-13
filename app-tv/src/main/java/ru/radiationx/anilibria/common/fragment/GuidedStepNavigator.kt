@@ -125,12 +125,17 @@ class GuidedStepNavigator(
 
         Log.e(
             "GuidedStepNavigator",
-            "guidedBack current = $currentFragment, stack = ${(0 until fragmentManager.backStackEntryCount).map {
+            "guidedBack old current = $currentFragment, stack = ${(0 until fragmentManager.backStackEntryCount).map {
                 fragmentManager.getBackStackEntryAt(it)
             }.joinToString()}"
         )
-        if (currentFragment != null) {
+        Log.e(
+            "GuidedStepNavigator",
+            "guidedBack new current = $currentFragment, stack = ${guidedStack.joinToString()}"
+        )
+        if (guidedStack.isNotEmpty()) {
             fragmentManager.popBackStack()
+            guidedStack.removeLast()
         } else {
             fragmentBack()
         }

@@ -2,14 +2,17 @@ package ru.radiationx.anilibria.screen.details
 
 import android.util.Log
 import ru.radiationx.anilibria.common.BaseRowsViewModel
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailsViewModel(
     private val releaseInteractor: ReleaseInteractor,
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    private val authRepository: AuthRepository
 ) : BaseRowsViewModel() {
 
     companion object {
@@ -33,10 +36,16 @@ class DetailsViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        releaseInteractor
-            .loadRelease(releaseId)
-            .map { historyRepository.putRelease(it) }
-            .lifeSubscribe { }
+        loadRelease()
+
+        authRepository
+            .observeUser()
+            .map { it.authState }
+            .distinctUntilChanged()
+            .skip(1)
+            .lifeSubscribe {
+                loadRelease()
+            }
 
         releaseInteractor
             .observeFull(releaseId)
@@ -44,5 +53,12 @@ class DetailsViewModel(
             .lifeSubscribe {
                 updateAvailableRow(RELATED_ROW_ID, it.isNotEmpty())
             }
+    }
+
+    private fun loadRelease() {
+        releaseInteractor
+            .loadRelease(releaseId)
+            .map { historyRepository.putRelease(it) }
+            .lifeSubscribe { }
     }
 }

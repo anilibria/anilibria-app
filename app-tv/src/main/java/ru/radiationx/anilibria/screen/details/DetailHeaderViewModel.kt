@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
+import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -83,9 +84,9 @@ class DetailHeaderViewModel(
 
     fun onPlayClick() {
         currentRelease ?: return
-        val episodes = releaseInteractor.getEpisodes(releaseId)
-        if (episodes.size > 1) {
-            val episodeId = episodes.maxBy { it.lastAccess }?.id ?: -1
+        val episodesCount = (currentRelease as? ReleaseFull?)?.episodes?.size ?: 0
+        if (episodesCount > 1) {
+            val episodeId = releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         } else {
             router.navigateTo(PlayerScreen(releaseId))

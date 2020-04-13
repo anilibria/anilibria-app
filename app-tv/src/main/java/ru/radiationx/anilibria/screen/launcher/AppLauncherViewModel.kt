@@ -18,13 +18,12 @@ class AppLauncherViewModel(
 
     private var firstLaunch = true
 
-    override fun onCreate() {
-        super.onCreate()
-
-
+    fun coldLaunch() {
+        initWithConfig()
+        //initMain()
     }
 
-    fun coldLaunch() {
+    private fun initWithConfig(){
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
@@ -44,7 +43,6 @@ class AppLauncherViewModel(
         } else {
             initMain()
         }
-        //initMain()
     }
 
     private fun initMain() {

@@ -52,7 +52,7 @@ class EndSeasonViewModel(
 
     fun onCloseClick() {
         guidedRouter.finishGuidedChain()
-        router.finishChain()
+        router.exit()
     }
 
 }

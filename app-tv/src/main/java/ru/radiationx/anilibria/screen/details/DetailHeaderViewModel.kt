@@ -3,12 +3,15 @@ package ru.radiationx.anilibria.screen.details
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposables
 import ru.radiationx.anilibria.common.DetailDataConverter
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
+import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -24,7 +27,8 @@ class DetailHeaderViewModel(
     private val authRepository: AuthRepository,
     private val converter: DetailDataConverter,
     private val router: Router,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
+    private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
     var releaseId: Int = -1
@@ -32,6 +36,8 @@ class DetailHeaderViewModel(
     val releaseData = MutableLiveData<LibriaDetails>()
 
     private var currentRelease: ReleaseItem? = null
+
+    private var selectEpisodeDisposable = Disposables.disposed()
 
     override fun onCreate() {
         super.onCreate()
@@ -49,7 +55,24 @@ class DetailHeaderViewModel(
                 currentRelease = it
                 update(it)
             }
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        selectEpisodeDisposable.dispose()
+        selectEpisodeDisposable = playerController
+            .selectEpisodeRelay
+            .observeOn(AndroidSchedulers.mainThread())
+            .lifeSubscribe { episodeId ->
+                Log.e("kokoko", "selectEpisodeRelay $releaseId, $episodeId")
+                router.navigateTo(PlayerScreen(releaseId, episodeId))
+            }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        selectEpisodeDisposable.dispose()
     }
 
     fun onContinueClick() {
@@ -60,7 +83,13 @@ class DetailHeaderViewModel(
 
     fun onPlayClick() {
         currentRelease ?: return
-        router.navigateTo(PlayerScreen(releaseId))
+        val episodes = releaseInteractor.getEpisodes(releaseId)
+        if (episodes.size > 1) {
+            val episodeId = episodes.maxBy { it.lastAccess }?.id ?: -1
+            guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
+        } else {
+            router.navigateTo(PlayerScreen(releaseId))
+        }
     }
 
     fun onPlayWebClick() {

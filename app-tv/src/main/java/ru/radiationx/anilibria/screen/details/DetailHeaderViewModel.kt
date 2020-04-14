@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import ru.radiationx.anilibria.common.DetailDataConverter
+import ru.radiationx.anilibria.common.DetailsState
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
@@ -35,17 +36,21 @@ class DetailHeaderViewModel(
     var releaseId: Int = -1
 
     val releaseData = MutableLiveData<LibriaDetails>()
+    val progressState = MutableLiveData<DetailsState>()
 
     private var currentRelease: ReleaseItem? = null
 
     private var selectEpisodeDisposable = Disposables.disposed()
+    private var favoriteDisposable = Disposables.disposed()
 
     override fun onCreate() {
         super.onCreate()
 
         (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
+            currentRelease = it
             update(it)
         }
+        updateProgress()
 
         releaseInteractor
             .observeFull(releaseId)
@@ -55,6 +60,7 @@ class DetailHeaderViewModel(
                 Log.e("kekeke", "observeFull")
                 currentRelease = it
                 update(it)
+                updateProgress()
             }
     }
 
@@ -83,9 +89,8 @@ class DetailHeaderViewModel(
     }
 
     fun onPlayClick() {
-        currentRelease ?: return
-        val episodesCount = (currentRelease as? ReleaseFull?)?.episodes?.size ?: 0
-        if (episodesCount > 1) {
+        val release = currentRelease as? ReleaseFull ?: return
+        if (release.episodes.size > 1) {
             val episodeId = releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         } else {
@@ -110,7 +115,9 @@ class DetailHeaderViewModel(
             favoriteRepository.addFavorite(releaseId)
         }
 
-        source
+        favoriteDisposable.dispose()
+        favoriteDisposable = source
+            .doFinally { updateProgress() }
             .lifeSubscribe({
                 release.favoriteInfo.isAdded = it.favoriteInfo.isAdded
                 release.favoriteInfo.rating = it.favoriteInfo.rating
@@ -118,10 +125,19 @@ class DetailHeaderViewModel(
             }, {
                 it.printStackTrace()
             })
+
+        updateProgress()
     }
 
     fun onDescriptionClick() {
 
+    }
+
+    private fun updateProgress() {
+        progressState.value = DetailsState(
+            currentRelease == null,
+            currentRelease !is ReleaseFull || !favoriteDisposable.isDisposed
+        )
     }
 
     private fun update(releaseItem: ReleaseItem) {

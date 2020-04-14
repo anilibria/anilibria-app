@@ -47,6 +47,11 @@ class DetailsViewModel(
                 loadRelease()
             }
 
+        (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
+            val releases = getReleasesFromDesc(it.description.orEmpty())
+            updateAvailableRow(RELATED_ROW_ID, releases.isNotEmpty())
+        }
+
         releaseInteractor
             .observeFull(releaseId)
             .map { getReleasesFromDesc(it.description.orEmpty()) }

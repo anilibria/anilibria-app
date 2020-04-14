@@ -17,4 +17,9 @@ data class LibriaDetails(
     val hasWebPlayer: Boolean
 )
 
-class LibriaDetailsRow(id: Long, var details: LibriaDetails? = null) : Row(id, null)
+data class DetailsState(
+    val loadingProgress: Boolean = false,
+    val updateProgress: Boolean = false
+)
+
+class LibriaDetailsRow(id: Long, var details: LibriaDetails? = null, var state: DetailsState? = null) : Row(id, null)

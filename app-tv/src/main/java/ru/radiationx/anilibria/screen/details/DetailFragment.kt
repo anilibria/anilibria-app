@@ -138,6 +138,11 @@ class DetailFragment : ScopedRowsFragment() {
             row.details = it
             rowsAdapter.notifyArrayItemRangeChanged(position, 1)
         }
+        subscribeTo(viewModel.progressState) {
+            val position = rowsAdapter.indexOf(row)
+            row.state = it
+            rowsAdapter.notifyArrayItemRangeChanged(position, 1)
+        }
         return row
     }
 

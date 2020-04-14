@@ -159,7 +159,7 @@ class ReleaseParser @Inject constructor(
                         quality = jsonTorrent.nullString("quality")
                         series = jsonTorrent.nullString("series")
                         size = jsonTorrent.optLong("size")
-                        url = "${apiConfig.siteUrl}${jsonTorrent.nullString("url")}"
+                        url = "${apiConfig.baseImagesUrl}${jsonTorrent.nullString("url")}"
                     })
                 }
             }

@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.screen.player.putIds
 import ru.radiationx.anilibria.screen.player.quality.PlayerQualityGuidedFragment
 import ru.radiationx.anilibria.screen.player.speed.PlayerSpeedGuidedFragment
 import ru.radiationx.anilibria.screen.schedule.ScheduleFragment
+import ru.radiationx.anilibria.screen.search.SearchFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
@@ -66,6 +67,11 @@ class UpdateSourceScreen() : GuidedAppScreen() {
     }
 }
 
+class SearchScreen() : SupportAppScreen() {
+    override fun getFragment(): Fragment {
+        return SearchFragment()
+    }
+}
 
 class FlowScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {

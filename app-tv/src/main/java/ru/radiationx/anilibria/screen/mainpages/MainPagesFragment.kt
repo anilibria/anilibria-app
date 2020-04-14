@@ -52,7 +52,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
         headersState = HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
         setOnSearchClickedListener {
-            Toast.makeText(requireContext(), "Поиска пока-что нет. Кнопка висит, чтобы не было пусто.", Toast.LENGTH_SHORT).show()
+            viewModel.onSearchClick()
         }
 
         setAlertClickListener(View.OnClickListener {

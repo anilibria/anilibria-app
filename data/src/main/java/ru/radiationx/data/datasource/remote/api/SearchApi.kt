@@ -14,6 +14,7 @@ import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import javax.inject.Inject
 
 class SearchApi @Inject constructor(
@@ -41,7 +42,7 @@ class SearchApi @Inject constructor(
                 .map { searchParser.years(it) }
     }
 
-    fun fastSearch(name: String): Single<List<SearchItem>> {
+    fun fastSearch(name: String): Single<List<SuggestionItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
                 "query" to "search",
                 "search" to name,

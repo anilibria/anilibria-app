@@ -14,6 +14,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
@@ -32,7 +33,7 @@ class SearchRepository @Inject constructor(
             .observeYears()
             .observeOn(schedulers.ui())
 
-    fun fastSearch(query: String): Single<List<SearchItem>> = searchApi
+    fun fastSearch(query: String): Single<List<SuggestionItem>> = searchApi
             .fastSearch(query)
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

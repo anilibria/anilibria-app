@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.SearchScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
@@ -35,5 +36,9 @@ class MainPagesViewModel(
 
     fun onAppUpdateClick() {
         router.navigateTo(UpdateScreen())
+    }
+
+    fun onSearchClick() {
+        router.navigateTo(SearchScreen())
     }
 }

@@ -24,7 +24,7 @@ class WatchingViewModel(
 
     override val rowIds: List<Long> = listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override val availableRows: MutableList<Long> = mutableListOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
+    override val availableRows: MutableSet<Long> = mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
 
     override fun onCreate() {
         super.onCreate()

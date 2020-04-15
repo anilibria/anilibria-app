@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.common
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -11,7 +12,7 @@ abstract class BaseRowsViewModel : LifecycleViewModel() {
 
     protected abstract val rowIds: List<Long>
 
-    protected abstract val availableRows: MutableList<Long>
+    protected abstract val availableRows: MutableSet<Long>
 
     override fun onCreate() {
         super.onCreate()

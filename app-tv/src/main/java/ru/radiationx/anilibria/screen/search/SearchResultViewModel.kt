@@ -1,14 +1,12 @@
 package ru.radiationx.anilibria.screen.search
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
@@ -16,9 +14,10 @@ import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
 
 @InjectConstructor
-class SearchViewModel(
+class SearchResultViewModel(
     private val searchRepository: SearchRepository,
-    private val router: Router
+    private val router: Router,
+    private val searchController: SearchController
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
@@ -35,13 +34,12 @@ class SearchViewModel(
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                if (it.length >= 3) {
-                    progressState.value = true
-                } else {
+                if (it.length < 3) {
                     showItems(emptyList(), it, false)
                 }
             }
             .filter { it.length >= 3 }
+            .doOnNext { progressState.value = true }
             .switchMapSingle { query ->
                 searchRepository
                     .fastSearch(query)
@@ -49,7 +47,7 @@ class SearchViewModel(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .lifeSubscribe({
-                showItems(it, currentQuery)
+                showItems(it, currentQuery, true)
             }, {
                 it.printStackTrace()
             })
@@ -64,10 +62,10 @@ class SearchViewModel(
         router.navigateTo(DetailsScreen(item.id))
     }
 
-    private fun showItems(items: List<SuggestionItem>, query: String, appendEmpty: Boolean = true) {
+    private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
+        val result = SearchController.SearchResult(items, query, validQuery)
+        searchController.resultEvent.accept(result)
         progressState.value = false
-        val resItems = mutableListOf<SearchItem>()
-        resItems.addAll(items)
         items.forEach { it.query = query }
         resultData.value = items.map {
             LibriaCard(

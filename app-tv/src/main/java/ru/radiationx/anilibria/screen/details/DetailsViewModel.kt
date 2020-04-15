@@ -31,7 +31,7 @@ class DetailsViewModel(
 
     override val rowIds: List<Long> = listOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override val availableRows: MutableList<Long> = mutableListOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
+    override val availableRows: MutableSet<Long> = mutableSetOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
 
     override fun onCreate() {
         super.onCreate()

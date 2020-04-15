@@ -1,20 +1,25 @@
 package ru.radiationx.anilibria.screen.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.app.SearchSupportFragment
 import androidx.leanback.widget.*
+import androidx.lifecycle.ViewModel
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedSearchFragment
 import ru.radiationx.anilibria.extension.applyCard
+import ru.radiationx.anilibria.extension.createCardsRowBy
+import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
+import toothpick.ktp.binding.module
 import javax.inject.Inject
 
 class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResultProvider {
@@ -25,22 +30,38 @@ class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResul
     private val progressManager by lazy { ExternalProgressManager() }
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    private val viewModel by viewModel<SearchViewModel>()
+    private val rowsViewModel by viewModel<SearchRowsViewModel>()
+    private val resultViewModel by viewModel<SearchResultViewModel>()
+    private val recommendsViewModel by viewModel<SearchRecommendsViewModel>()
 
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        dependencyInjector.installModules(module {
+            bind(SearchController::class.java).singleton()
+        })
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
+        lifecycle.addObserver(rowsViewModel)
+        lifecycle.addObserver(resultViewModel)
+        lifecycle.addObserver(recommendsViewModel)
 
         backgroundManager.clearGradient()
 
         setSearchResultProvider(this)
         setOnItemViewSelectedListener(ItemViewSelectedListener())
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
-            when (item) {
-                is LibriaCard -> viewModel.onCardClick(item)
+
+            val viewModel = getViewModel((row as ListRow).id)
+            when (viewModel) {
+                is BaseCardsViewModel -> when (item) {
+                    is LinkCard -> viewModel.onLinkCardClick()
+                    is LoadingCard -> viewModel.onLoadingCardClick()
+                    is LibriaCard -> viewModel.onLibriaCardClick(item)
+                }
+                is SearchResultViewModel -> when (item) {
+                    is LibriaCard -> resultViewModel.onCardClick(item)
+                }
             }
         }
     }
@@ -55,42 +76,63 @@ class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResul
         emptyTextManager.initialDelay = 0L
         emptyTextManager.text = "Ничего не найдено"
 
-        createCardsRowBy()
-    }
 
-    private fun createCardsRowBy() {
-        val cardsPresenter = CardPresenterSelector()
-        val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
-        val row = ListRow(1L, HeaderItem("Результат поиска"), cardsAdapter)
-        subscribeTo(viewModel.resultData) {
-            if (it.isEmpty()) {
+        subscribeTo(rowsViewModel.emptyResultState) {
+            Log.e("kokoko", "emptyResultState $it")
+            if (it) {
                 emptyTextManager.show()
                 backgroundManager.clearGradient()
-                rowsAdapter.setItems(emptyList<Row>(), RowDiffCallback)
             } else {
                 emptyTextManager.hide()
-                rowsAdapter.setItems(listOf(row), RowDiffCallback)
             }
+        }
 
+        val rowMap = mutableMapOf<Long, Row>()
+        subscribeTo(rowsViewModel.rowListData) { rowList ->
+            val rows = rowList.map { rowId ->
+                val row = rowMap[rowId] ?: createRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                rowMap[rowId] = row
+                row
+            }
+            rowsAdapter.setItems(rows, RowDiffCallback)
+        }
+    }
+
+    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
+        SearchRowsViewModel.RESULT_ROW_ID -> resultViewModel
+        SearchRowsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        else -> null
+    }
+
+    private fun createRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: ViewModel): Row = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as SearchResultViewModel)
+        else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
+    }
+
+    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: SearchResultViewModel): Row {
+        val cardsPresenter = CardPresenterSelector()
+        val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
+        val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)
+        subscribeTo(viewModel.resultData) {
             cardsAdapter.setItems(it, CardDiffCallback)
         }
         subscribeTo(viewModel.progressState) {
             if (it) {
                 progressManager.show()
-                emptyTextManager.hide()
             } else {
                 progressManager.hide()
             }
         }
+        return row
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        viewModel.onQueryChange(query.orEmpty())
+        resultViewModel.onQueryChange(query.orEmpty())
         return true
     }
 
     override fun onQueryTextChange(newQuery: String?): Boolean {
-        viewModel.onQueryChange(newQuery.orEmpty())
+        resultViewModel.onQueryChange(newQuery.orEmpty())
         return true
     }
 

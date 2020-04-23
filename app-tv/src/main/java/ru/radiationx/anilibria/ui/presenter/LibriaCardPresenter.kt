@@ -1,10 +1,13 @@
 package ru.radiationx.anilibria.ui.presenter
 
+import android.graphics.Bitmap
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
 import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.extensions.LayoutContainer
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
@@ -37,11 +40,18 @@ class LibriaCardViewHolder(
     private val cardYoutubeWidth by lazy { containerView.context.resources.getDimension(R.dimen.card_youtube_width).toInt() }
 
     fun bind(item: LibriaCard) {
-        when (item.type) {
-            LibriaCard.Type.RELEASE -> containerView.setMainImageDimensions(cardReleaseWidth, cardHeight)
-            LibriaCard.Type.YOUTUBE -> containerView.setMainImageDimensions(cardYoutubeWidth, cardHeight)
+        if (containerView.mainImageView.tag != item.image) {
+            when (item.type) {
+                LibriaCard.Type.RELEASE -> containerView.setMainImageDimensions(cardReleaseWidth, cardHeight)
+                LibriaCard.Type.YOUTUBE -> containerView.setMainImageDimensions(cardYoutubeWidth, cardHeight)
+            }
+            ImageLoader.getInstance().displayImage(item.image, containerView.mainImageView, object : SimpleImageLoadingListener() {
+                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
+                    super.onLoadingComplete(imageUri, view, loadedImage)
+                    view?.tag = item.image
+                }
+            })
         }
-        ImageLoader.getInstance().displayImage(item.image, containerView.mainImageView)
     }
 
     fun unbind() {

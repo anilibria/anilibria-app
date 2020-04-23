@@ -18,6 +18,7 @@
         <item name="android:textColorLink">@color/dark_textLink</item>
 
         <item name="browseTitleViewLayout">@layout/lb_titleview</item>
+        <item name="searchTitleButtonStyle">@style/AppTheme.Widget.Leanback.SearchTitleButtonStyle</item>
 
         <item name="guidedStepTheme">@style/AppTheme.LeanbackWizard</item>
         <item name="imageCardViewStyle">@style/AppTheme.ImageCardViewStyle</item>
@@ -104,6 +105,7 @@
 
     <style name="AppTheme.Widget.Leanback.GridItems.VerticalGridView" parent="Widget.Leanback.GridItems.VerticalGridView">
         <item name="android:paddingBottom">120dp</item>
+        <item name="android:paddingTop">220dp</item>
     </style>
 
     <style name="AppTheme.ImageCardViewStyle" parent="Widget.Leanback.BaseCardViewStyle">
@@ -115,6 +117,11 @@
         <item name="android:background">@drawable/bg_lb_action</item>
         <item name="android:stateListAnimator">@animator/button_animator</item>
         <item name="android:textColor">@color/text_button_color</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="AppTheme.Widget.Leanback.SearchTitleButtonStyle" parent="android:Widget.Material.Button.Borderless">
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="AppTheme.Widget.Description.Row">

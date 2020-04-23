@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_height="wrap_content"
     tools:layout_width="match_parent"
-    tools:style="?browseTitleViewStyle"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    tools:style="?browseTitleViewStyle">
 
     <ImageView
         android:id="@+id/title_badge"
@@ -16,7 +16,7 @@
         android:maxWidth="@dimen/lb_browse_title_icon_max_width"
         android:src="@null"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title_controls"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/movie"
@@ -27,7 +27,7 @@
         style="?attr/browseTitleTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/lb_browse_title_height"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title_controls"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem" />
@@ -45,11 +45,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:nextFocusRight="@id/title_alert"
+        android:nextFocusDown="@id/title_controls"
         android:transitionGroup="true"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title_controls"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 
     <com.google.android.material.button.MaterialButton
@@ -59,11 +61,27 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:nextFocusLeft="@id/title_orb"
+        android:nextFocusDown="@id/title_controls"
         android:theme="@style/AppTheme.Material.Browse"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title_controls"
         app:layout_constraintEnd_toStartOf="@id/title_barrier"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Обновление" />
+        tools:text="Обновление"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:id="@+id/title_controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:nextFocusUp="@id/title_orb"
+        android:paddingTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </merge>

@@ -17,8 +17,10 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.leanback.widget.SearchOrbView
@@ -26,7 +28,7 @@ import androidx.leanback.widget.TitleViewAdapter
 import kotlinx.android.synthetic.main.view_titleview.view.*
 import ru.radiationx.anilibria.R
 
-class BrowseTitleView @JvmOverloads constructor(
+open class BrowseTitleView @JvmOverloads constructor(
     context: Context?,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.browseTitleViewStyle
@@ -122,13 +124,27 @@ class BrowseTitleView @JvmOverloads constructor(
     override fun getTitleViewAdapter(): TitleViewAdapter = mTitleViewAdapter
 
     override fun focusSearch(focused: View, direction: Int): View? {
-        if (direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT) {
-            val nextView: View? = when (direction) {
+        if ((direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT || direction == View.FOCUS_UP || direction == View.FOCUS_DOWN)) {
+            var nextView: View? = when (direction) {
                 View.FOCUS_LEFT -> findViewById(focused.nextFocusLeftId)
                 View.FOCUS_RIGHT -> findViewById(focused.nextFocusRightId)
+                View.FOCUS_DOWN -> findViewById(focused.nextFocusDownId)
+                View.FOCUS_UP -> findViewById(focused.nextFocusUpId)
                 else -> null
             }
-            if (nextView != null && nextView.isFocusable) {
+
+            if (focused.parent == this && (nextView == null || !nextView.isVisible || !(nextView.isFocusable || nextView is ViewGroup))) {
+                nextView = when (direction) {
+                    View.FOCUS_LEFT -> findViewById(focused.nextFocusUpId)
+                    View.FOCUS_RIGHT -> findViewById(focused.nextFocusDownId)
+                    // Имхо так лучше
+                    //View.FOCUS_DOWN -> findViewById(focused.nextFocusRightId)
+                    //View.FOCUS_UP -> findViewById(focused.nextFocusLeftId)
+                    else -> null
+                }
+            }
+
+            if (nextView != null && (nextView.isFocusable || nextView is ViewGroup)) {
                 return nextView
             }
         }

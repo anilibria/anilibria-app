@@ -2,4 +2,5 @@
 <resources>
     <attr name="rowHorizontalDescriptionStyle" format="reference" />
     <attr name="itemsVerticalDescriptionStyle" format="reference" />
+    <attr name="searchTitleButtonStyle" format="reference" />
 </resources>

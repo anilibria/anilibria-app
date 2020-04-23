@@ -47,7 +47,8 @@ class AppLauncherViewModel(
 
     private fun initMain() {
         firstLaunch = false
-        router.newRootScreen(MainPagesScreen())
+        //router.newRootScreen(MainPagesScreen())
+        router.newRootScreen(GridScreen())
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(AuthGuidedScreen())
         }

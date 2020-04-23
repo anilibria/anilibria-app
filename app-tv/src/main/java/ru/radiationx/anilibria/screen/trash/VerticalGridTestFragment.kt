@@ -2,13 +2,13 @@ package ru.radiationx.anilibria.screen.trash
 
 import android.os.Bundle
 import android.os.Handler
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.VerticalGridPresenter
-import ru.radiationx.anilibria.common.LinkCard
-import ru.radiationx.anilibria.common.GradientBackgroundManager
-import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.common.LoadingCard
-import ru.radiationx.anilibria.common.MockData
+import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.BaseVerticalGridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
@@ -22,12 +22,23 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
+    @Inject
+    lateinit var dataConverter: CardsDataConverter
+
+    override fun onInflateTitleView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.lb_search_titleview, parent, false)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         title = "Избранное"
         gridPresenter = VerticalGridPresenter().apply {
-            numberOfColumns = 5
+            numberOfColumns = 6
+        }
+
+        setOnSearchClickedListener {
+
         }
 
         backgroundManager.clearGradient()
@@ -57,7 +68,7 @@ class VerticalGridTestFragment : BaseVerticalGridFragment() {
             adapter.apply {
                 startEntranceTransition()
                 clear()
-                //addAll(0, mockData.releases.shuffled().map { it.toCard(requireContext()) })
+                addAll(0, mockData.releases.shuffled().map { dataConverter.toCard(it) })
                 //add(LoadingCard())
                 //add(LinkCard("Открыть избранное"))
             }

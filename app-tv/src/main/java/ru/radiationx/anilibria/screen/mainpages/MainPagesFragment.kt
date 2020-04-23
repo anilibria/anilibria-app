@@ -178,6 +178,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     protected fun setAlertClickListener(listener: View.OnClickListener?) {
         mOnAlertClickedListener = listener
+        titleView
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
     }
 }

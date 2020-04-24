@@ -1,11 +1,11 @@
-package ru.radiationx.anilibria.screen.search
+package ru.radiationx.anilibria.screen.suggestions
 
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class SearchController {
+class SuggestionsController {
 
     val resultEvent = PublishRelay.create<SearchResult>()
 

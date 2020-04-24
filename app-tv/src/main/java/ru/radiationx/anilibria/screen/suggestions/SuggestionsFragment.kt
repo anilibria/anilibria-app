@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.search
+package ru.radiationx.anilibria.screen.suggestions
 
 import android.os.Bundle
 import android.util.Log
@@ -22,7 +22,7 @@ import ru.radiationx.shared_app.di.viewModel
 import toothpick.ktp.binding.module
 import javax.inject.Inject
 
-class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResultProvider {
+class SuggestionsFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResultProvider {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
@@ -30,16 +30,16 @@ class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResul
     private val progressManager by lazy { ExternalProgressManager() }
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    private val rowsViewModel by viewModel<SearchRowsViewModel>()
-    private val resultViewModel by viewModel<SearchResultViewModel>()
-    private val recommendsViewModel by viewModel<SearchRecommendsViewModel>()
+    private val rowsViewModel by viewModel<SuggestionsRowsViewModel>()
+    private val resultViewModel by viewModel<SuggestionsResultViewModel>()
+    private val recommendsViewModel by viewModel<SuggestionsRecommendsViewModel>()
 
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         dependencyInjector.installModules(module {
-            bind(SearchController::class.java).singleton()
+            bind(SuggestionsController::class.java).singleton()
         })
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(rowsViewModel)
@@ -59,7 +59,7 @@ class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResul
                     is LoadingCard -> viewModel.onLoadingCardClick()
                     is LibriaCard -> viewModel.onLibriaCardClick(item)
                 }
-                is SearchResultViewModel -> when (item) {
+                is SuggestionsResultViewModel -> when (item) {
                     is LibriaCard -> resultViewModel.onCardClick(item)
                 }
             }
@@ -99,17 +99,17 @@ class SearchFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResul
     }
 
     private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
-        SearchRowsViewModel.RESULT_ROW_ID -> resultViewModel
-        SearchRowsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        SuggestionsRowsViewModel.RESULT_ROW_ID -> resultViewModel
+        SuggestionsRowsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
         else -> null
     }
 
     private fun createRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: ViewModel): Row = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as SearchResultViewModel)
+        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as SuggestionsResultViewModel)
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
-    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: SearchResultViewModel): Row {
+    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: SuggestionsResultViewModel): Row {
         val cardsPresenter = CardPresenterSelector()
         val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
         val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)

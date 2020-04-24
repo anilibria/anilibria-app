@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.search
+package ru.radiationx.anilibria.screen.suggestions
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -6,8 +6,8 @@ import ru.radiationx.anilibria.common.BaseRowsViewModel
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class SearchRowsViewModel(
-    private val searchController: SearchController
+class SuggestionsRowsViewModel(
+    private val suggestionsController: SuggestionsController
 ) : BaseRowsViewModel() {
 
     companion object {
@@ -24,7 +24,7 @@ class SearchRowsViewModel(
     override fun onColdCreate() {
         super.onColdCreate()
 
-        searchController
+        suggestionsController
             .resultEvent
             .lifeSubscribe {
                 Log.e("kokoko", "resultEvent $it")

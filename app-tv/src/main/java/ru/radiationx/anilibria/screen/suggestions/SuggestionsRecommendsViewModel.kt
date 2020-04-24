@@ -1,21 +1,18 @@
-package ru.radiationx.anilibria.screen.search
+package ru.radiationx.anilibria.screen.suggestions
 
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.*
 
 @InjectConstructor
-class SearchRecommendsViewModel(
+class SuggestionsRecommendsViewModel(
     private val searchRepository: SearchRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

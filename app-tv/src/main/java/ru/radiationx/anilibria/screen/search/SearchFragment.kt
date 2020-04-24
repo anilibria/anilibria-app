@@ -105,6 +105,9 @@ class SearchFragment : BaseVerticalGridFragment() {
         }
 
         subscribeTo(cardsViewModel.cardsData) {
+            if (it.isEmpty()) {
+                backgroundManager.clearGradient()
+            }
             cardsAdapter.setItems(it, CardDiffCallback)
             startEntranceTransition()
         }

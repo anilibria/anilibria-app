@@ -4,6 +4,7 @@ import io.reactivex.Single
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.repository.SearchRepository
@@ -37,5 +38,11 @@ class SearchViewModel(
 
     fun onSearchClick() {
         router.navigateTo(SuggestionsScreen())
+    }
+
+    override fun onLibriaCardClick(card: LibriaCard) {
+        if (card.type == LibriaCard.Type.RELEASE) {
+            router.navigateTo(DetailsScreen(card.id))
+        }
     }
 }

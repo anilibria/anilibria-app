@@ -18,9 +18,11 @@ import ru.radiationx.anilibria.screen.player.putIds
 import ru.radiationx.anilibria.screen.player.quality.PlayerQualityGuidedFragment
 import ru.radiationx.anilibria.screen.player.speed.PlayerSpeedGuidedFragment
 import ru.radiationx.anilibria.screen.schedule.ScheduleFragment
+import ru.radiationx.anilibria.screen.search.completed.SearchCompletedGuidedFragment
 import ru.radiationx.anilibria.screen.search.genre.SearchGenreGuidedFragment
 import ru.radiationx.anilibria.screen.search.putValues
 import ru.radiationx.anilibria.screen.search.season.SearchSeasonGuidedFragment
+import ru.radiationx.anilibria.screen.search.sort.SearchSortGuidedFragment
 import ru.radiationx.anilibria.screen.search.year.SearchYearGuidedFragment
 import ru.radiationx.anilibria.screen.suggestions.SuggestionsFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
@@ -28,6 +30,7 @@ import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.trash.VerticalGridTestFragment
 import ru.radiationx.anilibria.screen.update.UpdateFragment
 import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
+import ru.radiationx.data.entity.app.search.SearchForm
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
 class ConfigScreen() : SupportAppScreen() {
@@ -99,6 +102,18 @@ class SearchSeasonGuidedScreen(private val values: List<String>? = null) : Guide
 class SearchGenreGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment? {
         return SearchGenreGuidedFragment().putValues(values)
+    }
+}
+
+class SearchSortGuidedScreen(private val sort: SearchForm.Sort? = null) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return SearchSortGuidedFragment.newInstance(sort)
+    }
+}
+
+class SearchCompletedGuidedScreen(private val onlyCompleted: Boolean) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return SearchCompletedGuidedFragment.newInstance(onlyCompleted)
     }
 }
 

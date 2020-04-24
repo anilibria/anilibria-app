@@ -3,10 +3,7 @@ package ru.radiationx.anilibria.screen.search
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.anilibria.screen.SearchGenreGuidedScreen
-import ru.radiationx.anilibria.screen.SearchSeasonGuidedScreen
-import ru.radiationx.anilibria.screen.SearchYearGuidedScreen
+import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.repository.SearchRepository
 import toothpick.InjectConstructor
@@ -66,16 +63,16 @@ class SearchFormViewModel(
     }
 
     fun onSortClick() {
-
+        guidedRouter.open(SearchSortGuidedScreen(searchForm.sort))
     }
 
     fun onOnlyCompletedClick() {
-
+        guidedRouter.open(SearchCompletedGuidedScreen(searchForm.onlyCompleted))
     }
 
     private fun updateDataByForm() {
         Log.e("kokoko", "updateDataByForm $searchForm")
-        yearData.value = searchForm.years?.map { it.title }.generateListTitle("За всё время")
+        yearData.value = searchForm.years?.map { it.title }.generateListTitle("Все годы")
         seasonData.value = searchForm.seasons?.map { it.title }.generateListTitle("Все сезоны")
         genreData.value = searchForm.genres?.map { it.title }.generateListTitle("Все жанры")
         sortData.value = when (searchForm.sort) {

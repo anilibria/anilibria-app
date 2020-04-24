@@ -12,7 +12,7 @@ import androidx.core.view.isVisible
 abstract class ExternalViewManager {
 
     companion object {
-        private const val DEFAULT_SHOWING_DELAY: Long = 1000
+        private const val DEFAULT_SHOWING_DELAY: Long = 500
     }
 
     var initialDelay = DEFAULT_SHOWING_DELAY

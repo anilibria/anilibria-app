@@ -2,10 +2,12 @@ package ru.radiationx.anilibria.screen.search
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesGuidedFragment.Companion.ARG_VALUES
+import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -16,6 +18,8 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
     }
 
     protected val argValues by lazy { arguments?.getStringArrayList(ARG_VALUES)?.toList() }
+
+    private val progressManager by lazy { ExternalProgressManager() }
 
     protected abstract val viewModel: BaseSearchValuesViewModel
 
@@ -31,6 +35,16 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        progressManager.rootView = view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup
+
+        subscribeTo(viewModel.progressState) {
+            if (it) {
+                progressManager.show()
+            } else {
+                progressManager.hide()
+            }
+        }
 
         subscribeTo(viewModel.valuesData) {
             actions = it.mapIndexed { index: Int, title: String ->

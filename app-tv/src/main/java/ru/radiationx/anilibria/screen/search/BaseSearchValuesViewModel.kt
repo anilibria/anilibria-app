@@ -8,6 +8,7 @@ abstract class BaseSearchValuesViewModel : LifecycleViewModel() {
 
     var argValues = listOf<String>()
 
+    val progressState = MutableLiveData<Boolean>()
     val valuesData = MutableLiveData<List<String>>()
     val checkedIndicesData = MutableLiveData<List<Pair<Int, Boolean>>>()
     val selectedIndex = MutableLiveData<Int>()

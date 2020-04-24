@@ -27,6 +27,7 @@ class SearchGenreViewModel(
                 currentValues.clear()
                 currentValues.addAll(it.map { it.value })
                 valuesData.value = it.map { it.title }
+                progressState.value = false
                 updateChecked()
                 updateSelected()
             }
@@ -34,8 +35,10 @@ class SearchGenreViewModel(
 
     override fun onCreate() {
         super.onCreate()
+        progressState.value = true
         searchRepository
             .getGenres()
+            .doFinally { progressState.value = false }
             .lifeSubscribe({}, {})
     }
 

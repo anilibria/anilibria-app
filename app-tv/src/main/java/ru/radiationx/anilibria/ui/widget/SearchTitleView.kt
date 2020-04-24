@@ -35,7 +35,7 @@ class SearchTitleView @JvmOverloads constructor(
         get() = searchTitleSort.getWonderText()
         set(value) = searchTitleSort.setWonderText(value)
 
-    var complete: String?
+    var onlyCompleted: String?
         get() = searchTitleComplete.getWonderText()
         set(value) = searchTitleComplete.setWonderText(value)
 
@@ -60,7 +60,7 @@ class SearchTitleView @JvmOverloads constructor(
         searchTitleSort.setOnClickListener(listener)
     }
 
-    fun setCompleteClickListener(listener: OnClickListener?) {
+    fun setOnlyCompletedClickListener(listener: OnClickListener?) {
         searchTitleComplete.setOnClickListener(listener)
     }
 

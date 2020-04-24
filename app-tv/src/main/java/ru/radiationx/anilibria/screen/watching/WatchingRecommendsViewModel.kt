@@ -6,6 +6,8 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.SearchRepository
@@ -41,10 +43,14 @@ class WatchingRecommendsViewModel(
                     genresMap[it] = currentCount + 1
                 }
             }
-            genresMap.toList().sortedByDescending { it.second }.take(3).joinToString()
+            genresMap.toList().sortedByDescending { it.second }.take(3).map { GenreItem(it.first, it.first) }
         }
         .flatMap { genres ->
-            searchRepository.searchReleases(genres, "", "", "2", "1", requestPage)
+            val form = SearchForm(
+                genres = genres,
+                sort = SearchForm.Sort.RATING
+            )
+            searchRepository.searchReleases(form, requestPage)
         }
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSuccess {

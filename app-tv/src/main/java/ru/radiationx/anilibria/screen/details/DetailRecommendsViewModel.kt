@@ -8,7 +8,9 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
@@ -42,7 +44,7 @@ class DetailRecommendsViewModel(
     }
 
     private fun searchGenres(genresCount: Int, requestPage: Int): Single<List<ReleaseItem>> = searchRepository
-        .searchReleases(getGenres(genresCount), "", "", "2", "1", requestPage)
+        .searchReleases(SearchForm(genres = getGenres(genresCount), sort = SearchForm.Sort.RATING), requestPage)
         .map { result -> result.data.filter { it.id != releaseId } }
 
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchGenres(3, requestPage)
@@ -61,9 +63,9 @@ class DetailRecommendsViewModel(
             result.map { converter.toCard(it) }
         }
 
-    private fun getGenres(count: Int): String {
-        val release = releaseInteractor.getFull(releaseId) ?: return ""
-        return release.genres.take(count).joinToString()
+    private fun getGenres(count: Int): List<GenreItem> {
+        val release = releaseInteractor.getFull(releaseId) ?: return emptyList()
+        return release.genres.take(count).map { GenreItem(it, it) }
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {

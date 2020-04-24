@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.SearchRepository
@@ -31,12 +32,11 @@ class SearchRecommendsViewModel(
     }
 
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchRepository
-        .searchReleases("", "", "", "2", "1", requestPage)
+        .searchReleases(SearchForm(sort = SearchForm.Sort.RATING), requestPage)
         .doOnSuccess { releaseInteractor.updateItemsCache(it.data) }
         .map { result -> result.data.map { converter.toCard(it) } }
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))
     }
-
 }

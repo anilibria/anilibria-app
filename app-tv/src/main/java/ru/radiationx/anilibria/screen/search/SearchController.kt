@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.catalog
+package ru.radiationx.anilibria.screen.search
 
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.radiationx.data.entity.app.release.GenreItem
@@ -7,7 +7,7 @@ import ru.radiationx.data.entity.app.search.SearchForm
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class CatalogController {
+class SearchController {
 
     val yearsEvent = PublishRelay.create<List<String>>()
     val seasonsEvent = PublishRelay.create<List<SeasonItem>>()

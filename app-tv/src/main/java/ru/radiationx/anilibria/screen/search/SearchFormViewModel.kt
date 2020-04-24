@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.catalog
+package ru.radiationx.anilibria.screen.search
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -8,9 +8,9 @@ import ru.radiationx.data.repository.SearchRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class CatalogFormViewModel(
+class SearchFormViewModel(
     private val searchRepository: SearchRepository,
-    private val catalogController: CatalogController
+    private val searchController: SearchController
 ) : LifecycleViewModel() {
 
     val yearData = MutableLiveData<String>()
@@ -26,23 +26,23 @@ class CatalogFormViewModel(
 
         updateDataByForm()
 
-        catalogController.yearsEvent.lifeSubscribe {
+        searchController.yearsEvent.lifeSubscribe {
             searchForm = searchForm.copy(years = it)
             updateDataByForm()
         }
-        catalogController.seasonsEvent.lifeSubscribe {
+        searchController.seasonsEvent.lifeSubscribe {
             searchForm = searchForm.copy(seasons = it)
             updateDataByForm()
         }
-        catalogController.genresEvent.lifeSubscribe {
+        searchController.genresEvent.lifeSubscribe {
             searchForm = searchForm.copy(genres = it)
             updateDataByForm()
         }
-        catalogController.sortEvent.lifeSubscribe {
+        searchController.sortEvent.lifeSubscribe {
             searchForm = searchForm.copy(sort = it)
             updateDataByForm()
         }
-        catalogController.completedEvent.lifeSubscribe {
+        searchController.completedEvent.lifeSubscribe {
             searchForm = searchForm.copy(onlyCompleted = it)
             updateDataByForm()
         }
@@ -83,7 +83,7 @@ class CatalogFormViewModel(
             "Все"
         }
 
-        catalogController.applyFormEvent.accept(searchForm)
+        searchController.applyFormEvent.accept(searchForm)
     }
 
     private fun List<String>?.generateListTitle(fallback: String): String {

@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.otp.AuthOtpGuidedFragment
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
 import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
-import ru.radiationx.anilibria.screen.catalog.CatalogFragment
+import ru.radiationx.anilibria.screen.search.SearchFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
@@ -74,9 +74,9 @@ class SuggestionsScreen() : SupportAppScreen() {
     }
 }
 
-class CatalogScreen() : SupportAppScreen() {
+class SearchScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {
-        return CatalogFragment()
+        return SearchFragment()
     }
 }
 

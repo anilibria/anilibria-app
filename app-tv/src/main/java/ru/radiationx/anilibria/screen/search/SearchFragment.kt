@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.catalog
+package ru.radiationx.anilibria.screen.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +16,7 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import javax.inject.Inject
 
-class CatalogFragment : BaseVerticalGridFragment() {
+class SearchFragment : BaseVerticalGridFragment() {
 
     private val cardsPresenter = CardPresenterSelector()
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
@@ -24,8 +24,8 @@ class CatalogFragment : BaseVerticalGridFragment() {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
-    private val cardsViewModel by viewModel<CatalogViewModel>()
-    private val formViewModel by viewModel<CatalogFormViewModel>()
+    private val cardsViewModel by viewModel<SearchViewModel>()
+    private val formViewModel by viewModel<SearchFormViewModel>()
 
     override fun onInflateTitleView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)

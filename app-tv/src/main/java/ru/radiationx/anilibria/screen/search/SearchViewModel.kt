@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.screen.catalog
+package ru.radiationx.anilibria.screen.search
 
 import io.reactivex.Single
 import ru.radiationx.anilibria.common.BaseCardsViewModel
@@ -11,11 +11,11 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class CatalogViewModel(
+class SearchViewModel(
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
     private val router: Router,
-    private val catalogController: CatalogController
+    private val searchController: SearchController
 ) : BaseCardsViewModel() {
 
     private var searchForm = SearchForm()
@@ -25,7 +25,7 @@ class CatalogViewModel(
     override fun onColdCreate() {
         super.onColdCreate()
 
-        catalogController.applyFormEvent.lifeSubscribe {
+        searchController.applyFormEvent.lifeSubscribe {
             searchForm = it
             onRefreshClick()
         }

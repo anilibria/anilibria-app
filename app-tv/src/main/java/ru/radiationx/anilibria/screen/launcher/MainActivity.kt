@@ -47,7 +47,7 @@ class MainActivity : ScopedFragmentActivity() {
             NavigationModule(),
             PlayerModule(),
             UpdateModule(),
-            CatalogModule(),
+            SearchModule(),
             module {
                 bind(DownloadsDataSource::class.java).singleton()
                 bind(DownloadControllerImpl::class.java).to(DownloadControllerImpl::class.java).singleton()

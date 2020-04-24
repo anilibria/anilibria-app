@@ -54,9 +54,8 @@ open class BaseVerticalGridFragment : ScopedVerticalGridFragment() {
         shadowDescriptionView = null
     }
 
-    override fun runEntranceTransition(entranceTransition: Any?) {
-        super.runEntranceTransition(entranceTransition)
-        shadowDescriptionView?.isVisible = true
+    protected fun setDescriptionVisible(visible: Boolean) {
+        shadowDescriptionView?.isInvisible = !visible
     }
 
     protected fun setDescription(title: CharSequence, subtitle: CharSequence) {

@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.common.fragment.BaseVerticalGridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.SearchTitleView
+import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import javax.inject.Inject
@@ -21,6 +22,8 @@ class SearchFragment : BaseVerticalGridFragment() {
     private val cardsPresenter = CardPresenterSelector()
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
 
+    private val emptyTextManager by lazy { ExternalTextManager() }
+
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
@@ -29,10 +32,6 @@ class SearchFragment : BaseVerticalGridFragment() {
 
     override fun onInflateTitleView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
-    }
-
-    override fun installTitleView(inflater: LayoutInflater?, parent: ViewGroup?, savedInstanceState: Bundle?) {
-        super.installTitleView(inflater, parent, savedInstanceState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +89,10 @@ class SearchFragment : BaseVerticalGridFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        emptyTextManager.rootView = view as ViewGroup
+        emptyTextManager.initialDelay = 0L
+        emptyTextManager.text = "По данным параметрам ничего не найдено"
+
         (titleView as? SearchTitleView?)?.apply {
             setYearClickListener(View.OnClickListener { formViewModel.onYearClick() })
             setSeasonClickListener(View.OnClickListener { formViewModel.onSeasonClick() })
@@ -107,6 +110,11 @@ class SearchFragment : BaseVerticalGridFragment() {
         subscribeTo(cardsViewModel.cardsData) {
             if (it.isEmpty()) {
                 backgroundManager.clearGradient()
+                setDescriptionVisible(false)
+                emptyTextManager.show()
+            } else {
+                emptyTextManager.hide()
+                setDescriptionVisible(true)
             }
             cardsAdapter.setItems(it, CardDiffCallback)
             startEntranceTransition()

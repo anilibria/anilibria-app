@@ -107,6 +107,16 @@ class SearchFragment : BaseVerticalGridFragment() {
             subscribeTo(formViewModel.onlyCompletedData) { onlyCompleted = it }
         }
 
+        progressBarManager.initialDelay = 0
+
+        subscribeTo(cardsViewModel.progressState) {
+            if (it) {
+                progressBarManager.show()
+            } else {
+                progressBarManager.hide()
+            }
+        }
+
         subscribeTo(cardsViewModel.cardsData) {
             if (it.isEmpty()) {
                 backgroundManager.clearGradient()

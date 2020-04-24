@@ -14,6 +14,7 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     protected open val firstPage = 1
     protected open val perPage = 20
     protected open val loadOnCreate = true
+    protected open val progressOnRefresh = true
     open val defaultTitle = "Cards"
 
     protected open val loadMoreCard = LinkCard("Загрузить еще")
@@ -66,7 +67,9 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     private fun loadPage(requestPage: Int = currentPage) {
 
         Log.e("lalala", "request load page $requestPage")
-        cardsData.value = currentCards + loadingCard
+        if (requestPage != firstPage || progressOnRefresh) {
+            cardsData.value = currentCards + loadingCard
+        }
 
         requestDisposable.dispose()
         requestDisposable = getLoader(requestPage)

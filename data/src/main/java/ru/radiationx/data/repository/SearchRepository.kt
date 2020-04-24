@@ -36,7 +36,7 @@ class SearchRepository @Inject constructor(
         .observeOn(schedulers.ui())
 
     fun searchReleases(form: SearchForm, page: Int): Single<Paginated<List<ReleaseItem>>> {
-        val yearsQuery = form.years?.joinToString(",").orEmpty()
+        val yearsQuery = form.years?.joinToString(",") { it.value }.orEmpty()
         val seasonsQuery = form.seasons?.joinToString(",") { it.value }.orEmpty()
         val genresQuery = form.genres?.joinToString(",") { it.value }.orEmpty()
         val sortStr = when (form.sort) {

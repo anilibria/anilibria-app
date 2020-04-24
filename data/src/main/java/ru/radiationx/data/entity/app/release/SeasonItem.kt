@@ -1,4 +1,4 @@
 
 package ru.radiationx.data.entity.app.release
 
-class SeasonItem(var title: String = "", var value: String = "")
+data class SeasonItem(var title: String = "", var value: String = "")

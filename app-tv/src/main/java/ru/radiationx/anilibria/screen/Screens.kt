@@ -18,6 +18,10 @@ import ru.radiationx.anilibria.screen.player.putIds
 import ru.radiationx.anilibria.screen.player.quality.PlayerQualityGuidedFragment
 import ru.radiationx.anilibria.screen.player.speed.PlayerSpeedGuidedFragment
 import ru.radiationx.anilibria.screen.schedule.ScheduleFragment
+import ru.radiationx.anilibria.screen.search.genre.SearchGenreGuidedFragment
+import ru.radiationx.anilibria.screen.search.putValues
+import ru.radiationx.anilibria.screen.search.season.SearchSeasonGuidedFragment
+import ru.radiationx.anilibria.screen.search.year.SearchYearGuidedFragment
 import ru.radiationx.anilibria.screen.suggestions.SuggestionsFragment
 import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
@@ -77,6 +81,24 @@ class SuggestionsScreen() : SupportAppScreen() {
 class SearchScreen() : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return SearchFragment()
+    }
+}
+
+class SearchYearGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return SearchYearGuidedFragment().putValues(values)
+    }
+}
+
+class SearchSeasonGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return SearchSeasonGuidedFragment().putValues(values)
+    }
+}
+
+class SearchGenreGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment? {
+        return SearchGenreGuidedFragment().putValues(values)
     }
 }
 

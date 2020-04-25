@@ -37,9 +37,6 @@ class MainActivity : ScopedFragmentActivity() {
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
-    @Inject
-    lateinit var downloadController: DownloadControllerImpl
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         dependencyInjector.installModules(
@@ -49,16 +46,12 @@ class MainActivity : ScopedFragmentActivity() {
             UpdateModule(),
             SearchModule(),
             module {
-                bind(DownloadsDataSource::class.java).singleton()
-                bind(DownloadControllerImpl::class.java).to(DownloadControllerImpl::class.java).singleton()
-                bind(DownloadController::class.java).to(DownloadControllerImpl::class.java).singleton()
                 bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
             }
         )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragments)
         lifecycle.addObserver(viewModel)
-        lifecycle.addObserver(downloadController)
 
         if (savedInstanceState == null) {
             viewModel.coldLaunch()

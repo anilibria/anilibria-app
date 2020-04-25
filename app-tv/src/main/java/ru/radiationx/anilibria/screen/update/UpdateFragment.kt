@@ -19,7 +19,9 @@ import kotlinx.android.synthetic.main.fragment_update.*
 import permissions.dispatcher.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.di.DownloadModule
 import ru.radiationx.shared.ktx.android.subscribeTo
+import ru.radiationx.shared_app.common.download.DownloadControllerImpl
 import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.screen.ScopedFragment
 import toothpick.ktp.binding.module
@@ -33,11 +35,16 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
+    @Inject
+    lateinit var downloadController: DownloadControllerImpl
+
     private val viewModel by viewModel<UpdateViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        dependencyInjector.installModules(DownloadModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
+        lifecycle.addObserver(downloadController)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

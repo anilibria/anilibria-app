@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.mainpages
 import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.SearchScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
@@ -34,6 +35,10 @@ class MainPagesViewModel(
 
     fun onAppUpdateClick() {
         router.navigateTo(UpdateScreen())
+    }
+
+    fun onCatalogClick() {
+        router.navigateTo(SearchScreen())
     }
 
     fun onSearchClick() {

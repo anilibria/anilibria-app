@@ -74,6 +74,13 @@ open class BrowseTitleView @JvmOverloads constructor(
             updateAlertVisibility()
         }
 
+    var other: CharSequence?
+        get() = title_other.text
+        set(value) {
+            title_other.text = value
+            updateOtherVisibility()
+        }
+
     fun setOnSearchClickedListener(listener: OnClickListener?) {
         mHasSearchListener = listener != null
         title_orb.setOnOrbClickedListener(listener)
@@ -82,6 +89,10 @@ open class BrowseTitleView @JvmOverloads constructor(
 
     fun setOnAlertClickedListener(listener: OnClickListener?) {
         title_alert.setOnClickListener(listener)
+    }
+
+    fun setOnOtherClickedListener(listener: OnClickListener?) {
+        title_other.setOnClickListener(listener)
     }
 
     fun enableAnimation(enable: Boolean) {
@@ -98,6 +109,7 @@ open class BrowseTitleView @JvmOverloads constructor(
         }
         updateSearchOrbViewVisibility()
         updateAlertVisibility()
+        updateOtherVisibility()
     }
 
     private fun updateSearchOrbViewVisibility() {
@@ -121,9 +133,14 @@ open class BrowseTitleView @JvmOverloads constructor(
         title_alert.isVisible = !alert.isNullOrEmpty()
     }
 
+    private fun updateOtherVisibility() {
+        title_other.isVisible = !other.isNullOrEmpty()
+    }
+
     override fun getTitleViewAdapter(): TitleViewAdapter = mTitleViewAdapter
 
     override fun focusSearch(focused: View, direction: Int): View? {
+        Log.e("kokoko","focusSearch $direction, $focused")
         if ((direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT || direction == View.FOCUS_UP || direction == View.FOCUS_DOWN)) {
             var nextView: View? = when (direction) {
                 View.FOCUS_LEFT -> findViewById(focused.nextFocusLeftId)
@@ -132,7 +149,7 @@ open class BrowseTitleView @JvmOverloads constructor(
                 View.FOCUS_UP -> findViewById(focused.nextFocusUpId)
                 else -> null
             }
-
+            Log.e("kokoko","focusSearch next $direction, $nextView")
             if (focused.parent == this && (nextView == null || !nextView.isVisible || !(nextView.isFocusable || nextView is ViewGroup))) {
                 nextView = when (direction) {
                     View.FOCUS_LEFT -> findViewById(focused.nextFocusUpId)
@@ -143,6 +160,8 @@ open class BrowseTitleView @JvmOverloads constructor(
                     else -> null
                 }
             }
+
+            Log.e("kokoko","focusSearch final next $direction, $nextView")
 
             if (nextView != null && (nextView.isFocusable || nextView is ViewGroup)) {
                 return nextView
@@ -164,6 +183,14 @@ open class BrowseTitleView @JvmOverloads constructor(
         fun getAlert(): CharSequence? = titleView.alert
 
         fun setOnAlertClickedListener(listener: OnClickListener?) = titleView.setOnAlertClickedListener(listener)
+
+        fun setOther(otherText: CharSequence?) {
+            titleView.other = otherText
+        }
+
+        fun getOther(): CharSequence? = titleView.other
+
+        fun setOnOtherClickedListener(listener: OnClickListener?) = titleView.setOnOtherClickedListener(listener)
 
         override fun getSearchAffordanceView(): View = titleView.searchAffordanceView
         override fun setOnSearchClickedListener(listener: OnClickListener?) = titleView.setOnSearchClickedListener(listener)

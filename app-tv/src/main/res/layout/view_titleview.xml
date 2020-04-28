@@ -44,7 +44,7 @@
         android:id="@+id/title_orb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:nextFocusRight="@id/title_alert"
+        android:nextFocusRight="@id/title_buttons"
         android:nextFocusDown="@id/title_controls"
         android:transitionGroup="true"
         android:visibility="invisible"
@@ -54,21 +54,45 @@
         tools:visibility="visible" />
 
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/title_alert"
-        style="@style/BrowseTitleAlert"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/title_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:nextFocusLeft="@id/title_orb"
         android:nextFocusDown="@id/title_controls"
-        android:theme="@style/AppTheme.Material.Browse"
-        android:visibility="gone"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/title_controls"
         app:layout_constraintEnd_toStartOf="@id/title_barrier"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Обновление"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/title_other"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:nextFocusLeft="@id/title_orb"
+            android:nextFocusRight="@id/title_alert"
+            android:theme="@style/AppTheme.Material.Browse"
+            android:visibility="gone"
+            app:cornerRadius="24dp"
+            tools:text="Каталог"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/title_alert"
+            style="@style/BrowseTitleAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:nextFocusLeft="@id/title_other"
+            android:theme="@style/AppTheme.Material.Browse"
+            android:visibility="gone"
+            tools:text="Обновление"
+            tools:visibility="visible" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <FrameLayout
         android:id="@+id/title_controls"

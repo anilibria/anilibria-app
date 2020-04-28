@@ -38,6 +38,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
     private val viewModel by viewModel<MainPagesViewModel>()
 
     private var mOnAlertClickedListener: View.OnClickListener? = null
+    private var mOnOtherClickedListener: View.OnClickListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +58,10 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
         setAlertClickListener(View.OnClickListener {
             viewModel.onAppUpdateClick()
+        })
+
+        setOtherClickListener(View.OnClickListener {
+            viewModel.onCatalogClick()
         })
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
@@ -94,10 +99,8 @@ class MainPagesFragment : ScopedBrowseFragment() {
             null
         }
         prepareEntranceTransition()
+        startEntranceTransition()
 
-        Handler().postDelayed({
-            startEntranceTransition()
-        }, 500)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,6 +123,7 @@ class MainPagesFragment : ScopedBrowseFragment() {
             val alert = if (it) "Обновление" else null
             setAlert(alert)
         }
+        setOther("Каталог")
         //progressBarManager.show()
 
         ImageViewCompat.setImageTintList(
@@ -163,13 +167,10 @@ class MainPagesFragment : ScopedBrowseFragment() {
         Log.e("kekeke", "onSaveInstanceState")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     override fun setTitleView(titleView: View?) {
         super.setTitleView(titleView)
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(mOnOtherClickedListener)
     }
 
     protected fun setAlert(alertText: CharSequence?) {
@@ -178,7 +179,15 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     protected fun setAlertClickListener(listener: View.OnClickListener?) {
         mOnAlertClickedListener = listener
-        titleView
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
+    }
+
+    protected fun setOther(otherText: CharSequence?) {
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOther(otherText)
+    }
+
+    protected fun setOtherClickListener(listener: View.OnClickListener?) {
+        mOnOtherClickedListener = listener
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(mOnOtherClickedListener)
     }
 }

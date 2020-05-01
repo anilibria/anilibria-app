@@ -20,7 +20,6 @@ class SearchGenreViewModel(
         super.onColdCreate()
         searchRepository
             .observeGenres()
-            .distinctUntilChanged()
             .lifeSubscribe {
                 currentGenres.clear()
                 currentGenres.addAll(it)

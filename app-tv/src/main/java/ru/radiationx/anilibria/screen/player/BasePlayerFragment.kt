@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
@@ -47,6 +48,7 @@ open class BasePlayerFragment : ScopedVideoFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()
     }
@@ -59,6 +61,7 @@ open class BasePlayerFragment : ScopedVideoFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         releasePlayer()
     }
 

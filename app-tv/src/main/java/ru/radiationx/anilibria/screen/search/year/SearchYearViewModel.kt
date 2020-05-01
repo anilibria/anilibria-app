@@ -20,7 +20,6 @@ class SearchYearViewModel(
         super.onColdCreate()
         searchRepository
             .observeYears()
-            .distinctUntilChanged()
             .lifeSubscribe {
                 currentYears.clear()
                 currentYears.addAll(it)

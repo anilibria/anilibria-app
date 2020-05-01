@@ -1,24 +1,23 @@
 {
   "update": {
-    "version_code": "2",
-    "version_name": "1.0.0_RC4",
+    "version_code": "3",
+    "version_name": "1.0.0_RC5",
     "version_build": "0",
-    "build_date": "13 апреля 2020 г.",
+    "build_date": "1 мая 2020 г.",
     "links": [
       {
         "name": "AniLibria TV",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/tv-1.0.0-rc4/AniLibria_TV_v1.0.0_RC4.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/tv-1.0.0-rc5/AniLibria_TV_v1.0.0_RC5.apk",
         "type": "file"
       }
     ],
     "important": [],
     "added": [
-      "Выбор серии на экране релиза"
+      "Поиск по названию",
+      "Каталог (поиск по параметрам)"
     ],
     "fixed": [
-      "Креш приложения при добавлении в избранное",
-      "Закрытие диалоговых окон больше не закрывает основные окна",
-      "Загрузка изображений"
+      "Засыпание устройства при воспроизведении видео"
     ],
     "changed": []
   }

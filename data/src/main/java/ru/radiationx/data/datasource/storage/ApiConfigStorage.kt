@@ -14,8 +14,8 @@ class ApiConfigStorage @Inject constructor(
 ) {
 
     companion object {
-        private const val KEY_API_CONFIG = "data.apiconfig"
-        private const val KEY_API_CONFIG_ACTIVE = "data.apiconfig_active"
+        private const val KEY_API_CONFIG = "data.apiconfig_v2"
+        private const val KEY_API_CONFIG_ACTIVE = "data.apiconfig_active_v2"
     }
 
     fun saveJson(json: JSONObject) {

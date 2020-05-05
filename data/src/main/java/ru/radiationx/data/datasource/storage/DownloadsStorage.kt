@@ -11,15 +11,19 @@ class DownloadsStorage(
 ) : DownloadsHolder {
 
     companion object {
-        private val KEY_DOWNLOADS = "data.download_ids"
+        private const val KEY_DOWNLOADS = "data.download_ids"
     }
 
     private val downloads = mutableListOf<Long>()
 
     init {
-        sharedPreferences.getString(KEY_DOWNLOADS, null)?.split(",")?.map { it.toLong() }?.also {
-            downloads.addAll(it)
-        }
+        sharedPreferences.getString(KEY_DOWNLOADS, null)
+            ?.split(",")
+            ?.filter { it.isNotEmpty() }
+            ?.map { it.toLong() }
+            ?.also {
+                downloads.addAll(it)
+            }
     }
 
     override fun getDownloads(): List<Long> = downloads.toList()

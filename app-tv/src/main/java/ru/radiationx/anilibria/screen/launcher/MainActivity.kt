@@ -1,16 +1,17 @@
 package ru.radiationx.anilibria.screen.launcher
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
+import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
 import ru.radiationx.anilibria.di.*
-import ru.radiationx.shared_app.common.download.DownloadController
-import ru.radiationx.shared_app.common.download.DownloadControllerImpl
-import ru.radiationx.shared_app.common.download.DownloadsDataSource
-import ru.radiationx.shared_app.screen.ScopedFragmentActivity
+import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.ktp.binding.module
@@ -53,13 +54,18 @@ class MainActivity : ScopedFragmentActivity() {
         setContentView(R.layout.activity_fragments)
         lifecycle.addObserver(viewModel)
 
+        subscribeTo(viewModel.appReadyAction) {
+            handleIntent(intent)
+        }
+
         if (savedInstanceState == null) {
             viewModel.coldLaunch()
         }
-        /* supportFragmentManager
-             .beginTransaction()
-             .add(R.id.fragmentContainer, DialogExampleFragment())
-             .commit()*/
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     override fun onResumeFragments() {
@@ -72,12 +78,15 @@ class MainActivity : ScopedFragmentActivity() {
         super.onPause()
     }
 
-    override fun onBackPressed() {
-        /*val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(supportFragmentManager)
-        if (currentFragment != null) {
-            dialogRouter.exit()
-        }else{
-        }*/
-        super.onBackPressed()
+    private fun handleIntent(intent: Intent?) {
+        Log.e("lololo", "handleIntent ${intent?.action}, $intent, ${intent?.extras?.keySet()?.joinToString()}")
+        intent ?: return
+        if (intent.action == SuggestionsContentProvider.INTENT_ACTION) {
+            val uri = intent.data ?: return
+            Log.e("lololo", "handleIntent uri $uri")
+            val id = uri.lastPathSegment?.toInt() ?: return
+            Log.e("lololo", "handleIntent id $id")
+            viewModel.openRelease(id)
+        }
     }
 }

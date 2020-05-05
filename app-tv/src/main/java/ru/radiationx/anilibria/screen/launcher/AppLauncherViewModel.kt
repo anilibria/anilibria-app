@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.launcher
 
+import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -18,12 +19,18 @@ class AppLauncherViewModel(
 
     private var firstLaunch = true
 
+    val appReadyAction = MutableLiveData<Unit>()
+
+    fun openRelease(id: Int) {
+        router.navigateTo(DetailsScreen(id))
+    }
+
     fun coldLaunch() {
         initWithConfig()
         //initMain()
     }
 
-    private fun initWithConfig(){
+    private fun initWithConfig() {
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
@@ -52,7 +59,7 @@ class AppLauncherViewModel(
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(AuthGuidedScreen())
         }
-
+        appReadyAction.value = Unit
         authRepository
             .loadUser()
             .lifeSubscribe({}, {})

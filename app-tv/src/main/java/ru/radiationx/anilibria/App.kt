@@ -6,9 +6,13 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import com.jakewharton.rxrelay2.BehaviorRelay
+import com.jakewharton.rxrelay2.PublishRelay
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import io.reactivex.Observable
 import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared_app.common.ImageLoaderConfig
@@ -19,6 +23,17 @@ import toothpick.configuration.Configuration
 
 class App : Application() {
 
+    companion object {
+
+        /*
+        * Это нужно, т.к. contentprovider создается до того, как отработает onCreate и будут доступны все зависимости.
+        * Такое происходит, когда приложение не запущено, но система уже стучится за данными в contentprovider.
+        * Логика такая - подписываемя с блокировкой на эту релейку в методах, которые выполняют запросы (query, insert, etc.)
+        * Главное чтобы логика выполнилась после инициализации приложения
+        * */
+        val appCreateAction = BehaviorRelay.createDefault(false)
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -27,6 +42,7 @@ class App : Application() {
         if (isMainProcess()) {
             initInMainProcess()
         }
+        appCreateAction.accept(true)
     }
 
     private fun initYandexAppMetrica() {

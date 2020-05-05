@@ -138,6 +138,7 @@ class LibriaReleaseViewHolder(
         )
         rowReleaseHQMarker.isVisible = details.hasFullHd
 
+        rowReleaseActionPlay.isVisible = details.hasEpisodes
         rowReleaseActionContinue.isVisible = details.hasViewed
         rowReleaseActionPlayWeb.isVisible = details.hasWebPlayer
         rowReleaseActionFavorite.text = if (details.isFavorite) {

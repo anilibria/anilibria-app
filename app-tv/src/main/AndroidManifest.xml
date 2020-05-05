@@ -61,7 +61,6 @@
         <provider android:name=".contentprovider.suggestions.SuggestionsContentProvider"
             android:authorities="ru.radiationx.anilibria.contentprovider.suggestions"
             android:exported="true"
-            android:initOrder="900"
             tools:ignore="ExportedContentProvider" />
 
     </application>

@@ -16,7 +16,8 @@ class CardsDataConverter(
             id,
             title.orEmpty(),
             "${seasons.firstOrNull()} год • ${genres.firstOrNull()
-                ?.capitalize()} • Серии: ${series} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context).decapitalize()}",
+                ?.capitalize()} • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context)
+                .decapitalize()}",
             poster.orEmpty(),
             LibriaCard.Type.RELEASE
         ).apply {

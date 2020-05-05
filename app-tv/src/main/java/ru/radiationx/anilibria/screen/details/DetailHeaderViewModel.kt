@@ -90,11 +90,12 @@ class DetailHeaderViewModel(
 
     fun onPlayClick() {
         val release = currentRelease as? ReleaseFull ?: return
-        if (release.episodes.size > 1) {
+        if (release.episodes.isEmpty()) return
+        if (release.episodes.size == 1) {
+            router.navigateTo(PlayerScreen(releaseId))
+        } else {
             val episodeId = releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
-        } else {
-            router.navigateTo(PlayerScreen(releaseId))
         }
     }
 

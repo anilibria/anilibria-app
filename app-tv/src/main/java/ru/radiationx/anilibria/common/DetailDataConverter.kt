@@ -23,7 +23,7 @@ class DetailDataConverter(
                 genres.firstOrNull()?.capitalize()?.trim(),
                 "${seasons.firstOrNull()} год",
                 types.firstOrNull()?.trim(),
-                "Серии: ${series?.trim()}"
+                "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),
             Html.fromHtml(description.orEmpty()).toString().trim().trim('"')/*.replace('\n', ' ')*/,
             getAnnounce(),
@@ -31,6 +31,7 @@ class DetailDataConverter(
             NumberFormat.getNumberInstance().format(favoriteInfo.rating),
             (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false,
             favoriteInfo.isAdded,
+            (releaseItem as? ReleaseFull)?.episodes?.isNotEmpty() ?: false,
             (releaseItem as? ReleaseFull)?.episodes?.any { it.isViewed } ?: false,
             false && (releaseItem as? ReleaseFull)?.moonwalkLink != null
         )

@@ -22,19 +22,19 @@ import java.util.regex.Pattern
  * Created by radiationx on 13.01.18.
  */
 class SearchSuggestionDelegate(
-        private val clickListener: (SearchItem) -> Unit
+    private val clickListener: (SearchItem) -> Unit
 ) : AppAdapterDelegate<SearchSuggestionListItem, ListItem, SearchSuggestionDelegate.ViewHolder>(
-        R.layout.item_fast_search,
-        { it is SearchSuggestionListItem },
-        { ViewHolder(it, clickListener) }
+    R.layout.item_fast_search,
+    { it is SearchSuggestionListItem },
+    { ViewHolder(it, clickListener) }
 ) {
 
     override fun bindData(item: SearchSuggestionListItem, holder: ViewHolder) =
-            holder.bind(item.item)
+        holder.bind(item.item)
 
     class ViewHolder(
-            val view: View,
-            private val clickListener: (SearchItem) -> Unit
+        val view: View,
+        private val clickListener: (SearchItem) -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
         private lateinit var currentItem: SearchItem
@@ -58,10 +58,13 @@ class SearchSuggestionDelegate(
         }
 
         fun setText(textView: TextView, item: SuggestionItem, title: String) {
-            val matcher = Pattern.compile(item.query, Pattern.CASE_INSENSITIVE).matcher(title)
             val s = SpannableString(title)
-            while (matcher.find()) {
-                s.setSpan(StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            try {
+                val matcher = Pattern.compile(item.query, Pattern.CASE_INSENSITIVE).matcher(title)
+                while (matcher.find()) {
+                    s.setSpan(StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            } catch (ignore: Throwable) {
             }
             textView.setText(s, TextView.BufferType.SPANNABLE)
         }

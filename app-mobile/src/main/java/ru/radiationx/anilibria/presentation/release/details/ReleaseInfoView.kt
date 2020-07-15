@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.entity.app.release.ReleaseFull
-import ru.radiationx.anilibria.entity.app.release.TorrentItem
-import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.vital.VitalItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ReleaseInfoView: IBaseView {
+interface ReleaseInfoView : IBaseView {
     fun showVitalItems(vital: List<VitalItem>)
 
     fun updateFavCounter()
@@ -29,7 +29,7 @@ interface ReleaseInfoView: IBaseView {
     fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playWeb(link: String)
+    fun playWeb(link: String, code: String)
 
     @StateStrategyType(SkipStrategy::class)
     fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)

@@ -6,32 +6,33 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.dialog_file_download.view.*
 import kotlinx.android.synthetic.main.fragment_list.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.di.extensions.getDependency
+import ru.radiationx.anilibria.di.extensions.injectDependencies
+import ru.radiationx.anilibria.entity.app.release.ReleaseFull
+import ru.radiationx.anilibria.entity.app.release.TorrentItem
+import ru.radiationx.anilibria.entity.app.vital.VitalItem
+import ru.radiationx.anilibria.model.data.holders.PreferencesHolder
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import java.net.URLConnection
 import java.text.DecimalFormat
 import java.util.regex.Pattern
@@ -54,7 +55,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     lateinit var presenter: ReleaseInfoPresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(ReleaseInfoPresenter::class.java, screenScope)
+    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(screenScope, ReleaseInfoPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -315,10 +316,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    override fun playWeb(link: String, code: String) {
+    override fun playWeb(link: String) {
         startActivity(Intent(context, WebPlayerActivity::class.java).apply {
             putExtra(WebPlayerActivity.ARG_URL, link)
-            putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)
         })
     }
 

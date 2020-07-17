@@ -45,4 +45,7 @@ interface ReleaseInfoView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun showEpisodesMenuDialog()
+
+    @StateStrategyType(SkipStrategy::class)
+    fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode)
 }

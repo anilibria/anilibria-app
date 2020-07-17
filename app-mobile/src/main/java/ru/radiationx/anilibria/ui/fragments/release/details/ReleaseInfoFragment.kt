@@ -192,6 +192,20 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                 .show()
     }
 
+    override fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode) {
+        val context = context ?: return
+        val items = arrayOf(
+                "Отметить как непросмотренная"
+        )
+        AlertDialog.Builder(context)
+                .setItems(items) { _, which ->
+                    when (which) {
+                        0 -> presenter.markEpisodeUnviewed(episode)
+                    }
+                }
+                .show()
+    }
+
     override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
             if (quality == null) {
@@ -420,6 +434,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
         override fun onClickEpisode(episode: ReleaseFull.Episode) {
             presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+        }
+
+        override fun onLongClickEpisode(episode: ReleaseFull.Episode) {
+            presenter.onLongClickEpisode(episode)
         }
 
         override fun onClickTorrent() {

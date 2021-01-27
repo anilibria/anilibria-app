@@ -61,7 +61,7 @@ class NotificationService : FirebaseMessagingService() {
                     message.data["push_data"]
             )
         }
-        manager.notify((System.currentTimeMillis() / 1000).toInt(), getNotification(data))
+        manager.notify(System.nanoTime().toInt(), getNotification(data))
 
 
         if (data.type == CUSTOM_TYPE_CONFIG) {

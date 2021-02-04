@@ -7,13 +7,14 @@
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.5/AniLibria_v2.4.5.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.6/AniLibria_v2.4.6.apk",
         "type": "file"
       }
     ],
     "important": [],
     "added": [
-      "Авторизация для приложения Android TV (5 вкладка -> привязать устройство)"
+      "Авторизация для приложения Android TV (5 вкладка -> привязать устройство)",
+      "Возможность отметить серию непросмотренной"
     ],
     "fixed": [
       "Загрузка торрент файлов"

@@ -1,26 +1,22 @@
 {
   "update": {
-    "version_code": "54",
-    "version_name": "2.4.4",
+    "version_code": "55",
+    "version_name": "2.4.5",
     "version_build": "0",
-    "build_date": "17 декабря 2019 г.",
+    "build_date": "4 февраля 2021 г.",
     "links": [
       {
-        "name": "AniLibria App (Красная иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_v2.4.4.apk",
-        "type": "file"
-      },
-      {
-        "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.4/AniLibria_Lite_v2.4.4.apk",
+        "name": "AniLibria App",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.5/AniLibria_v2.4.5.apk",
         "type": "file"
       }
     ],
     "important": [],
-    "added": [],
+    "added": [
+      "Авторизация для приложения Android TV (5 вкладка -> привязать устройство)"
+    ],
     "fixed": [
-      "Обновлён веб плеер, теперь должен работать",
-      "Авторизация в приложении (были проблемы после блокировки сайта)"
+      "Загрузка торрент файлов"
     ],
     "changed": []
   }

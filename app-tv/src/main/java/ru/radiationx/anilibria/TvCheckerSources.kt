@@ -7,7 +7,7 @@ import toothpick.InjectConstructor
 class TvCheckerSources : CheckerReserveSources {
 
     override val sources: List<String> = listOf(
-        "https://github.com/anilibria/anilibria-app/blob/master/check-tv.json",
+        "https://github.com/anilibria/anilibria-app/raw/master/check-tv.json",
         "https://bitbucket.org/RadiationX/anilibria-app/raw/master/check-tv.json"
     )
 }

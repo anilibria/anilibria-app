@@ -1,13 +1,13 @@
 {
   "update": {
-    "version_code": "56",
-    "version_name": "2.4.6",
+    "version_code": "57",
+    "version_name": "2.4.7",
     "version_build": "0",
     "build_date": "4 февраля 2021 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.6/AniLibria_v2.4.6.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.7/AniLibria_v2.4.7.apk",
         "type": "file"
       }
     ],

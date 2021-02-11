@@ -9,6 +9,11 @@
         "name": "AniLibria App",
         "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.7/AniLibria_v2.4.7.apk",
         "type": "file"
+      },
+      {
+        "name": "AniLibria Lite (Белая иконка)",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.7/AniLibria_Lite_v2.4.7.apk",
+        "type": "file"
       }
     ],
     "important": [],

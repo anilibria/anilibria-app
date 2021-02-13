@@ -3,6 +3,7 @@
     <string name="config_action_repeat">Повторить</string>
     <string name="config_action_skip">Пропустить</string>
     <string name="config_action_next">Следующий шаг</string>
+    <string name="config_action_restart">Начать проверку заново</string>
     <string name="cd_config_logo">Логотип</string>
     <string name="config_logo_name">AniLibria</string>
 

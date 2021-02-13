@@ -42,7 +42,7 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
         config_next.text = if (screenState.hasNext) {
             "Следующий шаг"
         } else {
-            null
+            "Начать проверку заново"
         }
 
         TransitionManager.beginDelayedTransition(constraint, AutoTransition().apply {
@@ -52,7 +52,7 @@ class ConfiguringFragment : BaseFragment(), ConfiguringView {
         val needRefresh = screenState.needRefresh
         config_refresh.visible(needRefresh)
         config_skip.visible(needRefresh)
-        config_next.visible(needRefresh && screenState.hasNext)
+        config_next.visible(needRefresh)
         config_progress.gone(needRefresh)
     }
 

@@ -15,7 +15,6 @@ class ApiConfig @Inject constructor(
     private var activeAddressTag: String = ""
     private val possibleIps = mutableListOf<String>()
     private val proxyPings = mutableMapOf<String, Float>()
-    private val availableAddresses = mutableListOf<String>()
 
     private val needConfigRelay = PublishRelay.create<Boolean>()
     var needConfig = true
@@ -24,7 +23,6 @@ class ApiConfig @Inject constructor(
         activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
         val initAddresses = apiConfigStorage.get() ?: listOf(Api.DEFAULT_ADDRESS)
         setAddresses(initAddresses)
-        setAvailableAddresses(initAddresses)
     }
 
     fun observeNeedConfig(): Observable<Boolean> = needConfigRelay.hide()
@@ -45,17 +43,12 @@ class ApiConfig @Inject constructor(
         proxy.ping = ping
     }
 
-    fun setAvailableAddresses(items: List<ApiAddress>) {
-        availableAddresses.clear()
-        availableAddresses.addAll(items.map { it.tag })
-    }
-
     @Synchronized
     fun setAddresses(items: List<ApiAddress>) {
         addresses.clear()
-        if (items.find { it.tag == Api.DEFAULT_ADDRESS.tag } == null) {
+        /*if (items.find { it.tag == Api.DEFAULT_ADDRESS.tag } == null) {
             addresses.add(Api.DEFAULT_ADDRESS)
-        }
+        }*/
         addresses.addAll(items)
 
         possibleIps.clear()
@@ -76,9 +69,6 @@ class ApiConfig @Inject constructor(
 
     @Synchronized
     fun getPossibleIps(): List<String> = possibleIps.toList()
-
-    @Synchronized
-    fun getAvailableAddresses(): List<String> = availableAddresses.toList()
 
     val active: ApiAddress
         get() = addresses.firstOrNull { it.tag == activeAddressTag } ?: Api.DEFAULT_ADDRESS

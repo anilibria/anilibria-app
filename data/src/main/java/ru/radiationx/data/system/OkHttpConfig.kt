@@ -5,6 +5,7 @@ import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
@@ -48,8 +49,8 @@ fun OkHttpClient.Builder.appendConnectionSpecs(): OkHttpClient.Builder {
     }
 
     val spec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-            .cipherSuites(*cipherSuites.toTypedArray())
-            .build()
+        .cipherSuites(*cipherSuites.toTypedArray())
+        .build()
     connectionSpecs(listOf(spec, ConnectionSpec.CLEARTEXT))
     return this
 }
@@ -65,5 +66,13 @@ fun OkHttpClient.Builder.appendSocketFactoryIfNeeded(): OkHttpClient.Builder {
             ex.printStackTrace()
         }
     }
+    return this
+}
+
+fun OkHttpClient.Builder.appendTimeouts(): OkHttpClient.Builder {
+    callTimeout(25, TimeUnit.SECONDS)
+    connectTimeout(15, TimeUnit.SECONDS)
+    readTimeout(15, TimeUnit.SECONDS)
+    writeTimeout(15, TimeUnit.SECONDS)
     return this
 }

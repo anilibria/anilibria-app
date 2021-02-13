@@ -14,7 +14,6 @@ class AppCookieJar @Inject constructor(
 ) : CookieJar {
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-        Log.e("IClient", "saveFromResponse ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
         var authDestroyed = false
         for (cookie in cookies) {
             if (cookie.value() == "deleted") {
@@ -32,9 +31,6 @@ class AppCookieJar @Inject constructor(
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-        return cookieHolder.getCookies().values.map { it }.also {cookies->
-            Log.e("IClient", "loadForRequest ${cookies.joinToString { "${it.name()}=${it.value()}" }}")
-
-        }
+        return cookieHolder.getCookies().values.map { it }
     }
 }

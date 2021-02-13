@@ -2,15 +2,21 @@ package ru.radiationx.data.interactors
 
 import android.util.Log
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.address.ApiProxy
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.system.WrongHostException
 import ru.radiationx.shared.ktx.addTo
 import java.io.IOException
+import java.lang.Exception
+import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 import javax.net.ssl.*
 
@@ -41,7 +47,8 @@ class ConfiguringInteractor @Inject constructor(
     }
 
     fun nextCheck() {
-        getNextState()?.also { doByState(it) }
+        val nextState = getNextState() ?: State.CHECK_LAST
+        doByState(nextState)
     }
 
     fun skipCheck() {
@@ -88,11 +95,8 @@ class ConfiguringInteractor @Inject constructor(
         updateState(State.CHECK_LAST)
         Log.e("bobobo", "active address ${apiConfig.active}")
         Log.e("bobobo", "getAddresses ${apiConfig.getAddresses()}")
-        Log.e("bobobo", "getAvailableAddresses ${apiConfig.getAvailableAddresses()}")
         compositeDisposable.clear()
-        configurationRepository
-            .checkAvailable(apiConfig.apiUrl)
-            .flatMap { configurationRepository.checkApiAvailable(apiConfig.apiUrl) }
+        zipLastCheck()
             .observeOn(schedulers.ui())
             .doOnSubscribe {
                 screenState.status = "Проверка доступности сервера"
@@ -111,7 +115,8 @@ class ConfiguringInteractor @Inject constructor(
                 Log.e("bobobo", "error on $currentState: $it, ${it is IOException}")
                 it.printStackTrace()
                 when (it) {
-                    is WrongHostException -> loadConfig()
+                    is WrongHostException,
+                    is TimeoutException -> loadConfig()
                     is IOException,
                     is SSLException,
                     is SSLHandshakeException,
@@ -119,7 +124,13 @@ class ConfiguringInteractor @Inject constructor(
                     is SSLProtocolException,
                     is SSLPeerUnverifiedException -> loadConfig()
                     else -> {
-                        screenState.status = "Ошибка проверки доступности сервера: ${it.message}".also { Log.e("bobobo", it) }
+                        screenState.status =
+                            "Ошибка проверки доступности сервера: ${it.message}".also {
+                                Log.e(
+                                    "bobobo",
+                                    it
+                                )
+                            }
                         screenState.needRefresh = true
                         notifyScreenChanged()
                     }
@@ -142,13 +153,19 @@ class ConfiguringInteractor @Inject constructor(
             .subscribe({
                 val addresses = apiConfig.getAddresses()
                 val proxies = addresses.sumBy { it.proxies.size }
-                screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies".also { Log.e("bobobo", it) }
+                screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies".also {
+                    Log.e(
+                        "bobobo",
+                        it
+                    )
+                }
                 notifyScreenChanged()
                 checkAvail()
             }, {
                 Log.e("bobobo", "error on $currentState: $it")
                 it.printStackTrace()
-                screenState.status = "Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) }
+                screenState.status =
+                    "Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) }
                 screenState.needRefresh = true
                 notifyScreenChanged()
             })
@@ -159,39 +176,35 @@ class ConfiguringInteractor @Inject constructor(
         updateState(State.CHECK_AVAIL)
         compositeDisposable.clear()
         val addresses = apiConfig.getAddresses()
-        Observable
-            .fromIterable(addresses)
-            .concatMapSingle { address ->
-                configurationRepository.checkAvailable(address.api)
-                    .onErrorReturnItem(false)
-                    .map { Pair(address, it) }
-            }
-            .filter { it.second }
-            .map { it.first }
-            .toList()
+        mergeAvailCheck(addresses)
             .observeOn(schedulers.ui())
             .doOnSubscribe {
                 screenState.status = "Проверка доступных адресов"
                 screenState.needRefresh = false
                 notifyScreenChanged()
             }
-            .subscribe({
-                screenState.status = "Доступнные адреса: ${it.size}".also { Log.e("bobobo", it) }
+            .subscribe({ activeAddress ->
+                screenState.status = "Найдет доступный адрес".also { Log.e("bobobo", it) }
                 notifyScreenChanged()
-                Log.e("boboob", "checkAvail ${it.joinToString()}")
-                apiConfig.setAvailableAddresses(it)
-                if (it.isNotEmpty()) {
-                    apiConfig.updateActiveAddress(it.random())
-                    apiConfig.updateNeedConfig(false)
-                } else {
-                    checkProxies()
-                }
+                Log.e("boboob", "checkAvail $activeAddress")
+                apiConfig.updateActiveAddress(activeAddress)
+                apiConfig.updateNeedConfig(false)
             }, {
                 Log.e("bobobo", "error on $currentState: $it")
                 it.printStackTrace()
-                screenState.status = "Ошибка проверки доступности адресов: ${it.message}".also { Log.e("bobobo", it) }
-                screenState.needRefresh = true
-                notifyScreenChanged()
+                when (it) {
+                    // from mergeAvailCheck
+                    is NoSuchElementException -> {
+                        checkProxies()
+                    }
+                    else -> {
+                        screenState.status =
+                            "Ошибка проверки доступности адресов: ${it.message}"
+                                .also { Log.e("bobobo", it) }
+                        screenState.needRefresh = true
+                        notifyScreenChanged()
+                    }
+                }
             })
             .addTo(compositeDisposable)
     }
@@ -199,9 +212,16 @@ class ConfiguringInteractor @Inject constructor(
     private fun checkProxies() {
         updateState(State.CHECK_PROXIES)
         compositeDisposable.clear()
-        val proxies = apiConfig.getAddresses().map { it.proxies }.reduce { acc, list -> acc.plus(list) }
+        val proxies =
+            apiConfig.getAddresses().map { it.proxies }.reduce { acc, list -> acc.plus(list) }
         Observable
-            .fromIterable(proxies)
+            .fromArray(proxies)
+            .doOnNext {
+                if (it.isEmpty()) {
+                    throw Exception("No proxies for adresses")
+                }
+            }
+            .flatMap { Observable.fromIterable(it) }
             .concatMapSingle { proxy ->
                 configurationRepository.getPingHost(proxy.ip).map { Pair(proxy, it) }
             }
@@ -218,7 +238,8 @@ class ConfiguringInteractor @Inject constructor(
                     apiConfig.setProxyPing(it.first, it.second.timeTaken)
                 }
                 val bestProxy = it.minBy { it.second.timeTaken }
-                val addressByProxy = apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
+                val addressByProxy =
+                    apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
                 if (bestProxy != null && addressByProxy != null) {
                     apiConfig.updateActiveAddress(addressByProxy)
                     screenState.status =
@@ -229,18 +250,50 @@ class ConfiguringInteractor @Inject constructor(
                             )
                         }
                     notifyScreenChanged()
+                    apiConfig.updateNeedConfig(false)
                 }
 
-                apiConfig.updateNeedConfig(false)
             }, {
                 Log.e("bobobo", "error on $currentState: $it")
                 it.printStackTrace()
-                screenState.status = "Ошибка проверки доступности прокси-серверов: ${it.message}".also { Log.e("bobobo", it) }
+                screenState.status =
+                    "Ошибка проверки доступности прокси-серверов: ${it.message}".also {
+                        Log.e(
+                            "bobobo",
+                            it
+                        )
+                    }
                 screenState.needRefresh = true
                 notifyScreenChanged()
             })
             .addTo(compositeDisposable)
     }
+
+    private fun mergeAvailCheck(addresses: List<ApiAddress>): Single<ApiAddress> {
+        val adressesSources = addresses.map { address ->
+            configurationRepository.checkAvailable(address.api)
+                .subscribeOn(schedulers.io())
+                .onErrorReturnItem(false)
+                .map { Pair(address, it) }
+        }
+        return Single
+            .merge(adressesSources)
+            .filter { it.second }
+            .map { it.first }
+            .firstOrError()
+    }
+
+    private fun zipLastCheck(): Single<Boolean> = Single.zip(
+        configurationRepository
+            .checkAvailable(apiConfig.apiUrl)
+            .subscribeOn(schedulers.io()),
+        configurationRepository
+            .checkApiAvailable(apiConfig.apiUrl)
+            .subscribeOn(schedulers.io()),
+        BiFunction<Boolean, Boolean, Boolean> { result1, result2 ->
+            return@BiFunction result1 && result2
+        }
+    )
 
     private enum class State {
         CHECK_LAST,

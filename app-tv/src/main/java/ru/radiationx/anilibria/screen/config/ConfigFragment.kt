@@ -57,10 +57,18 @@ class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
     private fun updateScreen(screenState: ConfigScreenState) {
         Log.e("lalala", "updateScreen $screenState")
         configErrorText.text = screenState.status
+        configActionNext.setText(
+            if (screenState.hasNext) {
+                R.string.config_action_next
+            } else {
+                R.string.config_action_restart
+            }
+        )
+
         TransitionManager.beginDelayedTransition(mainConstraint)
         configProgressBar.isVisible = !screenState.needRefresh
         configErrorGroup.isVisible = screenState.needRefresh
-        configActionNext.isVisible = screenState.needRefresh && screenState.hasNext
+        configActionNext.isVisible = screenState.needRefresh
         configActionRepeat.requestFocus()
         configActionRepeat.post {
             configActionRepeat?.requestFocus()

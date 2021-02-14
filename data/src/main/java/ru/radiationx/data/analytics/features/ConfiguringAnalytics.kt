@@ -16,6 +16,10 @@ class ConfiguringAnalytics(
 
     private fun <T> T?.asParam(name: String) = Pair<String, String>(name, this.toString())
 
+    fun open() {
+        sender.send(AnalyticsConstants.config_open)
+    }
+
     fun checkFull(
         startAddressTag: String,
         endAddressTag: String,

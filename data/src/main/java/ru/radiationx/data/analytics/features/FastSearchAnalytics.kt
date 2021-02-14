@@ -9,26 +9,25 @@ class FastSearchAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun open() {
-        sender.send(AnalyticsConstants.fsearch_open)
-    }
-
-    fun cancel() {
-        sender.send(AnalyticsConstants.fsearch_cancel)
-    }
-
-    fun navRelease(releaseId: Int) {
+    fun open(from: String) {
         sender.send(
-            AnalyticsConstants.fsearch_nav_release,
-            "id" to releaseId.toString()
+            AnalyticsConstants.fsearch_open,
+            "from" to from
         )
     }
 
-    fun navCatalog() {
-        sender.send(AnalyticsConstants.fsearch_nav_catalog)
+    fun cancel(from: String) {
+        sender.send(
+            AnalyticsConstants.fsearch_cancel,
+            "from" to from
+        )
     }
 
-    fun navGoogle() {
-        sender.send(AnalyticsConstants.fsearch_nav_google)
+    fun catalogClick() {
+        sender.send(AnalyticsConstants.fsearch_catalog_click)
+    }
+
+    fun searchGoogleClick() {
+        sender.send(AnalyticsConstants.fsearch_google_click)
     }
 }

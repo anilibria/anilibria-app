@@ -27,6 +27,7 @@ object AnalyticsConstants {
 
 
     /* Configuring */
+    const val config_open = "config_open"
     const val config_check_full = "config_check_full"
     const val config_check_last = "config_check_last"
     const val config_load_config = "config_load_config"
@@ -39,13 +40,11 @@ object AnalyticsConstants {
     /* Fast Search */
     const val fsearch_open = "fsearch_open"
     const val fsearch_cancel = "fsearch_cancel"
-    const val fsearch_nav_release = "fsearch_nav_release"
-    const val fsearch_nav_catalog = "fsearch_nav_catalog"
-    const val fsearch_nav_google = "fsearch_nav_google"
+    const val fsearch_catalog_click = "fsearch_catalog_click"
+    const val fsearch_google_click = "fsearch_google_click"
 
-    /* Feed/Schedule */
-    const val feed_schedule_nav_schedule = "feed_schedule_nav_schedule"
-    const val feed_schedule_nav_release = "feed_schedule_nav_release"
+    /* Schedule */
+    const val schedule_open = "schedule_open"
 
     /* Feed */
     const val feed_open = "feed_open"
@@ -79,5 +78,9 @@ object AnalyticsConstants {
     const val release_comments_open = ""
 
     /* Youtube */
+    const val youtube_videos_open = ""
     const val youtube_video_open = ""
+
+    /* Catalog */
+    const val catalog_open = ""
 }

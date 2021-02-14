@@ -5,25 +5,24 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class FeedAnalytics(
+class YoutubeAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun open(from: String) {
+    fun openVideos(from: String) {
         sender.send(
-            AnalyticsConstants.feed_open,
+            AnalyticsConstants.youtube_videos_open,
             "from" to from
         )
     }
 
-    fun loadPage(page: Int) {
+    fun openVideo(from: String, id: Int, vid: String) {
         sender.send(
-            AnalyticsConstants.feed_load_page,
-            "page" to page.toString()
+            AnalyticsConstants.youtube_video_open,
+            "from" to from,
+            "id" to id.toString(),
+            "vid" to vid
         )
     }
 
-    fun onRandomClick() {
-        sender.send(AnalyticsConstants.feed_random_click)
-    }
 }

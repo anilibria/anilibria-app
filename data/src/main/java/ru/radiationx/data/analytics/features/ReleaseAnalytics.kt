@@ -9,7 +9,7 @@ class ReleaseAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun open(releaseId: Int, from: String) {
+    fun open(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_open,
             "from" to from,

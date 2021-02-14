@@ -104,10 +104,10 @@ class SettingsFragment : BaseSettingFragment() {
             summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
         }
 
-        findPreference<Preference>("about.app_topic_site")?.apply {
+        findPreference<Preference>("about.app_other_apps")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
             setOnPreferenceClickListener {
-                Utils.externalLink("${apiConfig.siteUrl}/pages/app.php")
+                Utils.externalLink("https://anilibria.app/")
                 false
             }
         }

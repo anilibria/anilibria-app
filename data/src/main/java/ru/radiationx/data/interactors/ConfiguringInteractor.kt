@@ -52,19 +52,19 @@ class ConfiguringInteractor @Inject constructor(
     }
 
     fun repeatCheck() {
-        analytics.onRepeatClick(currentState.toAnalyticsName())
+        analytics.onRepeatClick(currentState.toAnalyticsState())
         doByState()
     }
 
     fun nextCheck() {
-        analytics.onNextStepClick(currentState.toAnalyticsName())
+        analytics.onNextStepClick(currentState.toAnalyticsState())
         val nextState = getNextState() ?: State.CHECK_LAST
         doByState(nextState)
     }
 
     fun skipCheck() {
         isFullSuccess = false
-        analytics.onSkipClick(currentState.toAnalyticsName())
+        analytics.onSkipClick(currentState.toAnalyticsState())
         apiConfig.updateNeedConfig(false)
     }
 
@@ -341,11 +341,11 @@ class ConfiguringInteractor @Inject constructor(
         }
     )
 
-    private fun State.toAnalyticsName(): String = when (this) {
-        State.CHECK_LAST -> "check_last"
-        State.LOAD_CONFIG -> "load_config"
-        State.CHECK_AVAIL -> "check_avail"
-        State.CHECK_PROXIES -> "check_proxies"
+    private fun State.toAnalyticsState(): ConfiguringAnalytics.State = when (this) {
+        State.CHECK_LAST -> ConfiguringAnalytics.State.CHECK_LAST
+        State.LOAD_CONFIG -> ConfiguringAnalytics.State.LOAD_CONFIG
+        State.CHECK_AVAIL -> ConfiguringAnalytics.State.CHECK_AVAIL
+        State.CHECK_PROXIES -> ConfiguringAnalytics.State.CHECK_PROXIES
     }
 
     private enum class State {

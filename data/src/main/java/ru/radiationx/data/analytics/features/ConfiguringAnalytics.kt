@@ -95,15 +95,31 @@ class ConfiguringAnalytics(
     }
 
 
-    fun onRepeatClick(state: String) {
-        sender.send(AnalyticsConstants.config_repeat, "state" to state)
+    fun onRepeatClick(state: State) {
+        sender.send(
+            AnalyticsConstants.config_repeat,
+            "state" to state.toString()
+        )
     }
 
-    fun onSkipClick(state: String) {
-        sender.send(AnalyticsConstants.config_skip, "state" to state)
+    fun onSkipClick(state: State) {
+        sender.send(
+            AnalyticsConstants.config_skip,
+            "state" to state.toString()
+        )
     }
 
-    fun onNextStepClick(state: String) {
-        sender.send(AnalyticsConstants.config_next, "state" to state)
+    fun onNextStepClick(state: State) {
+        sender.send(
+            AnalyticsConstants.config_next,
+            "state" to state.toString()
+        )
+    }
+
+    enum class State {
+        CHECK_LAST,
+        LOAD_CONFIG,
+        CHECK_AVAIL,
+        CHECK_PROXIES
     }
 }

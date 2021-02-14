@@ -11,23 +11,23 @@ class FastSearchAnalytics(
 
     fun open(from: String) {
         sender.send(
-            AnalyticsConstants.fsearch_open,
+            AnalyticsConstants.fast_search_open,
             "from" to from
         )
     }
 
     fun cancel(from: String) {
         sender.send(
-            AnalyticsConstants.fsearch_cancel,
+            AnalyticsConstants.fast_search_cancel,
             "from" to from
         )
     }
 
     fun catalogClick() {
-        sender.send(AnalyticsConstants.fsearch_catalog_click)
+        sender.send(AnalyticsConstants.fast_search_catalog_click)
     }
 
     fun searchGoogleClick() {
-        sender.send(AnalyticsConstants.fsearch_google_click)
+        sender.send(AnalyticsConstants.fast_search_google_click)
     }
 }

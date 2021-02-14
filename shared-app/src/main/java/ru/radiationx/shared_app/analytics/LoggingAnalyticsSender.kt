@@ -1,6 +1,7 @@
-package ru.radiationx.data.analytics
+package ru.radiationx.shared_app.analytics
 
 import android.util.Log
+import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor

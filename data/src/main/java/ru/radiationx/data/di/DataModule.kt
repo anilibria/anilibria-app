@@ -7,9 +7,7 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.ConfiguringAnalytics
-import ru.radiationx.data.analytics.LoggingAnalyticsSender
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.IClient

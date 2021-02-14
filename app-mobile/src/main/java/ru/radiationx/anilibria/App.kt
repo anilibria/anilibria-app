@@ -82,7 +82,7 @@ class App : Application() {
     }
 
     private fun initYandexAppMetrica() {
-        if (BuildConfig.DEBUG) return
+        //if (BuildConfig.DEBUG) return
         val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)

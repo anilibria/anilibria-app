@@ -13,6 +13,7 @@ class ConfiguringAnalytics(
     private fun Boolean.toSuccessParam() = Pair("success", this.toString())
     private fun String?.toAddressParam() = Pair("address", this.toString())
     private fun Throwable?.toErrorParam() = Pair("error", this.toString())
+    private fun State.toStateParam() = Pair("state", this.toString())
 
     private fun <T> T?.asParam(name: String) = Pair<String, String>(name, this.toString())
 
@@ -98,21 +99,21 @@ class ConfiguringAnalytics(
     fun onRepeatClick(state: State) {
         sender.send(
             AnalyticsConstants.config_repeat,
-            "state" to state.toString()
+            state.toStateParam()
         )
     }
 
     fun onSkipClick(state: State) {
         sender.send(
             AnalyticsConstants.config_skip,
-            "state" to state.toString()
+            state.toStateParam()
         )
     }
 
     fun onNextStepClick(state: State) {
         sender.send(
             AnalyticsConstants.config_next,
-            "state" to state.toString()
+            state.toStateParam()
         )
     }
 

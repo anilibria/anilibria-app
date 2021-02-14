@@ -82,4 +82,6 @@ object AnalyticsConstants {
 
     /* Catalog */
     const val catalog_open = ""
+
+    /* Comments */
 }

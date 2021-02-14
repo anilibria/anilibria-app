@@ -1,11 +1,12 @@
-package ru.radiationx.data.analytics
+package ru.radiationx.data.analytics.features
 
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
-import java.lang.Exception
 
 @InjectConstructor
 class ConfiguringAnalytics(
-    private val analyticsSender: AnalyticsSender
+    private val sender: AnalyticsSender
 ) {
 
     private fun Long.toTimeParam() = Pair("time", this.toString())
@@ -21,8 +22,8 @@ class ConfiguringAnalytics(
         timeInMillis: Long,
         isSuccess: Boolean
     ) {
-        analyticsSender.send(
-            "check_full",
+        sender.send(
+            AnalyticsConstants.config_check_full,
             "startAddress" to startAddressTag,
             "endAddressTag" to endAddressTag,
             timeInMillis.toTimeParam(),
@@ -35,27 +36,27 @@ class ConfiguringAnalytics(
         addressTag: String,
         timeInMillis: Long,
         isSuccess: Boolean,
-        exception: Throwable? = null
+        error: Throwable? = null
     ) {
-        analyticsSender.send(
-            "check_last",
+        sender.send(
+            AnalyticsConstants.config_check_last,
             addressTag.toAddressParam(),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
-            exception.toErrorParam()
+            error.toErrorParam()
         )
     }
 
     fun loadConfig(
         timeInMillis: Long,
         isSuccess: Boolean,
-        exception: Throwable? = null
+        error: Throwable? = null
     ) {
-        analyticsSender.send(
-            "load_config",
+        sender.send(
+            AnalyticsConstants.config_load_config,
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
-            exception.toErrorParam()
+            error.toErrorParam()
         )
     }
 
@@ -63,14 +64,14 @@ class ConfiguringAnalytics(
         addressTag: String?,
         timeInMillis: Long,
         isSuccess: Boolean,
-        exception: Throwable? = null
+        error: Throwable? = null
     ) {
-        analyticsSender.send(
-            "check_avail",
+        sender.send(
+            AnalyticsConstants.config_check_avail,
             addressTag.toAddressParam(),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
-            exception.toErrorParam()
+            error.toErrorParam()
         )
     }
 
@@ -78,27 +79,27 @@ class ConfiguringAnalytics(
         addressTag: String?,
         timeInMillis: Long,
         isSuccess: Boolean,
-        exception: Throwable? = null
+        error: Throwable? = null
     ) {
-        analyticsSender.send(
-            "check_proxies",
+        sender.send(
+            AnalyticsConstants.config_check_proxies,
             addressTag.toAddressParam(),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
-            exception.toErrorParam()
+            error.toErrorParam()
         )
     }
 
 
     fun onRepeatClick(state: String) {
-        analyticsSender.send("repeat_click", "state" to state)
+        sender.send(AnalyticsConstants.config_repeat, "state" to state)
     }
 
     fun onSkipClick(state: String) {
-        analyticsSender.send("skip_click", "state" to state)
+        sender.send(AnalyticsConstants.config_skip, "state" to state)
     }
 
     fun onNextStepClick(state: String) {
-        analyticsSender.send("next_click", "state" to state)
+        sender.send(AnalyticsConstants.config_next, "state" to state)
     }
 }

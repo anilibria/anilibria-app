@@ -6,6 +6,8 @@ import ru.radiationx.anilibria.TvCheckerSources
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.data.SharedBuildConfig
+import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.AppmetricaAnalyticsSender
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.terrakok.cicerone.Cicerone
@@ -24,6 +26,8 @@ class AppModule(context: Context) : Module() {
         bind(OkHttpImageDownloader::class.java).singleton()
 
         bind(MockData::class.java).singleton()
+
+        bind(AnalyticsSender::class.java).to(AppmetricaAnalyticsSender::class.java).singleton()
     }
 
 }

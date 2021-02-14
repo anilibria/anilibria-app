@@ -8,7 +8,7 @@ import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.ConfiguringAnalytics
+import ru.radiationx.data.analytics.features.ConfiguringAnalytics
 import ru.radiationx.data.analytics.LoggingAnalyticsSender
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
@@ -122,7 +122,6 @@ class DataModule(context: Context) : Module() {
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
 
-        bind(AnalyticsSender::class.java).to(LoggingAnalyticsSender::class.java).singleton()
         bind(ConfiguringAnalytics::class.java).singleton()
     }
 

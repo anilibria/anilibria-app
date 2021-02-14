@@ -102,7 +102,7 @@ class ReleaseAnalytics(
 
     fun webPlayerClick(releaseId: Int) {
         sender.send(
-            AnalyticsConstants.release_webplayer,
+            AnalyticsConstants.release_web_player,
             releaseId.toReleaseIdParam()
         )
     }

@@ -7,6 +7,9 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.ConfiguringAnalytics
+import ru.radiationx.data.analytics.LoggingAnalyticsSender
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.IClient
@@ -29,13 +32,15 @@ class DataModule(context: Context) : Module() {
 
     init {
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
+        val dataStoragePreferences =
+            context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
 
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
-        bind(SharedPreferences::class.java).withName(DataPreferences::class.java).toInstance(dataStoragePreferences)
+        bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
+            .toInstance(dataStoragePreferences)
 
         bind(PreferencesStorage::class.java).singleton()
 
@@ -67,8 +72,10 @@ class DataModule(context: Context) : Module() {
         bind(MainClientWrapper::class.java).singleton()
         bind(ApiClientWrapper::class.java).singleton()
 
-        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java).singleton()
-        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java).singleton()
+        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java)
+            .singleton()
+        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java)
+            .singleton()
 
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singleton()
 
@@ -114,6 +121,9 @@ class DataModule(context: Context) : Module() {
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
+
+        bind(AnalyticsSender::class.java).to(LoggingAnalyticsSender::class.java).singleton()
+        bind(ConfiguringAnalytics::class.java).singleton()
     }
 
 }

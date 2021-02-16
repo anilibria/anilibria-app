@@ -42,14 +42,22 @@ object AnalyticsConstants {
     /* Fast Search */
     const val fast_search_open = "fast_search_open"
     const val fast_search_cancel = "fast_search_cancel"
+    const val fast_search_release_click = "fast_search_cancel"
     const val fast_search_catalog_click = "fast_search_catalog_click"
     const val fast_search_google_click = "fast_search_google_click"
 
     /* Schedule */
     const val schedule_open = "schedule_open"
+    const val schedule_horizontal_swipe = ""
+    const val schedule_release_click = ""
 
     /* Feed */
     const val feed_open = "feed_open"
+    const val feed_schedule_click = ""
+    const val feed_schedule_horizontal_swipe = ""
+    const val feed_schedule_release_click = ""
+    const val feed_release_click = ""
+    const val feed_youtube_click = ""
     const val feed_random_click = "feed_random_click"
     const val feed_load_page = "feed_load_page"
 
@@ -78,42 +86,67 @@ object AnalyticsConstants {
     const val release_favorite_remove = ""
     const val release_comments_open = ""
 
-    /* Youtube */
+    /* Youtube Videos */
     const val youtube_videos_open = ""
-    const val youtube_video_open = ""
+    const val youtube_videos_video_click = ""
     const val youtube_videos_load_page = ""
+
+    /* Youtube (external app) */
+    const val youtube_video_open = ""
 
     /* Catalog */
     const val catalog_open = ""
+    const val catalog_release_click = ""
+    const val catalog_fast_search_click = ""
+    const val catalog_filter_click = ""
 
     /* Catalog Filter */
     const val catalog_filter_open = ""
-    const val catalog_filter_time = ""
+    const val catalog_filter_use_time = ""
     const val catalog_filter_load_page = ""
+    const val catalog_filter_apply_click = ""
 
     /* Comments */
     const val comments_open = ""
+    const val comments_loaded = ""
+    const val comments_error = ""
 
     /* Favorites */
     const val favorites_open = ""
+    const val favorites_search_click = ""
+    const val favorites_search_release_click = ""
+    const val favorites_release_click = ""
     const val favorites_load_page = ""
-    const val favorites_search_open = ""
 
     /* Other */
     const val other_open = ""
     const val other_login_click = ""
     const val other_logout_click = ""
     const val other_profile_click = ""
-    const val other_link_click = ""
+    const val other_history_click = ""
+    const val other_team_click = ""
     const val other_donate_click = ""
     const val other_auth_device_click = ""
+    const val other_settings_click = ""
+    const val other_link_click = ""
 
     /* History */
     const val history_open = ""
-    const val history_search_open = ""
+    const val history_search_click = ""
+    const val history_search_release_click = ""
+    const val history_release_click = ""
 
     /* Settings */
     const val settings_open = ""
+    const val settings_notification_main_change = ""
+    const val settings_notification_system_change = ""
+    const val settings_theme_change = ""
+    const val settings_episodes_order_change = ""
+    const val settings_quality_click = ""
+    const val settings_quality_change = ""
+    const val settings_player_click = ""
+    const val settings_player_change = ""
+    const val settings_check_updates_click = ""
     const val settings_other_apps_click = ""
     const val settings_4pda_click = ""
 
@@ -121,7 +154,7 @@ object AnalyticsConstants {
     const val auth_device_open = ""
     const val auth_device_error = ""
     const val auth_device_success = ""
-    const val auth_device_time = ""
+    const val auth_device_use_time = ""
 
     /* Auth Main */
     const val auth_main_open = ""
@@ -131,18 +164,65 @@ object AnalyticsConstants {
     const val auth_main_reg = ""
     const val auth_main_reg_to_site = ""
     const val auth_main_skip = ""
-    const val auth_main_time = ""
+    const val auth_main_use_time = ""
 
     /* Auth Social */
     const val auth_social_open = ""
     const val auth_social_error = ""
     const val auth_social_success = ""
-    const val auth_social_time = ""
+    const val auth_social_use_time = ""
+
+    /* Auth VK */
+    const val auth_vk_open = ""
+    const val auth_vk_error = ""
+    const val auth_vk_success = ""
+    const val auth_vk_use_time = ""
+
+    /* Player */
+    const val player_open = ""
+    const val player_time_to_start = ""
+    const val player_buffering_time = ""
+    const val player_fail_play_time = ""
+    const val player_error = ""
+    const val player_use_time = ""
+    const val player_play_click = ""
+    const val player_prev_click = ""
+    const val player_next_click = ""
+    const val player_rewind_slide = ""
+    const val player_rewind_double_click = ""
+    const val player_rewind_seek = ""
+    const val player_fullscreen = ""
+    const val player_pip = ""
+    const val player_settings_click = ""
+    const val player_settings_quality_click = ""
+    const val player_settings_speed_click = ""
+    const val player_settings_ratio_click = ""
+    const val player_settings_pip_click = ""
+    const val player_settings_quality_change = ""
+    const val player_settings_speed_change = ""
+    const val player_settings_ratio_change = ""
+    const val player_settings_pip_change = ""
+    const val player_episodes_finish = ""
+    const val player_episodes_finish_action = ""
+    const val player_season_finish = ""
+    const val player_season_finish_action = ""
+
+    /* Web Player */
+    const val web_player_open = ""
+    const val web_player_loaded = ""
+    const val web_player_error = ""
+
+    /* Updater */
+    const val updater_open = ""
+    const val updater_download_click = ""
+    const val updater_source_download_click = ""
+    const val updater_use_time = ""
 
     /*
     * Глобально добавить в профиль пользователя текущий adresss
     * Глобально добавить в профиль темную тему
     * Глобально добавить состояние авторизации
     * и т.д.
+    * Евевнт времени запуска аппки
     * */
 }

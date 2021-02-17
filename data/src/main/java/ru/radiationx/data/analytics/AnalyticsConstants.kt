@@ -159,11 +159,12 @@ object AnalyticsConstants {
     /* Auth Main */
     const val auth_main_open = ""
     const val auth_main_social_click = ""
+    const val auth_main_reg_click = ""
+    const val auth_main_reg_to_site_click = ""
+    const val auth_main_skip_click = ""
+    const val auth_main_login_click = ""
     const val auth_main_error = ""
     const val auth_main_success = ""
-    const val auth_main_reg = ""
-    const val auth_main_reg_to_site = ""
-    const val auth_main_skip = ""
     const val auth_main_use_time = ""
 
     /* Auth Social */
@@ -211,6 +212,7 @@ object AnalyticsConstants {
     const val web_player_open = ""
     const val web_player_loaded = ""
     const val web_player_error = ""
+    const val web_player_use_time = ""
 
     /* Updater */
     const val updater_open = ""

@@ -48,13 +48,13 @@ object AnalyticsConstants {
 
     /* Schedule */
     const val schedule_open = "schedule_open"
-    const val schedule_horizontal_swipe = ""
+    const val schedule_horizontal_scroll = ""
     const val schedule_release_click = ""
 
     /* Feed */
     const val feed_open = "feed_open"
     const val feed_schedule_click = ""
-    const val feed_schedule_horizontal_swipe = ""
+    const val feed_schedule_horizontal_scroll = ""
     const val feed_schedule_release_click = ""
     const val feed_release_click = ""
     const val feed_youtube_click = ""
@@ -98,12 +98,12 @@ object AnalyticsConstants {
     const val catalog_open = ""
     const val catalog_release_click = ""
     const val catalog_fast_search_click = ""
-    const val catalog_filter_click = ""
+    const val catalog_on_filter_click = ""
+    const val catalog_load_page = ""
 
     /* Catalog Filter */
     const val catalog_filter_open = ""
     const val catalog_filter_use_time = ""
-    const val catalog_filter_load_page = ""
     const val catalog_filter_apply_click = ""
 
     /* Comments */

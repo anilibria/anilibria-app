@@ -5,28 +5,26 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class ScheduleAnalytics(
+class CatalogFilterAnalytics(
     private val sender: AnalyticsSender
 ) {
 
     fun open(from: String) {
         sender.send(
-            AnalyticsConstants.schedule_open,
+            AnalyticsConstants.catalog_filter_open,
             "from" to from
         )
     }
 
-    fun horizontalScroll(position: Int) {
+    fun useTime(timeInMillis: Long) {
         sender.send(
-            AnalyticsConstants.schedule_horizontal_scroll,
-            "position" to position.toString()
+            AnalyticsConstants.catalog_filter_use_time,
+            "time" to timeInMillis.toString()
         )
     }
 
-    fun releaseClick(position: Int) {
-        sender.send(
-            AnalyticsConstants.schedule_release_click,
-            "position" to position.toString()
-        )
+    fun applyClick() {
+        sender.send(AnalyticsConstants.catalog_filter_apply_click)
     }
+
 }

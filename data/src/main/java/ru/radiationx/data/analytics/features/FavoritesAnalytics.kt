@@ -5,32 +5,32 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class CatalogAnalytics(
+class FavoritesAnalytics(
     private val sender: AnalyticsSender
 ) {
 
     fun open(from: String) {
         sender.send(
-            AnalyticsConstants.catalog_open,
+            AnalyticsConstants.favorites_open,
             "from" to from
         )
     }
 
+    fun searchClick() {
+        sender.send(AnalyticsConstants.favorites_search_click)
+    }
+
+    fun searchReleaseClick() {
+        sender.send(AnalyticsConstants.favorites_search_release_click)
+    }
+
     fun releaseClick() {
-        sender.send(AnalyticsConstants.catalog_release_click)
-    }
-
-    fun fastSearchClick() {
-        sender.send(AnalyticsConstants.catalog_fast_search_click)
-    }
-
-    fun filterClick() {
-        sender.send(AnalyticsConstants.catalog_on_filter_click)
+        sender.send(AnalyticsConstants.favorites_release_click)
     }
 
     fun loadPage(page: Int) {
         sender.send(
-            AnalyticsConstants.catalog_load_page,
+            AnalyticsConstants.favorites_load_page,
             "page" to page.toString()
         )
     }

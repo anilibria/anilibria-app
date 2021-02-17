@@ -5,15 +5,23 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class Analytics(
+class CommentsAnalytics(
     private val sender: AnalyticsSender
 ) {
 
     fun open(from: String) {
         sender.send(
-            AnalyticsConstants.catalog_open,
+            AnalyticsConstants.comments_open,
             "from" to from
         )
+    }
+
+    fun loaded() {
+        sender.send(AnalyticsConstants.comments_loaded)
+    }
+
+    fun error() {
+        sender.send(AnalyticsConstants.comments_error)
     }
 
 }

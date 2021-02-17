@@ -2,6 +2,7 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -13,7 +14,7 @@ class ConfiguringAnalytics(
     private fun Boolean.toSuccessParam() = Pair("success", this.toString())
     private fun String?.toAddressParam() = Pair("address", this.toString())
     private fun Throwable?.toErrorParam() = Pair("error", this.toString())
-    private fun State.toStateParam() = Pair("state", this.toString())
+    private fun AnalyticsConfigState.toStateParam() = Pair("state", this.toString())
 
     private fun <T> T?.asParam(name: String) = Pair<String, String>(name, this.toString())
 
@@ -96,31 +97,25 @@ class ConfiguringAnalytics(
     }
 
 
-    fun onRepeatClick(state: State) {
+    fun onRepeatClick(state: AnalyticsConfigState) {
         sender.send(
             AnalyticsConstants.config_repeat,
             state.toStateParam()
         )
     }
 
-    fun onSkipClick(state: State) {
+    fun onSkipClick(state: AnalyticsConfigState) {
         sender.send(
             AnalyticsConstants.config_skip,
             state.toStateParam()
         )
     }
 
-    fun onNextStepClick(state: State) {
+    fun onNextStepClick(state: AnalyticsConfigState) {
         sender.send(
             AnalyticsConstants.config_next,
             state.toStateParam()
         )
     }
 
-    enum class State {
-        CHECK_LAST,
-        LOAD_CONFIG,
-        CHECK_AVAIL,
-        CHECK_PROXIES
-    }
 }

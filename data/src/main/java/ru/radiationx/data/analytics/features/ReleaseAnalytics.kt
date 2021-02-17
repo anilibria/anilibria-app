@@ -2,6 +2,7 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -10,7 +11,7 @@ class ReleaseAnalytics(
 ) {
 
     private fun Int.toReleaseIdParam() = Pair("id", this.toString())
-    private fun Quality?.toQualityParam() = Pair("quality", this.toString())
+    private fun AnalyticsQuality.toQualityParam() = Pair("quality", this.value)
 
     fun open(from: String, releaseId: Int) {
         sender.send(
@@ -84,7 +85,7 @@ class ReleaseAnalytics(
         )
     }
 
-    fun episodePlay(quality: Quality?, releaseId: Int) {
+    fun episodePlay(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_play,
             quality.toQualityParam(),
@@ -92,7 +93,7 @@ class ReleaseAnalytics(
         )
     }
 
-    fun episodeDownload(quality: Quality?, releaseId: Int) {
+    fun episodeDownload(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_download,
             quality.toQualityParam(),
@@ -168,9 +169,4 @@ class ReleaseAnalytics(
         )
     }
 
-    enum class Quality {
-        FULL_HD,
-        HD,
-        SD
-    }
 }

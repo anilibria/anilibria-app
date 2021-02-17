@@ -9,6 +9,7 @@ import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.features.ConfiguringAnalytics
 import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
@@ -341,11 +342,11 @@ class ConfiguringInteractor @Inject constructor(
         }
     )
 
-    private fun State.toAnalyticsState(): ConfiguringAnalytics.State = when (this) {
-        State.CHECK_LAST -> ConfiguringAnalytics.State.CHECK_LAST
-        State.LOAD_CONFIG -> ConfiguringAnalytics.State.LOAD_CONFIG
-        State.CHECK_AVAIL -> ConfiguringAnalytics.State.CHECK_AVAIL
-        State.CHECK_PROXIES -> ConfiguringAnalytics.State.CHECK_PROXIES
+    private fun State.toAnalyticsState(): AnalyticsConfigState = when (this) {
+        State.CHECK_LAST -> AnalyticsConfigState.CHECK_LAST
+        State.LOAD_CONFIG -> AnalyticsConfigState.LOAD_CONFIG
+        State.CHECK_AVAIL -> AnalyticsConfigState.CHECK_AVAIL
+        State.CHECK_PROXIES -> AnalyticsConfigState.CHECK_PROXIES
     }
 
     private enum class State {

@@ -23,7 +23,33 @@ class FeedAnalytics(
         )
     }
 
-    fun onRandomClick() {
+    fun scheduleClick() {
+        sender.send(AnalyticsConstants.feed_schedule_click)
+    }
+
+    fun scheduleHorizontalScroll(position: Int) {
+        sender.send(
+            AnalyticsConstants.feed_schedule_horizontal_scroll,
+            "position" to position.toString()
+        )
+    }
+
+    fun scheduleReleaseClick(position: Int) {
+        sender.send(
+            AnalyticsConstants.feed_schedule_release_click,
+            "position" to position.toString()
+        )
+    }
+
+    fun releaseClick() {
+        sender.send(AnalyticsConstants.feed_release_click)
+    }
+
+    fun youtubeClick() {
+        sender.send(AnalyticsConstants.feed_youtube_click)
+    }
+
+    fun randomClick() {
         sender.send(AnalyticsConstants.feed_random_click)
     }
 }

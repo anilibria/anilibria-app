@@ -23,6 +23,10 @@ class FastSearchAnalytics(
         )
     }
 
+    fun releaseClick() {
+        sender.send(AnalyticsConstants.fast_search_release_click)
+    }
+
     fun catalogClick() {
         sender.send(AnalyticsConstants.fast_search_catalog_click)
     }

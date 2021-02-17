@@ -9,13 +9,6 @@ class YoutubeAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun openVideos(from: String) {
-        sender.send(
-            AnalyticsConstants.youtube_videos_open,
-            "from" to from
-        )
-    }
-
     fun openVideo(from: String, id: Int, vid: String) {
         sender.send(
             AnalyticsConstants.youtube_video_open,

@@ -23,20 +23,20 @@ class AnalyticsProfileDataSource(
         apiConfig.tag
     }
 
-    fun getAppTheme(): Single<AnalyticsAppTheme> = single {
-        appThemeHolder.getTheme().toAnalyticsAppTheme()
+    fun getAppTheme(): Single<String> = single {
+        appThemeHolder.getTheme().toAnalyticsAppTheme().value
     }
 
-    fun getQualitySettings(): Single<AnalyticsQuality> = single {
-        preferencesHolder.getQuality().toAnalyticsQuality()
+    fun getQualitySettings(): Single<String> = single {
+        preferencesHolder.getQuality().toAnalyticsQuality().value
     }
 
-    fun getPlayerSettings(): Single<AnalyticsPlayer> = single {
-        preferencesHolder.getPlayerType().toAnalyticsPlayer()
+    fun getPlayerSettings(): Single<String> = single {
+        preferencesHolder.getPlayerType().toAnalyticsPlayer().value
     }
 
-    fun getPipSettings(): Single<AnalyticsPip> = single {
-        preferencesHolder.pipControl.toAnalyticsPip()
+    fun getPipSettings(): Single<String> = single {
+        preferencesHolder.pipControl.toAnalyticsPip().value
     }
 
     fun getPlaySpeedSettings(): Single<Float> = single {
@@ -55,8 +55,8 @@ class AnalyticsProfileDataSource(
         preferencesHolder.getEpisodesIsReverse()
     }
 
-    fun getAuthState(): Single<AnalyticsAuthState> = single {
-        userHolder.getUser().authState.toAnalyticsAuthState()
+    fun getAuthState(): Single<String> = single {
+        userHolder.getUser().authState.toAnalyticsAuthState().value
     }
 
     fun getHistoryItemsCount(): Single<Int> = historyHolder

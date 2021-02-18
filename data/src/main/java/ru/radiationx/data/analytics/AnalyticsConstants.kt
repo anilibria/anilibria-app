@@ -218,7 +218,7 @@ object AnalyticsConstants {
     /* Updater */
     const val updater_open = ""
     const val updater_download_click = ""
-    const val updater_source_download_click = ""
+    const val updater_source_download = ""
     const val updater_use_time = ""
 
     /*

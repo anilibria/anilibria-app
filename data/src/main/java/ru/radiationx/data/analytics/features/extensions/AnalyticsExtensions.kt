@@ -44,5 +44,5 @@ fun AnalyticsAppTheme?.toThemeParam(name: String = "theme") = Pair(name, this?.v
 
 fun Long.toSecondsString(): String {
     val timeInSeconds = this / 1000f
-    return "%.2f".format(Locale.US, timeInSeconds)
+    return "%.1f".format(Locale.US, timeInSeconds)
 }

@@ -2,6 +2,10 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toIdParam
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toQualityParam
+import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import toothpick.InjectConstructor
 
@@ -10,38 +14,39 @@ class ReleaseAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    private fun Int.toReleaseIdParam() = Pair("id", this.toString())
-    private fun AnalyticsQuality.toQualityParam() = Pair("quality", this.value)
+    private companion object {
+        const val PARAM_HEVC = "hevc"
+    }
 
     fun open(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_open,
-            "from" to from,
-            releaseId.toReleaseIdParam()
+            from.toNavFromParam(),
+            releaseId.toIdParam()
         )
     }
 
     fun copyLink(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_copy,
-            "from" to from,
-            releaseId.toReleaseIdParam()
+            from.toNavFromParam(),
+            releaseId.toIdParam()
         )
     }
 
     fun share(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_share,
-            "from" to from,
-            releaseId.toReleaseIdParam()
+            from.toNavFromParam(),
+            releaseId.toIdParam()
         )
     }
 
     fun shortcut(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_shortcut,
-            "from" to from,
-            releaseId.toReleaseIdParam()
+            from.toNavFromParam(),
+            releaseId.toIdParam()
         )
     }
 
@@ -60,28 +65,28 @@ class ReleaseAnalytics(
     fun episodesTopStart(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_top_start,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun episodesTopContinue(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_top_continue,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun episodesStart(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_start,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun episodesContinue(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_continue,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
@@ -89,7 +94,7 @@ class ReleaseAnalytics(
         sender.send(
             AnalyticsConstants.release_episode_play,
             quality.toQualityParam(),
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
@@ -97,29 +102,29 @@ class ReleaseAnalytics(
         sender.send(
             AnalyticsConstants.release_episode_download,
             quality.toQualityParam(),
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun webPlayerClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_web_player,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun torrentClick(isHevc: Boolean, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_torrent,
-            "hevc" to isHevc.toString(),
-            releaseId.toReleaseIdParam()
+            isHevc.toParam(PARAM_HEVC),
+            releaseId.toIdParam()
         )
     }
 
     fun donateClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_donate,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
@@ -130,43 +135,42 @@ class ReleaseAnalytics(
     fun descriptionLinkClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_description_link,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun scheduleClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_schedule_click,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun genreClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_genre_click,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun favoriteAdd(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_favorite_add,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun favoriteRemove(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_favorite_remove,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
 
     fun commentsOpen(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_comments_open,
-            releaseId.toReleaseIdParam()
+            releaseId.toIdParam()
         )
     }
-
 }

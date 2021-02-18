@@ -2,6 +2,8 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toPageParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -12,7 +14,7 @@ class FavoritesAnalytics(
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.favorites_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
@@ -31,7 +33,7 @@ class FavoritesAnalytics(
     fun loadPage(page: Int) {
         sender.send(
             AnalyticsConstants.favorites_load_page,
-            "page" to page.toString()
+            page.toPageParam()
         )
     }
 

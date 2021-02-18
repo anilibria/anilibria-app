@@ -2,6 +2,9 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toErrorParam
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -12,14 +15,14 @@ class AuthVkAnalytics(
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.auth_vk_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
-    fun error(throwable: Throwable) {
+    fun error(error: Throwable) {
         sender.send(
             AnalyticsConstants.auth_vk_error,
-            "error" to throwable.toString()
+            error.toErrorParam()
         )
     }
 
@@ -30,7 +33,7 @@ class AuthVkAnalytics(
     fun useTime(timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.auth_vk_use_time,
-            "time" to timeInMillis.toString()
+            timeInMillis.toTimeParam()
         )
     }
 

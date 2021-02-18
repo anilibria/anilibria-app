@@ -2,6 +2,9 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toPageParam
+import ru.radiationx.data.analytics.features.extensions.toPositionParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -12,14 +15,14 @@ class FeedAnalytics(
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.feed_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
     fun loadPage(page: Int) {
         sender.send(
             AnalyticsConstants.feed_load_page,
-            "page" to page.toString()
+            page.toPageParam()
         )
     }
 
@@ -30,14 +33,14 @@ class FeedAnalytics(
     fun scheduleHorizontalScroll(position: Int) {
         sender.send(
             AnalyticsConstants.feed_schedule_horizontal_scroll,
-            "position" to position.toString()
+            position.toPositionParam()
         )
     }
 
     fun scheduleReleaseClick(position: Int) {
         sender.send(
             AnalyticsConstants.feed_schedule_release_click,
-            "position" to position.toString()
+            position.toPositionParam()
         )
     }
 

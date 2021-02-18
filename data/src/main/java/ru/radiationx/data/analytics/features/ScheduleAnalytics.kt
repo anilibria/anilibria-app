@@ -2,6 +2,8 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toPositionParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -12,21 +14,21 @@ class ScheduleAnalytics(
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.schedule_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
     fun horizontalScroll(position: Int) {
         sender.send(
             AnalyticsConstants.schedule_horizontal_scroll,
-            "position" to position.toString()
+            position.toPositionParam()
         )
     }
 
     fun releaseClick(position: Int) {
         sender.send(
             AnalyticsConstants.schedule_release_click,
-            "position" to position.toString()
+            position.toPositionParam()
         )
     }
 }

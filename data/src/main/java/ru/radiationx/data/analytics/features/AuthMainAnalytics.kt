@@ -2,6 +2,10 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toErrorParam
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -9,17 +13,21 @@ class AuthMainAnalytics(
     private val sender: AnalyticsSender
 ) {
 
+    private companion object {
+        const val PARAM_KEY = "key"
+    }
+
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.auth_main_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
     fun socialClick(key: String) {
         sender.send(
             AnalyticsConstants.auth_main_social_click,
-            "key" to key
+            key.toParam(PARAM_KEY)
         )
     }
 
@@ -39,10 +47,10 @@ class AuthMainAnalytics(
         sender.send(AnalyticsConstants.auth_main_login_click)
     }
 
-    fun error(throwable: Throwable) {
+    fun error(error: Throwable) {
         sender.send(
             AnalyticsConstants.auth_main_error,
-            "error" to throwable.toString()
+            error.toErrorParam()
         )
     }
 
@@ -53,7 +61,7 @@ class AuthMainAnalytics(
     fun useTime(timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.auth_main_use_time,
-            "time" to timeInMillis.toString()
+            timeInMillis.toTimeParam()
         )
     }
 

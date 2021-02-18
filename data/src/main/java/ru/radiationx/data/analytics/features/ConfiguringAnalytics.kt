@@ -2,6 +2,7 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.*
 import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
 import toothpick.InjectConstructor
 
@@ -10,13 +11,11 @@ class ConfiguringAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    private fun Long.toTimeParam() = Pair("time", this.toString())
-    private fun Boolean.toSuccessParam() = Pair("success", this.toString())
-    private fun String?.toAddressParam() = Pair("address", this.toString())
-    private fun Throwable?.toErrorParam() = Pair("error", this.toString())
-    private fun AnalyticsConfigState.toStateParam() = Pair("state", this.toString())
-
-    private fun <T> T?.asParam(name: String) = Pair<String, String>(name, this.toString())
+    private companion object {
+        const val PARAM_ADDRESS = "address"
+        const val PARAM_START_ADDRESS = "start_address"
+        const val PARAM_END_ADDRESS = "start_address"
+    }
 
     fun open() {
         sender.send(AnalyticsConstants.config_open)
@@ -30,8 +29,8 @@ class ConfiguringAnalytics(
     ) {
         sender.send(
             AnalyticsConstants.config_check_full,
-            "startAddress" to startAddressTag,
-            "endAddressTag" to endAddressTag,
+            startAddressTag.toParam(PARAM_START_ADDRESS),
+            endAddressTag.toParam(PARAM_END_ADDRESS),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam()
         )
@@ -46,7 +45,7 @@ class ConfiguringAnalytics(
     ) {
         sender.send(
             AnalyticsConstants.config_check_last,
-            addressTag.toAddressParam(),
+            addressTag.toParam(PARAM_ADDRESS),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
             error.toErrorParam()
@@ -74,7 +73,7 @@ class ConfiguringAnalytics(
     ) {
         sender.send(
             AnalyticsConstants.config_check_avail,
-            addressTag.toAddressParam(),
+            addressTag.toParam(PARAM_ADDRESS),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
             error.toErrorParam()
@@ -89,13 +88,12 @@ class ConfiguringAnalytics(
     ) {
         sender.send(
             AnalyticsConstants.config_check_proxies,
-            addressTag.toAddressParam(),
+            addressTag.toParam(PARAM_ADDRESS),
             timeInMillis.toTimeParam(),
             isSuccess.toSuccessParam(),
             error.toErrorParam()
         )
     }
-
 
     fun onRepeatClick(state: AnalyticsConfigState) {
         sender.send(
@@ -117,5 +115,4 @@ class ConfiguringAnalytics(
             state.toStateParam()
         )
     }
-
 }

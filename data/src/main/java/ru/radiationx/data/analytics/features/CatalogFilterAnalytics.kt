@@ -2,6 +2,8 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -12,14 +14,14 @@ class CatalogFilterAnalytics(
     fun open(from: String) {
         sender.send(
             AnalyticsConstants.catalog_filter_open,
-            "from" to from
+            from.toNavFromParam()
         )
     }
 
     fun useTime(timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.catalog_filter_use_time,
-            "time" to timeInMillis.toString()
+            timeInMillis.toTimeParam()
         )
     }
 

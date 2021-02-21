@@ -72,7 +72,7 @@ class AuthFragment : BaseFragment(), AuthView {
             AlertDialog.Builder(it)
                 .setMessage("Зарегистрировать аккаунт можно только на сайте.")
                 .setPositiveButton("Регистрация") { _, _ ->
-                    Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
+                    presenter.registrationToSiteClick()
                 }
                 .setNeutralButton("Отмена", null)
                 .show()

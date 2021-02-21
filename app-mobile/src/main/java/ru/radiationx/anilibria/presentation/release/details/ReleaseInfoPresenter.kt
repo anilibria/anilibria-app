@@ -7,6 +7,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -23,15 +25,16 @@ import javax.inject.Inject
 
 @InjectViewState
 class ReleaseInfoPresenter @Inject constructor(
-        private val releaseInteractor: ReleaseInteractor,
-        private val historyRepository: HistoryRepository,
-        private val vitalRepository: VitalRepository,
-        private val authRepository: AuthRepository,
-        private val favoriteRepository: FavoriteRepository,
-        private val router: Router,
-        private val linkHandler: ILinkHandler,
-        private val errorHandler: IErrorHandler,
-        private val apiConfig: ApiConfig
+    private val releaseInteractor: ReleaseInteractor,
+    private val historyRepository: HistoryRepository,
+    private val vitalRepository: VitalRepository,
+    private val authRepository: AuthRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val router: Router,
+    private val linkHandler: ILinkHandler,
+    private val errorHandler: IErrorHandler,
+    private val apiConfig: ApiConfig,
+    private val authMainAnalytics: AuthMainAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -60,51 +63,51 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun subscribeAuth() {
         authRepository
-                .observeUser()
-                .distinctUntilChanged()
-                .skip(1)
-                .subscribe {
-                    loadRelease()
-                }
-                .addToDisposable()
+            .observeUser()
+            .distinctUntilChanged()
+            .skip(1)
+            .subscribe {
+                loadRelease()
+            }
+            .addToDisposable()
     }
 
     private fun loadVital() {
         vitalRepository
-                .observeByRule(VitalItem.Rule.RELEASE_DETAIL)
-                .subscribe { vitals ->
-                    vitals.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                        if (it.isNotEmpty()) {
-                            viewState.showVitalItems(it)
-                        }
+            .observeByRule(VitalItem.Rule.RELEASE_DETAIL)
+            .subscribe { vitals ->
+                vitals.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
+                    if (it.isNotEmpty()) {
+                        viewState.showVitalItems(it)
                     }
                 }
-                .addToDisposable()
+            }
+            .addToDisposable()
     }
 
     private fun loadRelease() {
         releaseInteractor
-                .loadRelease(releaseId, releaseIdCode)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .subscribe({ release ->
-                    viewState.setRefreshing(false)
-                    historyRepository.putRelease(release as ReleaseItem)
-                }) {
-                    viewState.setRefreshing(false)
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .loadRelease(releaseId, releaseIdCode)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .subscribe({ release ->
+                viewState.setRefreshing(false)
+                historyRepository.putRelease(release as ReleaseItem)
+            }) {
+                viewState.setRefreshing(false)
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     private fun observeRelease() {
         releaseInteractor
-                .observeFull(releaseId, releaseIdCode)
-                .subscribe({ release ->
-                    updateLocalRelease(release)
-                }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .observeFull(releaseId, releaseIdCode)
+            .subscribe({ release ->
+                updateLocalRelease(release)
+            }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     private fun updateLocalRelease(release: ReleaseFull) {
@@ -162,7 +165,11 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
-    fun onPlayEpisodeClick(episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null) {
+    fun onPlayEpisodeClick(
+        episode: ReleaseFull.Episode,
+        playFlag: Int? = null,
+        quality: Int? = null
+    ) {
         currentData?.let {
             viewState.playEpisode(it, episode, playFlag, quality)
         }
@@ -196,22 +203,22 @@ class ReleaseInfoPresenter @Inject constructor(
         }
 
         source
-                .doOnSubscribe {
-                    favInfo.inProgress = true
-                    viewState.updateFavCounter()
-                }
-                .doAfterTerminate {
-                    favInfo.inProgress = false
-                    viewState.updateFavCounter()
-                }
-                .subscribe({ releaseItem ->
-                    favInfo.rating = releaseItem.favoriteInfo.rating
-                    favInfo.isAdded = releaseItem.favoriteInfo.isAdded
-                    viewState.updateFavCounter()
-                }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .doOnSubscribe {
+                favInfo.inProgress = true
+                viewState.updateFavCounter()
+            }
+            .doAfterTerminate {
+                favInfo.inProgress = false
+                viewState.updateFavCounter()
+            }
+            .subscribe({ releaseItem ->
+                favInfo.rating = releaseItem.favoriteInfo.rating
+                favInfo.isAdded = releaseItem.favoriteInfo.isAdded
+                viewState.updateFavCounter()
+            }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     fun onScheduleClick(day: Int) {
@@ -219,6 +226,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun openAuth() {
+        authMainAnalytics.open(AnalyticsConstants.screen_release)
         router.navigateTo(Screens.Auth())
     }
 

@@ -58,6 +58,10 @@ class AuthMainAnalytics(
         sender.send(AnalyticsConstants.auth_main_success)
     }
 
+    fun wrongSuccess() {
+        sender.send(AnalyticsConstants.auth_main_wrong_success)
+    }
+
     fun useTime(timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.auth_main_use_time,

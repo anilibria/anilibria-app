@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.graphics.Bitmap
+import android.net.http.SslError
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_webview.*
@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -46,7 +47,8 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     lateinit var presenter: AuthSocialPresenter
 
     @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter = getDependency(AuthSocialPresenter::class.java, screenScope)
+    fun providePresenter(): AuthSocialPresenter =
+        getDependency(AuthSocialPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -92,15 +94,15 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
     override fun showError() {
         AlertDialog.Builder(context!!)
-                .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
-                .setPositiveButton("Перейти") { _, _ ->
-                    Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
-                }
-                .setNegativeButton("Отмена", null)
-                .show()
-                .setOnDismissListener {
-                    presenter.onUserUnderstandWhatToDo()
-                }
+            .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
+            .setPositiveButton("Перейти") { _, _ ->
+                Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
+            .setOnDismissListener {
+                presenter.onUserUnderstandWhatToDo()
+            }
     }
 
     private val customWebViewClient = object : WebViewClient() {
@@ -145,6 +147,43 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         override fun onPageCommitVisible(view: WebView?, url: String?) {
             super.onPageCommitVisible(view, url)
             progressBarWv.gone()
+        }
+
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            super.onReceivedSslError(view, handler, error)
+            presenter.onPageCommitError(Exception(
+                "onReceivedSslError ${error.toString()}"
+            ))
+        }
+
+        override fun onReceivedHttpError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            errorResponse: WebResourceResponse?
+        ) {
+            super.onReceivedHttpError(view, request, errorResponse)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                presenter.onPageCommitError(Exception(
+                    "onReceivedHttpError ${errorResponse?.reasonPhrase.orEmpty()}"
+                ))
+            }
+        }
+
+        override fun onReceivedError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            error: WebResourceError?
+        ) {
+            super.onReceivedError(view, request, error)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                presenter.onPageCommitError(
+                    Exception("onReceivedError ${error?.description?.toString().orEmpty()}")
+                )
+            }
         }
     }
 }

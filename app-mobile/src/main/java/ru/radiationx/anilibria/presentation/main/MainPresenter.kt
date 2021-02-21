@@ -6,6 +6,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -28,7 +30,8 @@ class MainPresenter @Inject constructor(
         private val apiConfig: ApiConfig,
         private val schedulers: SchedulersProvider,
         private val localeHolder: LocaleHolder,
-        private val analyticsProfile: AnalyticsProfile
+        private val analyticsProfile: AnalyticsProfile,
+        private val authMainAnalytics: AuthMainAnalytics
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -72,6 +75,7 @@ class MainPresenter @Inject constructor(
     private fun initMain() {
         firstLaunch = false
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+            authMainAnalytics.open(AnalyticsConstants.screen_main)
             router.navigateTo(Screens.Auth())
         }
 

@@ -3,6 +3,7 @@ package ru.radiationx.data.analytics
 object AnalyticsConstants {
 
     /* Shared/Screens */
+    const val screen_main = "screen_main"
     const val screen_fast_search = "screen_fast_search"
     const val screen_feed = "screen_feed"
     const val screen_schedule = "screen_schedule"
@@ -165,6 +166,7 @@ object AnalyticsConstants {
     const val auth_main_login_click = "auth_main_login_click"
     const val auth_main_error = "auth_main_error"
     const val auth_main_success = "auth_main_success"
+    const val auth_main_wrong_success = "auth_main_wrong_success"
     const val auth_main_use_time = "auth_main_use_time"
 
     /* Auth Social */

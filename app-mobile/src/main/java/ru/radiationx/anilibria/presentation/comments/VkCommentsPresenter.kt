@@ -4,6 +4,8 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -18,7 +20,8 @@ class VkCommentsPresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val authHolder: AuthHolder,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val authVkAnalytics: AuthVkAnalytics
 ) : BasePresenter<VkCommentsView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -43,6 +46,7 @@ class VkCommentsPresenter @Inject constructor(
     }
 
     fun authRequest(url: String) {
+        authVkAnalytics.open(AnalyticsConstants.screen_auth_vk)
         router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
     }
 

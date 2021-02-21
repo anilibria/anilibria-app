@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
@@ -25,6 +26,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -345,10 +347,23 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         presenter.onItemLongClick(item)
         context?.let {
+            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
             AlertDialog.Builder(it)
-                .setItems(arrayOf("Добавить на главный экран")) { _, which ->
+                .setItems(titles) { _, which ->
                     when (which) {
-                        0 -> ShortcutHelper.addShortcut(item)
+                        0 -> {
+                            presenter.onCopyClick(item)
+                            Utils.copyToClipBoard(item.link.orEmpty())
+                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                        }
+                        1 -> {
+                            presenter.onShareClick(item)
+                            Utils.shareText(item.link.orEmpty())
+                        }
+                        2 -> {
+                            presenter.onShortcutClick(item)
+                            ShortcutHelper.addShortcut(item)
+                        }
                     }
                 }
                 .show()

@@ -218,6 +218,18 @@ class FeedPresenter @Inject constructor(
         fastSearchAnalytics.open(AnalyticsConstants.screen_feed)
     }
 
+    fun onCopyClick(item:ReleaseItem){
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id)
+    }
+
+    fun onShareClick(item: ReleaseItem){
+        releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItem){
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
+    }
+
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }

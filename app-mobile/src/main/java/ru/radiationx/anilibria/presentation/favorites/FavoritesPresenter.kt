@@ -85,6 +85,7 @@ class FavoritesPresenter @Inject constructor(
     }
 
     fun deleteFav(id: Int) {
+        favoritesAnalytics.deleteFav()
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
@@ -97,6 +98,18 @@ class FavoritesPresenter @Inject constructor(
                     errorHandler.handle(it)
                 }
                 .addToDisposable()
+    }
+
+    fun onCopyClick(item:ReleaseItem){
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_favorites, item.id)
+    }
+
+    fun onShareClick(item: ReleaseItem){
+        releaseAnalytics.share(AnalyticsConstants.screen_favorites, item.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItem){
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_favorites, item.id)
     }
 
     fun localSearch(query: String) {

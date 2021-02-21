@@ -16,15 +16,15 @@ import javax.inject.Inject
  */
 @InjectViewState
 class HistoryPresenter @Inject constructor(
-        private val router: Router,
-        private val historyRepository: HistoryRepository,
-        private val historyAnalytics: HistoryAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val router: Router,
+    private val historyRepository: HistoryRepository,
+    private val historyAnalytics: HistoryAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<ReleaseItem>()
 
-    private var isSearchEnabled:Boolean = false
+    private var isSearchEnabled: Boolean = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -33,20 +33,21 @@ class HistoryPresenter @Inject constructor(
 
     private fun observeReleases() {
         historyRepository
-                .observeReleases()
-                .subscribe {
-                    currentReleases.clear()
-                    currentReleases.addAll(it)
-                    viewState.showReleases(it)
-                }
-                .addToDisposable()
+            .observeReleases()
+            .subscribe {
+                currentReleases.clear()
+                currentReleases.addAll(it)
+                viewState.showReleases(it)
+            }
+            .addToDisposable()
     }
 
     fun localSearch(query: String) {
         isSearchEnabled = query.isNotEmpty()
         if (query.isNotEmpty()) {
             val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
+                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty()
+                    .contains(query, true)
             }
             viewState.showReleases(searchRes)
         } else {
@@ -55,9 +56,9 @@ class HistoryPresenter @Inject constructor(
     }
 
     fun onItemClick(item: ReleaseItem) {
-        if(isSearchEnabled){
+        if (isSearchEnabled) {
             historyAnalytics.searchReleaseClick()
-        }else{
+        } else {
             historyAnalytics.releaseClick()
         }
         releaseAnalytics.open(AnalyticsConstants.screen_history, item.id)
@@ -69,7 +70,19 @@ class HistoryPresenter @Inject constructor(
         historyRepository.removeRelease(item.id)
     }
 
-    fun onSearchClick(){
+    fun onCopyClick(item:ReleaseItem){
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, item.id)
+    }
+
+    fun onShareClick(item: ReleaseItem){
+        releaseAnalytics.share(AnalyticsConstants.screen_history, item.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItem){
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, item.id)
+    }
+
+    fun onSearchClick() {
         historyAnalytics.searchClick()
     }
 

@@ -124,6 +124,18 @@ class ReleasesPresenter @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
+    fun onCopyClick(item:ReleaseItem){
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_releases_list, item.id)
+    }
+
+    fun onShareClick(item: ReleaseItem){
+        releaseAnalytics.share(AnalyticsConstants.screen_releases_list, item.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItem){
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_releases_list, item.id)
+    }
+
     fun onItemLongClick(item: ReleaseItem): Boolean {
         return false
     }

@@ -295,11 +295,18 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             .setItems(titles) { dialog, which ->
                 when (which) {
                     0 -> {
+                        presenter.onCopyClick(item)
                         Utils.copyToClipBoard(item.link.orEmpty())
                         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
-                    1 -> Utils.shareText(item.link.orEmpty())
-                    2 -> ShortcutHelper.addShortcut(item)
+                    1 -> {
+                        presenter.onShareClick(item)
+                        Utils.shareText(item.link.orEmpty())
+                    }
+                    2 -> {
+                        presenter.onShortcutClick(item)
+                        ShortcutHelper.addShortcut(item)
+                    }
                 }
             }
             .show()

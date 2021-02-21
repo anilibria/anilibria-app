@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
@@ -196,11 +198,24 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
 
     override fun onItemLongClick(item: ReleaseItem): Boolean {
         context?.let {
+            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
             AlertDialog.Builder(it)
-                .setItems(arrayOf("Удалить"/*, "Добавить на главный экран"*/)) { dialog, which ->
+                .setItems(titles) { dialog, which ->
                     when (which) {
-                        0 -> presenter.deleteFav(item.id)
-                        1 -> ShortcutHelper.addShortcut(item)
+                        0 -> {
+                            presenter.onCopyClick(item)
+                            Utils.copyToClipBoard(item.link.orEmpty())
+                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                        }
+                        1 -> {
+                            presenter.onShareClick(item)
+                            Utils.shareText(item.link.orEmpty())
+                        }
+                        2 -> {
+                            presenter.onShortcutClick(item)
+                            ShortcutHelper.addShortcut(item)
+                        }
+                        3 -> presenter.deleteFav(item.id)
                     }
                 }
                 .show()

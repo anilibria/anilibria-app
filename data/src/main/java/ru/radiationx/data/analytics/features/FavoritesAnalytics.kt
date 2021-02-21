@@ -30,6 +30,10 @@ class FavoritesAnalytics(
         sender.send(AnalyticsConstants.favorites_release_click)
     }
 
+    fun deleteFav() {
+        sender.send(AnalyticsConstants.favorites_delete_click)
+    }
+
     fun loadPage(page: Int) {
         sender.send(
             AnalyticsConstants.favorites_load_page,

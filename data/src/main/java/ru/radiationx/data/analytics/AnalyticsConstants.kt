@@ -118,6 +118,7 @@ object AnalyticsConstants {
     const val favorites_search_click = "favorites_search_click"
     const val favorites_search_release_click = "favorites_search_release_click"
     const val favorites_release_click = "favorites_release_click"
+    const val favorites_delete_click = "favorites_delete_click"
     const val favorites_load_page = "favorites_load_page"
 
     /* Other */

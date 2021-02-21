@@ -11,6 +11,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.HistoryAnalytics
+import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.other.LinkMenuItem
@@ -32,7 +33,8 @@ class OtherPresenter @Inject constructor(
     private val menuRepository: MenuRepository,
     private val authDeviceAnalytics: AuthDeviceAnalytics,
     private val authMainAnalytics: AuthMainAnalytics,
-    private val historyAnalytics: HistoryAnalytics
+    private val historyAnalytics: HistoryAnalytics,
+    private val otherAnalytics: OtherAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -83,13 +85,16 @@ class OtherPresenter @Inject constructor(
 
     fun openAuth() {
         if (currentProfileItem.authState == AuthState.AUTH) {
+            otherAnalytics.profileClick()
             return
         }
+        otherAnalytics.loginClick()
         authMainAnalytics.open(AnalyticsConstants.screen_other)
         router.navigateTo(Screens.Auth())
     }
 
     fun signOut() {
+        otherAnalytics.logoutClick()
         val disposable = authRepository
             .signOut()
             .subscribe({
@@ -102,18 +107,30 @@ class OtherPresenter @Inject constructor(
     fun onMenuClick(item: OtherMenuItem) {
         when (item.id) {
             MENU_HISTORY -> {
+                otherAnalytics.historyClick()
                 historyAnalytics.open(AnalyticsConstants.screen_other)
                 router.navigateTo(Screens.History())
             }
-            MENU_TEAM -> router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
-            MENU_DONATE -> Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
-            MENU_SETTINGS -> router.navigateTo(Screens.Settings())
+            MENU_TEAM -> {
+                otherAnalytics.teamClick()
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
+            }
+            MENU_DONATE -> {
+                otherAnalytics.donateClick()
+                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+            }
+            MENU_SETTINGS -> {
+                otherAnalytics.settingsClick()
+                router.navigateTo(Screens.Settings())
+            }
             MENU_OTP_CODE -> {
+                otherAnalytics.authDeviceClick()
                 authDeviceAnalytics.open(AnalyticsConstants.screen_other)
                 viewState.showOtpCode()
             }
             else -> {
                 linksMap[item.id]?.also { linkItem ->
+                    otherAnalytics.linkClick(linkItem.title)
                     val absoluteLink = linkItem.absoluteLink
                     val pagePath = linkItem.sitePagePath
                     when {

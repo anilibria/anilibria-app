@@ -2,16 +2,16 @@ package ru.radiationx.shared_app.analytics
 
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.profile.Attribute
-import com.yandex.metrica.profile.StringAttribute
 import com.yandex.metrica.profile.UserProfile
 import com.yandex.metrica.profile.UserProfileUpdate
-import io.reactivex.Maybe
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
+import ru.radiationx.data.entity.common.DataWrapper
+import ru.radiationx.data.extensions.nullOnError
+import ru.radiationx.data.extensions.toWrapper
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -79,11 +79,4 @@ class AppMetricaAnalyticsProfile(
         .nullOnError()
 
     private fun <T> Single<T>.attachScheduler() = this.subscribeOn(Schedulers.io())
-
-    private fun <T> Single<DataWrapper<T>>.nullOnError() =
-        this.onErrorReturn { DataWrapper(null) }
-
-    private fun <T> T.toWrapper() = DataWrapper(this)
-
-    private class DataWrapper<T>(val data: T?)
 }

@@ -3,12 +3,17 @@ package ru.radiationx.data.analytics.features
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toParam
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class OtherAnalytics(
     private val sender: AnalyticsSender
 ) {
+
+    private companion object {
+        const val PARAM_TITLE = "title"
+    }
 
     fun open(from: String) {
         sender.send(
@@ -50,7 +55,10 @@ class OtherAnalytics(
     }
 
     fun linkClick(title: String) {
-        sender.send(AnalyticsConstants.other_link_click)
+        sender.send(
+            AnalyticsConstants.other_link_click,
+            title.toParam(PARAM_TITLE)
+        )
     }
 
 }

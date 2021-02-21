@@ -13,8 +13,11 @@ import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.shared_app.analytics.AppMetricaAnalyticsSender
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
+import ru.radiationx.shared_app.analytics.LoggingAnalyticsProfile
+import ru.radiationx.shared_app.analytics.LoggingAnalyticsSender
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module
@@ -44,7 +47,8 @@ class AppModule(context: Context) : Module() {
         bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
         bind(OkHttpImageDownloader::class.java).singleton()
 
-        bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
+        bind(AnalyticsSender::class.java).to(LoggingAnalyticsSender::class.java).singleton()
+        bind(AnalyticsProfile::class.java).to(LoggingAnalyticsProfile::class.java).singleton()
 
     }
 

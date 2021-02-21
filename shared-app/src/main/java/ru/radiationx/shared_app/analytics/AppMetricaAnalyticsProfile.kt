@@ -22,7 +22,7 @@ class AppMetricaAnalyticsProfile(
     override fun update() {
         val singleSources = with(dataSource) {
             listOf<Single<DataWrapper<UserProfileUpdate<*>>>>(
-                getApiAddressTag().mapStringAttr(ProfileConstants.address),
+                getApiAddressTag().mapStringAttr(ProfileConstants.address_tag),
                 getAppTheme().mapStringAttr(ProfileConstants.app_theme),
                 getQualitySettings().mapStringAttr(ProfileConstants.quality),
                 getPlayerSettings().mapStringAttr(ProfileConstants.player),

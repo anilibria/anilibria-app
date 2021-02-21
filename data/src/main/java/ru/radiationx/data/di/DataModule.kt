@@ -7,7 +7,8 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.analytics.features.ConfiguringAnalytics
+import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.IClient
@@ -120,7 +121,30 @@ class DataModule(context: Context) : Module() {
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
 
+
+        /* Analytics */
+        bind(AnalyticsProfileDataSource::class.java).singleton()
+        bind(AuthDeviceAnalytics::class.java).singleton()
+        bind(AuthMainAnalytics::class.java).singleton()
+        bind(AuthSocialAnalytics::class.java).singleton()
+        bind(AuthVkAnalytics::class.java).singleton()
+        bind(CatalogAnalytics::class.java).singleton()
+        bind(CatalogFilterAnalytics::class.java).singleton()
+        bind(CommentsAnalytics::class.java).singleton()
         bind(ConfiguringAnalytics::class.java).singleton()
+        bind(FastSearchAnalytics::class.java).singleton()
+        bind(FavoritesAnalytics::class.java).singleton()
+        bind(FeedAnalytics::class.java).singleton()
+        bind(HistoryAnalytics::class.java).singleton()
+        bind(OtherAnalytics::class.java).singleton()
+        bind(PlayerAnalytics::class.java).singleton()
+        bind(ReleaseAnalytics::class.java).singleton()
+        bind(ScheduleAnalytics::class.java).singleton()
+        bind(SettingsAnalytics::class.java).singleton()
+        bind(UpdaterAnalytics::class.java).singleton()
+        bind(WebPlayerAnalytics::class.java).singleton()
+        bind(YoutubeAnalytics::class.java).singleton()
+        bind(YoutubeVideosAnalytics::class.java).singleton()
     }
 
 }

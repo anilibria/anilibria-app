@@ -1,10 +1,6 @@
 package ru.radiationx.shared_app.analytics
 
 import android.util.Log
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.profile.Attribute
-import com.yandex.metrica.profile.UserProfile
-import com.yandex.metrica.profile.UserProfileUpdate
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
@@ -23,7 +19,7 @@ class LoggingAnalyticsProfile(
     override fun update() {
         val singleSources = with(dataSource) {
             listOf<Single<DataWrapper<Pair<String, Any>>>>(
-                getApiAddressTag().mapToAttr(ProfileConstants.address),
+                getApiAddressTag().mapToAttr(ProfileConstants.address_tag),
                 getAppTheme().mapToAttr(ProfileConstants.app_theme),
                 getQualitySettings().mapToAttr(ProfileConstants.quality),
                 getPlayerSettings().mapToAttr(ProfileConstants.player),

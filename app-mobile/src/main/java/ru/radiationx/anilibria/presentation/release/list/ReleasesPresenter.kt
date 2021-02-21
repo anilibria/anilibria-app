@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.vital.VitalItem
@@ -23,7 +24,8 @@ class ReleasesPresenter @Inject constructor(
         private val router: Router,
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder,
-        private val fastSearchAnalytics: FastSearchAnalytics
+        private val fastSearchAnalytics: FastSearchAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleasesView>(router) {
 
     companion object {
@@ -118,6 +120,7 @@ class ReleasesPresenter @Inject constructor(
     }
 
     fun onItemClick(item: ReleaseItem) {
+        releaseAnalytics.open(AnalyticsConstants.screen_releases_list, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 

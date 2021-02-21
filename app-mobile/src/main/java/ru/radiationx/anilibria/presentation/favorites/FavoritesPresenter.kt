@@ -4,7 +4,9 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FavoritesAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
@@ -18,7 +20,8 @@ class FavoritesPresenter @Inject constructor(
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val favoritesAnalytics: FavoritesAnalytics
+        private val favoritesAnalytics: FavoritesAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FavoritesView>(router) {
 
 
@@ -118,6 +121,7 @@ class FavoritesPresenter @Inject constructor(
         }else{
             favoritesAnalytics.releaseClick()
         }
+        releaseAnalytics.open(AnalyticsConstants.screen_favorites, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 

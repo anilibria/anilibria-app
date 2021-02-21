@@ -4,6 +4,8 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.ScheduleRepository
@@ -17,7 +19,8 @@ class SchedulePresenter @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val scheduleAnalytics: ScheduleAnalytics
+        private val scheduleAnalytics: ScheduleAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ScheduleView>(router) {
 
     private var firstData = true
@@ -60,6 +63,7 @@ class SchedulePresenter @Inject constructor(
 
     fun onItemClick(releaseItem: ReleaseItem, position:Int) {
         scheduleAnalytics.releaseClick(position)
+        releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id))
     }
 

@@ -16,13 +16,15 @@ class ReleaseAnalytics(
 
     private companion object {
         const val PARAM_HEVC = "hevc"
+        const val PARAM_RELEASE_CODE = "code"
     }
 
-    fun open(from: String, releaseId: Int) {
+    fun open(from: String, releaseId: Int?, releaseCode:String?=null) {
         sender.send(
             AnalyticsConstants.release_open,
             from.toNavFromParam(),
-            releaseId.toIdParam()
+            releaseId.toIdParam(),
+            releaseCode.toParam(PARAM_RELEASE_CODE)
         )
     }
 

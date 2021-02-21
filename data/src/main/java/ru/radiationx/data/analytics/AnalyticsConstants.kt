@@ -13,13 +13,11 @@ object AnalyticsConstants {
     const val screen_player = "screen_player"
     const val screen_web_player = "screen_web_player"
     const val screen_favorites = "screen_favorites"
-    const val screen_favorites_search = "screen_favorites_search"
     const val screen_catalog = "screen_catalog"
     const val screen_catalog_filter = "screen_catalog_filter"
     const val screen_youtube = "screen_youtube"
     const val screen_other = "screen_other"
     const val screen_history = "screen_history"
-    const val screen_history_search = "screen_history_search"
     const val screen_page = "screen_page"
     const val screen_settings = "screen_settings"
     const val screen_update = "screen_update"
@@ -30,6 +28,7 @@ object AnalyticsConstants {
     const val screen_auth_social = "screen_auth_social"
     const val notification_local_update = "notification_local_update"
     const val notification_push_update = "notification_push_update"
+    const val link_router = "link_router"
 
 
     /* Configuring */

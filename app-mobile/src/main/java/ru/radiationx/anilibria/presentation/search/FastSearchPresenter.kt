@@ -11,6 +11,7 @@ import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
@@ -26,7 +27,8 @@ class FastSearchPresenter @Inject constructor(
         private val router: Router,
         private val errorHandler: IErrorHandler,
         private val catalogAnalytics: CatalogAnalytics,
-        private val fastSearchAnalytics: FastSearchAnalytics
+        private val fastSearchAnalytics: FastSearchAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FastSearchView>(router) {
 
     companion object {
@@ -111,6 +113,7 @@ class FastSearchPresenter @Inject constructor(
             else -> {
                 (item as? SuggestionItem)?.also {
                     fastSearchAnalytics.releaseClick()
+                    releaseAnalytics.open(AnalyticsConstants.screen_fast_search, item.id)
                     router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
                 }
             }

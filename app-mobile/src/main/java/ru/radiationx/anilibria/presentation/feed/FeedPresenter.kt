@@ -11,10 +11,7 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.FastSearchAnalytics
-import ru.radiationx.data.analytics.features.FeedAnalytics
-import ru.radiationx.data.analytics.features.ScheduleAnalytics
-import ru.radiationx.data.analytics.features.YoutubeAnalytics
+import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -41,7 +38,8 @@ class FeedPresenter @Inject constructor(
         private val fastSearchAnalytics: FastSearchAnalytics,
         private val feedAnalytics: FeedAnalytics,
         private val scheduleAnalytics: ScheduleAnalytics,
-        private val youtubeAnalytics: YoutubeAnalytics
+        private val youtubeAnalytics: YoutubeAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private var randomDisposable = Disposables.disposed()
@@ -178,11 +176,13 @@ class FeedPresenter @Inject constructor(
 
     fun onScheduleItemClick(item: ReleaseItem,position:Int) {
         feedAnalytics.scheduleReleaseClick(position)
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onItemClick(item: ReleaseItem) {
         feedAnalytics.releaseClick()
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
@@ -206,6 +206,7 @@ class FeedPresenter @Inject constructor(
         randomDisposable = releaseInteractor
                 .getRandomRelease()
                 .subscribe({
+                    releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code)
                     router.navigateTo(Screens.ReleaseDetails(code = it.code))
                 }, {
                     errorHandler.handle(it)

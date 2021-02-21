@@ -3,7 +3,9 @@ package ru.radiationx.anilibria.presentation.history
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -16,7 +18,8 @@ import javax.inject.Inject
 class HistoryPresenter @Inject constructor(
         private val router: Router,
         private val historyRepository: HistoryRepository,
-        private val historyAnalytics: HistoryAnalytics
+        private val historyAnalytics: HistoryAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<ReleaseItem>()
@@ -57,6 +60,7 @@ class HistoryPresenter @Inject constructor(
         }else{
             historyAnalytics.releaseClick()
         }
+        releaseAnalytics.open(AnalyticsConstants.screen_history, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 

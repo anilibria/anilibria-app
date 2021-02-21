@@ -70,7 +70,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     lateinit var presenter: PagePresenter
 
     @ProvidePresenter
-    fun providePagePresenter(): PagePresenter = getDependency(PagePresenter::class.java, screenScope)
+    fun providePagePresenter(): PagePresenter =
+        getDependency(PagePresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -104,7 +105,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
         webView.setJsLifeCycleListener(this)
 
-        webView.webViewClient = object :WebViewClient(){
+        webView.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pageAnalytics.loaded()
@@ -125,8 +126,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
                 errorResponse: WebResourceResponse?
             ) {
                 super.onReceivedHttpError(view, request, errorResponse)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    pageAnalytics.error(errorResponse.toException())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+                    pageAnalytics.error(errorResponse.toException(request))
                 }
             }
 
@@ -136,8 +137,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
                 error: WebResourceError?
             ) {
                 super.onReceivedError(view, request, error)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    pageAnalytics.error(error.toException())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+                    pageAnalytics.error(error.toException(request))
                 }
             }
         }
@@ -147,14 +148,17 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = App.instance.staticPageTemplate
-        webView.easyLoadData(apiConfig.siteUrl, template.generateWithTheme(appThemeHolder.getTheme()))
+        webView.easyLoadData(
+            apiConfig.siteUrl,
+            template.generateWithTheme(appThemeHolder.getTheme())
+        )
 
         disposables.add(
-                appThemeHolder
-                        .observeTheme()
-                        .subscribe {
-                            webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
-                        }
+            appThemeHolder
+                .observeTheme()
+                .subscribe {
+                    webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                }
         )
     }
 

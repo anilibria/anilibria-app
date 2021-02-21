@@ -165,8 +165,8 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             errorResponse: WebResourceResponse?
         ) {
             super.onReceivedHttpError(view, request, errorResponse)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                presenter.onPageCommitError(errorResponse.toException())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+                presenter.onPageCommitError(errorResponse.toException(request))
             }
         }
 
@@ -176,8 +176,8 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             error: WebResourceError?
         ) {
             super.onReceivedError(view, request, error)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                presenter.onPageCommitError(error.toException())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+                presenter.onPageCommitError(error.toException(request))
             }
         }
     }

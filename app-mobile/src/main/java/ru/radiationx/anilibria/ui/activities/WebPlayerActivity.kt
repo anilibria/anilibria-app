@@ -54,8 +54,8 @@ class WebPlayerActivity : BaseActivity() {
         }
 
         window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         setContentView(R.layout.activity_moon)
         supportActionBar?.hide()
@@ -68,7 +68,9 @@ class WebPlayerActivity : BaseActivity() {
         webView.webViewClient = object : WebViewClient() {
             @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                val matcher = Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)").matcher(url)
+                val matcher =
+                    Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)")
+                        .matcher(url)
                 return if (matcher.find()) {
                     false
                 } else {
@@ -96,8 +98,8 @@ class WebPlayerActivity : BaseActivity() {
                 errorResponse: WebResourceResponse?
             ) {
                 super.onReceivedHttpError(view, request, errorResponse)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    webPlayerAnalytics.error(errorResponse.toException())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+                    webPlayerAnalytics.error(errorResponse.toException(request))
                 }
             }
 
@@ -107,8 +109,8 @@ class WebPlayerActivity : BaseActivity() {
                 error: WebResourceError?
             ) {
                 super.onReceivedError(view, request, error)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    webPlayerAnalytics.error(error.toException())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+                    webPlayerAnalytics.error(error.toException(request))
                 }
             }
         }

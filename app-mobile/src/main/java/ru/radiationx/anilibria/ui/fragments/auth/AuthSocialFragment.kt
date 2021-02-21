@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import java.lang.Exception
 import javax.inject.Inject
@@ -155,9 +156,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             error: SslError?
         ) {
             super.onReceivedSslError(view, handler, error)
-            presenter.onPageCommitError(Exception(
-                "onReceivedSslError ${error.toString()}"
-            ))
+            presenter.onPageCommitError(error.toException())
         }
 
         override fun onReceivedHttpError(
@@ -167,9 +166,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         ) {
             super.onReceivedHttpError(view, request, errorResponse)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                presenter.onPageCommitError(Exception(
-                    "onReceivedHttpError ${errorResponse?.reasonPhrase.orEmpty()}"
-                ))
+                presenter.onPageCommitError(errorResponse.toException())
             }
         }
 
@@ -180,9 +177,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         ) {
             super.onReceivedError(view, request, error)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                presenter.onPageCommitError(
-                    Exception("onReceivedError ${error?.description?.toString().orEmpty()}")
-                )
+                presenter.onPageCommitError(error.toException())
             }
         }
     }

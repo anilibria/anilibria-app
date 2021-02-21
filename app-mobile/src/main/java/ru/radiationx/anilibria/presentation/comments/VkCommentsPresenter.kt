@@ -6,12 +6,14 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
+import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
+import java.lang.Exception
 import javax.inject.Inject
 
 @InjectViewState
@@ -21,7 +23,8 @@ class VkCommentsPresenter @Inject constructor(
         private val authHolder: AuthHolder,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val authVkAnalytics: AuthVkAnalytics
+        private val authVkAnalytics: AuthVkAnalytics,
+        private val commentsAnalytics: CommentsAnalytics
 ) : BasePresenter<VkCommentsView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -50,6 +53,14 @@ class VkCommentsPresenter @Inject constructor(
         router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
     }
 
+    fun onPageLoaded(){
+        commentsAnalytics.loaded()
+    }
+
+    fun onPageCommitError(error:Exception){
+        commentsAnalytics.error(error)
+    }
+
     private fun loadData() {
         pageRepository
                 .getComments()
@@ -57,6 +68,7 @@ class VkCommentsPresenter @Inject constructor(
                     currentVkComments = it
                     updateComments()
                 }, {
+                    commentsAnalytics.error(it)
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
@@ -69,6 +81,7 @@ class VkCommentsPresenter @Inject constructor(
                     currentData = release
                     updateComments()
                 }) {
+                    commentsAnalytics.error(it)
                     errorHandler.handle(it)
                 }
                 .addToDisposable()

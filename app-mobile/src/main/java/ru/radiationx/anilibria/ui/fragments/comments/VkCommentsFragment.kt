@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
@@ -28,6 +29,7 @@ import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.shared.ktx.android.toBase64
+import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
@@ -256,8 +258,40 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
             if (loadingFinished && !redirect) {
                 //progressBar.visibility = View.GONE
+                presenter.onPageLoaded()
             } else {
                 redirect = false
+            }
+        }
+
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            super.onReceivedSslError(view, handler, error)
+            presenter.onPageCommitError(error.toException())
+        }
+
+        override fun onReceivedHttpError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            errorResponse: WebResourceResponse?
+        ) {
+            super.onReceivedHttpError(view, request, errorResponse)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                presenter.onPageCommitError(errorResponse.toException())
+            }
+        }
+
+        override fun onReceivedError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            error: WebResourceError?
+        ) {
+            super.onReceivedError(view, request, error)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                presenter.onPageCommitError(error.toException())
             }
         }
 

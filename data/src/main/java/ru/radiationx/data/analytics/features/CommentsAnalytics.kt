@@ -2,8 +2,10 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import toothpick.InjectConstructor
+import java.lang.Exception
 
 @InjectConstructor
 class CommentsAnalytics(
@@ -21,8 +23,11 @@ class CommentsAnalytics(
         sender.send(AnalyticsConstants.comments_loaded)
     }
 
-    fun error() {
-        sender.send(AnalyticsConstants.comments_error)
+    fun error(error: Throwable) {
+        sender.send(
+            AnalyticsConstants.comments_error,
+            error.toErrorParam()
+        )
     }
 
 }

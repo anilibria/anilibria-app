@@ -22,6 +22,7 @@ import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptPresenter
 import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptView
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.di.getDependency
 
 class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
@@ -35,18 +36,28 @@ class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
     private val alertDialog: AlertDialog?
         get() = dialog as? AlertDialog?
 
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(presenter::submitUseTime)
+    }
+
     @InjectPresenter
     lateinit var presenter: OtpAcceptPresenter
 
     @ProvidePresenter
     fun provideAuthPresenter(): OtpAcceptPresenter = getDependency(OtpAcceptPresenter::class.java)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
-        .setPositiveButton("Привязать", null)
-        .create()
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        AlertDialog.Builder(requireContext())
+            .setPositiveButton("Привязать", null)
+            .create()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val otpLayout = inflater.inflate(R.layout.fragment_otp, container, false) as ConstraintLayout
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val otpLayout =
+            inflater.inflate(R.layout.fragment_otp, container, false) as ConstraintLayout
         otpLayoutView = otpLayout
         otpInputLayout = otpLayout.otpInputLayout
         otpInputField = otpLayout.otpInputField
@@ -54,6 +65,11 @@ class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
         otpSuccess = otpLayout.otpSuccess
         alertDialog?.setView(otpLayout)
         return null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
     }
 
     override fun onStart() {

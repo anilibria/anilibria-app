@@ -22,6 +22,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -39,6 +40,10 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
                 putString(ARG_KEY, key)
             }
         }
+    }
+
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(presenter::submitUseTime)
     }
 
     @Inject
@@ -65,7 +70,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
         appbarLayout.gone()
 
         webView.apply {

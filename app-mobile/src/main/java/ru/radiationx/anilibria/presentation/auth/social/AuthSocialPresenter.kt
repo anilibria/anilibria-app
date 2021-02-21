@@ -24,11 +24,8 @@ class AuthSocialPresenter @Inject constructor(
 
     private var currentData: SocialAuth? = null
 
-    private val useTimeCounter = TimeCounter()
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        useTimeCounter.start()
         authRepository
                 .getSocialAuth(argKey)
                 .subscribe({
@@ -41,11 +38,9 @@ class AuthSocialPresenter @Inject constructor(
                 .addToDisposable()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authSocialAnalytics.useTime(useTimeCounter.elapsed())
+    fun submitUseTime(time: Long) {
+        authSocialAnalytics.useTime(time)
     }
-
 
     fun onNewRedirectLink(url: String?): Boolean {
         currentData?.also { model ->

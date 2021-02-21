@@ -30,6 +30,7 @@ import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.util.*
 import javax.inject.Inject
 
@@ -49,7 +50,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
-    private val useTimeCounter = TimeCounter()
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(pageAnalytics::useTime)
+    }
 
     private var pageTitle: String? = null
 
@@ -86,8 +89,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        useTimeCounter.start()
 
+        viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
         //ToolbarHelper.setTransparent(toolbar, appbarLayout)
         //ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
         ToolbarHelper.fixInsets(toolbar)
@@ -162,16 +165,6 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         )
     }
 
-    override fun onStart() {
-        super.onStart()
-        useTimeCounter.resume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        useTimeCounter.pause()
-    }
-
     override fun onResume() {
         super.onResume()
         webView?.onResume()
@@ -184,7 +177,6 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun onDestroy() {
         super.onDestroy()
-        pageAnalytics.useTime(useTimeCounter.elapsed())
         disposables.dispose()
     }
 

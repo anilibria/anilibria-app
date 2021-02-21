@@ -17,6 +17,7 @@ import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.toException
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -31,7 +32,9 @@ class WebPlayerActivity : BaseActivity() {
     private var argUrl: String = ""
     private var argReleaseCode: String = ""
 
-    private val useTimeCounter = TimeCounter()
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(webPlayerAnalytics::useTime)
+    }
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -43,7 +46,7 @@ class WebPlayerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
-        useTimeCounter.start()
+        lifecycle.addObserver(useTimeCounter)
 
         argUrl = intent?.getStringExtra(ARG_URL).orEmpty()
         argReleaseCode = intent?.getStringExtra(ARG_RELEASE_CODE).orEmpty()
@@ -116,21 +119,6 @@ class WebPlayerActivity : BaseActivity() {
         }
 
         loadUrl()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        useTimeCounter.resume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        useTimeCounter.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        webPlayerAnalytics.useTime(useTimeCounter.elapsed())
     }
 
     private fun loadUrl() {

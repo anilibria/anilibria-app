@@ -28,24 +28,21 @@ class OtpAcceptPresenter @Inject constructor(
     private var progress = false
     private var error: String? = null
 
-    private val useTimeCounter = TimeCounter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         updateState()
-        useTimeCounter.start()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authDeviceAnalytics.useTime(useTimeCounter.elapsed())
+    fun submitUseTime(time: Long) {
+        authDeviceAnalytics.useTime(time)
     }
 
     fun onAcceptClick(code: String) {
         if (progress || success) {
             return
         }
-        if(code.isBlank()){
+        if (code.isBlank()) {
             error = "Поле обязательно к заполнению"
             updateState()
             return

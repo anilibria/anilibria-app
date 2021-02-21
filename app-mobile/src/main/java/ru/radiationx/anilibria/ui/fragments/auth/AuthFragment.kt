@@ -19,6 +19,7 @@ import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import javax.inject.Inject
 
 /**
@@ -30,6 +31,10 @@ class AuthFragment : BaseFragment(), AuthView {
         onSocialClick(it)
     }
 
+    private val lifecycleTimeCounter by lazy {
+        LifecycleTimeCounter(presenter::submitUseTime)
+    }
+
     @Inject
     lateinit var apiConfig: ApiConfig
 
@@ -37,7 +42,8 @@ class AuthFragment : BaseFragment(), AuthView {
     lateinit var presenter: AuthPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): AuthPresenter = getDependency(AuthPresenter::class.java, screenScope)
+    fun provideAuthPresenter(): AuthPresenter =
+        getDependency(AuthPresenter::class.java, screenScope)
 
     override fun getLayoutResource(): Int = R.layout.fragment_auth
 
@@ -46,7 +52,7 @@ class AuthFragment : BaseFragment(), AuthView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
-
+        viewLifecycleOwner.lifecycle.addObserver(lifecycleTimeCounter)
         appbarLayout.gone()
 
         authSocialList.apply {

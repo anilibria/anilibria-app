@@ -25,11 +25,8 @@ class CheckerPresenter @Inject constructor(
 
     private var compositeDisposable = CompositeDisposable()
 
-    private val useTimeCounter = TimeCounter()
-
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        useTimeCounter.start()
+    fun submitUseTime(time: Long) {
+        updaterAnalytics.useTime(time)
     }
 
     fun checkUpdate() {
@@ -55,7 +52,6 @@ class CheckerPresenter @Inject constructor(
     }
 
     override fun onDestroy() {
-        updaterAnalytics.useTime(useTimeCounter.elapsed())
         compositeDisposable.dispose()
     }
 

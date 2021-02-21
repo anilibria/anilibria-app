@@ -35,11 +35,8 @@ class AuthPresenter @Inject constructor(
     private var currentPassword = ""
     private var currentCode2fa = ""
 
-    private val useTimeCounter = TimeCounter()
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        useTimeCounter.start()
 
         authRepository
                 .loadSocialAuth()
@@ -57,11 +54,6 @@ class AuthPresenter @Inject constructor(
                 })
                 .addToDisposable()
         updateButtonState()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        authMainAnalytics.useTime(useTimeCounter.elapsed())
     }
 
     fun onSocialClick(item: SocialAuth) {
@@ -129,6 +121,10 @@ class AuthPresenter @Inject constructor(
     fun registrationToSiteClick(){
         authMainAnalytics.regToSiteClick()
         Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
+    }
+
+    fun submitUseTime(time:Long){
+        authMainAnalytics.useTime(time)
     }
 
 }

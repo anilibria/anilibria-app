@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
+import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.terrakok.cicerone.Router
@@ -16,12 +17,15 @@ class YoutubePresenter @Inject constructor(
         private val youtubeRepository: YoutubeRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val youtubeAnalytics: YoutubeAnalytics
+        private val youtubeAnalytics: YoutubeAnalytics,
+        private val youtubeVideosAnalytics: YoutubeVideosAnalytics
 ) : BasePresenter<YoutubeView>(router) {
 
     companion object {
         private const val START_PAGE = 1
     }
+
+    private var lastLoadedPage:Int?=null
 
     private var currentPage = START_PAGE
 
@@ -35,6 +39,10 @@ class YoutubePresenter @Inject constructor(
     }
 
     private fun loadPage(page: Int) {
+        if(lastLoadedPage!=page){
+            youtubeVideosAnalytics.loadPage(page)
+            lastLoadedPage = page
+        }
         currentPage = page
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -68,6 +76,7 @@ class YoutubePresenter @Inject constructor(
     }
 
     fun onItemClick(item: YoutubeItem) {
+        youtubeVideosAnalytics.videoClick()
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, item.id, item.vid)
         Utils.externalLink(item.link)
     }

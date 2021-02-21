@@ -4,6 +4,10 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.CatalogFilterAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
@@ -16,12 +20,17 @@ class SearchPresenter @Inject constructor(
         private val searchRepository: SearchRepository,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val releaseUpdateHolder: ReleaseUpdateHolder
+        private val releaseUpdateHolder: ReleaseUpdateHolder,
+        private val catalogAnalytics: CatalogAnalytics,
+        private val catalogFilterAnalytics: CatalogFilterAnalytics
 ) : BasePresenter<SearchCatalogView>(router) {
 
     companion object {
         private const val START_PAGE = 1
     }
+
+    private var lastLoadedPage:Int?=null
+    private val filterUseTimeCounter = TimeCounter()
 
     private val staticSeasons = listOf("зима", "весна", "лето", "осень")
             .map { SeasonItem(it.capitalize(), it) }
@@ -120,6 +129,10 @@ class SearchPresenter @Inject constructor(
             viewState.setRefreshing(false)
             return
         }*/
+        if(lastLoadedPage!=pageNum){
+            catalogAnalytics.loadPage(pageNum)
+            lastLoadedPage = pageNum
+        }
 
         currentPage = pageNum
         if (isFirstPage()) {
@@ -133,6 +146,7 @@ class SearchPresenter @Inject constructor(
                 .searchReleases(genresQuery, yearsQuery, seasonsQuery, currentSorting, completeStr, pageNum)
                 .doAfterTerminate { viewState.setRefreshing(false) }
                 .subscribe({ releaseItems ->
+                    lastLoadedPage = pageNum
                     viewState.setEndless(releaseItems.data.isNotEmpty())
                     showData(releaseItems.data)
                 }) {
@@ -166,6 +180,9 @@ class SearchPresenter @Inject constructor(
     }
 
     fun showDialog() {
+        filterUseTimeCounter.start()
+        catalogAnalytics.filterClick()
+        catalogFilterAnalytics.open(AnalyticsConstants.screen_catalog)
         beforeOpenDialogGenres.clear()
         beforeOpenDialogYears.clear()
         beforeOpenDialogSeasons.clear()
@@ -177,16 +194,22 @@ class SearchPresenter @Inject constructor(
         viewState.showDialog()
     }
 
-    fun onCloseDialog() {
+    fun onAcceptDialog(){
+        catalogFilterAnalytics.applyClick()
         if (
-                beforeOpenDialogGenres != currentGenres
-                || beforeOpenDialogYears != currentYears
-                || beforeOpenDialogSeasons != currentSeasons
-                || beforeOpenDialogSorting != currentSorting
-                || beforeComplete != currentComplete
+            beforeOpenDialogGenres != currentGenres
+            || beforeOpenDialogYears != currentYears
+            || beforeOpenDialogSeasons != currentSeasons
+            || beforeOpenDialogSorting != currentSorting
+            || beforeComplete != currentComplete
         ) {
             refreshReleases()
         }
+    }
+
+    fun onCloseDialog() {
+        catalogFilterAnalytics.useTime(filterUseTimeCounter.elapsed())
+        onAcceptDialog()
     }
 
     fun onChangeGenres(newGenres: List<String>) {
@@ -226,7 +249,12 @@ class SearchPresenter @Inject constructor(
         viewState.updateInfo(currentSorting, currentGenres.size + currentYears.size + currentSeasons.size)
     }
 
+    fun onFastSearchClick(){
+        catalogAnalytics.fastSearchClick()
+    }
+
     fun onItemClick(item: ReleaseItem) {
+        catalogAnalytics.releaseClick()
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 

@@ -8,6 +8,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
@@ -21,7 +23,8 @@ class FastSearchPresenter @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val catalogAnalytics: CatalogAnalytics
 ) : BasePresenter<FastSearchView>(router) {
 
     companion object {
@@ -98,6 +101,7 @@ class FastSearchPresenter @Inject constructor(
                 Utils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {
+                catalogAnalytics.open(AnalyticsConstants.screen_fast_search)
                 router.navigateTo(Screens.ReleasesSearch())
             }
             else -> {

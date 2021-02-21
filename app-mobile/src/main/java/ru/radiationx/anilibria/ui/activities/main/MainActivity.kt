@@ -355,7 +355,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
-        router.replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
+        val screen = tabs.first { it.screen.screenKey == screenKey }.screen
+        presenter.submitScreenAnalytics(screen)
+        router.replaceScreen(screen)
     }
 
     fun addInStack(screenKey: String) {

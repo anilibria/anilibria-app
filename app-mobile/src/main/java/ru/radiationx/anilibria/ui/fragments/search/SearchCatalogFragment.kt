@@ -117,6 +117,10 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onAccept() {
+                    presenter.onAcceptDialog()
+                }
+
+                override fun onClose() {
                     presenter.onCloseDialog()
                 }
 
@@ -172,6 +176,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
+                    presenter.onFastSearchClick()
                     searchView?.requestFocus(it)
                     false
                 }

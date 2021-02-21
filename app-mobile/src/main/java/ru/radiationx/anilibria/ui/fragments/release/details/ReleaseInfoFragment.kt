@@ -26,8 +26,10 @@ import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
+import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -35,6 +37,7 @@ import ru.radiationx.data.entity.app.vital.VitalItem
 import java.net.URLConnection
 import java.text.DecimalFormat
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 @RuntimePermissions
 class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
@@ -45,16 +48,23 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
-        ReleaseInfoAdapter(adapterListener) {
-            loadTorrent(it)
-        }
+        ReleaseInfoAdapter(
+            headListener = headListener,
+            episodeListener = episodeListener,
+            episodeControlListener = episodeControlListener,
+            donateListener = donateListener,
+            torrentClickListener = {
+                loadTorrent(it)
+            }
+        )
     }
 
     @InjectPresenter
     lateinit var presenter: ReleaseInfoPresenter
 
     @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter = getDependency(ReleaseInfoPresenter::class.java, screenScope)
+    fun provideReleasePresenter(): ReleaseInfoPresenter =
+        getDependency(ReleaseInfoPresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -101,19 +111,26 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     override fun showTorrentDialog(torrents: List<TorrentItem>) {
         val context = context ?: return
-        val titles = torrents.map { "Серия ${it.series} [${it.quality}][${readableFileSize(it.size)}]" }.toTypedArray()
+        val titles =
+            torrents.map { "Серия ${it.series} [${it.quality}][${readableFileSize(it.size)}]" }
+                .toTypedArray()
         AlertDialog.Builder(context)
-                .setItems(titles) { dialog, which ->
-                    loadTorrent(torrents[which])
-                }
-                .show()
+            .setItems(titles) { dialog, which ->
+                loadTorrent(torrents[which])
+            }
+            .show()
     }
 
     private fun readableFileSize(size: Long): String {
         if (size <= 0) return "0"
         val units = arrayOf("B", "kB", "MB", "GB", "TB")
         val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#").format(size / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
+        return DecimalFormat("#,##0.#").format(
+            size / Math.pow(
+                1024.0,
+                digitGroups.toDouble()
+            )
+        ) + " " + units[digitGroups]
     }
 
     override fun playEpisodes(release: ReleaseFull) {
@@ -137,30 +154,31 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         val context = context ?: return
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         AlertDialog.Builder(context)
-                .setItems(titles) { _, which ->
-                    when (which) {
-                        0 -> Utils.externalLink(url)
-                        1 -> systemDownloadWithPermissionCheck(url)
-                    }
+            .setItems(titles) { _, which ->
+                when (which) {
+                    0 -> Utils.externalLink(url)
+                    1 -> systemDownloadWithPermissionCheck(url)
                 }
-                .show()
+            }
+            .show()
     }
 
     override fun showFileDonateDialog(url: String) {
         val dialogView = LayoutInflater.from(view!!.context)
-                .inflate(R.layout.dialog_file_download, null, false)
-                .apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                }
+            .inflate(R.layout.dialog_file_download, null, false)
+            .apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            }
 
-        ImageLoader.getInstance().displayImage("assets://libria_tyan_type3.png", dialogView.dialogFileImage)
+        ImageLoader.getInstance()
+            .displayImage("assets://libria_tyan_type3.png", dialogView.dialogFileImage)
 
         val dialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .show()
+            .setView(dialogView)
+            .show()
 
         dialogView.dialogFilePatreonBtn.setOnClickListener {
             presenter.onDialogPatreonClick()
@@ -179,34 +197,39 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun showEpisodesMenuDialog() {
         val context = context ?: return
         val items = arrayOf(
-                "Сбросить историю просмотров",
-                "Отметить все как просмотренные"
+            "Сбросить историю просмотров",
+            "Отметить все как просмотренные"
         )
         AlertDialog.Builder(context)
-                .setItems(items) { _, which ->
-                    when (which) {
-                        0 -> presenter.onResetEpisodesHistoryClick()
-                        1 -> presenter.onCheckAllEpisodesHistoryClick()
-                    }
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> presenter.onResetEpisodesHistoryClick()
+                    1 -> presenter.onCheckAllEpisodesHistoryClick()
                 }
-                .show()
+            }
+            .show()
     }
 
     override fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode) {
         val context = context ?: return
         val items = arrayOf(
-                "Отметить как непросмотренная"
+            "Отметить как непросмотренная"
         )
         AlertDialog.Builder(context)
-                .setItems(items) { _, which ->
-                    when (which) {
-                        0 -> presenter.markEpisodeUnviewed(episode)
-                    }
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> presenter.markEpisodeUnviewed(episode)
                 }
-                .show()
+            }
+            .show()
     }
 
-    override fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int?, quality: Int?) {
+    override fun playEpisode(
+        release: ReleaseFull,
+        episode: ReleaseFull.Episode,
+        playFlag: Int?,
+        quality: Int?
+    ) {
         if (episode.type == ReleaseFull.Episode.Type.SOURCE) {
             if (quality == null) {
                 selectQuality(episode, { selected ->
@@ -232,8 +255,17 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                     }
                 } else {
                     when (playerType) {
-                        PreferencesHolder.PLAYER_TYPE_EXTERNAL -> playExternal(release, episode, quality)
-                        PreferencesHolder.PLAYER_TYPE_INTERNAL -> playInternal(release, episode, quality, playFlag)
+                        PreferencesHolder.PLAYER_TYPE_EXTERNAL -> playExternal(
+                            release,
+                            episode,
+                            quality
+                        )
+                        PreferencesHolder.PLAYER_TYPE_INTERNAL -> playInternal(
+                            release,
+                            episode,
+                            quality,
+                            playFlag
+                        )
                     }
                 }
             })
@@ -262,24 +294,27 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    private fun showSelectPlayerDialog(onSelect: (playerType: Int) -> Unit, savePlayerType: Boolean = true) {
+    private fun showSelectPlayerDialog(
+        onSelect: (playerType: Int) -> Unit,
+        savePlayerType: Boolean = true
+    ) {
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
         val context = context ?: return
         AlertDialog.Builder(context)
-                .setItems(titles) { dialog, which ->
-                    val playerType = when (which) {
-                        0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
-                        1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
-                        else -> -1
-                    }
-                    if (playerType != -1) {
-                        if (savePlayerType) {
-                            presenter.setPlayerType(playerType)
-                        }
-                        onSelect.invoke(playerType)
-                    }
+            .setItems(titles) { dialog, which ->
+                val playerType = when (which) {
+                    0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
+                    1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
+                    else -> -1
                 }
-                .show()
+                if (playerType != -1) {
+                    if (savePlayerType) {
+                        presenter.setPlayerType(playerType)
+                    }
+                    onSelect.invoke(playerType)
+                }
+            }
+            .show()
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -294,12 +329,21 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         onRequestPermissionsResult(requestCode, grantResults)
     }
 
-    private fun playInternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int, playFlag: Int? = null) {
+    private fun playInternal(
+        release: ReleaseFull,
+        episode: ReleaseFull.Episode,
+        quality: Int,
+        playFlag: Int? = null
+    ) {
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
@@ -337,7 +381,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         })
     }
 
-    private fun selectQuality(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, forceDialog: Boolean = false) {
+    private fun selectQuality(
+        episode: ReleaseFull.Episode,
+        onSelect: (quality: Int) -> Unit,
+        forceDialog: Boolean = false
+    ) {
         val savedQuality = presenter.getQuality()
 
         var correctQuality = savedQuality
@@ -364,7 +412,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    private fun showQualityDialog(episode: ReleaseFull.Episode, onSelect: (quality: Int) -> Unit, saveQuality: Boolean = true) {
+    private fun showQualityDialog(
+        episode: ReleaseFull.Episode,
+        onSelect: (quality: Int) -> Unit,
+        saveQuality: Boolean = true
+    ) {
         val context = context ?: return
 
         val qualities = mutableListOf<Int>()
@@ -373,33 +425,35 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         if (episode.urlFullHd != null) qualities.add(MyPlayerActivity.VAL_QUALITY_FULL_HD)
 
         val titles = qualities
-                .map {
-                    when (it) {
-                        MyPlayerActivity.VAL_QUALITY_SD -> "480p"
-                        MyPlayerActivity.VAL_QUALITY_HD -> "720p"
-                        MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
-                        else -> "Unknown"
-                    }
+            .map {
+                when (it) {
+                    MyPlayerActivity.VAL_QUALITY_SD -> "480p"
+                    MyPlayerActivity.VAL_QUALITY_HD -> "720p"
+                    MyPlayerActivity.VAL_QUALITY_FULL_HD -> "1080p"
+                    else -> "Unknown"
                 }
-                .toTypedArray()
+            }
+            .toTypedArray()
 
         AlertDialog.Builder(context)
-                .setTitle("Качество")
-                .setItems(titles) { _, p1 ->
-                    val quality = qualities[p1]
-                    if (quality != -1) {
-                        if (saveQuality) {
-                            presenter.setQuality(when (quality) {
+            .setTitle("Качество")
+            .setItems(titles) { _, p1 ->
+                val quality = qualities[p1]
+                if (quality != -1) {
+                    if (saveQuality) {
+                        presenter.setQuality(
+                            when (quality) {
                                 MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
                                 MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
                                 MyPlayerActivity.VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
                                 else -> PreferencesHolder.QUALITY_NO
-                            })
-                        }
-                        onSelect.invoke(quality)
+                            }
+                        )
                     }
+                    onSelect.invoke(quality)
                 }
-                .show()
+            }
+            .show()
     }
 
     override fun updateFavCounter() {
@@ -413,57 +467,14 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun showFavoriteDialog() {
         val context = context ?: return
         AlertDialog.Builder(context)
-                .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-                .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
-                .setNegativeButton("Нет", null)
-                .show()
+            .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
+            .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
+            .setNegativeButton("Нет", null)
+            .show()
     }
 
-    private val adapterListener = object : ReleaseInfoAdapter.ItemListener {
 
-        override fun onClickSd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_SD)
-        }
-
-        override fun onClickHd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_HD)
-        }
-
-        override fun onClickFullHd(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, MyPlayerActivity.VAL_QUALITY_FULL_HD)
-        }
-
-        override fun onClickEpisode(episode: ReleaseFull.Episode) {
-            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
-        }
-
-        override fun onLongClickEpisode(episode: ReleaseFull.Episode) {
-            presenter.onLongClickEpisode(episode)
-        }
-
-        override fun onClickTorrent() {
-            presenter.onTorrentClick()
-        }
-
-        override fun onClickWatchAll() {
-            presenter.onPlayAllClick()
-        }
-
-        override fun onClickContinue() {
-            presenter.onClickContinue()
-        }
-
-        override fun onClickEpisodesMenu() {
-            presenter.onClickEpisodesMenu()
-        }
-
-        override fun onClickTag(text: String) {
-            presenter.openSearch(text)
-        }
-
-        override fun onClickFav() {
-            presenter.onClickFav()
-        }
+    private val headListener = object : ReleaseHeadDelegate.Listener {
 
         override fun onClickSomeLink(url: String): Boolean {
             val handled = presenter.onClickLink(url)
@@ -473,16 +484,86 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             return true
         }
 
-        override fun onClickDonate() {
-            presenter.onClickDonate()
+        override fun onClickTorrent() {
+            presenter.onTorrentClick()
+        }
+
+        override fun onClickTag(text: String) {
+            presenter.openSearch(text)
         }
 
         override fun onClickWatchWeb() {
             presenter.onClickWatchWeb()
         }
 
+        override fun onClickFav() {
+            presenter.onClickFav()
+        }
+
         override fun onScheduleClick(day: Int) {
             presenter.onScheduleClick(day)
         }
     }
+
+    private val episodeListener = object : ReleaseEpisodeDelegate.Listener {
+
+        override fun onClickSd(episode: ReleaseFull.Episode) {
+            presenter.onPlayEpisodeClick(
+                episode,
+                MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
+                MyPlayerActivity.VAL_QUALITY_SD
+            )
+        }
+
+        override fun onClickHd(episode: ReleaseFull.Episode) {
+            presenter.onPlayEpisodeClick(
+                episode,
+                MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
+                MyPlayerActivity.VAL_QUALITY_HD
+            )
+        }
+
+        override fun onClickFullHd(episode: ReleaseFull.Episode) {
+            presenter.onPlayEpisodeClick(
+                episode,
+                MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
+                MyPlayerActivity.VAL_QUALITY_FULL_HD
+            )
+        }
+
+        override fun onClickEpisode(episode: ReleaseFull.Episode) {
+            presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+        }
+
+        override fun onLongClickEpisode(episode: ReleaseFull.Episode) {
+            presenter.onLongClickEpisode(episode)
+        }
+    }
+
+    private val episodeControlListener = object : ReleaseEpisodeControlDelegate.Listener {
+
+        override fun onClickWatchWeb(place: EpisodeControlPlace) {
+            presenter.onClickWatchWeb(place)
+        }
+
+        override fun onClickWatchAll(place: EpisodeControlPlace) {
+            presenter.onPlayAllClick(place)
+        }
+
+        override fun onClickContinue(place: EpisodeControlPlace) {
+            presenter.onClickContinue(place)
+        }
+
+        override fun onClickEpisodesMenu(place: EpisodeControlPlace) {
+            presenter.onClickEpisodesMenu(place)
+        }
+    }
+
+    private val donateListener = object : ReleaseDonateDelegate.Listener {
+
+        override fun onClickDonate() {
+            presenter.onClickDonate()
+        }
+    }
+
 }

@@ -6,12 +6,10 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
+import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.AuthMainAnalytics
-import ru.radiationx.data.analytics.features.CatalogAnalytics
-import ru.radiationx.data.analytics.features.ScheduleAnalytics
-import ru.radiationx.data.analytics.features.WebPlayerAnalytics
+import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -40,7 +38,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
-    private val webPlayerAnalytics: WebPlayerAnalytics
+    private val webPlayerAnalytics: WebPlayerAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -130,6 +129,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun markEpisodeUnviewed(episode: ReleaseFull.Episode) {
+        releaseAnalytics.historyResetEpisode()
         episode.isViewed = false
         episode.lastAccess = 0
         releaseInteractor.putEpisode(episode)
@@ -144,7 +144,7 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
-    fun onClickWatchWeb() {
+    fun onClickWatchWeb(place: EpisodeControlPlace) {
         currentData?.let { release ->
             release.moonwalkLink?.let {
                 viewState.playWeb(it, release.code.orEmpty())
@@ -152,13 +152,13 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
-    fun onPlayAllClick() {
+    fun onPlayAllClick(place: EpisodeControlPlace) {
         currentData?.let {
             viewState.playEpisodes(it)
         }
     }
 
-    fun onClickContinue() {
+    fun onClickContinue(place: EpisodeControlPlace) {
         currentData?.also { release ->
             Log.e("jojojo", release.episodes.joinToString { "${it.id}=>${it.lastAccess}" })
             release.episodes.asReversed().maxBy { it.lastAccess }?.let { episode ->
@@ -167,7 +167,7 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
-    fun onClickEpisodesMenu() {
+    fun onClickEpisodesMenu(place: EpisodeControlPlace) {
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
@@ -262,12 +262,14 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onResetEpisodesHistoryClick() {
+        releaseAnalytics.historyReset()
         currentData?.also {
             releaseInteractor.resetEpisodesHistory(it.id)
         }
     }
 
     fun onCheckAllEpisodesHistoryClick() {
+        releaseAnalytics.historyViewAll()
         currentData?.also {
             it.episodes.forEach {
                 it.isViewed = true

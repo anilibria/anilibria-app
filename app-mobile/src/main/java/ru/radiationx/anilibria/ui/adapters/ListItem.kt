@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
@@ -43,7 +44,12 @@ class ReleaseListItem(val item: ReleaseItem) : ListItem()
 class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean) : ListItem()
 class ReleaseTorrentListItem(val item: TorrentItem) : ListItem()
 class ReleaseExpandListItem(val title: String) : ListItem()
-class ReleaseEpisodeControlItem(val item: ReleaseFull, val hasWeb: Boolean) : ListItem()
+class ReleaseEpisodeControlItem(
+    val item: ReleaseFull,
+    val hasWeb: Boolean,
+    val place: EpisodeControlPlace
+) : ListItem()
+
 class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
 class ReleaseDonateListItem : ListItem()
 class ReleaseRemindListItem(val item: String) : ListItem()
@@ -63,6 +69,12 @@ class SocialAuthListItem(val item: SocialAuth) : ListItem()
 
 class FeedScheduleListItem(val item: ScheduleItem) : ListItem()
 class FeedSchedulesListItem(val items: List<ScheduleItem>) : ListItem()
-class FeedSectionListItem(var title: String, val route: String? = null, val hasBg: Boolean = false, val center: Boolean = false) : ListItem()
+class FeedSectionListItem(
+    var title: String,
+    val route: String? = null,
+    val hasBg: Boolean = false,
+    val center: Boolean = false
+) : ListItem()
+
 class FeedListItem(val item: FeedItem) : ListItem()
 class FeedRandomBtnListItem : ListItem()

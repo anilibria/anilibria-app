@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.shared_app.di.injectDependencies
@@ -16,6 +17,10 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.SettingsAnalytics
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -40,16 +45,55 @@ class SettingsFragment : BaseSettingFragment() {
     @Inject
     lateinit var errorHandler: IErrorHandler
 
+    @Inject
+    lateinit var settingsAnalytics: SettingsAnalytics
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
+
+        findPreference<SwitchPreferenceCompat>("notifications.all")?.apply {
+            setOnPreferenceChangeListener { preference, newValue ->
+                (newValue as? Boolean)?.also(settingsAnalytics::notificationMainChange)
+                return@setOnPreferenceChangeListener true
+            }
+        }
+
+        findPreference<SwitchPreferenceCompat>("notifications.service")?.apply {
+            setOnPreferenceChangeListener { preference, newValue ->
+                (newValue as? Boolean)?.also(settingsAnalytics::notificationSystemChange)
+                return@setOnPreferenceChangeListener true
+            }
+        }
+
+        findPreference<SwitchPreferenceCompat>("app_theme_dark")?.apply {
+            setOnPreferenceChangeListener { preference, newValue ->
+                (newValue as? Boolean)?.also { isDark ->
+                    val theme = if (isDark) {
+                        AnalyticsAppTheme.DARK
+                    } else {
+                        AnalyticsAppTheme.LIGHT
+                    }
+                    settingsAnalytics.themeChange(theme)
+                }
+                return@setOnPreferenceChangeListener true
+            }
+        }
+
+        findPreference<SwitchPreferenceCompat>("episodes_is_reverse")?.apply {
+            setOnPreferenceChangeListener { preference, newValue ->
+                (newValue as? Boolean)?.also(settingsAnalytics::episodesOrderChange)
+                return@setOnPreferenceChangeListener true
+            }
+        }
 
         findPreference<Preference>("quality")?.apply {
             val savedQuality = appPreferences.getQuality()
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
+                settingsAnalytics.qualityClick()
                 val values = arrayOf(
                     PreferencesHolder.QUALITY_SD,
                     PreferencesHolder.QUALITY_HD,
@@ -62,6 +106,7 @@ class SettingsFragment : BaseSettingFragment() {
                     .setTitle(preference.title)
                     .setItems(titles) { _, which ->
                         val quality = values[which]
+                        settingsAnalytics.qualityChange(quality.toAnalyticsQuality())
                         appPreferences.setQuality(quality)
                         icon = getQualityIcon(quality)
                         summary = getQualityTitle(quality)
@@ -76,6 +121,7 @@ class SettingsFragment : BaseSettingFragment() {
             icon = this.context.getCompatDrawable(R.drawable.ic_play_circle_outline)
             summary = getPlayerTypeTitle(savedPlayerType)
             setOnPreferenceClickListener { preference ->
+                settingsAnalytics.playerClick()
                 val values = arrayOf(
                     PreferencesHolder.PLAYER_TYPE_EXTERNAL,
                     PreferencesHolder.PLAYER_TYPE_INTERNAL,
@@ -87,6 +133,7 @@ class SettingsFragment : BaseSettingFragment() {
                     .setTitle(preference.title)
                     .setItems(titles) { dialog, which ->
                         val playerType = values[which]
+                        settingsAnalytics.playerChange(playerType.toAnalyticsPlayer())
                         appPreferences.setPlayerType(playerType)
                         summary = getPlayerTypeTitle(playerType)
                     }
@@ -107,6 +154,7 @@ class SettingsFragment : BaseSettingFragment() {
         findPreference<Preference>("about.app_other_apps")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
             setOnPreferenceClickListener {
+                settingsAnalytics.otherAppsClick()
                 Utils.externalLink("https://anilibria.app/")
                 false
             }
@@ -115,6 +163,7 @@ class SettingsFragment : BaseSettingFragment() {
         findPreference<Preference>("about.app_topic_4pda")?.apply {
             icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
             setOnPreferenceClickListener {
+                settingsAnalytics.fourPdaClick()
                 Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
                 false
             }
@@ -130,6 +179,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
+                settingsAnalytics.checkUpdatesClick()
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)
                 })

@@ -8,10 +8,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
-import ru.radiationx.data.analytics.features.AuthMainAnalytics
-import ru.radiationx.data.analytics.features.HistoryAnalytics
-import ru.radiationx.data.analytics.features.OtherAnalytics
+import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.other.LinkMenuItem
@@ -34,7 +31,8 @@ class OtherPresenter @Inject constructor(
     private val authDeviceAnalytics: AuthDeviceAnalytics,
     private val authMainAnalytics: AuthMainAnalytics,
     private val historyAnalytics: HistoryAnalytics,
-    private val otherAnalytics: OtherAnalytics
+    private val otherAnalytics: OtherAnalytics,
+    private val settingsAnalytics: SettingsAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -124,6 +122,7 @@ class OtherPresenter @Inject constructor(
                 router.navigateTo(Screens.Settings())
             }
             MENU_OTP_CODE -> {
+                settingsAnalytics.open(AnalyticsConstants.screen_other)
                 otherAnalytics.authDeviceClick()
                 authDeviceAnalytics.open(AnalyticsConstants.screen_other)
                 viewState.showOtpCode()

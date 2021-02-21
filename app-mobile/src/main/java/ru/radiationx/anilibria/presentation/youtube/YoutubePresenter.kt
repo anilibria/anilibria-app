@@ -4,6 +4,8 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.terrakok.cicerone.Router
@@ -13,7 +15,8 @@ import javax.inject.Inject
 class YoutubePresenter @Inject constructor(
         private val youtubeRepository: YoutubeRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val youtubeAnalytics: YoutubeAnalytics
 ) : BasePresenter<YoutubeView>(router) {
 
     companion object {
@@ -65,6 +68,7 @@ class YoutubePresenter @Inject constructor(
     }
 
     fun onItemClick(item: YoutubeItem) {
+        youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, item.id, item.vid)
         Utils.externalLink(item.link)
     }
 

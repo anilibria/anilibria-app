@@ -12,7 +12,7 @@ class YoutubeAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun openVideo(from: String, id: Int, vid: String) {
+    fun openVideo(from: String, id: Int, vid: String?) {
         sender.send(
             AnalyticsConstants.youtube_video_open,
             from.toNavFromParam(),

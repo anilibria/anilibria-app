@@ -226,6 +226,12 @@ object AnalyticsConstants {
     const val updater_source_download = "updater_source_download"
     const val updater_use_time = "updater_use_time"
 
+    /* Static Page */
+    const val page_open = "page_open"
+    const val page_loaded = "page_loaded"
+    const val page_error = "page_error"
+    const val page_use_time = "page_use_time"
+
     /*
     * Глобально добавить в профиль пользователя текущий adresss
     * Глобально добавить в профиль темную тему

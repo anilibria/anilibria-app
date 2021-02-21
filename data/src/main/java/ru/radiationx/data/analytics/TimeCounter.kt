@@ -18,6 +18,8 @@ class TimeCounter {
     }
 
     fun resume() {
+        val delta = getDelta() ?: 0L
+        counted += delta
         lastTime = SystemClock.elapsedRealtime()
     }
 

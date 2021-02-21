@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments.page
 
+import android.net.http.SslError
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.webkit.*
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_webview.*
@@ -17,12 +20,15 @@ import ru.radiationx.anilibria.presentation.page.PageView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.page.PageLibria
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
+import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import java.util.*
 import javax.inject.Inject
@@ -43,6 +49,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
+    private val useTimeCounter = TimeCounter()
+
     private var pageTitle: String? = null
 
     @Inject
@@ -50,6 +58,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @Inject
     lateinit var apiConfig: ApiConfig
+
+    @Inject
+    lateinit var pageAnalytics: PageAnalytics
 
     private val disposables = CompositeDisposable()
 
@@ -74,6 +85,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        useTimeCounter.start()
 
         //ToolbarHelper.setTransparent(toolbar, appbarLayout)
         //ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
@@ -92,6 +104,44 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
         webView.setJsLifeCycleListener(this)
 
+        webView.webViewClient = object :WebViewClient(){
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                pageAnalytics.loaded()
+            }
+
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                super.onReceivedSslError(view, handler, error)
+                pageAnalytics.error(error.toException())
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    pageAnalytics.error(errorResponse.toException())
+                }
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                super.onReceivedError(view, request, error)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    pageAnalytics.error(error.toException())
+                }
+            }
+        }
+
         savedInstanceState?.let {
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
@@ -108,6 +158,16 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         )
     }
 
+    override fun onStart() {
+        super.onStart()
+        useTimeCounter.resume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        useTimeCounter.pause()
+    }
+
     override fun onResume() {
         super.onResume()
         webView?.onResume()
@@ -120,6 +180,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     override fun onDestroy() {
         super.onDestroy()
+        pageAnalytics.useTime(useTimeCounter.elapsed())
         disposables.dispose()
     }
 

@@ -32,7 +32,8 @@ class OtherPresenter @Inject constructor(
     private val authMainAnalytics: AuthMainAnalytics,
     private val historyAnalytics: HistoryAnalytics,
     private val otherAnalytics: OtherAnalytics,
-    private val settingsAnalytics: SettingsAnalytics
+    private val settingsAnalytics: SettingsAnalytics,
+    private val pageAnalytics: PageAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -111,6 +112,7 @@ class OtherPresenter @Inject constructor(
             }
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
+                pageAnalytics.open(AnalyticsConstants.screen_other, PageApi.PAGE_PATH_TEAM)
                 router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
             }
             MENU_DONATE -> {
@@ -134,7 +136,10 @@ class OtherPresenter @Inject constructor(
                     val pagePath = linkItem.sitePagePath
                     when {
                         absoluteLink != null -> Utils.externalLink(absoluteLink)
-                        pagePath != null -> router.navigateTo(Screens.StaticPage(pagePath))
+                        pagePath != null -> {
+                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath)
+                            router.navigateTo(Screens.StaticPage(pagePath))
+                        }
                     }
                 }
             }

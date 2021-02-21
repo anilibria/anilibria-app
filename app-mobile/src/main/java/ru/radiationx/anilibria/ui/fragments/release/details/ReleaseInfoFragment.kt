@@ -330,6 +330,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun playWeb(link: String, code: String) {
+        presenter.onWebPlayerClick()
         startActivity(Intent(context, WebPlayerActivity::class.java).apply {
             putExtra(WebPlayerActivity.ARG_URL, link)
             putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)

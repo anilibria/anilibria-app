@@ -11,6 +11,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
+import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -38,7 +39,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val apiConfig: ApiConfig,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
-    private val scheduleAnalytics: ScheduleAnalytics
+    private val scheduleAnalytics: ScheduleAnalytics,
+    private val webPlayerAnalytics: WebPlayerAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -272,6 +274,10 @@ class ReleaseInfoPresenter @Inject constructor(
             }
             releaseInteractor.putEpisodes(it.episodes)
         }
+    }
+
+    fun onWebPlayerClick(){
+        webPlayerAnalytics.open(AnalyticsConstants.screen_release, releaseId)
     }
 
 }

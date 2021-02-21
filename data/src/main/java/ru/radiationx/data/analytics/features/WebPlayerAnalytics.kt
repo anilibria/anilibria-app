@@ -3,6 +3,7 @@ package ru.radiationx.data.analytics.features
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toErrorParam
+import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import toothpick.InjectConstructor
@@ -12,10 +13,11 @@ class WebPlayerAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun open(from: String) {
+    fun open(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.web_player_open,
-            from.toNavFromParam()
+            from.toNavFromParam(),
+            releaseId.toIdParam()
         )
     }
 

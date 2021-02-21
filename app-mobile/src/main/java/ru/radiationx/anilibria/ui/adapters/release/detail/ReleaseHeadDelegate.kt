@@ -145,6 +145,7 @@ class ReleaseHeadDelegate(
 
         fun updateDescription(isExpanded: Boolean = false) {
             full_description?.also {
+                itemListener.onExpandStateChanged(isExpanded)
                 full_description_expander.visible(it.lineCount > it.maxLines)
                 full_description_expander.text = if (isExpanded) {
                     "Скрыть"
@@ -184,5 +185,7 @@ class ReleaseHeadDelegate(
         fun onClickFav()
 
         fun onScheduleClick(day: Int)
+
+        fun onExpandStateChanged(isExpanded:Boolean)
     }
 }

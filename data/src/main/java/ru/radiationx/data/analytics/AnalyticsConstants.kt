@@ -87,7 +87,7 @@ object AnalyticsConstants {
     const val release_genre_click = "release_genre_click"
     const val release_favorite_add = "release_favorite_add"
     const val release_favorite_remove = "release_favorite_remove"
-    const val release_comments_open = "release_comments_open"
+    const val release_comments_click = "release_comments_click"
 
     /* Youtube Videos */
     const val youtube_videos_open = "youtube_videos_open"

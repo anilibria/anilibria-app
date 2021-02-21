@@ -20,7 +20,8 @@ class ReleaseInfoAdapter(
     private val episodeListener: ReleaseEpisodeDelegate.Listener,
     private val episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
     private val donateListener: ReleaseDonateDelegate.Listener,
-    private val torrentClickListener: (TorrentItem) -> Unit
+    private val torrentClickListener: (TorrentItem) -> Unit,
+    private val commentsClickListener: () -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
@@ -78,7 +79,7 @@ class ReleaseInfoAdapter(
         addDelegate(ReleaseDonateDelegate(donateListener))
         addDelegate(ReleaseRemindDelegate(remindCloseListener))
         addDelegate(ReleaseBlockedDelegate())
-        addDelegate(CommentRouteDelegate())
+        addDelegate(CommentRouteDelegate(commentsClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(VitalWebItemDelegate(true))
         addDelegate(VitalNativeItemDelegate(true))

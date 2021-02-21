@@ -62,35 +62,35 @@ class ReleaseAnalytics(
         sender.send(AnalyticsConstants.release_history_reset_episode)
     }
 
-    fun episodesTopStart(releaseId: Int) {
+    fun episodesTopStartClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_top_start,
             releaseId.toIdParam()
         )
     }
 
-    fun episodesTopContinue(releaseId: Int) {
+    fun episodesTopContinueClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_top_continue,
             releaseId.toIdParam()
         )
     }
 
-    fun episodesStart(releaseId: Int) {
+    fun episodesStartClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_start,
             releaseId.toIdParam()
         )
     }
 
-    fun episodesContinue(releaseId: Int) {
+    fun episodesContinueClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episodes_continue,
             releaseId.toIdParam()
         )
     }
 
-    fun episodePlay(quality: AnalyticsQuality, releaseId: Int) {
+    fun episodePlayClick(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_play,
             quality.toQualityParam(),
@@ -98,7 +98,7 @@ class ReleaseAnalytics(
         )
     }
 
-    fun episodeDownload(quality: AnalyticsQuality, releaseId: Int) {
+    fun episodeDownloadClick(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_download,
             quality.toQualityParam(),
@@ -128,8 +128,11 @@ class ReleaseAnalytics(
         )
     }
 
-    fun descriptionExpand() {
-        sender.send(AnalyticsConstants.release_description_expand)
+    fun descriptionExpand(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_description_expand,
+            releaseId.toIdParam()
+        )
     }
 
     fun descriptionLinkClick(releaseId: Int) {
@@ -167,9 +170,9 @@ class ReleaseAnalytics(
         )
     }
 
-    fun commentsOpen(releaseId: Int) {
+    fun commentsClick(releaseId: Int) {
         sender.send(
-            AnalyticsConstants.release_comments_open,
+            AnalyticsConstants.release_comments_click,
             releaseId.toIdParam()
         )
     }

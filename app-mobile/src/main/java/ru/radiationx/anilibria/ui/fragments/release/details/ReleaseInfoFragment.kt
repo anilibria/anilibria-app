@@ -53,9 +53,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             episodeListener = episodeListener,
             episodeControlListener = episodeControlListener,
             donateListener = donateListener,
-            torrentClickListener = {
-                loadTorrent(it)
-            }
+            torrentClickListener = presenter::onTorrentClick,
+            commentsClickListener = presenter::onCommentsClick
         )
     }
 
@@ -477,10 +476,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     private val headListener = object : ReleaseHeadDelegate.Listener {
 
         override fun onClickSomeLink(url: String): Boolean {
-            val handled = presenter.onClickLink(url)
-            if (!handled) {
-                Utils.externalLink(url)
-            }
+            presenter.onClickLink(url)
             return true
         }
 
@@ -493,7 +489,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
 
         override fun onClickWatchWeb() {
-            presenter.onClickWatchWeb()
+            presenter.onClickWatchWeb(EpisodeControlPlace.BOTTOM)
         }
 
         override fun onClickFav() {
@@ -502,6 +498,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
         override fun onScheduleClick(day: Int) {
             presenter.onScheduleClick(day)
+        }
+
+        override fun onExpandStateChanged(isExpanded: Boolean) {
+            presenter.onDescriptionExpandChanged(isExpanded)
         }
     }
 

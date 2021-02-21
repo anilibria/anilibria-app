@@ -20,7 +20,7 @@ import ru.radiationx.shared.ktx.android.visible
  * Created by radiationx on 13.01.18.
  */
 class FeedScheduleDelegate(
-        private val clickListener: (ScheduleItem, View) -> Unit
+        private val clickListener: (ScheduleItem, View,Int) -> Unit
 ) : AppAdapterDelegate<FeedScheduleListItem, ListItem, FeedScheduleDelegate.ViewHolder>(
         R.layout.item_feed_schedule,
         { it is FeedScheduleListItem },
@@ -32,14 +32,14 @@ class FeedScheduleDelegate(
 
     class ViewHolder(
             override val containerView: View,
-            private val clickListener: (ScheduleItem, View) -> Unit
+            private val clickListener: (ScheduleItem, View,Int) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ScheduleItem
 
         init {
             containerView.setOnClickListener {
-                clickListener.invoke(currentItem, item_image)
+                clickListener.invoke(currentItem, item_image, adapterPosition)
             }
             val gradientDrawable = GradientDrawable(
                     GradientDrawable.Orientation.TOP_BOTTOM,

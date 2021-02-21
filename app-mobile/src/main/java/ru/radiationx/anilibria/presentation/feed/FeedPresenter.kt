@@ -9,12 +9,15 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
+import ru.radiationx.data.analytics.features.FeedAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
@@ -33,10 +36,13 @@ class FeedPresenter @Inject constructor(
         private val releaseUpdateHolder: ReleaseUpdateHolder,
         private val router: Router,
         private val errorHandler: IErrorHandler,
-        private val fastSearchAnalytics: FastSearchAnalytics
+        private val fastSearchAnalytics: FastSearchAnalytics,
+        private val feedAnalytics: FeedAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private var randomDisposable = Disposables.disposed()
+
+    private var lastLoadedPage:Int?=null
 
     private val currentItems = mutableListOf<FeedItem>()
 
@@ -83,6 +89,10 @@ class FeedPresenter @Inject constructor(
     })
 
     private fun loadFeed(page: Int): Single<List<FeedItem>> {
+        if(lastLoadedPage!=page){
+            feedAnalytics.loadPage(page)
+            lastLoadedPage=page
+        }
         return if (page == Paginator.FIRST_PAGE) {
             Single
                     .zip(
@@ -158,15 +168,32 @@ class FeedPresenter @Inject constructor(
         paginator.release()
     }
 
-    fun onItemClick(item: ReleaseItem) {
+    fun onScheduleScroll(position: Int){
+        feedAnalytics.scheduleHorizontalScroll(position)
+    }
+
+    fun onScheduleItemClick(item: ReleaseItem,position:Int) {
+        feedAnalytics.scheduleReleaseClick(position)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
+    fun onItemClick(item: ReleaseItem) {
+        feedAnalytics.releaseClick()
+        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+    }
+
+    fun onYoutubeClick(youtubeItem:YoutubeItem){
+        feedAnalytics.youtubeClick()
+        Utils.externalLink(youtubeItem.link)
+    }
+
     fun onSchedulesClick() {
+        feedAnalytics.scheduleClick()
         router.navigateTo(Screens.Schedule())
     }
 
     fun onRandomClick() {
+        feedAnalytics.randomClick()
         if (!randomDisposable.isDisposed) {
             return
         }

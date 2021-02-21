@@ -20,11 +20,12 @@ import ru.radiationx.data.entity.app.youtube.YoutubeItem
 class FeedAdapter(
         val loadMoreListener: () -> Unit,
         schedulesClickListener: () -> Unit,
+        scheduleScrollListener:(Int)->Unit,
         randomClickListener: () -> Unit,
         releaseClickListener: (ReleaseItem, View) -> Unit,
         releaseLongClickListener: (ReleaseItem, View) -> Unit,
         youtubeClickListener: (YoutubeItem, View) -> Unit,
-        scheduleClickListener: (ScheduleItem, View) -> Unit
+        scheduleClickListener: (ScheduleItem, View, Int) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val scheduleSection = FeedSectionListItem("Ожидаются", "Расписание")
@@ -42,7 +43,7 @@ class FeedAdapter(
             override fun onLoadMore() {}
         }))
         addDelegate(FeedSectionDelegate(sectionClickListener))
-        addDelegate(FeedSchedulesDelegate(scheduleClickListener))
+        addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))

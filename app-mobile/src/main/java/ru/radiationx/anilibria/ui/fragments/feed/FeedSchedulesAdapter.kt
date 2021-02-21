@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 
 class FeedSchedulesAdapter(
-        private val clickListener: (ScheduleItem, View) -> Unit
+        private val clickListener: (ScheduleItem, View, Int) -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     init {

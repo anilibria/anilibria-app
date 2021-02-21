@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedules.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.addItemsPositionListener
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -20,7 +21,8 @@ import ru.radiationx.shared.ktx.android.inflate
  * Created by radiationx on 13.01.18.
  */
 class FeedSchedulesDelegate(
-        private val clickListener: (ScheduleItem, View) -> Unit
+        private val clickListener: (ScheduleItem, View, Int) -> Unit,
+        private val scrollListener:(Int)->Unit
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
         R.layout.item_feed_schedules,
         { it is FeedSchedulesListItem },
@@ -36,13 +38,15 @@ class FeedSchedulesDelegate(
         return ViewHolder(
                 parent.inflate(layoutRes!!, false),
                 clickListener,
+            scrollListener,
                 viewPool
         )
     }
 
     class ViewHolder(
             override val containerView: View,
-            private val clickListener: (ScheduleItem, View) -> Unit,
+            private val clickListener: (ScheduleItem, View, Int) -> Unit,
+            private val scrollListener:(Int)->Unit,
             private val viewPool: RecyclerView.RecycledViewPool? = null
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
 
@@ -57,6 +61,9 @@ class FeedSchedulesDelegate(
                 adapter = scheduleAdapter
                 viewPool?.also {
                     setRecycledViewPool(it)
+                }
+                addItemsPositionListener { first, last ->
+
                 }
             }
         }

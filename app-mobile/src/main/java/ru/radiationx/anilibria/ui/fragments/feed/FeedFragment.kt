@@ -47,6 +47,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         presenter.loadMore()
     }, schedulesClickListener = {
         presenter.onSchedulesClick()
+    }, scheduleScrollListener = {position->
+       presenter.onScheduleScroll(position)
     }, randomClickListener = {
         presenter.onRandomClick()
     }, releaseClickListener = { releaseItem, view ->
@@ -55,10 +57,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     }, releaseLongClickListener = { releaseItem, view ->
         releaseOnLongClick(releaseItem)
     }, youtubeClickListener = { youtubeItem, view ->
-        Utils.externalLink(youtubeItem.link)
-    }, scheduleClickListener = { feedScheduleItem, view ->
+        presenter.onYoutubeClick(youtubeItem)
+    }, scheduleClickListener = { feedScheduleItem, view, position->
         this.sharedViewLocal = view
-        presenter.onItemClick(feedScheduleItem.releaseItem)
+        presenter.onScheduleItemClick(feedScheduleItem.releaseItem, position)
     })
 
     @Inject

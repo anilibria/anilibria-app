@@ -10,13 +10,14 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 
 class ScheduleAdapter(
-        scheduleClickListener: (ScheduleItem, View) -> Unit
+        scheduleClickListener: (ScheduleItem, View, Int) -> Unit,
+        scrollListener:(Int)->Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     init {
         items = mutableListOf()
         addDelegate(FeedSectionDelegate({}))
-        addDelegate(FeedSchedulesDelegate(scheduleClickListener))
+        addDelegate(FeedSchedulesDelegate(scheduleClickListener,scrollListener))
     }
 
     fun bindItems(newItems: List<Pair<String, List<ScheduleItem>>>) {

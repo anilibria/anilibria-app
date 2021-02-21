@@ -28,10 +28,15 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         }
     }
 
-    private val scheduleAdapter = ScheduleAdapter { item, view ->
-        this.sharedViewLocal = view
-        presenter.onItemClick(item.releaseItem)
-    }
+    private val scheduleAdapter = ScheduleAdapter(
+        scheduleClickListener = { item, view, position->
+            this.sharedViewLocal = view
+            presenter.onItemClick(item.releaseItem)
+        },
+        scrollListener = {position->
+
+        }
+    )
 
     @InjectPresenter
     lateinit var presenter: SchedulePresenter

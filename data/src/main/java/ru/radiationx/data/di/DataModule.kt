@@ -124,6 +124,7 @@ class DataModule(context: Context) : Module() {
 
         /* Analytics */
         bind(AnalyticsProfileDataSource::class.java).singleton()
+        bind(AppAnalytics::class.java).singleton()
         bind(AuthDeviceAnalytics::class.java).singleton()
         bind(AuthMainAnalytics::class.java).singleton()
         bind(AuthSocialAnalytics::class.java).singleton()

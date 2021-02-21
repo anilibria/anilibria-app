@@ -22,6 +22,8 @@ fun Int?.toPositionParam(name: String = "position") = Pair(name, this.toString()
 
 fun Long?.toTimeParam(name: String = "time") = Pair(name, this?.toSecondsString().toString())
 
+fun Long?.toPreciseTimeParam(name: String = "time") = Pair(name, this?.toPreciseSecondsString().toString())
+
 fun Throwable?.toErrorParam(name: String = "error") = Pair(name, this.toString())
 
 fun AnalyticsConfigState?.toStateParam(name: String = "state") = Pair(name, this.toString())
@@ -41,6 +43,11 @@ fun AnalyticsSeasonFinishAction?.toActionParam(name: String = "action") =
     Pair(name, this?.value.toString())
 
 fun AnalyticsAppTheme?.toThemeParam(name: String = "theme") = Pair(name, this?.value.toString())
+
+fun Long.toPreciseSecondsString(): String {
+    val timeInSeconds = this / 1000f
+    return "%.2f".format(Locale.US, timeInSeconds)
+}
 
 fun Long.toSecondsString(): String {
     val timeInSeconds = this / 1000f

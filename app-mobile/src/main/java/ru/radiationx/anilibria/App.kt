@@ -1,10 +1,13 @@
 package ru.radiationx.anilibria
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
@@ -21,11 +24,14 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -35,6 +41,7 @@ import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
+
     companion object {
 
         init {
@@ -44,6 +51,10 @@ class App : Application() {
         lateinit var instance: App
             private set
 
+    }
+
+    private val timeCounter = TimeCounter().apply {
+        start()
     }
 
     private var messengerDisposable = Disposables.disposed()
@@ -73,11 +84,25 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        val timeToCreate = timeCounter.elapsed()
         instance = this
         initYandexAppMetrica()
 
         if (isMainProcess()) {
             initInMainProcess()
+            val timeToInit = timeCounter.elapsed()
+            val appAnalytics = DI.get(AppAnalytics::class.java)
+            appAnalytics.timeToCreate(timeToCreate)
+            appAnalytics.timeToInit(timeToInit)
+
+            registerActivityLifecycleCallbacks(object :SimpleActivityLifecycleCallbacks(){
+                override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
+                    super.onActivityCreated(p0, p1)
+                    val timeToActivity = timeCounter.elapsed()
+                    appAnalytics.timeToActivity(timeToActivity)
+                    unregisterActivityLifecycleCallbacks(this)
+                }
+            })
         }
     }
 

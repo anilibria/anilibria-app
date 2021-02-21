@@ -31,6 +31,11 @@ object AnalyticsConstants {
     const val link_router = "link_router"
 
 
+    /* App */
+    const val app_time_to_create = "app_time_to_create"
+    const val app_time_to_init = "app_time_to_init"
+    const val app_time_to_activity = "app_time_to_activity"
+
     /* Configuring */
     const val config_open = "config_open"
     const val config_check_full = "config_check_full"

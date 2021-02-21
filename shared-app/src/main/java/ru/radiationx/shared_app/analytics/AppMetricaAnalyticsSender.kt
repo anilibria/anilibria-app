@@ -9,7 +9,6 @@ import toothpick.InjectConstructor
 class AppMetricaAnalyticsSender : AnalyticsSender {
     override fun send(key: String, vararg params: Pair<String, String>) {
         try {
-            Log.d("AnalyticsSender", "key: $key, params: ${params.toMap()}")
             YandexMetrica.reportEvent(key, params.toMap())
         } catch (e: Throwable) {
             e.printStackTrace()

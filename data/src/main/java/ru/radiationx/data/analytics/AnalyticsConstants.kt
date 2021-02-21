@@ -136,6 +136,7 @@ object AnalyticsConstants {
     const val history_search_click = "history_search_click"
     const val history_search_release_click = "history_search_release_click"
     const val history_release_click = "history_release_click"
+    const val history_release_delete_click = "history_release_delete_click"
 
     /* Settings */
     const val settings_open = "settings_open"

@@ -86,6 +86,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
             add("Поиск")
                     .setIcon(R.drawable.ic_toolbar_search)
                     .setOnMenuItemClickListener {
+                        presenter.onSearchClick()
                         searchView?.requestFocus(it)
                         false
                     }

@@ -25,6 +25,10 @@ class HistoryAnalytics(
         sender.send(AnalyticsConstants.history_search_release_click)
     }
 
+    fun releaseDeleteClick() {
+        sender.send(AnalyticsConstants.history_release_delete_click)
+    }
+
     fun releaseClick() {
         sender.send(AnalyticsConstants.history_release_click)
     }

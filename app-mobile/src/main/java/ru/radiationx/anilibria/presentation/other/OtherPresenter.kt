@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
+import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.other.LinkMenuItem
@@ -30,7 +31,8 @@ class OtherPresenter @Inject constructor(
     private val apiConfig: ApiConfig,
     private val menuRepository: MenuRepository,
     private val authDeviceAnalytics: AuthDeviceAnalytics,
-    private val authMainAnalytics: AuthMainAnalytics
+    private val authMainAnalytics: AuthMainAnalytics,
+    private val historyAnalytics: HistoryAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -99,7 +101,10 @@ class OtherPresenter @Inject constructor(
 
     fun onMenuClick(item: OtherMenuItem) {
         when (item.id) {
-            MENU_HISTORY -> router.navigateTo(Screens.History())
+            MENU_HISTORY -> {
+                historyAnalytics.open(AnalyticsConstants.screen_other)
+                router.navigateTo(Screens.History())
+            }
             MENU_TEAM -> router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
             MENU_DONATE -> Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
             MENU_SETTINGS -> router.navigateTo(Screens.Settings())

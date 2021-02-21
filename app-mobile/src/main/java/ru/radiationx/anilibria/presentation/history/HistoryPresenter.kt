@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.presentation.history
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -14,10 +15,13 @@ import javax.inject.Inject
 @InjectViewState
 class HistoryPresenter @Inject constructor(
         private val router: Router,
-        private val historyRepository: HistoryRepository
+        private val historyRepository: HistoryRepository,
+        private val historyAnalytics: HistoryAnalytics
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<ReleaseItem>()
+
+    private var isSearchEnabled:Boolean = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -36,7 +40,8 @@ class HistoryPresenter @Inject constructor(
     }
 
     fun localSearch(query: String) {
-        if (!query.isEmpty()) {
+        isSearchEnabled = query.isNotEmpty()
+        if (query.isNotEmpty()) {
             val searchRes = currentReleases.filter {
                 it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
             }
@@ -47,11 +52,21 @@ class HistoryPresenter @Inject constructor(
     }
 
     fun onItemClick(item: ReleaseItem) {
+        if(isSearchEnabled){
+            historyAnalytics.searchReleaseClick()
+        }else{
+            historyAnalytics.releaseClick()
+        }
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
     fun onDeleteClick(item: ReleaseItem) {
+        historyAnalytics.releaseDeleteClick()
         historyRepository.removeRelease(item.id)
+    }
+
+    fun onSearchClick(){
+        historyAnalytics.searchClick()
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

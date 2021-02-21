@@ -1,6 +1,5 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.events
 
-import android.util.Log
 import com.yandex.metrica.YandexMetrica
 import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor

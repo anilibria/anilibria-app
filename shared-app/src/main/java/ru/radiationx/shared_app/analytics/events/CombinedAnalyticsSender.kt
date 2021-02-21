@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.events
 
 import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor

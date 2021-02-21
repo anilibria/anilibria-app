@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.events
 
 import android.util.Log
 import ru.radiationx.data.analytics.AnalyticsSender

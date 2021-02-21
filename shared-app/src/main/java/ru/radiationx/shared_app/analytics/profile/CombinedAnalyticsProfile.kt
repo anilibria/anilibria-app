@@ -1,6 +1,5 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.profile
 
-import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import toothpick.InjectConstructor
 

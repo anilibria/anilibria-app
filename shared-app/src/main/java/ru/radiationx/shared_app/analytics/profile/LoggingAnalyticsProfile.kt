@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.profile
 
 import android.util.Log
 import io.reactivex.Single
@@ -31,7 +31,8 @@ class LoggingAnalyticsProfile(
                 getAuthState().mapToAttr(ProfileConstants.auth_state),
                 getHistoryItemsCount().mapToAttr(ProfileConstants.history_count),
                 getEpisodesItemsCount().mapToAttr(ProfileConstants.episodes_count),
-                getDownloadsCount().mapToAttr(ProfileConstants.downloads_count)
+                getDownloadsCount().mapToAttr(ProfileConstants.downloads_count),
+                getAppVersionsHistory().mapToAttr(ProfileConstants.app_versions)
             )
         }
         val ignoreDisposable = Single

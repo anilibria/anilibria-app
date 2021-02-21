@@ -6,6 +6,7 @@ import ru.radiationx.data.analytics.features.model.*
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.migration.MigrationDataSource
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -16,7 +17,8 @@ class AnalyticsProfileDataSource(
     private val userHolder: UserHolder,
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
-    private val downloadsHolder: DownloadsHolder
+    private val downloadsHolder: DownloadsHolder,
+    private val migrationDataSource: MigrationDataSource
 ) {
 
     fun getApiAddressTag(): Single<String> = single {
@@ -69,6 +71,10 @@ class AnalyticsProfileDataSource(
 
     fun getDownloadsCount(): Single<Int> = single {
         downloadsHolder.getDownloads().size
+    }
+
+    fun getAppVersionsHistory(): Single<String> = single {
+        migrationDataSource.getHistory().joinToString()
     }
 
     private fun <T> single(callable: () -> T) = Single.fromCallable(callable)

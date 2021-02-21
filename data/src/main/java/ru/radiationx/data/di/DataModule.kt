@@ -20,6 +20,8 @@ import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
@@ -40,6 +42,8 @@ class DataModule(context: Context) : Module() {
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
         bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
             .toInstance(dataStoragePreferences)
+
+        bind(MigrationDataSource::class.java).to(MigrationDataSourceImpl::class.java).singleton()
 
         bind(PreferencesStorage::class.java).singleton()
 

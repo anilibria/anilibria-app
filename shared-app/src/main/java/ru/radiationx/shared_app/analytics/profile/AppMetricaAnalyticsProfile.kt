@@ -1,4 +1,4 @@
-package ru.radiationx.shared_app.analytics
+package ru.radiationx.shared_app.analytics.profile
 
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.profile.Attribute
@@ -34,7 +34,8 @@ class AppMetricaAnalyticsProfile(
                 getAuthState().mapStringAttr(ProfileConstants.auth_state),
                 getHistoryItemsCount().mapIntAttr(ProfileConstants.history_count),
                 getEpisodesItemsCount().mapIntAttr(ProfileConstants.episodes_count),
-                getDownloadsCount().mapIntAttr(ProfileConstants.downloads_count)
+                getDownloadsCount().mapIntAttr(ProfileConstants.downloads_count),
+                getAppVersionsHistory().mapStringAttr(ProfileConstants.app_versions)
             )
         }
 

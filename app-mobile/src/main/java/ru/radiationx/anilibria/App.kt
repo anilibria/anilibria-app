@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -28,6 +27,7 @@ import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
+import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
@@ -192,52 +192,8 @@ class App : Application() {
     }
 
     private fun appVersionCheck() {
-        try {
-            val prefKey = "app.versions.history"
-            val defaultPreferences = DI.get(SharedPreferences::class.java)
-            val history = defaultPreferences
-                .getString(prefKey, "")
-                ?.split(";")
-                ?.filter { it.isNotBlank() }
-                ?.map { it.toInt() }
-                ?: emptyList()
-
-
-            var lastAppCode = 0
-
-            var disorder = false
-            history.forEach {
-                if (it < lastAppCode) {
-                    disorder = true
-                }
-                lastAppCode = it
-            }
-            val currentAppCode = ("" + BuildConfig.VERSION_CODE).toInt()
-
-            if (lastAppCode < currentAppCode) {
-                if (lastAppCode > 0) {
-                    val appMigration = AppMigration(currentAppCode, lastAppCode, history)
-                    appMigration.start()
-                }
-
-                val list = history.map { it.toString() }.toMutableList()
-                list.add(currentAppCode.toString())
-                defaultPreferences
-                    .edit()
-                    .putString(prefKey, TextUtils.join(";", list))
-                    .apply()
-            }
-            if (disorder) {
-                val errMsg = "AniLibria: Нарушение порядка версий, программа может работать не стабильно!"
-                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            val errMsg = "Сбой при проверке локальной версии."
-            YandexMetrica.reportError(errMsg, ex)
-            val uiErr = "$errMsg\nПрограмма может работать не стабильно! Переустановите программу."
-            Toast.makeText(this, uiErr, Toast.LENGTH_LONG).show()
-        }
+        val migrationDataSource = DI.get(MigrationDataSource::class.java)
+        migrationDataSource.update()
     }
 
     private fun findTemplate(name: String): MiniTemplator? {

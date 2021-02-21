@@ -17,7 +17,9 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
+import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
@@ -47,6 +49,9 @@ class SettingsFragment : BaseSettingFragment() {
 
     @Inject
     lateinit var settingsAnalytics: SettingsAnalytics
+
+    @Inject
+    lateinit var updaterAnalytics: UpdaterAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -179,6 +184,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
+                updaterAnalytics.open(AnalyticsConstants.screen_settings)
                 settingsAnalytics.checkUpdatesClick()
                 startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
                     putExtra(UpdateCheckerActivity.ARG_FORCE, true)

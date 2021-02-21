@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
+import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
@@ -116,6 +117,7 @@ class NotificationService : FirebaseMessagingService() {
         return when (remote.type) {
             CUSTOM_TYPE_APP_UPDATE -> Intent(this, UpdateCheckerActivity::class.java).apply {
                 putExtra(UpdateCheckerActivity.ARG_FORCE, true)
+                putExtra(UpdateCheckerActivity.ARG_ANALYTICS_FROM, AnalyticsConstants.notification_push_update)
                 action = Intent.ACTION_VIEW
             }
             CUSTOM_TYPE_CONFIG -> Intent(this, MainActivity::class.java)

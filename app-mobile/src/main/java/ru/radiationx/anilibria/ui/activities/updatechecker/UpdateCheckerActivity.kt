@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
@@ -37,10 +38,14 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
         const val ARG_FORCE = "force"
+        const val ARG_ANALYTICS_FROM = "from"
     }
 
     @Inject
     lateinit var apiUtils: IApiUtils
+
+    @Inject
+    lateinit var updaterAnalytics: UpdaterAnalytics
 
     @InjectPresenter
     lateinit var presenter: CheckerPresenter
@@ -55,6 +60,9 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
         intent?.let {
             presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
+            it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
+                updaterAnalytics.open(it)
+            }
         }
         presenter.checkUpdate()
 
@@ -85,6 +93,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
         updateButton.visible()
         updateButton.setOnClickListener {
+            presenter.onDownloadClick()
             openDownloadDialog(update)
         }
     }
@@ -94,7 +103,9 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
             return
         }
         if (update.links.size == 1) {
-            decideDownload(update.links.last())
+            val link = update.links.last()
+            presenter.onSourceDownloadClick(link.name)
+            decideDownload(link)
             return
         }
         val titles = update.links.map { it.name }.toTypedArray()
@@ -102,7 +113,9 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
                 .setTitle("Источник")
                 .setItems(titles) { _, which ->
                     //Utils.externalLink(update.links[titles[which]].orEmpty())
-                    decideDownload(update.links[which])
+                    val link = update.links[which]
+                    presenter.onSourceDownloadClick(link.name)
+                    decideDownload(link)
                 }
                 .show()
     }

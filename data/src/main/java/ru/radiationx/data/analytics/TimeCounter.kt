@@ -7,6 +7,7 @@ class TimeCounter {
     private var lastTime: Long? = null
 
     fun start() {
+        counted = 0
         lastTime = SystemClock.elapsedRealtime()
     }
 
@@ -14,6 +15,10 @@ class TimeCounter {
         val delta = getDelta() ?: return
         lastTime = null
         counted += delta
+    }
+
+    fun resume() {
+        lastTime = SystemClock.elapsedRealtime()
     }
 
     fun elapsed(): Long {

@@ -28,6 +28,8 @@ object AnalyticsConstants {
     const val screen_auth_main = "screen_auth_main"
     const val screen_auth_vk = "screen_auth_vk"
     const val screen_auth_social = "screen_auth_social"
+    const val notification_local_update = "notification_local_update"
+    const val notification_push_update = "notification_push_update"
 
 
     /* Configuring */

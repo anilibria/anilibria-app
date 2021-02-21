@@ -157,6 +157,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
+                    }else{
+                        presenter.onFastSearchOpen()
                     }
                 }
             })

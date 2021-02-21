@@ -8,6 +8,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.CatalogFilterAnalytics
+import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
@@ -22,7 +23,8 @@ class SearchPresenter @Inject constructor(
         private val errorHandler: IErrorHandler,
         private val releaseUpdateHolder: ReleaseUpdateHolder,
         private val catalogAnalytics: CatalogAnalytics,
-        private val catalogFilterAnalytics: CatalogFilterAnalytics
+        private val catalogFilterAnalytics: CatalogFilterAnalytics,
+        private val fastSearchAnalytics: FastSearchAnalytics
 ) : BasePresenter<SearchCatalogView>(router) {
 
     companion object {
@@ -251,6 +253,10 @@ class SearchPresenter @Inject constructor(
 
     fun onFastSearchClick(){
         catalogAnalytics.fastSearchClick()
+    }
+
+    fun onFastSearchOpen(){
+        fastSearchAnalytics.open(AnalyticsConstants.screen_catalog)
     }
 
     fun onItemClick(item: ReleaseItem) {

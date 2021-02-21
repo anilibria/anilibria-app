@@ -9,6 +9,8 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -30,7 +32,8 @@ class FeedPresenter @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val releaseUpdateHolder: ReleaseUpdateHolder,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val fastSearchAnalytics: FastSearchAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private var randomDisposable = Disposables.disposed()
@@ -175,6 +178,10 @@ class FeedPresenter @Inject constructor(
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
+    }
+
+    fun onFastSearchOpen(){
+        fastSearchAnalytics.open(AnalyticsConstants.screen_feed)
     }
 
     fun onItemLongClick(item: ReleaseItem): Boolean {

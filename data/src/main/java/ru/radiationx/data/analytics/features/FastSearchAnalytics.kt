@@ -17,13 +17,6 @@ class FastSearchAnalytics(
         )
     }
 
-    fun cancel(from: String) {
-        sender.send(
-            AnalyticsConstants.fast_search_cancel,
-            from.toNavFromParam()
-        )
-    }
-
     fun releaseClick() {
         sender.send(AnalyticsConstants.fast_search_release_click)
     }

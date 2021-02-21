@@ -131,6 +131,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
+                    }else{
+                        presenter.onFastSearchOpen()
                     }
                 }
 

@@ -8,6 +8,7 @@ object AnalyticsConstants {
     const val screen_feed = "screen_feed"
     const val screen_schedule = "screen_schedule"
     const val screen_release = "screen_release"
+    const val screen_releases_list = "screen_releases_list"
     const val screen_release_comments = "screen_release_comments"
     const val screen_player = "screen_player"
     const val screen_web_player = "screen_web_player"
@@ -42,7 +43,6 @@ object AnalyticsConstants {
 
     /* Fast Search */
     const val fast_search_open = "fast_search_open"
-    const val fast_search_cancel = "fast_search_cancel"
     const val fast_search_release_click = "fast_search_release_click"
     const val fast_search_catalog_click = "fast_search_catalog_click"
     const val fast_search_google_click = "fast_search_google_click"

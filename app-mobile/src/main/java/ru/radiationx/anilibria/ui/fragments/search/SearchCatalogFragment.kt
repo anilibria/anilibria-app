@@ -206,6 +206,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
+                    }else{
+                        presenter.onFastSearchOpen()
                     }
                 }
 

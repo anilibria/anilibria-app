@@ -7,8 +7,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.AuthMainAnalytics
-import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -34,7 +33,11 @@ class MainPresenter @Inject constructor(
         private val localeHolder: LocaleHolder,
         private val analyticsProfile: AnalyticsProfile,
         private val authMainAnalytics: AuthMainAnalytics,
-        private val catalogAnalytics: CatalogAnalytics
+        private val catalogAnalytics: CatalogAnalytics,
+        private val favoritesAnalytics: FavoritesAnalytics,
+        private val feedAnalytics: FeedAnalytics,
+        private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
+        private val otherAnalytics: OtherAnalytics
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -102,9 +105,13 @@ class MainPresenter @Inject constructor(
         viewState.highlightTab(screenKey)
     }
 
-    fun submitScreenAnalytics(screen: Screen){
-        when(screen){
-            is Screens.ReleasesSearch->catalogAnalytics.open(AnalyticsConstants.screen_main)
+    fun submitScreenAnalytics(screen: Screen) {
+        when (screen) {
+            is Screens.ReleasesSearch -> catalogAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.Favorites -> favoritesAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainFeed -> feedAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainYouTube -> youtubeVideosAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainOther -> otherAnalytics.open(AnalyticsConstants.screen_main)
         }
     }
 

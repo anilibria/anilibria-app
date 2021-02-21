@@ -109,6 +109,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     searchView?.requestFocus(it)
+                    presenter.onSearchClick()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

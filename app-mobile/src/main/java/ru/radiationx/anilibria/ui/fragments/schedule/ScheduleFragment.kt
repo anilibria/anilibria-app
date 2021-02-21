@@ -31,10 +31,10 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     private val scheduleAdapter = ScheduleAdapter(
         scheduleClickListener = { item, view, position->
             this.sharedViewLocal = view
-            presenter.onItemClick(item.releaseItem)
+            presenter.onItemClick(item.releaseItem,position)
         },
         scrollListener = {position->
-
+            presenter.onHorizontalScroll(position)
         }
     )
 

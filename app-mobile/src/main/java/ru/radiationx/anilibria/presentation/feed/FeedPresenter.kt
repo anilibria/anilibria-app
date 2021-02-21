@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.FeedAnalytics
+import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -37,7 +38,8 @@ class FeedPresenter @Inject constructor(
         private val router: Router,
         private val errorHandler: IErrorHandler,
         private val fastSearchAnalytics: FastSearchAnalytics,
-        private val feedAnalytics: FeedAnalytics
+        private val feedAnalytics: FeedAnalytics,
+        private val scheduleAnalytics: ScheduleAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private var randomDisposable = Disposables.disposed()
@@ -188,6 +190,7 @@ class FeedPresenter @Inject constructor(
     }
 
     fun onSchedulesClick() {
+        scheduleAnalytics.open(AnalyticsConstants.screen_feed)
         feedAnalytics.scheduleClick()
         router.navigateTo(Screens.Schedule())
     }

@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -36,7 +37,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val apiConfig: ApiConfig,
     private val authMainAnalytics: AuthMainAnalytics,
-    private val catalogAnalytics: CatalogAnalytics
+    private val catalogAnalytics: CatalogAnalytics,
+    private val scheduleAnalytics: ScheduleAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -224,6 +226,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onScheduleClick(day: Int) {
+        scheduleAnalytics.open(AnalyticsConstants.screen_release)
         router.navigateTo(Screens.Schedule(day))
     }
 

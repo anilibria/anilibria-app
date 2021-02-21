@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
@@ -26,7 +27,8 @@ class MainPresenter @Inject constructor(
         private val appThemeHolder: AppThemeHolder,
         private val apiConfig: ApiConfig,
         private val schedulers: SchedulersProvider,
-        private val localeHolder: LocaleHolder
+        private val localeHolder: LocaleHolder,
+        private val analyticsProfile: AnalyticsProfile
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -35,6 +37,7 @@ class MainPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        analyticsProfile.update()
         appThemeHolder
                 .observeTheme()
                 .subscribe { viewState.changeTheme(it) }

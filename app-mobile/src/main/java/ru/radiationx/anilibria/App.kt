@@ -164,8 +164,6 @@ class App : Application() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
         scope.installModules(AppModule(this), DataModule(this))
-
-        Log.e("lalala", "initDependencies ${Toothpick.openScope(DI.DEFAULT_SCOPE)}")
     }
 
     private fun appVersionCheck() {

@@ -13,7 +13,7 @@ import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.shared_app.analytics.AppmetricaAnalyticsSender
+import ru.radiationx.shared_app.analytics.AppMetricaAnalyticsSender
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -44,7 +44,7 @@ class AppModule(context: Context) : Module() {
         bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
         bind(OkHttpImageDownloader::class.java).singleton()
 
-        bind(AnalyticsSender::class.java).to(AppmetricaAnalyticsSender::class.java).singleton()
+        bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
 
     }
 

@@ -11,29 +11,30 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.analytics.profile.ProfileConstants
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class AppmetricaAnalyticsProfile(
+class AppMetricaAnalyticsProfile(
     private val dataSource: AnalyticsProfileDataSource
 ) : AnalyticsProfile {
 
     override fun update() {
         val singleSources = with(dataSource) {
             listOf<Single<DataWrapper<UserProfileUpdate<*>>>>(
-                getApiAddressTag().mapStringAttr(""),
-                getAppTheme().mapStringAttr(""),
-                getQualitySettings().mapStringAttr(""),
-                getPlayerSettings().mapStringAttr(""),
-                getPipSettings().mapStringAttr(""),
-                getPlaySpeedSettings().mapFloatAttr(""),
-                getNotificationsAllSettings().mapBoolAttr(""),
-                getNotificationsServiceSettings().mapBoolAttr(""),
-                getEpisodeOrderSettings().mapBoolAttr(""),
-                getAuthState().mapStringAttr(""),
-                getHistoryItemsCount().mapIntAttr(""),
-                getEpisodesItemsCount().mapIntAttr(""),
-                getDownloadsCount().mapIntAttr("")
+                getApiAddressTag().mapStringAttr(ProfileConstants.address),
+                getAppTheme().mapStringAttr(ProfileConstants.app_theme),
+                getQualitySettings().mapStringAttr(ProfileConstants.quality),
+                getPlayerSettings().mapStringAttr(ProfileConstants.player),
+                getPipSettings().mapStringAttr(ProfileConstants.pip),
+                getPlaySpeedSettings().mapFloatAttr(ProfileConstants.play_speed),
+                getNotificationsAllSettings().mapBoolAttr(ProfileConstants.notification_all),
+                getNotificationsServiceSettings().mapBoolAttr(ProfileConstants.notification_service),
+                getEpisodeOrderSettings().mapBoolAttr(ProfileConstants.episode_order),
+                getAuthState().mapStringAttr(ProfileConstants.auth_state),
+                getHistoryItemsCount().mapIntAttr(ProfileConstants.history_count),
+                getEpisodesItemsCount().mapIntAttr(ProfileConstants.episodes_count),
+                getDownloadsCount().mapIntAttr(ProfileConstants.downloads_count)
             )
         }
 

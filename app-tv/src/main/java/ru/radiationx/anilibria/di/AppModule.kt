@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.TvCheckerSources
 import ru.radiationx.anilibria.common.MockData
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.shared_app.analytics.AppmetricaAnalyticsSender
+import ru.radiationx.shared_app.analytics.AppMetricaAnalyticsSender
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import toothpick.config.Module
@@ -23,7 +23,7 @@ class AppModule(context: Context) : Module() {
 
         bind(MockData::class.java).singleton()
 
-        bind(AnalyticsSender::class.java).to(AppmetricaAnalyticsSender::class.java).singleton()
+        bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
     }
 
 }

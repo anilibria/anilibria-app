@@ -6,7 +6,7 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class AppmetricaAnalyticsSender : AnalyticsSender {
+class AppMetricaAnalyticsSender : AnalyticsSender {
     override fun send(key: String, vararg params: Pair<String, String>) {
         try {
             Log.d("AnalyticsSender", "key: $key, params: ${params.toMap()}")

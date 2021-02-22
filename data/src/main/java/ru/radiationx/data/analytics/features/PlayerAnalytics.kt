@@ -16,6 +16,7 @@ class PlayerAnalytics(
         const val PARAM_SPEED = "speed"
         const val PARAM_REWIND_TIME = "rewind_time"
         const val PARAM_SEEK_PERCENT = "seek_percent"
+        const val PARAM_HOST = "host"
     }
 
     private fun Long?.toRewindTimeParam() = this.toTimeParam(PARAM_REWIND_TIME)
@@ -29,23 +30,20 @@ class PlayerAnalytics(
         )
     }
 
-    fun timeToStart(timeInMillis: Long) {
+    fun timeToStart(host: String, quality: AnalyticsQuality, timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.player_time_to_start,
+            host.toParam(PARAM_HOST),
+            quality.toQualityParam(),
             timeInMillis.toTimeParam()
         )
     }
 
-    fun bufferingTime(timeInMillis: Long) {
+    fun loadTime(host: String, quality: AnalyticsQuality, timeInMillis: Long) {
         sender.send(
             AnalyticsConstants.player_buffering_time,
-            timeInMillis.toTimeParam()
-        )
-    }
-
-    fun failPlayTime(timeInMillis: Long) {
-        sender.send(
-            AnalyticsConstants.player_fail_play_time,
+            host.toParam(PARAM_HOST),
+            quality.toQualityParam(),
             timeInMillis.toTimeParam()
         )
     }

@@ -192,8 +192,7 @@ object AnalyticsConstants {
     /* Player */
     const val player_open = "player_open"
     const val player_time_to_start = "player_time_to_start"
-    const val player_buffering_time = "player_buffering_time"
-    const val player_fail_play_time = "player_fail_play_time"
+    const val player_buffering_time = "player_load_time"
     const val player_error = "player_error"
     const val player_use_time = "player_use_time"
     const val player_play_click = "player_play_click"

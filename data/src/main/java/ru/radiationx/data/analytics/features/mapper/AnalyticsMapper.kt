@@ -9,12 +9,14 @@ import java.lang.IllegalStateException
 fun AppThemeHolder.AppTheme.toAnalyticsAppTheme(): AnalyticsAppTheme = when (this) {
     AppThemeHolder.AppTheme.LIGHT -> AnalyticsAppTheme.LIGHT
     AppThemeHolder.AppTheme.DARK -> AnalyticsAppTheme.DARK
+    else -> AnalyticsAppTheme.UNKNOWN
 }
 
 fun AuthState.toAnalyticsAuthState(): AnalyticsAuthState = when (this) {
     AuthState.NO_AUTH -> AnalyticsAuthState.NO
     AuthState.AUTH_SKIPPED -> AnalyticsAuthState.SKIP
     AuthState.AUTH -> AnalyticsAuthState.AUTH
+    else -> AnalyticsAuthState.UNKNOWN
 }
 
 fun Int.toAnalyticsQuality(): AnalyticsQuality = when (this) {
@@ -23,7 +25,7 @@ fun Int.toAnalyticsQuality(): AnalyticsQuality = when (this) {
     PreferencesHolder.QUALITY_FULL_HD -> AnalyticsQuality.FULL_HD
     PreferencesHolder.QUALITY_NO -> AnalyticsQuality.NONE
     PreferencesHolder.QUALITY_ALWAYS -> AnalyticsQuality.ALWAYS_ASK
-    else -> throw IllegalStateException("Unknown quality $this")
+    else -> AnalyticsQuality.UNKNOWN
 }
 
 fun Int.toAnalyticsPlayer(): AnalyticsPlayer = when (this) {
@@ -31,11 +33,21 @@ fun Int.toAnalyticsPlayer(): AnalyticsPlayer = when (this) {
     PreferencesHolder.PLAYER_TYPE_INTERNAL -> AnalyticsPlayer.INTERNAL
     PreferencesHolder.PLAYER_TYPE_NO -> AnalyticsPlayer.NONE
     PreferencesHolder.PLAYER_TYPE_ALWAYS -> AnalyticsPlayer.NONE
-    else -> throw IllegalStateException("Unknown player $this")
+    else -> AnalyticsPlayer.UNKNOWN
 }
 
 fun Int.toAnalyticsPip(): AnalyticsPip = when (this) {
     PreferencesHolder.PIP_AUTO -> AnalyticsPip.AUTO
     PreferencesHolder.PIP_BUTTON -> AnalyticsPip.BUTTON
-    else -> throw IllegalStateException("Unknown pip $this")
+    else -> AnalyticsPip.UNKNOWN
+}
+
+fun Int.toAnalyticsScale(): AnalyticsVideoScale = when (this) {
+    0 -> AnalyticsVideoScale.CENTER
+    1 -> AnalyticsVideoScale.CENTER_CROP
+    2 -> AnalyticsVideoScale.CENTER_INSIDE
+    3 -> AnalyticsVideoScale.FIT_CENTER
+    4 -> AnalyticsVideoScale.FIT_XY
+    5 -> AnalyticsVideoScale.NONE
+    else -> AnalyticsVideoScale.UNKNOWN
 }

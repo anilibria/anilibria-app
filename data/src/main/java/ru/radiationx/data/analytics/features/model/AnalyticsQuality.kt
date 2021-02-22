@@ -5,5 +5,6 @@ enum class AnalyticsQuality(val value: String) {
     SD("sd"),
     HD("hd"),
     FULL_HD("full_hd"),
-    ALWAYS_ASK("always_ask")
+    ALWAYS_ASK("always_ask"),
+    UNKNOWN("unknown")
 }

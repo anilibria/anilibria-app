@@ -3,10 +3,12 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
+import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
@@ -17,7 +19,8 @@ import javax.inject.Inject
  */
 class ReleaseUpdateStorage @Inject constructor(
         @DataPreferences private val sharedPreferences: SharedPreferences,
-        private val schedulers: SchedulersProvider
+        private val schedulers: SchedulersProvider,
+        private val appAnalytics: AppAnalytics
 ) : ReleaseUpdateHolder {
 
     companion object {
@@ -34,6 +37,10 @@ class ReleaseUpdateStorage @Inject constructor(
     override fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>> = localReleasesRelay
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
+
+    override fun getReleases(): Single<List<ReleaseUpdate>> = Single.fromCallable {
+        localReleasesRelay.value?.toList().orEmpty()
+    }
 
     override fun getRelease(id: Int): ReleaseUpdate? {
         return localReleases.firstOrNull { it.id == id }
@@ -78,6 +85,7 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     private fun saveAll() {
+        appAnalytics.releasePut()
         val jsonEpisodes = JSONArray()
         localReleases.forEach {
             jsonEpisodes.put(JSONObject().apply {

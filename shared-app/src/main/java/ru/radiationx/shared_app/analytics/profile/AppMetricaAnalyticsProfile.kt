@@ -34,6 +34,7 @@ class AppMetricaAnalyticsProfile(
                 getAuthState().mapStringAttr(ProfileConstants.auth_state),
                 getHistoryItemsCount().mapIntAttr(ProfileConstants.history_count),
                 getEpisodesItemsCount().mapIntAttr(ProfileConstants.episodes_count),
+                getReleasesItemsCount().mapIntAttr(ProfileConstants.releases_count),
                 getDownloadsCount().mapIntAttr(ProfileConstants.downloads_count),
                 getAppVersionsHistory().mapStringAttr(ProfileConstants.app_versions)
             )

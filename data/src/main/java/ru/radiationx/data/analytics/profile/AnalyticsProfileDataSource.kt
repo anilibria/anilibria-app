@@ -18,7 +18,8 @@ class AnalyticsProfileDataSource(
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val downloadsHolder: DownloadsHolder,
-    private val migrationDataSource: MigrationDataSource
+    private val migrationDataSource: MigrationDataSource,
+    private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
     fun getApiAddressTag(): Single<String> = single {
@@ -67,6 +68,10 @@ class AnalyticsProfileDataSource(
 
     fun getEpisodesItemsCount(): Single<Int> = episodesCheckerHolder
         .getEpisodes()
+        .map { it.size }
+
+    fun getReleasesItemsCount(): Single<Int> = releaseUpdateHolder
+        .getReleases()
         .map { it.size }
 
     fun getDownloadsCount(): Single<Int> = single {

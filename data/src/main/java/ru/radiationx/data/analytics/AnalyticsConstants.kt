@@ -35,6 +35,9 @@ object AnalyticsConstants {
     const val app_time_to_create = "app_time_to_create"
     const val app_time_to_init = "app_time_to_init"
     const val app_time_to_activity = "app_time_to_activity"
+    const val app_episode_put = "app_episode_put"
+    const val app_history_put = "app_history_put"
+    const val app_release_put = "app_release_put"
 
     /* Configuring */
     const val config_open = "config_open"

@@ -31,6 +31,7 @@ class LoggingAnalyticsProfile(
                 getAuthState().mapToAttr(ProfileConstants.auth_state),
                 getHistoryItemsCount().mapToAttr(ProfileConstants.history_count),
                 getEpisodesItemsCount().mapToAttr(ProfileConstants.episodes_count),
+                getReleasesItemsCount().mapToAttr(ProfileConstants.releases_count),
                 getDownloadsCount().mapToAttr(ProfileConstants.downloads_count),
                 getAppVersionsHistory().mapToAttr(ProfileConstants.app_versions)
             )

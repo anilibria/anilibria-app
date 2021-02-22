@@ -14,6 +14,7 @@ object ProfileConstants {
     const val auth_state = "auth_state"
     const val history_count = "history_count"
     const val episodes_count = "episodes_count"
+    const val releases_count = "releases_count"
     const val downloads_count = "downloads_count"
     const val app_versions = "app_versions"
 }

@@ -8,7 +8,11 @@ import toothpick.InjectConstructor
 class AppMetricaAnalyticsSender : AnalyticsSender {
     override fun send(key: String, vararg params: Pair<String, String>) {
         try {
-            YandexMetrica.reportEvent(key, params.toMap())
+            if (params.isEmpty()) {
+                YandexMetrica.reportEvent(key)
+            } else {
+                YandexMetrica.reportEvent(key, params.toMap())
+            }
         } catch (e: Throwable) {
             e.printStackTrace()
         }

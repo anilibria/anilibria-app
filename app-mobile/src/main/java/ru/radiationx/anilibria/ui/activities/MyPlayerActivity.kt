@@ -212,11 +212,14 @@ class MyPlayerActivity : BaseActivity() {
             )
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
-        player.setOnErrorListener(playerListener)
         player.setAnalyticsListener(object : AnalyticsListener {
 
             private var wasFirstFrame = false
             private var lastLoadedUri: Uri? = null
+
+
+            private var lastLoadError: Throwable? = null
+            private var lastPlayerError: Throwable? = null
 
 
             override fun onLoadCanceled(
@@ -270,8 +273,11 @@ class MyPlayerActivity : BaseActivity() {
                 wasCanceled: Boolean
             ) {
                 super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
-                errorReporter.report(ErrorReporterConstants.group_player, "onLoadError", error)
-                playerAnalytics.error(error)
+                if (lastLoadError?.toString() != error.toString()) {
+                    errorReporter.report(ErrorReporterConstants.group_player, "onLoadError", error)
+                    playerAnalytics.error(error)
+                    lastLoadError = error
+                }
             }
 
             override fun onPlayerError(
@@ -279,8 +285,15 @@ class MyPlayerActivity : BaseActivity() {
                 error: ExoPlaybackException
             ) {
                 super.onPlayerError(eventTime, error)
-                errorReporter.report(ErrorReporterConstants.group_player, "onPlayerError", error)
-                playerAnalytics.error(error)
+                if (lastPlayerError?.toString() != error.toString()) {
+                    errorReporter.report(
+                        ErrorReporterConstants.group_player,
+                        "onPlayerError",
+                        error
+                    )
+                    playerAnalytics.error(error)
+                    lastLoadError = error
+                }
             }
         })
 
@@ -1201,37 +1214,27 @@ class MyPlayerActivity : BaseActivity() {
 
     }
 
-    private val playerListener =
-        object : OnPreparedListener, OnCompletionListener, OnErrorListener {
-            override fun onPrepared() {
-                val episode = getEpisode()
-                if (episode.seek >= player.duration) {
-                    player.stopPlayback()
-                    if (getNextEpisode() == null) {
-                        showSeasonFinishDialog()
-                    } else {
-                        showEpisodeFinishDialog()
-                    }
-                } else {
-                    player.start()
-                }
-            }
-
-            override fun onCompletion() {
-                if (!controlsListener.onNextClicked()) {
+    private val playerListener = object : OnPreparedListener, OnCompletionListener {
+        override fun onPrepared() {
+            val episode = getEpisode()
+            if (episode.seek >= player.duration) {
+                player.stopPlayback()
+                if (getNextEpisode() == null) {
                     showSeasonFinishDialog()
+                } else {
+                    showEpisodeFinishDialog()
                 }
-            }
-
-            override fun onError(e: Exception?): Boolean {
-                e?.let {
-                    playerAnalytics.error(it)
-                    errorReporter.report(ErrorReporterConstants.group_player, "OnErrorListener", it)
-                }
-                e?.printStackTrace()
-                return false
+            } else {
+                player.start()
             }
         }
+
+        override fun onCompletion() {
+            if (!controlsListener.onNextClicked()) {
+                showSeasonFinishDialog()
+            }
+        }
+    }
 
     private val controlsListener = object : VideoControlsButtonListener {
         override fun onPlayPauseClicked(): Boolean {

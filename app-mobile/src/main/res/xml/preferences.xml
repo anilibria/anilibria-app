@@ -67,9 +67,9 @@
             android:title="Проверить обновления" />
 
         <Preference
-            android:key="about.app_topic_site"
+            android:key="about.app_other_apps"
             android:layout="@layout/preference_custom"
-            android:title="Обсуждение на сайте" />
+            android:title="Наши приложения" />
 
         <Preference
             android:key="about.app_topic_4pda"

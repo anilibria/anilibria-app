@@ -47,6 +47,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         presenter.loadMore()
     }, schedulesClickListener = {
         presenter.onSchedulesClick()
+    }, scheduleScrollListener = {position->
+       presenter.onScheduleScroll(position)
     }, randomClickListener = {
         presenter.onRandomClick()
     }, releaseClickListener = { releaseItem, view ->
@@ -55,10 +57,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     }, releaseLongClickListener = { releaseItem, view ->
         releaseOnLongClick(releaseItem)
     }, youtubeClickListener = { youtubeItem, view ->
-        Utils.externalLink(youtubeItem.link)
-    }, scheduleClickListener = { feedScheduleItem, view ->
+        presenter.onYoutubeClick(youtubeItem)
+    }, scheduleClickListener = { feedScheduleItem, view, position->
         this.sharedViewLocal = view
-        presenter.onItemClick(feedScheduleItem.releaseItem)
+        presenter.onScheduleItemClick(feedScheduleItem.releaseItem, position)
     })
 
     @Inject
@@ -157,6 +159,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
+                    }else{
+                        presenter.onFastSearchOpen()
                     }
                 }
             })
@@ -291,11 +295,18 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             .setItems(titles) { dialog, which ->
                 when (which) {
                     0 -> {
+                        presenter.onCopyClick(item)
                         Utils.copyToClipBoard(item.link.orEmpty())
                         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
-                    1 -> Utils.shareText(item.link.orEmpty())
-                    2 -> ShortcutHelper.addShortcut(item)
+                    1 -> {
+                        presenter.onShareClick(item)
+                        Utils.shareText(item.link.orEmpty())
+                    }
+                    2 -> {
+                        presenter.onShortcutClick(item)
+                        ShortcutHelper.addShortcut(item)
+                    }
                 }
             }
             .show()

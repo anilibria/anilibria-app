@@ -6,6 +6,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.entity.app.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
@@ -18,23 +20,29 @@ class OtpAcceptPresenter @Inject constructor(
     private val authRepository: AuthRepository,
     private val errorHandler: IErrorHandler,
     private val messenger: SystemMessenger,
-    private val schedulersProvider: SchedulersProvider
+    private val schedulersProvider: SchedulersProvider,
+    private val authDeviceAnalytics: AuthDeviceAnalytics
 ) : BasePresenter<OtpAcceptView>(router) {
 
     private var success = false
     private var progress = false
     private var error: String? = null
 
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         updateState()
+    }
+
+    fun submitUseTime(time: Long) {
+        authDeviceAnalytics.useTime(time)
     }
 
     fun onAcceptClick(code: String) {
         if (progress || success) {
             return
         }
-        if(code.isBlank()){
+        if (code.isBlank()) {
             error = "Поле обязательно к заполнению"
             updateState()
             return
@@ -50,6 +58,7 @@ class OtpAcceptPresenter @Inject constructor(
             .subscribe({
                 onSuccess()
             }, {
+                authDeviceAnalytics.error(it)
                 if (it is OtpAcceptedException) {
                     onSuccess()
                     return@subscribe
@@ -67,6 +76,7 @@ class OtpAcceptPresenter @Inject constructor(
     }
 
     private fun onSuccess() {
+        authDeviceAnalytics.success()
         error = null
         success = true
         startCloseTimer()
@@ -79,6 +89,7 @@ class OtpAcceptPresenter @Inject constructor(
             .subscribe({
                 viewState.close()
             }, {
+                authDeviceAnalytics.error(it)
                 errorHandler.handle(it)
             })
             .addToDisposable()

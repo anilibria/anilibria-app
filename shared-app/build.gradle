@@ -41,4 +41,6 @@ dependencies {
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0"
 
     implementation 'ru.terrakok.cicerone:cicerone:5.0.0'
+
+    api 'com.yandex.android:mobmetricalib:3.16.2'
 }

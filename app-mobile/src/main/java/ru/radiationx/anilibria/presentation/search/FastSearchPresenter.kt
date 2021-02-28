@@ -8,6 +8,10 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.FastSearchAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
@@ -21,7 +25,10 @@ class FastSearchPresenter @Inject constructor(
         private val schedulers: SchedulersProvider,
         private val searchRepository: SearchRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val catalogAnalytics: CatalogAnalytics,
+        private val fastSearchAnalytics: FastSearchAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FastSearchView>(router) {
 
     companion object {
@@ -94,14 +101,19 @@ class FastSearchPresenter @Inject constructor(
     fun onItemClick(item: SearchItem) {
         when (item.id) {
             ITEM_ID_GOOGLE -> {
+                fastSearchAnalytics.searchGoogleClick()
                 val urlQuery = URLEncoder.encode("anilibria ${item.query}", "utf-8")
                 Utils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {
+                catalogAnalytics.open(AnalyticsConstants.screen_fast_search)
+                fastSearchAnalytics.catalogClick()
                 router.navigateTo(Screens.ReleasesSearch())
             }
             else -> {
                 (item as? SuggestionItem)?.also {
+                    fastSearchAnalytics.releaseClick()
+                    releaseAnalytics.open(AnalyticsConstants.screen_fast_search, item.id)
                     router.navigateTo(Screens.ReleaseDetails(it.id, it.code))
                 }
             }

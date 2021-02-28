@@ -13,11 +13,13 @@ import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.util.Rational
+import android.view.Surface
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
@@ -26,6 +28,9 @@ import androidx.core.content.ContextCompat
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.*
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.source.MediaSourceEventListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
@@ -37,6 +42,16 @@ import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
+import ru.radiationx.data.analytics.AnalyticsErrorReporter
+import ru.radiationx.data.analytics.ErrorReporterConstants
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.PlayerAnalytics
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsScale
+import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
+import ru.radiationx.data.analytics.features.model.AnalyticsQuality
+import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -45,6 +60,8 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -56,6 +73,7 @@ class MyPlayerActivity : BaseActivity() {
 
     companion object {
         const val ARG_RELEASE = "release"
+
         //const val ARG_CURRENT = "current"
         const val ARG_EPISODE_ID = "episode_id"
         const val ARG_QUALITY = "quality"
@@ -87,6 +105,7 @@ class MyPlayerActivity : BaseActivity() {
     private lateinit var releaseData: ReleaseFull
     private var playFlag = PLAY_FLAG_DEFAULT
     private var currentEpisodeId = NO_ID
+
     //private var currentEpisode = NOT_SELECTED
     private var currentQuality = DEFAULT_QUALITY
     private var currentPlaySpeed = 1.0f
@@ -108,6 +127,21 @@ class MyPlayerActivity : BaseActivity() {
     @Inject
     lateinit var appPreferences: PreferencesHolder
 
+    @Inject
+    lateinit var playerAnalytics: PlayerAnalytics
+
+    @Inject
+    lateinit var errorReporter: AnalyticsErrorReporter
+
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(playerAnalytics::useTime)
+    }
+
+    private val timeToStartCounter = TimeCounter()
+
+    private val loadingStatistics =
+        mutableMapOf<String, MutableList<Pair<AnalyticsQuality, Long>>>()
+
 
     private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
@@ -127,6 +161,28 @@ class MyPlayerActivity : BaseActivity() {
 
     private var pictureInPictureParams: PictureInPictureParams.Builder? = null
 
+    private fun getStatisticByDomain(host: String): MutableList<Pair<AnalyticsQuality, Long>> {
+        if (!loadingStatistics.contains(host)) {
+            loadingStatistics[host] = mutableListOf()
+        }
+        return loadingStatistics.getValue(host)
+    }
+
+    private fun putStatistics(uri: Uri, quality: AnalyticsQuality, time: Long) {
+        uri.host?.let { getStatisticByDomain(it) }?.add(quality to time)
+    }
+
+    private fun getAverageStatisticsValues(): Map<String, Map<AnalyticsQuality, Long>> {
+        return loadingStatistics
+            .mapValues { statsMap ->
+                statsMap.value
+                    .groupBy { it.first }
+                    .mapValues { qualityMap ->
+                        qualityMap.value.map { it.second }.average().toLong()
+                    }
+            }
+    }
+
     fun Disposable.addToDisposable() {
         compositeDisposable.add(this)
     }
@@ -134,6 +190,8 @@ class MyPlayerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(useTimeCounter)
+        timeToStartCounter.start()
         createPIPParams()
         loadVital()
         initUiFlags()
@@ -148,14 +206,102 @@ class MyPlayerActivity : BaseActivity() {
         player.setOnPreparedListener(playerListener)
         player.setOnCompletionListener(playerListener)
         player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
-            Log.e("lalka", "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio")
+            Log.e(
+                "lalka",
+                "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio"
+            )
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
-        //player.setOnErrorListener(playerListener)
+        player.setAnalyticsListener(object : AnalyticsListener {
+
+            private var wasFirstFrame = false
+            private var lastLoadedUri: Uri? = null
+
+
+            private var lastLoadError: Throwable? = null
+            private var lastPlayerError: Throwable? = null
+
+
+            override fun onLoadCanceled(
+                eventTime: AnalyticsListener.EventTime,
+                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
+                mediaLoadData: MediaSourceEventListener.MediaLoadData
+            ) {
+                super.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData)
+                putStatistics(
+                    loadEventInfo.uri,
+                    currentQuality.toPrefQuality().toAnalyticsQuality(),
+                    loadEventInfo.loadDurationMs
+                )
+            }
+
+            override fun onLoadCompleted(
+                eventTime: AnalyticsListener.EventTime,
+                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
+                mediaLoadData: MediaSourceEventListener.MediaLoadData
+            ) {
+                super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
+                lastLoadedUri = loadEventInfo.uri
+                putStatistics(
+                    loadEventInfo.uri,
+                    currentQuality.toPrefQuality().toAnalyticsQuality(),
+                    loadEventInfo.loadDurationMs
+                )
+            }
+
+
+            override fun onRenderedFirstFrame(
+                eventTime: AnalyticsListener.EventTime,
+                surface: Surface?
+            ) {
+                super.onRenderedFirstFrame(eventTime, surface)
+                if (!wasFirstFrame) {
+                    playerAnalytics.timeToStart(
+                        lastLoadedUri?.host.toString(),
+                        currentQuality.toPrefQuality().toAnalyticsQuality(),
+                        timeToStartCounter.elapsed()
+                    )
+                    wasFirstFrame = true
+                }
+            }
+
+            override fun onLoadError(
+                eventTime: AnalyticsListener.EventTime,
+                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
+                mediaLoadData: MediaSourceEventListener.MediaLoadData,
+                error: IOException,
+                wasCanceled: Boolean
+            ) {
+                super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
+                if (lastLoadError?.toString() != error.toString()) {
+                    errorReporter.report(ErrorReporterConstants.group_player, "onLoadError", error)
+                    playerAnalytics.error(error)
+                    lastLoadError = error
+                }
+            }
+
+            override fun onPlayerError(
+                eventTime: AnalyticsListener.EventTime,
+                error: ExoPlaybackException
+            ) {
+                super.onPlayerError(eventTime, error)
+                if (lastPlayerError?.toString() != error.toString()) {
+                    errorReporter.report(
+                        ErrorReporterConstants.group_player,
+                        "onPlayerError",
+                        error
+                    )
+                    playerAnalytics.error(error)
+                    lastLoadError = error
+                }
+            }
+        })
+
 
         videoControls = VideoControlsAlib(ContextThemeWrapper(this, this.theme), null, 0)
 
         videoControls?.apply {
+            setAnalytics(playerAnalytics)
             updatePIPControl()
             player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
@@ -194,13 +340,17 @@ class MyPlayerActivity : BaseActivity() {
         val height = min(size.x, size.y)
         val ratio = width.toFloat() / height.toFloat()
 
-        Log.e("lululu", "checkSausage $width, $height, $ratio && $notSausage = ${ratio != notSausage}")
+        Log.e(
+            "lululu",
+            "checkSausage $width, $height, $ratio && $notSausage = ${ratio != notSausage}"
+        )
         return notSausage != ratio
     }
 
     private fun handleIntent(intent: Intent) {
         val release = intent.getSerializableExtra(ARG_RELEASE) as ReleaseFull? ?: return
-        val episodeId = intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
+        val episodeId =
+            intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
         val playFlag = intent.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
 
@@ -224,7 +374,8 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun loadScale(orientation: Int): ScaleType {
-        val scaleOrdinal = defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
+        val scaleOrdinal =
+            defaultPreferences.getInt("video_ratio_$orientation", defaultScale.ordinal)
         return ScaleType.fromOrdinal(scaleOrdinal)
     }
 
@@ -233,6 +384,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun savePlaySpeed() {
+        playerAnalytics.settingsSpeedChange(currentPlaySpeed)
         releaseInteractor.setPlaySpeed(currentPlaySpeed)
     }
 
@@ -261,15 +413,16 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun loadVital() {
         vitalRepository
-                .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
-                .subscribe {
-                    it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }.let {
+            .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
+            .subscribe {
+                it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }
+                    .let {
                         if (it.isNotEmpty()) {
                             showVitalItems(it)
                         }
                     }
-                }
-                .addToDisposable()
+            }
+            .addToDisposable()
     }
 
     fun showVitalItems(vital: List<VitalItem>) {
@@ -277,14 +430,18 @@ class MyPlayerActivity : BaseActivity() {
         currentVitals.addAll(vital)
     }
 
+    private fun Int.toPrefQuality() = when (this) {
+        VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+        VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+        VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
+        else -> PreferencesHolder.QUALITY_NO
+    }
+
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
-        appPreferences.setQuality(when (newQuality) {
-            VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
-            VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
-            VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
-            else -> PreferencesHolder.QUALITY_NO
-        })
+        val prefQuality = newQuality.toPrefQuality()
+        playerAnalytics.settingsQualityChange(prefQuality.toAnalyticsQuality())
+        appPreferences.setQuality(prefQuality)
         saveEpisode()
         updateAndPlayRelease()
     }
@@ -367,6 +524,11 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        getAverageStatisticsValues().forEach { statsEntry ->
+            statsEntry.value.forEach { qualityEntry ->
+                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
+            }
+        }
         saveEpisode()
         compositeDisposable.dispose()
         player.stopPlayback()
@@ -407,7 +569,8 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun getEpisode(id: Int = currentEpisodeId) = releaseData.episodes.first { it.id == id }
 
-    private fun getEpisodeId(episode: ReleaseFull.Episode) = releaseData.episodes.first { it == episode }.id
+    private fun getEpisodeId(episode: ReleaseFull.Episode) =
+        releaseData.episodes.first { it == episode }.id
 
     private fun playEpisode(episode: ReleaseFull.Episode) {
         when (playFlag) {
@@ -417,13 +580,13 @@ class MyPlayerActivity : BaseActivity() {
                     hardPlayEpisode(episode)
                     val titles = arrayOf("К началу", "К последней позиции")
                     AlertDialog.Builder(this)
-                            .setTitle("Перемотать")
-                            .setItems(titles) { _, which ->
-                                if (which == 1) {
-                                    player.seekTo(episode.seek)
-                                }
+                        .setTitle("Перемотать")
+                        .setItems(titles) { _, which ->
+                            if (which == 1) {
+                                player.seekTo(episode.seek)
                             }
-                            .show()
+                        }
+                        .show()
                 }
             }
             PLAY_FLAG_FORCE_START -> {
@@ -508,7 +671,8 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     override fun onPictureInPictureModeChanged(
-            isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+        isInPictureInPictureMode: Boolean, newConfig: Configuration
+    ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         Log.d("lalka", "onPictureInPictureModeChanged $isInPictureInPictureMode")
         saveEpisode()
@@ -561,12 +725,13 @@ class MyPlayerActivity : BaseActivity() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
         if (checkPipMode()) {
-            player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)?.also {
-                val rect = Rect(0, 0, 0, 0)
-                it.getGlobalVisibleRect(rect)
-                Log.e("lalka", "setSourceRectHint ${rect.flattenToString()}")
-                pictureInPictureParams?.setSourceRectHint(rect)
-            }
+            player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
+                ?.also {
+                    val rect = Rect(0, 0, 0, 0)
+                    it.getGlobalVisibleRect(rect)
+                    Log.e("lalka", "setSourceRectHint ${rect.flattenToString()}")
+                    pictureInPictureParams?.setSourceRectHint(rect)
+                }
         }
     }
 
@@ -582,21 +747,27 @@ class MyPlayerActivity : BaseActivity() {
 
 
             if (actions.size < maxActions) {
-                val icRes = if (playState) R.drawable.ic_pause_remote else R.drawable.ic_play_arrow_remote
+                val icRes =
+                    if (playState) R.drawable.ic_pause_remote else R.drawable.ic_play_arrow_remote
                 val actionCode = if (playState) REMOTE_CONTROL_PAUSE else REMOTE_CONTROL_PLAY
                 val title = if (playState) "Пауза" else "Пуск"
 
-                actions.add(RemoteAction(
+                actions.add(
+                    RemoteAction(
                         Icon.createWithResource(this@MyPlayerActivity, icRes),
                         title,
                         title,
                         PendingIntent.getBroadcast(
-                                this@MyPlayerActivity,
-                                actionCode,
-                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
-                                0
+                            this@MyPlayerActivity,
+                            actionCode,
+                            Intent(ACTION_REMOTE_CONTROL).putExtra(
+                                EXTRA_REMOTE_CONTROL,
+                                actionCode
+                            ),
+                            0
                         )
-                ))
+                    )
+                )
             }
 
             if (actions.size < maxActions) {
@@ -604,17 +775,22 @@ class MyPlayerActivity : BaseActivity() {
                 val actionCode = REMOTE_CONTROL_NEXT
                 val title = "Следующая серия"
 
-                actions.add(RemoteAction(
+                actions.add(
+                    RemoteAction(
                         Icon.createWithResource(this@MyPlayerActivity, icRes),
                         title,
                         title,
                         PendingIntent.getBroadcast(
-                                this@MyPlayerActivity,
-                                actionCode,
-                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
-                                0
+                            this@MyPlayerActivity,
+                            actionCode,
+                            Intent(ACTION_REMOTE_CONTROL).putExtra(
+                                EXTRA_REMOTE_CONTROL,
+                                actionCode
+                            ),
+                            0
                         )
-                ))
+                    )
+                )
             }
 
             if (actions.size < maxActions) {
@@ -622,17 +798,22 @@ class MyPlayerActivity : BaseActivity() {
                 val actionCode = REMOTE_CONTROL_PREV
                 val title = "Предыдущая серия"
 
-                actions.add(0, RemoteAction(
+                actions.add(
+                    0, RemoteAction(
                         Icon.createWithResource(this@MyPlayerActivity, icRes),
                         title,
                         title,
                         PendingIntent.getBroadcast(
-                                this@MyPlayerActivity,
-                                actionCode,
-                                Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, actionCode),
-                                0
+                            this@MyPlayerActivity,
+                            actionCode,
+                            Intent(ACTION_REMOTE_CONTROL).putExtra(
+                                EXTRA_REMOTE_CONTROL,
+                                actionCode
+                            ),
+                            0
                         )
-                ))
+                    )
+                )
             }
 
             params.setActions(actions)
@@ -646,6 +827,7 @@ class MyPlayerActivity : BaseActivity() {
         if (checkPipMode()) {
             Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
             pictureInPictureParams?.also {
+                playerAnalytics.pip(getSeekPercent())
                 videoControls?.gone()
                 enterPictureInPictureMode(it.build())
             }
@@ -710,8 +892,8 @@ class MyPlayerActivity : BaseActivity() {
             val pipValue = getPIPTitle(currentPipControl)
 
             val valuesList = mutableListOf(
-                    settingQuality,
-                    settingPlaySpeed
+                settingQuality,
+                settingPlaySpeed
             )
             if (checkSausage()) {
                 valuesList.add(settingScale)
@@ -721,19 +903,19 @@ class MyPlayerActivity : BaseActivity() {
             }
 
             val titles = valuesList
-                    .asSequence()
-                    .map {
-                        when (it) {
-                            settingQuality -> "Качество (<b>$qualityValue</b>)"
-                            settingPlaySpeed -> "Скорость (<b>$speedValue</b>)"
-                            settingScale -> "Соотношение сторон (<b>$scaleValue</b>)"
-                            settingPIP -> "Режим окна (<b>$pipValue</b>)"
-                            else -> "Привет"
-                        }
+                .asSequence()
+                .map {
+                    when (it) {
+                        settingQuality -> "Качество (<b>$qualityValue</b>)"
+                        settingPlaySpeed -> "Скорость (<b>$speedValue</b>)"
+                        settingScale -> "Соотношение сторон (<b>$scaleValue</b>)"
+                        settingPIP -> "Режим окна (<b>$pipValue</b>)"
+                        else -> "Привет"
                     }
-                    .map { Html.fromHtml(it) }
-                    .toList()
-                    .toTypedArray()
+                }
+                .map { Html.fromHtml(it) }
+                .toList()
+                .toTypedArray()
 
             val icQualityRes = when (currentQuality) {
                 VAL_QUALITY_SD -> R.drawable.ic_quality_sd_base
@@ -742,74 +924,86 @@ class MyPlayerActivity : BaseActivity() {
                 else -> R.drawable.ic_settings
             }
             val icons = valuesList
-                    .asSequence()
-                    .map {
-                        when (it) {
-                            settingQuality -> icQualityRes
-                            settingPlaySpeed -> R.drawable.ic_play_speed
-                            settingScale -> R.drawable.ic_aspect_ratio
-                            settingPIP -> R.drawable.ic_picture_in_picture_alt
-                            else -> R.drawable.ic_anilibria
-                        }
+                .asSequence()
+                .map {
+                    when (it) {
+                        settingQuality -> icQualityRes
+                        settingPlaySpeed -> R.drawable.ic_play_speed
+                        settingScale -> R.drawable.ic_aspect_ratio
+                        settingPIP -> R.drawable.ic_picture_in_picture_alt
+                        else -> R.drawable.ic_anilibria
                     }
-                    .map {
-                        ContextCompat.getDrawable(this@MyPlayerActivity, it)
-                    }
-                    .toList()
-                    .toTypedArray()
+                }
+                .map {
+                    ContextCompat.getDrawable(this@MyPlayerActivity, it)
+                }
+                .toList()
+                .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setItems(titles, icons) { _, which ->
-                        when (valuesList[which]) {
-                            settingQuality -> showQualityDialog()
-                            settingPlaySpeed -> showPlaySpeedDialog()
-                            settingScale -> showScaleDialog()
-                            settingPIP -> showPIPDialog()
+                .setItems(titles, icons) { _, which ->
+                    when (valuesList[which]) {
+                        settingQuality -> {
+                            playerAnalytics.settingsQualityClick()
+                            showQualityDialog()
+                        }
+                        settingPlaySpeed -> {
+                            playerAnalytics.settingsSpeedClick()
+                            showPlaySpeedDialog()
+                        }
+                        settingScale -> {
+                            playerAnalytics.settingsScaleClick()
+                            showScaleDialog()
+                        }
+                        settingPIP -> {
+                            playerAnalytics.settingsPipClick()
+                            showPIPDialog()
                         }
                     }
-                    .setDarkTheme(appThemeHolder.getTheme().isDark())
-                    .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
-                    .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
-                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                    .show()
-                    .register()
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
+                .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+                .show()
+                .register()
         }
 
         fun showPlaySpeedDialog() {
             val values = arrayOf(
-                    0.25f,
-                    0.5f,
-                    0.75f,
-                    1.0f,
-                    1.25f,
-                    1.5f,
-                    1.75f,
-                    2.0f
+                0.25f,
+                0.5f,
+                0.75f,
+                1.0f,
+                1.25f,
+                1.5f,
+                1.75f,
+                2.0f
             )
             val activeIndex = values.indexOf(currentPlaySpeed)
             val titles = values
-                    .mapIndexed { index, s ->
-                        val stringValue = getPlaySpeedTitle(s)
-                        when (index) {
-                            activeIndex -> "<b>$stringValue</b>"
-                            else -> stringValue
-                        }
+                .mapIndexed { index, s ->
+                    val stringValue = getPlaySpeedTitle(s)
+                    when (index) {
+                        activeIndex -> "<b>$stringValue</b>"
+                        else -> stringValue
                     }
-                    .map { Html.fromHtml(it) }
-                    .toTypedArray()
+                }
+                .map { Html.fromHtml(it) }
+                .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setTitle("Скорость воспроизведения")
-                    .setItems(titles) { _, which ->
-                        updatePlaySpeed(values[which])
-                    }
-                    .setDarkTheme(appThemeHolder.getTheme().isDark())
-                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                    .show()
-                    .register()
+                .setTitle("Скорость воспроизведения")
+                .setItems(titles) { _, which ->
+                    updatePlaySpeed(values[which])
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+                .show()
+                .register()
         }
 
         fun showQualityDialog() {
@@ -822,132 +1016,155 @@ class MyPlayerActivity : BaseActivity() {
 
             val activeIndex = values.indexOf(currentQuality)
             val titles = values
-                    .mapIndexed { index, s ->
-                        val stringValue = getQualityTitle(s)
-                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
-                    }
-                    .map { Html.fromHtml(it) }
-                    .toTypedArray()
+                .mapIndexed { index, s ->
+                    val stringValue = getQualityTitle(s)
+                    if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                }
+                .map { Html.fromHtml(it) }
+                .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setTitle("Качество")
-                    .setItems(titles) { _, which ->
-                        updateQuality(values[which])
-                    }
-                    .setDarkTheme(appThemeHolder.getTheme().isDark())
-                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                    .show()
-                    .register()
+                .setTitle("Качество")
+                .setItems(titles) { _, which ->
+                    updateQuality(values[which])
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+                .show()
+                .register()
         }
 
         fun showScaleDialog() {
             val values = arrayOf(
-                    ScaleType.FIT_CENTER,
-                    ScaleType.CENTER_CROP,
-                    ScaleType.FIT_XY
+                ScaleType.FIT_CENTER,
+                ScaleType.CENTER_CROP,
+                ScaleType.FIT_XY
             )
             val activeIndex = values.indexOf(currentScale)
             val titles = values
-                    .mapIndexed { index, s ->
-                        val stringValue = getScaleTitle(s)
-                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
-                    }
-                    .map { Html.fromHtml(it) }
-                    .toTypedArray()
+                .mapIndexed { index, s ->
+                    val stringValue = getScaleTitle(s)
+                    if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                }
+                .map { Html.fromHtml(it) }
+                .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setTitle("Соотношение сторон")
-                    .setItems(titles) { _, which ->
-                        val newScaleType = values[which]
-                        updateScale(newScaleType)
-                    }
-                    .setDarkTheme(appThemeHolder.getTheme().isDark())
-                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                    .show()
-                    .register()
+                .setTitle("Соотношение сторон")
+                .setItems(titles) { _, which ->
+                    val newScaleType = values[which]
+                    playerAnalytics.settingsScaleChange(newScaleType.ordinal.toAnalyticsScale())
+                    updateScale(newScaleType)
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+                .show()
+                .register()
         }
 
         fun showPIPDialog() {
             val values = arrayOf(
-                    PreferencesHolder.PIP_AUTO,
-                    PreferencesHolder.PIP_BUTTON
+                PreferencesHolder.PIP_AUTO,
+                PreferencesHolder.PIP_BUTTON
             )
             val activeIndex = values.indexOf(currentPipControl)
             val titles = values
-                    .mapIndexed { index, s ->
-                        val stringValue = getPIPTitle(s)
-                        if (index == activeIndex) "<b>$stringValue</b>" else stringValue
-                    }
-                    .map { Html.fromHtml(it) }
-                    .toTypedArray()
+                .mapIndexed { index, s ->
+                    val stringValue = getPIPTitle(s)
+                    if (index == activeIndex) "<b>$stringValue</b>" else stringValue
+                }
+                .map { Html.fromHtml(it) }
+                .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
-                    .setTitle("Режим окна (картинка в картинке)")
-                    .setItems(titles) { _, which ->
-                        val newPipControl = values[which]
-                        updatePIPControl(newPipControl)
-                    }
-                    .setDarkTheme(appThemeHolder.getTheme().isDark())
-                    .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                    .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                    .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                    .show()
-                    .register()
+                .setTitle("Режим окна (картинка в картинке)")
+                .setItems(titles) { _, which ->
+                    val newPipControl = values[which]
+                    playerAnalytics.settingsPipChange(newPipControl.toAnalyticsPip())
+                    updatePIPControl(newPipControl)
+                }
+                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+                .show()
+                .register()
         }
     }
 
     private fun showSeasonFinishDialog() {
+        playerAnalytics.seasonFinish()
         val titles = arrayOf(
-                "Начать серию заново",
-                "Начать с первой серии",
-                "Закрыть плеер"
+            "Начать серию заново",
+            "Начать с первой серии",
+            "Закрыть плеер"
         )
         BottomSheet.Builder(this@MyPlayerActivity)
-                .setTitle("Серия полностью просмотрена")
-                .setItems(titles) { _, which ->
-                    when (which) {
-                        0 -> {
-                            saveEpisode(0)
-                            hardPlayEpisode(getEpisode())
-                        }
-                        1 -> releaseData.episodes.lastOrNull()?.also {
+            .setTitle("Серия полностью просмотрена")
+            .setItems(titles) { _, which ->
+                when (which) {
+                    0 -> {
+                        playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.RESTART_EPISODE)
+                        saveEpisode(0)
+                        hardPlayEpisode(getEpisode())
+                    }
+                    1 -> {
+                        playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.RESTART_SEASON)
+                        releaseData.episodes.lastOrNull()?.also {
                             hardPlayEpisode(it)
                         }
-                        2 -> finish()
+                    }
+                    2 -> {
+                        playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.CLOSE_PLAYER)
+                        finish()
                     }
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
-                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
+            }
+            .setDarkTheme(appThemeHolder.getTheme().isDark())
+            .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+            .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+            .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+            .show()
     }
 
     private fun showEpisodeFinishDialog() {
+        playerAnalytics.episodesFinish()
         val titles = arrayOf(
-                "Начать серию заново",
-                "Включить следущую серию"
+            "Начать серию заново",
+            "Включить следущую серию"
         )
         BottomSheet.Builder(this@MyPlayerActivity)
-                .setTitle("Серия полностью просмотрена")
-                .setItems(titles) { _, which ->
-                    when (which) {
-                        0 -> {
-                            saveEpisode(0)
-                            hardPlayEpisode(getEpisode())
-                        }
-                        1 -> getNextEpisode()?.also { hardPlayEpisode(it) }
+            .setTitle("Серия полностью просмотрена")
+            .setItems(titles) { _, which ->
+                when (which) {
+                    0 -> {
+                        playerAnalytics.episodesFinishAction(AnalyticsEpisodeFinishAction.RESTART)
+                        saveEpisode(0)
+                        hardPlayEpisode(getEpisode())
+                    }
+                    1 -> {
+                        playerAnalytics.episodesFinishAction(AnalyticsEpisodeFinishAction.NEXT)
+                        getNextEpisode()?.also { hardPlayEpisode(it) }
                     }
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
-                .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
-                .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
-                .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
+            }
+            .setDarkTheme(appThemeHolder.getTheme().isDark())
+            .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
+            .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
+            .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
+            .show()
+    }
+
+    private fun getSeekPercent(): Float {
+        if (player == null) return 0f
+        if (player.duration <= 0) {
+            return 0f
+        }
+        return player.currentPosition / player.duration.toFloat()
     }
 
 
@@ -962,6 +1179,7 @@ class MyPlayerActivity : BaseActivity() {
         }
 
         override fun onSettingsClick() {
+            playerAnalytics.settingsClick()
             dialogController.showSettingsDialog()
         }
 
@@ -983,6 +1201,9 @@ class MyPlayerActivity : BaseActivity() {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             }
             fullscreenOrientation = !fullscreenOrientation
+            if (fullscreenOrientation) {
+                playerAnalytics.fullScreen(getSeekPercent())
+            }
             videoControls?.setFullScreenMode(fullscreenOrientation)
         }
 
@@ -993,7 +1214,7 @@ class MyPlayerActivity : BaseActivity() {
 
     }
 
-    private val playerListener = object : OnPreparedListener, OnCompletionListener, OnErrorListener {
+    private val playerListener = object : OnPreparedListener, OnCompletionListener {
         override fun onPrepared() {
             val episode = getEpisode()
             if (episode.seek >= player.duration) {
@@ -1013,24 +1234,22 @@ class MyPlayerActivity : BaseActivity() {
                 showSeasonFinishDialog()
             }
         }
-
-        override fun onError(e: Exception?): Boolean {
-            e?.printStackTrace()
-            return false
-        }
     }
 
     private val controlsListener = object : VideoControlsButtonListener {
         override fun onPlayPauseClicked(): Boolean {
             if (player.isPlaying) {
+                playerAnalytics.pauseClick()
                 player.pause()
             } else {
+                playerAnalytics.playClick()
                 player.start()
             }
             return true
         }
 
         override fun onNextClicked(): Boolean {
+            playerAnalytics.nextClick(getSeekPercent())
             saveEpisode()
             val episode = getNextEpisode() ?: return false
             playEpisode(episode)
@@ -1038,6 +1257,7 @@ class MyPlayerActivity : BaseActivity() {
         }
 
         override fun onPreviousClicked(): Boolean {
+            playerAnalytics.prevClick(getSeekPercent())
             saveEpisode()
             val episode = getPrevEpisode() ?: return false
             playEpisode(episode)

@@ -1,10 +1,12 @@
 package ru.radiationx.anilibria
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
@@ -21,11 +23,15 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
+import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -35,6 +41,7 @@ import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
+
     companion object {
 
         init {
@@ -44,6 +51,10 @@ class App : Application() {
         lateinit var instance: App
             private set
 
+    }
+
+    private val timeCounter = TimeCounter().apply {
+        start()
     }
 
     private var messengerDisposable = Disposables.disposed()
@@ -73,16 +84,30 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        val timeToCreate = timeCounter.elapsed()
         instance = this
         initYandexAppMetrica()
 
         if (isMainProcess()) {
             initInMainProcess()
+            val timeToInit = timeCounter.elapsed()
+            val appAnalytics = DI.get(AppAnalytics::class.java)
+            appAnalytics.timeToCreate(timeToCreate)
+            appAnalytics.timeToInit(timeToInit)
+
+            registerActivityLifecycleCallbacks(object :SimpleActivityLifecycleCallbacks(){
+                override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
+                    super.onActivityCreated(p0, p1)
+                    val timeToActivity = timeCounter.elapsed()
+                    appAnalytics.timeToActivity(timeToActivity)
+                    unregisterActivityLifecycleCallbacks(this)
+                }
+            })
         }
     }
 
     private fun initYandexAppMetrica() {
-        if (BuildConfig.DEBUG) return
+        //if (BuildConfig.DEBUG) return
         val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
@@ -164,57 +189,11 @@ class App : Application() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
         scope.installModules(AppModule(this), DataModule(this))
-
-        Log.e("lalala", "initDependencies ${Toothpick.openScope(DI.DEFAULT_SCOPE)}")
     }
 
     private fun appVersionCheck() {
-        try {
-            val prefKey = "app.versions.history"
-            val defaultPreferences = DI.get(SharedPreferences::class.java)
-            val history = defaultPreferences
-                .getString(prefKey, "")
-                ?.split(";")
-                ?.filter { it.isNotBlank() }
-                ?.map { it.toInt() }
-                ?: emptyList()
-
-
-            var lastAppCode = 0
-
-            var disorder = false
-            history.forEach {
-                if (it < lastAppCode) {
-                    disorder = true
-                }
-                lastAppCode = it
-            }
-            val currentAppCode = ("" + BuildConfig.VERSION_CODE).toInt()
-
-            if (lastAppCode < currentAppCode) {
-                if (lastAppCode > 0) {
-                    val appMigration = AppMigration(currentAppCode, lastAppCode, history)
-                    appMigration.start()
-                }
-
-                val list = history.map { it.toString() }.toMutableList()
-                list.add(currentAppCode.toString())
-                defaultPreferences
-                    .edit()
-                    .putString(prefKey, TextUtils.join(";", list))
-                    .apply()
-            }
-            if (disorder) {
-                val errMsg = "AniLibria: Нарушение порядка версий, программа может работать не стабильно!"
-                Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            val errMsg = "Сбой при проверке локальной версии."
-            YandexMetrica.reportError(errMsg, ex)
-            val uiErr = "$errMsg\nПрограмма может работать не стабильно! Переустановите программу."
-            Toast.makeText(this, uiErr, Toast.LENGTH_LONG).show()
-        }
+        val migrationDataSource = DI.get(MigrationDataSource::class.java)
+        migrationDataSource.update()
     }
 
     private fun findTemplate(name: String): MiniTemplator? {

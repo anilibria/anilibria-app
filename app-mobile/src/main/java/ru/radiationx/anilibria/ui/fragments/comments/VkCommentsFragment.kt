@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
@@ -28,6 +29,7 @@ import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.shared.ktx.android.toBase64
+import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
 import toothpick.Toothpick
@@ -56,7 +58,8 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     lateinit var presenter: VkCommentsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): VkCommentsPresenter = getDependency(VkCommentsPresenter::class.java, screenScope)
+    fun providePresenter(): VkCommentsPresenter =
+        getDependency(VkCommentsPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_webview
 
@@ -101,11 +104,11 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))*/
 
         disposables.add(
-                appThemeHolder
-                        .observeTheme()
-                        .subscribe {
-                            webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
-                        }
+            appThemeHolder
+                .observeTheme()
+                .subscribe {
+                    webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                }
         )
     }
 
@@ -138,7 +141,10 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     override fun showBody(comments: VkComments) {
         if (webView.url != comments.baseUrl) {
             val template = App.instance.vkCommentsTemplate
-            webView.easyLoadData(comments.baseUrl, template.generateWithTheme(appThemeHolder.getTheme()))
+            webView.easyLoadData(
+                comments.baseUrl,
+                template.generateWithTheme(appThemeHolder.getTheme())
+            )
         }
         webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
         webView?.postDelayed({
@@ -168,12 +174,17 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     private val vkWebChromeClient = object : WebChromeClient() {
-        override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message): Boolean {
+        override fun onCreateWindow(
+            view: WebView?,
+            isDialog: Boolean,
+            isUserGesture: Boolean,
+            resultMsg: Message
+        ): Boolean {
             Log.d("kukosina", "onCreateWindow $isDialog, $isUserGesture")
             val newWebView = WebView(context)
             AlertDialog.Builder(context!!)
-                    .setView(newWebView)
-                    .show()
+                .setView(newWebView)
+                .show()
             //addView(newWebView)
             val transport = resultMsg.obj as WebView.WebViewTransport
             transport.webView = newWebView
@@ -193,14 +204,21 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         @Suppress("DEPRECATION", "OverridingDeprecatedMember")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
             return if (url?.contains("widget_comments.css") == true) {
-                val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope).getInstance(IClient::class.java, MainClient::class.java.name)
+                val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope)
+                    .getInstance(IClient::class.java, MainClient::class.java.name)
 
                 Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = try {
                     client.get(url.orEmpty(), emptyMap()).blockingGet()
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
-                    return WebResourceResponse("text/css", "utf-8", ByteArrayInputStream(ex.message.orEmpty().toByteArray(StandardCharsets.UTF_8)))
+                    return WebResourceResponse(
+                        "text/css",
+                        "utf-8",
+                        ByteArrayInputStream(
+                            ex.message.orEmpty().toByteArray(StandardCharsets.UTF_8)
+                        )
+                    )
                 }
                 var newCss = cssSrc
 
@@ -256,8 +274,40 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
             if (loadingFinished && !redirect) {
                 //progressBar.visibility = View.GONE
+                presenter.onPageLoaded()
             } else {
                 redirect = false
+            }
+        }
+
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            super.onReceivedSslError(view, handler, error)
+            presenter.onPageCommitError(error.toException())
+        }
+
+        override fun onReceivedHttpError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            errorResponse: WebResourceResponse?
+        ) {
+            super.onReceivedHttpError(view, request, errorResponse)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+                presenter.onPageCommitError(errorResponse.toException(request))
+            }
+        }
+
+        override fun onReceivedError(
+            view: WebView?,
+            request: WebResourceRequest?,
+            error: WebResourceError?
+        ) {
+            super.onReceivedError(view, request, error)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+                presenter.onPageCommitError(error.toException(request))
             }
         }
 

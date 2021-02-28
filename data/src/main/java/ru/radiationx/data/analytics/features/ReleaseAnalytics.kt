@@ -1,0 +1,181 @@
+package ru.radiationx.data.analytics.features
+
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.AnalyticsSender
+import ru.radiationx.data.analytics.features.extensions.toIdParam
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toQualityParam
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.model.AnalyticsQuality
+import toothpick.InjectConstructor
+
+@InjectConstructor
+class ReleaseAnalytics(
+    private val sender: AnalyticsSender
+) {
+
+    private companion object {
+        const val PARAM_HEVC = "hevc"
+        const val PARAM_RELEASE_CODE = "code"
+    }
+
+    fun open(from: String, releaseId: Int?, releaseCode:String?=null) {
+        sender.send(
+            AnalyticsConstants.release_open,
+            from.toNavFromParam(),
+            releaseId.toIdParam(),
+            releaseCode.toParam(PARAM_RELEASE_CODE)
+        )
+    }
+
+    fun copyLink(from: String, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_copy,
+            from.toNavFromParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun share(from: String, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_share,
+            from.toNavFromParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun shortcut(from: String, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_shortcut,
+            from.toNavFromParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun historyReset() {
+        sender.send(AnalyticsConstants.release_history_reset)
+    }
+
+    fun historyViewAll() {
+        sender.send(AnalyticsConstants.release_history_view_all)
+    }
+
+    fun historyResetEpisode() {
+        sender.send(AnalyticsConstants.release_history_reset_episode)
+    }
+
+    fun episodesTopStartClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episodes_top_start,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodesTopContinueClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episodes_top_continue,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodesStartClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episodes_start,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodesContinueClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episodes_continue,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodePlayClick(quality: AnalyticsQuality, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episode_play,
+            quality.toQualityParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodeDownloadClick(quality: AnalyticsQuality, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episode_download,
+            quality.toQualityParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun webPlayerClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_web_player,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun torrentClick(isHevc: Boolean, releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_torrent,
+            isHevc.toParam(PARAM_HEVC),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun donateClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_donate,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun descriptionExpand(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_description_expand,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun descriptionLinkClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_description_link,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun scheduleClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_schedule_click,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun genreClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_genre_click,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun favoriteAdd(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_favorite_add,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun favoriteRemove(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_favorite_remove,
+            releaseId.toIdParam()
+        )
+    }
+
+    fun commentsClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_comments_click,
+            releaseId.toIdParam()
+        )
+    }
+}

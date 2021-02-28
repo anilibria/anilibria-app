@@ -7,6 +7,7 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.nullString
@@ -16,7 +17,8 @@ import javax.inject.Inject
  * Created by radiationx on 18.02.18.
  */
 class HistoryStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+        @DataPreferences private val sharedPreferences: SharedPreferences,
+        private val appAnalytics: AppAnalytics
 ) : HistoryHolder {
 
     companion object {
@@ -62,6 +64,7 @@ class HistoryStorage @Inject constructor(
     }
 
     private fun saveAll() {
+        appAnalytics.historyPut()
         val jsonEpisodes = JSONArray()
         localReleases.forEach {
             jsonEpisodes.put(JSONObject().apply {

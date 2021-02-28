@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -31,11 +32,13 @@ import ru.radiationx.anilibria.ui.widgets.UILImageListener
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
+import javax.inject.Inject
 
 
 /* Created by radiationx on 16.11.17. */
@@ -71,6 +74,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             .cacheOnDisk(true)
             .displayer(FadeInBitmapDisplayer(1000, true, false, false))
             .bitmapConfig(Bitmap.Config.ARGB_8888)
+
+    @Inject
+    lateinit var commentsAnalytics: CommentsAnalytics
 
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
@@ -155,6 +161,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
                     }
+                }
+            }
+        })
+
+        viewPagerPaged.addOnPageChangeListener(object :ViewPager.SimpleOnPageChangeListener(){
+            override fun onPageSelected(position: Int) {
+                if(position==1){
+                    presenter.onCommentsSwipe()
                 }
             }
         })

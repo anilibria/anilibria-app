@@ -6,6 +6,8 @@ import moxy.InjectViewState
 import moxy.MvpPresenter
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.repository.CheckerRepository
 import javax.inject.Inject
 
@@ -15,12 +17,17 @@ import javax.inject.Inject
 @InjectViewState
 class CheckerPresenter @Inject constructor(
         private val checkerRepository: CheckerRepository,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val updaterAnalytics: UpdaterAnalytics
 ) : MvpPresenter<CheckerView>() {
 
     var forceLoad = false
 
     private var compositeDisposable = CompositeDisposable()
+
+    fun submitUseTime(time: Long) {
+        updaterAnalytics.useTime(time)
+    }
 
     fun checkUpdate() {
         checkerRepository
@@ -34,6 +41,14 @@ class CheckerPresenter @Inject constructor(
                     errorHandler.handle(it)
                 })
                 .addToDisposable()
+    }
+
+    fun onDownloadClick(){
+        updaterAnalytics.downloadClick()
+    }
+
+    fun onSourceDownloadClick(title:String){
+        updaterAnalytics.sourceDownload(title)
     }
 
     override fun onDestroy() {

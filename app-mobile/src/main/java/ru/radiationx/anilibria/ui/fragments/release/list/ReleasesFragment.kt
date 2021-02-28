@@ -131,6 +131,8 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
+                    }else{
+                        presenter.onFastSearchOpen()
                     }
                 }
 
@@ -227,11 +229,18 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                 .setItems(titles) { dialog, which ->
                     when (which) {
                         0 -> {
+                            presenter.onCopyClick(item)
                             Utils.copyToClipBoard(item.link.orEmpty())
-                            Toast.makeText(it, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> Utils.shareText(item.link.orEmpty())
-                        2 -> ShortcutHelper.addShortcut(item)
+                        1 -> {
+                            presenter.onShareClick(item)
+                            Utils.shareText(item.link.orEmpty())
+                        }
+                        2 -> {
+                            presenter.onShortcutClick(item)
+                            ShortcutHelper.addShortcut(item)
+                        }
                     }
                 }
                 .show()

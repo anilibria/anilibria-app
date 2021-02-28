@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator
+import com.devbrackets.android.exomedia.listener.VideoControlsSeekListener
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
@@ -16,10 +17,12 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
+import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
+import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
@@ -30,14 +33,33 @@ import kotlin.math.absoluteValue
 
 
 class VideoControlsAlib @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : VideoControlsMobile(context, attrs, defStyleAttr) {
 
     private var alibControlsListener: AlibControlsListener? = null
     private var pictureInPictureMenuItem: MenuItem? = null
     private var controlsEnabled = true
+    private var playerAnalytics: PlayerAnalytics? = null
+
+    init {
+        setSeekListener(object : VideoControlsSeekListener {
+
+            override fun onSeekStarted(): Boolean {
+                return false
+            }
+
+            override fun onSeekEnded(seekTime: Long): Boolean {
+                playerAnalytics?.rewindSeek(getSeekPercent(), seekTime)
+                return false
+            }
+        })
+    }
+
+    fun setAnalytics(playerAnalytics: PlayerAnalytics) {
+        this.playerAnalytics = playerAnalytics
+    }
 
     fun setOpeningListener(listener: AlibControlsListener) {
         alibControlsListener = listener
@@ -59,6 +81,15 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlPlusOpening.visible(percent < 0.3)
     }*/
 
+    private fun getSeekPercent(): Float {
+        val player = videoView ?: return 0f
+        if (player.duration <= 0) {
+            return 0f
+        }
+        return player.currentPosition / player.duration.toFloat()
+    }
+
+
     override fun getLayoutResource() = R.layout.view_video_control
 
     override fun retrieveViews() {
@@ -75,12 +106,12 @@ class VideoControlsAlib @JvmOverloads constructor(
                 alibControlsListener?.onBackClick()
             }
             pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
-                    .setIcon(context.getCompatDrawable(R.drawable.ic_picture_in_picture_alt_toolbar))
-                    .setOnMenuItemClickListener {
-                        alibControlsListener?.onPIPClick()
-                        true
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setIcon(context.getCompatDrawable(R.drawable.ic_picture_in_picture_alt_toolbar))
+                .setOnMenuItemClickListener {
+                    alibControlsListener?.onPIPClick()
+                    true
+                }
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
         controlsContainer = timeControlsContainer
@@ -92,6 +123,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private var tapDisposable = Disposables.disposed()
             private val tapSeekHandler = Handler()
             private val tapSeekRunnable = Runnable {
+                playerAnalytics?.rewindDoubleTap(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
                 gestureSeekValue.gone()
                 tapDisposable.dispose()
@@ -102,6 +134,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private val tapRelay = PublishRelay.create<MotionEvent>()
 
             private fun handleEndSwipeSeek() {
+                playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
                 gestureSeekValue.gone()
                 gesturesControllerView.background = null
@@ -112,9 +145,9 @@ class VideoControlsAlib @JvmOverloads constructor(
             private fun handleStartTapSeek() {
                 tapDisposable.dispose()
                 tapDisposable = tapRelay
-                        //.debounce(100L, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { handleTapSeek(it) }
+                    //.debounce(100L, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { handleTapSeek(it) }
             }
 
             private fun handleTapSeek(event: MotionEvent?) {
@@ -124,7 +157,8 @@ class VideoControlsAlib @JvmOverloads constructor(
 
                 localSeekDelta += seekMillis
 
-                val textValue = "${if (localSeekDelta > 0) "+" else "-"}${Date(localSeekDelta.absoluteValue).asTimeSecString()}"
+                val textValue =
+                    "${if (localSeekDelta > 0) "+" else "-"}${Date(localSeekDelta.absoluteValue).asTimeSecString()}"
                 gestureSeekValue.text = textValue
             }
 
@@ -151,7 +185,10 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onDoubleTap(event: MotionEvent?) {
-                Log.e("gestureLalala", "onDoubleTap,;;; ${event?.x}:${event?.y};;;;  $canViewHide, $isVisible")
+                Log.e(
+                    "gestureLalala",
+                    "onDoubleTap,;;; ${event?.x}:${event?.y};;;;  $canViewHide, $isVisible"
+                )
 
                 if (!tapSeekStarted) {
                     gestureSeekValue.visible()
@@ -170,16 +207,21 @@ class VideoControlsAlib @JvmOverloads constructor(
                 val duration = videoView?.duration ?: 0
                 val currentPosition = videoView?.currentPosition ?: 0
                 val percent: Int = ((delta / gesturesControllerView.width) * 100).toInt()
-                val seconds = (pow(percent.toDouble(), 2.0) / 25).toLong() * if (percent < 0) -1 else 1
+                val seconds =
+                    (pow(percent.toDouble(), 2.0) / 25).toLong() * if (percent < 0) -1 else 1
                 val seekMillis = TimeUnit.SECONDS.toMillis(seconds)
                 val targetPosition = (currentPosition + seekMillis).coerceIn(0, duration)
 
-                val textValue = "${if (seekMillis > 0) "+" else "-"}${Date(seekMillis.absoluteValue).asTimeSecString()}"
+                val textValue =
+                    "${if (seekMillis > 0) "+" else "-"}${Date(seekMillis.absoluteValue).asTimeSecString()}"
 
                 gestureSeekValue.text = textValue
                 localSeekDelta = seekMillis
 
-                Log.e("gestureLalala", "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition")
+                Log.e(
+                    "gestureLalala",
+                    "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition"
+                )
             }
 
             override fun onVerticalScroll(event: MotionEvent?, delta: Float) {
@@ -262,7 +304,10 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun animateVisibility(toVisible: Boolean) {
 
-        Log.e("lalka", "animateVisibility $controlsEnabled, $toVisible, ${!controlsEnabled && toVisible}")
+        Log.e(
+            "lalka",
+            "animateVisibility $controlsEnabled, $toVisible, ${!controlsEnabled && toVisible}"
+        )
         if (!controlsEnabled && toVisible) {
             hide()
             return
@@ -272,19 +317,41 @@ class VideoControlsAlib @JvmOverloads constructor(
         }
 
         if (!hideEmptyTextContainer || !isTextContainerEmpty) {
-            textContainer.startAnimation(TopViewHideShowAnimation(textContainer, toVisible, VideoControls.CONTROL_VISIBILITY_ANIMATION_LENGTH))
+            textContainer.startAnimation(
+                TopViewHideShowAnimation(
+                    textContainer,
+                    toVisible,
+                    VideoControls.CONTROL_VISIBILITY_ANIMATION_LENGTH
+                )
+            )
         }
 
         if (!isLoading) {
-            controlsContainer.startAnimation(BottomViewHideShowAnimation(controlsContainer, toVisible, VideoControls.CONTROL_VISIBILITY_ANIMATION_LENGTH))
-            controlButtonsWrapper.startAnimation(CenterViewHideShowAnimation(controlButtonsWrapper, toVisible, 225))
+            controlsContainer.startAnimation(
+                BottomViewHideShowAnimation(
+                    controlsContainer,
+                    toVisible,
+                    VideoControls.CONTROL_VISIBILITY_ANIMATION_LENGTH
+                )
+            )
+            controlButtonsWrapper.startAnimation(
+                CenterViewHideShowAnimation(
+                    controlButtonsWrapper,
+                    toVisible,
+                    225
+                )
+            )
 
             val colorDark = Color.argb(127, 0, 0, 0)
             val colorFrom = if (toVisible) Color.TRANSPARENT else colorDark
             val colorTo = if (!toVisible) Color.TRANSPARENT else colorDark
             val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
             colorAnimation.duration = 335 // milliseconds
-            colorAnimation.addUpdateListener { animator -> videoControlsRoot.setBackgroundColor(animator.animatedValue as Int) }
+            colorAnimation.addUpdateListener { animator ->
+                videoControlsRoot.setBackgroundColor(
+                    animator.animatedValue as Int
+                )
+            }
             colorAnimation.start()
         }
 
@@ -323,8 +390,12 @@ class VideoControlsAlib @JvmOverloads constructor(
         controlButtonsWrapper.visible()
 
         playPauseButton.isEnabled = true
-        previousButton.isEnabled = enabledViews.get(com.devbrackets.android.exomedia.R.id.exomedia_controls_previous_btn, true)
-        nextButton.isEnabled = enabledViews.get(com.devbrackets.android.exomedia.R.id.exomedia_controls_next_btn, true)
+        previousButton.isEnabled = enabledViews.get(
+            com.devbrackets.android.exomedia.R.id.exomedia_controls_previous_btn,
+            true
+        )
+        nextButton.isEnabled =
+            enabledViews.get(com.devbrackets.android.exomedia.R.id.exomedia_controls_next_btn, true)
 
         updatePlaybackState(videoView != null && videoView!!.isPlaying)
     }

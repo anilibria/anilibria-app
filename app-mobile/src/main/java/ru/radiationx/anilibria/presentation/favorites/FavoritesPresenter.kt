@@ -4,6 +4,9 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.FavoritesAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
@@ -16,13 +19,18 @@ import javax.inject.Inject
 class FavoritesPresenter @Inject constructor(
         private val favoriteRepository: FavoriteRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val favoritesAnalytics: FavoritesAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FavoritesView>(router) {
 
 
     companion object {
         private const val START_PAGE = 1
     }
+
+    private var lastLoadedPage:Int?=null
+    private var isSearchEnabled:Boolean = false
 
     private var currentPage = START_PAGE
 
@@ -38,6 +46,10 @@ class FavoritesPresenter @Inject constructor(
     }
 
     private fun loadReleases(pageNum: Int) {
+        if(lastLoadedPage!=pageNum){
+            favoritesAnalytics.loadPage(pageNum)
+            lastLoadedPage = pageNum
+        }
         currentPage = pageNum
         if (isFirstPage()) {
             viewState.setRefreshing(true)
@@ -73,6 +85,7 @@ class FavoritesPresenter @Inject constructor(
     }
 
     fun deleteFav(id: Int) {
+        favoritesAnalytics.deleteFav()
         if (isFirstPage()) {
             viewState.setRefreshing(true)
         }
@@ -87,8 +100,21 @@ class FavoritesPresenter @Inject constructor(
                 .addToDisposable()
     }
 
+    fun onCopyClick(item:ReleaseItem){
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_favorites, item.id)
+    }
+
+    fun onShareClick(item: ReleaseItem){
+        releaseAnalytics.share(AnalyticsConstants.screen_favorites, item.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItem){
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_favorites, item.id)
+    }
+
     fun localSearch(query: String) {
-        if (!query.isEmpty()) {
+        isSearchEnabled = query.isNotEmpty()
+        if (query.isNotEmpty()) {
             val searchRes = currentReleases.filter {
                 it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
             }
@@ -98,7 +124,17 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
+    fun onSearchClick(){
+        favoritesAnalytics.searchClick()
+    }
+
     fun onItemClick(item: ReleaseItem) {
+        if(isSearchEnabled){
+            favoritesAnalytics.searchReleaseClick()
+        }else{
+            favoritesAnalytics.releaseClick()
+        }
+        releaseAnalytics.open(AnalyticsConstants.screen_favorites, item.id)
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 

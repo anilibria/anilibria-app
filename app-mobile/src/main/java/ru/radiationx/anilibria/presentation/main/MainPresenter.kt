@@ -6,12 +6,16 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.system.LocaleHolder
 import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.Screen
 import javax.inject.Inject
 
 /**
@@ -26,7 +30,14 @@ class MainPresenter @Inject constructor(
         private val appThemeHolder: AppThemeHolder,
         private val apiConfig: ApiConfig,
         private val schedulers: SchedulersProvider,
-        private val localeHolder: LocaleHolder
+        private val localeHolder: LocaleHolder,
+        private val analyticsProfile: AnalyticsProfile,
+        private val authMainAnalytics: AuthMainAnalytics,
+        private val catalogAnalytics: CatalogAnalytics,
+        private val favoritesAnalytics: FavoritesAnalytics,
+        private val feedAnalytics: FeedAnalytics,
+        private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
+        private val otherAnalytics: OtherAnalytics
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -35,6 +46,7 @@ class MainPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        analyticsProfile.update()
         appThemeHolder
                 .observeTheme()
                 .subscribe { viewState.changeTheme(it) }
@@ -69,6 +81,7 @@ class MainPresenter @Inject constructor(
     private fun initMain() {
         firstLaunch = false
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+            authMainAnalytics.open(AnalyticsConstants.screen_main)
             router.navigateTo(Screens.Auth())
         }
 
@@ -90,6 +103,16 @@ class MainPresenter @Inject constructor(
 
     fun selectTab(screenKey: String) {
         viewState.highlightTab(screenKey)
+    }
+
+    fun submitScreenAnalytics(screen: Screen) {
+        when (screen) {
+            is Screens.ReleasesSearch -> catalogAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.Favorites -> favoritesAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainFeed -> feedAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainYouTube -> youtubeVideosAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.MainOther -> otherAnalytics.open(AnalyticsConstants.screen_main)
+        }
     }
 
 }

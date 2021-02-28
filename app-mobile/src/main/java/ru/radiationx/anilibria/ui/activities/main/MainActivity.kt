@@ -40,6 +40,7 @@ import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.app.updater.UpdateData
@@ -197,6 +198,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
             val notifyIntent = Intent(context, UpdateCheckerActivity::class.java)
             notifyIntent.action = Intent.ACTION_VIEW
+            notifyIntent.putExtra(UpdateCheckerActivity.ARG_ANALYTICS_FROM, AnalyticsConstants.notification_local_update)
             val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
             mBuilder.setContentIntent(notifyPendingIntent)
 
@@ -355,7 +357,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun highlightTab(screenKey: String) {
         Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
-        router.replaceScreen(tabs.first { it.screen.screenKey == screenKey }.screen)
+        val screen = tabs.first { it.screen.screenKey == screenKey }.screen
+        presenter.submitScreenAnalytics(screen)
+        router.replaceScreen(screen)
     }
 
     fun addInStack(screenKey: String) {

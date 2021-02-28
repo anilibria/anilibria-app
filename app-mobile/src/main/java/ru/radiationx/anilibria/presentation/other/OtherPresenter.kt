@@ -7,6 +7,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.other.LinkMenuItem
@@ -25,7 +27,13 @@ class OtherPresenter @Inject constructor(
     private val authRepository: AuthRepository,
     private val errorHandler: IErrorHandler,
     private val apiConfig: ApiConfig,
-    private val menuRepository: MenuRepository
+    private val menuRepository: MenuRepository,
+    private val authDeviceAnalytics: AuthDeviceAnalytics,
+    private val authMainAnalytics: AuthMainAnalytics,
+    private val historyAnalytics: HistoryAnalytics,
+    private val otherAnalytics: OtherAnalytics,
+    private val settingsAnalytics: SettingsAnalytics,
+    private val pageAnalytics: PageAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -76,12 +84,16 @@ class OtherPresenter @Inject constructor(
 
     fun openAuth() {
         if (currentProfileItem.authState == AuthState.AUTH) {
+            otherAnalytics.profileClick()
             return
         }
+        otherAnalytics.loginClick()
+        authMainAnalytics.open(AnalyticsConstants.screen_other)
         router.navigateTo(Screens.Auth())
     }
 
     fun signOut() {
+        otherAnalytics.logoutClick()
         val disposable = authRepository
             .signOut()
             .subscribe({
@@ -93,18 +105,41 @@ class OtherPresenter @Inject constructor(
 
     fun onMenuClick(item: OtherMenuItem) {
         when (item.id) {
-            MENU_HISTORY -> router.navigateTo(Screens.History())
-            MENU_TEAM -> router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
-            MENU_DONATE -> Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
-            MENU_SETTINGS -> router.navigateTo(Screens.Settings())
-            MENU_OTP_CODE -> viewState.showOtpCode()
+            MENU_HISTORY -> {
+                otherAnalytics.historyClick()
+                historyAnalytics.open(AnalyticsConstants.screen_other)
+                router.navigateTo(Screens.History())
+            }
+            MENU_TEAM -> {
+                otherAnalytics.teamClick()
+                pageAnalytics.open(AnalyticsConstants.screen_other, PageApi.PAGE_PATH_TEAM)
+                router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
+            }
+            MENU_DONATE -> {
+                otherAnalytics.donateClick()
+                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+            }
+            MENU_SETTINGS -> {
+                otherAnalytics.settingsClick()
+                router.navigateTo(Screens.Settings())
+            }
+            MENU_OTP_CODE -> {
+                settingsAnalytics.open(AnalyticsConstants.screen_other)
+                otherAnalytics.authDeviceClick()
+                authDeviceAnalytics.open(AnalyticsConstants.screen_other)
+                viewState.showOtpCode()
+            }
             else -> {
                 linksMap[item.id]?.also { linkItem ->
+                    otherAnalytics.linkClick(linkItem.title)
                     val absoluteLink = linkItem.absoluteLink
                     val pagePath = linkItem.sitePagePath
                     when {
                         absoluteLink != null -> Utils.externalLink(absoluteLink)
-                        pagePath != null -> router.navigateTo(Screens.StaticPage(pagePath))
+                        pagePath != null -> {
+                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath)
+                            router.navigateTo(Screens.StaticPage(pagePath))
+                        }
                     }
                 }
             }

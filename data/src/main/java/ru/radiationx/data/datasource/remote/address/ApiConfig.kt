@@ -73,7 +73,7 @@ class ApiConfig @Inject constructor(
     val active: ApiAddress
         get() = addresses.firstOrNull { it.tag == activeAddressTag } ?: Api.DEFAULT_ADDRESS
 
-    val tag: String?
+    val tag: String
         get() = active.tag
 
     val name: String?

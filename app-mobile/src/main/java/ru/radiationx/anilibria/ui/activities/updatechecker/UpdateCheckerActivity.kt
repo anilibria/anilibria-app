@@ -22,10 +22,12 @@ import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import javax.inject.Inject
 
 /**
@@ -37,10 +39,18 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
         const val ARG_FORCE = "force"
+        const val ARG_ANALYTICS_FROM = "from"
+    }
+
+    private val useTimeCounter by lazy {
+        LifecycleTimeCounter(presenter::submitUseTime)
     }
 
     @Inject
     lateinit var apiUtils: IApiUtils
+
+    @Inject
+    lateinit var updaterAnalytics: UpdaterAnalytics
 
     @InjectPresenter
     lateinit var presenter: CheckerPresenter
@@ -52,9 +62,13 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_updater)
+        lifecycle.addObserver(useTimeCounter)
 
         intent?.let {
             presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
+            it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
+                updaterAnalytics.open(it)
+            }
         }
         presenter.checkUpdate()
 
@@ -85,6 +99,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
         updateButton.visible()
         updateButton.setOnClickListener {
+            presenter.onDownloadClick()
             openDownloadDialog(update)
         }
     }
@@ -94,17 +109,21 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
             return
         }
         if (update.links.size == 1) {
-            decideDownload(update.links.last())
+            val link = update.links.last()
+            presenter.onSourceDownloadClick(link.name)
+            decideDownload(link)
             return
         }
         val titles = update.links.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
-                .setTitle("Источник")
-                .setItems(titles) { _, which ->
-                    //Utils.externalLink(update.links[titles[which]].orEmpty())
-                    decideDownload(update.links[which])
-                }
-                .show()
+            .setTitle("Источник")
+            .setItems(titles) { _, which ->
+                //Utils.externalLink(update.links[titles[which]].orEmpty())
+                val link = update.links[which]
+                presenter.onSourceDownloadClick(link.name)
+                decideDownload(link)
+            }
+            .show()
     }
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
@@ -121,7 +140,11 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         onRequestPermissionsResult(requestCode, grantResults)
     }
@@ -164,7 +187,13 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         sectionText.setTextColor(getCompatColor(R.color.light_textDefault))
         root.addView(sectionText)
 
-        updateContent.addView(root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        updateContent.addView(
+            root,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
     }
 
     private fun generateCurrentInfo(name: String?, date: String?): String {

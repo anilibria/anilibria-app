@@ -162,8 +162,6 @@ dependencies {
     implementation("org.permissionsdispatcher:permissionsdispatcher:4.6.0")
     kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.6.0"
 
-    implementation 'com.yandex.android:mobmetricalib:3.5.0'
-
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 
     implementation 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.0.4'

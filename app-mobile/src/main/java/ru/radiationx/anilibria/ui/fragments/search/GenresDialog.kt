@@ -144,7 +144,7 @@ class GenresDialog(
         }
 
         dialog.setOnDismissListener {
-            listener.onAccept()
+            listener.onClose()
         }
     }
 
@@ -302,6 +302,7 @@ class GenresDialog(
 
     interface ClickListener {
         fun onAccept()
+        fun onClose()
         fun onCheckedGenres(items: List<String>)
         fun onCheckedYears(items: List<String>)
         fun onCheckedSeasons(items: List<String>)

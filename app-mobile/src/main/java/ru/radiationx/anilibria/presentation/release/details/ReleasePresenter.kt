@@ -3,6 +3,9 @@ package ru.radiationx.anilibria.presentation.release.details
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.CommentsAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -16,7 +19,9 @@ class ReleasePresenter @Inject constructor(
         private val releaseInteractor: ReleaseInteractor,
         private val historyRepository: HistoryRepository,
         private val router: Router,
-        private val errorHandler: IErrorHandler
+        private val errorHandler: IErrorHandler,
+        private val commentsAnalytics: CommentsAnalytics,
+        private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleaseView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -66,12 +71,18 @@ class ReleasePresenter @Inject constructor(
     }
 
     fun onShareClick() {
+        currentData?.let {
+            releaseAnalytics.share(AnalyticsConstants.screen_release, it.id)
+        }
         currentData?.link?.let {
             viewState.shareRelease(it)
         }
     }
 
     fun onCopyLinkClick() {
+        currentData?.let {
+            releaseAnalytics.copyLink(AnalyticsConstants.screen_release, it.id)
+        }
         currentData?.link?.let {
             viewState.copyLink(it)
         }
@@ -79,7 +90,14 @@ class ReleasePresenter @Inject constructor(
 
     fun onShortcutAddClick() {
         currentData?.let {
+            releaseAnalytics.shortcut(AnalyticsConstants.screen_release, it.id)
             viewState.addShortCut(it)
+        }
+    }
+
+    fun onCommentsSwipe(){
+        currentData?.also {
+            commentsAnalytics.open(AnalyticsConstants.screen_release, it.id)
         }
     }
 

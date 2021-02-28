@@ -16,13 +16,18 @@ import ru.radiationx.data.entity.app.vital.VitalItem
 import java.util.*
 
 class ReleaseInfoAdapter(
-        private var itemListener: ItemListener,
-        private val torrentClickListener: (TorrentItem) -> Unit
+    private val headListener: ReleaseHeadDelegate.Listener,
+    private val episodeListener: ReleaseEpisodeDelegate.Listener,
+    private val episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
+    private val donateListener: ReleaseDonateDelegate.Listener,
+    private val torrentClickListener: (TorrentItem) -> Unit,
+    private val commentsClickListener: () -> Unit
 ) : OptimizeAdapter<MutableList<ListItem>>() {
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
 
-    private val remindText = "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
+    private val remindText =
+        "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
     private val vitalItems = mutableListOf<VitalItem>()
 
     private var currentRelease: ReleaseFull? = null
@@ -57,7 +62,7 @@ class ReleaseInfoAdapter(
 
     init {
         items = mutableListOf()
-        addDelegate(ReleaseHeadDelegate(itemListener))
+        addDelegate(ReleaseHeadDelegate(headListener))
         addDelegate(FeedSectionDelegate {})
         addDelegate(ReleaseExpandDelegate {
             when (it) {
@@ -67,14 +72,14 @@ class ReleaseInfoAdapter(
                 }
             }
         })
-        addDelegate(ReleaseEpisodeDelegate(itemListener))
+        addDelegate(ReleaseEpisodeDelegate(episodeListener))
         addDelegate(ReleaseTorrentDelegate(torrentClickListener))
-        addDelegate(ReleaseEpisodeControlDelegate(itemListener))
+        addDelegate(ReleaseEpisodeControlDelegate(episodeControlListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodeHeadListener))
-        addDelegate(ReleaseDonateDelegate(itemListener))
+        addDelegate(ReleaseDonateDelegate(donateListener))
         addDelegate(ReleaseRemindDelegate(remindCloseListener))
         addDelegate(ReleaseBlockedDelegate())
-        addDelegate(CommentRouteDelegate())
+        addDelegate(CommentRouteDelegate(commentsClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(VitalWebItemDelegate(true))
         addDelegate(VitalNativeItemDelegate(true))
@@ -99,7 +104,7 @@ class ReleaseInfoAdapter(
     fun setRelease(release: ReleaseFull) {
         items.clear()
         currentRelease = release
-        items.add(ReleaseEpisodeControlItem(release, false))
+        items.add(ReleaseEpisodeControlItem(release, false, EpisodeControlPlace.TOP))
         items.add(ReleaseHeadListItem(release))
         items.add(DividerShadowListItem())
 
@@ -139,7 +144,13 @@ class ReleaseInfoAdapter(
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
             if (release.episodes.isNotEmpty()) {
-                items.add(ReleaseEpisodeControlItem(release, release.moonwalkLink != null))
+                items.add(
+                    ReleaseEpisodeControlItem(
+                        release,
+                        release.moonwalkLink != null,
+                        EpisodeControlPlace.BOTTOM
+                    )
+                )
             }
             if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))
@@ -170,10 +181,6 @@ class ReleaseInfoAdapter(
         return newItems
     }
 
-    interface ItemListener :
-            ReleaseHeadDelegate.Listener,
-            ReleaseEpisodeDelegate.Listener,
-            ReleaseDonateDelegate.Listener,
-            ReleaseEpisodeControlDelegate.Listener
+    interface ItemListener
 
 }

@@ -7,6 +7,8 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.IClient
@@ -18,6 +20,8 @@ import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
@@ -29,13 +33,17 @@ class DataModule(context: Context) : Module() {
 
     init {
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val dataStoragePreferences = context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
+        val dataStoragePreferences =
+            context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
 
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
 
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
-        bind(SharedPreferences::class.java).withName(DataPreferences::class.java).toInstance(dataStoragePreferences)
+        bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
+            .toInstance(dataStoragePreferences)
+
+        bind(MigrationDataSource::class.java).to(MigrationDataSourceImpl::class.java).singleton()
 
         bind(PreferencesStorage::class.java).singleton()
 
@@ -67,8 +75,10 @@ class DataModule(context: Context) : Module() {
         bind(MainClientWrapper::class.java).singleton()
         bind(ApiClientWrapper::class.java).singleton()
 
-        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java).singleton()
-        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java).singleton()
+        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java)
+            .singleton()
+        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java)
+            .singleton()
 
         bind(IApiUtils::class.java).to(ApiUtils::class.java).singleton()
 
@@ -114,6 +124,32 @@ class DataModule(context: Context) : Module() {
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
+
+
+        /* Analytics */
+        bind(AnalyticsProfileDataSource::class.java).singleton()
+        bind(AppAnalytics::class.java).singleton()
+        bind(AuthDeviceAnalytics::class.java).singleton()
+        bind(AuthMainAnalytics::class.java).singleton()
+        bind(AuthSocialAnalytics::class.java).singleton()
+        bind(AuthVkAnalytics::class.java).singleton()
+        bind(CatalogAnalytics::class.java).singleton()
+        bind(CatalogFilterAnalytics::class.java).singleton()
+        bind(CommentsAnalytics::class.java).singleton()
+        bind(ConfiguringAnalytics::class.java).singleton()
+        bind(FastSearchAnalytics::class.java).singleton()
+        bind(FavoritesAnalytics::class.java).singleton()
+        bind(FeedAnalytics::class.java).singleton()
+        bind(HistoryAnalytics::class.java).singleton()
+        bind(OtherAnalytics::class.java).singleton()
+        bind(PlayerAnalytics::class.java).singleton()
+        bind(ReleaseAnalytics::class.java).singleton()
+        bind(ScheduleAnalytics::class.java).singleton()
+        bind(SettingsAnalytics::class.java).singleton()
+        bind(UpdaterAnalytics::class.java).singleton()
+        bind(WebPlayerAnalytics::class.java).singleton()
+        bind(YoutubeAnalytics::class.java).singleton()
+        bind(YoutubeVideosAnalytics::class.java).singleton()
     }
 
 }

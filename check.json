@@ -1,29 +1,32 @@
 {
   "update": {
-    "version_code": "57",
-    "version_name": "2.4.7",
+    "version_code": "58",
+    "version_name": "2.4.8",
     "version_build": "0",
-    "build_date": "4 февраля 2021 г.",
+    "build_date": "28 февраля 2021 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.7/AniLibria_v2.4.7.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.8/AniLibria_v2.4.8.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.7/AniLibria_Lite_v2.4.7.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.8/AniLibria_Lite_v2.4.8.apk",
         "type": "file"
       }
     ],
-    "important": [],
-    "added": [
-      "Авторизация для приложения Android TV (5 вкладка -> привязать устройство)",
-      "Возможность отметить серию непросмотренной"
+    "important": [
+      "В этом обновлении исправлены некоторые фундаментальные проблемы, а так-же внесены важные правки, которые помогут нам улучшать приложение в будущем"
     ],
+    "added": [],
     "fixed": [
-      "Загрузка торрент файлов"
+      "Зависание приложения на проверке доступности сервера",
+      "Сбор отчетов об ошибках"
     ],
-    "changed": []
+    "changed": [
+      "Увеличена скорость старта приложения",
+      "Увеличена стабильность сетевых запросов"
+    ]
   }
 }

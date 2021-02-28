@@ -67,9 +67,13 @@ class AppModule(context: Context) : Module() {
         bind(LoggingAnalyticsProfile::class.java).singleton()
         bind(LoggingErrorReporter::class.java).singleton()
 
-        bind(AnalyticsSender::class.java).to(CombinedAnalyticsSender::class.java).singleton()
+        /*bind(AnalyticsSender::class.java).to(CombinedAnalyticsSender::class.java).singleton()
         bind(AnalyticsProfile::class.java).to(CombinedAnalyticsProfile::class.java).singleton()
-        bind(AnalyticsErrorReporter::class.java).to(CombinedErrorReporter::class.java).singleton()
+        bind(AnalyticsErrorReporter::class.java).to(CombinedErrorReporter::class.java).singleton()*/
+
+        bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
+        bind(AnalyticsProfile::class.java).to(AppMetricaAnalyticsProfile::class.java).singleton()
+        bind(AnalyticsErrorReporter::class.java).to(AppMetricaErrorReporter::class.java).singleton()
 
     }
 

@@ -20,6 +20,14 @@ class AppMetricaAnalyticsProfile(
 ) : AnalyticsProfile {
 
     override fun update() {
+        try {
+            unsafeUpdate()
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+    }
+
+    private fun unsafeUpdate() {
         val singleSources = with(dataSource) {
             listOf<Single<DataWrapper<UserProfileUpdate<*>>>>(
                 getApiAddressTag().mapStringAttr(ProfileConstants.address_tag),

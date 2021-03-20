@@ -1,7 +1,5 @@
 package ru.radiationx.data.analytics.features.extensions
 
-import ru.radiationx.data.analytics.features.ConfiguringAnalytics
-import ru.radiationx.data.analytics.features.FeedAnalytics
 import ru.radiationx.data.analytics.features.model.*
 import java.util.*
 

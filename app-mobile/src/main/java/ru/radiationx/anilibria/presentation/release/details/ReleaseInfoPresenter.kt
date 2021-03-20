@@ -6,11 +6,13 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
+import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
@@ -42,7 +44,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
     private val webPlayerAnalytics: WebPlayerAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val playerAnalytics: PlayerAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -196,6 +199,10 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
+    fun submitPlayerOpenAnalytics(playerType: AnalyticsPlayer, quality: AnalyticsQuality) {
+        playerAnalytics.open(AnalyticsConstants.screen_release, playerType, quality)
+    }
+
     fun onClickEpisodesMenu(place: EpisodeControlPlace) {
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
@@ -206,7 +213,8 @@ class ReleaseInfoPresenter @Inject constructor(
         quality: Int? = null
     ) {
         currentData?.let {
-            val analyticsQuality = quality?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+            val analyticsQuality =
+                quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
             when (episode.type) {
                 ReleaseFull.Episode.Type.ONLINE -> {
                     releaseAnalytics.episodePlayClick(analyticsQuality, it.id)
@@ -316,6 +324,12 @@ class ReleaseInfoPresenter @Inject constructor(
             } else {
                 viewState.showDownloadDialog(url)
             }
+        }
+    }
+
+    fun submitDownloadEpisodeUrlAnalytics() {
+        currentData?.also {
+            releaseAnalytics.episodeDownloadByUrl(it.id)
         }
     }
 

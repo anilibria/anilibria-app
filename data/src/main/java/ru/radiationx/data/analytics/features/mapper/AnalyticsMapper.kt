@@ -4,7 +4,6 @@ import ru.radiationx.data.analytics.features.model.*
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.AuthState
-import java.lang.IllegalStateException
 
 fun AppThemeHolder.AppTheme.toAnalyticsAppTheme(): AnalyticsAppTheme = when (this) {
     AppThemeHolder.AppTheme.LIGHT -> AnalyticsAppTheme.LIGHT
@@ -32,7 +31,7 @@ fun Int.toAnalyticsPlayer(): AnalyticsPlayer = when (this) {
     PreferencesHolder.PLAYER_TYPE_EXTERNAL -> AnalyticsPlayer.EXTERNAL
     PreferencesHolder.PLAYER_TYPE_INTERNAL -> AnalyticsPlayer.INTERNAL
     PreferencesHolder.PLAYER_TYPE_NO -> AnalyticsPlayer.NONE
-    PreferencesHolder.PLAYER_TYPE_ALWAYS -> AnalyticsPlayer.NONE
+    PreferencesHolder.PLAYER_TYPE_ALWAYS -> AnalyticsPlayer.ALWAYS_ASK
     else -> AnalyticsPlayer.UNKNOWN
 }
 

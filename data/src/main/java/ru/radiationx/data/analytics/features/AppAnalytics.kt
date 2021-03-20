@@ -2,9 +2,7 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toPreciseTimeParam
-import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import toothpick.InjectConstructor
 
 @InjectConstructor

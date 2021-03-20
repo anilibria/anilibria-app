@@ -19,7 +19,7 @@ class ReleaseAnalytics(
         const val PARAM_RELEASE_CODE = "code"
     }
 
-    fun open(from: String, releaseId: Int?, releaseCode:String?=null) {
+    fun open(from: String, releaseId: Int?, releaseCode: String? = null) {
         sender.send(
             AnalyticsConstants.release_open,
             from.toNavFromParam(),
@@ -104,6 +104,13 @@ class ReleaseAnalytics(
         sender.send(
             AnalyticsConstants.release_episode_download,
             quality.toQualityParam(),
+            releaseId.toIdParam()
+        )
+    }
+
+    fun episodeDownloadByUrl(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episode_download_url,
             releaseId.toIdParam()
         )
     }

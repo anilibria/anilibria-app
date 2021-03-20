@@ -23,10 +23,12 @@ class PlayerAnalytics(
 
     private fun Float?.toSeekPercentParam() = this?.times(100)?.toInt().toParam(PARAM_SEEK_PERCENT)
 
-    fun open(from: String) {
+    fun open(from: String, playerType: AnalyticsPlayer, quality: AnalyticsQuality) {
         sender.send(
             AnalyticsConstants.player_open,
-            from.toNavFromParam()
+            from.toNavFromParam(),
+            playerType.toPlayerParam(),
+            quality.toQualityParam()
         )
     }
 

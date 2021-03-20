@@ -68,6 +68,12 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
+fun Int.toPrefQuality() = when (this) {
+    MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
+    MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
+    MyPlayerActivity.VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
+    else -> PreferencesHolder.QUALITY_NO
+}
 
 class MyPlayerActivity : BaseActivity() {
 
@@ -428,13 +434,6 @@ class MyPlayerActivity : BaseActivity() {
     fun showVitalItems(vital: List<VitalItem>) {
         currentVitals.clear()
         currentVitals.addAll(vital)
-    }
-
-    private fun Int.toPrefQuality() = when (this) {
-        VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
-        VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
-        VAL_QUALITY_FULL_HD -> PreferencesHolder.QUALITY_FULL_HD
-        else -> PreferencesHolder.QUALITY_NO
     }
 
     private fun updateQuality(newQuality: Int) {

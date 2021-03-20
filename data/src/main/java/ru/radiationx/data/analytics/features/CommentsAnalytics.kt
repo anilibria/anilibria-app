@@ -6,7 +6,6 @@ import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import toothpick.InjectConstructor
-import java.lang.Exception
 
 @InjectConstructor
 class CommentsAnalytics(

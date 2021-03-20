@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.di
 import android.content.Context
 import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.MobileCheckerSources
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -67,14 +68,18 @@ class AppModule(context: Context) : Module() {
         bind(LoggingAnalyticsProfile::class.java).singleton()
         bind(LoggingErrorReporter::class.java).singleton()
 
-        /*bind(AnalyticsSender::class.java).to(CombinedAnalyticsSender::class.java).singleton()
-        bind(AnalyticsProfile::class.java).to(CombinedAnalyticsProfile::class.java).singleton()
-        bind(AnalyticsErrorReporter::class.java).to(CombinedErrorReporter::class.java).singleton()*/
-
-        bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
-        bind(AnalyticsProfile::class.java).to(AppMetricaAnalyticsProfile::class.java).singleton()
-        bind(AnalyticsErrorReporter::class.java).to(AppMetricaErrorReporter::class.java).singleton()
-
+        if (BuildConfig.DEBUG) {
+            bind(AnalyticsSender::class.java).to(CombinedAnalyticsSender::class.java).singleton()
+            bind(AnalyticsProfile::class.java).to(CombinedAnalyticsProfile::class.java).singleton()
+            bind(AnalyticsErrorReporter::class.java).to(CombinedErrorReporter::class.java)
+                .singleton()
+        } else {
+            bind(AnalyticsSender::class.java).to(AppMetricaAnalyticsSender::class.java).singleton()
+            bind(AnalyticsProfile::class.java).to(AppMetricaAnalyticsProfile::class.java)
+                .singleton()
+            bind(AnalyticsErrorReporter::class.java).to(AppMetricaErrorReporter::class.java)
+                .singleton()
+        }
     }
 
 }

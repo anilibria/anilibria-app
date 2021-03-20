@@ -85,6 +85,7 @@ object AnalyticsConstants {
     const val release_episodes_continue = "release_episodes_continue"
     const val release_episode_play = "release_episode_play"
     const val release_episode_download = "release_episode_download"
+    const val release_episode_download_url = "release_episode_download_url"
     const val release_web_player = "release_web_player"
     const val release_torrent = "release_torrent"
     const val release_donate = "release_donate"

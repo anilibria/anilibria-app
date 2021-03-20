@@ -26,10 +26,13 @@ import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
+import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -154,6 +157,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         AlertDialog.Builder(context)
             .setItems(titles) { _, which ->
+                presenter.submitDownloadEpisodeUrlAnalytics()
                 when (which) {
                     0 -> Utils.externalLink(url)
                     1 -> systemDownloadWithPermissionCheck(url)
@@ -343,6 +347,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         quality: Int,
         playFlag: Int? = null
     ) {
+        presenter.submitPlayerOpenAnalytics(
+            PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
+            quality.toPrefQuality().toAnalyticsQuality()
+        )
         startActivity(Intent(context, MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
@@ -354,6 +362,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     private fun playExternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
+        presenter.submitPlayerOpenAnalytics(
+            PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
+            quality.toPrefQuality().toAnalyticsQuality()
+        )
         presenter.markEpisodeViewed(episode)
         val url = when (quality) {
             MyPlayerActivity.VAL_QUALITY_SD -> episode.urlSd

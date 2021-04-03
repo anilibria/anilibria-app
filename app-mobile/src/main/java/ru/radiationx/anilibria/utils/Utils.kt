@@ -47,10 +47,11 @@ object Utils {
         return fileName
     }
 
+    @Suppress("UsePropertyAccessSyntax")
     fun copyToClipBoard(s: String) {
         val clipboard = App.instance.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("label", s)
-        clipboard.primaryClip = clip
+        clipboard.setPrimaryClip(clip)
     }
 
     fun readFromClipboard(): String? {

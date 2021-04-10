@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/white">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="56dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceHeadline5"
+                tools:text="AniLibria – творческое объединение, занимающееся озвучиванием аниме" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textAppearance="?textAppearanceHeadline6"
+                tools:text="Немного фактов" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody2"
+                tools:maxLines="5"
+                tools:text="@tools:sample/lorem/random" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?textAppearanceHeadline6"
+                tools:text="Что не круто" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody2"
+                tools:maxLines="5"
+                tools:text="@tools:sample/lorem/random" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="6dp"
+                android:textAppearance="?textAppearanceHeadline6"
+                tools:text="Вы можете поддержать проект материально" />
+
+
+            <com.google.android.material.button.MaterialButton
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:textAllCaps="false"
+                android:textColor="#F96854"
+                app:icon="@drawable/ic_logo_patreon"
+                app:iconPadding="16dp"
+                app:iconTint="@null"
+                tools:text="Оформить подписку на Patreon" />
+
+            <com.google.android.material.button.MaterialButton
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:textAllCaps="false"
+                android:textColor="#8B3FFD"
+                app:icon="@drawable/ic_logo_yoomoney"
+                app:iconPadding="16dp"
+                app:iconTint="@null"
+                tools:text="Денежный перевод на ЮMoney" />
+
+            <com.google.android.material.button.MaterialButton
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:textAllCaps="false"
+                android:textColor="#F57D07"
+                app:icon="@drawable/ic_logo_donationalerts"
+                app:iconPadding="16dp"
+                app:iconTint="@null"
+                tools:text="Донат на DonationAlerts" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="6dp"
+                android:textAppearance="?textAppearanceHeadline6"
+                tools:text="И нематериально" />
+
+            <com.google.android.material.button.MaterialButton
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_anilibria"
+                app:iconPadding="16dp"
+                app:iconTint="@null"
+                tools:text="Вступить в команду AniLibria" />
+
+            <com.google.android.material.button.MaterialButton
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="start|center_vertical"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_server_plus"
+                app:iconPadding="16dp"
+                tools:text="Предоставить сервер для онлайн плеера" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textAppearance="?textAppearanceCaption"
+                tools:text="На данный момент все средства пойдут на поддержку сайта, онлайн плеера и в целом на развитие проекта.
+В дальнейшем планируется вернуть денежные премии для участников команды." />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eeffffff"
+        app:navigationIcon="@drawable/ic_toolbar_arrow_back" />
+</FrameLayout>

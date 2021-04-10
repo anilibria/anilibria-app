@@ -9,6 +9,7 @@
     tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/joinTeamTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -16,12 +17,14 @@
         android:textAppearance="?textAppearanceHeadline6" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/joinTeamDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent"
         android:textAppearance="?textAppearanceBody1" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/joinTeamNoticeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -29,6 +32,7 @@
         android:textAppearance="?textAppearanceBody2" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/joinTeamNotice"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="64dp"
@@ -41,19 +45,21 @@
         tools:text="Первые шаги для озвучивания аниме" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/joinTeamTelegram"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
         android:textAllCaps="false"
-        app:iconGravity="textStart"
         android:textColor="@color/brand_telegram"
         app:icon="@drawable/ic_logo_telegram"
+        app:iconGravity="textStart"
         app:iconPadding="16dp"
         app:iconTint="@null"
         tools:text="Подать заявку через Telegram" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/joinTeamCancel"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

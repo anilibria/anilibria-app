@@ -6,5 +6,5 @@ data class DonationLink(
     @SerializedName("text")
     val text: String,
     @SerializedName("link")
-    val link: String?
+    val link: String
 )

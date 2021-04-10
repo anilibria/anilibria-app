@@ -9,6 +9,7 @@
     tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/infraTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -16,12 +17,14 @@
         android:textAppearance="?textAppearanceHeadline6" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/infraDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..."
         android:textAppearance="?textAppearanceBody1" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/infraTelegram"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="64dp"
@@ -35,6 +38,7 @@
         tools:text="Техподдержка в Telegram" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/infraCancel"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

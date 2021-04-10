@@ -2,12 +2,10 @@ package ru.radiationx.anilibria.ui.fragments.donation.detail
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.fragment_donation_detail.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptPresenter
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailPresenter
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -55,8 +53,8 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
         }
     }
 
-    override fun showData(donationDetail: DonationDetail) {
-        donationTitle.text = donationDetail.title
+    override fun showData(data: DonationDetail) {
+        donationTitle.text = data.title
 
         val goodViews = listOf<View>(donationGoodTitle, donationGoodDesc)
         val badViews = listOf<View>(donationBadTitle, donationBadDesc)
@@ -72,17 +70,17 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
             donationInfra
         )
 
-        donationDetail.good.bindOptionalViews(goodViews) {
+        data.good.bindOptionalViews(goodViews) {
             donationGoodTitle.text = it.title
             donationGoodDesc.text = it.desc
         }
 
-        donationDetail.bad.bindOptionalViews(badViews) {
+        data.bad.bindOptionalViews(badViews) {
             donationBadTitle.text = it.title
             donationBadDesc.text = it.desc
         }
 
-        donationDetail.donateSupport.bindOptionalViews(donateViews) { support ->
+        data.donateSupport.bindOptionalViews(donateViews) { support ->
             donationDonateTitle.text = support.title
 
             support.btPatreon.bindOptionalView(donationPatreon) {
@@ -96,7 +94,7 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
             }
         }
 
-        donationDetail.otherSupport.bindOptionalViews(otherViews) { support ->
+        data.otherSupport.bindOptionalViews(otherViews) { support ->
             donationOtherTitle.text = support.title
 
             support.btJoinTeam.bindOptionalView(donationJoinTeam) {
@@ -107,7 +105,7 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
             }
         }
 
-        donationDetail.footerText.bindOptionalView(donationFooterText) {
+        data.footerText.bindOptionalView(donationFooterText) {
             donationFooterText.text = it
         }
     }

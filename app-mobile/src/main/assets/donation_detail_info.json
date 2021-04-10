@@ -1,0 +1,91 @@
+{
+  "title": "",
+  "good": {
+    "title": "",
+    "desc": ""
+  },
+  "bad": {
+    "title": "",
+    "desc": ""
+  },
+  "donate_support": {
+    "title": "",
+    "bt_patreon": {
+      "text": "",
+      "link": ""
+    },
+    "bt_yoomoney": {
+      "text": "",
+      "info": {
+        "title": "",
+        "help": "",
+        "amounts": {
+          "default_value": 0,
+          "items": [
+            1,
+            2,
+            3
+          ]
+        },
+        "payment_types": {
+          "selected_id": 0,
+          "items": [
+            {
+              "id": "",
+              "title": ""
+            },
+            {
+              "id": "",
+              "title": ""
+            },
+            {
+              "id": "",
+              "title": ""
+            }
+          ]
+        },
+        "form": {
+          "receiver": "",
+          "target": "",
+          "short_desc": "",
+          "label": ""
+        },
+        "bt_donate_text": ""
+      }
+    },
+    "bt_donationalerts": {
+      "text": "",
+      "link": ""
+    }
+  },
+  "other_support": {
+    "title": "",
+    "bt_join_team": {
+      "text": "",
+      "info": {
+        "title": "",
+        "description": "",
+        "voicer_notice": "",
+        "bt_voicer": {
+          "text": "",
+          "link": ""
+        },
+        "bt_telegram": {
+          "text": "",
+          "link": ""
+        }
+      }
+    },
+    "bt_infra": {
+      "text": "",
+      "info": {
+        "title": "",
+        "description": "",
+        "bt_telegram": {
+          "text": "",
+          "link": ""
+        }
+      }
+    }
+  }
+}

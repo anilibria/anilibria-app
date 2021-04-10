@@ -16,7 +16,18 @@ data class DonationYooMoneyInfo(
     @SerializedName("bt_donate_text")
     val btDonateText: String
 ) {
+
+    companion object {
+        const val TYPE_ID_ACCOUNT = "account"
+        const val TYPE_ID_CARD = "card"
+        const val TYPE_ID_MOBILE = "mobile"
+    }
+
     data class Amounts(
+        @SerializedName("title")
+        val title: String,
+        @SerializedName("hint")
+        val hint: String,
         @SerializedName("default_value")
         val defaultValue: Int?,
         @SerializedName("items")
@@ -24,6 +35,8 @@ data class DonationYooMoneyInfo(
     )
 
     data class PaymentTypes(
+        @SerializedName("title")
+        val title: String,
         @SerializedName("selected_id")
         val selectedId: String?,
         @SerializedName("items")

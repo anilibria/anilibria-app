@@ -21,6 +21,8 @@
         "title": "",
         "help": "",
         "amounts": {
+          "title": "",
+          "hint": "",
           "default_value": 0,
           "items": [
             1,
@@ -29,6 +31,7 @@
           ]
         },
         "payment_types": {
+          "title": "",
           "selected_id": "",
           "items": [
             {

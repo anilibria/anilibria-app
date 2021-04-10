@@ -9,96 +9,103 @@
     tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/yooMoneyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:drawablePadding="8dp"
-        android:text="Перевод на ЮMoney"
         android:textAppearance="?textAppearanceHeadline6"
         app:drawableEndCompat="@drawable/ic_help_circle_outline"
-        app:drawableTint="?textSecond" />
+        app:drawableTint="?textSecond"
+        tools:text="Перевод на ЮMoney" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/yooMoneyAmountTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Сумма перевода"
-        android:textAppearance="?textAppearanceCaption" />
+        android:textAppearance="?textAppearanceCaption"
+        tools:text="Сумма перевода" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/yooMoneyAmounts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:checkedButton="@id/button2"
         app:selectionRequired="true"
         app:singleSelection="true">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button1"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="0dp"
-            android:text="150 ₽" />
+            tools:text="150 ₽" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button2"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="0dp"
-            android:text="250 ₽" />
+            tools:text="250 ₽" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button3"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="0dp"
-            android:text="500 ₽" />
+            tools:text="500 ₽" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button4"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="0dp"
-            android:text="1000 ₽" />
+            tools:text="1000 ₽" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/yooMoneyAmountInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:suffixText="₽">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/yooMoneyAmountField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Своё значение"
             android:inputType="numberDecimal"
+            tools:hint="Своё значение"
             tools:text="1800" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/yooMoneyTypeTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Способ оплаты"
-        android:textAppearance="?textAppearanceCaption" />
+        android:textAppearance="?textAppearanceCaption"
+        tools:text="Способ оплаты" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/yooMoneyTypes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:checkedButton="@id/buttonCard"
         app:selectionRequired="true"
-        app:singleSelection="true">
+        app:singleSelection="true"
+        tools:checkedButton="@id/yooMoneyTypeCard">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonAccount"
+            android:id="@+id/yooMoneyTypeAccount"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -110,7 +117,7 @@
             app:iconPadding="0dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonCard"
+            android:id="@+id/yooMoneyTypeCard"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -122,7 +129,7 @@
             app:iconPadding="0dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonPhone"
+            android:id="@+id/yooMoneyTypeMobile"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -136,46 +143,52 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/yooMoneyTypesNames"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/yooMoneyTypeAccountName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Кошелёк\nЮMoney"
-            android:textAppearance="?textAppearanceCaption" />
+            android:textAppearance="?textAppearanceCaption"
+            tools:text="Кошелёк\nЮMoney" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/yooMoneyTypeCardName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Банковская\nкарта"
-            android:textAppearance="?textAppearanceCaption" />
+            android:textAppearance="?textAppearanceCaption"
+            tools:text="Банковская\nкарта" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/yooMoneyTypeMobileName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Баланс\nмобильного"
-            android:textAppearance="?textAppearanceCaption" />
+            android:textAppearance="?textAppearanceCaption"
+            tools:text="Баланс\nмобильного" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/yooMoneyAccept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Пожертвовать" />
+        tools:text="Пожертвовать" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/yooMoneyCancel"
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Отмена" />
+        tools:text="Отмена" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

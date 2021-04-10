@@ -82,10 +82,10 @@ fun <T> T?.bindOptional(
     bindAction: (T) -> Unit,
     visibilityAction: (Boolean) -> Unit
 ) {
+    visibilityAction.invoke(this != null)
     if (this != null) {
         bindAction.invoke(this)
     }
-    visibilityAction.invoke(this != null)
 }
 
 fun <T> T?.bindOptionalView(

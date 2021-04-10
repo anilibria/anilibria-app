@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:background="@color/white">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Вступить в команду AniLibria"
+        android:textAppearance="?textAppearanceHeadline6" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent"
+        android:textAppearance="?textAppearanceBody1" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)"
+        android:textAppearance="?textAppearanceBody2" />
+
+    <com.google.android.material.button.MaterialButton
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:gravity="start|center_vertical"
+        android:textAllCaps="false"
+        android:textColor="@color/brand_youtube"
+        app:icon="@drawable/ic_logo_youtube"
+        app:iconPadding="16dp"
+        app:iconTint="@null"
+        tools:text="Первые шаги для озвучивания аниме" />
+
+    <com.google.android.material.button.MaterialButton
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        android:textAllCaps="false"
+        app:iconGravity="textStart"
+        android:textColor="@color/brand_telegram"
+        app:icon="@drawable/ic_logo_telegram"
+        app:iconPadding="16dp"
+        app:iconTint="@null"
+        tools:text="Подать заявку через Telegram" />
+
+    <com.google.android.material.button.MaterialButton
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отмена" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

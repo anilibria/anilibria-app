@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:background="@color/white">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Предоставить сервер для онлайн плеера"
+        android:textAppearance="?textAppearanceHeadline6" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..."
+        android:textAppearance="?textAppearanceBody1" />
+
+    <com.google.android.material.button.MaterialButton
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        android:textAllCaps="false"
+        android:textColor="@color/brand_telegram"
+        app:icon="@drawable/ic_logo_telegram"
+        app:iconGravity="textStart"
+        app:iconPadding="16dp"
+        app:iconTint="@null"
+        tools:text="Техподдержка в Telegram" />
+
+    <com.google.android.material.button.MaterialButton
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отмена" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

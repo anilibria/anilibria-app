@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
@@ -44,7 +45,7 @@ fun <T : View> T.gone(isGone: Boolean) = visible(!isGone)
 fun <T : View> T.invisible(isInvisible: Boolean) = if (isInvisible) invisible() else visible()
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View =
-        LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
+    LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 
 fun TextView.addTextChangeListener(action: (String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
@@ -56,12 +57,49 @@ fun TextView.addTextChangeListener(action: (String) -> Unit) {
     })
 }
 
-fun ImageView.setCompatDrawable(@DrawableRes icRes: Int) = this.setImageDrawable(context.getCompatDrawable(icRes))
+fun ImageView.setCompatDrawable(@DrawableRes icRes: Int) =
+    this.setImageDrawable(context.getCompatDrawable(icRes))
 
-fun AppCompatImageView.setTint(color: Int) = ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
-fun AppCompatImageView.setTintColor(@ColorRes colorRes: Int) = setTint(ContextCompat.getColor(context, colorRes))
-fun AppCompatImageView.setTintColorAttr(@AttrRes colorAttr: Int) = setTint(context.getColorFromAttr(colorAttr))
+fun AppCompatImageView.setTint(color: Int) =
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
 
-fun AppCompatImageButton.setTint(color: Int) = ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
-fun AppCompatImageButton.setTintColor(@ColorRes colorRes: Int) = setTint(ContextCompat.getColor(context, colorRes))
-fun AppCompatImageButton.setTintColorAttr(@AttrRes colorAttr: Int) = setTint(context.getColorFromAttr(colorAttr))
+fun AppCompatImageView.setTintColor(@ColorRes colorRes: Int) =
+    setTint(ContextCompat.getColor(context, colorRes))
+
+fun AppCompatImageView.setTintColorAttr(@AttrRes colorAttr: Int) =
+    setTint(context.getColorFromAttr(colorAttr))
+
+fun AppCompatImageButton.setTint(color: Int) =
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+
+fun AppCompatImageButton.setTintColor(@ColorRes colorRes: Int) =
+    setTint(ContextCompat.getColor(context, colorRes))
+
+fun AppCompatImageButton.setTintColorAttr(@AttrRes colorAttr: Int) =
+    setTint(context.getColorFromAttr(colorAttr))
+
+fun <T> T?.bindOptional(
+    bindAction: (T) -> Unit,
+    visibilityAction: (Boolean) -> Unit
+) {
+    if (this != null) {
+        bindAction.invoke(this)
+    }
+    visibilityAction.invoke(this != null)
+}
+
+fun <T> T?.bindOptionalView(
+    view: View,
+    bindAction: (T) -> Unit
+) = bindOptional(bindAction, { visible ->
+    view.isVisible = visible
+})
+
+fun <T> T?.bindOptionalViews(
+    views: Iterable<View>,
+    bindAction: (T) -> Unit
+) = bindOptional(bindAction, { visible ->
+    views.forEach {
+        it.isVisible = visible
+    }
+})

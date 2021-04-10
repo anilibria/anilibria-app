@@ -8,6 +8,7 @@
     "title": "",
     "desc": ""
   },
+  "footer_text": "",
   "donate_support": {
     "title": "",
     "bt_patreon": {
@@ -28,7 +29,7 @@
           ]
         },
         "payment_types": {
-          "selected_id": 0,
+          "selected_id": "",
           "items": [
             {
               "id": "",

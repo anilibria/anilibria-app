@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/white">
+    tools:background="?colorSurface">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -26,6 +26,7 @@
                 tools:text="AniLibria – творческое объединение, занимающееся озвучиванием аниме" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationGoodTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -33,6 +34,7 @@
                 tools:text="Немного фактов" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationGoodDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?textAppearanceBody2"
@@ -40,6 +42,7 @@
                 tools:text="@tools:sample/lorem/random" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationBadTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -47,6 +50,7 @@
                 tools:text="Что не круто" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationBadDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?textAppearanceBody2"
@@ -54,6 +58,7 @@
                 tools:text="@tools:sample/lorem/random" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationDonateTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -63,6 +68,7 @@
 
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/donationPatreon"
                 style="?materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -75,6 +81,7 @@
                 tools:text="Оформить подписку на Patreon" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/donationYooMoney"
                 style="?materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -87,6 +94,7 @@
                 tools:text="Денежный перевод на ЮMoney" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/donationDonationAlerts"
                 style="?materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -100,6 +108,7 @@
 
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationOtherTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -108,6 +117,7 @@
                 tools:text="И нематериально" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/donationJoinTeam"
                 style="?materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -119,6 +129,7 @@
                 tools:text="Вступить в команду AniLibria" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/donationInfra"
                 style="?materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -129,6 +140,7 @@
                 tools:text="Предоставить сервер для онлайн плеера" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/donationFooterText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -139,8 +151,10 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/donationToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#eeffffff"
+        android:background="?colorSurface"
+        android:alpha="0.95"
         app:navigationIcon="@drawable/ic_toolbar_arrow_back" />
 </FrameLayout>

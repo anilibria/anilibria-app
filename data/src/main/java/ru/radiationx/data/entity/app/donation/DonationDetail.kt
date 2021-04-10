@@ -11,6 +11,8 @@ data class DonationDetail(
     val good: DonationDesc?,
     @SerializedName("bad")
     val bad: DonationDesc?,
+    @SerializedName("footer_text")
+    val footerText: String?,
     @SerializedName("donate_support")
     val donateSupport: DonationDonateSupport?,
     @SerializedName("other_support")

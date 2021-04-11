@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.navigation
 
 import android.content.Context
 import android.content.Intent
+import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -10,6 +11,7 @@ import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
+import ru.radiationx.anilibria.ui.fragments.donation.detail.DonationDetailFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.feed.FeedFragment
 import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
@@ -32,7 +34,8 @@ object Screens {
     }
 
     class Auth(val rootScreen: BaseAppScreen? = null) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = AuthActivity.createIntent(context, rootScreen)
+        override fun getActivityIntent(context: Context) =
+            AuthActivity.createIntent(context, rootScreen)
     }
 
     class AuthMain : BaseAppScreen() {
@@ -68,20 +71,21 @@ object Screens {
     }
 
     class Schedule(val day: Int = -1) : BaseAppScreen() {
-        override fun getFragment(): androidx.fragment.app.Fragment = ScheduleFragment.newInstance(day)
+        override fun getFragment(): androidx.fragment.app.Fragment =
+            ScheduleFragment.newInstance(day)
     }
 
     class ReleaseDetails(
-            val id: Int = -1,
-            val code: String? = null,
-            val item: ReleaseItem? = null
+        val id: Int = -1,
+        val code: String? = null,
+        val item: ReleaseItem? = null
     ) : BaseAppScreen() {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }
 
     class ReleasesSearch(
-            val genres: String? = null,
-            val years: String? = null
+        val genres: String? = null,
+        val years: String? = null
     ) : BaseAppScreen() {
         override fun getFragment() = SearchCatalogFragment.newInstance(genres, years)
     }
@@ -104,6 +108,13 @@ object Screens {
     }
 
     class BlockedCountry : BaseAppScreen() {
-        override fun getActivityIntent(context: Context?): Intent = Intent(context, CountryBlockedActivity::class.java)
+        override fun getActivityIntent(context: Context?): Intent =
+            Intent(context, CountryBlockedActivity::class.java)
+    }
+
+    class DonationDetail : BaseAppScreen() {
+        override fun getFragment(): Fragment {
+            return DonationDetailFragment()
+        }
     }
 }

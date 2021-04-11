@@ -9,6 +9,10 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailPresenter
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
+import ru.radiationx.anilibria.ui.fragments.donation.infra.DonationInfraDialogFragment
+import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationJoinTeamDialogFragment
+import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.data.entity.app.donation.DonationDetail
 import ru.radiationx.shared.ktx.android.bindOptionalView
 import ru.radiationx.shared.ktx.android.bindOptionalViews
@@ -38,6 +42,8 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
         donationYooMoney.setOnClickListener {
             presenter.onYooMoneyClick()
+            DonationYooMoneyDialogFragment()
+                .show(childFragmentManager, "yoomoney")
         }
 
         donationDonationAlerts.setOnClickListener {
@@ -46,10 +52,14 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
         donationJoinTeam.setOnClickListener {
             presenter.onJoinTeamClick()
+            DonationJoinTeamDialogFragment()
+                .show(childFragmentManager, "jointeam")
         }
 
         donationInfra.setOnClickListener {
             presenter.onInfraClick()
+            DonationInfraDialogFragment()
+                .show(childFragmentManager, "infra")
         }
     }
 

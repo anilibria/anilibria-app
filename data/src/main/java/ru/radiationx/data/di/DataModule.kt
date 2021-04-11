@@ -121,6 +121,7 @@ class DataModule(context: Context) : Module() {
         bind(ScheduleRepository::class.java).singleton()
         bind(FeedRepository::class.java).singleton()
         bind(MenuRepository::class.java).singleton()
+        bind(DonationRepository::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()

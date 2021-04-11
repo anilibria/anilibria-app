@@ -22,6 +22,7 @@ import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
 import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.Screen
 import java.util.*
 import javax.inject.Inject
 
@@ -200,6 +201,11 @@ class FeedPresenter @Inject constructor(
 
     fun onRandomClick() {
         feedAnalytics.randomClick()
+        if(true){
+            router.navigateTo(Screens.DonationDetail())
+            return
+        }
+
         if (!randomDisposable.isDisposed) {
             return
         }

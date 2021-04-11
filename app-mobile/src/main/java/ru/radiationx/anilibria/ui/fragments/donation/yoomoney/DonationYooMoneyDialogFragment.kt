@@ -143,12 +143,12 @@ class DonationYooMoneyDialogFragment :
             types.items
                 .firstOrNull { it.id == DonationYooMoneyInfo.TYPE_ID_CARD }
                 .bindOptionalViews(cardViews) {
-                    yooMoneyTypeAccountName.text = it.title
+                    yooMoneyTypeCardName.text = it.title
                 }
             types.items
                 .firstOrNull { it.id == DonationYooMoneyInfo.TYPE_ID_MOBILE }
                 .bindOptionalViews(mobileViews) {
-                    yooMoneyTypeAccountName.text = it.title
+                    yooMoneyTypeMobileName.text = it.title
                 }
 
             val hasSupportedTypes = types.items.any {

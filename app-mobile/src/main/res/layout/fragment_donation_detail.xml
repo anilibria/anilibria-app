@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="?colorSurface">
+    android:background="?colorSurface">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -154,7 +154,7 @@
         android:id="@+id/donationToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorSurface"
         android:alpha="0.95"
+        android:background="?colorSurface"
         app:navigationIcon="@drawable/ic_toolbar_arrow_back" />
 </FrameLayout>

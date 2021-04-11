@@ -4,7 +4,9 @@ import android.content.Context
 import com.google.gson.Gson
 import io.reactivex.Observable
 import ru.radiationx.data.entity.app.donation.DonationDetail
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class DonationRepository(
     private val context: Context
 ) {

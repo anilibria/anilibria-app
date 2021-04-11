@@ -201,11 +201,6 @@ class FeedPresenter @Inject constructor(
 
     fun onRandomClick() {
         feedAnalytics.randomClick()
-        if(true){
-            router.navigateTo(Screens.DonationDetail())
-            return
-        }
-
         if (!randomDisposable.isDisposed) {
             return
         }

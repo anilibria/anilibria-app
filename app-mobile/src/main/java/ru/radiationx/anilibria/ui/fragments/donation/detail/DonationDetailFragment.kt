@@ -5,6 +5,7 @@ import android.text.Html
 import android.view.View
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.updatePadding
+import androidx.transition.AutoTransition
 import kotlinx.android.synthetic.main.fragment_donation_detail.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -34,6 +35,12 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
         getDependency(DonationDetailPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_donation_detail
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = AutoTransition()
+        exitTransition = AutoTransition()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -117,7 +117,7 @@ class OtherPresenter @Inject constructor(
             }
             MENU_DONATE -> {
                 otherAnalytics.donateClick()
-                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+                router.navigateTo(Screens.DonationDetail())
             }
             MENU_SETTINGS -> {
                 otherAnalytics.settingsClick()

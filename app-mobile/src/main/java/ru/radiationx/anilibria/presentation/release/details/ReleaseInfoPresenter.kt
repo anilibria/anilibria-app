@@ -242,10 +242,9 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickDonate() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
         currentData?.also {
             releaseAnalytics.donateClick(it.id)
-            Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+            router.navigateTo(Screens.DonationDetail())
         }
     }
 
@@ -338,8 +337,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogDonateClick() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+        router.navigateTo(Screens.DonationDetail())
     }
 
     fun onResetEpisodesHistoryClick() {

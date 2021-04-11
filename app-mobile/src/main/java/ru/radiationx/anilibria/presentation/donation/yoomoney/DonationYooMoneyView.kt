@@ -12,4 +12,6 @@ import ru.radiationx.data.entity.app.donation.other.DonationInfraInfo
 interface DonationYooMoneyView : IBaseView {
 
     fun showData(state: DonationYooMoneyState)
+
+    fun closeView()
 }

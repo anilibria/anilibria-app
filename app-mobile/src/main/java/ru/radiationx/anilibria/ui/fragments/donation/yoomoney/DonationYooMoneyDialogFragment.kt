@@ -1,14 +1,14 @@
 package ru.radiationx.anilibria.ui.fragments.donation.yoomoney
 
+import android.graphics.Rect
 import android.os.Bundle
-import android.util.AttributeSet
+import android.text.method.TransformationMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.core.view.setPadding
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.android.synthetic.main.dialog_donation_yoomoney.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -18,6 +18,7 @@ import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyPr
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared_app.di.getDependency
 
@@ -33,11 +34,84 @@ class DonationYooMoneyDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        yooMoneyAmounts.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                val intValue =
+                    yooMoneyAmounts.findViewById<MaterialButton>(checkedId).getTextIntValue()
+                presenter.setSelectedAmount(intValue)
+            }
+        }
+        yooMoneyAmountInput.setOnFocusChangeListener { _, isFocused ->
+            if (isFocused) {
+                val intValue = yooMoneyAmountField.getTextIntValue()
+                presenter.setCustomAmount(intValue)
+            }
+        }
+
+        yooMoneyAmountField.addTextChangeListener {
+            val intValue = yooMoneyAmountField.getTextIntValue()
+            presenter.setCustomAmount(intValue)
+        }
+
+        yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                val paymentTypeId = when (checkedId) {
+                    R.id.yooMoneyTypeAccount -> DonationYooMoneyInfo.TYPE_ID_ACCOUNT
+                    R.id.yooMoneyTypeCard -> DonationYooMoneyInfo.TYPE_ID_CARD
+                    R.id.yooMoneyTypeMobile -> DonationYooMoneyInfo.TYPE_ID_MOBILE
+                    else -> null
+                }
+                if (paymentTypeId != null) {
+                    presenter.setPaymentType(paymentTypeId)
+                }
+            }
+        }
+
+        yooMoneyAccept.setOnClickListener {
+            presenter.onAcceptClick()
+        }
+
+        yooMoneyCancel.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    override fun closeView() {
+        dismiss()
     }
 
     override fun showData(state: DonationYooMoneyState) {
         bindData(state.data)
 
+        when (state.amountType) {
+            DonationYooMoneyState.AmountType.PRESET -> {
+                if (state.selectedAmount != null) {
+                    yooMoneyAmounts.setSingleSelection(state.selectedAmount)
+                } else {
+                    yooMoneyAmounts.clearChecked()
+                }
+                yooMoneyAmountInput.clearFocus()
+            }
+            DonationYooMoneyState.AmountType.CUSTOM -> {
+                yooMoneyAmounts.clearChecked()
+                yooMoneyAmountInput.requestFocus()
+            }
+        }
+
+        val selectedTypeViewId = when (state.selectedTypeId) {
+            DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
+            DonationYooMoneyInfo.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
+            DonationYooMoneyInfo.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
+            else -> null
+        }
+        if (selectedTypeViewId != null) {
+            yooMoneyTypes.setSingleSelection(selectedTypeViewId)
+        } else {
+            yooMoneyTypes.clearChecked()
+        }
+
+        yooMoneyAccept.isEnabled = state.acceptEnabled
     }
 
     private fun bindData(data: DonationYooMoneyInfo) {
@@ -51,7 +125,7 @@ class DonationYooMoneyDialogFragment :
         data.amounts.bindOptionalViews(amountViews) {
             yooMoneyAmountTitle.text = it.title
             yooMoneyAmountField.hint = it.hint
-            updateAmounts(it.items)
+            updateAmountsViews(it.items)
         }
 
         data.paymentTypes.also { types ->
@@ -90,7 +164,7 @@ class DonationYooMoneyDialogFragment :
         yooMoneyAccept.text = data.btDonateText
     }
 
-    private fun updateAmounts(amounts: List<Int>) {
+    private fun updateAmountsViews(amounts: List<Int>) {
         if (yooMoneyAmounts.childCount != amounts.size) {
             yooMoneyAmounts.clearChecked()
             yooMoneyAmounts.removeAllViews()
@@ -107,18 +181,31 @@ class DonationYooMoneyDialogFragment :
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     1f
                 )
+                button.transformationMethod = AmountCurrencyTransformation()
                 yooMoneyAmounts.addView(button, layoutParams)
             }
 
         }
         amounts.forEachIndexed { index, amount ->
             (yooMoneyAmounts.getChildAt(index) as MaterialButton?)?.also {
-                it.text = "$amount ₽"
-                it.tag = amount
+                it.id = amount
+                it.text = amount.toString()
             }
         }
     }
 
     override fun setRefreshing(refreshing: Boolean) {
+    }
+
+    private fun TextView.getTextIntValue(): Int = text?.toString()?.toIntOrNull() ?: 0
+
+    private class AmountCurrencyTransformation : TransformationMethod {
+
+        override fun getTransformation(source: CharSequence?, view: View?): CharSequence {
+            return source?.toString().orEmpty() + " ₽"
+        }
+
+        override fun onFocusChanged(p0: View?, p1: CharSequence?, p2: Boolean, p3: Int, p4: Rect?) {
+        }
     }
 }

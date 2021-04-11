@@ -33,6 +33,10 @@ class DonationDetailPresenter(
             .addToDisposable()
     }
 
+    fun onLinkClick(url: String) {
+        Utils.externalLink(url)
+    }
+
     fun onPatreonClick() {
         currentData?.donateSupport?.btPatreon?.link?.let {
             Utils.externalLink(it)

@@ -251,4 +251,9 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="YooMoneyThemeOverlay">
+        <item name="colorPrimary">@color/brand_yoomoney</item>
+        <item name="colorSecondary">@color/brand_yoomoney</item>
+    </style>
+
 </resources>

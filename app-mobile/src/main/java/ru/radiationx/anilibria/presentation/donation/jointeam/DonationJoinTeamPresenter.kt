@@ -46,4 +46,8 @@ class DonationJoinTeamPresenter(
             Utils.externalLink(it)
         }
     }
+
+    fun onLinkClick(url: String) {
+        Utils.externalLink(url)
+    }
 }

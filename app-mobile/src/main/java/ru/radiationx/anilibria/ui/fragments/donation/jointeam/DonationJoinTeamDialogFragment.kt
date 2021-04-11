@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.donation.jointeam
 
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.dialog_donation_join_team.*
@@ -10,6 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.presentation.donation.jointeam.DonationJoinTeamPresenter
 import ru.radiationx.anilibria.presentation.donation.jointeam.DonationJoinTeamView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
+import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.data.entity.app.donation.other.DonationJoinTeamInfo
 import ru.radiationx.shared.ktx.android.bindOptionalView
 import ru.radiationx.shared_app.di.getDependency
@@ -35,6 +37,11 @@ class DonationJoinTeamDialogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        joinTeamDesc.movementMethod = LinkMovementMethod {
+            presenter.onLinkClick(it)
+            true
+        }
+
         joinTeamNotice.setOnClickListener {
             presenter.onNoticeClick()
         }
@@ -51,7 +58,7 @@ class DonationJoinTeamDialogFragment :
 
     override fun showData(data: DonationJoinTeamInfo) {
         joinTeamTitle.text = data.title
-        joinTeamDesc.text = data.desc
+        joinTeamDesc.text = Html.fromHtml(data.desc)
 
         data.voicerNotice.bindOptionalView(joinTeamNoticeText) {
             joinTeamNoticeText.text = it

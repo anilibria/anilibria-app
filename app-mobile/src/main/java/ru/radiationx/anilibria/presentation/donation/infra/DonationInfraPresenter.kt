@@ -39,4 +39,8 @@ class DonationInfraPresenter(
         currentData?.btTelegram?.link?.let { Utils.externalLink(it) }
     }
 
+    fun onLinkClick(url: String) {
+        Utils.externalLink(url)
+    }
+
 }

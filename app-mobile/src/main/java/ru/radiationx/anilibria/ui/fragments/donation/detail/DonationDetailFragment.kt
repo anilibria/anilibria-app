@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.donation.detail
 
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.updatePadding
@@ -16,6 +17,8 @@ import ru.radiationx.anilibria.ui.fragments.donation.infra.DonationInfraDialogFr
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationJoinTeamDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.LinkMovementMethod
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.donation.DonationDetail
 import ru.radiationx.shared.ktx.android.bindOptionalView
 import ru.radiationx.shared.ktx.android.bindOptionalViews
@@ -34,6 +37,14 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val linkMovementMethod = LinkMovementMethod {
+            presenter.onLinkClick(it)
+            true
+        }
+
+        donationGoodDesc.movementMethod = linkMovementMethod
+        donationBadDesc.movementMethod = linkMovementMethod
 
         donationToolbar.setNavigationOnClickListener {
             presenter.onBackPressed()
@@ -87,12 +98,12 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
         data.good.bindOptionalViews(goodViews) {
             donationGoodTitle.text = it.title
-            donationGoodDesc.text = it.desc
+            donationGoodDesc.text = Html.fromHtml(it.desc)
         }
 
         data.bad.bindOptionalViews(badViews) {
             donationBadTitle.text = it.title
-            donationBadDesc.text = it.desc
+            donationBadDesc.text = Html.fromHtml(it.desc)
         }
 
         data.donateSupport.bindOptionalViews(donateViews) { support ->
@@ -121,7 +132,7 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
         }
 
         data.footerText.bindOptionalView(donationFooterText) {
-            donationFooterText.text = it
+            donationFooterText.text = Html.fromHtml(it)
         }
     }
 

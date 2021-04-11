@@ -23,12 +23,18 @@ class DonationDetailPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
+            .requestUpdate()
+            .subscribe({}, {
+                it.printStackTrace()
+            })
+            .addToDisposable()
+        donationRepository
             .observerDonationDetail()
             .subscribe({
                 currentData = it
                 viewState.showData(it)
             }, {
-                errorHandler.handle(it)
+                it.printStackTrace()
             })
             .addToDisposable()
     }

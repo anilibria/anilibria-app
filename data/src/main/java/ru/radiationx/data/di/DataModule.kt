@@ -3,6 +3,7 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.google.gson.Gson
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
@@ -38,6 +39,7 @@ class DataModule(context: Context) : Module() {
 
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
+        bind(Gson::class.java).toInstance(Gson())
 
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
         bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
@@ -57,6 +59,7 @@ class DataModule(context: Context) : Module() {
         bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singleton()
         bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
         bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
+        bind(DonationHolder::class.java).to(DonationStorage::class.java).singleton()
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
         bind(UserHolder::class.java).to(UserStorage::class.java).singleton()
@@ -107,6 +110,7 @@ class DataModule(context: Context) : Module() {
         bind(ScheduleApi::class.java).singleton()
         bind(FeedApi::class.java).singleton()
         bind(MenuApi::class.java).singleton()
+        bind(DonationApi::class.java).singleton()
 
         bind(AuthRepository::class.java).singleton()
         bind(ReleaseRepository::class.java).singleton()

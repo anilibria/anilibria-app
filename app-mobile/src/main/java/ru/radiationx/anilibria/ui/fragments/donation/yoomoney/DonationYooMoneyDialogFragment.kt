@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.android.synthetic.main.dialog_donation_yoomoney.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -46,13 +47,11 @@ class DonationYooMoneyDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        yooMoneyAmounts.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            Log.d("kekeke", "checked amount $checkedId, $isChecked")
-            if (isChecked && checkedId != View.NO_ID) {
-                val intValue =
-                    yooMoneyAmounts.findViewById<MaterialButton>(checkedId).getTextIntValue()
-                presenter.setSelectedAmount(intValue)
-            }
+        yooMoneyAmounts.addCheckedListener { checkedId ->
+            val intValue = checkedId
+                ?.let { yooMoneyAmounts.findViewById<MaterialButton>(it) }
+                ?.getTextIntValue()
+            presenter.setSelectedAmount(intValue)
         }
         yooMoneyAmountField.setOnFocusChangeListener { _, isFocused ->
             Log.d("kekeke", "focus custom amount $isFocused")
@@ -98,7 +97,10 @@ class DonationYooMoneyDialogFragment :
 
     override fun showData(state: DonationYooMoneyState) {
         state.data?.also { bindData(it) }
+        bindState(state)
+    }
 
+    private fun bindState(state: DonationYooMoneyState){
         when (state.amountType) {
             DonationYooMoneyState.AmountType.PRESET -> {
                 if (state.selectedAmount != null) {
@@ -214,6 +216,29 @@ class DonationYooMoneyDialogFragment :
     }
 
     private fun TextView.getTextIntValue(): Int? = text?.toString()?.toIntOrNull()
+
+
+    private fun MaterialButtonToggleGroup.addCheckedListener(action: (checkedId: Int?) -> Unit) {
+        var lastValue: Int? = null
+        addOnButtonCheckedListener { group, checkedId, isChecked ->
+            Log.d(
+                "kekeke",
+                "checked amount $checkedId, $isChecked, ${group.checkedButtonIds}, ${group.checkedButtonId}"
+            )
+            val isSameValue = group.checkedButtonIds.size == 1
+                    && group.checkedButtonIds[0] == group.checkedButtonId
+            val isNoSelection = group.checkedButtonIds.isEmpty()
+            if (isSameValue || isNoSelection) {
+                val newValue = if (isNoSelection) null else group.checkedButtonId
+                if (newValue != lastValue) {
+                    lastValue = newValue
+                    Log.e("kekeke", "real value changed to $newValue")
+                    action.invoke(lastValue)
+                }
+            }
+        }
+    }
+
 
     private class AmountCurrencyTransformation : TransformationMethod {
 

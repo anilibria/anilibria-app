@@ -30,46 +30,7 @@
         android:id="@+id/yooMoneyAmounts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:checkedButton="@id/button2"
-        app:singleSelection="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button1"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="0dp"
-            tools:text="150 ₽" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button2"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="0dp"
-            tools:text="250 ₽" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button3"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="0dp"
-            tools:text="500 ₽" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button4"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="0dp"
-            tools:text="1000 ₽" />
-
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+        app:singleSelection="true" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/yooMoneyAmountInput"
@@ -82,7 +43,7 @@
             android:id="@+id/yooMoneyAmountField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             tools:hint="Своё значение"
             tools:text="1800" />
     </com.google.android.material.textfield.TextInputLayout>

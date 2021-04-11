@@ -1,12 +1,16 @@
 package ru.radiationx.anilibria.ui.fragments.donation.yoomoney
 
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.TransformationMethod
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.dialog_donation_yoomoney.*
@@ -32,17 +36,26 @@ class DonationYooMoneyDialogFragment :
     fun providePresenter(): DonationYooMoneyPresenter =
         getDependency(DonationYooMoneyPresenter::class.java)
 
+    override fun onStart() {
+        super.onStart()
+        getAlertDialog()?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         yooMoneyAmounts.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
+            Log.d("kekeke", "checked amount $checkedId, $isChecked")
+            if (isChecked && checkedId != View.NO_ID) {
                 val intValue =
                     yooMoneyAmounts.findViewById<MaterialButton>(checkedId).getTextIntValue()
                 presenter.setSelectedAmount(intValue)
             }
         }
-        yooMoneyAmountInput.setOnFocusChangeListener { _, isFocused ->
+        yooMoneyAmountField.setOnFocusChangeListener { _, isFocused ->
+            Log.d("kekeke", "focus custom amount $isFocused")
             if (isFocused) {
                 val intValue = yooMoneyAmountField.getTextIntValue()
                 presenter.setCustomAmount(intValue)
@@ -50,12 +63,14 @@ class DonationYooMoneyDialogFragment :
         }
 
         yooMoneyAmountField.addTextChangeListener {
+            Log.d("kekeke", "change custom amount $it")
             val intValue = yooMoneyAmountField.getTextIntValue()
             presenter.setCustomAmount(intValue)
         }
 
         yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
+            Log.d("kekeke", "checked type $checkedId, $isChecked")
+            if (isChecked && checkedId != View.NO_ID) {
                 val paymentTypeId = when (checkedId) {
                     R.id.yooMoneyTypeAccount -> DonationYooMoneyInfo.TYPE_ID_ACCOUNT
                     R.id.yooMoneyTypeCard -> DonationYooMoneyInfo.TYPE_ID_CARD
@@ -87,15 +102,15 @@ class DonationYooMoneyDialogFragment :
         when (state.amountType) {
             DonationYooMoneyState.AmountType.PRESET -> {
                 if (state.selectedAmount != null) {
-                    yooMoneyAmounts.setSingleSelection(state.selectedAmount)
+                    yooMoneyAmounts.check(state.selectedAmount)
                 } else {
                     yooMoneyAmounts.clearChecked()
                 }
-                yooMoneyAmountInput.clearFocus()
+                yooMoneyAmountField.clearFocus()
             }
             DonationYooMoneyState.AmountType.CUSTOM -> {
                 yooMoneyAmounts.clearChecked()
-                yooMoneyAmountInput.requestFocus()
+                yooMoneyAmountField.requestFocus()
             }
         }
 
@@ -106,7 +121,7 @@ class DonationYooMoneyDialogFragment :
             else -> null
         }
         if (selectedTypeViewId != null) {
-            yooMoneyTypes.setSingleSelection(selectedTypeViewId)
+            yooMoneyTypes.check(selectedTypeViewId)
         } else {
             yooMoneyTypes.clearChecked()
         }
@@ -124,7 +139,7 @@ class DonationYooMoneyDialogFragment :
         )
         data.amounts.bindOptionalViews(amountViews) {
             yooMoneyAmountTitle.text = it.title
-            yooMoneyAmountField.hint = it.hint
+            yooMoneyAmountInput.hint = it.hint
             updateAmountsViews(it.items)
         }
 
@@ -198,7 +213,7 @@ class DonationYooMoneyDialogFragment :
     override fun setRefreshing(refreshing: Boolean) {
     }
 
-    private fun TextView.getTextIntValue(): Int = text?.toString()?.toIntOrNull() ?: 0
+    private fun TextView.getTextIntValue(): Int? = text?.toString()?.toIntOrNull()
 
     private class AmountCurrencyTransformation : TransformationMethod {
 

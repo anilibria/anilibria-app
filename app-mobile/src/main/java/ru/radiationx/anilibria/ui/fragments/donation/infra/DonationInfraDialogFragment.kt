@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.donation.infra
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.dialog_donation_infra.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -22,6 +23,14 @@ class DonationInfraDialogFragment :
     @ProvidePresenter
     fun providePresenter(): DonationInfraPresenter =
         getDependency(DonationInfraPresenter::class.java)
+
+    override fun onStart() {
+        super.onStart()
+        getAlertDialog()?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

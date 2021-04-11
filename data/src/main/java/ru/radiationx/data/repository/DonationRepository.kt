@@ -11,16 +11,19 @@ class DonationRepository(
     private val context: Context
 ) {
 
+    private var currentData: DonationDetail? = null
+
     fun observerDonationDetail(): Observable<DonationDetail> = Observable
         .fromCallable { getAssetsData() }
 
     fun getAssetsData(): DonationDetail {
         val gson = Gson()
-        val data = context.assets.open("donation_detail_info.json").use { stream ->
+        val data = currentData ?: context.assets.open("donation_detail_info.json").use { stream ->
             stream.bufferedReader().use { reader ->
                 gson.fromJson<DonationDetail>(reader, DonationDetail::class.java)
             }
         }
+        currentData = data
         return data
     }
 }

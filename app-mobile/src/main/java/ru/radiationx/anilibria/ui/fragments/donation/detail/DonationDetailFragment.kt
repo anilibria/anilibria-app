@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.fragments.donation.detail
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.fragment_donation_detail.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -13,6 +15,7 @@ import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.infra.DonationInfraDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationJoinTeamDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
+import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.app.donation.DonationDetail
 import ru.radiationx.shared.ktx.android.bindOptionalView
 import ru.radiationx.shared.ktx.android.bindOptionalViews
@@ -60,6 +63,14 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
             presenter.onInfraClick()
             DonationInfraDialogFragment()
                 .show(childFragmentManager, "infra")
+        }
+    }
+
+    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+        super.updateDimens(dimensions)
+        donationToolbar.updatePadding(top = dimensions.statusBar)
+        donationToolbar.doOnNextLayout {
+            donationScrollView.updatePadding(top = it.height)
         }
     }
 

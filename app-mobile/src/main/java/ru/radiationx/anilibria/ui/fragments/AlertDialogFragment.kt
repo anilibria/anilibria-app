@@ -18,6 +18,11 @@ open class AlertDialogFragment(@LayoutRes val layoutRes: Int) : MvpAppCompatDial
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext()).create()
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        onViewCreated(requireView(), savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

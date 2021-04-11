@@ -42,6 +42,7 @@ class DonationInfraDialogFragment :
         data.btTelegram.bindOptionalView(infraTelegram) {
             infraTelegram.text = it.text
         }
+        infraCancel.text = data.btCancelText
     }
 
     override fun setRefreshing(refreshing: Boolean) {

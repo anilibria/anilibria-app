@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.data.repository.DonationRepository
@@ -19,6 +20,7 @@ class DonationYooMoneyPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationDetail()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val yooMoneyInfo = it.donateSupport?.btYooMoney?.info

@@ -13,15 +13,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Предоставить сервер для онлайн плеера"
-        android:textAppearance="?textAppearanceHeadline6" />
+        android:textAppearance="?textAppearanceHeadline6"
+        tools:text="Предоставить сервер для онлайн плеера" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/infraDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..."
-        android:textAppearance="?textAppearanceBody1" />
+        android:textAppearance="?textAppearanceBody1"
+        tools:text="Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..." />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/infraTelegram"
@@ -42,6 +42,6 @@
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Отмена" />
+        tools:text="Отмена" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

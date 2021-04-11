@@ -82,7 +82,7 @@ class DonationYooMoneyDialogFragment :
     }
 
     override fun showData(state: DonationYooMoneyState) {
-        bindData(state.data)
+        state.data?.also { bindData(it) }
 
         when (state.amountType) {
             DonationYooMoneyState.AmountType.PRESET -> {
@@ -162,6 +162,7 @@ class DonationYooMoneyDialogFragment :
         }
 
         yooMoneyAccept.text = data.btDonateText
+        yooMoneyCancel.text = data.btCancelText
     }
 
     private fun updateAmountsViews(amounts: List<Int>) {

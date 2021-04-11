@@ -13,5 +13,7 @@ data class DonationJoinTeamInfo(
     @SerializedName("bt_voicer")
     val btVoicer: DonationLink?,
     @SerializedName("bt_telegram")
-    val btTelegram: DonationLink?
+    val btTelegram: DonationLink?,
+    @SerializedName("bt_cancel_text")
+    val btCancelText: String
 )

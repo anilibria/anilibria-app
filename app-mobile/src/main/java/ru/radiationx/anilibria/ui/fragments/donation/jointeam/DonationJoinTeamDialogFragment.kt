@@ -53,6 +53,7 @@ class DonationJoinTeamDialogFragment :
         data.btTelegram.bindOptionalView(joinTeamTelegram) {
             joinTeamTelegram.text = it.text
         }
+        joinTeamCancel.text = data.btCancelText
     }
 
     override fun setRefreshing(refreshing: Boolean) {

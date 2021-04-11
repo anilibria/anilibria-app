@@ -13,23 +13,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Вступить в команду AniLibria"
-        android:textAppearance="?textAppearanceHeadline6" />
+        android:textAppearance="?textAppearanceHeadline6"
+        tools:text="Вступить в команду AniLibria" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/joinTeamDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent"
-        android:textAppearance="?textAppearanceBody1" />
+        android:textAppearance="?textAppearanceBody1"
+        tools:text="Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/joinTeamNoticeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)"
-        android:textAppearance="?textAppearanceBody2" />
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/joinTeamNotice"
@@ -63,6 +63,6 @@
         style="?materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Отмена" />
+        tools:text="Отмена" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

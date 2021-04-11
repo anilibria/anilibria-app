@@ -1,94 +1,98 @@
 {
-  "title": "",
+  "title": "AniLibria – творческое объединение, занимающееся озвучиванием аниме",
   "good": {
-    "title": "",
-    "desc": ""
+    "title": "Немного фактов",
+    "desc": "@tools:sample/lorem/random"
   },
   "bad": {
-    "title": "",
-    "desc": ""
+    "title": "Что не круто",
+    "desc": "@tools:sample/lorem/random"
   },
-  "footer_text": "",
+  "footer_text": "На данный момент все средства пойдут на поддержку сайта, онлайн плеера и в целом на развитие проекта.\nВ дальнейшем планируется вернуть денежные премии для участников команды.",
   "donate_support": {
-    "title": "",
+    "title": "Вы можете поддержать проект материально",
     "bt_patreon": {
-      "text": "",
+      "text": "Оформить подписку на Patreon",
       "link": ""
     },
     "bt_yoomoney": {
-      "text": "",
+      "text": "Денежный перевод на ЮMoney",
       "info": {
-        "title": "",
-        "help": "",
+        "title": "Перевод на ЮMoney",
+        "help": "helpme",
         "amounts": {
-          "title": "",
-          "hint": "",
-          "default_value": 0,
+          "title": "Сумма перевода",
+          "hint": "Своё значение",
+          "default_value": 250,
           "items": [
-            1,
-            2,
-            3
+            150,
+            250,
+            500,
+            1000
           ]
         },
         "payment_types": {
-          "title": "",
-          "selected_id": "",
+          "title": "Способ оплаты",
+          "selected_id": "card",
           "items": [
             {
-              "id": "",
-              "title": ""
+              "id": "account",
+              "title": "Кошелёк\nЮMoney"
             },
             {
-              "id": "",
-              "title": ""
+              "id": "card",
+              "title": "Банковская\nкарта"
             },
             {
-              "id": "",
-              "title": ""
+              "id": "mobile",
+              "title": "Баланс\nмобильного"
             }
           ]
         },
         "form": {
-          "receiver": "",
-          "target": "",
-          "short_desc": "",
-          "label": ""
+          "receiver": "receiver",
+          "target": "target",
+          "short_desc": "short_desc",
+          "label": "label"
         },
-        "bt_donate_text": ""
+        "bt_donate_text": "Пожертвовать",
+        "bt_cancel_text": "Отмена"
       }
     },
     "bt_donationalerts": {
-      "text": "",
+      "text": "Донат на DonationAlerts",
       "link": ""
     }
   },
   "other_support": {
-    "title": "",
+    "title": "И нематериально",
     "bt_join_team": {
-      "text": "",
+      "text": "Вступить в команду AniLibria",
       "info": {
-        "title": "",
-        "description": "",
-        "voicer_notice": "",
+        "title": "Вступить в команду AniLibria",
+        "description": "Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent",
+        "voicer_notice": "Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)",
         "bt_voicer": {
-          "text": "",
+          "text": "Первые шаги для озвучивания аниме",
           "link": ""
         },
         "bt_telegram": {
-          "text": "",
+          "text": "Подать заявку через Telegram",
           "link": ""
-        }
+        },
+        "bt_cancel_text": "Отмена"
       }
     },
     "bt_infra": {
-      "text": "",
+      "text": "Предоставить сервер для онлайн плеера",
       "info": {
-        "title": "",
-        "description": "",
+        "title": "Предоставить сервер для онлайн плеера",
+        "description": "Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла...",
         "bt_telegram": {
-          "text": "",
+          "text": "Техподдержка в Telegram",
           "link": ""
-        }
+        },
+        "bt_cancel_text": "Отмена"
       }
     }
   }

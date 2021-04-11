@@ -9,5 +9,7 @@ data class DonationInfraInfo(
     @SerializedName("description")
     val description: String,
     @SerializedName("bt_telegram")
-    val btTelegram: DonationLink?
+    val btTelegram: DonationLink?,
+    @SerializedName("bt_cancel_text")
+    val btCancelText: String
 )

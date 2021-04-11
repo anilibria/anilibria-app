@@ -14,7 +14,9 @@ data class DonationYooMoneyInfo(
     @SerializedName("form")
     val form: YooMoneyForm,
     @SerializedName("bt_donate_text")
-    val btDonateText: String
+    val btDonateText: String,
+    @SerializedName("bt_cancel_text")
+    val btCancelText: String
 ) {
 
     companion object {

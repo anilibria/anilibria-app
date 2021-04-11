@@ -91,7 +91,7 @@ class DonationYooMoneyDialogFragment :
         }
     }
 
-    override fun closeView() {
+    override fun close() {
         dismiss()
     }
 
@@ -223,6 +223,8 @@ class DonationYooMoneyDialogFragment :
     }
 
     override fun setRefreshing(refreshing: Boolean) {
+        yooMoneyProgress.isVisible = refreshing
+        yooMoneyAccept.isVisible = !refreshing
     }
 
     private fun TextView.getTextIntValue(): Int? = text?.toString()?.toIntOrNull()

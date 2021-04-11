@@ -154,6 +154,16 @@
         android:layout_marginTop="16dp"
         tools:text="Пожертвовать" />
 
+    <ProgressBar
+        android:id="@+id/yooMoneyProgress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:padding="6dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/yooMoneyCancel"
         style="?materialButtonOutlinedStyle"

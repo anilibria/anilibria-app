@@ -23,8 +23,6 @@ class DonationJoinTeamPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationDetail()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val joinTeamInfo = it.otherSupport?.btJoinTeam?.info
                 if (joinTeamInfo != null) {

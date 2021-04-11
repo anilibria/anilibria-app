@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import android.util.Log
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.ui.common.ErrorHandler
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -22,8 +22,6 @@ class DonationYooMoneyPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationDetail()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val yooMoneyInfo = it.donateSupport?.btYooMoney?.info
                 val newState = currentState.copy(
@@ -61,21 +59,32 @@ class DonationYooMoneyPresenter(
     }
 
     fun onAcceptClick() {
-        viewState.closeView()
+        val amount = currentState.getAmount()
+        val typeId = currentState.selectedTypeId ?: return
+        val form = currentState.data?.form ?: return
+        viewState.setRefreshing(true)
+        donationRepository
+            .createYooMoneyPayLink(amount, typeId, form)
+            .doFinally { viewState.setRefreshing(false) }
+            .subscribe({
+                Utils.externalLink(it)
+                viewState.close()
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
     }
 
     private fun DonationYooMoneyState.withValidation(): DonationYooMoneyState {
-        val isValidAmount = when (amountType) {
-            DonationYooMoneyState.AmountType.PRESET -> {
-                (selectedAmount ?: 0) > 0
-            }
-            DonationYooMoneyState.AmountType.CUSTOM -> {
-                (customAmount ?: 0) > 0
-            }
-        }
+        val isValidAmount = getAmount() > 0
         val containsType = data?.paymentTypes?.items?.any { it.id == selectedTypeId } == true
         val isValidType = selectedTypeId != null && containsType
         return copy(acceptEnabled = isValidAmount && isValidType)
+    }
+
+    private fun DonationYooMoneyState.getAmount(): Int = when (amountType) {
+        DonationYooMoneyState.AmountType.PRESET -> selectedAmount ?: 0
+        DonationYooMoneyState.AmountType.CUSTOM -> customAmount ?: 0
     }
 
     private fun tryUpdateState(newState: DonationYooMoneyState) {

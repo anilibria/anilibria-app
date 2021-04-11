@@ -24,8 +24,6 @@ class DonationDetailPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationDetail()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 currentData = it
                 viewState.showData(it)

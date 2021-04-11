@@ -13,5 +13,5 @@ interface DonationYooMoneyView : IBaseView {
 
     fun showData(state: DonationYooMoneyState)
 
-    fun closeView()
+    fun close()
 }

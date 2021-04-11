@@ -23,8 +23,6 @@ class DonationInfraPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationDetail()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val infraInfo = it.otherSupport?.btInfra?.info
                 if (infraInfo != null) {

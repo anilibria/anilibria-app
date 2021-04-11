@@ -9,4 +9,10 @@ import ru.radiationx.data.entity.app.donation.DonationDetail
 interface DonationDetailView : IBaseView {
 
     fun showData(data: DonationDetail)
+
+    fun openYooMoney()
+
+    fun openJoinTeam()
+
+    fun openInfra()
 }

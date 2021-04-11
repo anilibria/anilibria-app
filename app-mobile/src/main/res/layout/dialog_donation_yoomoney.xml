@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clipToPadding="false"
     android:orientation="vertical"
     android:padding="16dp"
     tools:background="@color/white">
@@ -12,7 +13,6 @@
         android:id="@+id/yooMoneyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:drawablePadding="8dp"
         android:textAppearance="?textAppearanceHeadline6"
         app:drawableEndCompat="@drawable/ic_help_circle_outline"
@@ -20,9 +20,19 @@
         tools:text="Перевод на ЮMoney" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/yooMoneyHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceCaption"
+        android:visibility="gone"
+        tools:text="ЮMoney - бывший сервис Яндекс.Деньги"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/yooMoneyAmountTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:textAppearance="?textAppearanceCaption"
         tools:text="Сумма перевода" />
 

@@ -45,8 +45,6 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
         donationYooMoney.setOnClickListener {
             presenter.onYooMoneyClick()
-            DonationYooMoneyDialogFragment()
-                .show(childFragmentManager, "yoomoney")
         }
 
         donationDonationAlerts.setOnClickListener {
@@ -55,14 +53,10 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
         donationJoinTeam.setOnClickListener {
             presenter.onJoinTeamClick()
-            DonationJoinTeamDialogFragment()
-                .show(childFragmentManager, "jointeam")
         }
 
         donationInfra.setOnClickListener {
             presenter.onInfraClick()
-            DonationInfraDialogFragment()
-                .show(childFragmentManager, "infra")
         }
     }
 
@@ -129,6 +123,18 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
         data.footerText.bindOptionalView(donationFooterText) {
             donationFooterText.text = it
         }
+    }
+
+    override fun openYooMoney() {
+        DonationYooMoneyDialogFragment().show(childFragmentManager, "yoomoney")
+    }
+
+    override fun openJoinTeam() {
+        DonationJoinTeamDialogFragment().show(childFragmentManager, "jointeam")
+    }
+
+    override fun openInfra() {
+        DonationInfraDialogFragment().show(childFragmentManager, "infra")
     }
 
     override fun setRefreshing(refreshing: Boolean) {

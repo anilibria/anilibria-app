@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
-import android.util.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
+import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -12,7 +12,8 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class DonationYooMoneyPresenter(
     router: Router,
-    val donationRepository: DonationRepository
+    private val donationRepository: DonationRepository,
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<DonationYooMoneyView>(router) {
 
     private var currentState = DonationYooMoneyState()
@@ -33,13 +34,12 @@ class DonationYooMoneyPresenter(
                 )
                 tryUpdateState(newState)
             }, {
-                it.printStackTrace()
+                errorHandler.handle(it)
             })
             .addToDisposable()
     }
 
     fun setSelectedAmount(value: Int?) {
-        Log.d("kekeke", "setSelectedAmount $value")
         val newState = currentState.copy(
             selectedAmount = value,
             amountType = DonationYooMoneyState.AmountType.PRESET
@@ -48,7 +48,6 @@ class DonationYooMoneyPresenter(
     }
 
     fun setCustomAmount(value: Int?) {
-        Log.d("kekeke", "setCustomAmount $value")
         val newState = currentState.copy(
             customAmount = value,
             amountType = DonationYooMoneyState.AmountType.CUSTOM
@@ -57,7 +56,6 @@ class DonationYooMoneyPresenter(
     }
 
     fun setPaymentType(typeId: String?) {
-        Log.d("kekeke", "setPaymentType $typeId")
         val newState = currentState.copy(selectedTypeId = typeId)
         tryUpdateState(newState)
     }
@@ -82,16 +80,9 @@ class DonationYooMoneyPresenter(
 
     private fun tryUpdateState(newState: DonationYooMoneyState) {
         val withValidationState = newState.withValidation()
-        Log.d("kekeke", "tryUpdateState ${withValidationState.stringOnlyState()}")
         if (currentState != withValidationState) {
             currentState = withValidationState
             viewState.showData(currentState)
         }
     }
-
-    private fun DonationYooMoneyState.stringOnlyState(): String {
-
-        return "sa=$selectedAmount, at=${amountType.name}, ca=$customAmount, sti=$selectedTypeId, ae=$acceptEnabled"
-    }
-
 }

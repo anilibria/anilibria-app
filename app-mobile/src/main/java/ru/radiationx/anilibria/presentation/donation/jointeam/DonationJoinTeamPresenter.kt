@@ -3,7 +3,9 @@ package ru.radiationx.anilibria.presentation.donation.jointeam
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.presentation.donation.infra.DonationInfraView
+import ru.radiationx.anilibria.ui.common.ErrorHandler
+import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.entity.app.donation.other.DonationJoinTeamInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -11,8 +13,11 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class DonationJoinTeamPresenter(
     router: Router,
-    val donationRepository: DonationRepository
+    private val donationRepository: DonationRepository,
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<DonationJoinTeamView>(router) {
+
+    private var currentData: DonationJoinTeamInfo? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -21,21 +26,26 @@ class DonationJoinTeamPresenter(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                val infraInfo = it.otherSupport?.btJoinTeam?.info
-                if (infraInfo != null) {
-                    viewState.showData(infraInfo)
+                val joinTeamInfo = it.otherSupport?.btJoinTeam?.info
+                if (joinTeamInfo != null) {
+                    currentData = joinTeamInfo
+                    viewState.showData(joinTeamInfo)
                 }
             }, {
-                it.printStackTrace()
+                errorHandler.handle(it)
             })
             .addToDisposable()
     }
 
     fun onNoticeClick() {
-
+        currentData?.btVoicer?.link?.let {
+            Utils.externalLink(it)
+        }
     }
 
     fun onTelegramClick() {
-
+        currentData?.btTelegram?.link?.let {
+            Utils.externalLink(it)
+        }
     }
 }

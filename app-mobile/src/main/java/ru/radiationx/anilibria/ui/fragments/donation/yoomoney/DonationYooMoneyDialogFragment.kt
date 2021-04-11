@@ -12,6 +12,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.android.synthetic.main.dialog_donation_yoomoney.*
@@ -54,7 +57,6 @@ class DonationYooMoneyDialogFragment :
             presenter.setSelectedAmount(intValue)
         }
         yooMoneyAmountField.setOnFocusChangeListener { _, isFocused ->
-            Log.d("kekeke", "focus custom amount $isFocused")
             if (isFocused) {
                 val intValue = yooMoneyAmountField.getTextIntValue()
                 presenter.setCustomAmount(intValue)
@@ -62,13 +64,11 @@ class DonationYooMoneyDialogFragment :
         }
 
         yooMoneyAmountField.addTextChangeListener {
-            Log.d("kekeke", "change custom amount $it")
             val intValue = yooMoneyAmountField.getTextIntValue()
             presenter.setCustomAmount(intValue)
         }
 
         yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            Log.d("kekeke", "checked type $checkedId, $isChecked")
             if (isChecked && checkedId != View.NO_ID) {
                 val paymentTypeId = when (checkedId) {
                     R.id.yooMoneyTypeAccount -> DonationYooMoneyInfo.TYPE_ID_ACCOUNT
@@ -100,7 +100,7 @@ class DonationYooMoneyDialogFragment :
         bindState(state)
     }
 
-    private fun bindState(state: DonationYooMoneyState){
+    private fun bindState(state: DonationYooMoneyState) {
         when (state.amountType) {
             DonationYooMoneyState.AmountType.PRESET -> {
                 if (state.selectedAmount != null) {
@@ -133,6 +133,16 @@ class DonationYooMoneyDialogFragment :
 
     private fun bindData(data: DonationYooMoneyInfo) {
         yooMoneyTitle.text = data.title
+
+        if (data.help != null) {
+            yooMoneyHelp.text = data.help
+            yooMoneyTitle.setOnClickListener {
+                yooMoneyHelp.isVisible = !yooMoneyHelp.isVisible
+            }
+        } else {
+            yooMoneyHelp.isVisible = false
+            yooMoneyTitle.setOnClickListener(null)
+        }
 
         val amountViews = listOf<View>(
             yooMoneyAmountTitle,
@@ -217,14 +227,9 @@ class DonationYooMoneyDialogFragment :
 
     private fun TextView.getTextIntValue(): Int? = text?.toString()?.toIntOrNull()
 
-
     private fun MaterialButtonToggleGroup.addCheckedListener(action: (checkedId: Int?) -> Unit) {
         var lastValue: Int? = null
         addOnButtonCheckedListener { group, checkedId, isChecked ->
-            Log.d(
-                "kekeke",
-                "checked amount $checkedId, $isChecked, ${group.checkedButtonIds}, ${group.checkedButtonId}"
-            )
             val isSameValue = group.checkedButtonIds.size == 1
                     && group.checkedButtonIds[0] == group.checkedButtonId
             val isNoSelection = group.checkedButtonIds.isEmpty()
@@ -232,13 +237,11 @@ class DonationYooMoneyDialogFragment :
                 val newValue = if (isNoSelection) null else group.checkedButtonId
                 if (newValue != lastValue) {
                     lastValue = newValue
-                    Log.e("kekeke", "real value changed to $newValue")
                     action.invoke(lastValue)
                 }
             }
         }
     }
-
 
     private class AmountCurrencyTransformation : TransformationMethod {
 

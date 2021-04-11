@@ -13,13 +13,13 @@
     "title": "Вы можете поддержать проект материально",
     "bt_patreon": {
       "text": "Оформить подписку на Patreon",
-      "link": ""
+      "link": "https://www.patreon.com/anilibria"
     },
     "bt_yoomoney": {
       "text": "Денежный перевод на ЮMoney",
       "info": {
         "title": "Перевод на ЮMoney",
-        "help": "helpme",
+        "help": "ЮMoney - бывший сервис Яндекс.Деньги",
         "amounts": {
           "title": "Сумма перевода",
           "hint": "Своё значение",
@@ -50,8 +50,8 @@
           ]
         },
         "form": {
-          "receiver": "receiver",
-          "target": "target",
+          "receiver": "4100115839344905",
+          "target": "Добровольное пожертвование",
           "short_desc": "short_desc",
           "label": "label"
         },
@@ -61,7 +61,7 @@
     },
     "bt_donationalerts": {
       "text": "Донат на DonationAlerts",
-      "link": ""
+      "link": "https://www.donationalerts.com/r/anilibria"
     }
   },
   "other_support": {
@@ -74,11 +74,11 @@
         "voicer_notice": "Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)",
         "bt_voicer": {
           "text": "Первые шаги для озвучивания аниме",
-          "link": ""
+          "link": "https://youtu.be/J4AKmleW7Ls"
         },
         "bt_telegram": {
           "text": "Подать заявку через Telegram",
-          "link": ""
+          "link": "https://t.me/joinlibria_bot"
         },
         "bt_cancel_text": "Отмена"
       }
@@ -90,7 +90,7 @@
         "description": "Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла...",
         "bt_telegram": {
           "text": "Техподдержка в Telegram",
-          "link": ""
+          "link": "tg://resolve?domain=Libria911Bot"
         },
         "bt_cancel_text": "Отмена"
       }

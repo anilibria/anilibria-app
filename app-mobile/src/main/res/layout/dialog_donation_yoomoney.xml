@@ -1,174 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clipToPadding="false"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:background="@color/white">
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/yooMoneyTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawablePadding="8dp"
-        android:textAppearance="?textAppearanceHeadline6"
-        app:drawableEndCompat="@drawable/ic_help_circle_outline"
-        app:drawableTint="?textSecond"
-        tools:text="Перевод на ЮMoney" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/yooMoneyHelp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?textAppearanceCaption"
-        android:visibility="gone"
-        tools:text="ЮMoney - бывший сервис Яндекс.Деньги"
-        tools:visibility="visible" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/yooMoneyAmountTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAppearance="?textAppearanceCaption"
-        tools:text="Сумма перевода" />
-
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/yooMoneyAmounts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:singleSelection="true" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/yooMoneyAmountInput"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:suffixText="₽">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/yooMoneyAmountField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            tools:hint="Своё значение"
-            tools:text="1800" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/yooMoneyTypeTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAppearance="?textAppearanceCaption"
-        tools:text="Способ оплаты" />
-
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/yooMoneyTypes"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:selectionRequired="true"
-        app:singleSelection="true"
-        tools:checkedButton="@id/yooMoneyTypeCard">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/yooMoneyTypeAccount"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minWidth="48dp"
-            android:padding="0dp"
-            app:icon="@drawable/ic_logo_yoomoney"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/yooMoneyTypeCard"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minWidth="48dp"
-            android:padding="0dp"
-            app:icon="@drawable/ic_credit_card_outline"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/yooMoneyTypeMobile"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minWidth="48dp"
-            android:padding="0dp"
-            app:icon="@drawable/ic_cellphone"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp" />
-
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+    android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/yooMoneyTypesNames"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:background="@color/white">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/yooMoneyTypeAccountName"
-            android:layout_width="0dp"
+            android:id="@+id/yooMoneyTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:textAppearance="?textAppearanceCaption"
-            tools:text="Кошелёк\nЮMoney" />
+            android:drawablePadding="8dp"
+            android:textAppearance="?textAppearanceHeadline6"
+            app:drawableEndCompat="@drawable/ic_help_circle_outline"
+            app:drawableTint="?textSecond"
+            tools:text="Перевод на ЮMoney" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/yooMoneyTypeCardName"
-            android:layout_width="0dp"
+            android:id="@+id/yooMoneyHelp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
             android:textAppearance="?textAppearanceCaption"
-            tools:text="Банковская\nкарта" />
+            android:visibility="gone"
+            tools:text="ЮMoney - бывший сервис Яндекс.Деньги"
+            tools:visibility="visible" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/yooMoneyTypeMobileName"
-            android:layout_width="0dp"
+            android:id="@+id/yooMoneyAmountTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:layout_marginTop="16dp"
             android:textAppearance="?textAppearanceCaption"
-            tools:text="Баланс\nмобильного" />
+            tools:text="Сумма перевода" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/yooMoneyAmounts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:singleSelection="true" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/yooMoneyAmountInput"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:suffixText="₽">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/yooMoneyAmountField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                tools:hint="Своё значение"
+                tools:text="1800" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/yooMoneyTypeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?textAppearanceCaption"
+            tools:text="Способ оплаты" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/yooMoneyTypes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            tools:checkedButton="@id/yooMoneyTypeCard">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/yooMoneyTypeAccount"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="48dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_logo_yoomoney"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/yooMoneyTypeCard"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="48dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_credit_card_outline"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/yooMoneyTypeMobile"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="48dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_cellphone"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/yooMoneyTypesNames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/yooMoneyTypeAccountName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textAppearance="?textAppearanceCaption"
+                tools:text="Кошелёк\nЮMoney" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/yooMoneyTypeCardName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textAppearance="?textAppearanceCaption"
+                tools:text="Банковская\nкарта" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/yooMoneyTypeMobileName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textAppearance="?textAppearanceCaption"
+                tools:text="Баланс\nмобильного" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/yooMoneyAccept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            tools:text="Пожертвовать" />
+
+        <ProgressBar
+            android:id="@+id/yooMoneyProgress"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:padding="6dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/yooMoneyCancel"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Отмена" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/yooMoneyAccept"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        tools:text="Пожертвовать" />
-
-    <ProgressBar
-        android:id="@+id/yooMoneyProgress"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:padding="6dp"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/yooMoneyCancel"
-        style="?materialButtonOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Отмена" />
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

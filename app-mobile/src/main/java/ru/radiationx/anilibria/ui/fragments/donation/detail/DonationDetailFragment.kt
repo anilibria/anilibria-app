@@ -28,7 +28,7 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
     @ProvidePresenter
     fun provideAuthPresenter(): DonationDetailPresenter =
-        getDependency(DonationDetailPresenter::class.java)
+        getDependency(DonationDetailPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_donation_detail
 

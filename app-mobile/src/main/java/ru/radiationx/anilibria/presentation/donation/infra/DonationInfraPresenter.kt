@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria.presentation.donation.infra
 
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.DonationInfraAnalytics
 import ru.radiationx.data.entity.app.donation.other.DonationInfraInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
@@ -14,7 +13,8 @@ import toothpick.InjectConstructor
 class DonationInfraPresenter(
     router: Router,
     private val donationRepository: DonationRepository,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val analytics: DonationInfraAnalytics
 ) : BasePresenter<DonationInfraView>(router) {
 
     private var currentData: DonationInfraInfo? = null
@@ -36,10 +36,12 @@ class DonationInfraPresenter(
     }
 
     fun onTelegramClick() {
+        analytics.telegramClick()
         currentData?.btTelegram?.link?.let { Utils.externalLink(it) }
     }
 
     fun onLinkClick(url: String) {
+        analytics.linkClick(url)
         Utils.externalLink(url)
     }
 

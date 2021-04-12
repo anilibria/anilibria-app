@@ -1,10 +1,13 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
-import android.util.Log
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
+import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
+import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
+import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -13,7 +16,8 @@ import toothpick.InjectConstructor
 class DonationYooMoneyPresenter(
     router: Router,
     private val donationRepository: DonationRepository,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val analytics: DonationYooMoneyAnalytics
 ) : BasePresenter<DonationYooMoneyView>(router) {
 
     private var currentState = DonationYooMoneyState()
@@ -28,7 +32,7 @@ class DonationYooMoneyPresenter(
                     data = yooMoneyInfo,
                     amountType = DonationYooMoneyState.AmountType.PRESET,
                     selectedAmount = yooMoneyInfo?.amounts?.defaultValue,
-                    selectedTypeId = yooMoneyInfo?.paymentTypes?.selectedId
+                    selectedPaymentTypeId = yooMoneyInfo?.paymentTypes?.selectedId
                 )
                 tryUpdateState(newState)
             }, {
@@ -54,17 +58,26 @@ class DonationYooMoneyPresenter(
     }
 
     fun setPaymentType(typeId: String?) {
-        val newState = currentState.copy(selectedTypeId = typeId)
+        val newState = currentState.copy(selectedPaymentTypeId = typeId)
         tryUpdateState(newState)
+    }
+
+    fun submitHelpClickAnalytics() {
+        analytics.helpClick()
     }
 
     fun onAcceptClick() {
         val amount = currentState.getAmount()
-        val typeId = currentState.selectedTypeId ?: return
+        val paymentTypeId = currentState.selectedPaymentTypeId ?: return
         val form = currentState.data?.form ?: return
+        analytics.acceptClick(
+            amount,
+            currentState.amountType.toAnalytics(),
+            paymentTypeId.toAnalyticsPaymentType()
+        )
         viewState.setRefreshing(true)
         donationRepository
-            .createYooMoneyPayLink(amount, typeId, form)
+            .createYooMoneyPayLink(amount, paymentTypeId, form)
             .doFinally { viewState.setRefreshing(false) }
             .subscribe({
                 Utils.externalLink(it)
@@ -77,8 +90,8 @@ class DonationYooMoneyPresenter(
 
     private fun DonationYooMoneyState.withValidation(): DonationYooMoneyState {
         val isValidAmount = getAmount() > 0
-        val containsType = data?.paymentTypes?.items?.any { it.id == selectedTypeId } == true
-        val isValidType = selectedTypeId != null && containsType
+        val containsType = data?.paymentTypes?.items?.any { it.id == selectedPaymentTypeId } == true
+        val isValidType = selectedPaymentTypeId != null && containsType
         return copy(acceptEnabled = isValidAmount && isValidType)
     }
 
@@ -93,5 +106,17 @@ class DonationYooMoneyPresenter(
             currentState = withValidationState
             viewState.showData(currentState)
         }
+    }
+
+    private fun DonationYooMoneyState.AmountType.toAnalytics() = when (this) {
+        DonationYooMoneyState.AmountType.PRESET -> AnalyticsDonationAmountType.PRESET
+        DonationYooMoneyState.AmountType.CUSTOM -> AnalyticsDonationAmountType.CUSTOM
+    }
+
+    private fun String.toAnalyticsPaymentType() = when (this) {
+        DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> AnalyticsDonationPaymentType.ACCOUNT
+        DonationYooMoneyInfo.TYPE_ID_CARD -> AnalyticsDonationPaymentType.CARD
+        DonationYooMoneyInfo.TYPE_ID_MOBILE -> AnalyticsDonationPaymentType.MOBILE
+        else -> null
     }
 }

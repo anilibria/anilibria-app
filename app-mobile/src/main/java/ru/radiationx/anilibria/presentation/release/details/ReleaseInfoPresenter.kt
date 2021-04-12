@@ -45,7 +45,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val scheduleAnalytics: ScheduleAnalytics,
     private val webPlayerAnalytics: WebPlayerAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
-    private val playerAnalytics: PlayerAnalytics
+    private val playerAnalytics: PlayerAnalytics,
+    private val donationDetailAnalytics: DonationDetailAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -244,6 +245,7 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onClickDonate() {
         currentData?.also {
             releaseAnalytics.donateClick(it.id)
+            donationDetailAnalytics.open(AnalyticsConstants.screen_release)
             router.navigateTo(Screens.DonationDetail())
         }
     }

@@ -2,10 +2,8 @@ package ru.radiationx.data.analytics.profile
 
 import io.reactivex.Single
 import ru.radiationx.data.analytics.features.mapper.*
-import ru.radiationx.data.analytics.features.model.*
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.migration.MigrationDataSource
 import toothpick.InjectConstructor
 

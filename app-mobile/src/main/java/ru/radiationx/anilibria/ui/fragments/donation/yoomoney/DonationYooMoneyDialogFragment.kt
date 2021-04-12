@@ -1,20 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.donation.yoomoney
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.method.TransformationMethod
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.android.synthetic.main.dialog_donation_yoomoney.*
@@ -116,7 +109,7 @@ class DonationYooMoneyDialogFragment :
             }
         }
 
-        val selectedTypeViewId = when (state.selectedTypeId) {
+        val selectedTypeViewId = when (state.selectedPaymentTypeId) {
             DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
             DonationYooMoneyInfo.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
             DonationYooMoneyInfo.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
@@ -137,6 +130,7 @@ class DonationYooMoneyDialogFragment :
         if (data.help != null) {
             yooMoneyHelp.text = data.help
             yooMoneyTitle.setOnClickListener {
+                presenter.submitHelpClickAnalytics()
                 yooMoneyHelp.isVisible = !yooMoneyHelp.isVisible
             }
         } else {

@@ -7,7 +7,7 @@ data class DonationYooMoneyState(
     val selectedAmount: Int? = null,
     val amountType: AmountType = AmountType.PRESET,
     val customAmount: Int? = null,
-    val selectedTypeId: String? = null,
+    val selectedPaymentTypeId: String? = null,
     val acceptEnabled: Boolean = false
 ) {
     enum class AmountType {

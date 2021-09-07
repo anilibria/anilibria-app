@@ -25,7 +25,7 @@ class SearchAdapter(
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
             localItems.removeAt(position)
-            notifyItemRangeRemoved(position, 1)
+            notifyDiffItems()
             appPreferences.setSearchRemind(false)
         }
     }

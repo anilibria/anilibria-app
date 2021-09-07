@@ -87,8 +87,8 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun bindItems(profileItem: ProfileItem, menu: List<MutableList<OtherMenuItem>>) {
             items = mutableListOf<ListItem>().apply {
-                items.add(ProfileListItem(profileItem))
-                items.add(DividerShadowListItem("profile"))
+                add(ProfileListItem(profileItem))
+                add(DividerShadowListItem("profile"))
                 val lastItem = menu.lastOrNull()
                 menu.forEach { menuItems ->
                     addAll(menuItems.map { MenuListItem(it) })

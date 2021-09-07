@@ -21,7 +21,6 @@ import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
@@ -30,17 +29,15 @@ import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.shared_app.di.injectDependencies
 import java.net.URLConnection
 import java.text.DecimalFormat
 import java.util.regex.Pattern
-import javax.inject.Inject
 
 @RuntimePermissions
 class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
@@ -469,10 +466,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     override fun updateFavCounter() {
         releaseInfoAdapter.notifyDataSetChanged()
-    }
-
-    override fun showVitalItems(vital: List<VitalItem>) {
-        releaseInfoAdapter.setVitals(vital)
     }
 
     override fun showFavoriteDialog() {

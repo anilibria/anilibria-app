@@ -13,7 +13,6 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 sealed class ListItem
@@ -29,8 +28,6 @@ class DividerShadowListItem : ListItem()
 
 class LoadMoreListItem : ListItem()
 class CommentRouteListItem : ListItem()
-class VitalWebListItem(val item: VitalItem) : ListItem()
-class VitalNativeListItem(val item: VitalItem) : ListItem()
 class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
 class PlaceholderListItem(val icRes: Int, val titleRes: Int, val descRes: Int) : ListItem()
 

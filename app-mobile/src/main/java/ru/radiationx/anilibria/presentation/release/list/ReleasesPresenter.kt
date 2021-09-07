@@ -9,9 +9,7 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.VitalRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -19,13 +17,12 @@ import javax.inject.Inject
 
 @InjectViewState
 class ReleasesPresenter @Inject constructor(
-        private val releaseInteractor: ReleaseInteractor,
-        private val vitalRepository: VitalRepository,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val releaseUpdateHolder: ReleaseUpdateHolder,
-        private val fastSearchAnalytics: FastSearchAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val releaseInteractor: ReleaseInteractor,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    private val fastSearchAnalytics: FastSearchAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleasesView>(router) {
 
     companion object {
@@ -38,41 +35,25 @@ class ReleasesPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         refreshReleases()
-        loadVital()
 
         releaseUpdateHolder
-                .observeEpisodes()
-                .subscribe { data ->
-                    val itemsNeedUpdate = mutableListOf<ReleaseItem>()
-                    currentItems.forEach { item ->
-                        data.firstOrNull { it.id == item.id }?.also { updItem ->
-                            val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                            if (item.isNew != isNew) {
-                                item.isNew = isNew
-                                itemsNeedUpdate.add(item)
-                            }
-                        }
-                    }
-
-                    viewState.updateReleases(itemsNeedUpdate)
-                }
-                .addToDisposable()
-    }
-
-    private fun loadVital() {
-        vitalRepository
-                .observeByRule(VitalItem.Rule.RELEASE_LIST)
-                .subscribe {
-                    it.findLast { it.type == VitalItem.VitalType.BANNER }?.let {
-                        viewState.showVitalBottom(it)
-                    }
-                    it.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                        if (it.isNotEmpty()) {
-                            viewState.showVitalItems(it)
+            .observeEpisodes()
+            .subscribe { data ->
+                val itemsNeedUpdate = mutableListOf<ReleaseItem>()
+                currentItems.forEach { item ->
+                    data.firstOrNull { it.id == item.id }?.also { updItem ->
+                        val isNew =
+                            item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                        if (item.isNew != isNew) {
+                            item.isNew = isNew
+                            itemsNeedUpdate.add(item)
                         }
                     }
                 }
-                .addToDisposable()
+
+                viewState.updateReleases(itemsNeedUpdate)
+            }
+            .addToDisposable()
     }
 
     private fun isFirstPage(): Boolean {
@@ -85,15 +66,15 @@ class ReleasesPresenter @Inject constructor(
             viewState.setRefreshing(true)
         }
         releaseInteractor
-                .loadReleases(pageNum)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ releaseItems ->
-                    viewState.setEndless(!releaseItems.isEnd())
-                    showData(releaseItems.data)
-                }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .loadReleases(pageNum)
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({ releaseItems ->
+                viewState.setEndless(!releaseItems.isEnd())
+                showData(releaseItems.data)
+            }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     private fun showData(data: List<ReleaseItem>) {
@@ -115,7 +96,7 @@ class ReleasesPresenter @Inject constructor(
         loadReleases(currentPage + 1)
     }
 
-    fun onFastSearchOpen(){
+    fun onFastSearchOpen() {
         fastSearchAnalytics.open(AnalyticsConstants.screen_releases_list)
     }
 
@@ -124,15 +105,15 @@ class ReleasesPresenter @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
     }
 
-    fun onCopyClick(item:ReleaseItem){
+    fun onCopyClick(item: ReleaseItem) {
         releaseAnalytics.copyLink(AnalyticsConstants.screen_releases_list, item.id)
     }
 
-    fun onShareClick(item: ReleaseItem){
+    fun onShareClick(item: ReleaseItem) {
         releaseAnalytics.share(AnalyticsConstants.screen_releases_list, item.id)
     }
 
-    fun onShortcutClick(item: ReleaseItem){
+    fun onShortcutClick(item: ReleaseItem) {
         releaseAnalytics.shortcut(AnalyticsConstants.screen_releases_list, item.id)
     }
 

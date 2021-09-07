@@ -33,7 +33,6 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.shared.ktx.android.putExtra
 import javax.inject.Inject
 
@@ -259,14 +258,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     override fun showDialog() {
         genresDialog.showDialog()
-    }
-
-    override fun showVitalBottom(vital: VitalItem) {
-
-    }
-
-    override fun showVitalItems(vital: List<VitalItem>) {
-
     }
 
     override fun setEndless(enable: Boolean) {

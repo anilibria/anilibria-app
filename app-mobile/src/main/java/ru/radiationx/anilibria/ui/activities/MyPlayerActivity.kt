@@ -36,9 +36,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
@@ -55,12 +53,11 @@ import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.di.injectDependencies
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -119,9 +116,6 @@ class MyPlayerActivity : BaseActivity() {
     private val fullScreenListener = FullScreenListener()
 
     @Inject
-    lateinit var vitalRepository: VitalRepository
-
-    @Inject
     lateinit var releaseInteractor: ReleaseInteractor
 
     @Inject
@@ -149,7 +143,6 @@ class MyPlayerActivity : BaseActivity() {
         mutableMapOf<String, MutableList<Pair<AnalyticsQuality, Long>>>()
 
 
-    private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
 
@@ -199,7 +192,6 @@ class MyPlayerActivity : BaseActivity() {
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
         createPIPParams()
-        loadVital()
         initUiFlags()
         currentOrientation = resources.configuration.orientation
         goFullscreen()
@@ -417,25 +409,6 @@ class MyPlayerActivity : BaseActivity() {
         player?.setScaleType(currentScale)
     }
 
-    private fun loadVital() {
-        vitalRepository
-            .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
-            .subscribe {
-                it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }
-                    .let {
-                        if (it.isNotEmpty()) {
-                            showVitalItems(it)
-                        }
-                    }
-            }
-            .addToDisposable()
-    }
-
-    fun showVitalItems(vital: List<VitalItem>) {
-        currentVitals.clear()
-        currentVitals.addAll(vital)
-    }
-
     private fun updateQuality(newQuality: Int) {
         this.currentQuality = newQuality
         val prefQuality = newQuality.toPrefQuality()
@@ -533,13 +506,6 @@ class MyPlayerActivity : BaseActivity() {
         player.stopPlayback()
         super.onDestroy()
         exitFullscreen()
-        if (currentVitals.isNotEmpty()) {
-            val randomVital = if (currentVitals.size > 1) rand(0, currentVitals.size) else 0
-            val listItem = currentVitals[randomVital]
-            startActivity(Intent(App.instance, FullScreenActivity::class.java).apply {
-                putExtra(FullScreenActivity.VITAL_ITEM, listItem)
-            })
-        }
     }
 
     private fun checkIndex(id: Int): Boolean {

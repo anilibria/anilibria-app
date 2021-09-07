@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.release.list.ReleasesPresenter
 import ru.radiationx.anilibria.presentation.release.list.ReleasesView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -32,8 +31,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
@@ -131,7 +129,7 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
-                    }else{
+                    } else {
                         presenter.onFastSearchOpen()
                     }
                 }
@@ -182,14 +180,6 @@ class ReleasesFragment : BaseFragment(), SharedProvider, ReleasesView, FastSearc
     }
 
     /* ReleaseView */
-    override fun showVitalBottom(vital: VitalItem) {
-        vitalBottom.visible()
-    }
-
-    override fun showVitalItems(vital: List<VitalItem>) {
-        adapter.setVitals(vital)
-    }
-
     override fun setEndless(enable: Boolean) {
         adapter.endless = enable
     }

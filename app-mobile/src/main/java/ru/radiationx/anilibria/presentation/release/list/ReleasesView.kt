@@ -5,7 +5,6 @@ import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 
 /* Created by radiationx on 16.11.17. */
 
@@ -22,7 +21,4 @@ interface ReleasesView : IBaseView {
 
     fun setEndless(enable: Boolean)
 
-    fun showVitalBottom(vital: VitalItem)
-
-    fun showVitalItems(vital: List<VitalItem>)
 }

@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
 import ru.radiationx.anilibria.ui.adapters.auth.SocialAuthDelegate

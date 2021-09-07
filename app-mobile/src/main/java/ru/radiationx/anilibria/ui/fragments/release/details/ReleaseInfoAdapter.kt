@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
@@ -21,7 +22,7 @@ class ReleaseInfoAdapter(
     private val donateListener: ReleaseDonateDelegate.Listener,
     private val torrentClickListener: (TorrentItem) -> Unit,
     private val commentsClickListener: () -> Unit
-) : OptimizeAdapter<MutableList<ListItem>>() {
+) : ListItemAdapter()  {
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
 

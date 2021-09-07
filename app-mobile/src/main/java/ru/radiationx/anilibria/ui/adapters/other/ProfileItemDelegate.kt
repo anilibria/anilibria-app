@@ -27,7 +27,7 @@ class ProfileItemDelegate(
         { ViewHolder(it, clickListener, logoutClickListener) }
 ) {
 
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         (holder as ViewHolder).onDetach()
     }

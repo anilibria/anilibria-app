@@ -4,6 +4,7 @@ import android.util.Log
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.release.ReleaseItem
 
@@ -12,7 +13,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 open class ReleasesAdapter(
     var listener: ItemListener,
     private val placeHolder: PlaceholderListItem
-) : OptimizeAdapter<MutableList<ListItem>>() {
+) : ListItemAdapter()  {
 
     var endless: Boolean = false
         set(enable) {

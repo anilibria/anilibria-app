@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.BottomTabListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.main.BottomTabDelegate

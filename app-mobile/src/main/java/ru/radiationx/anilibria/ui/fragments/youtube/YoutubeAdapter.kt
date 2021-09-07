@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.youtube
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
@@ -11,7 +12,7 @@ import ru.radiationx.data.entity.app.youtube.YoutubeItem
 class YoutubeAdapter(
     var listener: ItemListener,
     private val placeHolder: PlaceholderListItem
-) : OptimizeAdapter<MutableList<ListItem>>() {
+) : ListItemAdapter()  {
 
 
     var endless: Boolean = false

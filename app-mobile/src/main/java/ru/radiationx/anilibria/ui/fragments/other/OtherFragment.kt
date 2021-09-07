@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.other
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter

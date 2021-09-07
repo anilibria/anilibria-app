@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
@@ -26,7 +27,7 @@ class FeedAdapter(
         releaseLongClickListener: (ReleaseItem, View) -> Unit,
         youtubeClickListener: (YoutubeItem, View) -> Unit,
         scheduleClickListener: (ScheduleItem, View, Int) -> Unit
-) : OptimizeAdapter<MutableList<ListItem>>() {
+) : ListItemAdapter()  {
 
     private val scheduleSection = FeedSectionListItem("Ожидаются", "Расписание")
     private val feedSection = FeedSectionListItem("Обновления", hasBg = true)

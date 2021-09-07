@@ -24,7 +24,6 @@ class YoutubeAdapter(
         }
 
     init {
-        items = mutableListOf()
         addDelegate(YoutubeDelegate(listener))
         addDelegate(LoadMoreDelegate(listener))
         addDelegate(PlaceholderDelegate())
@@ -50,7 +49,7 @@ class YoutubeAdapter(
     fun bindItems(newItems: List<YoutubeItem>) {
         localItems.clear()
         localItems.addAll(newItems.map { YoutubeListItem(it) })
-        if (items.isEmpty()) {
+        if (localItems.isEmpty()) {
             localItems.add(placeHolder)
         } else {
             localItems.removeAll { it is PlaceholderListItem }

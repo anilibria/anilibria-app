@@ -78,7 +78,7 @@ class FeedAdapter(
                 )
             )
         } else {
-            items[index + 1] = FeedSchedulesListItem("actual", newItems)
+            localItems[index + 1] = FeedSchedulesListItem("actual", newItems)
         }
 
 
@@ -86,7 +86,7 @@ class FeedAdapter(
     }
 
     fun updateItems(updItems: List<FeedItem>) {
-        val updListItems = items
+        val updListItems = localItems
             .filterIsInstance<FeedListItem>()
             .filter { feedListItem ->
                 val releaseItem = feedListItem.item.release
@@ -110,7 +110,7 @@ class FeedAdapter(
                 }
             }
             if (index != -1 && updItem != null) {
-                items[index] = FeedListItem(updItem)
+                localItems[index] = FeedListItem(updItem)
                 notifyDiffItems()
             }
         }
@@ -134,10 +134,10 @@ class FeedAdapter(
 
         val currentFeedItems = (startIndex until itemCount)
             .filter { index ->
-                val listItem = items[index]
+                val listItem = localItems[index]
                 listItem is FeedListItem || listItem is DividerShadowListItem
             }
-            .map { items[it] }
+            .map { localItems[it] }
         val newListItems = mutableListOf<ListItem>()
 
         var lastFeedItem: FeedListItem? = null

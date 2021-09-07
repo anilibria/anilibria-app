@@ -61,7 +61,6 @@ class ReleaseInfoAdapter(
     }
 
     init {
-        items = mutableListOf()
         addDelegate(ReleaseHeadDelegate(headListener))
         addDelegate(FeedSectionDelegate {})
         addDelegate(ReleaseExpandDelegate {

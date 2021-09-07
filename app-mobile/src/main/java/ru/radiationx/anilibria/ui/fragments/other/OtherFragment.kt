@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.other
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -17,6 +16,7 @@ import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.data.entity.app.other.OtherMenuItem
@@ -54,19 +54,7 @@ class OtherFragment : BaseFragment(), OtherView {
     }
 
     override fun showItems(profileItem: ProfileItem, menu: List<MutableList<OtherMenuItem>>) {
-        adapter.apply {
-            clear()
-            addProfile(profileItem)
-            val lastItem = menu.lastOrNull()
-            menu.forEach {
-                addMenu(it, it === lastItem)
-            }
-            notifyDataSetChanged()
-        }
-    }
-
-    override fun updateProfile() {
-        adapter.notifyDataSetChanged()
+        adapter.bindItems(profileItem, menu)
     }
 
     override fun showOtpCode() {
@@ -79,7 +67,7 @@ class OtherFragment : BaseFragment(), OtherView {
         return false
     }
 
-    inner class OtherAdapter : ListDelegationAdapter<MutableList<ListItem>>() {
+    inner class OtherAdapter : ListItemAdapter() {
 
         private val profileClickListener = { item: ProfileItem ->
             presenter.openAuth()
@@ -90,7 +78,6 @@ class OtherFragment : BaseFragment(), OtherView {
         private val menuClickListener = { item: OtherMenuItem -> presenter.onMenuClick(item) }
 
         init {
-            items = mutableListOf()
             delegatesManager.apply {
                 addDelegate(ProfileItemDelegate(profileClickListener, logoutClickListener))
                 addDelegate(DividerShadowItemDelegate())
@@ -98,19 +85,17 @@ class OtherFragment : BaseFragment(), OtherView {
             }
         }
 
-        fun clear() {
-            items.clear()
-        }
-
-        fun addProfile(profileItem: ProfileItem) {
-            items.add(ProfileListItem(profileItem))
-            items.add(DividerShadowListItem("profile"))
-        }
-
-        fun addMenu(newItems: MutableList<OtherMenuItem>, isLast: Boolean = false) {
-            items.addAll(newItems.map { MenuListItem(it) })
-            if (newItems.isNotEmpty() && !isLast) {
-                items.add(DividerShadowListItem("divider_${newItems.lastOrNull()?.id ?: 0}"))
+        fun bindItems(profileItem: ProfileItem, menu: List<MutableList<OtherMenuItem>>) {
+            items = mutableListOf<ListItem>().apply {
+                items.add(ProfileListItem(profileItem))
+                items.add(DividerShadowListItem("profile"))
+                val lastItem = menu.lastOrNull()
+                menu.forEach { menuItems ->
+                    addAll(menuItems.map { MenuListItem(it) })
+                    if (menuItems.isNotEmpty() && lastItem != menuItems) {
+                        add(DividerShadowListItem("divider_${menuItems.lastOrNull()?.id ?: 0}"))
+                    }
+                }
             }
         }
     }

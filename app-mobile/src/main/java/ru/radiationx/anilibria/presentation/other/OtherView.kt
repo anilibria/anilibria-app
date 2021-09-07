@@ -13,5 +13,4 @@ interface OtherView : IBaseView {
 
     @StateStrategyType(SkipStrategy::class)
     fun showOtpCode()
-    fun updateProfile()
 }

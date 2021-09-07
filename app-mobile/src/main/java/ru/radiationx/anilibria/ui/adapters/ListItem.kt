@@ -53,8 +53,8 @@ data class LoadMoreListItem(val id: Any) : ListItem(null)
 data class CommentRouteListItem(val id: Any) : ListItem(null)
 data class BottomTabListItem(
     val item: MainActivity.Tab,
-    var selected: Boolean = false
-) : ListItem(item.title)
+    val selected: Boolean
+) : ListItem(item.screen.screenKey)
 
 data class PlaceholderListItem(
     val icRes: Int,

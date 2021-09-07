@@ -26,6 +26,10 @@ object AnalyticsConstants {
     const val screen_auth_main = "screen_auth_main"
     const val screen_auth_vk = "screen_auth_vk"
     const val screen_auth_social = "screen_auth_social"
+    const val screen_donation_detail = "screen_donation_detail"
+    const val screen_donation_yoomoney = "screen_donation_yoomoney"
+    const val screen_donation_jointeam = "screen_donation_jointeam"
+    const val screen_donation_infra = "screen_donation_infra"
     const val notification_local_update = "notification_local_update"
     const val notification_push_update = "notification_push_update"
     const val link_router = "link_router"
@@ -239,6 +243,28 @@ object AnalyticsConstants {
     const val page_loaded = "page_loaded"
     const val page_error = "page_error"
     const val page_use_time = "page_use_time"
+
+    /* Donation */
+    const val donation_detail_open = "donation_detail_open"
+    const val donation_detail_link_click = "donation_detail_link_click"
+    const val donation_detail_patreon_click = "donation_detail_patreon_click"
+    const val donation_detail_yoomoney_click = "donation_detail_yoomoney_click"
+    const val donation_detail_donationalerts_click = "donation_detail_donationalerts_click"
+    const val donation_detail_jointeam_click = "donation_detail_jointeam_click"
+    const val donation_detail_infra_click = "donation_detail_infra_click"
+
+    const val donation_yoomoney_open = "donation_yoomoney_open"
+    const val donation_yoomoney_help_click = "donation_yoomoney_help_click"
+    const val donation_yoomoney_accept_click = "donation_yoomoney_accept_click"
+
+    const val donation_jointeam_open = "donation_jointeam_open"
+    const val donation_jointeam_link_click = "donation_jointeam_link_click"
+    const val donation_jointeam_notice_click = "donation_jointeam_notice_click"
+    const val donation_jointeam_telegram_click = "donation_jointeam_telegram_click"
+
+    const val donation_infra_open = "donation_infra_open"
+    const val donation_infra_link_click = "donation_infra_link_click"
+    const val donation_infra_telegram_click = "donation_infra_telegram_click"
 
     /*
     * Глобально добавить в профиль пользователя текущий adresss

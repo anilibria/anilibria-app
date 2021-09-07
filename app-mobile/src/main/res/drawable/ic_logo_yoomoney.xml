@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group>
+        <clip-path android:pathData="M2,5h20v14.2012h-20z" />
+        <path
+            android:fillColor="@color/brand_yoomoney"
+            android:pathData="M14.8982,5C10.9435,5 7.7977,8.1908 7.7977,12.1006C7.7977,16.0553 10.9885,19.2012 14.8982,19.2012C18.8081,19.2012 21.9988,16.0104 21.9988,12.1006C21.9988,8.1908 18.8081,5 14.8982,5ZM14.8982,14.7521C13.4602,14.7521 12.2468,13.5387 12.2468,12.1006C12.2468,10.6625 13.4602,9.4491 14.8982,9.4491C16.3363,9.4491 17.5497,10.6625 17.5497,12.1006C17.5049,13.5387 16.3363,14.7521 14.8982,14.7521Z" />
+        <path
+            android:fillColor="@color/brand_yoomoney"
+            android:pathData="M7.7524,7.0673V17.4036H5.2357L2,7.0673H7.7524Z" />
+    </group>
+</vector>

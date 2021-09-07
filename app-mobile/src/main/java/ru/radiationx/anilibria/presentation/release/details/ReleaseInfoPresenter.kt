@@ -45,7 +45,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val scheduleAnalytics: ScheduleAnalytics,
     private val webPlayerAnalytics: WebPlayerAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
-    private val playerAnalytics: PlayerAnalytics
+    private val playerAnalytics: PlayerAnalytics,
+    private val donationDetailAnalytics: DonationDetailAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private var currentData: ReleaseFull? = null
@@ -242,10 +243,10 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickDonate() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
         currentData?.also {
             releaseAnalytics.donateClick(it.id)
-            Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+            donationDetailAnalytics.open(AnalyticsConstants.screen_release)
+            router.navigateTo(Screens.DonationDetail())
         }
     }
 
@@ -338,8 +339,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogDonateClick() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+        router.navigateTo(Screens.DonationDetail())
     }
 
     fun onResetEpisodesHistoryClick() {

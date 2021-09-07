@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:background="@color/white">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/joinTeamTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textAppearance="?textAppearanceHeadline6"
+            tools:text="Вступить в команду AniLibria" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/joinTeamDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="Какие роли у нас есть:\n* Войсер - озвучивает персонажей\n* Саббер - переводит субтитры\n* Технарь - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки\n* Сидер - раздаёт серии через torrent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/joinTeamNoticeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/joinTeamNotice"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="start|center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_youtube"
+            app:icon="@drawable/ic_logo_youtube"
+            app:iconPadding="16dp"
+            app:iconTint="@null"
+            tools:text="Первые шаги для озвучивания аниме" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/joinTeamTelegram"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_telegram"
+            app:icon="@drawable/ic_logo_telegram"
+            app:iconGravity="textStart"
+            app:iconPadding="16dp"
+            app:iconTint="@null"
+            tools:text="Подать заявку через Telegram" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/joinTeamCancel"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Отмена" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

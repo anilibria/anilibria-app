@@ -8,7 +8,6 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -22,7 +21,9 @@ class ReleaseInfoAdapter(
     private val donateListener: ReleaseDonateDelegate.Listener,
     private val torrentClickListener: (TorrentItem) -> Unit,
     private val commentsClickListener: () -> Unit
-) : ListItemAdapter()  {
+) : ListItemAdapter() {
+
+    private val localItems = mutableListOf<ListItem>()
 
     private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
 
@@ -39,9 +40,9 @@ class ReleaseInfoAdapter(
     private var reverseEpisodes = appPreferences.getEpisodesIsReverse()
     private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
         override fun onClickClose(position: Int) {
-            items.removeAt(position)
-            items.removeAt(position)
-            notifyItemRangeRemoved(position, 2)
+            localItems.removeAt(position)
+            localItems.removeAt(position)
+            updateItems()
             appPreferences.setReleaseRemind(false)
         }
     }
@@ -50,10 +51,10 @@ class ReleaseInfoAdapter(
         override fun onSelect(tabTag: String, position: Int) {
             currentTabTag = tabTag
             currentRelease?.let {
-                val startPos = items.indexOfFirst { it is ReleaseEpisodeListItem }
-                items.removeAll { it is ReleaseEpisodeListItem }
-                items.addAll(startPos, prepareEpisodeItems(it))
-                notifyItemRangeChanged(startPos, items.size)
+                val startPos = localItems.indexOfFirst { it is ReleaseEpisodeListItem }
+                localItems.removeAll { it is ReleaseEpisodeListItem }
+                localItems.addAll(startPos, prepareEpisodeItems(it))
+                updateItems()
                 return@let
             }
         }
@@ -83,42 +84,42 @@ class ReleaseInfoAdapter(
     }
 
     fun setRelease(release: ReleaseFull) {
-        items.clear()
+        localItems.clear()
         currentRelease = release
-        items.add(ReleaseEpisodeControlItem(release, false, EpisodeControlPlace.TOP))
-        items.add(ReleaseHeadListItem(release))
-        items.add(DividerShadowListItem("head"))
+        localItems.add(ReleaseEpisodeControlItem(release, false, EpisodeControlPlace.TOP))
+        localItems.add(ReleaseHeadListItem(release))
+        localItems.add(DividerShadowListItem("head"))
 
         if (release.blockedInfo.isBlocked) {
-            items.add(ReleaseBlockedListItem(release))
-            items.add(DividerShadowListItem("blocked"))
+            localItems.add(ReleaseBlockedListItem(release))
+            localItems.add(DividerShadowListItem("blocked"))
         }
 
         if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
-            items.add(ReleaseDonateListItem("donate"))
-            items.add(DividerShadowListItem("donate"))
+            localItems.add(ReleaseDonateListItem("donate"))
+            localItems.add(DividerShadowListItem("donate"))
         }
 
         val torrents = release.torrents.asReversed()
         if (torrents.isNotEmpty()) {
-            items.add(FeedSectionListItem("Раздачи", hasBg = true))
+            localItems.add(FeedSectionListItem("Раздачи", hasBg = true))
             if (!currentTorrentsExpand && release.torrents.size > 3) {
-                items.addAll(torrents.take(3).map { ReleaseTorrentListItem(it) })
-                items.add(torrentsListItem)
+                localItems.addAll(torrents.take(3).map { ReleaseTorrentListItem(it) })
+                localItems.add(torrentsListItem)
             } else {
-                items.addAll(torrents.map { ReleaseTorrentListItem(it) })
+                localItems.addAll(torrents.map { ReleaseTorrentListItem(it) })
             }
-            items.add(DividerShadowListItem("torrents"))
+            localItems.add(DividerShadowListItem("torrents"))
         }
 
         if (!release.blockedInfo.isBlocked && appPreferences.getReleaseRemind()) {
-            items.add(ReleaseRemindListItem(remindText))
-            items.add(DividerShadowListItem("remind"))
+            localItems.add(ReleaseRemindListItem(remindText))
+            localItems.add(DividerShadowListItem("remind"))
         }
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
             if (release.episodes.isNotEmpty()) {
-                items.add(
+                localItems.add(
                     ReleaseEpisodeControlItem(
                         release,
                         release.moonwalkLink != null,
@@ -127,16 +128,20 @@ class ReleaseInfoAdapter(
                 )
             }
             if (/*release.episodesSource.isNotEmpty() && */release.episodesSource.isNotEmpty()) {
-                items.add(ReleaseEpisodesHeadListItem(currentTabTag))
+                localItems.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
-            items.addAll(prepareEpisodeItems(release))
-            items.add(DividerShadowListItem("episodes"))
+            localItems.addAll(prepareEpisodeItems(release))
+            localItems.add(DividerShadowListItem("episodes"))
         }
 
-        items.add(CommentRouteListItem("comments"))
-        items.add(DividerShadowListItem("comments"))
+        localItems.add(CommentRouteListItem("comments"))
+        localItems.add(DividerShadowListItem("comments"))
 
-        notifyDataSetChanged()
+        updateItems()
+    }
+
+    private fun updateItems(){
+        items = localItems.toList()
     }
 
     private fun prepareEpisodeItems(release: ReleaseFull): List<ReleaseEpisodeListItem> {

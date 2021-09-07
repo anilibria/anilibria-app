@@ -4,7 +4,6 @@ import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /* Created by radiationx on 31.10.17. */
@@ -12,15 +11,16 @@ import ru.radiationx.data.entity.app.youtube.YoutubeItem
 class YoutubeAdapter(
     var listener: ItemListener,
     private val placeHolder: PlaceholderListItem
-) : ListItemAdapter()  {
+) : ListItemAdapter() {
 
+
+    private var localItems = mutableListOf<ListItem>()
 
     var endless: Boolean = false
         set(enable) {
             field = enable
             removeLoadMore()
             addLoadMore()
-            notifyDataSetChanged()
         }
 
     init {
@@ -30,38 +30,37 @@ class YoutubeAdapter(
         addDelegate(PlaceholderDelegate())
     }
 
-    private fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
-        if (condition) {
-            items.add(placeHolder)
-        } else {
-            items.removeAll { it is PlaceholderListItem }
-        }
-    }
-
     private fun removeLoadMore() {
-        this.items.removeAll { it is LoadMoreListItem }
+        localItems.removeAll { it is LoadMoreListItem }
     }
 
     private fun addLoadMore() {
         if (endless) {
-            this.items.add(LoadMoreListItem("bottom"))
+            localItems.add(LoadMoreListItem("bottom"))
         }
     }
 
     fun insertMore(newItems: List<YoutubeItem>) {
-        val prevItems = itemCount
         removeLoadMore()
-        this.items.addAll(newItems.map { YoutubeListItem(it) })
+        localItems.addAll(newItems.map { YoutubeListItem(it) })
         addLoadMore()
-        notifyItemRangeInserted(prevItems, itemCount)
+        updateItems()
     }
 
     fun bindItems(newItems: List<YoutubeItem>) {
-        this.items.clear()
-        this.items.addAll(newItems.map { YoutubeListItem(it) })
-        updatePlaceholder()
+        localItems.clear()
+        localItems.addAll(newItems.map { YoutubeListItem(it) })
+        if (items.isEmpty()) {
+            localItems.add(placeHolder)
+        } else {
+            localItems.removeAll { it is PlaceholderListItem }
+        }
         addLoadMore()
-        notifyDataSetChanged()
+        updateItems()
+    }
+
+    private fun updateItems() {
+        items = localItems.toList()
     }
 
     interface ItemListener : LoadMoreDelegate.Listener, YoutubeDelegate.Listener

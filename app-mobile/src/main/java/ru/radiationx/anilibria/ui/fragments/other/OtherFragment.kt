@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -22,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.shared_app.di.injectDependencies
 
 
 /**
@@ -35,7 +35,8 @@ class OtherFragment : BaseFragment(), OtherView {
     lateinit var presenter: OtherPresenter
 
     @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter = getDependency(OtherPresenter::class.java, screenScope)
+    fun provideOtherPresenter(): OtherPresenter =
+        getDependency(OtherPresenter::class.java, screenScope)
 
     override fun getBaseLayout(): Int = R.layout.fragment_list
 
@@ -103,13 +104,13 @@ class OtherFragment : BaseFragment(), OtherView {
 
         fun addProfile(profileItem: ProfileItem) {
             items.add(ProfileListItem(profileItem))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem("profile"))
         }
 
         fun addMenu(newItems: MutableList<OtherMenuItem>, isLast: Boolean = false) {
             items.addAll(newItems.map { MenuListItem(it) })
             if (newItems.isNotEmpty() && !isLast) {
-                items.add(DividerShadowListItem())
+                items.add(DividerShadowListItem("divider_${newItems.lastOrNull()?.id ?: 0}"))
             }
         }
     }

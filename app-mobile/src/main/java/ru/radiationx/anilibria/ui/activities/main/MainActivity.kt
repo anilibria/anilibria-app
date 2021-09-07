@@ -440,7 +440,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         }
     }
 
-    class Tab(
+    data class Tab(
             val title: Int,
             val icon: Int,
             val screen: BaseAppScreen

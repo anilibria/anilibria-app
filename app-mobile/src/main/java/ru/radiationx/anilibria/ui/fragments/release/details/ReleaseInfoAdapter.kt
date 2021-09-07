@@ -87,16 +87,16 @@ class ReleaseInfoAdapter(
         currentRelease = release
         items.add(ReleaseEpisodeControlItem(release, false, EpisodeControlPlace.TOP))
         items.add(ReleaseHeadListItem(release))
-        items.add(DividerShadowListItem())
+        items.add(DividerShadowListItem("head"))
 
         if (release.blockedInfo.isBlocked) {
             items.add(ReleaseBlockedListItem(release))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem("blocked"))
         }
 
         if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
-            items.add(ReleaseDonateListItem())
-            items.add(DividerShadowListItem())
+            items.add(ReleaseDonateListItem("donate"))
+            items.add(DividerShadowListItem("donate"))
         }
 
         val torrents = release.torrents.asReversed()
@@ -108,12 +108,12 @@ class ReleaseInfoAdapter(
             } else {
                 items.addAll(torrents.map { ReleaseTorrentListItem(it) })
             }
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem("torrents"))
         }
 
         if (!release.blockedInfo.isBlocked && appPreferences.getReleaseRemind()) {
             items.add(ReleaseRemindListItem(remindText))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem("remind"))
         }
 
         if (release.episodes.isNotEmpty() || release.episodesSource.isNotEmpty()) {
@@ -130,11 +130,11 @@ class ReleaseInfoAdapter(
                 items.add(ReleaseEpisodesHeadListItem(currentTabTag))
             }
             items.addAll(prepareEpisodeItems(release))
-            items.add(DividerShadowListItem())
+            items.add(DividerShadowListItem("episodes"))
         }
 
-        items.add(CommentRouteListItem())
-        items.add(DividerShadowListItem())
+        items.add(CommentRouteListItem("comments"))
+        items.add(DividerShadowListItem("comments"))
 
         notifyDataSetChanged()
     }

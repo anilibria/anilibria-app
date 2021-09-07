@@ -10,7 +10,6 @@ import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -19,15 +18,15 @@ import ru.radiationx.data.entity.app.youtube.YoutubeItem
 /* Created by radiationx on 31.10.17. */
 
 class FeedAdapter(
-        val loadMoreListener: () -> Unit,
-        schedulesClickListener: () -> Unit,
-        scheduleScrollListener:(Int)->Unit,
-        randomClickListener: () -> Unit,
-        releaseClickListener: (ReleaseItem, View) -> Unit,
-        releaseLongClickListener: (ReleaseItem, View) -> Unit,
-        youtubeClickListener: (YoutubeItem, View) -> Unit,
-        scheduleClickListener: (ScheduleItem, View, Int) -> Unit
-) : ListItemAdapter()  {
+    val loadMoreListener: () -> Unit,
+    schedulesClickListener: () -> Unit,
+    scheduleScrollListener: (Int) -> Unit,
+    randomClickListener: () -> Unit,
+    releaseClickListener: (ReleaseItem, View) -> Unit,
+    releaseLongClickListener: (ReleaseItem, View) -> Unit,
+    youtubeClickListener: (YoutubeItem, View) -> Unit,
+    scheduleClickListener: (ScheduleItem, View, Int) -> Unit
+) : ListItemAdapter() {
 
     private val scheduleSection = FeedSectionListItem("Ожидаются", "Расписание")
     private val feedSection = FeedSectionListItem("Обновления", hasBg = true)
@@ -51,12 +50,19 @@ class FeedAdapter(
         addDelegate(DividerShadowItemDelegate())
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any?>
+    ) {
 
         val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
 
-        Log.d("nonono", "onBindViewHolder pos=$position type=${getItemViewType(position)} time=${System.currentTimeMillis() - time}")
+        Log.d(
+            "nonono",
+            "onBindViewHolder pos=$position type=${getItemViewType(position)} time=${System.currentTimeMillis() - time}"
+        )
         val threshold = (items.lastIndex - position)
         if (threshold <= 3) {
             Handler().post {
@@ -74,16 +80,18 @@ class FeedAdapter(
 
 
         if (index == -1) {
-            items.addAll(0, listOf(
+            items.addAll(
+                0, listOf(
                     scheduleSection,
-                    FeedSchedulesListItem(newItems)
-            ))
+                    FeedSchedulesListItem("actual", newItems)
+                )
+            )
             notifyDataSetChanged()
             /*notifyItemInserted(0)
             notifyItemInserted(1)*/
             //notifyItemRangeInserted(0, 2)
         } else {
-            items[index + 1] = FeedSchedulesListItem(newItems)
+            items[index + 1] = FeedSchedulesListItem("actual", newItems)
             notifyItemChanged(index + 1)
         }
 
@@ -92,16 +100,16 @@ class FeedAdapter(
 
     fun updateItems(updItems: List<FeedItem>) {
         val updListItems = items
-                .filterIsInstance<FeedListItem>()
-                .filter { feedListItem ->
-                    val releaseItem = feedListItem.item.release
-                    val youtubeItem = feedListItem.item.youtube
-                    when {
-                        releaseItem != null -> updItems.firstOrNull { it.release?.id == releaseItem.id } != null
-                        youtubeItem != null -> updItems.firstOrNull { it.youtube?.id == youtubeItem.id } != null
-                        else -> false
-                    }
+            .filterIsInstance<FeedListItem>()
+            .filter { feedListItem ->
+                val releaseItem = feedListItem.item.release
+                val youtubeItem = feedListItem.item.youtube
+                when {
+                    releaseItem != null -> updItems.firstOrNull { it.release?.id == releaseItem.id } != null
+                    youtubeItem != null -> updItems.firstOrNull { it.youtube?.id == youtubeItem.id } != null
+                    else -> false
                 }
+            }
 
         updListItems.forEach { feedListItem ->
             val index = items.indexOf(feedListItem)
@@ -133,7 +141,7 @@ class FeedAdapter(
             startIndex = items.indexOfLast { it is FeedSchedulesListItem }
             //items.add(DividerShadowListItem())
             items.add(feedSection)
-            items.add(FeedRandomBtnListItem())
+            items.add(FeedRandomBtnListItem("random"))
             notifyItemRangeInserted(startIndex, 2)
         }
         startIndex = items.indexOf(feedSection) + 2
@@ -141,20 +149,21 @@ class FeedAdapter(
         Log.e("ninini", "afterkek  $startIndex = ${items.joinToString()}")
 
         val currentFeedItems = (startIndex until itemCount)
-                .filter { index ->
-                    Log.e("ninini", "current index = $index => ${items[index]}")
-                    val listItem = items[index]
-                    listItem is FeedListItem || listItem is DividerShadowListItem
-                }
-                .map { items[it] }
+            .filter { index ->
+                Log.e("ninini", "current index = $index => ${items[index]}")
+                val listItem = items[index]
+                listItem is FeedListItem || listItem is DividerShadowListItem
+            }
+            .map { items[it] }
         val newListItems = mutableListOf<ListItem>()
 
         var lastFeedItem: FeedListItem? = null
         newItems.forEach { feedItem ->
             lastFeedItem?.also {
                 if (it.item.release == null && feedItem.release != null
-                        || it.item.youtube == null && feedItem.youtube != null) {
-                    newListItems.add(DividerShadowListItem())
+                    || it.item.youtube == null && feedItem.youtube != null
+                ) {
+                    newListItems.add(DividerShadowListItem("item_${it.item.hashCode()}_${feedItem.hashCode()}"))
                 }
             }
             newListItems.add(FeedListItem(feedItem).also {
@@ -190,7 +199,7 @@ class FeedAdapter(
         }
 
         if (progress) {
-            items.add(LoadMoreListItem())
+            items.add(LoadMoreListItem("bottom"))
             notifyItemInserted(items.size)
         }
     }
@@ -199,7 +208,7 @@ class FeedAdapter(
         val progress = isProgress()
 
         if (isVisible && !progress) {
-            items.add(LoadMoreListItem())
+            items.add(LoadMoreListItem("bottom"))
             notifyItemInserted(items.lastIndex)
         } else if (!isVisible && progress) {
             items.remove(items.last())
@@ -212,7 +221,10 @@ class FeedAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val time = System.currentTimeMillis()
         return super.onCreateViewHolder(parent, viewType).also {
-            Log.d("nonono", "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}")
+            Log.d(
+                "nonono",
+                "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}"
+            )
         }
     }
 

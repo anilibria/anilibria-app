@@ -15,63 +15,98 @@ import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
-sealed class ListItem
+sealed class ListItem(val idData: Any?) {
+
+    open fun getItemId(): Long {
+        return generateIdentifier(this::class.java, idData)
+    }
+
+    open fun getItemHash(): Int {
+        return hashCode()
+    }
+
+    open fun getPayloadBy(oldItem: ListItem): Any? {
+        return null
+    }
+
+    private fun generateIdentifier(vararg obj: Any?): Long {
+        var identifier = 0L
+        obj.forEach {
+            if (it != null) {
+                identifier = identifier * 31 + it.hashCode()
+            }
+        }
+        return identifier
+    }
+}
 
 /* Other screen*/
 
-class ProfileListItem(val profileItem: ProfileItem) : ListItem()
-class MenuListItem(val menuItem: OtherMenuItem) : ListItem()
-class DividerShadowListItem : ListItem()
+data class ProfileListItem(val profileItem: ProfileItem) : ListItem(profileItem.id)
+data class MenuListItem(val menuItem: OtherMenuItem) : ListItem(menuItem.id)
+data class DividerShadowListItem(val id: Any) : ListItem(id)
 
 
 /* Common */
 
-class LoadMoreListItem : ListItem()
-class CommentRouteListItem : ListItem()
-class BottomTabListItem(val item: MainActivity.Tab, var selected: Boolean = false) : ListItem()
-class PlaceholderListItem(val icRes: Int, val titleRes: Int, val descRes: Int) : ListItem()
+data class LoadMoreListItem(val id: Any) : ListItem(null)
+data class CommentRouteListItem(val id: Any) : ListItem(null)
+data class BottomTabListItem(
+    val item: MainActivity.Tab,
+    var selected: Boolean = false
+) : ListItem(item.title)
+
+data class PlaceholderListItem(
+    val icRes: Int,
+    val titleRes: Int,
+    val descRes: Int
+) : ListItem(titleRes)
 
 /* Releases list screen */
 
-class ReleaseListItem(val item: ReleaseItem) : ListItem()
+data class ReleaseListItem(val item: ReleaseItem) : ListItem(item.id)
 
 
 /* Release detail screen */
 
-class ReleaseEpisodeListItem(val item: ReleaseFull.Episode, val isEven: Boolean) : ListItem()
-class ReleaseTorrentListItem(val item: TorrentItem) : ListItem()
-class ReleaseExpandListItem(val title: String) : ListItem()
-class ReleaseEpisodeControlItem(
+data class ReleaseEpisodeListItem(
+    val item: ReleaseFull.Episode,
+    val isEven: Boolean
+) : ListItem("${item.releaseId}_${item.id}")
+
+data class ReleaseTorrentListItem(val item: TorrentItem) : ListItem("${item.id}_${item.hash}")
+data class ReleaseExpandListItem(val title: String) : ListItem(title)
+data class ReleaseEpisodeControlItem(
     val item: ReleaseFull,
     val hasWeb: Boolean,
     val place: EpisodeControlPlace
-) : ListItem()
+) : ListItem("${item.id}_$place")
 
-class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem()
-class ReleaseDonateListItem : ListItem()
-class ReleaseRemindListItem(val item: String) : ListItem()
-class ReleaseBlockedListItem(val item: ReleaseFull) : ListItem()
-class ReleaseHeadListItem(val item: ReleaseFull) : ListItem()
+data class ReleaseEpisodesHeadListItem(val tabTag: String) : ListItem(tabTag)
+data class ReleaseDonateListItem(val id: Any) : ListItem(id)
+data class ReleaseRemindListItem(val item: String) : ListItem(item)
+data class ReleaseBlockedListItem(val item: ReleaseFull) : ListItem(item.id)
+data class ReleaseHeadListItem(val item: ReleaseFull) : ListItem(item.id)
 
 
 /* Search screen */
 
-class SearchListItem(val item: SearchItem) : ListItem()
-class SearchSuggestionListItem(val item: SuggestionItem) : ListItem()
-class GenreListItem(val item: GenreItem) : ListItem()
+data class SearchListItem(val item: SearchItem) : ListItem(item.id)
+data class SearchSuggestionListItem(val item: SuggestionItem) : ListItem(item.id)
+data class GenreListItem(val item: GenreItem) : ListItem(item.value)
 
-class YoutubeListItem(val item: YoutubeItem) : ListItem()
+data class YoutubeListItem(val item: YoutubeItem) : ListItem(item.id)
 
-class SocialAuthListItem(val item: SocialAuth) : ListItem()
+data class SocialAuthListItem(val item: SocialAuth) : ListItem(item.key)
 
-class FeedScheduleListItem(val item: ScheduleItem) : ListItem()
-class FeedSchedulesListItem(val items: List<ScheduleItem>) : ListItem()
-class FeedSectionListItem(
+data class FeedScheduleListItem(val item: ScheduleItem) : ListItem(item.releaseItem.id)
+data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItem>) : ListItem(id)
+data class FeedSectionListItem(
     var title: String,
     val route: String? = null,
     val hasBg: Boolean = false,
     val center: Boolean = false
-) : ListItem()
+) : ListItem(title)
 
-class FeedListItem(val item: FeedItem) : ListItem()
-class FeedRandomBtnListItem : ListItem()
+data class FeedListItem(val item: FeedItem) : ListItem("${item.release?.id}_${item.youtube?.id}")
+data class FeedRandomBtnListItem(val id: Any) : ListItem(id)

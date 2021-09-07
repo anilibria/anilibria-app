@@ -44,7 +44,7 @@ class YoutubeAdapter(
 
     private fun addLoadMore() {
         if (endless) {
-            this.items.add(LoadMoreListItem())
+            this.items.add(LoadMoreListItem("bottom"))
         }
     }
 

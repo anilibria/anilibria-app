@@ -15,17 +15,14 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.data.repository.HistoryRepository
-import ru.radiationx.data.repository.VitalRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -33,7 +30,6 @@ import javax.inject.Inject
 class ReleaseInfoPresenter @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
-    private val vitalRepository: VitalRepository,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
     private val router: Router,
@@ -60,7 +56,6 @@ class ReleaseInfoPresenter @Inject constructor(
         }
         observeRelease()
         loadRelease()
-        loadVital()
         subscribeAuth()
     }
 
@@ -80,19 +75,6 @@ class ReleaseInfoPresenter @Inject constructor(
             .skip(1)
             .subscribe {
                 loadRelease()
-            }
-            .addToDisposable()
-    }
-
-    private fun loadVital() {
-        vitalRepository
-            .observeByRule(VitalItem.Rule.RELEASE_DETAIL)
-            .subscribe { vitals ->
-                vitals.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                    if (it.isNotEmpty()) {
-                        viewState.showVitalItems(it)
-                    }
-                }
             }
             .addToDisposable()
     }

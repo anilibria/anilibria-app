@@ -6,11 +6,9 @@ import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseInfoView : IBaseView {
-    fun showVitalItems(vital: List<VitalItem>)
 
     fun updateFavCounter()
 
@@ -32,7 +30,12 @@ interface ReleaseInfoView : IBaseView {
     fun playWeb(link: String, code: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)
+    fun playEpisode(
+        release: ReleaseFull,
+        episode: ReleaseFull.Episode,
+        playFlag: Int? = null,
+        quality: Int? = null
+    )
 
     @StateStrategyType(SkipStrategy::class)
     fun showFavoriteDialog()

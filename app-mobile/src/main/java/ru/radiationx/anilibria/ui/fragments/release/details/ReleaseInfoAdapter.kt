@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
-import ru.radiationx.shared_app.di.DI
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
@@ -12,7 +11,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.shared_app.di.DI
 import java.util.*
 
 class ReleaseInfoAdapter(
@@ -28,7 +27,6 @@ class ReleaseInfoAdapter(
 
     private val remindText =
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
-    private val vitalItems = mutableListOf<VitalItem>()
 
     private var currentRelease: ReleaseFull? = null
     private var currentTabTag = ReleaseEpisodesHeadDelegate.TAG_ONLINE
@@ -81,24 +79,6 @@ class ReleaseInfoAdapter(
         addDelegate(ReleaseBlockedDelegate())
         addDelegate(CommentRouteDelegate(commentsClickListener))
         addDelegate(DividerShadowItemDelegate())
-        addDelegate(VitalWebItemDelegate(true))
-        addDelegate(VitalNativeItemDelegate(true))
-    }
-
-    private val random = Random()
-
-    private fun rand(from: Int, to: Int): Int {
-        return random.nextInt(to - from) + from
-    }
-
-    fun setVitals(vitals: List<VitalItem>) {
-        vitalItems.clear()
-        vitalItems.addAll(vitals)
-    }
-
-    private fun getVitalListItem(item: VitalItem) = when (item.contentType) {
-        VitalItem.ContentType.WEB -> VitalWebListItem(item)
-        else -> VitalNativeListItem(item)
     }
 
     fun setRelease(release: ReleaseFull) {
@@ -115,13 +95,6 @@ class ReleaseInfoAdapter(
 
         if (!release.blockedInfo.isBlocked && release.episodes.isNotEmpty()) {
             items.add(ReleaseDonateListItem())
-            items.add(DividerShadowListItem())
-        }
-
-        if (vitalItems.isNotEmpty()) {
-            val randomVital = if (vitalItems.size > 1) rand(0, vitalItems.size) else 0
-            val listItem = getVitalListItem(vitalItems[randomVital])
-            this.items.add(listItem)
             items.add(DividerShadowListItem())
         }
 

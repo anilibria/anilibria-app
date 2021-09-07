@@ -39,7 +39,6 @@ class SearchAdapter(listener: ItemListener, placeholder: PlaceholderListItem) : 
         }
         this.items.addAll(newItems.map { ReleaseListItem(it) })
         updatePlaceholder(newItems.isEmpty())
-        randomInsertVitals()
         addLoadMore()
         notifyDataSetChanged()
     }

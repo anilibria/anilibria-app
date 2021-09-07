@@ -1,9 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Handler
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
@@ -37,8 +35,9 @@ class FeedAdapter(
         }
     }
 
+    private val localItems = mutableListOf<ListItem>()
+
     init {
-        items = mutableListOf()
         addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
             override fun onLoadMore() {}
         }))
@@ -59,11 +58,7 @@ class FeedAdapter(
         val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
 
-        Log.d(
-            "nonono",
-            "onBindViewHolder pos=$position type=${getItemViewType(position)} time=${System.currentTimeMillis() - time}"
-        )
-        val threshold = (items.lastIndex - position)
+        val threshold = (localItems.lastIndex - position)
         if (threshold <= 3) {
             Handler().post {
                 loadMoreListener.invoke()
@@ -72,30 +67,22 @@ class FeedAdapter(
     }
 
     fun bindSchedules(title: String, newItems: List<ScheduleItem>) {
-        val index = items.indexOf(scheduleSection)
+        val index = localItems.indexOf(scheduleSection)
         scheduleSection.title = title
 
-
-        Log.d("kokoko", "bindSchedules before ${items.joinToString { it.javaClass.simpleName }}")
-
-
         if (index == -1) {
-            items.addAll(
+            localItems.addAll(
                 0, listOf(
                     scheduleSection,
                     FeedSchedulesListItem("actual", newItems)
                 )
             )
-            notifyDataSetChanged()
-            /*notifyItemInserted(0)
-            notifyItemInserted(1)*/
-            //notifyItemRangeInserted(0, 2)
         } else {
             items[index + 1] = FeedSchedulesListItem("actual", newItems)
-            notifyItemChanged(index + 1)
         }
 
-        Log.d("kokoko", "bindSchedules after ${items.joinToString { it.javaClass.simpleName }}")
+
+        notifyDiffItems()
     }
 
     fun updateItems(updItems: List<FeedItem>) {
@@ -112,7 +99,7 @@ class FeedAdapter(
             }
 
         updListItems.forEach { feedListItem ->
-            val index = items.indexOf(feedListItem)
+            val index = localItems.indexOf(feedListItem)
             val updItem = updItems.firstOrNull { feedItem ->
                 val releaseItem = feedListItem.item.release
                 val youtubeItem = feedListItem.item.youtube
@@ -124,7 +111,7 @@ class FeedAdapter(
             }
             if (index != -1 && updItem != null) {
                 items[index] = FeedListItem(updItem)
-                notifyItemChanged(index)
+                notifyDiffItems()
             }
         }
     }
@@ -133,24 +120,20 @@ class FeedAdapter(
 
         val progress = isProgress()
 
-        var startIndex = items.indexOf(feedSection)
+        var startIndex = localItems.indexOf(feedSection)
 
-        Log.e("ninini", "beforekek  $startIndex ")
 
         if (startIndex == -1) {
-            startIndex = items.indexOfLast { it is FeedSchedulesListItem }
-            //items.add(DividerShadowListItem())
-            items.add(feedSection)
-            items.add(FeedRandomBtnListItem("random"))
-            notifyItemRangeInserted(startIndex, 2)
+            startIndex = localItems.indexOfLast { it is FeedSchedulesListItem }
+            //localItems.add(DividerShadowListItem())
+            localItems.add(feedSection)
+            localItems.add(FeedRandomBtnListItem("random"))
         }
-        startIndex = items.indexOf(feedSection) + 2
+        startIndex = localItems.indexOf(feedSection) + 2
 
-        Log.e("ninini", "afterkek  $startIndex = ${items.joinToString()}")
 
         val currentFeedItems = (startIndex until itemCount)
             .filter { index ->
-                Log.e("ninini", "current index = $index => ${items[index]}")
                 val listItem = items[index]
                 listItem is FeedListItem || listItem is DividerShadowListItem
             }
@@ -171,61 +154,36 @@ class FeedAdapter(
             })
         }
 
-        currentFeedItems.forEach { items.remove(it) }
-        items.addAll(startIndex, newListItems)
-        //notifyDataSetChanged()
-
-        when {
-            currentFeedItems.size == newListItems.size -> {
-                notifyItemRangeChanged(startIndex, currentFeedItems.size, FeedUpdateDataPayload)
-            }
-            currentFeedItems.size < newListItems.size -> {
-                val insertIndex = startIndex + currentFeedItems.size
-                notifyItemRangeChanged(startIndex, currentFeedItems.size, FeedUpdateDataPayload)
-                notifyItemRangeInserted(insertIndex, newListItems.size - currentFeedItems.size)
-            }
-            currentFeedItems.size > newListItems.size -> {
-                val removeIndex = startIndex + newListItems.size
-                notifyItemRangeChanged(startIndex, newListItems.size, FeedUpdateDataPayload)
-                notifyItemRangeRemoved(removeIndex, currentFeedItems.size - newListItems.size)
-            }
-        }
+        currentFeedItems.forEach { localItems.remove(it) }
+        localItems.addAll(startIndex, newListItems)
 
 
-        val loadMoreIndex = items.indexOfLast { it is LoadMoreListItem }
+        val loadMoreIndex = localItems.indexOfLast { it is LoadMoreListItem }
         if (loadMoreIndex != -1) {
-            items.removeAt(loadMoreIndex)
-            notifyItemRemoved(loadMoreIndex)
+            localItems.removeAt(loadMoreIndex)
         }
 
         if (progress) {
-            items.add(LoadMoreListItem("bottom"))
-            notifyItemInserted(items.size)
+            localItems.add(LoadMoreListItem("bottom"))
         }
+        notifyDiffItems()
     }
 
     fun showProgress(isVisible: Boolean) {
         val progress = isProgress()
 
         if (isVisible && !progress) {
-            items.add(LoadMoreListItem("bottom"))
-            notifyItemInserted(items.lastIndex)
+            localItems.add(LoadMoreListItem("bottom"))
         } else if (!isVisible && progress) {
-            items.remove(items.last())
-            notifyItemRemoved(items.size)
+            localItems.remove(localItems.last())
         }
+        notifyDiffItems()
     }
 
-    private fun isProgress() = items.isNotEmpty() && items.last() is LoadMoreListItem
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val time = System.currentTimeMillis()
-        return super.onCreateViewHolder(parent, viewType).also {
-            Log.d(
-                "nonono",
-                "onCreateViewHolder  type=${viewType} time=${System.currentTimeMillis() - time}"
-            )
-        }
+    private fun notifyDiffItems() {
+        items = localItems.toList()
     }
+
+    private fun isProgress() = localItems.isNotEmpty() && localItems.last() is LoadMoreListItem
 
 }

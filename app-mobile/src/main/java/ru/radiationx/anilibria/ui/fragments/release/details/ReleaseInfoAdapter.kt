@@ -42,7 +42,7 @@ class ReleaseInfoAdapter(
         override fun onClickClose(position: Int) {
             localItems.removeAt(position)
             localItems.removeAt(position)
-            updateItems()
+            notifyDiffItems()
             appPreferences.setReleaseRemind(false)
         }
     }
@@ -54,7 +54,7 @@ class ReleaseInfoAdapter(
                 val startPos = localItems.indexOfFirst { it is ReleaseEpisodeListItem }
                 localItems.removeAll { it is ReleaseEpisodeListItem }
                 localItems.addAll(startPos, prepareEpisodeItems(it))
-                updateItems()
+                notifyDiffItems()
                 return@let
             }
         }
@@ -137,10 +137,10 @@ class ReleaseInfoAdapter(
         localItems.add(CommentRouteListItem("comments"))
         localItems.add(DividerShadowListItem("comments"))
 
-        updateItems()
+        notifyDiffItems()
     }
 
-    private fun updateItems(){
+    private fun notifyDiffItems() {
         items = localItems.toList()
     }
 

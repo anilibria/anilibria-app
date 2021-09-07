@@ -44,7 +44,7 @@ class YoutubeAdapter(
         removeLoadMore()
         localItems.addAll(newItems.map { YoutubeListItem(it) })
         addLoadMore()
-        updateItems()
+        notifyDiffItems()
     }
 
     fun bindItems(newItems: List<YoutubeItem>) {
@@ -56,10 +56,10 @@ class YoutubeAdapter(
             localItems.removeAll { it is PlaceholderListItem }
         }
         addLoadMore()
-        updateItems()
+        notifyDiffItems()
     }
 
-    private fun updateItems() {
+    private fun notifyDiffItems() {
         items = localItems.toList()
     }
 

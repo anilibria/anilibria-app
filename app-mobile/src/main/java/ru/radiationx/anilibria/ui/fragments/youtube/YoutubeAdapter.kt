@@ -18,7 +18,7 @@ class YoutubeAdapter(
         addDelegate(PlaceholderDelegate())
     }
 
-    fun bindState(state: YoutubeListState) {
+    fun bindState(state: YoutubeScreenState) {
         val newItems = mutableListOf<ListItem>()
         if (state.items.isEmpty() && !state.refreshing) {
             newItems.add(placeHolder)

@@ -71,7 +71,7 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         return true
     }
 
-    override fun showState(state: YoutubeListState) {
+    override fun showState(state: YoutubeScreenState) {
         refreshLayout.isRefreshing = state.refreshing
         youtubeAdapter.bindState(state)
     }

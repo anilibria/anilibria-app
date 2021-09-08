@@ -5,7 +5,7 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeListState
+import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeScreenState
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
@@ -29,7 +29,7 @@ class YoutubePresenter @Inject constructor(
     }
 
     private var currentRawItems = mutableListOf<YoutubeItem>()
-    private var currentState = YoutubeListState()
+    private var currentState = YoutubeScreenState()
 
     private var lastLoadedPage: Int? = null
     private var currentPage = START_PAGE
@@ -79,7 +79,7 @@ class YoutubePresenter @Inject constructor(
             .addToDisposable()
     }
 
-    private fun updateState(block: (YoutubeListState) -> YoutubeListState) {
+    private fun updateState(block: (YoutubeScreenState) -> YoutubeScreenState) {
         currentState = block.invoke(currentState)
         viewState.showState(currentState)
     }

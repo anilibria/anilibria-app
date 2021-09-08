@@ -8,29 +8,32 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.shared_app.di.injectDependencies
 
 class YoutubeFragment : BaseFragment(), YoutubeView {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
-        YoutubeAdapter(adapterListener, PlaceholderListItem(
+        YoutubeAdapter(
+            adapterListener, PlaceholderListItem(
                 R.drawable.ic_toolbar_search,
                 R.string.placeholder_title_nodata_base,
                 R.string.placeholder_desc_nodata_base
-        ))
+            )
+        )
     }
 
     @InjectPresenter
     lateinit var presenter: YoutubePresenter
 
     @ProvidePresenter
-    fun providePresenter(): YoutubePresenter = getDependency(YoutubePresenter::class.java, screenScope)
+    fun providePresenter(): YoutubePresenter =
+        getDependency(YoutubePresenter::class.java, screenScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -53,15 +56,11 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         recyclerView.apply {
             adapter = youtubeAdapter
             layoutManager = LinearLayoutManager(recyclerView.context)
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
         }
 
         ToolbarShadowController(
-                recyclerView,
-                appbarLayout
+            recyclerView,
+            appbarLayout
         ) {
             updateToolbarShadow(it)
         }
@@ -72,20 +71,9 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         return true
     }
 
-    override fun showItems(items: List<YoutubeItem>) {
-        youtubeAdapter.bindItems(items)
-    }
-
-    override fun insertMore(items: List<YoutubeItem>) {
-        youtubeAdapter.insertMore(items)
-    }
-
-    override fun setEndless(enable: Boolean) {
-        youtubeAdapter.endless = enable
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
+    override fun showState(state: YoutubeListState) {
+        refreshLayout.isRefreshing = state.refreshing
+        youtubeAdapter.bindState(state)
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {
@@ -93,15 +81,13 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
             presenter.loadMore()
         }
 
-        override fun onItemClick(item: YoutubeItem, position: Int) {
+        override fun onItemClick(item: YoutubeItemState, position: Int) {
             presenter.onItemClick(item)
         }
 
-        override fun onItemLongClick(item: YoutubeItem): Boolean {
-            presenter.onItemLongClick(item)
+        override fun onItemLongClick(item: YoutubeItemState): Boolean {
             return false
         }
-
     }
 
 }

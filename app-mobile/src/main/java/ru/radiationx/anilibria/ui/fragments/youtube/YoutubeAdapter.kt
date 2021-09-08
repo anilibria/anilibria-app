@@ -4,24 +4,13 @@ import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /* Created by radiationx on 31.10.17. */
 
 class YoutubeAdapter(
-    var listener: ItemListener,
+    private val listener: ItemListener,
     private val placeHolder: PlaceholderListItem
 ) : ListItemAdapter() {
-
-
-    private var localItems = mutableListOf<ListItem>()
-
-    var endless: Boolean = false
-        set(enable) {
-            field = enable
-            removeLoadMore()
-            addLoadMore()
-        }
 
     init {
         addDelegate(YoutubeDelegate(listener))
@@ -29,37 +18,16 @@ class YoutubeAdapter(
         addDelegate(PlaceholderDelegate())
     }
 
-    private fun removeLoadMore() {
-        localItems.removeAll { it is LoadMoreListItem }
-    }
-
-    private fun addLoadMore() {
-        if (endless) {
-            localItems.add(LoadMoreListItem("bottom"))
+    fun bindState(state: YoutubeListState) {
+        val newItems = mutableListOf<ListItem>()
+        if (state.items.isEmpty() && !state.refreshing) {
+            newItems.add(placeHolder)
         }
-    }
-
-    fun insertMore(newItems: List<YoutubeItem>) {
-        removeLoadMore()
-        localItems.addAll(newItems.map { YoutubeListItem(it) })
-        addLoadMore()
-        notifyDiffItems()
-    }
-
-    fun bindItems(newItems: List<YoutubeItem>) {
-        localItems.clear()
-        localItems.addAll(newItems.map { YoutubeListItem(it) })
-        if (localItems.isEmpty()) {
-            localItems.add(placeHolder)
-        } else {
-            localItems.removeAll { it is PlaceholderListItem }
+        newItems.addAll(state.items.map { YoutubeListItem(it) })
+        if (state.hasMorePages) {
+            newItems.add(LoadMoreListItem("bottom"))
         }
-        addLoadMore()
-        notifyDiffItems()
-    }
-
-    private fun notifyDiffItems() {
-        items = localItems.toList()
+        items = newItems
     }
 
     interface ItemListener : LoadMoreDelegate.Listener, YoutubeDelegate.Listener

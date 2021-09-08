@@ -102,7 +102,7 @@ class SchedulePresenter @Inject constructor(
             }
             .doFinally {
                 updateState {
-                    it.copy(refreshing = true)
+                    it.copy(refreshing = false)
                 }
             }
             .subscribe({}, {

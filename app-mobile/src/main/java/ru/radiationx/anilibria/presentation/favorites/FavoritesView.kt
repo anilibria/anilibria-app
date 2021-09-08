@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.presentation.favorites
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
+import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.data.entity.app.release.ReleaseItem
 
 /**
@@ -11,15 +13,8 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
  */
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface FavoritesView : IBaseView {
-    @StateStrategyType(AddToEndStrategy::class)
-    fun showReleases(releases: List<ReleaseItem>)
+interface FavoritesView : MvpView {
 
-    @StateStrategyType(AddToEndStrategy::class)
-    fun insertMore(releases: List<ReleaseItem>)
-
-    @StateStrategyType(AddToEndStrategy::class)
-    fun removeReleases(releases: List<ReleaseItem>)
-
-    fun setEndless(enable: Boolean)
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showState(state:ReleaseScreenState)
 }

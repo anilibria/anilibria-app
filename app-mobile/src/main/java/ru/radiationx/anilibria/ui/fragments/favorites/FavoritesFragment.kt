@@ -16,19 +16,21 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
+import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 
@@ -37,6 +39,7 @@ import javax.inject.Inject
  */
 class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
+
     private val adapter: ReleasesAdapter = ReleasesAdapter(
         this, PlaceholderListItem(
             R.drawable.ic_fav_border,
@@ -163,58 +166,37 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         super.onDestroyView()
     }
 
-    override fun setEndless(enable: Boolean) {
-        adapter.endless = enable
-    }
-
-    override fun showReleases(releases: List<ReleaseItem>) {
-        Log.e("S_DEF_LOG", "fav show releases " + releases.size)
-        adapter.bindItems(releases)
-    }
-
-    override fun insertMore(releases: List<ReleaseItem>) {
-        adapter.insertMore(releases)
-    }
-
-    override fun removeReleases(releases: List<ReleaseItem>) {
-        adapter.removeItems(releases)
+    override fun showState(state: ReleaseScreenState) {
+        refreshLayout.isRefreshing = state.refreshing
+        adapter.bindState(state)
     }
 
     override fun onLoadMore() {
         presenter.loadMore()
     }
 
-    override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
-    }
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view
     }
 
-    override fun onItemClick(item: ReleaseItem, position: Int) {
+    override fun onItemClick(item: ReleaseItemState, position: Int) {
         presenter.onItemClick(item)
     }
 
-    override fun onItemLongClick(item: ReleaseItem): Boolean {
+    override fun onItemLongClick(item: ReleaseItemState): Boolean {
         context?.let {
-            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
+            val titles =
+                arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
             AlertDialog.Builder(it)
                 .setItems(titles) { dialog, which ->
                     when (which) {
                         0 -> {
                             presenter.onCopyClick(item)
-                            Utils.copyToClipBoard(item.link.orEmpty())
                             Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> {
-                            presenter.onShareClick(item)
-                            Utils.shareText(item.link.orEmpty())
-                        }
-                        2 -> {
-                            presenter.onShortcutClick(item)
-                            ShortcutHelper.addShortcut(item)
-                        }
+                        1 -> presenter.onShareClick(item)
+                        2 -> presenter.onShortcutClick(item)
                         3 -> presenter.deleteFav(item.id)
                     }
                 }

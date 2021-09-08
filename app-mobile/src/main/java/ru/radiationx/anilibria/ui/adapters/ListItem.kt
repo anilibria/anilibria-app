@@ -1,19 +1,19 @@
 package ru.radiationx.anilibria.ui.adapters
 
+import ru.radiationx.anilibria.model.FeedItemState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.ScheduleItemState
+import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 sealed class ListItem(val idData: Any?) {
 
@@ -64,7 +64,7 @@ data class PlaceholderListItem(
 
 /* Releases list screen */
 
-data class ReleaseListItem(val item: ReleaseItem) : ListItem(item.id)
+data class ReleaseListItem(val item: ReleaseItemState) : ListItem(item.id)
 
 
 /* Release detail screen */
@@ -95,12 +95,12 @@ data class SearchListItem(val item: SearchItem) : ListItem(item.id)
 data class SearchSuggestionListItem(val item: SuggestionItem) : ListItem(item.id)
 data class GenreListItem(val item: GenreItem) : ListItem(item.value)
 
-data class YoutubeListItem(val item: YoutubeItem) : ListItem(item.id)
+data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 
 data class SocialAuthListItem(val item: SocialAuth) : ListItem(item.key)
 
-data class FeedScheduleListItem(val item: ScheduleItem) : ListItem(item.releaseItem.id)
-data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItem>) : ListItem(id)
+data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.id)
+data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItemState>) : ListItem(id)
 data class FeedSectionListItem(
     var title: String,
     val route: String? = null,
@@ -108,5 +108,5 @@ data class FeedSectionListItem(
     val center: Boolean = false
 ) : ListItem(title)
 
-data class FeedListItem(val item: FeedItem) : ListItem("${item.release?.id}_${item.youtube?.id}")
+data class FeedListItem(val item: FeedItemState) : ListItem("${item.release?.id}_${item.youtube?.id}")
 data class FeedRandomBtnListItem(val id: Any) : ListItem(id)

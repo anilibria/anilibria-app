@@ -69,7 +69,7 @@ class YoutubePresenter @Inject constructor(
 
                 updateState {
                     it.copy(
-                        items = items.data.map { item -> item.toState() },
+                        items = currentRawItems.map { item -> item.toState() },
                         hasMorePages = !items.isEnd()
                     )
                 }

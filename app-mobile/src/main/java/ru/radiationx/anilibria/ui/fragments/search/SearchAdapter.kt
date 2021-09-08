@@ -6,30 +6,15 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.shared_app.di.DI
 
 /**
  * Created by radiationx on 04.03.18.
  */
 class SearchAdapter(
     listener: ReleasesAdapter.ItemListener,
+    private val remindCloseListener: ReleaseRemindDelegate.Listener,
     private val placeholder: PlaceholderListItem
 ) : ListItemAdapter() {
-
-    private val remindText =
-        "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
-
-    private val appPreferences = DI.get(PreferencesHolder::class.java)
-
-    private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
-        override fun onClickClose(position: Int) {
-            localItems.removeAt(position)
-            notifyDiffItems()
-            appPreferences.setSearchRemind(false)
-        }
-    }
 
     init {
         delegatesManager.run {

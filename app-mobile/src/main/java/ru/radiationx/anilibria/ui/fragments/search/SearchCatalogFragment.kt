@@ -14,15 +14,17 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.presentation.search.SearchCatalogView
 import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
+import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -34,6 +36,7 @@ import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 
@@ -55,7 +58,13 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     private lateinit var genresDialog: GenresDialog
     private val adapter = SearchAdapter(
-        this, PlaceholderListItem(
+        this,
+        object : ReleaseRemindDelegate.Listener {
+            override fun onClickClose(position: Int) {
+
+            }
+        },
+        PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
@@ -207,7 +216,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
-                    }else{
+                    } else {
                         presenter.onFastSearchOpen()
                     }
                 }
@@ -260,10 +269,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         genresDialog.showDialog()
     }
 
-    override fun setEndless(enable: Boolean) {
-        adapter.endless = enable
-    }
-
     override fun showGenres(genres: List<GenreItem>) {
         genresDialog.setItems(genres)
     }
@@ -307,36 +312,24 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         toolbar.subtitle = subtitle
     }
 
-    override fun showReleases(releases: List<ReleaseItem>) {
-        adapter.bindItems(releases)
-    }
-
-    override fun insertMore(releases: List<ReleaseItem>) {
-        adapter.insertMore(releases)
-    }
-
-    override fun updateReleases(releases: List<ReleaseItem>) {
-        adapter.updateItems(releases)
+    override fun showState(state: SearchScreenState) {
+        refreshLayout.isRefreshing = state.refreshing
+        adapter.bindState(state)
     }
 
     override fun onLoadMore() {
         presenter.loadMore()
     }
 
-    override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
-    }
-
     override fun onItemClick(position: Int, view: View) {
         sharedViewLocal = view
     }
 
-    override fun onItemClick(item: ReleaseItem, position: Int) {
+    override fun onItemClick(item: ReleaseItemState, position: Int) {
         presenter.onItemClick(item)
     }
 
-    override fun onItemLongClick(item: ReleaseItem): Boolean {
-        presenter.onItemLongClick(item)
+    override fun onItemLongClick(item: ReleaseItemState): Boolean {
         context?.let {
             val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
             AlertDialog.Builder(it)
@@ -344,17 +337,10 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                     when (which) {
                         0 -> {
                             presenter.onCopyClick(item)
-                            Utils.copyToClipBoard(item.link.orEmpty())
                             Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> {
-                            presenter.onShareClick(item)
-                            Utils.shareText(item.link.orEmpty())
-                        }
-                        2 -> {
-                            presenter.onShortcutClick(item)
-                            ShortcutHelper.addShortcut(item)
-                        }
+                        1 -> presenter.onShareClick(item)
+                        2 -> presenter.onShortcutClick(item)
                     }
                 }
                 .show()

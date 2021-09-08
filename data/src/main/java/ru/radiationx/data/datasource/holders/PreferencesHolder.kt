@@ -25,8 +25,8 @@ interface PreferencesHolder {
     fun getReleaseRemind(): Boolean
     fun setReleaseRemind(state: Boolean)
 
-    fun getSearchRemind(): Boolean
-    fun setSearchRemind(state: Boolean)
+    fun observeSearchRemind(): Observable<Boolean>
+    var searchRemind: Boolean
 
     fun getEpisodesIsReverse(): Boolean
 

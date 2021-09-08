@@ -60,7 +60,7 @@ class FeedPresenter @Inject constructor(
         viewState.showState(currentState)
     }
 
-    private fun getFeedSource(page: Int): Single<List<FeedItemState>> = feedRepository
+    private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
         .getFeed(page)
         .doOnSuccess {
             if (page == Paginator.FIRST_PAGE) {
@@ -68,7 +68,6 @@ class FeedPresenter @Inject constructor(
             }
             currentItems.addAll(it)
         }
-        .map { items -> items.map { it.toState() } }
 
     private fun getScheduleSource(): Single<FeedScheduleState> = scheduleRepository
         .loadSchedule()
@@ -121,7 +120,7 @@ class FeedPresenter @Inject constructor(
             .zip(
                 feedSource,
                 scheduleDataSource,
-                BiFunction { feedItems: List<FeedItemState>, scheduleState: FeedScheduleState ->
+                BiFunction { feedItems: List<FeedItem>, scheduleState: FeedScheduleState ->
                     Pair(feedItems, scheduleState)
                 }
             )
@@ -136,7 +135,7 @@ class FeedPresenter @Inject constructor(
             .subscribe({ (feedItems, scheduleState) ->
                 updateState {
                     it.copy(
-                        feedItems = feedItems,
+                        feedItems = currentItems.map { it.toState() },
                         schedule = scheduleState,
                         hasMorePages = feedItems.isNotEmpty()
                     )

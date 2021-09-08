@@ -31,7 +31,9 @@ class PreferencesStorage @Inject constructor(
     private val qualityRelay = BehaviorRelay.createDefault<Int>(getQuality())
     private val playSpeedRelay = BehaviorRelay.createDefault<Float>(playSpeed)
     private val notificationsAllRelay = BehaviorRelay.createDefault<Boolean>(notificationsAll)
-    private val notificationsServiceRelay = BehaviorRelay.createDefault<Boolean>(notificationsService)
+    private val notificationsServiceRelay =
+        BehaviorRelay.createDefault<Boolean>(notificationsService)
+    private val searchRemindRelay = BehaviorRelay.createDefault<Boolean>(searchRemind)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -41,6 +43,7 @@ class PreferencesStorage @Inject constructor(
             NOTIFICATIONS_SERVICE_KEY -> notificationsServiceRelay.accept(notificationsService)
             QUALITY_KEY -> qualityRelay.accept(getQuality())
             PLAY_SPEED_KEY -> playSpeedRelay.accept(playSpeed)
+            SEARCH_REMIND_KEY -> searchRemindRelay.accept(searchRemind)
         }
     }
 
@@ -56,13 +59,11 @@ class PreferencesStorage @Inject constructor(
         sharedPreferences.edit().putBoolean(RELEASE_REMIND_KEY, state).apply()
     }
 
-    override fun getSearchRemind(): Boolean {
-        return sharedPreferences.getBoolean(SEARCH_REMIND_KEY, true)
-    }
+    override fun observeSearchRemind(): Observable<Boolean> = searchRemindRelay.hide()
 
-    override fun setSearchRemind(state: Boolean) {
-        sharedPreferences.edit().putBoolean(SEARCH_REMIND_KEY, state).apply()
-    }
+    override var searchRemind: Boolean
+        get() = sharedPreferences.getBoolean(SEARCH_REMIND_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(SEARCH_REMIND_KEY, value).apply()
 
     override fun getEpisodesIsReverse(): Boolean {
         return sharedPreferences.getBoolean(EPISODES_IS_REVERSE_KEY, false)
@@ -121,5 +122,6 @@ class PreferencesStorage @Inject constructor(
         get() = sharedPreferences.getBoolean(NOTIFICATIONS_SERVICE_KEY, true)
         set(value) = sharedPreferences.edit().putBoolean(NOTIFICATIONS_SERVICE_KEY, value).apply()
 
-    override fun observeNotificationsService(): Observable<Boolean> = notificationsServiceRelay.hide()
+    override fun observeNotificationsService(): Observable<Boolean> =
+        notificationsServiceRelay.hide()
 }

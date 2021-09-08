@@ -101,7 +101,7 @@ class ReleaseInfoAdapter(
 
         val torrents = release.torrents.asReversed()
         if (torrents.isNotEmpty()) {
-            localItems.add(FeedSectionListItem("Раздачи", hasBg = true))
+            localItems.add(FeedSectionListItem("torrents", "Раздачи", null, hasBg = true))
             if (!currentTorrentsExpand && release.torrents.size > 3) {
                 localItems.addAll(torrents.take(3).map { ReleaseTorrentListItem(it) })
                 localItems.add(torrentsListItem)

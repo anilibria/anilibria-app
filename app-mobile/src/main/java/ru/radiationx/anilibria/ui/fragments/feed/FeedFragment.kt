@@ -28,15 +28,9 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.inflate
-import ru.radiationx.shared.ktx.android.invisible
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -238,10 +232,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         )
     }
 
-
     override fun showState(state: FeedScreenState) {
         progressBarList.isVisible = state.emptyLoading
-        refreshLayout.isVisible = state.emptyLoading
         refreshLayout.isRefreshing = state.refreshing
 
         val isDataEmpty = state.feedItems.isEmpty() && state.schedule == null
@@ -249,7 +241,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         placeHolderContainer.isVisible = isDataEmpty
         recyclerView.isInvisible = isDataEmpty
 
-        if (isDataEmpty) {
+        if (isDataEmpty && !state.emptyLoading) {
             if (state.errorMessage != null) {
                 placeHolder.bind(
                     R.drawable.ic_newspaper,
@@ -267,8 +259,6 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
         adapter.bindState(state)
     }
-
-    override fun setRefreshing(refreshing: Boolean) {}
 
     private fun releaseOnLongClick(item: ReleaseItemState) {
         val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")

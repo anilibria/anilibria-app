@@ -4,7 +4,10 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction
 import moxy.InjectViewState
-import ru.radiationx.anilibria.model.*
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.ScheduleItemState
+import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -110,10 +113,8 @@ class FeedPresenter @Inject constructor(
             currentState.schedule?.let { Single.just(it) } ?: getScheduleSource()
         }
 
-        if (currentPage == Paginator.FIRST_PAGE) {
-            updateState {
-                it.copy(refreshing = true)
-            }
+        if (page == Paginator.FIRST_PAGE) {
+            updateLoading(true)
         }
 
         dataDisposable = Single
@@ -125,12 +126,7 @@ class FeedPresenter @Inject constructor(
                 }
             )
             .doFinally {
-                updateState {
-                    it.copy(
-                        emptyLoading = false,
-                        refreshing = false
-                    )
-                }
+                updateLoading(false)
             }
             .subscribe({ (feedItems, scheduleState) ->
                 updateState {
@@ -149,6 +145,16 @@ class FeedPresenter @Inject constructor(
                 }
             })
             .addToDisposable()
+    }
+
+    private fun updateLoading(isLoading: Boolean) {
+        val isEmpty = currentItems.isEmpty()
+        updateState {
+            it.copy(
+                emptyLoading = isLoading && isEmpty,
+                refreshing = isLoading && !isEmpty
+            )
+        }
     }
 
     override fun onFirstViewAttach() {
@@ -187,7 +193,7 @@ class FeedPresenter @Inject constructor(
     }
 
     fun refreshReleases() {
-        loadData(currentPage)
+        loadData(Paginator.FIRST_PAGE)
     }
 
     fun loadMore() {

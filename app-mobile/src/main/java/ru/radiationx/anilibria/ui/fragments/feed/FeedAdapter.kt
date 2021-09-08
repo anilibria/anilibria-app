@@ -37,8 +37,6 @@ class FeedAdapter(
         }
     }
 
-    private val localItems = mutableListOf<ListItem>()
-
     init {
         addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
             override fun onLoadMore() {}
@@ -60,7 +58,7 @@ class FeedAdapter(
         val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
 
-        val threshold = (localItems.lastIndex - position)
+        val threshold = (items.lastIndex - position)
         if (threshold <= 3) {
             Handler().post {
                 loadMoreListener.invoke()

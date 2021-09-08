@@ -99,14 +99,17 @@ data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 
 data class SocialAuthListItem(val item: SocialAuth) : ListItem(item.key)
 
-data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.id)
+data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.releaseId)
 data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItemState>) : ListItem(id)
 data class FeedSectionListItem(
-    var title: String,
-    val route: String? = null,
+    val tag: String,
+    val title: String,
+    val route: String?,
     val hasBg: Boolean = false,
     val center: Boolean = false
-) : ListItem(title)
+) : ListItem(tag)
 
-data class FeedListItem(val item: FeedItemState) : ListItem("${item.release?.id}_${item.youtube?.id}")
+data class FeedListItem(val item: FeedItemState) :
+    ListItem("${item.release?.id}_${item.youtube?.id}")
+
 data class FeedRandomBtnListItem(val id: Any) : ListItem(id)

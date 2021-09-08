@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
@@ -16,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
@@ -35,7 +37,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.shared.ktx.android.invisible
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 
@@ -47,8 +49,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         presenter.loadMore()
     }, schedulesClickListener = {
         presenter.onSchedulesClick()
-    }, scheduleScrollListener = {position->
-       presenter.onScheduleScroll(position)
+    }, scheduleScrollListener = { position ->
+        presenter.onScheduleScroll(position)
     }, randomClickListener = {
         presenter.onRandomClick()
     }, releaseClickListener = { releaseItem, view ->
@@ -58,9 +60,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         releaseOnLongClick(releaseItem)
     }, youtubeClickListener = { youtubeItem, view ->
         presenter.onYoutubeClick(youtubeItem)
-    }, scheduleClickListener = { feedScheduleItem, view, position->
+    }, scheduleClickListener = { feedScheduleItem, view, position ->
         this.sharedViewLocal = view
-        presenter.onScheduleItemClick(feedScheduleItem.releaseItem, position)
+        presenter.onScheduleItemClick(feedScheduleItem, position)
     })
 
     @Inject
@@ -159,7 +161,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
-                    }else{
+                    } else {
                         presenter.onFastSearchOpen()
                     }
                 }
@@ -236,77 +238,49 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         )
     }
 
-    override fun showSchedules(title: String, items: List<ScheduleItem>) {
-        adapter.bindSchedules(title, items)
-    }
 
-    override fun showRefreshProgress(show: Boolean) {
-        Log.d("nonono", "showRefreshProgress $show")
-        refreshLayout.isRefreshing = show
-    }
+    override fun showState(state: FeedScreenState) {
+        progressBarList.isVisible = state.emptyLoading
+        refreshLayout.isVisible = state.emptyLoading
+        refreshLayout.isRefreshing = state.refreshing
 
-    override fun showEmptyProgress(show: Boolean) {
-        Log.d("nonono", "showEmptyProgress $show")
-        progressBarList.visible(show)
-        refreshLayout.visible(!show)
-        refreshLayout.isRefreshing = false
-    }
+        val isDataEmpty = state.feedItems.isEmpty() && state.schedule == null
 
-    override fun showPageProgress(show: Boolean) {
-        Log.d("nonono", "showPageProgress $show")
-        adapter.showProgress(show)
-    }
+        placeHolderContainer.isVisible = isDataEmpty
+        recyclerView.isInvisible = isDataEmpty
 
-    override fun showEmptyView(show: Boolean) {
-        placeHolder.bind(
-            R.drawable.ic_newspaper,
-            R.string.placeholder_title_nodata_base,
-            R.string.placeholder_desc_nodata_base
-        )
-        placeHolderContainer.visible(show)
-        Log.d("nonono", "showEmptyView $show")
-    }
+        if (isDataEmpty) {
+            if (state.errorMessage != null) {
+                placeHolder.bind(
+                    R.drawable.ic_newspaper,
+                    R.string.placeholder_title_errordata_base,
+                    R.string.placeholder_desc_nodata_base
+                )
+            } else {
+                placeHolder.bind(
+                    R.drawable.ic_newspaper,
+                    R.string.placeholder_title_nodata_base,
+                    R.string.placeholder_desc_nodata_base
+                )
+            }
+        }
 
-    override fun showEmptyError(show: Boolean, message: String?) {
-        Log.d("nonono", "showEmptyError $show, $message")
-        placeHolder.bind(
-            R.drawable.ic_newspaper,
-            R.string.placeholder_title_errordata_base,
-            R.string.placeholder_desc_nodata_base
-        )
-        placeHolderContainer.visible(show)
-    }
-
-    override fun showProjects(show: Boolean, items: List<FeedItem>) {
-        Log.d("nonono", "showProjects $show, ${items.size}")
-        recyclerView.invisible(!show)
-        adapter.bindItems(items)
-    }
-
-    override fun updateItems(items: List<FeedItem>) {
-        adapter.updateItems(items)
+        adapter.bindState(state)
     }
 
     override fun setRefreshing(refreshing: Boolean) {}
 
-    private fun releaseOnLongClick(item: ReleaseItem) {
+    private fun releaseOnLongClick(item: ReleaseItemState) {
         val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setItems(titles) { dialog, which ->
                 when (which) {
                     0 -> {
                         presenter.onCopyClick(item)
-                        Utils.copyToClipBoard(item.link.orEmpty())
                         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
-                    1 -> {
-                        presenter.onShareClick(item)
-                        Utils.shareText(item.link.orEmpty())
-                    }
-                    2 -> {
-                        presenter.onShortcutClick(item)
-                        ShortcutHelper.addShortcut(item)
-                    }
+                    1 -> presenter.onShareClick(item)
+                    2 -> presenter.onShortcutClick(item)
                 }
             }
             .show()

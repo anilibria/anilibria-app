@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.youtube
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeListState
@@ -98,11 +99,5 @@ class YoutubePresenter @Inject constructor(
         Utils.externalLink(rawItem.link)
     }
 
-    private fun YoutubeItem.toState() = YoutubeItemState(
-        id = id,
-        title = title.orEmpty(),
-        image = image.orEmpty(),
-        views = views.toString(),
-        comments = comments.toString()
-    )
+
 }

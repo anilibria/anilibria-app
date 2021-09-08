@@ -1,28 +1,29 @@
 package ru.radiationx.anilibria.presentation.feed
 
-import android.util.Log
 import io.reactivex.Single
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.feed.FeedScheduleState
+import ru.radiationx.anilibria.ui.fragments.feed.FeedScreenState
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
 import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.Screen
 import java.util.*
 import javax.inject.Inject
 
@@ -30,107 +31,125 @@ import javax.inject.Inject
 
 @InjectViewState
 class FeedPresenter @Inject constructor(
-        private val feedRepository: FeedRepository,
-        private val releaseInteractor: ReleaseInteractor,
-        private val scheduleRepository: ScheduleRepository,
-        private val releaseUpdateHolder: ReleaseUpdateHolder,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val fastSearchAnalytics: FastSearchAnalytics,
-        private val feedAnalytics: FeedAnalytics,
-        private val scheduleAnalytics: ScheduleAnalytics,
-        private val youtubeAnalytics: YoutubeAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val feedRepository: FeedRepository,
+    private val releaseInteractor: ReleaseInteractor,
+    private val scheduleRepository: ScheduleRepository,
+    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val fastSearchAnalytics: FastSearchAnalytics,
+    private val feedAnalytics: FeedAnalytics,
+    private val scheduleAnalytics: ScheduleAnalytics,
+    private val youtubeAnalytics: YoutubeAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private var randomDisposable = Disposables.disposed()
+    private var dataDisposable = Disposables.disposed()
 
-    private var lastLoadedPage:Int?=null
+    private var lastLoadedPage: Int? = null
 
     private val currentItems = mutableListOf<FeedItem>()
 
-    private val paginator = Paginator({
-        loadFeed(it)/*.delay(1000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())*/
-    }, object : Paginator.ViewController<FeedItem> {
+    private var currentState = FeedScreenState()
 
-        override fun showEmptyProgress(show: Boolean) {
-            viewState.showEmptyProgress(show)
+    private var currentPage = Paginator.FIRST_PAGE
+
+    private fun updateState(block: (FeedScreenState) -> FeedScreenState) {
+        currentState = block.invoke(currentState)
+        viewState.showState(currentState)
+    }
+
+    private fun getFeedSource(page: Int): Single<List<FeedItemState>> = feedRepository
+        .getFeed(page)
+        .doOnSuccess {
+            if (page == Paginator.FIRST_PAGE) {
+                currentItems.clear()
+            }
+            currentItems.addAll(it)
+        }
+        .map { items -> items.map { it.toState() } }
+
+    private fun getScheduleSource(): Single<FeedScheduleState> = scheduleRepository
+        .loadSchedule()
+        .map { scheduleDays ->
+            val currentTime = System.currentTimeMillis()
+            val mskTime = System.currentTimeMillis().asMsk()
+
+            val mskDay = mskTime.getDayOfWeek()
+
+            val asSameDay = Date(currentTime).isSameDay(Date(mskTime))
+            val dayTitle = if (asSameDay) {
+                "Ожидается сегодня"
+            } else {
+                val preText = mskDay.asDayPretext()
+                val dayName = mskDay.asDayNameDeclension().toLowerCase()
+                "Ожидается $preText $dayName (по МСК)"
+            }
+
+            val items = scheduleDays
+                .firstOrNull { it.day == mskDay }
+                ?.items
+                ?.map { it.toState() }
+                .orEmpty()
+
+            FeedScheduleState(dayTitle, items)
         }
 
-        override fun showEmptyError(show: Boolean, error: Throwable?) {
-            if (error != null) {
-                errorHandler.handle(error) { ex, str ->
-                    viewState.showEmptyError(show, str)
-                }
-            } else {
-                viewState.showEmptyError(show, null)
+    private fun loadData(page: Int) {
+        if (!dataDisposable.isDisposed) {
+            return
+        }
+        if (lastLoadedPage != page) {
+            feedAnalytics.loadPage(page)
+            lastLoadedPage = page
+        }
+        val feedSource = getFeedSource(page)
+        val scheduleDataSource = if (page == Paginator.FIRST_PAGE) {
+            getScheduleSource()
+        } else {
+            currentState.schedule?.let { Single.just(it) } ?: getScheduleSource()
+        }
+
+        if (currentPage == Paginator.FIRST_PAGE) {
+            updateState {
+                it.copy(refreshing = true)
             }
         }
 
-        override fun showErrorMessage(error: Throwable) {
-            errorHandler.handle(error)
-        }
-
-        override fun showEmptyView(show: Boolean) {
-            viewState.showEmptyView(show)
-        }
-
-        override fun showData(show: Boolean, data: List<FeedItem>) {
-            currentItems.clear()
-            currentItems.addAll(data)
-            viewState.showProjects(show, data)
-        }
-
-        override fun showRefreshProgress(show: Boolean) {
-            viewState.showRefreshProgress(show)
-        }
-
-        override fun showPageProgress(show: Boolean) {
-            viewState.showPageProgress(show)
-        }
-
-    })
-
-    private fun loadFeed(page: Int): Single<List<FeedItem>> {
-        if(lastLoadedPage!=page){
-            feedAnalytics.loadPage(page)
-            lastLoadedPage=page
-        }
-        return if (page == Paginator.FIRST_PAGE) {
-            Single
-                    .zip(
-                            feedRepository.getFeed(page),
-                            scheduleRepository.loadSchedule(),
-                            BiFunction<List<FeedItem>, List<ScheduleDay>, Pair<List<FeedItem>, List<ScheduleDay>>> { t1, t2 ->
-                                Pair(t1, t2)
-                            }
+        dataDisposable = Single
+            .zip(
+                feedSource,
+                scheduleDataSource,
+                BiFunction { feedItems: List<FeedItemState>, scheduleState: FeedScheduleState ->
+                    Pair(feedItems, scheduleState)
+                }
+            )
+            .doFinally {
+                updateState {
+                    it.copy(
+                        emptyLoading = false,
+                        refreshing = false
                     )
-                    .doOnSuccess {
-                        val currentTime = System.currentTimeMillis()
-                        val mskTime = System.currentTimeMillis().asMsk()
-
-                        val currentDay = currentTime.getDayOfWeek()
-                        val mskDay = mskTime.getDayOfWeek()
-
-
-                        Log.d("ninini", "check correct = ${Date(currentTime)} :::: ${Date(mskTime)} ${Date(currentTime).isSameDay(Date(mskTime))}")
-
-                        val dayTitle = if (Date(currentTime).isSameDay(Date(mskTime))) {
-                            "Ожидается сегодня"
-                        } else {
-                            "Ожидается ${mskDay.asDayPretext()} ${mskDay.asDayNameDeclension().toLowerCase()} (по МСК)"
-                        }
-
-                        val items = it.second.firstOrNull { it.day == mskDay }?.items
-
-                        items?.also {
-                            viewState.showSchedules(dayTitle, it)
-                        }
+                }
+            }
+            .subscribe({ (feedItems, scheduleState) ->
+                updateState {
+                    it.copy(
+                        feedItems = feedItems,
+                        schedule = scheduleState,
+                        hasMorePages = feedItems.isNotEmpty()
+                    )
+                }
+                currentPage = page
+            }, { throwable ->
+                errorHandler.handle(throwable) { _, message ->
+                    updateState { state ->
+                        state.copy(errorMessage = message)
                     }
-                    .map { it.first }
-        } else {
-            feedRepository.getFeed(page)
-        }
+                }
+            })
+            .addToDisposable()
     }
 
     override fun onFirstViewAttach() {
@@ -139,55 +158,71 @@ class FeedPresenter @Inject constructor(
 
 
         releaseUpdateHolder
-                .observeEpisodes()
-                .subscribe { data ->
-                    val itemsNeedUpdate = mutableListOf<FeedItem>()
-                    currentItems.forEach { item ->
-                        data.firstOrNull { it.id == item.release?.id }?.also { updItem ->
-                            val release = item.release!!
-                            val isNew = release.torrentUpdate > updItem.lastOpenTimestamp || release.torrentUpdate > updItem.timestamp
-                            if (release.isNew != isNew) {
-                                release.isNew = isNew
-                                itemsNeedUpdate.add(item)
-                            }
+            .observeEpisodes()
+            .subscribe { data ->
+                val itemsNeedUpdate = mutableListOf<FeedItem>()
+                currentItems.forEach { item ->
+                    data.firstOrNull { it.id == item.release?.id }?.also { updItem ->
+                        val release = item.release!!
+                        val isNew =
+                            release.torrentUpdate > updItem.lastOpenTimestamp || release.torrentUpdate > updItem.timestamp
+                        if (release.isNew != isNew) {
+                            release.isNew = isNew
+                            itemsNeedUpdate.add(item)
                         }
                     }
-
-                    viewState.updateItems(itemsNeedUpdate)
                 }
-                .addToDisposable()
+
+                val newFeedItems = currentState.feedItems.map { feedItemState ->
+                    val feedItem = itemsNeedUpdate.firstOrNull {
+                        it.release?.id == feedItemState.release?.id
+                                || it.youtube?.id == feedItemState.youtube?.id
+                    }
+                    feedItem?.toState() ?: feedItemState
+                }
+                updateState {
+                    it.copy(feedItems = newFeedItems)
+                }
+            }
+            .addToDisposable()
     }
 
     fun refreshReleases() {
-        paginator.refresh()
+        loadData(currentPage)
     }
 
     fun loadMore() {
-        paginator.loadNewPage()
+        loadData(currentPage + 1)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        paginator.release()
+    private fun findRelease(id: Int): ReleaseItem? {
+        return currentItems.mapNotNull { it.release }.firstOrNull { it.id == id }
     }
 
-    fun onScheduleScroll(position: Int){
+    private fun findYoutube(id: Int): YoutubeItem? {
+        return currentItems.mapNotNull { it.youtube }.firstOrNull { it.id == id }
+    }
+
+    fun onScheduleScroll(position: Int) {
         feedAnalytics.scheduleHorizontalScroll(position)
     }
 
-    fun onScheduleItemClick(item: ReleaseItem,position:Int) {
+    fun onScheduleItemClick(item: ScheduleItemState, position: Int) {
+        val releaseItem = findRelease(item.releaseId) ?: return
         feedAnalytics.scheduleReleaseClick(position)
-        releaseAnalytics.open(AnalyticsConstants.screen_feed, item.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    fun onItemClick(item: ReleaseItem) {
+    fun onItemClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
         feedAnalytics.releaseClick()
-        releaseAnalytics.open(AnalyticsConstants.screen_feed, item.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    fun onYoutubeClick(youtubeItem:YoutubeItem){
+    fun onYoutubeClick(item: YoutubeItemState) {
+        val youtubeItem = findYoutube(item.id) ?: return
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_feed, youtubeItem.id, youtubeItem.vid)
         feedAnalytics.youtubeClick()
         Utils.externalLink(youtubeItem.link)
@@ -205,33 +240,35 @@ class FeedPresenter @Inject constructor(
             return
         }
         randomDisposable = releaseInteractor
-                .getRandomRelease()
-                .subscribe({
-                    releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code)
-                    router.navigateTo(Screens.ReleaseDetails(code = it.code))
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .getRandomRelease()
+            .subscribe({
+                releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code)
+                router.navigateTo(Screens.ReleaseDetails(code = it.code))
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
     }
 
-    fun onFastSearchOpen(){
+    fun onFastSearchOpen() {
         fastSearchAnalytics.open(AnalyticsConstants.screen_feed)
     }
 
-    fun onCopyClick(item:ReleaseItem){
+    fun onCopyClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.copyToClipBoard(releaseItem.link.orEmpty())
         releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id)
     }
 
-    fun onShareClick(item: ReleaseItem){
+    fun onShareClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.shareText(releaseItem.link.orEmpty())
         releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id)
     }
 
-    fun onShortcutClick(item: ReleaseItem){
+    fun onShortcutClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        ShortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
-    }
-
-    fun onItemLongClick(item: ReleaseItem): Boolean {
-        return false
     }
 }

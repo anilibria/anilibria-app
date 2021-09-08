@@ -8,7 +8,6 @@ object AnalyticsConstants {
     const val screen_feed = "screen_feed"
     const val screen_schedule = "screen_schedule"
     const val screen_release = "screen_release"
-    const val screen_releases_list = "screen_releases_list"
     const val screen_release_comments = "screen_release_comments"
     const val screen_player = "screen_player"
     const val screen_web_player = "screen_web_player"

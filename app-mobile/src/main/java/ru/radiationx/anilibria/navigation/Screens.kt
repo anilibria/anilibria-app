@@ -18,7 +18,6 @@ import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.page.PageFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesFragment
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
@@ -88,10 +87,6 @@ object Screens {
         val years: String? = null
     ) : BaseAppScreen() {
         override fun getFragment() = SearchCatalogFragment.newInstance(genres, years)
-    }
-
-    class MainReleases : BaseAppScreen() {
-        override fun getFragment() = ReleasesFragment()
     }
 
     class MainFeed : BaseAppScreen() {

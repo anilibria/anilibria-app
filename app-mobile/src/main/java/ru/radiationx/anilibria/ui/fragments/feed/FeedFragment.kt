@@ -235,17 +235,19 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     }
 
     override fun showState(state: FeedScreenState) {
-        progressBarList.isVisible = state.emptyLoading
-        refreshLayout.isRefreshing = state.refreshing
+        progressBarList.isVisible = state.data.emptyLoading
+        refreshLayout.isRefreshing = state.data.refreshLoading
 
-        val isDataEmpty = state.feedItems.isEmpty() && state.schedule == null
-        val isPlaceHolderVisible = isDataEmpty && !state.emptyLoading
+        val isDataEmpty = state.data.data?.let {
+            it.feedItems.isEmpty() && it.schedule == null
+        } ?: true
+        val isPlaceHolderVisible = isDataEmpty && !state.data.emptyLoading
 
         recyclerView.isInvisible = isPlaceHolderVisible
         placeHolderContainer.isVisible = isPlaceHolderVisible
 
         if (isPlaceHolderVisible) {
-            if (state.hasError) {
+            if (state.data.error != null) {
                 placeHolder.bind(
                     R.drawable.ic_newspaper,
                     R.string.placeholder_title_errordata_base,
@@ -260,7 +262,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             }
         }
 
-        adapter.bindState(state)
+        adapter.bindState(state.data)
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {

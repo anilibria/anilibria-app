@@ -2,12 +2,14 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingState
+
 
 data class FeedScreenState(
-    val emptyLoading: Boolean = false,
-    val refreshing: Boolean = false,
-    val hasMorePages: Boolean = false,
-    val hasError: Boolean = false,
+    val data: DataLoadingState<FeedDataState> = DataLoadingState()
+)
+
+data class FeedDataState(
     val feedItems: List<FeedItemState> = emptyList(),
     val schedule: FeedScheduleState? = null
 )

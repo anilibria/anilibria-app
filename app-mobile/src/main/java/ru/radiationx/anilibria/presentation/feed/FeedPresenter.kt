@@ -7,11 +7,14 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.applyAction
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.feed.FeedDataState
 import ru.radiationx.anilibria.ui.fragments.feed.FeedScheduleState
 import ru.radiationx.anilibria.ui.fragments.feed.FeedScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -63,6 +66,12 @@ class FeedPresenter @Inject constructor(
         viewState.showState(currentState)
     }
 
+    private fun updateStateByAction(action: ScreenStateAction<FeedDataState>) {
+        updateState {
+            it.copy(data = it.data.applyAction(action))
+        }
+    }
+
     private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
         .getFeed(page)
         .doOnSuccess {
@@ -107,15 +116,20 @@ class FeedPresenter @Inject constructor(
             lastLoadedPage = page
         }
         val feedSource = getFeedSource(page)
-        val scheduleDataSource = if (page == Paginator.FIRST_PAGE) {
+        val isFirstPage = page == Paginator.FIRST_PAGE
+        val isEmptyData = currentState.data.data == null
+        val scheduleDataSource = if (isFirstPage) {
             getScheduleSource()
         } else {
-            currentState.schedule?.let { Single.just(it) } ?: getScheduleSource()
+            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
         }
 
-        if (page == Paginator.FIRST_PAGE) {
-            updateLoading(true)
+        val action: ScreenStateAction<FeedDataState> = when {
+            isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
+            isFirstPage && !isEmptyData -> ScreenStateAction.Refresh()
+            else -> ScreenStateAction.MoreLoading()
         }
+        updateStateByAction(action)
 
         dataDisposable = Single
             .zip(
@@ -125,39 +139,21 @@ class FeedPresenter @Inject constructor(
                     Pair(feedItems, scheduleState)
                 }
             )
-            .doFinally {
-                updateLoading(false)
-            }
             .subscribe({ (feedItems, scheduleState) ->
-                updateState {
-                    it.copy(
-                        feedItems = currentItems.map { it.toState() },
-                        schedule = scheduleState,
-                        hasMorePages = feedItems.isNotEmpty(),
-                        hasError = false
-                    )
-                }
+                val feedDataState = FeedDataState(
+                    feedItems = currentItems.map { it.toState() },
+                    schedule = scheduleState
+                )
+                val action = ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
+                updateStateByAction(action)
                 currentPage = page
             }, { throwable ->
                 if (page == Paginator.FIRST_PAGE) {
                     errorHandler.handle(throwable)
                 }
-                updateState { state ->
-                    state.copy(hasError = true)
-                }
+                updateStateByAction(ScreenStateAction.Error(throwable))
             })
             .addToDisposable()
-    }
-
-    private fun updateLoading(isLoading: Boolean) {
-        val isEmpty = currentItems.isEmpty()
-        updateState {
-            it.copy(
-                emptyLoading = isLoading && isEmpty,
-                refreshing = isLoading && !isEmpty,
-                hasError = if (isLoading) false else it.hasError
-            )
-        }
     }
 
     override fun onFirstViewAttach() {
@@ -181,15 +177,22 @@ class FeedPresenter @Inject constructor(
                     }
                 }
 
-                val newFeedItems = currentState.feedItems.map { feedItemState ->
+                val newFeedItems = currentState.data.data?.feedItems?.map { feedItemState ->
                     val feedItem = itemsNeedUpdate.firstOrNull {
                         it.release?.id == feedItemState.release?.id
                                 && it.youtube?.id == feedItemState.youtube?.id
                     }
                     feedItem?.toState() ?: feedItemState
-                }
+                }.orEmpty()
+
                 updateState {
-                    it.copy(feedItems = newFeedItems)
+                    it.copy(
+                        data = it.data.copy(
+                            data = it.data.data?.copy(
+                                feedItems = newFeedItems
+                            )
+                        )
+                    )
                 }
             }
             .addToDisposable()

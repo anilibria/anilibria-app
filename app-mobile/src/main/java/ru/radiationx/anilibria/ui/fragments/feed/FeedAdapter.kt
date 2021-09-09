@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
@@ -69,26 +70,29 @@ class FeedAdapter(
         }
     }
 
-    fun bindState(state: FeedScreenState) {
+    fun bindState(state: DataLoadingState<FeedDataState>) {
         val newItems = mutableListOf<ListItem>()
 
-        if (state.schedule != null) {
+
+        state.data?.schedule?.also { scheduleState ->
             newItems.add(
                 FeedSectionListItem(
                     TAG_SCHEDULE_SECTION,
-                    state.schedule.title,
+                    scheduleState.title,
                     "Расписание"
                 )
             )
-            newItems.add(FeedSchedulesListItem("actual", state.schedule.items))
+            newItems.add(FeedSchedulesListItem("actual", scheduleState.items))
         }
 
-        if (state.feedItems.isNotEmpty()) {
+
+        val feedItems = state.data?.feedItems.orEmpty()
+        if (feedItems.isNotEmpty()) {
             newItems.add(FeedSectionListItem(TAG_FEED_SECTION, "Обновления", null, hasBg = true))
             newItems.add(FeedRandomBtnListItem("random"))
 
             var lastFeedItem: FeedItemState? = null
-            state.feedItems.forEach { feedItem ->
+            feedItems.forEach { feedItem ->
                 val isNotReleaseSequence = feedItem.release == null && lastFeedItem?.release != null
                 val isNotYoutubeSequence = feedItem.youtube == null && lastFeedItem?.youtube != null
                 if (isNotReleaseSequence || isNotYoutubeSequence) {
@@ -100,7 +104,7 @@ class FeedAdapter(
         }
 
         if (state.hasMorePages) {
-            if (state.hasError) {
+            if (state.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {
                 newItems.add(LoadMoreListItem("bottom"))

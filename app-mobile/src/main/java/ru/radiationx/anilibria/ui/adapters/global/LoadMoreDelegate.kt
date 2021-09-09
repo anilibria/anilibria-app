@@ -16,18 +16,18 @@ import ru.radiationx.shared.ktx.android.visible
  * Created by radiationx on 13.01.18.
  */
 class LoadMoreDelegate(
-        private val listener: Listener
+    private val listener: Listener
 ) : AppAdapterDelegate<LoadMoreListItem, ListItem, LoadMoreDelegate.ViewHolder>(
-        R.layout.item_load_more,
-        { it is LoadMoreListItem },
-        { ViewHolder(it, listener) }
+    R.layout.item_load_more,
+    { it is LoadMoreListItem },
+    { ViewHolder(it, listener) }
 ) {
 
     override fun bindData(item: LoadMoreListItem, holder: ViewHolder) = holder.bind()
 
     class ViewHolder(
-            override val containerView: View,
-            private val listener: Listener
+        override val containerView: View,
+        private val listener: Listener
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {

@@ -133,15 +133,17 @@ class FeedPresenter @Inject constructor(
                     it.copy(
                         feedItems = currentItems.map { it.toState() },
                         schedule = scheduleState,
-                        hasMorePages = feedItems.isNotEmpty()
+                        hasMorePages = feedItems.isNotEmpty(),
+                        hasError = false
                     )
                 }
                 currentPage = page
             }, { throwable ->
-                errorHandler.handle(throwable) { _, message ->
-                    updateState { state ->
-                        state.copy(errorMessage = message)
-                    }
+                if (page == Paginator.FIRST_PAGE) {
+                    errorHandler.handle(throwable)
+                }
+                updateState { state ->
+                    state.copy(hasError = true)
                 }
             })
             .addToDisposable()
@@ -152,7 +154,8 @@ class FeedPresenter @Inject constructor(
         updateState {
             it.copy(
                 emptyLoading = isLoading && isEmpty,
-                refreshing = isLoading && !isEmpty
+                refreshing = isLoading && !isEmpty,
+                hasError = if (isLoading) false else it.hasError
             )
         }
     }
@@ -181,7 +184,7 @@ class FeedPresenter @Inject constructor(
                 val newFeedItems = currentState.feedItems.map { feedItemState ->
                     val feedItem = itemsNeedUpdate.firstOrNull {
                         it.release?.id == feedItemState.release?.id
-                                || it.youtube?.id == feedItemState.youtube?.id
+                                && it.youtube?.id == feedItemState.youtube?.id
                     }
                     feedItem?.toState() ?: feedItemState
                 }

@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
+import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
@@ -17,6 +18,7 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 class FeedAdapter(
     private val loadMoreListener: () -> Unit,
+    private val loadRetryListener: () -> Unit,
     schedulesClickListener: () -> Unit,
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
@@ -41,6 +43,7 @@ class FeedAdapter(
         addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
             override fun onLoadMore() {}
         }))
+        addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
         addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
@@ -97,7 +100,11 @@ class FeedAdapter(
         }
 
         if (state.hasMorePages) {
-            newItems.add(LoadMoreListItem("bottom"))
+            if (state.hasError) {
+                newItems.add(LoadErrorListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom"))
+            }
         }
 
         items = newItems

@@ -50,6 +50,7 @@ data class DividerShadowListItem(val id: Any) : ListItem(id)
 /* Common */
 
 data class LoadMoreListItem(val id: Any) : ListItem(null)
+data class LoadErrorListItem(val id: Any) : ListItem(null)
 data class CommentRouteListItem(val id: Any) : ListItem(null)
 data class BottomTabListItem(
     val item: MainActivity.Tab,

@@ -41,6 +41,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     private val adapter = FeedAdapter({
         presenter.loadMore()
+    }, loadRetryListener = {
+        presenter.loadMore()
     }, schedulesClickListener = {
         presenter.onSchedulesClick()
     }, scheduleScrollListener = { position ->
@@ -237,12 +239,13 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         refreshLayout.isRefreshing = state.refreshing
 
         val isDataEmpty = state.feedItems.isEmpty() && state.schedule == null
+        val isPlaceHolderVisible = isDataEmpty && !state.emptyLoading
 
-        placeHolderContainer.isVisible = isDataEmpty
-        recyclerView.isInvisible = isDataEmpty
+        recyclerView.isInvisible = isPlaceHolderVisible
+        placeHolderContainer.isVisible = isPlaceHolderVisible
 
-        if (isDataEmpty && !state.emptyLoading) {
-            if (state.errorMessage != null) {
+        if (isPlaceHolderVisible) {
+            if (state.hasError) {
                 placeHolder.bind(
                     R.drawable.ic_newspaper,
                     R.string.placeholder_title_errordata_base,

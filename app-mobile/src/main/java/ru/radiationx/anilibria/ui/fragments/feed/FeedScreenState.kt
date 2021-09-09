@@ -7,7 +7,7 @@ data class FeedScreenState(
     val emptyLoading: Boolean = false,
     val refreshing: Boolean = false,
     val hasMorePages: Boolean = false,
-    val errorMessage: String? = null,
+    val hasError: Boolean = false,
     val feedItems: List<FeedItemState> = emptyList(),
     val schedule: FeedScheduleState? = null
 )

@@ -1,14 +1,14 @@
 package ru.radiationx.anilibria.presentation.search
 
-import android.util.Log
-import io.reactivex.disposables.Disposables
+import io.reactivex.Single
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.applyAction
+import ru.radiationx.anilibria.model.loading.ScreenStateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
@@ -41,9 +41,6 @@ class SearchPresenter @Inject constructor(
     private val appPreferences: PreferencesHolder
 ) : BasePresenter<SearchCatalogView>(router) {
 
-    companion object {
-        private const val START_PAGE = 1
-    }
 
     private var lastLoadedPage: Int? = null
     private val filterUseTimeCounter = TimeCounter()
@@ -54,7 +51,6 @@ class SearchPresenter @Inject constructor(
     private val staticSeasons = listOf("зима", "весна", "лето", "осень")
         .map { SeasonItem(it.capitalize(), it) }
 
-    private var currentPage = START_PAGE
     private val currentGenres = mutableListOf<String>()
     private val currentYears = mutableListOf<String>()
     private val currentSeasons = mutableListOf<String>()
@@ -68,23 +64,11 @@ class SearchPresenter @Inject constructor(
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
-    private var dataDisposable = Disposables.disposed()
-
-    private var currentState = SearchScreenState()
-
-    private fun updateState(block: (SearchScreenState) -> SearchScreenState) {
-        val newState = block.invoke(currentState)
-        if (currentState != newState) {
-            currentState = newState
-            viewState.showState(currentState)
-        }
-    }
-
-    private fun updateStateByAction(action: ScreenStateAction<List<ReleaseItemState>>) {
-        updateState {
-            it.copy(data = it.data.applyAction(action))
-        }
-    }
+    private val loadingController = DataLoadingController {
+        submitPageAnalytics(it.page)
+        getDataSource(it)
+    }.addToDisposable()
+    private val stateController = ScreenStateController(SearchScreenState())
 
     private fun findRelease(id: Int): ReleaseItem? {
         return currentItems.find { it.id == id }
@@ -92,6 +76,7 @@ class SearchPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        observeScreenState()
         loadGenres()
         loadYears()
         observeGenres()
@@ -101,7 +86,8 @@ class SearchPresenter @Inject constructor(
         viewState.showSeasons(staticSeasons)
         onChangeSorting(currentSorting)
         onChangeComplete(currentComplete)
-        loadReleases(START_PAGE)
+        observeLoadingState()
+        loadingController.refresh()
         releaseUpdateHolder
             .observeEpisodes()
             .subscribe { data ->
@@ -117,12 +103,12 @@ class SearchPresenter @Inject constructor(
                     }
                 }
 
-                val newItems = currentState.data.data?.map { itemState ->
+                val dataState = loadingController.currentState.data
+                val newItems = dataState?.map { itemState ->
                     val releaseItem = itemsNeedUpdate.firstOrNull { it.id == itemState.id }
                     releaseItem?.toState() ?: itemState
                 }
-                val action = ScreenStateAction.DataModify(newItems)
-                updateStateByAction(action)
+                loadingController.modifyData(newItems)
             }
             .addToDisposable()
     }
@@ -173,7 +159,7 @@ class SearchPresenter @Inject constructor(
             .observeSearchRemind()
             .subscribe({ remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
-                updateState {
+                stateController.updateState {
                     it.copy(remindText = newRemindText)
                 }
             }, {
@@ -182,63 +168,67 @@ class SearchPresenter @Inject constructor(
             .addToDisposable()
     }
 
-    private fun loadReleases(pageNum: Int) {
-        if (!dataDisposable.isDisposed) {
-            return
-        }
-        if (lastLoadedPage != pageNum) {
-            catalogAnalytics.loadPage(pageNum)
-            lastLoadedPage = pageNum
-        }
+    private fun observeLoadingState() {
+        loadingController
+            .observeState()
+            .subscribe { loadingData ->
+                stateController.updateState {
+                    it.copy(data = loadingData)
+                }
+            }
+            .addToDisposable()
+    }
 
-        val isFirstPage = pageNum == START_PAGE
-        val isEmptyData = currentState.data.data == null
+    private fun observeScreenState() {
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+    }
 
-        val action: ScreenStateAction<List<ReleaseItemState>> = when {
-            isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
-            isFirstPage && !isEmptyData -> ScreenStateAction.Refresh()
-            else -> ScreenStateAction.MoreLoading()
+    private fun submitPageAnalytics(page: Int) {
+        if (lastLoadedPage != page) {
+            catalogAnalytics.loadPage(page)
+            lastLoadedPage = page
         }
-        updateStateByAction(action)
+    }
 
+    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<ReleaseItemState>>> {
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")
         val completeStr = if (currentComplete) "2" else "1"
-        dataDisposable = searchRepository
+        return searchRepository
             .searchReleases(
                 genresQuery,
                 yearsQuery,
                 seasonsQuery,
                 currentSorting,
                 completeStr,
-                pageNum
+                params.page
             )
-            .subscribe({ releaseItems ->
-                if (pageNum == START_PAGE) {
+            .map { paginated ->
+                if (params.isFirstPage) {
                     currentItems.clear()
                 }
-                currentItems.addAll(releaseItems.data)
+                currentItems.addAll(paginated.data)
 
                 val newItems = currentItems.map { it.toState() }
-                val action = ScreenStateAction.Data(newItems, releaseItems.data.isNotEmpty())
-                updateStateByAction(action)
-                currentPage = pageNum
-            }) { throwable ->
-                if (pageNum == Paginator.FIRST_PAGE) {
-                    errorHandler.handle(throwable)
-                }
-                updateStateByAction(ScreenStateAction.Error(throwable))
+                ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
             }
-            .addToDisposable()
+            .doOnError {
+                if (params.isFirstPage) {
+                    errorHandler.handle(it)
+                }
+            }
     }
 
     fun refreshReleases() {
-        loadReleases(START_PAGE)
+        loadingController.refresh()
     }
 
     fun loadMore() {
-        loadReleases(currentPage + 1)
+        loadingController.loadMore()
     }
 
     fun showDialog() {

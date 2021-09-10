@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.youtube
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -20,7 +21,11 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
-            adapterListener, PlaceholderListItem(
+            loadRetryListener = {
+                presenter.loadMore()
+            },
+            listener = adapterListener,
+            placeHolder = PlaceholderListItem(
                 R.drawable.ic_toolbar_search,
                 R.string.placeholder_title_nodata_base,
                 R.string.placeholder_desc_nodata_base
@@ -72,7 +77,8 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
     }
 
     override fun showState(state: YoutubeScreenState) {
-        refreshLayout.isRefreshing = state.refreshing
+        progressBarList.isVisible = state.data.emptyLoading
+        refreshLayout.isRefreshing = state.data.refreshLoading
         youtubeAdapter.bindState(state)
     }
 

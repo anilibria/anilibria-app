@@ -1,8 +1,12 @@
 package ru.radiationx.anilibria.presentation.youtube
 
+import io.reactivex.disposables.Disposables
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.applyAction
 import ru.radiationx.anilibria.model.toState
+import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeScreenState
@@ -34,47 +38,50 @@ class YoutubePresenter @Inject constructor(
     private var lastLoadedPage: Int? = null
     private var currentPage = START_PAGE
 
+    private var dataDisposable = Disposables.disposed()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         refresh()
     }
 
-    private fun isFirstPage(): Boolean {
-        return currentPage == START_PAGE
-    }
-
     private fun loadPage(page: Int) {
+        if (!dataDisposable.isDisposed) {
+            return
+        }
+
         if (lastLoadedPage != page) {
             youtubeVideosAnalytics.loadPage(page)
             lastLoadedPage = page
         }
-        currentPage = page
-        if (isFirstPage()) {
-            updateState {
-                it.copy(refreshing = true)
-            }
+
+        val isFirstPage = page == START_PAGE
+        val isEmptyData = currentState.data.data == null
+
+        val action: ScreenStateAction<List<YoutubeItemState>> = when {
+            isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
+            isFirstPage && !isEmptyData -> ScreenStateAction.Refresh()
+            else -> ScreenStateAction.MoreLoading()
         }
-        youtubeRepository
+        updateStateByAction(action)
+
+        dataDisposable = youtubeRepository
             .getYoutubeList(page)
-            .doFinally {
-                updateState {
-                    it.copy(refreshing = false)
-                }
-            }
             .subscribe({ items ->
-                if (isFirstPage()) {
+                if (page == START_PAGE) {
                     currentRawItems.clear()
                 }
                 currentRawItems.addAll(items.data)
 
-                updateState {
-                    it.copy(
-                        items = currentRawItems.map { item -> item.toState() },
-                        hasMorePages = !items.isEnd()
-                    )
+                val newItems = currentRawItems.map { item -> item.toState() }
+                val action = ScreenStateAction.Data(newItems, !items.isEnd())
+                updateStateByAction(action)
+                currentPage = page
+            }) { throwable ->
+                if (page == Paginator.FIRST_PAGE) {
+                    errorHandler.handle(throwable)
                 }
-            }) {
-                errorHandler.handle(it)
+                updateStateByAction(ScreenStateAction.Error(throwable))
             }
             .addToDisposable()
     }
@@ -82,6 +89,12 @@ class YoutubePresenter @Inject constructor(
     private fun updateState(block: (YoutubeScreenState) -> YoutubeScreenState) {
         currentState = block.invoke(currentState)
         viewState.showState(currentState)
+    }
+
+    private fun updateStateByAction(action: ScreenStateAction<List<YoutubeItemState>>) {
+        updateState {
+            it.copy(data = it.data.applyAction(action))
+        }
     }
 
     fun refresh() {

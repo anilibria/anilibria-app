@@ -1,9 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingState
 
 data class YoutubeScreenState(
-    val refreshing: Boolean = false,
-    val hasMorePages: Boolean = false,
-    val items: List<YoutubeItemState> = emptyList()
+    val data: DataLoadingState<List<YoutubeItemState>> = DataLoadingState()
 )

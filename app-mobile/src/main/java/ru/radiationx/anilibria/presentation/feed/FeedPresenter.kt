@@ -115,14 +115,8 @@ class FeedPresenter @Inject constructor(
             feedAnalytics.loadPage(page)
             lastLoadedPage = page
         }
-        val feedSource = getFeedSource(page)
         val isFirstPage = page == Paginator.FIRST_PAGE
         val isEmptyData = currentState.data.data == null
-        val scheduleDataSource = if (isFirstPage) {
-            getScheduleSource()
-        } else {
-            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
-        }
 
         val action: ScreenStateAction<FeedDataState> = when {
             isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
@@ -130,6 +124,14 @@ class FeedPresenter @Inject constructor(
             else -> ScreenStateAction.MoreLoading()
         }
         updateStateByAction(action)
+
+
+        val feedSource = getFeedSource(page)
+        val scheduleDataSource = if (isFirstPage) {
+            getScheduleSource()
+        } else {
+            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
+        }
 
         dataDisposable = Single
             .zip(

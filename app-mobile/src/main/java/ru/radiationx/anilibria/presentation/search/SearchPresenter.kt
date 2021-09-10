@@ -1,9 +1,14 @@
 package ru.radiationx.anilibria.presentation.search
 
+import android.util.Log
+import io.reactivex.disposables.Disposables
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.applyAction
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
@@ -63,11 +68,22 @@ class SearchPresenter @Inject constructor(
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
+    private var dataDisposable = Disposables.disposed()
+
     private var currentState = SearchScreenState()
 
     private fun updateState(block: (SearchScreenState) -> SearchScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
+        val newState = block.invoke(currentState)
+        if (currentState != newState) {
+            currentState = newState
+            viewState.showState(currentState)
+        }
+    }
+
+    private fun updateStateByAction(action: ScreenStateAction<List<ReleaseItemState>>) {
+        updateState {
+            it.copy(data = it.data.applyAction(action))
+        }
     }
 
     private fun findRelease(id: Int): ReleaseItem? {
@@ -101,20 +117,16 @@ class SearchPresenter @Inject constructor(
                     }
                 }
 
-                val newItems = currentState.items.map { itemState ->
+                val newItems = currentState.data.data?.map { itemState ->
                     val releaseItem = itemsNeedUpdate.firstOrNull { it.id == itemState.id }
                     releaseItem?.toState() ?: itemState
                 }
-                updateState {
-                    it.copy(items = newItems)
-                }
+                val action = ScreenStateAction.DataModify(newItems)
+                updateStateByAction(action)
             }
             .addToDisposable()
     }
 
-    private fun isFirstPage(): Boolean {
-        return currentPage == START_PAGE
-    }
 
     private fun loadGenres() {
         searchRepository
@@ -160,8 +172,9 @@ class SearchPresenter @Inject constructor(
         appPreferences
             .observeSearchRemind()
             .subscribe({ remindEnabled ->
+                val newRemindText = remindText.takeIf { remindEnabled }
                 updateState {
-                    it.copy(remindText = remindText.takeIf { remindEnabled })
+                    it.copy(remindText = newRemindText)
                 }
             }, {
                 errorHandler.handle(it)
@@ -170,25 +183,29 @@ class SearchPresenter @Inject constructor(
     }
 
     private fun loadReleases(pageNum: Int) {
-
-        /*if (isEmpty()) {
-            viewState.setRefreshing(false)
+        if (!dataDisposable.isDisposed) {
             return
-        }*/
+        }
         if (lastLoadedPage != pageNum) {
             catalogAnalytics.loadPage(pageNum)
             lastLoadedPage = pageNum
         }
 
-        currentPage = pageNum
-        if (isFirstPage()) {
-            updateState { it.copy(refreshing = true) }
+        val isFirstPage = pageNum == START_PAGE
+        val isEmptyData = currentState.data.data == null
+
+        val action: ScreenStateAction<List<ReleaseItemState>> = when {
+            isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
+            isFirstPage && !isEmptyData -> ScreenStateAction.Refresh()
+            else -> ScreenStateAction.MoreLoading()
         }
+        updateStateByAction(action)
+
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")
         val completeStr = if (currentComplete) "2" else "1"
-        searchRepository
+        dataDisposable = searchRepository
             .searchReleases(
                 genresQuery,
                 yearsQuery,
@@ -197,22 +214,21 @@ class SearchPresenter @Inject constructor(
                 completeStr,
                 pageNum
             )
-            .doAfterTerminate { updateState { it.copy(refreshing = false) } }
             .subscribe({ releaseItems ->
-                lastLoadedPage = pageNum
-                if (isFirstPage()) {
+                if (pageNum == START_PAGE) {
                     currentItems.clear()
                 }
                 currentItems.addAll(releaseItems.data)
 
-                updateState {
-                    it.copy(
-                        items = currentItems.map { it.toState() },
-                        hasMorePages = releaseItems.data.isNotEmpty()
-                    )
+                val newItems = currentItems.map { it.toState() }
+                val action = ScreenStateAction.Data(newItems, releaseItems.data.isNotEmpty())
+                updateStateByAction(action)
+                currentPage = pageNum
+            }) { throwable ->
+                if (pageNum == Paginator.FIRST_PAGE) {
+                    errorHandler.handle(throwable)
                 }
-            }) {
-                errorHandler.handle(it)
+                updateStateByAction(ScreenStateAction.Error(throwable))
             }
             .addToDisposable()
     }

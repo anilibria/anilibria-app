@@ -6,10 +6,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
+import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -24,14 +25,10 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchItem
@@ -58,13 +55,16 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     private lateinit var genresDialog: GenresDialog
     private val adapter = SearchAdapter(
-        this,
-        object : ReleaseRemindDelegate.Listener {
+        loadRetryListener = {
+            presenter.loadMore()
+        },
+        listener = this,
+        remindCloseListener = object : ReleaseRemindDelegate.Listener {
             override fun onClickClose(position: Int) {
-
+                presenter.onRemindClose()
             }
         },
-        PlaceholderListItem(
+        placeholder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
@@ -117,7 +117,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
+    override fun getLayoutResource(): Int = R.layout.fragment_feed
 
     override val statusBarVisible: Boolean = true
 
@@ -313,7 +313,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
     }
 
     override fun showState(state: SearchScreenState) {
-        refreshLayout.isRefreshing = state.refreshing
+        progressBarList.isVisible = state.data.emptyLoading
+        refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
     }
 

@@ -26,7 +26,11 @@ fun <T> DataLoadingState<T>.applyAction(action: ScreenStateAction<T>): DataLoadi
             emptyLoading = false,
             refreshLoading = false,
             moreLoading = false,
-            hasMorePages = action.hasMoreData,
+            hasMorePages = action.hasMoreData ?: hasMorePages,
+            data = action.data,
+            error = null
+        )
+        is ScreenStateAction.DataModify -> copy(
             data = action.data,
             error = null
         )
@@ -43,6 +47,7 @@ sealed class ScreenStateAction<T> {
     class EmptyLoading<T> : ScreenStateAction<T>()
     class MoreLoading<T> : ScreenStateAction<T>()
     class Refresh<T> : ScreenStateAction<T>()
-    class Data<T>(val data: T, val hasMoreData: Boolean) : ScreenStateAction<T>()
+    class Data<T>(val data: T?, val hasMoreData: Boolean? = null) : ScreenStateAction<T>()
+    class DataModify<T>(val data: T?) : ScreenStateAction<T>()
     class Error<T>(val error: Throwable) : ScreenStateAction<T>()
 }

@@ -41,9 +41,7 @@ class FeedAdapter(
     }
 
     init {
-        addDelegate(LoadMoreDelegate(object : LoadMoreDelegate.Listener {
-            override fun onLoadMore() {}
-        }))
+        addDelegate(LoadMoreDelegate(null))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
         addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
@@ -58,8 +56,6 @@ class FeedAdapter(
         position: Int,
         payloads: MutableList<Any?>
     ) {
-
-        val time = System.currentTimeMillis()
         super.onBindViewHolder(holder, position, payloads)
 
         val threshold = (items.lastIndex - position)
@@ -106,7 +102,7 @@ class FeedAdapter(
         if (state.hasMorePages) {
             if (state.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else {
+            } else if (state.moreLoading) {
                 newItems.add(LoadMoreListItem("bottom"))
             }
         }

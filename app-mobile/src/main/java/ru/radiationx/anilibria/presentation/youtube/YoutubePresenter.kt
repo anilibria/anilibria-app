@@ -29,8 +29,9 @@ class YoutubePresenter @Inject constructor(
 ) : BasePresenter<YoutubeView>(router) {
 
     private val loadingController = DataLoadingController {
+        submitPageAnalytics(it.page)
         getDataSource(it)
-    }
+    }.addToDisposable()
 
     private var currentRawItems = mutableListOf<YoutubeItem>()
     private var currentState = YoutubeScreenState()
@@ -41,17 +42,13 @@ class YoutubePresenter @Inject constructor(
         super.onFirstViewAttach()
         loadingController
             .observeState()
-            .subscribe {
-                currentState = YoutubeScreenState(it)
-                viewState.showState(currentState)
+            .subscribe { loadingState ->
+                updateState {
+                    it.copy(data = loadingState)
+                }
             }
             .addToDisposable()
         loadingController.refresh()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        loadingController.release()
     }
 
     fun refresh() {
@@ -69,6 +66,11 @@ class YoutubePresenter @Inject constructor(
         Utils.externalLink(rawItem.link)
     }
 
+    private fun updateState(block: (YoutubeScreenState) -> YoutubeScreenState) {
+        currentState = block.invoke(currentState)
+        viewState.showState(currentState)
+    }
+
     private fun submitPageAnalytics(page: Int) {
         if (lastLoadedPage != page) {
             youtubeVideosAnalytics.loadPage(page)
@@ -77,7 +79,6 @@ class YoutubePresenter @Inject constructor(
     }
 
     private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<YoutubeItemState>>> {
-        submitPageAnalytics(params.page)
         return youtubeRepository
             .getYoutubeList(params.page)
             .map { paginated ->

@@ -3,18 +3,25 @@ package ru.radiationx.anilibria.model.loading
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 
 class DataLoadingController<T>(
     private val firstPage: Int = 1,
     private val dataSource: (PageLoadParams) -> Single<ScreenStateAction.Data<T>>
-) {
+) : Disposable {
 
-    private val stateRelay = BehaviorRelay.create<DataLoadingState<T>>()
+    private val stateRelay = BehaviorRelay.createDefault(DataLoadingState<T>())
 
     private var currentPage = firstPage
 
     private var dataDisposable = Disposables.disposed()
+
+    var currentState: DataLoadingState<T>
+        get() = requireNotNull(stateRelay.value)
+        private set(value) {
+            stateRelay.accept(value)
+        }
 
     fun observeState(): Observable<DataLoadingState<T>> {
         return stateRelay.hide().distinctUntilChanged()
@@ -30,6 +37,11 @@ class DataLoadingController<T>(
 
     fun release() {
         dataDisposable.dispose()
+    }
+
+    fun modifyData(data: T?) {
+        val action = ScreenStateAction.DataModify(data)
+        updateStateByAction(action)
     }
 
     private fun loadPage(page: Int) {
@@ -73,8 +85,7 @@ class DataLoadingController<T>(
     }
 
     private fun updateState(block: (DataLoadingState<T>) -> DataLoadingState<T>) {
-        val newState = block.invoke(stateRelay.value ?: DataLoadingState())
-        stateRelay.accept(newState)
+        currentState = block.invoke(currentState)
     }
 
     private fun updateStateByAction(action: ScreenStateAction<T>) {
@@ -83,4 +94,11 @@ class DataLoadingController<T>(
         }
     }
 
+    override fun dispose() {
+        dataDisposable.dispose()
+    }
+
+    override fun isDisposed(): Boolean {
+        return dataDisposable.isDisposed
+    }
 }

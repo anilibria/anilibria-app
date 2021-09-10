@@ -7,8 +7,9 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.applyAction
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
@@ -50,8 +51,12 @@ class FeedPresenter @Inject constructor(
     private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FeedView>(router) {
 
+    private val loadingController = DataLoadingController {
+        submitPageAnalytics(it.page)
+        getDataSource(it)
+    }.addToDisposable()
+
     private var randomDisposable = Disposables.disposed()
-    private var dataDisposable = Disposables.disposed()
 
     private var lastLoadedPage: Int? = null
 
@@ -59,109 +64,18 @@ class FeedPresenter @Inject constructor(
 
     private var currentState = FeedScreenState()
 
-    private var currentPage = Paginator.FIRST_PAGE
-
-    private fun updateState(block: (FeedScreenState) -> FeedScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
-    }
-
-    private fun updateStateByAction(action: ScreenStateAction<FeedDataState>) {
-        updateState {
-            it.copy(data = it.data.applyAction(action))
-        }
-    }
-
-    private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
-        .getFeed(page)
-        .doOnSuccess {
-            if (page == Paginator.FIRST_PAGE) {
-                currentItems.clear()
-            }
-            currentItems.addAll(it)
-        }
-
-    private fun getScheduleSource(): Single<FeedScheduleState> = scheduleRepository
-        .loadSchedule()
-        .map { scheduleDays ->
-            val currentTime = System.currentTimeMillis()
-            val mskTime = System.currentTimeMillis().asMsk()
-
-            val mskDay = mskTime.getDayOfWeek()
-
-            val asSameDay = Date(currentTime).isSameDay(Date(mskTime))
-            val dayTitle = if (asSameDay) {
-                "Ожидается сегодня"
-            } else {
-                val preText = mskDay.asDayPretext()
-                val dayName = mskDay.asDayNameDeclension().toLowerCase()
-                "Ожидается $preText $dayName (по МСК)"
-            }
-
-            val items = scheduleDays
-                .firstOrNull { it.day == mskDay }
-                ?.items
-                ?.map { it.toState() }
-                .orEmpty()
-
-            FeedScheduleState(dayTitle, items)
-        }
-
-    private fun loadData(page: Int) {
-        if (!dataDisposable.isDisposed) {
-            return
-        }
-        if (lastLoadedPage != page) {
-            feedAnalytics.loadPage(page)
-            lastLoadedPage = page
-        }
-        val isFirstPage = page == Paginator.FIRST_PAGE
-        val isEmptyData = currentState.data.data == null
-
-        val action: ScreenStateAction<FeedDataState> = when {
-            isFirstPage && isEmptyData -> ScreenStateAction.EmptyLoading()
-            isFirstPage && !isEmptyData -> ScreenStateAction.Refresh()
-            else -> ScreenStateAction.MoreLoading()
-        }
-        updateStateByAction(action)
-
-
-        val feedSource = getFeedSource(page)
-        val scheduleDataSource = if (isFirstPage) {
-            getScheduleSource()
-        } else {
-            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
-        }
-
-        dataDisposable = Single
-            .zip(
-                feedSource,
-                scheduleDataSource,
-                BiFunction { feedItems: List<FeedItem>, scheduleState: FeedScheduleState ->
-                    Pair(feedItems, scheduleState)
-                }
-            )
-            .subscribe({ (feedItems, scheduleState) ->
-                val feedDataState = FeedDataState(
-                    feedItems = currentItems.map { it.toState() },
-                    schedule = scheduleState
-                )
-                val action = ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
-                updateStateByAction(action)
-                currentPage = page
-            }, { throwable ->
-                if (page == Paginator.FIRST_PAGE) {
-                    errorHandler.handle(throwable)
-                }
-                updateStateByAction(ScreenStateAction.Error(throwable))
-            })
-            .addToDisposable()
-    }
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        refreshReleases()
 
+        loadingController.observeState()
+            .subscribe { loadingState ->
+                updateState {
+                    it.copy(data = loadingState)
+                }
+            }
+            .addToDisposable()
+
+        loadingController.refresh()
 
         releaseUpdateHolder
             .observeEpisodes()
@@ -179,7 +93,8 @@ class FeedPresenter @Inject constructor(
                     }
                 }
 
-                val newFeedItems = currentState.data.data?.feedItems?.map { feedItemState ->
+                val dataState = loadingController.currentState.data
+                val newFeedItems = dataState?.feedItems?.map { feedItemState ->
                     val feedItem = itemsNeedUpdate.firstOrNull {
                         it.release?.id == feedItemState.release?.id
                                 && it.youtube?.id == feedItemState.youtube?.id
@@ -187,33 +102,17 @@ class FeedPresenter @Inject constructor(
                     feedItem?.toState() ?: feedItemState
                 }.orEmpty()
 
-                updateState {
-                    it.copy(
-                        data = it.data.copy(
-                            data = it.data.data?.copy(
-                                feedItems = newFeedItems
-                            )
-                        )
-                    )
-                }
+                loadingController.modifyData(dataState?.copy(feedItems = newFeedItems))
             }
             .addToDisposable()
     }
 
     fun refreshReleases() {
-        loadData(Paginator.FIRST_PAGE)
+        loadingController.refresh()
     }
 
     fun loadMore() {
-        loadData(currentPage + 1)
-    }
-
-    private fun findRelease(id: Int): ReleaseItem? {
-        return currentItems.mapNotNull { it.release }.firstOrNull { it.id == id }
-    }
-
-    private fun findYoutube(id: Int): YoutubeItem? {
-        return currentItems.mapNotNull { it.youtube }.firstOrNull { it.id == id }
+        loadingController.loadMore()
     }
 
     fun onScheduleScroll(position: Int) {
@@ -283,5 +182,90 @@ class FeedPresenter @Inject constructor(
         val releaseItem = findRelease(item.id) ?: return
         ShortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
+    }
+
+    private fun findRelease(id: Int): ReleaseItem? {
+        return currentItems.mapNotNull { it.release }.firstOrNull { it.id == id }
+    }
+
+    private fun findYoutube(id: Int): YoutubeItem? {
+        return currentItems.mapNotNull { it.youtube }.firstOrNull { it.id == id }
+    }
+
+    private fun submitPageAnalytics(page: Int) {
+        if (lastLoadedPage != page) {
+            feedAnalytics.loadPage(page)
+            lastLoadedPage = page
+        }
+    }
+
+    private fun updateState(block: (FeedScreenState) -> FeedScreenState) {
+        currentState = block.invoke(currentState)
+        viewState.showState(currentState)
+    }
+
+    private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
+        .getFeed(page)
+        .doOnSuccess {
+            if (page == Paginator.FIRST_PAGE) {
+                currentItems.clear()
+            }
+            currentItems.addAll(it)
+        }
+
+    private fun getScheduleSource(): Single<FeedScheduleState> = scheduleRepository
+        .loadSchedule()
+        .map { scheduleDays ->
+            val currentTime = System.currentTimeMillis()
+            val mskTime = System.currentTimeMillis().asMsk()
+
+            val mskDay = mskTime.getDayOfWeek()
+
+            val asSameDay = Date(currentTime).isSameDay(Date(mskTime))
+            val dayTitle = if (asSameDay) {
+                "Ожидается сегодня"
+            } else {
+                val preText = mskDay.asDayPretext()
+                val dayName = mskDay.asDayNameDeclension().toLowerCase()
+                "Ожидается $preText $dayName (по МСК)"
+            }
+
+            val items = scheduleDays
+                .firstOrNull { it.day == mskDay }
+                ?.items
+                ?.map { it.toState() }
+                .orEmpty()
+
+            FeedScheduleState(dayTitle, items)
+        }
+
+
+    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<FeedDataState>> {
+        val feedSource = getFeedSource(params.page)
+        val scheduleDataSource = if (params.isFirstPage) {
+            getScheduleSource()
+        } else {
+            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
+        }
+        return Single
+            .zip(
+                feedSource,
+                scheduleDataSource,
+                BiFunction { feedItems: List<FeedItem>, scheduleState: FeedScheduleState ->
+                    Pair(feedItems, scheduleState)
+                }
+            )
+            .map { (feedItems, scheduleState) ->
+                val feedDataState = FeedDataState(
+                    feedItems = currentItems.map { it.toState() },
+                    schedule = scheduleState
+                )
+                ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
+            }
+            .doOnError {
+                if (params.isFirstPage) {
+                    errorHandler.handle(it)
+                }
+            }
     }
 }

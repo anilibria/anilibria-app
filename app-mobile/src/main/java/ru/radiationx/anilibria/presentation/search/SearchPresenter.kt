@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.ScreenStateController
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -68,7 +68,7 @@ class SearchPresenter @Inject constructor(
         submitPageAnalytics(it.page)
         getDataSource(it)
     }.addToDisposable()
-    private val stateController = ScreenStateController(SearchScreenState())
+    private val stateController = StateController(SearchScreenState())
 
     private fun findRelease(id: Int): ReleaseItem? {
         return currentItems.find { it.id == id }

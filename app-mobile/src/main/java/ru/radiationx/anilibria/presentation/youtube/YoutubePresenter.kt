@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -33,17 +34,24 @@ class YoutubePresenter @Inject constructor(
         getDataSource(it)
     }.addToDisposable()
 
+    private val stateController = StateController(YoutubeScreenState())
+
     private var currentRawItems = mutableListOf<YoutubeItem>()
-    private var currentState = YoutubeScreenState()
 
     private var lastLoadedPage: Int? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
         loadingController
             .observeState()
             .subscribe { loadingState ->
-                updateState {
+                stateController.updateState {
                     it.copy(data = loadingState)
                 }
             }
@@ -64,11 +72,6 @@ class YoutubePresenter @Inject constructor(
         youtubeVideosAnalytics.videoClick()
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id, rawItem.vid)
         Utils.externalLink(rawItem.link)
-    }
-
-    private fun updateState(block: (YoutubeScreenState) -> YoutubeScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
     }
 
     private fun submitPageAnalytics(page: Int) {

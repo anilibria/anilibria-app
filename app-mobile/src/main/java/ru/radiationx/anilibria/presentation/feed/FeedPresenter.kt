@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
@@ -56,20 +57,25 @@ class FeedPresenter @Inject constructor(
         getDataSource(it)
     }.addToDisposable()
 
+    private val stateController = StateController(FeedScreenState())
+
     private var randomDisposable = Disposables.disposed()
 
     private var lastLoadedPage: Int? = null
 
     private val currentItems = mutableListOf<FeedItem>()
 
-    private var currentState = FeedScreenState()
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
         loadingController.observeState()
             .subscribe { loadingState ->
-                updateState {
+                stateController.updateState {
                     it.copy(data = loadingState)
                 }
             }
@@ -199,11 +205,6 @@ class FeedPresenter @Inject constructor(
         }
     }
 
-    private fun updateState(block: (FeedScreenState) -> FeedScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
-    }
-
     private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
         .getFeed(page)
         .doOnSuccess {
@@ -245,7 +246,8 @@ class FeedPresenter @Inject constructor(
         val scheduleDataSource = if (params.isFirstPage) {
             getScheduleSource()
         } else {
-            currentState.data.data?.schedule?.let { Single.just(it) } ?: getScheduleSource()
+            loadingController.currentState.data?.schedule?.let { Single.just(it) }
+                ?: getScheduleSource()
         }
         return Single
             .zip(

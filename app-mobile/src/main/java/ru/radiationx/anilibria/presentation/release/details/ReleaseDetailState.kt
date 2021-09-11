@@ -4,9 +4,15 @@ import ru.radiationx.data.entity.app.release.ReleaseFull
 
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
+    val modifiers: ReleaseDetailModifiersState = ReleaseDetailModifiersState(),
+    val remindText: String? = null
+)
+
+data class ReleaseDetailModifiersState(
     val episodesType: ReleaseFull.Episode.Type = ReleaseFull.Episode.Type.ONLINE,
-    val remindText: String? = null,
-    val favoriteRefreshing: Boolean = false
+    val favoriteRefreshing: Boolean = false,
+    val episodesReversed: Boolean = false,
+    val descriptionExpanded: Boolean = false
 )
 
 data class ReleaseDetailState(
@@ -31,8 +37,7 @@ data class ReleaseInfoState(
 
 data class ReleaseFavoriteState(
     val rating: String,
-    val isAdded: Boolean,
-    val isRefreshing: Boolean
+    val isAdded: Boolean
 )
 
 data class ReleaseEpisodeItemState(

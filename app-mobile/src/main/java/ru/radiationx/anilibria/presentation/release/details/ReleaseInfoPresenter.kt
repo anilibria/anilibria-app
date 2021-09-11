@@ -15,7 +15,7 @@ import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.common.AuthState
@@ -35,7 +35,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
-    private val apiConfig: ApiConfig,
+    private val appPreferences: PreferencesHolder,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -45,11 +45,22 @@ class ReleaseInfoPresenter @Inject constructor(
     private val donationDetailAnalytics: DonationDetailAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
+    private val remindText =
+        "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
+
     private var currentData: ReleaseFull? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
     private val stateController = StateController(ReleaseDetailScreenState())
+
+    private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
+        stateController.updateState {
+            it.copy(
+                modifiers = block.invoke(it.modifiers)
+            )
+        }
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -57,6 +68,25 @@ class ReleaseInfoPresenter @Inject constructor(
         stateController
             .observeState()
             .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        appPreferences
+            .observeEpisodesIsReverse()
+            .subscribe { episodesReversed ->
+                updateModifiers {
+                    it.copy(episodesReversed = episodesReversed)
+                }
+
+            }
+            .addToDisposable()
+
+        appPreferences
+            .observeReleaseRemind()
+            .subscribe { remindEnabled ->
+                stateController.updateState {
+                    it.copy(remindText = remindText.takeIf { remindEnabled })
+                }
+            }
             .addToDisposable()
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
@@ -132,11 +162,13 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onEpisodeTabClick(type: ReleaseFull.Episode.Type) {
-
+        updateModifiers {
+            it.copy(episodesType = type)
+        }
     }
 
     fun onRemindCloseClick() {
-
+        appPreferences.releaseRemind = false
     }
 
     fun onTorrentClick(item: ReleaseTorrentItemState) {
@@ -204,7 +236,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-        when (stateController.currentState.episodesType) {
+        when (stateController.currentState.modifiers.episodesType) {
             ReleaseFull.Episode.Type.ONLINE -> {
                 releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
             }
@@ -222,7 +254,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun getEpisodeItem(episodeId: Int): ReleaseFull.Episode? {
         val release = currentData ?: return null
-        val episodes = when (stateController.currentState.episodesType) {
+        val episodes = when (stateController.currentState.modifiers.episodesType) {
             ReleaseFull.Episode.Type.ONLINE -> release.episodes
             ReleaseFull.Episode.Type.SOURCE -> release.episodesSource
         }
@@ -269,12 +301,12 @@ class ReleaseInfoPresenter @Inject constructor(
 
         source
             .doOnSubscribe {
-                stateController.updateState {
+                updateModifiers {
                     it.copy(favoriteRefreshing = true)
                 }
             }
             .doAfterTerminate {
-                stateController.updateState {
+                updateModifiers {
                     it.copy(favoriteRefreshing = false)
                 }
             }
@@ -304,9 +336,12 @@ class ReleaseInfoPresenter @Inject constructor(
         router.navigateTo(Screens.Schedule(day))
     }
 
-    fun onDescriptionExpandChanged(isExpanded: Boolean) {
+    fun onDescriptionExpandClick() {
+        updateModifiers {
+            it.copy(descriptionExpanded = !it.descriptionExpanded)
+        }
         currentData?.also {
-            if (isExpanded) {
+            if (stateController.currentState.modifiers.descriptionExpanded) {
                 releaseAnalytics.descriptionExpand(it.id)
             }
         }

@@ -34,6 +34,8 @@ class PreferencesStorage @Inject constructor(
     private val notificationsServiceRelay =
         BehaviorRelay.createDefault<Boolean>(notificationsService)
     private val searchRemindRelay = BehaviorRelay.createDefault<Boolean>(searchRemind)
+    private val releaseRemindRelay = BehaviorRelay.createDefault<Boolean>(releaseRemind)
+    private val episodesIsReverseRelay = BehaviorRelay.createDefault<Boolean>(episodesIsReverse)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -44,6 +46,8 @@ class PreferencesStorage @Inject constructor(
             QUALITY_KEY -> qualityRelay.accept(getQuality())
             PLAY_SPEED_KEY -> playSpeedRelay.accept(playSpeed)
             SEARCH_REMIND_KEY -> searchRemindRelay.accept(searchRemind)
+            RELEASE_REMIND_KEY -> releaseRemindRelay.accept(releaseRemind)
+            EPISODES_IS_REVERSE_KEY -> episodesIsReverseRelay.accept(episodesIsReverse)
         }
     }
 
@@ -51,13 +55,11 @@ class PreferencesStorage @Inject constructor(
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 
-    override fun getReleaseRemind(): Boolean {
-        return sharedPreferences.getBoolean(RELEASE_REMIND_KEY, true)
-    }
+    override fun observeReleaseRemind(): Observable<Boolean> = releaseRemindRelay.hide()
 
-    override fun setReleaseRemind(state: Boolean) {
-        sharedPreferences.edit().putBoolean(RELEASE_REMIND_KEY, state).apply()
-    }
+    override var releaseRemind: Boolean
+        get() = sharedPreferences.getBoolean(RELEASE_REMIND_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(RELEASE_REMIND_KEY, value).apply()
 
     override fun observeSearchRemind(): Observable<Boolean> = searchRemindRelay.hide()
 
@@ -65,9 +67,10 @@ class PreferencesStorage @Inject constructor(
         get() = sharedPreferences.getBoolean(SEARCH_REMIND_KEY, true)
         set(value) = sharedPreferences.edit().putBoolean(SEARCH_REMIND_KEY, value).apply()
 
-    override fun getEpisodesIsReverse(): Boolean {
-        return sharedPreferences.getBoolean(EPISODES_IS_REVERSE_KEY, false)
-    }
+    override fun observeEpisodesIsReverse(): Observable<Boolean> = episodesIsReverseRelay.hide()
+
+    override val episodesIsReverse: Boolean
+        get() = sharedPreferences.getBoolean(EPISODES_IS_REVERSE_KEY, false)
 
     override fun getQuality(): Int {
         return sharedPreferences.getInt(QUALITY_KEY, PreferencesHolder.QUALITY_NO)

@@ -11,9 +11,7 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.shared_app.di.DI
 
 class ReleaseInfoAdapter(
     private val headListener: ReleaseHeadDelegate.Listener,
@@ -25,13 +23,6 @@ class ReleaseInfoAdapter(
     private val episodesTabListener: (ReleaseFull.Episode.Type) -> Unit,
     private val remindCloseListener: () -> Unit
 ) : ListItemAdapter() {
-
-    private val appPreferences: PreferencesHolder = DI.get(PreferencesHolder::class.java)
-
-    private val remindText =
-        "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
-
-    private var reverseEpisodes = appPreferences.getEpisodesIsReverse()
 
     init {
         addDelegate(ReleaseHeadDelegate(headListener))
@@ -49,6 +40,7 @@ class ReleaseInfoAdapter(
     }
 
     fun bindState(releaseState: ReleaseDetailState, screenState: ReleaseDetailScreenState) {
+        val modifications = screenState.modifiers
         val newItems = mutableListOf<ListItem>()
 
         newItems.add(
@@ -57,7 +49,13 @@ class ReleaseInfoAdapter(
                 EpisodeControlPlace.TOP
             )
         )
-        newItems.add(ReleaseHeadListItem("head", releaseState.info))
+        newItems.add(
+            ReleaseHeadListItem(
+                "head",
+                releaseState.info,
+                modifications
+            )
+        )
         newItems.add(DividerShadowListItem("head"))
 
         if (releaseState.blockedInfo != null) {
@@ -92,13 +90,17 @@ class ReleaseInfoAdapter(
                     )
                 )
             }
-            newItems.add(ReleaseEpisodesHeadListItem(screenState.episodesType))
+            newItems.add(ReleaseEpisodesHeadListItem("tabs", modifications.episodesType))
 
-            val episodes = releaseState.episodes[screenState.episodesType].orEmpty()
+            val episodes = releaseState.episodes[modifications.episodesType].orEmpty()
             val episodeListItems = episodes.mapIndexed { index, episode ->
                 ReleaseEpisodeListItem(episode, index % 2 == 0)
             }
-            newItems.addAll(episodeListItems)
+            if (modifications.episodesReversed) {
+                newItems.addAll(episodeListItems.asReversed())
+            } else {
+                newItems.addAll(episodeListItems)
+            }
 
             newItems.add(DividerShadowListItem("episodes"))
         }

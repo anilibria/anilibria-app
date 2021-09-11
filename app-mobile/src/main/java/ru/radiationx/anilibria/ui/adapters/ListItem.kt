@@ -75,11 +75,19 @@ data class ReleaseEpisodeControlItem(
     val place: EpisodeControlPlace
 ) : ListItem(place)
 
-data class ReleaseEpisodesHeadListItem(val episodeType: ReleaseFull.Episode.Type) : ListItem(episodeType)
+data class ReleaseEpisodesHeadListItem(
+    val id: Any,
+    val episodeType: ReleaseFull.Episode.Type
+) : ListItem(id)
+
 data class ReleaseDonateListItem(val id: Any) : ListItem(id)
 data class ReleaseRemindListItem(val text: String) : ListItem(text)
 data class ReleaseBlockedListItem(val state: ReleaseBlockedInfoState) : ListItem(state.title)
-data class ReleaseHeadListItem(val id: Any, val item: ReleaseInfoState) : ListItem(id)
+data class ReleaseHeadListItem(
+    val id: Any,
+    val item: ReleaseInfoState,
+    val modifiers: ReleaseDetailModifiersState
+) : ListItem(id)
 
 
 /* Search screen */

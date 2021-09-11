@@ -15,13 +15,12 @@ fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
         ReleaseFull.Episode.Type.SOURCE to episodesSource.map { it.toState() }
     ),
     torrents = torrents.map { it.toState() },
-    blockedInfo = blockedInfo.toState()
+    blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
 )
 
 fun FavoriteInfo.toState() = ReleaseFavoriteState(
     rating = rating.toString(),
-    isAdded = isAdded,
-    isRefreshing = false
+    isAdded = isAdded
 )
 
 fun ReleaseFull.toInfoState(): ReleaseInfoState {

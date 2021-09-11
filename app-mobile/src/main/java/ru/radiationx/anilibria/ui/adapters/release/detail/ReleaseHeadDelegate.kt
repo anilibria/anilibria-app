@@ -5,10 +5,10 @@ import android.view.View
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import at.blogc.android.views.ExpandableTextView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_new.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailModifiersState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseFavoriteState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -28,7 +28,8 @@ class ReleaseHeadDelegate(
     { ViewHolder(it, itemListener) }
 ) {
 
-    override fun bindData(item: ReleaseHeadListItem, holder: ViewHolder) = holder.bind(item.item)
+    override fun bindData(item: ReleaseHeadListItem, holder: ViewHolder) =
+        holder.bind(item.item, item.modifiers)
 
     class ViewHolder(
         override val containerView: View,
@@ -39,23 +40,9 @@ class ReleaseHeadDelegate(
             full_fav_btn.setOnClickListener {
                 itemListener.onClickFav()
             }
-
             full_days_bar.clickListener = {
                 itemListener.onScheduleClick(it)
             }
-
-            full_description.addOnExpandListener(object :
-                ExpandableTextView.SimpleOnExpandListener() {
-                override fun onExpand(view: ExpandableTextView) {
-                    super.onExpand(view)
-                    updateDescription(true)
-                }
-
-                override fun onCollapse(view: ExpandableTextView) {
-                    super.onCollapse(view)
-                    updateDescription(false)
-                }
-            })
             full_info.movementMethod = LinkMovementMethod {
                 itemListener.onClickTag(it)
                 true
@@ -68,18 +55,17 @@ class ReleaseHeadDelegate(
                 itemListener.onClickSomeLink(it)
                 true
             }
-
             full_description_expander.setOnClickListener {
-                full_description.toggle()
+                itemListener.onExpandClick()
             }
         }
 
-        fun bind(state: ReleaseInfoState) {
+        fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             full_title.text = state.titleRus
             full_title_en.text = state.titleEng
             full_description.text = Html.fromHtml(state.description)
             full_description.doOnLayout {
-                updateDescription()
+                updateDescription(modifiers.descriptionExpanded)
             }
             full_info.text = Html.fromHtml(state.info)
 
@@ -90,28 +76,31 @@ class ReleaseHeadDelegate(
             full_announce.isVisible = state.announce != null
             full_announce.text = state.announce?.let { Html.fromHtml(it) }
 
-            bindFavorite(state.favorite)
+            bindFavorite(state.favorite, modifiers.favoriteRefreshing)
         }
 
-        private fun bindFavorite(state: ReleaseFavoriteState) {
+        private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {
             full_fav_count.text = state.rating
 
             val iconRes = if (state.isAdded) R.drawable.ic_fav else R.drawable.ic_fav_border
             full_fav_icon.setCompatDrawable(iconRes)
 
-            full_fav_icon.isVisible = !state.isRefreshing
-            full_fav_progress.isVisible = state.isRefreshing
+            full_fav_icon.isVisible = !favoritesRefresh
+            full_fav_progress.isVisible = favoritesRefresh
 
             full_fav_btn.isSelected = state.isAdded
-            full_fav_btn.isClickable = !state.isRefreshing
+            full_fav_btn.isClickable = !favoritesRefresh
         }
 
-        private fun updateDescription(isExpanded: Boolean? = null) {
-            val newExpanded = isExpanded ?: full_description.isExpanded
+        private fun updateDescription(isExpanded: Boolean) {
             val expanderVisible = full_description.lineCount > full_description.maxLines
-            itemListener.onExpandStateChanged(newExpanded)
+            if (isExpanded) {
+                full_description.expand()
+            } else {
+                full_description.collapse()
+            }
             full_description_expander.isVisible = expanderVisible
-            full_description_expander.text = if (newExpanded) {
+            full_description_expander.text = if (isExpanded) {
                 "Скрыть"
             } else {
                 "Раскрыть"
@@ -128,6 +117,6 @@ class ReleaseHeadDelegate(
 
         fun onScheduleClick(day: Int)
 
-        fun onExpandStateChanged(isExpanded: Boolean)
+        fun onExpandClick()
     }
 }

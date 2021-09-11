@@ -480,8 +480,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             presenter.onScheduleClick(day)
         }
 
-        override fun onExpandStateChanged(isExpanded: Boolean) {
-            presenter.onDescriptionExpandChanged(isExpanded)
+        override fun onExpandClick() {
+            presenter.onDescriptionExpandClick()
         }
     }
 

@@ -10,13 +10,20 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.entity.common.AuthState
 
-fun ReleaseItem.toState() = ReleaseItemState(
-    id = id,
-    title = title.orEmpty(),
-    description = description.orEmpty(),
-    posterUrl = poster.orEmpty(),
-    isNew = isNew
-)
+fun ReleaseItem.toState(): ReleaseItemState {
+    val title = if (series == null) {
+        title.toString()
+    } else {
+        "$title ($series)"
+    }
+    return ReleaseItemState(
+        id = id,
+        title = title,
+        description = description.orEmpty(),
+        posterUrl = poster.orEmpty(),
+        isNew = isNew
+    )
+}
 
 fun YoutubeItem.toState() = YoutubeItemState(
     id = id,

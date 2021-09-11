@@ -1,15 +1,20 @@
 package ru.radiationx.anilibria.presentation.search
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.release.list.ReleasesView
+import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface SearchCatalogView : ReleasesView {
+interface SearchCatalogView : MvpView {
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showState(state: SearchScreenState)
+
     fun updateInfo(sort: String, filters: Int)
 
     fun showGenres(genres: List<GenreItem>)

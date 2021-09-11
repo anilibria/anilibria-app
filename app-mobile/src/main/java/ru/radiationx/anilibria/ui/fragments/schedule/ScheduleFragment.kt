@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_list_refresh.*
@@ -9,15 +8,15 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared_app.di.injectDependencies
 
 class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
 
@@ -29,11 +28,11 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     }
 
     private val scheduleAdapter = ScheduleAdapter(
-        scheduleClickListener = { item, view, position->
+        scheduleClickListener = { item, view, position ->
             this.sharedViewLocal = view
-            presenter.onItemClick(item.releaseItem,position)
+            presenter.onItemClick(item, position)
         },
-        scrollListener = {position->
+        scrollListener = { position ->
             presenter.onHorizontalScroll(position)
         }
     )
@@ -42,7 +41,8 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
     lateinit var presenter: SchedulePresenter
 
     @ProvidePresenter
-    fun providePresenter(): SchedulePresenter = getDependency(SchedulePresenter::class.java, screenScope)
+    fun providePresenter(): SchedulePresenter =
+        getDependency(SchedulePresenter::class.java, screenScope)
 
     override var sharedViewLocal: View? = null
 
@@ -79,6 +79,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         recyclerView.apply {
             adapter = scheduleAdapter
             layoutManager = LinearLayoutManager(this.context)
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(recyclerView, appbarLayout) {
@@ -106,19 +107,15 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         return true
     }
 
-    override fun showSchedules(items: List<Pair<String, List<ScheduleItem>>>) {
-        scheduleAdapter.bindItems(items)
+    override fun showState(state: ScheduleScreenState) {
+        refreshLayout.isRefreshing = state.refreshing
+        scheduleAdapter.bindState(state)
     }
 
-    override fun scrollToDay(item: Pair<String, List<ScheduleItem>>) {
-        val position = scheduleAdapter.getPositionByDay(item)
-        Log.e("ninini", "scrollToDay ${item.first} -> $position")
+    override fun scrollToDay(day: ScheduleDayState) {
+        val position = scheduleAdapter.getPositionByDay(day)
         (recyclerView.layoutManager as? LinearLayoutManager)?.also {
             it.scrollToPositionWithOffset(position, 0)
         }
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
     }
 }

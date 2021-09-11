@@ -9,19 +9,20 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_schedules.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.addItemsPositionListener
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
-import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.shared.ktx.android.inflate
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class FeedSchedulesDelegate(
-    private val clickListener: (ScheduleItem, View, Int) -> Unit,
+    private val clickListener: (ScheduleItemState, View, Int) -> Unit,
     private val scrollListener: (Int) -> Unit
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
     R.layout.item_feed_schedules,
@@ -45,12 +46,12 @@ class FeedSchedulesDelegate(
 
     class ViewHolder(
         override val containerView: View,
-        private val clickListener: (ScheduleItem, View, Int) -> Unit,
+        private val clickListener: (ScheduleItemState, View, Int) -> Unit,
         private val scrollListener: (Int) -> Unit,
         private val viewPool: RecyclerView.RecycledViewPool? = null
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
 
-        private val currentItems = mutableListOf<ScheduleItem>()
+        private val currentItems = mutableListOf<ScheduleItemState>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
 
         init {
@@ -59,6 +60,7 @@ class FeedSchedulesDelegate(
                 isNestedScrollingEnabled = false
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = scheduleAdapter
+                disableItemChangeAnimation()
                 viewPool?.also {
                     setRecycledViewPool(it)
                 }
@@ -72,7 +74,7 @@ class FeedSchedulesDelegate(
             }
         }
 
-        fun bind(items: List<ScheduleItem>) {
+        fun bind(items: List<ScheduleItemState>) {
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)

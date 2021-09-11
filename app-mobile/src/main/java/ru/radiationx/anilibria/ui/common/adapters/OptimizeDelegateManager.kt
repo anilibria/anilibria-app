@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.common.adapters
 
 import android.util.SparseIntArray
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager
 
 class OptimizeDelegateManager<T> : AdapterDelegatesManager<T>() {
 

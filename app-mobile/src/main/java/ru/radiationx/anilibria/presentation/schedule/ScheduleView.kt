@@ -1,15 +1,18 @@
 package ru.radiationx.anilibria.presentation.schedule
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.common.IBaseView
-import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleDayState
+import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleScreenState
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ScheduleView : IBaseView {
-    fun showSchedules(items: List<Pair<String, List<ScheduleItem>>>)
+interface ScheduleView : MvpView {
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showState(state: ScheduleScreenState)
 
     @StateStrategyType(SkipStrategy::class)
-    fun scrollToDay(item:Pair<String, List<ScheduleItem>>)
+    fun scrollToDay(day: ScheduleDayState)
 }

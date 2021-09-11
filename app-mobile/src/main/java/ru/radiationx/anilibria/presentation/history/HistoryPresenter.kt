@@ -1,8 +1,14 @@
 package ru.radiationx.anilibria.presentation.history
 
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.ui.fragments.history.HistoryScreenState
+import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
@@ -23,70 +29,96 @@ class HistoryPresenter @Inject constructor(
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<ReleaseItem>()
+    private val stateController = StateController(HistoryScreenState())
 
     private var isSearchEnabled: Boolean = false
+    private var currentQuery: String = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
         observeReleases()
     }
 
     private fun observeReleases() {
         historyRepository
             .observeReleases()
-            .subscribe {
+            .subscribe { releases ->
                 currentReleases.clear()
-                currentReleases.addAll(it)
-                viewState.showReleases(it)
+                currentReleases.addAll(releases)
+
+                stateController.updateState {
+                    it.copy(items = currentReleases.map { it.toState() })
+                }
+
+                updateSearchState()
             }
             .addToDisposable()
     }
 
-    fun localSearch(query: String) {
-        isSearchEnabled = query.isNotEmpty()
-        if (query.isNotEmpty()) {
-            val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty()
-                    .contains(query, true)
+    private fun updateSearchState() {
+        isSearchEnabled = currentQuery.isNotEmpty()
+        val searchItes = if (currentQuery.isNotEmpty()) {
+            currentReleases.filter {
+                it.title.orEmpty().contains(currentQuery, true)
+                        || it.titleEng.orEmpty().contains(currentQuery, true)
             }
-            viewState.showReleases(searchRes)
         } else {
-            viewState.showReleases(currentReleases)
+            emptyList()
+        }
+        stateController.updateState {
+            it.copy(searchItems = searchItes.map { it.toState() })
         }
     }
 
-    fun onItemClick(item: ReleaseItem) {
+    private fun findRelease(id: Int): ReleaseItem? {
+        return currentReleases.find { it.id == id }
+    }
+
+    fun localSearch(query: String) {
+        currentQuery = query
+        updateSearchState()
+    }
+
+    fun onItemClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
         if (isSearchEnabled) {
             historyAnalytics.searchReleaseClick()
         } else {
             historyAnalytics.releaseClick()
         }
-        releaseAnalytics.open(AnalyticsConstants.screen_history, item.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+        releaseAnalytics.open(AnalyticsConstants.screen_history, releaseItem.id)
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    fun onDeleteClick(item: ReleaseItem) {
+    fun onDeleteClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
         historyAnalytics.releaseDeleteClick()
-        historyRepository.removeRelease(item.id)
+        historyRepository.removeRelease(releaseItem.id)
     }
 
-    fun onCopyClick(item:ReleaseItem){
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, item.id)
+    fun onCopyClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, releaseItem.id)
     }
 
-    fun onShareClick(item: ReleaseItem){
-        releaseAnalytics.share(AnalyticsConstants.screen_history, item.id)
+    fun onShareClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.shareText(releaseItem.link.orEmpty())
+        releaseAnalytics.share(AnalyticsConstants.screen_history, releaseItem.id)
     }
 
-    fun onShortcutClick(item: ReleaseItem){
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, item.id)
+    fun onShortcutClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        ShortcutHelper.addShortcut(releaseItem)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, releaseItem.id)
     }
 
     fun onSearchClick() {
         historyAnalytics.searchClick()
-    }
-
-    fun onItemLongClick(item: ReleaseItem): Boolean {
-        return false
     }
 }

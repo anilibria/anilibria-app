@@ -13,22 +13,23 @@ import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
  * Created by radiationx on 21.01.18.
  */
 class ReleaseRemindDelegate(
-        private val itemListener: Listener
+    private val itemListener: () -> Unit
 ) : AppAdapterDelegate<ReleaseRemindListItem, ListItem, ReleaseRemindDelegate.ViewHolder>(
-        R.layout.item_release_remind,
-        { it is ReleaseRemindListItem },
-        { ViewHolder(it, itemListener) }
+    R.layout.item_release_remind,
+    { it is ReleaseRemindListItem },
+    { ViewHolder(it, itemListener) }
 ) {
 
-    override fun bindData(item: ReleaseRemindListItem, holder: ViewHolder) = holder.bind(item.item)
+    override fun bindData(item: ReleaseRemindListItem, holder: ViewHolder) = holder.bind(item.text)
 
     class ViewHolder(
-            override val containerView: View,
-            private val itemListener: Listener
+        override val containerView: View,
+        private val itemListener: () -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
         init {
             remindClose.setOnClickListener {
-                itemListener.onClickClose(layoutPosition)
+                itemListener.invoke()
             }
         }
 
@@ -37,7 +38,4 @@ class ReleaseRemindDelegate(
         }
     }
 
-    interface Listener {
-        fun onClickClose(position: Int)
-    }
 }

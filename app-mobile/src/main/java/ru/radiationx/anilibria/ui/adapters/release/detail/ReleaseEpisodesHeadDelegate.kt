@@ -9,64 +9,54 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.data.entity.app.release.ReleaseFull
 
 /**
  * Created by radiationx on 21.01.18.
  */
 class ReleaseEpisodesHeadDelegate(
-        private val itemListener: Listener
+    private val itemListener: (ReleaseFull.Episode.Type) -> Unit
 ) : AppAdapterDelegate<ReleaseEpisodesHeadListItem, ListItem, ReleaseEpisodesHeadDelegate.ViewHolder>(
-        R.layout.item_release_head_episodes,
-        { it is ReleaseEpisodesHeadListItem },
-        { ViewHolder(it, itemListener) }
+    R.layout.item_release_head_episodes,
+    { it is ReleaseEpisodesHeadListItem },
+    { ViewHolder(it, itemListener) }
 ) {
 
-    companion object {
-        const val TAG_ONLINE = "online"
-        const val TAG_DOWNLOAD = "download"
-    }
-
-    override fun bindData(item: ReleaseEpisodesHeadListItem, holder: ViewHolder) = holder.bind(item.tabTag)
+    override fun bindData(item: ReleaseEpisodesHeadListItem, holder: ViewHolder) =
+        holder.bind(item.episodeType)
 
     class ViewHolder(
-            override val containerView: View,
-            private val itemListener: Listener
+        override val containerView: View,
+        private val itemListener: (ReleaseFull.Episode.Type) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private val tabListener = object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
+            override fun onTabReselected(tab: TabLayout.Tab) {}
 
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tab?.let {
-                    itemListener.onSelect(it.tag as String, layoutPosition)
-                }
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                itemListener.invoke(tab.tag as ReleaseFull.Episode.Type)
             }
         }
 
         init {
-            tabLayout.addTab(tabLayout.newTab().setText("Онлайн").setTag(TAG_ONLINE))
-            tabLayout.addTab(tabLayout.newTab().setText("Скачать").setTag(TAG_DOWNLOAD))
+            tabLayout.addTab(
+                tabLayout.newTab().setText("Онлайн").setTag(ReleaseFull.Episode.Type.ONLINE)
+            )
+            tabLayout.addTab(
+                tabLayout.newTab().setText("Скачать").setTag(ReleaseFull.Episode.Type.SOURCE)
+            )
             tabLayout.addOnTabSelectedListener(tabListener)
         }
 
-        fun bind(tabTag: String) {
-            (0 until tabLayout.tabCount).forEach {
-                tabLayout.getTabAt(it)?.let {
-                    if (it.tag == tabTag) {
-                        //todo Чеита падает, например осамацу 2, вкладка скачать
-                        //it.select()
-                    }
-                }
-            }
+        fun bind(episodeType: ReleaseFull.Episode.Type) {
+            tabLayout.removeOnTabSelectedListener(tabListener)
+            (0 until tabLayout.tabCount)
+                .mapNotNull { tabLayout.getTabAt(it) }
+                .firstOrNull { it.tag == episodeType }
+                ?.also { tabLayout.selectTab(it) }
+            tabLayout.addOnTabSelectedListener(tabListener)
         }
-    }
-
-    interface Listener {
-        fun onSelect(tabTag: String, position: Int)
     }
 }

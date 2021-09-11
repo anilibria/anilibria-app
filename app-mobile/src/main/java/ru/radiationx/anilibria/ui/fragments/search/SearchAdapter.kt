@@ -1,45 +1,74 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.shared_app.di.DI
-import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
-import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
+import android.os.Handler
+import androidx.recyclerview.widget.RecyclerView
+import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
+import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
+import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
 
 /**
  * Created by radiationx on 04.03.18.
  */
-class SearchAdapter(listener: ItemListener, placeholder: PlaceholderListItem) : ReleasesAdapter(listener, placeholder) {
-
-    private val remindText = "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
-
-    private val appPreferences = DI.get(PreferencesHolder::class.java)
-
-    private val remindCloseListener = object : ReleaseRemindDelegate.Listener {
-        override fun onClickClose(position: Int) {
-            items.removeAt(position)
-            notifyItemRangeRemoved(position, 1)
-            appPreferences.setSearchRemind(false)
-        }
-    }
+class SearchAdapter(
+    private val loadRetryListener: () -> Unit,
+    private val listener: ReleasesAdapter.ItemListener,
+    private val remindCloseListener: () -> Unit,
+    private val placeholder: PlaceholderListItem
+) : ListItemAdapter() {
 
     init {
         delegatesManager.run {
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
+            addDelegate(ReleaseItemDelegate(listener))
+            addDelegate(LoadMoreDelegate(null))
+            addDelegate(LoadErrorDelegate(loadRetryListener))
+            addDelegate(PlaceholderDelegate())
         }
     }
 
-    override fun bindItems(newItems: List<ReleaseItem>) {
-        this.items.clear()
-        if (newItems.isEmpty() && appPreferences.getSearchRemind()) {
-            items.add(ReleaseRemindListItem(remindText))
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any?>
+    ) {
+        super.onBindViewHolder(holder, position, payloads)
+
+        val threshold = (items.lastIndex - position)
+        if (threshold <= 3) {
+            Handler().post {
+                listener.onLoadMore()
+            }
         }
-        this.items.addAll(newItems.map { ReleaseListItem(it) })
-        updatePlaceholder(newItems.isEmpty())
-        addLoadMore()
-        notifyDataSetChanged()
+    }
+
+    fun bindState(state: SearchScreenState) {
+        val newItems = mutableListOf<ListItem>()
+
+        val loadingState = state.data
+
+        if (loadingState.data?.isEmpty() == true && !loadingState.emptyLoading) {
+            state.remindText?.also {
+                newItems.add(ReleaseRemindListItem(it))
+            }
+            newItems.add(placeholder)
+        }
+
+        loadingState.data?.let { data ->
+            newItems.addAll(data.map { ReleaseListItem(it) })
+        }
+
+        if (loadingState.hasMorePages) {
+            if (loadingState.error != null) {
+                newItems.add(LoadErrorListItem("bottom"))
+            } else if (loadingState.moreLoading) {
+                newItems.add(LoadMoreListItem("bottom"))
+            }
+        }
+
+        items = newItems
     }
 }

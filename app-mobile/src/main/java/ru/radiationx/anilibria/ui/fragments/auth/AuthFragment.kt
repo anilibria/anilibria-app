@@ -9,13 +9,14 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -58,6 +59,7 @@ class AuthFragment : BaseFragment(), AuthView {
         authSocialList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = socialAuthAdapter
+            disableItemChangeAnimation()
         }
 
         authSubmit.setOnClickListener { presenter.signIn() }
@@ -94,15 +96,15 @@ class AuthFragment : BaseFragment(), AuthView {
         authSwitcher.displayedChild = if (refreshing) 1 else 0
     }
 
-    override fun showSocial(items: List<SocialAuth>) {
+    override fun showSocial(items: List<SocialAuthItemState>) {
         authSocialTop.visible(items.isNotEmpty())
         authSocialContent.visible(items.isNotEmpty())
         authSocialBottom.visible(items.isNotEmpty())
         socialAuthAdapter.bindItems(items)
     }
 
-    private fun onSocialClick(item: SocialAuth) {
-        AlertDialog.Builder(context!!)
+    private fun onSocialClick(item: SocialAuthItemState) {
+        AlertDialog.Builder(requireContext())
             .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
             .setPositiveButton("Продолжить") { _, _ ->
                 presenter.onSocialClick(item)

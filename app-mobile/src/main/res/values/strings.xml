@@ -24,6 +24,7 @@
     <string name="comments_header">Комментарии</string>
     <string name="comments_notify_text">Сделайте свайп влево, чтобы открыть комментарии</string>
     <string name="loading">Загрузка</string>
+    <string name="item_loading_error">Произошла ошибка</string>
 
     <string name="placeholder_title_nodata_base">Нет данных</string>
     <string name="placeholder_title_errordata_base">Ошибка при загрузке данных</string>

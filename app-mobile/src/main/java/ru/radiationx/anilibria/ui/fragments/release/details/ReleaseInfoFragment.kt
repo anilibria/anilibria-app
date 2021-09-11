@@ -21,6 +21,9 @@ import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
+import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
@@ -36,7 +39,6 @@ import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.shared_app.di.injectDependencies
 import java.net.URLConnection
-import java.text.DecimalFormat
 import java.util.regex.Pattern
 
 @RuntimePermissions
@@ -54,7 +56,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             episodeControlListener = episodeControlListener,
             donateListener = donateListener,
             torrentClickListener = presenter::onTorrentClick,
-            commentsClickListener = presenter::onCommentsClick
+            commentsClickListener = presenter::onCommentsClick,
+            episodesTabListener = presenter::onEpisodeTabClick,
+            remindCloseListener = presenter::onRemindCloseClick
         )
     }
 
@@ -84,6 +88,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             layoutManager = LinearLayoutManager(context)
             adapter = releaseInfoAdapter
             setHasFixedSize(true)
+            disableItemChangeAnimation()
         }
     }
 
@@ -98,10 +103,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         return true
     }
 
-    override fun setRefreshing(refreshing: Boolean) {}
-
-    override fun showRelease(release: ReleaseFull) {
-        releaseInfoAdapter.setRelease(release)
+    override fun showState(state: ReleaseDetailScreenState) {
+        state.data?.let { releaseInfoAdapter.bindState(it, state) }
     }
 
     override fun loadTorrent(torrent: TorrentItem) {
@@ -111,25 +114,13 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun showTorrentDialog(torrents: List<TorrentItem>) {
         val context = context ?: return
         val titles =
-            torrents.map { "Серия ${it.series} [${it.quality}][${readableFileSize(it.size)}]" }
+            torrents.map { "Серия ${it.series} [${it.quality}][${Utils.readableFileSize(it.size)}]" }
                 .toTypedArray()
         AlertDialog.Builder(context)
             .setItems(titles) { dialog, which ->
                 loadTorrent(torrents[which])
             }
             .show()
-    }
-
-    private fun readableFileSize(size: Long): String {
-        if (size <= 0) return "0"
-        val units = arrayOf("B", "kB", "MB", "GB", "TB")
-        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#").format(
-            size / Math.pow(
-                1024.0,
-                digitGroups.toDouble()
-            )
-        ) + " " + units[digitGroups]
     }
 
     override fun playEpisodes(release: ReleaseFull) {
@@ -164,7 +155,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun showFileDonateDialog(url: String) {
-        val dialogView = LayoutInflater.from(view!!.context)
+        val dialogView = LayoutInflater.from(requireView().context)
             .inflate(R.layout.dialog_file_download, null, false)
             .apply {
                 layoutParams = ViewGroup.LayoutParams(
@@ -176,7 +167,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         ImageLoader.getInstance()
             .displayImage("assets://libria_tyan_type3.png", dialogView.dialogFileImage)
 
-        val dialog = AlertDialog.Builder(context!!)
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .show()
 
@@ -464,10 +455,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .show()
     }
 
-    override fun updateFavCounter() {
-        releaseInfoAdapter.notifyDataSetChanged()
-    }
-
     override fun showFavoriteDialog() {
         val context = context ?: return
         AlertDialog.Builder(context)
@@ -477,24 +464,14 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .show()
     }
 
-
     private val headListener = object : ReleaseHeadDelegate.Listener {
 
-        override fun onClickSomeLink(url: String): Boolean {
+        override fun onClickSomeLink(url: String) {
             presenter.onClickLink(url)
-            return true
-        }
-
-        override fun onClickTorrent() {
-            presenter.onTorrentClick()
         }
 
         override fun onClickTag(text: String) {
             presenter.openSearch(text)
-        }
-
-        override fun onClickWatchWeb() {
-            presenter.onClickWatchWeb(EpisodeControlPlace.BOTTOM)
         }
 
         override fun onClickFav() {
@@ -505,14 +482,14 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             presenter.onScheduleClick(day)
         }
 
-        override fun onExpandStateChanged(isExpanded: Boolean) {
-            presenter.onDescriptionExpandChanged(isExpanded)
+        override fun onExpandClick() {
+            presenter.onDescriptionExpandClick()
         }
     }
 
     private val episodeListener = object : ReleaseEpisodeDelegate.Listener {
 
-        override fun onClickSd(episode: ReleaseFull.Episode) {
+        override fun onClickSd(episode: ReleaseEpisodeItemState) {
             presenter.onPlayEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
@@ -520,7 +497,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             )
         }
 
-        override fun onClickHd(episode: ReleaseFull.Episode) {
+        override fun onClickHd(episode: ReleaseEpisodeItemState) {
             presenter.onPlayEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
@@ -528,7 +505,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             )
         }
 
-        override fun onClickFullHd(episode: ReleaseFull.Episode) {
+        override fun onClickFullHd(episode: ReleaseEpisodeItemState) {
             presenter.onPlayEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
@@ -536,11 +513,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             )
         }
 
-        override fun onClickEpisode(episode: ReleaseFull.Episode) {
+        override fun onClickEpisode(episode: ReleaseEpisodeItemState) {
             presenter.onPlayEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
         }
 
-        override fun onLongClickEpisode(episode: ReleaseFull.Episode) {
+        override fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
             presenter.onLongClickEpisode(episode)
         }
     }

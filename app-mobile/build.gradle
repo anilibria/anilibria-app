@@ -150,7 +150,7 @@ dependencies {
 
     implementation 'org.bsc.util:minitemplator-repackaged:1.2'
 
-    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
+    implementation 'com.hannesdorfmann:adapterdelegates4:4.3.0'
 
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 

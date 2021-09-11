@@ -2,9 +2,13 @@ package ru.radiationx.anilibria.presentation.other
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
+import ru.radiationx.anilibria.ui.fragments.other.ProfileScreenState
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -45,6 +49,8 @@ class OtherPresenter @Inject constructor(
         const val MENU_OTP_CODE = 4
     }
 
+    private val stateController = StateController(ProfileScreenState())
+
     private var currentProfileItem: ProfileItem = authRepository.getUser()
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
@@ -56,10 +62,21 @@ class OtherPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
         allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
         allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
         allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
-        allMainMenu.add(OtherMenuItem(MENU_OTP_CODE, "Привязать устройство", R.drawable.ic_devices_other))
+        allMainMenu.add(
+            OtherMenuItem(
+                MENU_OTP_CODE,
+                "Привязать устройство",
+                R.drawable.ic_devices_other
+            )
+        )
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
@@ -73,7 +90,6 @@ class OtherPresenter @Inject constructor(
         updateMenuItems()
     }
 
-
     override fun attachView(view: OtherView?) {
         super.attachView(view)
         authRepository
@@ -82,8 +98,7 @@ class OtherPresenter @Inject constructor(
             .addToDisposable()
     }
 
-
-    fun openAuth() {
+    fun onProfileClick() {
         if (currentProfileItem.authState == AuthState.AUTH) {
             otherAnalytics.profileClick()
             return
@@ -104,7 +119,7 @@ class OtherPresenter @Inject constructor(
             })
     }
 
-    fun onMenuClick(item: OtherMenuItem) {
+    fun onMenuClick(item: OtherMenuItemState) {
         when (item.id) {
             MENU_HISTORY -> {
                 otherAnalytics.historyClick()
@@ -183,7 +198,15 @@ class OtherPresenter @Inject constructor(
             mainMenu.removeAll { it.id == MENU_OTP_CODE }
         }
 
-        viewState.showItems(currentProfileItem, listOf(mainMenu, systemMenu, linkMenu).filter { it.isNotEmpty() })
+        val profileState = currentProfileItem.toState()
+        val menuState = listOf(mainMenu, systemMenu, linkMenu)
+            .filter { it.isNotEmpty() }
+            .map { itemsGroup ->
+                itemsGroup.map { it.toState() }
+            }
+        stateController.updateState {
+            it.copy(profile = profileState, menuItems = menuState)
+        }
     }
 
     private fun getResIconByType(type: String?): Int = when (type) {

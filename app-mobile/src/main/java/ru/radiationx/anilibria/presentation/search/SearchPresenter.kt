@@ -1,15 +1,26 @@
 package ru.radiationx.anilibria.presentation.search
 
+import io.reactivex.Single
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
+import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.CatalogFilterAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
@@ -19,27 +30,27 @@ import javax.inject.Inject
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
-        private val searchRepository: SearchRepository,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val releaseUpdateHolder: ReleaseUpdateHolder,
-        private val catalogAnalytics: CatalogAnalytics,
-        private val catalogFilterAnalytics: CatalogFilterAnalytics,
-        private val fastSearchAnalytics: FastSearchAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val searchRepository: SearchRepository,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    private val catalogAnalytics: CatalogAnalytics,
+    private val catalogFilterAnalytics: CatalogFilterAnalytics,
+    private val fastSearchAnalytics: FastSearchAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val appPreferences: PreferencesHolder
 ) : BasePresenter<SearchCatalogView>(router) {
 
-    companion object {
-        private const val START_PAGE = 1
-    }
 
-    private var lastLoadedPage:Int?=null
+    private var lastLoadedPage: Int? = null
     private val filterUseTimeCounter = TimeCounter()
 
-    private val staticSeasons = listOf("зима", "весна", "лето", "осень")
-            .map { SeasonItem(it.capitalize(), it) }
+    private val remindText =
+        "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
-    private var currentPage = START_PAGE
+    private val staticSeasons = listOf("зима", "весна", "лето", "осень")
+        .map { SeasonItem(it.capitalize(), it) }
+
     private val currentGenres = mutableListOf<String>()
     private val currentYears = mutableListOf<String>()
     private val currentSeasons = mutableListOf<String>()
@@ -53,134 +64,171 @@ class SearchPresenter @Inject constructor(
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
+    private val loadingController = DataLoadingController {
+        submitPageAnalytics(it.page)
+        getDataSource(it)
+    }.addToDisposable()
+    private val stateController = StateController(SearchScreenState())
+
+    private fun findRelease(id: Int): ReleaseItem? {
+        return currentItems.find { it.id == id }
+    }
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        observeScreenState()
         loadGenres()
         loadYears()
         observeGenres()
         observeYears()
+        observeSearchRemind()
         updateInfo()
         viewState.showSeasons(staticSeasons)
         onChangeSorting(currentSorting)
         onChangeComplete(currentComplete)
-        loadReleases(START_PAGE)
+        observeLoadingState()
+        loadingController.refresh()
         releaseUpdateHolder
-                .observeEpisodes()
-                .subscribe { data ->
-                    val itemsNeedUpdate = mutableListOf<ReleaseItem>()
-                    currentItems.forEach { item ->
-                        data.firstOrNull { it.id == item.id }?.also { updItem ->
-                            val isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                            if (item.isNew != isNew) {
-                                item.isNew = isNew
-                                itemsNeedUpdate.add(item)
-                            }
+            .observeEpisodes()
+            .subscribe { data ->
+                val itemsNeedUpdate = mutableListOf<ReleaseItem>()
+                currentItems.forEach { item ->
+                    data.firstOrNull { it.id == item.id }?.also { updItem ->
+                        val isNew =
+                            item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                        if (item.isNew != isNew) {
+                            item.isNew = isNew
+                            itemsNeedUpdate.add(item)
                         }
                     }
-
-                    viewState.updateReleases(itemsNeedUpdate)
                 }
-                .addToDisposable()
+
+                val dataState = loadingController.currentState.data
+                val newItems = dataState?.map { itemState ->
+                    val releaseItem = itemsNeedUpdate.firstOrNull { it.id == itemState.id }
+                    releaseItem?.toState() ?: itemState
+                }
+                loadingController.modifyData(newItems)
+            }
+            .addToDisposable()
     }
 
-    private fun isFirstPage(): Boolean {
-        return currentPage == START_PAGE
-    }
 
     private fun loadGenres() {
         searchRepository
-                .getGenres()
-                .subscribe({ }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .getGenres()
+            .subscribe({ }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     private fun observeGenres() {
         searchRepository
-                .observeGenres()
-                .subscribe({
-                    viewState.showGenres(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .observeGenres()
+            .subscribe({
+                viewState.showGenres(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
     }
 
     private fun loadYears() {
         searchRepository
-                .getYears()
-                .subscribe({ }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .getYears()
+            .subscribe({ }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
     private fun observeYears() {
         searchRepository
-                .observeYears()
-                .subscribe({
-                    viewState.showYears(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .observeYears()
+            .subscribe({
+                viewState.showYears(it)
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
     }
 
-    private fun loadReleases(pageNum: Int) {
+    private fun observeSearchRemind() {
+        appPreferences
+            .observeSearchRemind()
+            .subscribe({ remindEnabled ->
+                val newRemindText = remindText.takeIf { remindEnabled }
+                stateController.updateState {
+                    it.copy(remindText = newRemindText)
+                }
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
+    }
 
-        /*if (isEmpty()) {
-            viewState.setRefreshing(false)
-            return
-        }*/
-        if(lastLoadedPage!=pageNum){
-            catalogAnalytics.loadPage(pageNum)
-            lastLoadedPage = pageNum
-        }
+    private fun observeLoadingState() {
+        loadingController
+            .observeState()
+            .subscribe { loadingData ->
+                stateController.updateState {
+                    it.copy(data = loadingData)
+                }
+            }
+            .addToDisposable()
+    }
 
-        currentPage = pageNum
-        if (isFirstPage()) {
-            viewState.setRefreshing(true)
+    private fun observeScreenState() {
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+    }
+
+    private fun submitPageAnalytics(page: Int) {
+        if (lastLoadedPage != page) {
+            catalogAnalytics.loadPage(page)
+            lastLoadedPage = page
         }
+    }
+
+    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<ReleaseItemState>>> {
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")
         val completeStr = if (currentComplete) "2" else "1"
-        searchRepository
-                .searchReleases(genresQuery, yearsQuery, seasonsQuery, currentSorting, completeStr, pageNum)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ releaseItems ->
-                    lastLoadedPage = pageNum
-                    viewState.setEndless(releaseItems.data.isNotEmpty())
-                    showData(releaseItems.data)
-                }) {
-                    if (currentItems.isEmpty()) {
-                        showData(emptyList())
-                    }
-                    viewState.setEndless(false)
+        return searchRepository
+            .searchReleases(
+                genresQuery,
+                yearsQuery,
+                seasonsQuery,
+                currentSorting,
+                completeStr,
+                params.page
+            )
+            .map { paginated ->
+                if (params.isFirstPage) {
+                    currentItems.clear()
+                }
+                currentItems.addAll(paginated.data)
+
+                val newItems = currentItems.map { it.toState() }
+                ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
+            }
+            .doOnError {
+                if (params.isFirstPage) {
                     errorHandler.handle(it)
                 }
-                .addToDisposable()
-    }
-
-    private fun showData(data: List<ReleaseItem>) {
-        updateInfo()
-        if (isFirstPage()) {
-            currentItems.clear()
-            currentItems.addAll(data)
-            viewState.showReleases(data)
-        } else {
-            currentItems.addAll(data)
-            viewState.insertMore(data)
-        }
+            }
     }
 
     fun refreshReleases() {
-        loadReleases(START_PAGE)
+        loadingController.refresh()
     }
 
     fun loadMore() {
-        loadReleases(currentPage + 1)
+        loadingController.loadMore()
     }
 
     fun showDialog() {
@@ -198,7 +246,7 @@ class SearchPresenter @Inject constructor(
         viewState.showDialog()
     }
 
-    fun onAcceptDialog(){
+    fun onAcceptDialog() {
         catalogFilterAnalytics.applyClick()
         if (
             beforeOpenDialogGenres != currentGenres
@@ -250,36 +298,46 @@ class SearchPresenter @Inject constructor(
     }
 
     private fun updateInfo() {
-        viewState.updateInfo(currentSorting, currentGenres.size + currentYears.size + currentSeasons.size)
+        viewState.updateInfo(
+            currentSorting,
+            currentGenres.size + currentYears.size + currentSeasons.size
+        )
     }
 
-    fun onFastSearchClick(){
+    fun onFastSearchClick() {
         catalogAnalytics.fastSearchClick()
     }
 
-    fun onFastSearchOpen(){
+    fun onFastSearchOpen() {
         fastSearchAnalytics.open(AnalyticsConstants.screen_catalog)
     }
 
-    fun onItemClick(item: ReleaseItem) {
+    fun onRemindClose() {
+        appPreferences.searchRemind = false
+    }
+
+    fun onItemClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
         catalogAnalytics.releaseClick()
-        releaseAnalytics.open(AnalyticsConstants.screen_catalog, item.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+        releaseAnalytics.open(AnalyticsConstants.screen_catalog, releaseItem.id)
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    fun onCopyClick(item:ReleaseItem){
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_catalog, item.id)
+    fun onCopyClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_catalog, releaseItem.id)
     }
 
-    fun onShareClick(item: ReleaseItem){
-        releaseAnalytics.share(AnalyticsConstants.screen_catalog, item.id)
+    fun onShareClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.shareText(releaseItem.link.orEmpty())
+        releaseAnalytics.share(AnalyticsConstants.screen_catalog, releaseItem.id)
     }
 
-    fun onShortcutClick(item: ReleaseItem){
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_catalog, item.id)
-    }
-
-    fun onItemLongClick(item: ReleaseItem): Boolean {
-        return false
+    fun onShortcutClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        ShortcutHelper.addShortcut(releaseItem)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_catalog, releaseItem.id)
     }
 }

@@ -19,21 +19,21 @@ import ru.radiationx.shared.ktx.android.visible
  * Created by radiationx on 13.01.18.
  */
 class FeedSectionDelegate(
-        private val clickListener: (FeedSectionListItem) -> Unit
+    private val clickListener: (FeedSectionListItem) -> Unit
 ) : AppAdapterDelegate<FeedSectionListItem, ListItem, FeedSectionDelegate.ViewHolder>(
-        R.layout.item_feed_section_header,
-        { it is FeedSectionListItem },
-        { ViewHolder(it, clickListener) }
+    R.layout.item_feed_section_header,
+    { it is FeedSectionListItem },
+    { ViewHolder(it, clickListener) }
 ), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 2
 
     override fun bindData(item: FeedSectionListItem, holder: ViewHolder) =
-            holder.bind(item)
+        holder.bind(item)
 
     class ViewHolder(
-            override val containerView: View,
-            private val clickListener: (FeedSectionListItem) -> Unit
+        override val containerView: View,
+        private val clickListener: (FeedSectionListItem) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: FeedSectionListItem
@@ -43,10 +43,10 @@ class FeedSectionDelegate(
                 clickListener.invoke(currentItem)
             }
             itemFeedScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    itemFeedScheduleBtn.getCompatDrawable(R.drawable.ic_chevron_right),
-                    null
+                null,
+                null,
+                itemFeedScheduleBtn.getCompatDrawable(R.drawable.ic_chevron_right),
+                null
             )
         }
 
@@ -61,11 +61,13 @@ class FeedSectionDelegate(
             itemFeedScheduleBtn.visible(item.route != null)
             itemFeedScheduleBtn.text = item.route
 
-            containerView.setBackgroundColor(if (item.hasBg) {
-                containerView.context.getColorFromAttr(R.attr.colorSurface)
-            } else {
-                Color.TRANSPARENT
-            })
+            containerView.setBackgroundColor(
+                if (item.hasBg) {
+                    containerView.context.getColorFromAttr(R.attr.colorSurface)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
         }
     }
 }

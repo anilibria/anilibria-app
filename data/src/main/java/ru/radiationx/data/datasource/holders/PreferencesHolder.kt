@@ -22,13 +22,14 @@ interface PreferencesHolder {
         const val PIP_AUTO = 1
     }
 
-    fun getReleaseRemind(): Boolean
-    fun setReleaseRemind(state: Boolean)
+    fun observeReleaseRemind(): Observable<Boolean>
+    var releaseRemind: Boolean
 
-    fun getSearchRemind(): Boolean
-    fun setSearchRemind(state: Boolean)
+    fun observeSearchRemind(): Observable<Boolean>
+    var searchRemind: Boolean
 
-    fun getEpisodesIsReverse(): Boolean
+    fun observeEpisodesIsReverse(): Observable<Boolean>
+    val episodesIsReverse: Boolean
 
     fun getQuality(): Int
     fun setQuality(value: Int)

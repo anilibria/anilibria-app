@@ -53,7 +53,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getEpisodeOrderSettings(): Single<Boolean> = single {
-        preferencesHolder.getEpisodesIsReverse()
+        preferencesHolder.episodesIsReverse
     }
 
     fun getAuthState(): Single<String> = single {

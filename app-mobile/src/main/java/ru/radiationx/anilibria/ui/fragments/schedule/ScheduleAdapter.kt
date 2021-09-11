@@ -1,37 +1,34 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.view.View
+import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSchedulesDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
-import ru.radiationx.data.entity.app.feed.ScheduleItem
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 class ScheduleAdapter(
-        scheduleClickListener: (ScheduleItem, View, Int) -> Unit,
-        scrollListener:(Int)->Unit
-) : OptimizeAdapter<MutableList<ListItem>>() {
+    scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
+    scrollListener: (Int) -> Unit
+) : ListItemAdapter() {
 
     init {
-        items = mutableListOf()
         addDelegate(FeedSectionDelegate({}))
-        addDelegate(FeedSchedulesDelegate(scheduleClickListener,scrollListener))
+        addDelegate(FeedSchedulesDelegate(scheduleClickListener, scrollListener))
     }
 
-    fun bindItems(newItems: List<Pair<String, List<ScheduleItem>>>) {
-        items.clear()
-        newItems.forEach { pair ->
-            items.add(FeedSectionListItem(pair.first))
-            items.add(FeedSchedulesListItem(pair.second))
+    fun bindState(state: ScheduleScreenState) {
+        val newItems = mutableListOf<ListItem>()
+        state.dayItems.forEach { dayItem ->
+            newItems.add(FeedSectionListItem(dayItem.title, dayItem.title, null))
+            newItems.add(FeedSchedulesListItem(dayItem.title, dayItem.items))
         }
-        notifyDataSetChanged()
+        items = newItems
     }
 
-    fun getPositionByDay(item: Pair<String, List<ScheduleItem>>): Int {
-        return items.indexOfFirst {
-            (it as? FeedSectionListItem)?.title == item.first
-        }
+    fun getPositionByDay(day: ScheduleDayState): Int = items.indexOfFirst {
+        (it as? FeedSectionListItem)?.title == day.title
     }
 }

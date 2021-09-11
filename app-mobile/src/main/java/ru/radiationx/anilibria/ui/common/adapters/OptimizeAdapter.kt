@@ -3,14 +3,16 @@ package ru.radiationx.anilibria.ui.common.adapters
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.SparseArray
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 
-open class OptimizeAdapter<T : List<*>>(
-        private val manager: OptimizeDelegateManager<T> = OptimizeDelegateManager()
-) : ListDelegationAdapter<T>(manager) {
+open class OptimizeAdapter<T>(
+    private val itemCallback: DiffUtil.ItemCallback<T>,
+    private val manager: OptimizeDelegateManager<List<T>> = OptimizeDelegateManager()
+) : AsyncListDifferDelegationAdapter<T>(itemCallback, manager) {
 
     private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
     private var states: SparseArray<Parcelable?> = SparseArray()
@@ -41,7 +43,11 @@ open class OptimizeAdapter<T : List<*>>(
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any?>) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any?>
+    ) {
         super.onBindViewHolder(holder, position, payloads)
         (holder as? IBundledViewHolder)?.apply {
             val state = states[getStateId()]
@@ -72,15 +78,15 @@ open class OptimizeAdapter<T : List<*>>(
         }
     }
 
-    fun addDelegate(delegate: AdapterDelegate<T>) {
+    fun addDelegate(delegate: AdapterDelegate<List<T>>) {
         manager.addDelegate(delegate)
     }
 
-    fun addDelegate(viewType: Int, delegate: AdapterDelegate<T>) {
+    fun addDelegate(viewType: Int, delegate: AdapterDelegate<List<T>>) {
         manager.addDelegate(viewType, delegate)
     }
 
-    fun addDelegate(viewType: Int, allowReplacingDelegate: Boolean, delegate: AdapterDelegate<T>) {
+    fun addDelegate(viewType: Int, allowReplacingDelegate: Boolean, delegate: AdapterDelegate<List<T>>) {
         manager.addDelegate(viewType, allowReplacingDelegate, delegate)
     }
 }

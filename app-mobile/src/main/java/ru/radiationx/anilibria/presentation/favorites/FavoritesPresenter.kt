@@ -1,9 +1,19 @@
 package ru.radiationx.anilibria.presentation.favorites
 
+import io.reactivex.Single
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesScreenState
+import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FavoritesAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
@@ -17,129 +27,161 @@ import javax.inject.Inject
  */
 @InjectViewState
 class FavoritesPresenter @Inject constructor(
-        private val favoriteRepository: FavoriteRepository,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val favoritesAnalytics: FavoritesAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val favoriteRepository: FavoriteRepository,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val favoritesAnalytics: FavoritesAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FavoritesView>(router) {
 
+    private val loadingController = DataLoadingController {
+        submitPageAnalytics(it.page)
+        getDataSource(it)
+    }.addToDisposable()
 
-    companion object {
-        private const val START_PAGE = 1
-    }
+    private val stateController = StateController(FavoritesScreenState())
 
-    private var lastLoadedPage:Int?=null
-    private var isSearchEnabled:Boolean = false
-
-    private var currentPage = START_PAGE
+    private var lastLoadedPage: Int? = null
+    private var isSearchEnabled: Boolean = false
+    private var currentQuery: String = ""
 
     private val currentReleases = mutableListOf<ReleaseItem>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        loadingController
+            .observeState()
+            .subscribe { loadingData ->
+                stateController.updateState {
+                    it.copy(data = loadingData)
+                }
+                updateSearchState()
+            }
+            .addToDisposable()
+
         refreshReleases()
     }
 
-    private fun isFirstPage(): Boolean {
-        return currentPage == START_PAGE
-    }
-
-    private fun loadReleases(pageNum: Int) {
-        if(lastLoadedPage!=pageNum){
-            favoritesAnalytics.loadPage(pageNum)
-            lastLoadedPage = pageNum
-        }
-        currentPage = pageNum
-        if (isFirstPage()) {
-            viewState.setRefreshing(true)
-        }
-        favoriteRepository
-                .getFavorites(pageNum)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.setEndless(!it.isEnd())
-                    currentReleases.addAll(it.data)
-                    showData(it.data)
-                }) {
-                    showData(emptyList())
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
-    }
-
-    private fun showData(data: List<ReleaseItem>) {
-        if (isFirstPage()) {
-            viewState.showReleases(data)
-        } else {
-            viewState.insertMore(data)
-        }
-    }
-
     fun refreshReleases() {
-        loadReleases(START_PAGE)
+        loadingController.refresh()
     }
 
     fun loadMore() {
-        loadReleases(currentPage + 1)
+        loadingController.loadMore()
     }
 
     fun deleteFav(id: Int) {
         favoritesAnalytics.deleteFav()
-        if (isFirstPage()) {
-            viewState.setRefreshing(true)
+        stateController.updateState {
+            it.copy(deletingItemIds = it.deletingItemIds + id)
         }
         favoriteRepository
-                .deleteFavorite(id)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({
-                    viewState.removeReleases(listOf(it))
-                }) {
-                    errorHandler.handle(it)
+            .deleteFavorite(id)
+            .doFinally {
+                stateController.updateState {
+                    it.copy(deletingItemIds = it.deletingItemIds - id)
                 }
-                .addToDisposable()
+            }
+            .subscribe({ deletedItem ->
+                loadingController.currentState.data?.also { dataState ->
+                    val newItems = dataState.toMutableList()
+                    newItems.find { it.id == deletedItem.id }?.also {
+                        newItems.remove(it)
+                    }
+                    loadingController.modifyData(newItems)
+                }
+            }) { throwable ->
+                errorHandler.handle(throwable)
+            }
+            .addToDisposable()
     }
 
-    fun onCopyClick(item:ReleaseItem){
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_favorites, item.id)
+    fun onCopyClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_favorites, releaseItem.id)
     }
 
-    fun onShareClick(item: ReleaseItem){
-        releaseAnalytics.share(AnalyticsConstants.screen_favorites, item.id)
+    fun onShareClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        Utils.shareText(releaseItem.link.orEmpty())
+        releaseAnalytics.share(AnalyticsConstants.screen_favorites, releaseItem.id)
     }
 
-    fun onShortcutClick(item: ReleaseItem){
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_favorites, item.id)
+    fun onShortcutClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        ShortcutHelper.addShortcut(releaseItem)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_favorites, releaseItem.id)
     }
 
     fun localSearch(query: String) {
-        isSearchEnabled = query.isNotEmpty()
-        if (query.isNotEmpty()) {
-            val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(query, true) || it.titleEng.orEmpty().contains(query, true)
-            }
-            viewState.showReleases(searchRes)
-        } else {
-            viewState.showReleases(currentReleases)
-        }
+        currentQuery = query
+        updateSearchState()
     }
 
-    fun onSearchClick(){
+    fun onSearchClick() {
         favoritesAnalytics.searchClick()
     }
 
-    fun onItemClick(item: ReleaseItem) {
-        if(isSearchEnabled){
+    fun onItemClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        if (isSearchEnabled) {
             favoritesAnalytics.searchReleaseClick()
-        }else{
+        } else {
             favoritesAnalytics.releaseClick()
         }
-        releaseAnalytics.open(AnalyticsConstants.screen_favorites, item.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code, item))
+        releaseAnalytics.open(AnalyticsConstants.screen_favorites, releaseItem.id)
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    fun onItemLongClick(item: ReleaseItem): Boolean {
-        return false
+    private fun findRelease(id: Int): ReleaseItem? {
+        return currentReleases.find { it.id == id }
+    }
+
+    private fun submitPageAnalytics(page: Int) {
+        if (lastLoadedPage != page) {
+            favoritesAnalytics.loadPage(page)
+            lastLoadedPage = page
+        }
+    }
+
+    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<ReleaseItemState>>> {
+        return favoriteRepository
+            .getFavorites(params.page)
+            .map { paginated ->
+                if (params.isFirstPage) {
+                    currentReleases.clear()
+                }
+                currentReleases.addAll(paginated.data)
+                val newItems = currentReleases.map { it.toState() }
+                ScreenStateAction.Data(newItems, !paginated.isEnd())
+            }
+            .doOnError {
+                if (params.isFirstPage) {
+                    errorHandler.handle(it)
+                }
+            }
+    }
+
+    private fun updateSearchState() {
+        isSearchEnabled = currentQuery.isNotEmpty()
+        val searchItems = if (currentQuery.isNotEmpty()) {
+            currentReleases.filter {
+                it.title.orEmpty().contains(currentQuery, true)
+                        || it.titleEng.orEmpty().contains(currentQuery, true)
+            }
+        } else {
+            emptyList()
+        }
+        val newItems = searchItems.map { it.toState() }
+        stateController.updateState {
+            it.copy(searchItems = newItems)
+        }
     }
 
 }

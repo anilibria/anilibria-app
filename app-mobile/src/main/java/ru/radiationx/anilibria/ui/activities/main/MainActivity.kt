@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatColor
@@ -150,6 +151,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
+            disableItemChangeAnimation()
         }
 
         updateTabs()
@@ -440,7 +442,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         }
     }
 
-    class Tab(
+    data class Tab(
             val title: Int,
             val icon: Int,
             val screen: BaseAppScreen

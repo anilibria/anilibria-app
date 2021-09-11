@@ -14,21 +14,21 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
  * Created by radiationx on 13.01.18.
  */
 class ReleaseExpandDelegate(
-        private val clickListener: (ReleaseExpandListItem) -> Unit
+    private val clickListener: (ReleaseExpandListItem) -> Unit
 ) : AppAdapterDelegate<ReleaseExpandListItem, ListItem, ReleaseExpandDelegate.ViewHolder>(
-        R.layout.item_release_expand,
-        { it is ReleaseExpandListItem },
-        { ViewHolder(it, clickListener) }
+    R.layout.item_release_expand,
+    { it is ReleaseExpandListItem },
+    { ViewHolder(it, clickListener) }
 ), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 20
 
     override fun bindData(item: ReleaseExpandListItem, holder: ViewHolder) =
-            holder.bind(item)
+        holder.bind(item)
 
     class ViewHolder(
-            override val containerView: View,
-            private val clickListener: (ReleaseExpandListItem) -> Unit
+        override val containerView: View,
+        private val clickListener: (ReleaseExpandListItem) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         private lateinit var currentItem: ReleaseExpandListItem
@@ -41,7 +41,5 @@ class ReleaseExpandDelegate(
             currentItem = item
             item_expand_title.text = item.title
         }
-
     }
-
 }

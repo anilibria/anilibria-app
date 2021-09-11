@@ -2,12 +2,17 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import ru.radiationx.data.entity.app.release.ReleaseFull
 
+data class ReleaseDetailScreenState(
+    val data: ReleaseDetailState? = null,
+    val episodesType: ReleaseFull.Episode.Type = ReleaseFull.Episode.Type.ONLINE,
+    val remindText: String? = null
+)
+
 data class ReleaseDetailState(
-    val id:Int,
+    val id: Int,
     val info: ReleaseInfoState,
-    val favorite: ReleaseFavoriteState,
     val episodesControl: ReleaseEpisodesControlState,
-    val episodes: List<ReleaseEpisodeItemState>,
+    val episodes: Map<ReleaseFull.Episode.Type, List<ReleaseEpisodeItemState>>,
     val torrents: List<ReleaseTorrentItemState>,
     val blockedInfo: ReleaseBlockedInfoState?
 )
@@ -19,7 +24,8 @@ data class ReleaseInfoState(
     val info: String,
     val days: List<Int>,
     val isOngoing: Boolean,
-    val announce: String?
+    val announce: String?,
+    val favorite: ReleaseFavoriteState
 )
 
 data class ReleaseFavoriteState(
@@ -30,13 +36,13 @@ data class ReleaseFavoriteState(
 
 data class ReleaseEpisodeItemState(
     val id: Int,
+    val releaseId: Int,
     val title: String,
     val subtitle: String?,
     val isViewed: Boolean,
     val hasSd: Boolean,
     val hasHd: Boolean,
-    val hasFullHd: Boolean,
-    val type: ReleaseFull.Episode.Type
+    val hasFullHd: Boolean
 )
 
 data class ReleaseTorrentItemState(
@@ -52,6 +58,7 @@ data class ReleaseTorrentItemState(
 data class ReleaseEpisodesControlState(
     val hasWeb: Boolean,
     val hasEpisodes: Boolean,
+    val hasViewed: Boolean,
     val continueTitle: String
 )
 

@@ -9,9 +9,11 @@ import java.util.*
 fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
-    favorite = favoriteInfo.toState(),
     episodesControl = toEpisodeControlState(),
-    episodes = episodes.map { it.toState() },
+    episodes = mapOf(
+        ReleaseFull.Episode.Type.ONLINE to episodes.map { it.toState() },
+        ReleaseFull.Episode.Type.SOURCE to episodesSource.map { it.toState() }
+    ),
     torrents = torrents.map { it.toState() },
     blockedInfo = blockedInfo.toState()
 )
@@ -23,7 +25,6 @@ fun FavoriteInfo.toState() = ReleaseFavoriteState(
 )
 
 fun ReleaseFull.toInfoState(): ReleaseInfoState {
-
     val seasonsHtml = "<b>Год:</b> " + seasons.joinToString(", ")
     val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ")
     val typesHtml = "<b>Тип:</b> " + types.joinToString(", ")
@@ -40,7 +41,6 @@ fun ReleaseFull.toInfoState(): ReleaseInfoState {
     )
     val infoStr = arrHtml.joinToString("<br>")
 
-
     return ReleaseInfoState(
         titleRus = title.orEmpty(),
         titleEng = titleEng.orEmpty(),
@@ -48,7 +48,8 @@ fun ReleaseFull.toInfoState(): ReleaseInfoState {
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == ReleaseItem.STATUS_CODE_PROGRESS,
-        announce = announce
+        announce = announce,
+        favorite = favoriteInfo.toState()
     )
 }
 
@@ -75,9 +76,10 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState {
     }
 
     return ReleaseEpisodesControlState(
-        hasWeb,
-        hasEpisodes,
-        continueTitle
+        hasWeb = hasWeb,
+        hasEpisodes = hasEpisodes,
+        hasViewed = hasViewed,
+        continueTitle = continueTitle
     )
 }
 
@@ -99,12 +101,12 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
     }
     return ReleaseEpisodeItemState(
         id = id,
+        releaseId = releaseId,
         title = title.orEmpty(),
         subtitle = subtitle,
         isViewed = isViewed,
         hasSd = urlSd != null,
         hasHd = urlHd != null,
-        hasFullHd = urlFullHd != null,
-        type = type
+        hasFullHd = urlFullHd != null
     )
 }

@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 class SearchAdapter(
     private val loadRetryListener: () -> Unit,
     private val listener: ReleasesAdapter.ItemListener,
-    private val remindCloseListener: ReleaseRemindDelegate.Listener,
+    private val remindCloseListener: () -> Unit,
     private val placeholder: PlaceholderListItem
 ) : ListItemAdapter() {
 

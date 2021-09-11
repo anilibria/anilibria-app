@@ -100,7 +100,7 @@ class ReleaseHeadDelegate(
             full_fav_icon.setCompatDrawable(iconRes)
 
             full_fav_icon.isVisible = !state.isRefreshing
-            full_fav_progress.isVisible = (state.isRefreshing)
+            full_fav_progress.isVisible = state.isRefreshing
 
             full_fav_btn.isSelected = state.isAdded
             full_fav_btn.isClickable = !state.isRefreshing

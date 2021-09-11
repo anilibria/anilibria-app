@@ -1,18 +1,17 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ReleaseInfoView : IBaseView {
+interface ReleaseInfoView : MvpView {
 
-    fun updateFavCounter()
-
-    fun showRelease(release: ReleaseFull)
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showState(state:ReleaseDetailScreenState)
 
     @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(torrent: TorrentItem)

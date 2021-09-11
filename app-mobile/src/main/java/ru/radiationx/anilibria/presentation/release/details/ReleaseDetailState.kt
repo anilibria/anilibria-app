@@ -5,7 +5,8 @@ import ru.radiationx.data.entity.app.release.ReleaseFull
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
     val episodesType: ReleaseFull.Episode.Type = ReleaseFull.Episode.Type.ONLINE,
-    val remindText: String? = null
+    val remindText: String? = null,
+    val favoriteRefreshing: Boolean = false
 )
 
 data class ReleaseDetailState(

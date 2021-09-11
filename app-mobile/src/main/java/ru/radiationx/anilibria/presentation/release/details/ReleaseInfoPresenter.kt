@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import android.util.Log
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -17,7 +18,6 @@ import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -49,8 +49,16 @@ class ReleaseInfoPresenter @Inject constructor(
     var releaseId = -1
     var releaseIdCode: String? = null
 
+    private val stateController = StateController(ReleaseDetailScreenState())
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
@@ -82,12 +90,9 @@ class ReleaseInfoPresenter @Inject constructor(
     private fun loadRelease() {
         releaseInteractor
             .loadRelease(releaseId, releaseIdCode)
-            .doOnSubscribe { viewState.setRefreshing(true) }
             .subscribe({ release ->
-                viewState.setRefreshing(false)
                 historyRepository.putRelease(release as ReleaseItem)
             }) {
-                viewState.setRefreshing(false)
                 errorHandler.handle(it)
             }
             .addToDisposable()
@@ -108,7 +113,9 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
-        viewState.showRelease(release)
+        stateController.updateState {
+            it.copy(data = release.toState())
+        }
     }
 
     fun markEpisodeViewed(episode: ReleaseFull.Episode) {
@@ -124,22 +131,19 @@ class ReleaseInfoPresenter @Inject constructor(
         releaseInteractor.putEpisode(episode)
     }
 
-    fun onTorrentClick() {
-        currentData?.let {
-            when {
-                it.torrents.size == 1 -> viewState.loadTorrent(it.torrents.last())
-                else -> viewState.showTorrentDialog(it.torrents)
-            }
-        }
+    fun onEpisodeTabClick(type: ReleaseFull.Episode.Type) {
+
     }
 
-    fun onTorrentClick(item: TorrentItem) {
-        currentData?.let {
-            val isHevc = item.quality?.contains("HEVC", true) == true
-            releaseAnalytics.torrentClick(isHevc, it.id)
-            viewState.loadTorrent(item)
-        }
+    fun onRemindCloseClick() {
 
+    }
+
+    fun onTorrentClick(item: ReleaseTorrentItemState) {
+        val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
+        val isHevc = torrentItem.quality?.contains("HEVC", true) == true
+        releaseAnalytics.torrentClick(isHevc, torrentItem.id)
+        viewState.loadTorrent(torrentItem)
     }
 
     fun onCommentsClick() {
@@ -191,27 +195,38 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onPlayEpisodeClick(
-        episode: ReleaseFull.Episode,
+        episode: ReleaseEpisodeItemState,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
-        currentData?.let {
-            val analyticsQuality =
-                quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-            when (episode.type) {
-                ReleaseFull.Episode.Type.ONLINE -> {
-                    releaseAnalytics.episodePlayClick(analyticsQuality, it.id)
-                }
-                ReleaseFull.Episode.Type.SOURCE -> {
-                    releaseAnalytics.episodeDownloadClick(analyticsQuality, it.id)
-                }
+        val release = currentData ?: return
+        val episodeItem = getEpisodeItem(episode.id) ?: return
+
+        val analyticsQuality =
+            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        when (stateController.currentState.episodesType) {
+            ReleaseFull.Episode.Type.ONLINE -> {
+                releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
             }
-            viewState.playEpisode(it, episode, playFlag, quality)
+            ReleaseFull.Episode.Type.SOURCE -> {
+                releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id)
+            }
         }
+        viewState.playEpisode(release, episodeItem, playFlag, quality)
     }
 
-    fun onLongClickEpisode(episode: ReleaseFull.Episode) {
-        currentData?.also { viewState.showLongPressEpisodeDialog(episode) }
+    fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
+        val episodeItem = getEpisodeItem(episode.id) ?: return
+        viewState.showLongPressEpisodeDialog(episodeItem)
+    }
+
+    private fun getEpisodeItem(episodeId: Int): ReleaseFull.Episode? {
+        val release = currentData ?: return null
+        val episodes = when (stateController.currentState.episodesType) {
+            ReleaseFull.Episode.Type.ONLINE -> release.episodes
+            ReleaseFull.Episode.Type.SOURCE -> release.episodesSource
+        }
+        return episodes.find { it.id == episodeId }
     }
 
     fun onClickLink(url: String) {
@@ -254,17 +269,27 @@ class ReleaseInfoPresenter @Inject constructor(
 
         source
             .doOnSubscribe {
-                favInfo.inProgress = true
-                viewState.updateFavCounter()
+                stateController.updateState {
+                    it.copy(favoriteRefreshing = true)
+                }
             }
             .doAfterTerminate {
-                favInfo.inProgress = false
-                viewState.updateFavCounter()
+                stateController.updateState {
+                    it.copy(favoriteRefreshing = false)
+                }
             }
             .subscribe({ releaseItem ->
                 favInfo.rating = releaseItem.favoriteInfo.rating
                 favInfo.isAdded = releaseItem.favoriteInfo.isAdded
-                viewState.updateFavCounter()
+                stateController.updateState {
+                    it.copy(
+                        data = it.data?.copy(
+                            info = it.data.info.copy(
+                                favorite = releaseItem.favoriteInfo.toState()
+                            )
+                        )
+                    )
+                }
             }) {
                 errorHandler.handle(it)
             }

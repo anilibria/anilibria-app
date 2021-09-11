@@ -21,7 +21,7 @@ fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
 fun FavoriteInfo.toState() = ReleaseFavoriteState(
     rating = rating.toString(),
     isAdded = isAdded,
-    isRefreshing = inProgress
+    isRefreshing = false
 )
 
 fun ReleaseFull.toInfoState(): ReleaseInfoState {

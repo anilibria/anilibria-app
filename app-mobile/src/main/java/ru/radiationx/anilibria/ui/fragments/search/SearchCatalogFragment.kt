@@ -55,10 +55,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
             presenter.loadMore()
         },
         listener = this,
-        remindCloseListener = object : ReleaseRemindDelegate.Listener {
-            override fun onClickClose(position: Int) {
-                presenter.onRemindClose()
-            }
+        remindCloseListener = {
+            presenter.onRemindClose()
         },
         placeholder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,

@@ -9,6 +9,7 @@ import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.entity.common.AuthState
 
@@ -92,5 +93,21 @@ fun SocialAuth.toState(): SocialAuthItemState {
         title = title,
         iconRes = icon,
         colorRes = color
+    )
+}
+
+fun SuggestionItem.toState(query: String): SuggestionItemState {
+    val itemTitle = names.firstOrNull().orEmpty()
+    val matchRanges = try {
+        Regex(query, RegexOption.IGNORE_CASE).findAll(itemTitle).map { it.range }.toList()
+    } catch (ignore: Throwable) {
+        emptyList<IntRange>()
+    }
+
+    return SuggestionItemState(
+        id,
+        itemTitle,
+        poster.orEmpty(),
+        matchRanges
     )
 }

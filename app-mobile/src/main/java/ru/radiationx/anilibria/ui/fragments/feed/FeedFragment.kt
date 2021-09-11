@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
+import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
 import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -29,7 +30,6 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
@@ -64,9 +64,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
 
-    private val searchAdapter = FastSearchAdapter {
-        searchPresenter.onItemClick(it)
-    }
+    private val searchAdapter = FastSearchAdapter(
+        clickListener = { searchPresenter.onItemClick(it) },
+        localClickListener = { searchPresenter.onLocalItemClick(it) }
+    )
     private var searchView: SearchView? = null
 
     @InjectPresenter
@@ -204,19 +205,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         super.onDestroyView()
     }
 
-    /* FastSearchView */
-    override fun showSearchItems(items: List<SearchItem>) {
-        searchAdapter.bindItems(items)
-    }
-
-    override fun setSearchProgress(isProgress: Boolean) {
-        searchView?.also {
-            /*if (isProgress) {
-                it.showProgress()
-            } else {
-                it.hideProgress()
-            }*/
-        }
+    override fun showState(state: FastSearchScreenState) {
+        searchAdapter.bindItems(state)
     }
 
     /* ReleaseView */

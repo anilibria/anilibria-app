@@ -16,10 +16,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
-import ru.radiationx.anilibria.presentation.search.FastSearchView
-import ru.radiationx.anilibria.presentation.search.SearchCatalogView
-import ru.radiationx.anilibria.presentation.search.SearchPresenter
+import ru.radiationx.anilibria.presentation.search.*
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -31,7 +28,6 @@ import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
@@ -74,10 +70,10 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
 
-    private val fastSearchAdapter = FastSearchAdapter {
-        //searchView?.close(true)
-        searchPresenter.onItemClick(it)
-    }
+    private val fastSearchAdapter = FastSearchAdapter(
+        clickListener = { searchPresenter.onItemClick(it) },
+        localClickListener = { searchPresenter.onLocalItemClick(it) }
+    )
     private var searchView: SearchMenuItem? = null
 
     @InjectPresenter
@@ -249,18 +245,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         return true
     }
 
-    override fun showSearchItems(items: List<SearchItem>) {
-        fastSearchAdapter.bindItems(items)
-    }
-
-    override fun setSearchProgress(isProgress: Boolean) {
-        searchView?.also {
-            /*if (isProgress) {
-                it.showProgress()
-            } else {
-                it.hideProgress()
-            }*/
-        }
+    override fun showState(state: FastSearchScreenState) {
+        fastSearchAdapter.bindItems(state)
     }
 
     override fun showDialog() {

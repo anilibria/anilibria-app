@@ -5,11 +5,8 @@ import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
 
 sealed class ListItem(private val idData: Any?) {
 
@@ -88,8 +85,9 @@ data class ReleaseHeadListItem(val item: ReleaseFull) : ListItem(item.id)
 
 /* Search screen */
 
-data class SearchListItem(val item: SearchItem) : ListItem(item.id)
-data class SearchSuggestionListItem(val item: SuggestionItem) : ListItem(item.id)
+data class SuggestionLocalListItem(val state: SuggestionLocalItemState) : ListItem(state.id)
+
+data class SuggestionListItem(val state: SuggestionItemState) : ListItem(state.id)
 
 data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 

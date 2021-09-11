@@ -4,7 +4,6 @@ import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem

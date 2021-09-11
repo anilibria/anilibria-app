@@ -16,20 +16,20 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
 import ru.radiationx.anilibria.presentation.history.HistoryView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -53,12 +53,18 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
 
     private val adapter = ReleasesAdapter(
-        this, PlaceholderListItem(
+        loadRetryListener = {},
+        listener = this,
+        placeHolder = PlaceholderListItem(
             R.drawable.ic_history,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_history
         )
     )
+
+    private val searchAdapter = ListItemAdapter().apply {
+        addDelegate(ReleaseItemDelegate(this@HistoryFragment))
+    }
 
     @InjectPresenter
     lateinit var presenter: HistoryPresenter
@@ -136,7 +142,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
                 }
             })
 
-            setAdapter(adapter)
+            setAdapter(searchAdapter)
         }
     }
 
@@ -154,8 +160,9 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         return true
     }
 
-    override fun showState(state: ReleaseScreenState) {
-        adapter.bindState(state)
+    override fun showState(state: HistoryScreenState) {
+        adapter.bindState(DataLoadingState(data = state.items))
+        searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 
     override fun onItemClick(item: ReleaseItemState, position: Int) {

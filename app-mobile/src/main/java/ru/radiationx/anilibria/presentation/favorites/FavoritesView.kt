@@ -2,11 +2,8 @@ package ru.radiationx.anilibria.presentation.favorites
 
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.common.IBaseView
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesScreenState
 
 /**
  * Created by radiationx on 13.01.18.
@@ -16,5 +13,5 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 interface FavoritesView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showState(state:ReleaseScreenState)
+    fun showState(state: FavoritesScreenState)
 }

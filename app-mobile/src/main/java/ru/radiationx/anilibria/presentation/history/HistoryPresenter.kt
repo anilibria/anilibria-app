@@ -2,10 +2,11 @@ package ru.radiationx.anilibria.presentation.history
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
+import ru.radiationx.anilibria.ui.fragments.history.HistoryScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -28,46 +29,49 @@ class HistoryPresenter @Inject constructor(
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<ReleaseItem>()
-
-    private var currentState = ReleaseScreenState()
-
-    private fun updateState(block: (ReleaseScreenState) -> ReleaseScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
-    }
+    private val stateController = StateController(HistoryScreenState())
 
     private var isSearchEnabled: Boolean = false
     private var currentQuery: String = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
         observeReleases()
     }
 
     private fun observeReleases() {
         historyRepository
             .observeReleases()
-            .subscribe {
+            .subscribe { releases ->
                 currentReleases.clear()
-                currentReleases.addAll(it)
-                updateData()
+                currentReleases.addAll(releases)
+
+                stateController.updateState {
+                    it.copy(items = currentReleases.map { it.toState() })
+                }
+
+                updateSearchState()
             }
             .addToDisposable()
     }
 
-    private fun updateData() {
+    private fun updateSearchState() {
         isSearchEnabled = currentQuery.isNotEmpty()
-        val newReleases = if (currentQuery.isNotEmpty()) {
-            val searchRes = currentReleases.filter {
-                it.title.orEmpty().contains(currentQuery, true) || it.titleEng.orEmpty()
-                    .contains(currentQuery, true)
+        val searchItes = if (currentQuery.isNotEmpty()) {
+            currentReleases.filter {
+                it.title.orEmpty().contains(currentQuery, true)
+                        || it.titleEng.orEmpty().contains(currentQuery, true)
             }
-            searchRes
         } else {
-            currentReleases
+            emptyList()
         }
-        val newItems = newReleases.map { it.toState() }
-        updateState { it.copy(items = newItems) }
+        stateController.updateState {
+            it.copy(searchItems = searchItes.map { it.toState() })
+        }
     }
 
     private fun findRelease(id: Int): ReleaseItem? {
@@ -76,7 +80,7 @@ class HistoryPresenter @Inject constructor(
 
     fun localSearch(query: String) {
         currentQuery = query
-        updateData()
+        updateSearchState()
     }
 
     fun onItemClick(item: ReleaseItemState) {

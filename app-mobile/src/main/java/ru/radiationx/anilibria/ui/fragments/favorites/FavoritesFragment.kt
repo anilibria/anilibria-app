@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.favorites
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
@@ -20,14 +20,14 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleaseScreenState
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared_app.di.injectDependencies
@@ -41,13 +41,18 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
-        this, PlaceholderListItem(
+        loadRetryListener = { presenter.loadMore() },
+        listener = this,
+        placeHolder = PlaceholderListItem(
             R.drawable.ic_fav_border,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_favorites
         )
     )
 
+    private val searchAdapter = ListItemAdapter().apply {
+        addDelegate(ReleaseItemDelegate(this@FavoritesFragment))
+    }
 
     private var searchView: SearchMenuItem? = null
 
@@ -143,7 +148,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
                 }
             })
 
-            setAdapter(adapter)
+            setAdapter(searchAdapter)
         }
     }
 
@@ -166,9 +171,11 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         super.onDestroyView()
     }
 
-    override fun showState(state: ReleaseScreenState) {
-        refreshLayout.isRefreshing = state.refreshing
-        adapter.bindState(state)
+    override fun showState(state: FavoritesScreenState) {
+        progressBarList.isVisible = state.data.emptyLoading
+        refreshLayout.isRefreshing = state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
+        adapter.bindState(state.data)
+        searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 
     override fun onLoadMore() {

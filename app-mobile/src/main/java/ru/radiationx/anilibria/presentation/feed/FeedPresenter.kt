@@ -25,6 +25,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
+import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -64,6 +65,7 @@ class FeedPresenter @Inject constructor(
     private var lastLoadedPage: Int? = null
 
     private val currentItems = mutableListOf<FeedItem>()
+    private val currentScheduleItems = mutableListOf<ScheduleItem>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -126,7 +128,9 @@ class FeedPresenter @Inject constructor(
     }
 
     fun onScheduleItemClick(item: ScheduleItemState, position: Int) {
-        val releaseItem = findRelease(item.releaseId) ?: return
+        val releaseItem = currentScheduleItems
+            .find { it.releaseItem.id == item.releaseId }
+            ?.releaseItem ?: return
         feedAnalytics.scheduleReleaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
@@ -231,9 +235,11 @@ class FeedPresenter @Inject constructor(
                 "Ожидается $preText $dayName (по МСК)"
             }
 
+            currentScheduleItems.clear()
             val items = scheduleDays
                 .firstOrNull { it.day == mskDay }
                 ?.items
+                ?.also { currentScheduleItems.addAll(it) }
                 ?.map { it.toState() }
                 .orEmpty()
 

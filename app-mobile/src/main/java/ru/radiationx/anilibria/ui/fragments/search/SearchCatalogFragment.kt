@@ -77,8 +77,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
     private val fastSearchAdapter = FastSearchAdapter {
         //searchView?.close(true)
         searchPresenter.onItemClick(it)
-    }.apply {
-        setHasStableIds(true)
     }
     private var searchView: SearchMenuItem? = null
 

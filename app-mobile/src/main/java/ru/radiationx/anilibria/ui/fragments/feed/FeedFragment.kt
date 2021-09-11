@@ -65,11 +65,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     lateinit var appThemeHolder: AppThemeHolder
 
     private val searchAdapter = FastSearchAdapter {
-        //searchView?.close(true)
-
         searchPresenter.onItemClick(it)
-    }.apply {
-        setHasStableIds(true)
     }
     private var searchView: SearchView? = null
 

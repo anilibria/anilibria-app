@@ -15,7 +15,7 @@ import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.search.SearchItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 
-sealed class ListItem(val idData: Any?) {
+sealed class ListItem(private val idData: Any?) {
 
     open fun getItemId(): Long {
         return generateIdentifier(this::class.java, idData)

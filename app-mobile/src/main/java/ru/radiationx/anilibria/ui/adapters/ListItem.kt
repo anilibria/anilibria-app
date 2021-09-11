@@ -43,7 +43,7 @@ sealed class ListItem(private val idData: Any?) {
 /* Other screen*/
 
 data class ProfileListItem(val profileItem: ProfileItem) : ListItem(profileItem.id)
-data class MenuListItem(val menuItem: OtherMenuItem) : ListItem(menuItem.id)
+data class MenuListItem(val menuItem: OtherMenuItem) : ListItem(menuItem.title)
 data class DividerShadowListItem(val id: Any) : ListItem(id)
 
 

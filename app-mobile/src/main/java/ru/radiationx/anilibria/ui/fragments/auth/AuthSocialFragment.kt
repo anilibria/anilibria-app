@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -23,7 +22,7 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import java.lang.Exception
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 
@@ -98,8 +97,24 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         webView.loadUrl(url)
     }
 
+    override fun showClearCookies() {
+        AlertDialog.Builder(requireContext())
+            .setCancelable(false)
+            .setMessage("Обнаружен автоматический вход по старым данным авторизации. Хотите продолжить?")
+            .setPositiveButton("Продолжить") { _, _ ->
+                presenter.onContinueClick()
+            }
+            .setNegativeButton("Начать заново") { _, _ ->
+                presenter.onClearDataClick()
+            }
+            .setNeutralButton("Отмена") { _, _ ->
+                presenter.onBackPressed()
+            }
+            .show()
+    }
+
     override fun showError() {
-        AlertDialog.Builder(context!!)
+        AlertDialog.Builder(requireContext())
             .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
             .setPositiveButton("Перейти") { _, _ ->
                 Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")

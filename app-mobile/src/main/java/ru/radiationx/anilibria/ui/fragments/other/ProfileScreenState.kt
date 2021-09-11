@@ -16,5 +16,5 @@ data class ProfileItemState(
 data class OtherMenuItemState(
     val id: Int,
     val title: String,
-    val icon: Int
+    val iconRes: Int
 )

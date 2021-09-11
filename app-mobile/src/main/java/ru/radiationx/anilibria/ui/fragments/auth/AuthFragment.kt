@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
@@ -94,15 +95,15 @@ class AuthFragment : BaseFragment(), AuthView {
         authSwitcher.displayedChild = if (refreshing) 1 else 0
     }
 
-    override fun showSocial(items: List<SocialAuth>) {
+    override fun showSocial(items: List<SocialAuthItemState>) {
         authSocialTop.visible(items.isNotEmpty())
         authSocialContent.visible(items.isNotEmpty())
         authSocialBottom.visible(items.isNotEmpty())
         socialAuthAdapter.bindItems(items)
     }
 
-    private fun onSocialClick(item: SocialAuth) {
-        AlertDialog.Builder(context!!)
+    private fun onSocialClick(item: SocialAuthItemState) {
+        AlertDialog.Builder(requireContext())
             .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
             .setPositiveButton("Продолжить") { _, _ ->
                 presenter.onSocialClick(item)

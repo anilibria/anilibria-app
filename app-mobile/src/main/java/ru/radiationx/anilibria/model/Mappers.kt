@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.model
 
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
+import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
@@ -69,5 +71,26 @@ fun ProfileItem.toState(): ProfileItemState {
 fun OtherMenuItem.toState() = OtherMenuItemState(
     id = id,
     title = title,
-    icon = icon
+    iconRes = icon
 )
+
+fun SocialAuth.toState(): SocialAuthItemState {
+    val icon = when (key) {
+        SocialAuth.KEY_VK -> R.drawable.ic_logo_vk
+        SocialAuth.KEY_PATREON -> R.drawable.ic_logo_patreon
+        else -> null
+    }
+
+    val color = when (key) {
+        SocialAuth.KEY_VK -> R.color.brand_vk
+        SocialAuth.KEY_PATREON -> R.color.brand_patreon
+        else -> null
+    }
+
+    return SocialAuthItemState(
+        key = key,
+        title = title,
+        iconRes = icon,
+        colorRes = color
+    )
+}

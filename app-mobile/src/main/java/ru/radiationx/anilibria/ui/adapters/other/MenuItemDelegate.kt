@@ -28,7 +28,7 @@ class MenuItemDelegate(
 
         fun bind(state: OtherMenuItemState) {
             otherMenuTitle.text = state.title
-            otherMenuIcon.setCompatDrawable(state.icon)
+            otherMenuIcon.setCompatDrawable(state.iconRes)
             containerView.setOnClickListener { clickListener(state) }
         }
     }

@@ -1,15 +1,11 @@
 package ru.radiationx.anilibria.ui.adapters
 
-import ru.radiationx.anilibria.model.FeedItemState
-import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.ScheduleItemState
-import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.data.entity.app.search.SearchItem
@@ -94,11 +90,10 @@ data class ReleaseHeadListItem(val item: ReleaseFull) : ListItem(item.id)
 
 data class SearchListItem(val item: SearchItem) : ListItem(item.id)
 data class SearchSuggestionListItem(val item: SuggestionItem) : ListItem(item.id)
-data class GenreListItem(val item: GenreItem) : ListItem(item.value)
 
 data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 
-data class SocialAuthListItem(val item: SocialAuth) : ListItem(item.key)
+data class SocialAuthListItem(val state: SocialAuthItemState) : ListItem(state.key)
 
 data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.releaseId)
 data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItemState>) : ListItem(id)

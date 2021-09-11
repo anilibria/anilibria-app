@@ -19,8 +19,6 @@ import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.shared_app.di.injectDependencies
 
 
@@ -53,15 +51,13 @@ class OtherFragment : BaseFragment(), OtherView {
         }
     }
 
-    override fun showItems(profileItem: ProfileItem, menu: List<MutableList<OtherMenuItem>>) {
-        adapter.bindItems(profileItem, menu)
+    override fun showState(state: ProfileScreenState) {
+        adapter.bindItems(state)
     }
 
     override fun showOtpCode() {
         OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
     }
-
-    override fun setRefreshing(refreshing: Boolean) {}
 
     override fun onBackPressed(): Boolean {
         return false
@@ -69,13 +65,11 @@ class OtherFragment : BaseFragment(), OtherView {
 
     inner class OtherAdapter : ListItemAdapter() {
 
-        private val profileClickListener = { item: ProfileItem ->
-            presenter.openAuth()
-        }
+        private val profileClickListener = { _: ProfileItemState -> presenter.onProfileClick() }
 
         private val logoutClickListener = { presenter.signOut() }
 
-        private val menuClickListener = { item: OtherMenuItem -> presenter.onMenuClick(item) }
+        private val menuClickListener = { item: OtherMenuItemState -> presenter.onMenuClick(item) }
 
         init {
             delegatesManager.apply {
@@ -85,12 +79,15 @@ class OtherFragment : BaseFragment(), OtherView {
             }
         }
 
-        fun bindItems(profileItem: ProfileItem, menu: List<MutableList<OtherMenuItem>>) {
+        fun bindItems(state: ProfileScreenState) {
             items = mutableListOf<ListItem>().apply {
-                add(ProfileListItem(profileItem))
-                add(DividerShadowListItem("profile"))
-                val lastItem = menu.lastOrNull()
-                menu.forEach { menuItems ->
+                state.profile?.also {
+                    add(ProfileListItem("profile", it))
+                    add(DividerShadowListItem("profile"))
+                }
+
+                val lastItem = state.menuItems.lastOrNull()
+                state.menuItems.forEach { menuItems ->
                     addAll(menuItems.map { MenuListItem(it) })
                     if (menuItems.isNotEmpty() && lastItem != menuItems) {
                         add(DividerShadowListItem("divider_${menuItems.lastOrNull()?.id ?: 0}"))

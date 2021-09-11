@@ -6,9 +6,9 @@ import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
+import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
+import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -42,8 +42,8 @@ sealed class ListItem(private val idData: Any?) {
 
 /* Other screen*/
 
-data class ProfileListItem(val profileItem: ProfileItem) : ListItem(profileItem.id)
-data class MenuListItem(val menuItem: OtherMenuItem) : ListItem(menuItem.title)
+data class ProfileListItem(val id: Any, val state: ProfileItemState) : ListItem(id)
+data class MenuListItem(val menuItem: OtherMenuItemState) : ListItem(menuItem.title)
 data class DividerShadowListItem(val id: Any) : ListItem(id)
 
 

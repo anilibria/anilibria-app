@@ -21,6 +21,7 @@ import moxy.presenter.ProvidePresenter
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
@@ -87,6 +88,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             layoutManager = LinearLayoutManager(context)
             adapter = releaseInfoAdapter
             setHasFixedSize(true)
+            disableItemChangeAnimation()
         }
     }
 

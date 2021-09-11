@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -48,6 +49,7 @@ class OtherFragment : BaseFragment(), OtherView {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = this@OtherFragment.adapter
+            disableItemChangeAnimation()
         }
     }
 

@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
 import ru.radiationx.anilibria.presentation.youtube.YoutubeView
@@ -61,6 +62,7 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
         recyclerView.apply {
             adapter = youtubeAdapter
             layoutManager = LinearLayoutManager(recyclerView.context)
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(

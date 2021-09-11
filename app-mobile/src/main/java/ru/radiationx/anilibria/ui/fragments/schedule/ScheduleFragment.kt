@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -78,6 +79,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         recyclerView.apply {
             adapter = scheduleAdapter
             layoutManager = LinearLayoutManager(this.context)
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(recyclerView, appbarLayout) {

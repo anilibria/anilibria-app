@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.presentation.history.HistoryPresenter
@@ -115,10 +116,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = this@HistoryFragment.adapter
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
+            disableItemChangeAnimation()
         }
 
 

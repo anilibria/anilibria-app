@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
 import ru.radiationx.anilibria.presentation.feed.FeedView
@@ -108,11 +109,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         recyclerView.apply {
             adapter = this@FeedFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
-            //itemAnimator = null
+            disableItemChangeAnimation()
         }
 
         toolbar.apply {

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
@@ -15,10 +16,10 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.search.*
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
@@ -153,11 +154,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
         recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
+            layoutManager = LinearLayoutManager(this.context)
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(

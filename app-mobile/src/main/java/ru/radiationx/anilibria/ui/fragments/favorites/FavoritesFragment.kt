@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
 import ru.radiationx.anilibria.presentation.favorites.FavoritesView
@@ -29,7 +30,6 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -101,10 +101,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         recyclerView.apply {
             adapter = this@FavoritesFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(

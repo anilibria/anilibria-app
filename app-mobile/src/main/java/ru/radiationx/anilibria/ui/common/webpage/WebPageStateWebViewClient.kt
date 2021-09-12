@@ -15,14 +15,14 @@ class WebPageStateWebViewClient(
     private val stateHandler = WebPageStateHandler(listener)
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             stateHandler.onLoadingChanged(true)
         }
         return super.shouldOverrideUrlLoading(view, request)
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
             stateHandler.onLoadingChanged(true)
         }
         return super.shouldOverrideUrlLoading(view, url)

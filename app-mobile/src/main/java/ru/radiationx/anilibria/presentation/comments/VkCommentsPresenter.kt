@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.presentation.comments
 
 import android.util.Log
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposables
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -34,6 +37,10 @@ class VkCommentsPresenter @Inject constructor(
     var releaseId = -1
     var releaseIdCode: String? = null
 
+    private var isVisibleToUser = false
+    private var pendingAuthRequest: String? = null
+    private var authRequestDisposable = Disposables.disposed()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         val releaseItem = releaseInteractor.getItem(releaseId, releaseIdCode)
@@ -56,9 +63,14 @@ class VkCommentsPresenter @Inject constructor(
             .addToDisposable()
     }
 
+    fun setVisibleToUser(isVisible: Boolean) {
+        isVisibleToUser = isVisible
+        tryExecutePendingAuthRequest()
+    }
+
     fun authRequest(url: String) {
-        authVkAnalytics.open(AnalyticsConstants.screen_auth_vk)
-        router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
+        pendingAuthRequest = url
+        tryExecutePendingAuthRequest()
     }
 
     fun onPageLoaded() {
@@ -67,6 +79,22 @@ class VkCommentsPresenter @Inject constructor(
 
     fun onPageCommitError(error: Exception) {
         commentsAnalytics.error(error)
+    }
+
+    private fun tryExecutePendingAuthRequest() {
+        authRequestDisposable.dispose()
+        authRequestDisposable = Completable
+            .fromAction {
+                val url = pendingAuthRequest
+                if (isVisibleToUser && url != null) {
+                    pendingAuthRequest = null
+                    authVkAnalytics.open(AnalyticsConstants.screen_auth_vk)
+                    router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
+                }
+            }
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+            .addToDisposable()
     }
 
     private fun loadData() {
@@ -96,7 +124,6 @@ class VkCommentsPresenter @Inject constructor(
     }
 
     private fun updateComments() {
-        Log.d("kekeke", "COMMENTS: updateComments")
         if (currentData != null && currentVkComments != null) {
             currentVkComments?.also {
                 viewState.showBody(

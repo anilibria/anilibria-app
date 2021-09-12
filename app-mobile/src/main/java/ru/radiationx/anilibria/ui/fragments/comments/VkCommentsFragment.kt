@@ -15,12 +15,13 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.presentation.comments.VkCommentsPresenter
 import ru.radiationx.anilibria.presentation.comments.VkCommentsView
+import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
+import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.Utils
@@ -32,6 +33,7 @@ import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
+import ru.radiationx.shared_app.di.injectDependencies
 import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
@@ -91,7 +93,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             //this.javaScriptCanOpenWindowsAutomatically = false
         }
 
-        webView.webViewClient = vkWebViewClient
+        webView.webViewClient = composite
         webView.webChromeClient = vkWebChromeClient
 
         val cookieManager = CookieManager.getInstance()
@@ -121,12 +123,12 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     override fun onPause() {
         super.onPause()
-        webView.onPause()
+        presenter.setVisibleToUser(false)
     }
 
     override fun onResume() {
         super.onResume()
-        webView.onResume()
+        presenter.setVisibleToUser(true)
     }
 
     override fun onDestroyView() {
@@ -174,36 +176,64 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     private val vkWebChromeClient = object : WebChromeClient() {
+
         override fun onCreateWindow(
             view: WebView?,
             isDialog: Boolean,
             isUserGesture: Boolean,
             resultMsg: Message
         ): Boolean {
-            Log.d("kukosina", "onCreateWindow $isDialog, $isUserGesture")
             val newWebView = WebView(context)
             AlertDialog.Builder(context!!)
                 .setView(newWebView)
                 .show()
-            //addView(newWebView)
             val transport = resultMsg.obj as WebView.WebViewTransport
             transport.webView = newWebView
             resultMsg.sendToTarget()
             return true
         }
+    }
 
+    private val stateClient = WebPageStateWebViewClient {
+        Log.d("kekeke", "S_DEF_LOG state $it")
     }
 
     private val vkWebViewClient = object : WebViewClient() {
 
         var loadingFinished = true
         var redirect = false
+        var authCheckIntercepted = false
 
         private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
+        private val authCheckRegex = Regex("vk\\.com\\/login\\?act=authcheck")
+        private val commentsRegex = Regex("widget_comments(?:\\.\\w+?)?\\.css")
 
         @Suppress("DEPRECATION", "OverridingDeprecatedMember")
         override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
-            return if (url?.contains("widget_comments.css") == true) {
+            return tryInterceptAuthCheck(view, url)
+                ?: tryInterceptComments(view, url)
+                ?: super.shouldInterceptRequest(view, url)
+        }
+
+        private fun tryInterceptAuthCheck(view: WebView?, url: String?): WebResourceResponse? {
+            val needAuth = authCheckRegex.containsMatchIn(url.orEmpty())
+            if (needAuth && !authCheckIntercepted) {
+                authCheckIntercepted = true
+                val mobileUrl = if (!url.orEmpty().contains("/m.vk.com/")) {
+                    url.orEmpty().replace("vk.com", "/m.vk.com/")
+                } else {
+                    url.orEmpty()
+                }
+                Log.d("kekeke", "tryInterceptAuthCheck $url -> $mobileUrl")
+                presenter.authRequest(mobileUrl)
+            }
+            return null
+        }
+
+        private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
+            val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
+            return if (needIntercept) {
+                Log.d("kekeke", "tryInterceptComments $url")
                 val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope)
                     .getInstance(IClient::class.java, MainClient::class.java.name)
 
@@ -233,7 +263,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 val newData = ByteArrayInputStream(newCss.toByteArray(StandardCharsets.UTF_8))
                 WebResourceResponse("text/css", "utf-8", newData)
             } else {
-                super.shouldInterceptRequest(view, url)
+                null
             }
         }
 
@@ -258,6 +288,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+            authCheckIntercepted = false
+
+
             loadingFinished = false
             //progressBar.visibility = View.VISIBLE
 
@@ -266,6 +299,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
 
             Log.e("S_DEF_LOG", "ON onPageFinished")
             if (!redirect) {
@@ -312,5 +346,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         }
 
     }
+    private val composite = compositeWebViewClientOf(
+        stateClient,
+        vkWebViewClient
+    )
 
 }

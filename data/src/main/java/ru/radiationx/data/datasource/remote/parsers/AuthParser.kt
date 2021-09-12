@@ -46,7 +46,16 @@ class AuthParser @Inject constructor(
         val message = responseJson.nullString("mes")
         val key = responseJson.nullString("key")
         if (error != "ok" && key != "authorized") {
-            throw ApiError(400, message ?: key, null)
+            val apiError = ApiError(400, message ?: key, null)
+            throw when (key) {
+                "authorized" -> AlreadyAuthorizedException(apiError)
+                "empty" -> EmptyFieldException(apiError)
+                "wrongUserAgent" -> WrongUserAgentException(apiError)
+                "invalidUser" -> InvalidUserException(apiError)
+                "wrong2FA" -> Wrong2FaCodeException(apiError)
+                "wrongPasswd" -> WrongPasswordException(apiError)
+                else -> apiError
+            }
         }
         return message.orEmpty()
     }

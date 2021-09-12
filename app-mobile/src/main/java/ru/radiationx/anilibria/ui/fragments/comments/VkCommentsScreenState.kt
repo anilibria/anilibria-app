@@ -6,5 +6,6 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 data class VkCommentsScreenState(
     val pageState: WebPageViewState? = null,
     val jsErrorVisible: Boolean = false,
+    val vkBlockedVisible: Boolean = false,
     val data: DataLoadingState<VkCommentsState> = DataLoadingState()
 )

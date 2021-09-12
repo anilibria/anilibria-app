@@ -83,6 +83,13 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             presenter.pageReload()
         }
 
+        vkBlockedErrorView.setPrimaryButtonClickListener {
+            presenter.refresh()
+        }
+        vkBlockedErrorView.setSecondaryClickListener {
+            presenter.closeVkBlockedError()
+        }
+
         dataErrorView.setPrimaryButtonClickListener {
             presenter.refresh()
         }
@@ -156,6 +163,10 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading
         webErrorView.isVisible = state.pageState is WebPageViewState.Error
+        val webErrorDesc = (state.pageState as? WebPageViewState.Error?)?.error?.description
+        webErrorView.setSubtitle(webErrorDesc)
+
+        vkBlockedErrorView.isVisible = state.vkBlockedVisible
 
         dataErrorView.isVisible = state.data.error != null
 

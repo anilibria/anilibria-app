@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.comments
 
+import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -26,6 +27,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -49,6 +51,9 @@ class VkCommentsPresenter @Inject constructor(
 
     private var hasJsError = false
     private var jsErrorClosed = false
+
+    private var hasVkBlockedError = false
+    private var vkBlockedErrorClosed = false
 
     private val loadingController = DataLoadingController {
         getDataSource().map { ScreenStateAction.Data(it, false) }
@@ -85,6 +90,21 @@ class VkCommentsPresenter @Inject constructor(
                 stateController.updateState {
                     it.copy(data = loadingData)
                 }
+            }
+            .addToDisposable()
+
+        loadingController
+            .observeState()
+            .filter { it.data != null }
+            .map { it.data!! }
+            .distinctUntilChanged { t1, t2 ->
+                t1 == t2 && vkBlockedErrorClosed
+            }
+            .debounce(1L, TimeUnit.SECONDS)
+            .switchMapSingle { pageRepository.checkVkBlocked() }
+            .subscribe { vkBlocked ->
+                hasVkBlockedError = vkBlocked
+                updateVkBlockedState()
             }
             .addToDisposable()
 
@@ -127,6 +147,12 @@ class VkCommentsPresenter @Inject constructor(
         updateJsErrorState()
     }
 
+    fun closeVkBlockedError() {
+        vkBlockedErrorClosed = true
+        updateVkBlockedState()
+        refresh()
+    }
+
     fun onNewPageState(pageState: WebPageViewState) {
         stateController.updateState {
             it.copy(pageState = pageState)
@@ -136,6 +162,12 @@ class VkCommentsPresenter @Inject constructor(
     private fun updateJsErrorState() {
         stateController.updateState {
             it.copy(jsErrorVisible = hasJsError && !jsErrorClosed)
+        }
+    }
+
+    private fun updateVkBlockedState() {
+        stateController.updateState {
+            it.copy(vkBlockedVisible = hasVkBlockedError && !vkBlockedErrorClosed)
         }
     }
 
@@ -171,8 +203,8 @@ class VkCommentsPresenter @Inject constructor(
                 commentsSource,
                 BiFunction<ReleaseItem, VkComments, VkCommentsState> { result1, result2 ->
                     return@BiFunction VkCommentsState(
-                        "${result2.baseUrl}release/${result1.code}.html",
-                        result2.script
+                        url = "${result2.baseUrl}release/${result1.code}.html",
+                        script = result2.script
                     )
                 }
             )

@@ -11,7 +11,6 @@ import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
 import ru.radiationx.anilibria.presentation.auth.AuthView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -21,6 +20,7 @@ import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 /**
@@ -68,7 +68,6 @@ class AuthFragment : BaseFragment(), AuthView {
 
         authLogin.addTextChangeListener { presenter.setLogin(it) }
         authPassword.addTextChangeListener { presenter.setPassword(it) }
-        auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
     }
 
     override fun setSignButtonEnabled(isEnabled: Boolean) {

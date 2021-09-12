@@ -12,6 +12,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.app.auth.EmptyFieldException
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
@@ -33,7 +34,6 @@ class AuthPresenter @Inject constructor(
 
     private var currentLogin = ""
     private var currentPassword = ""
-    private var currentCode2fa = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -72,11 +72,6 @@ class AuthPresenter @Inject constructor(
         updateButtonState()
     }
 
-    fun setCode2fa(code2fa: String) {
-        currentCode2fa = code2fa
-        updateButtonState()
-    }
-
     private fun updateButtonState() {
         val enabled = currentLogin.isNotEmpty() && currentPassword.isNotEmpty()
         viewState.setSignButtonEnabled(enabled)
@@ -86,15 +81,25 @@ class AuthPresenter @Inject constructor(
         authMainAnalytics.loginClick()
         viewState.setRefreshing(true)
         authRepository
-            .signIn(currentLogin, currentPassword, currentCode2fa)
+            .signIn(currentLogin, currentPassword, "")
             .doAfterTerminate { viewState.setRefreshing(false) }
             .subscribe({ user ->
                 decideWhatToDo(user.authState)
             }, {
-                authMainAnalytics.error(it)
-                errorHandler.handle(it)
+                if (isEmpty2FaCode(it)) {
+                    router.navigateTo(Screens.Auth2FaCode(currentLogin, currentPassword))
+                } else {
+                    authMainAnalytics.error(it)
+                    errorHandler.handle(it)
+                }
             })
             .addToDisposable()
+    }
+
+    private fun isEmpty2FaCode(error: Throwable): Boolean {
+        return currentLogin.isNotEmpty()
+                && currentPassword.isNotEmpty()
+                && error is EmptyFieldException
     }
 
     private fun decideWhatToDo(state: AuthState) {

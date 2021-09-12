@@ -16,7 +16,8 @@ class AuthVkPresenter @Inject constructor(
     private val router: Router
 ) : BasePresenter<AuthVkView>(router) {
 
-    private var resultPattern = "(\\?act=widget)"
+    private var resultPattern =
+        "(\\?act=widget|anilibria\\.tv\\/public\\/vk\\.php\\?code=|vk\\.com\\/widget_comments\\.php)"
 
     var argUrl: String = ""
 

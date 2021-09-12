@@ -27,4 +27,12 @@
         <attr name="aspectRatio" format="float" />
         <attr name="enabledAspectRatio" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="ScreenHolderView">
+        <attr name="shvIcon" format="reference" />
+        <attr name="shvTitle" format="string" />
+        <attr name="shvSubtitle" format="string" />
+        <attr name="shvPrimaryButton" format="string" />
+        <attr name="shvSecondaryButton" format="string" />
+    </declare-styleable>
 </resources>

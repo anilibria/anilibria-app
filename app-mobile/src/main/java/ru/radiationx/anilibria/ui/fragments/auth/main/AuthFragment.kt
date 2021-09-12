@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.auth
+package ru.radiationx.anilibria.ui.fragments.auth.main
 
 import android.os.Bundle
 import android.view.View

@@ -1,13 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
-import android.graphics.Bitmap
-import android.net.http.SslError
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.webkit.*
+import android.webkit.WebSettings
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_webview.*
 import moxy.presenter.InjectPresenter
@@ -15,12 +14,15 @@ import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
+import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
+import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
+import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.auth.otp.AuthPatternWebViewClient
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.toException
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
@@ -39,6 +41,20 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
                 putString(ARG_KEY, key)
             }
         }
+    }
+
+    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(presenter::onSuccessAuthResult) }
+
+    private val analyticsWebViewClient by lazy { AnalyticsWebViewClient(presenter::sendAnalyticsPageError) }
+
+    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(presenter::onPageStateChanged) }
+
+    private val compositeWebViewClient by lazy {
+        compositeWebViewClientOf(
+            authPatternWebViewClient,
+            analyticsWebViewClient,
+            webPageWebViewClient
+        )
     }
 
     private val useTimeCounter by lazy {
@@ -77,7 +93,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
                 setAppCacheEnabled(false)
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
-            webViewClient = customWebViewClient
+            webViewClient = compositeWebViewClient
         }
     }
 
@@ -91,26 +107,45 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         super.onDestroyView()
     }
 
-    override fun setRefreshing(refreshing: Boolean) {}
-
-    override fun loadPage(url: String) {
-        webView.loadUrl(url)
+    override fun loadPage(data: SocialAuth) {
+        authPatternWebViewClient.authData = data
+        webView.loadUrl(data.socialUrl)
     }
 
-    override fun showClearCookies() {
-        AlertDialog.Builder(requireContext())
-            .setCancelable(false)
-            .setMessage("Обнаружен автоматический вход по старым данным авторизации. Хотите продолжить?")
-            .setPositiveButton("Продолжить") { _, _ ->
-                presenter.onContinueClick()
+    override fun showState(state: AuthSocialScreenState) {
+        Log.d("kekeke", "show state $state")
+        val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
+        progressBarWv.isVisible = anyLoading
+        webView.isInvisible = anyLoading
+        showClearCookies(state.showClearCookies)
+    }
+
+    private var kekDialog: AlertDialog? = null
+
+    private fun showClearCookies(show: Boolean) {
+        val currentDialog = kekDialog
+        if (!show) {
+            currentDialog?.hide()
+        } else {
+            val dialog = currentDialog ?: run {
+                AlertDialog.Builder(requireContext())
+                    .setCancelable(false)
+                    .setMessage("Обнаружен автоматический вход по старым данным авторизации. Хотите продолжить?")
+                    .setPositiveButton("Продолжить") { _, _ ->
+                        presenter.onContinueClick()
+                    }
+                    .setNegativeButton("Начать заново") { _, _ ->
+                        presenter.onClearDataClick()
+                    }
+                    .setNeutralButton("Отмена") { _, _ ->
+                        presenter.onBackPressed()
+                    }
+                    .create()
             }
-            .setNegativeButton("Начать заново") { _, _ ->
-                presenter.onClearDataClick()
+            if (!dialog.isShowing) {
+                dialog.show()
             }
-            .setNeutralButton("Отмена") { _, _ ->
-                presenter.onBackPressed()
-            }
-            .show()
+        }
     }
 
     override fun showError() {
@@ -124,81 +159,5 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
             .setOnDismissListener {
                 presenter.onUserUnderstandWhatToDo()
             }
-    }
-
-    private val customWebViewClient = object : WebViewClient() {
-
-        var loadingFinished = true
-        var redirect = false
-
-        @Suppress("OverridingDeprecatedMember")
-        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
-            if (!loadingFinished) {
-                redirect = true
-            }
-
-            loadingFinished = false
-
-            val result = presenter.onNewRedirectLink(url)
-            if (result) {
-                return true
-            }
-            return false
-        }
-
-        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            super.onPageStarted(view, url, favicon)
-            loadingFinished = false
-            progressBarWv.visible()
-        }
-
-        override fun onPageFinished(view: WebView?, url: String?) {
-            if (!redirect) {
-                loadingFinished = true
-            }
-
-            if (loadingFinished && !redirect) {
-                progressBarWv.gone()
-            } else {
-                redirect = false
-            }
-        }
-
-        override fun onPageCommitVisible(view: WebView?, url: String?) {
-            super.onPageCommitVisible(view, url)
-            progressBarWv.gone()
-        }
-
-        override fun onReceivedSslError(
-            view: WebView?,
-            handler: SslErrorHandler?,
-            error: SslError?
-        ) {
-            super.onReceivedSslError(view, handler, error)
-            presenter.onPageCommitError(error.toException())
-        }
-
-        override fun onReceivedHttpError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            errorResponse: WebResourceResponse?
-        ) {
-            super.onReceivedHttpError(view, request, errorResponse)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
-                presenter.onPageCommitError(errorResponse.toException(request))
-            }
-        }
-
-        override fun onReceivedError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            error: WebResourceError?
-        ) {
-            super.onReceivedError(view, request, error)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
-                presenter.onPageCommitError(error.toException(request))
-            }
-        }
     }
 }

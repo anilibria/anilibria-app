@@ -8,7 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 
-class WebPageWebViewClient(
+class WebPageStateWebViewClient(
     listener: (WebPageViewState) -> Unit
 ) : WebViewClient() {
 

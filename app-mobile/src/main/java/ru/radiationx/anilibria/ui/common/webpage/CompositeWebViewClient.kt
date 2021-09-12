@@ -8,9 +8,15 @@ import android.view.KeyEvent
 import android.webkit.*
 import androidx.annotation.RequiresApi
 
-class CompositeWebViewClient : WebViewClient() {
+fun compositeWebViewClientOf(vararg client: WebViewClient): CompositeWebViewClient {
+    return CompositeWebViewClient(client.toList())
+}
 
-    private val clients = mutableListOf<WebViewClient>()
+class CompositeWebViewClient(
+    initialClients: List<WebViewClient> = emptyList()
+) : WebViewClient() {
+
+    private val clients = mutableListOf(*initialClients.toTypedArray())
 
     fun registerClient(client: WebViewClient) {
         if (!clients.contains(client)) {

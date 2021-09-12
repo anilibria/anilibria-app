@@ -119,7 +119,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     }
 
     override fun loadPage(data: SocialAuth) {
-        authPatternWebViewClient.authData = data
+        authPatternWebViewClient.resultPattern = data.resultPattern
         webView.loadUrl(data.socialUrl)
     }
 

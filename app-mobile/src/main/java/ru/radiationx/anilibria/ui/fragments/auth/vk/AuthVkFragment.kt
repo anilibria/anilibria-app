@@ -1,25 +1,26 @@
 package ru.radiationx.anilibria.ui.fragments.auth.vk
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_webview.*
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.presentation.auth.vk.AuthVkPresenter
+import ru.radiationx.anilibria.presentation.auth.vk.AuthVkView
+import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
+import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
+import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.visible
-import ru.terrakok.cicerone.Router
-import java.util.regex.Pattern
+import ru.radiationx.shared_app.di.injectDependencies
 
-class AuthVkFragment : BaseFragment() {
+class AuthVkFragment : BaseFragment(), AuthVkView {
     companion object {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
@@ -28,88 +29,57 @@ class AuthVkFragment : BaseFragment() {
         }
     }
 
+    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(presenter::onSuccessAuthResult) }
 
-    private var startUrl = ""
-    private val resultUrlPattern = Pattern.compile("widget\\.html", Pattern.CASE_INSENSITIVE)
+    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(presenter::onPageStateChanged) }
+
+    private val compositeWebViewClient by lazy {
+        compositeWebViewClientOf(
+            authPatternWebViewClient,
+            webPageWebViewClient
+        )
+    }
+
+    @InjectPresenter
+    lateinit var presenter: AuthVkPresenter
+
+    @ProvidePresenter
+    fun providePresenter(): AuthVkPresenter =
+        getDependency(AuthVkPresenter::class.java, screenScope)
+
+    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+
+    override val statusBarVisible: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            startUrl = it.getString(ARG_URL, startUrl)
+            presenter.argUrl = it.getString(ARG_URL, presenter.argUrl)
         }
     }
-
-    override fun getLayoutResource(): Int = R.layout.fragment_webview
-
-    override val statusBarVisible: Boolean = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         appbarLayout.gone()
 
+        errorView.setPrimaryButtonClickListener {
+            webView.reload()
+        }
+
+        cookieView.setPrimaryButtonClickListener {
+            presenter.onContinueClick()
+        }
+        cookieView.setSecondaryClickListener {
+            presenter.onClearDataClick()
+        }
+
         webView.settings.apply {
             setAppCacheEnabled(false)
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
-        webView.loadUrl(startUrl)
-
-
-        webView.webViewClient = object : WebViewClient() {
-
-            var loadingFinished = true
-            var redirect = false
-
-            @Suppress("OverridingDeprecatedMember")
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
-                if (!loadingFinished) {
-                    redirect = true
-                }
-
-                loadingFinished = false
-
-                val matcher = resultUrlPattern.matcher(url)
-                if (matcher.find()) {
-                    getDependency(AuthHolder::class.java, screenScope).changeVkAuth(true)
-                    //todo
-                    //(activity as RouterProvider).getRouter().exitWithResult(RETURN_URL, "")
-                    getDependency(Router::class.java, screenScope).exit()
-                    return true
-                }
-                //view.loadUrl(request.url.toString())
-                return false
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                loadingFinished = false
-                progressBarWv.visible()
-
-                Log.e("S_DEF_LOG", "ON onPageStarted")
-                //SHOW LOADING IF IT ISNT ALREADY VISIBLE
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-
-                Log.e("S_DEF_LOG", "ON onPageFinished")
-                if (!redirect) {
-                    loadingFinished = true
-                }
-
-                if (loadingFinished && !redirect) {
-                    progressBarWv.gone()
-                } else {
-                    redirect = false
-                }
-            }
-
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                progressBarWv.gone()
-            }
-        }
+        webView.webViewClient = compositeWebViewClient
     }
 
     override fun onBackPressed(): Boolean {
@@ -120,5 +90,17 @@ class AuthVkFragment : BaseFragment() {
         webView.webViewClient = null
         webView.stopLoading()
         super.onDestroyView()
+    }
+
+    override fun loadPage(url: String, resultPattern: String) {
+        authPatternWebViewClient.resultPattern = resultPattern
+        webView.loadUrl(url)
+    }
+
+    override fun showState(state: AuthVkScreenState) {
+        progressBarWv.isVisible = state.pageState == WebPageViewState.Loading
+        webView.isVisible = state.pageState == WebPageViewState.Success && !state.showClearCookies
+        errorView.isVisible = state.pageState is WebPageViewState.Error
+        cookieView.isVisible = state.showClearCookies
     }
 }

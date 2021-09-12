@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
-import android.webkit.CookieManager
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -12,8 +11,6 @@ import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -28,7 +25,7 @@ class AuthSocialPresenter @Inject constructor(
 
     private var currentData: SocialAuth? = null
 
-    private val detector = SoFastDetector()
+    private val detector = WebAuthSoFastDetector()
     private var currentSuccessUrl: String? = null
 
     private val stateController = StateController(
@@ -45,10 +42,10 @@ class AuthSocialPresenter @Inject constructor(
             .subscribe { viewState.showState(it) }
             .addToDisposable()
 
-        getSocialAuth()
+        resetPage()
     }
 
-    private fun getSocialAuth() {
+    private fun resetPage() {
         authRepository
             .getSocialAuth(argKey)
             .subscribe({
@@ -64,9 +61,9 @@ class AuthSocialPresenter @Inject constructor(
 
     fun onClearDataClick() {
         currentSuccessUrl = null
-        detector.clear()
-        CookieManager.getInstance().removeAllCookie()
-        getSocialAuth()
+        detector.reset()
+        detector.clearCookies()
+        resetPage()
         stateController.updateState {
             it.copy(showClearCookies = false)
         }
@@ -136,28 +133,4 @@ class AuthSocialPresenter @Inject constructor(
             .addToDisposable()
     }
 
-    private class SoFastDetector() {
-        private val threshold = TimeUnit.SECONDS.toMillis(15)
-        private var hasInitialCookies = false
-        private var loadTime: Date? = null
-
-        fun clear() {
-            hasInitialCookies = false
-            loadTime = null
-        }
-
-        fun loadUrl(url: String?) {
-            hasInitialCookies = CookieManager.getInstance().getCookie(url) != null
-            loadTime = Date()
-        }
-
-        fun isSoFast(): Boolean {
-            val successTime = Date()
-            val isSmallDelta = loadTime?.let {
-                val millisDelta = successTime.time - it.time
-                millisDelta < threshold
-            } ?: false
-            return hasInitialCookies && isSmallDelta
-        }
-    }
 }

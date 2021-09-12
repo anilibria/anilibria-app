@@ -113,8 +113,9 @@ class CompositeWebViewClient(
         super.onReceivedHttpError(view, request, errorResponse)
     }
 
+    // TODO fix java.lang.IllegalStateException: { when=0 what=2 target=xb } This message is already in use.
     override fun onFormResubmission(view: WebView?, dontResend: Message?, resend: Message?) {
-        clients.forEach { it.onFormResubmission(view, dontResend, resend) }
+        //clients.forEach { it.onFormResubmission(view, dontResend, resend) }
         super.onFormResubmission(view, dontResend, resend)
     }
 

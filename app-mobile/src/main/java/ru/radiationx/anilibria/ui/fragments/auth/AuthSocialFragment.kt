@@ -5,10 +5,9 @@ import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_webview.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -79,7 +78,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_webview
+    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
 
     override val statusBarVisible: Boolean = true
 
@@ -94,6 +93,17 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
             webViewClient = compositeWebViewClient
+        }
+
+        errorView.setPrimaryButtonClickListener {
+            webView.reload()
+        }
+
+        cookieView.setPrimaryButtonClickListener {
+            presenter.onContinueClick()
+        }
+        cookieView.setSecondaryClickListener {
+            presenter.onClearDataClick()
         }
     }
 
@@ -116,36 +126,10 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         Log.d("kekeke", "show state $state")
         val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
         progressBarWv.isVisible = anyLoading
-        webView.isInvisible = anyLoading
-        showClearCookies(state.showClearCookies)
-    }
-
-    private var kekDialog: AlertDialog? = null
-
-    private fun showClearCookies(show: Boolean) {
-        val currentDialog = kekDialog
-        if (!show) {
-            currentDialog?.hide()
-        } else {
-            val dialog = currentDialog ?: run {
-                AlertDialog.Builder(requireContext())
-                    .setCancelable(false)
-                    .setMessage("Обнаружен автоматический вход по старым данным авторизации. Хотите продолжить?")
-                    .setPositiveButton("Продолжить") { _, _ ->
-                        presenter.onContinueClick()
-                    }
-                    .setNegativeButton("Начать заново") { _, _ ->
-                        presenter.onClearDataClick()
-                    }
-                    .setNeutralButton("Отмена") { _, _ ->
-                        presenter.onBackPressed()
-                    }
-                    .create()
-            }
-            if (!dialog.isShowing) {
-                dialog.show()
-            }
-        }
+        webView.isVisible =
+            state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
+        errorView.isVisible = state.pageState is WebPageViewState.Error
+        cookieView.isVisible = state.showClearCookies
     }
 
     override fun showError() {

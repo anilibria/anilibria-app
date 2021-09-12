@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
-import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialScreenState
+import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialScreenState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.auth
+package ru.radiationx.anilibria.ui.fragments.auth.social
 
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +17,8 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.auth.otp.AuthPatternWebViewClient
+import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
+import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.auth.SocialAuth

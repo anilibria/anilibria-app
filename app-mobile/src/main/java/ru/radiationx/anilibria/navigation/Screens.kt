@@ -8,9 +8,9 @@ import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
-import ru.radiationx.anilibria.ui.fragments.auth.AuthFragment
-import ru.radiationx.anilibria.ui.fragments.auth.AuthSocialFragment
-import ru.radiationx.anilibria.ui.fragments.auth.AuthVkFragment
+import ru.radiationx.anilibria.ui.fragments.auth.main.AuthFragment
+import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialFragment
+import ru.radiationx.anilibria.ui.fragments.auth.vk.AuthVkFragment
 import ru.radiationx.anilibria.ui.fragments.donation.detail.DonationDetailFragment
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.feed.FeedFragment

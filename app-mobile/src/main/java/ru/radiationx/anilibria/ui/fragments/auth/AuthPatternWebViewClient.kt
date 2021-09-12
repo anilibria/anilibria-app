@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.auth.otp
+package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.util.Log
 import android.webkit.WebView

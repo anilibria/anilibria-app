@@ -1,12 +1,13 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
-import android.os.Build
 import android.text.Html
 import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_release.*
+import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
@@ -14,7 +15,6 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.shared.ktx.android.visible
 
 /**
@@ -43,9 +43,7 @@ class ReleaseItemDelegate(
             item_title.text = releaseItem.title
 
             item_desc.text = Html.fromHtml(releaseItem.description)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${releaseItem.id}"
-            }
+            ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${releaseItem.id}")
             item_new_indicator.visible(releaseItem.isNew)
             ImageLoader.getInstance().displayImage(releaseItem.posterUrl, item_image)
 

@@ -9,6 +9,10 @@ data class DataLoadingState<T>(
     val data: T? = null
 )
 
+fun DataLoadingState<*>.hasAnyLoading(): Boolean {
+    return emptyLoading || refreshLoading || moreLoading
+}
+
 fun <T> DataLoadingState<T>.applyAction(action: ScreenStateAction<T>): DataLoadingState<T> {
     return when (action) {
         is ScreenStateAction.EmptyLoading -> copy(

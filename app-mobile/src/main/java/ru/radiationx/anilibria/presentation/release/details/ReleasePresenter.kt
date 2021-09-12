@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
@@ -16,58 +18,78 @@ import javax.inject.Inject
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
 class ReleasePresenter @Inject constructor(
-        private val releaseInteractor: ReleaseInteractor,
-        private val historyRepository: HistoryRepository,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val commentsAnalytics: CommentsAnalytics,
-        private val releaseAnalytics: ReleaseAnalytics
+    private val releaseInteractor: ReleaseInteractor,
+    private val historyRepository: HistoryRepository,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val commentsAnalytics: CommentsAnalytics,
+    private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleaseView>(router) {
 
-    private var currentData: ReleaseFull? = null
+    private var currentData: ReleaseItem? = null
     var releaseId = -1
     var releaseIdCode: String? = null
+    var argReleaseItem: ReleaseItem? = null
+
+    private val stateController = StateController(ReleasePagerState())
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        argReleaseItem?.also {
+            updateLocalRelease(it)
+        }
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
         observeRelease()
         loadRelease()
+
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
     }
 
     private fun loadRelease() {
         releaseInteractor
-                .loadRelease(releaseId, releaseIdCode)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .subscribe({
-                    viewState.setRefreshing(false)
-                    historyRepository.putRelease(it as ReleaseItem)
-                }, {
-                    viewState.setRefreshing(false)
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .loadRelease(releaseId, releaseIdCode)
+            .doOnSubscribe { viewState.setRefreshing(true) }
+            .subscribe({
+                viewState.setRefreshing(false)
+                historyRepository.putRelease(it as ReleaseItem)
+            }, {
+                viewState.setRefreshing(false)
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
     }
 
     private fun observeRelease() {
         releaseInteractor
-                .observeFull(releaseId, releaseIdCode)
-                .subscribe({ release ->
-                    updateLocalRelease(release)
-                    historyRepository.putRelease(release as ReleaseItem)
-                }) {
-                    errorHandler.handle(it)
-                }
-                .addToDisposable()
+            .observeFull(releaseId, releaseIdCode)
+            .subscribe({ release ->
+                updateLocalRelease(release)
+                historyRepository.putRelease(release as ReleaseItem)
+            }) {
+                errorHandler.handle(it)
+            }
+            .addToDisposable()
     }
 
-    private fun updateLocalRelease(release: ReleaseFull) {
+    private fun updateLocalRelease(release: ReleaseItem) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
-        viewState.showRelease(release)
+
+        stateController.updateState {
+            it.copy(
+                poster = currentData?.poster,
+                title = currentData?.let {
+                    String.format("%s / %s", release.title, release.titleEng)
+                }
+            )
+        }
     }
 
     fun onShareClick() {
@@ -95,7 +117,7 @@ class ReleasePresenter @Inject constructor(
         }
     }
 
-    fun onCommentsSwipe(){
+    fun onCommentsSwipe() {
         currentData?.also {
             commentsAnalytics.open(AnalyticsConstants.screen_release, it.id)
         }

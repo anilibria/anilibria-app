@@ -1,20 +1,28 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import android.util.Log
 import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
+import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsScreenState
+import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.entity.app.page.VkComments
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
@@ -32,8 +40,6 @@ class VkCommentsPresenter @Inject constructor(
     private val commentsAnalytics: CommentsAnalytics
 ) : BasePresenter<VkCommentsView>(router) {
 
-    private var currentData: ReleaseFull? = null
-    private var currentVkComments: VkComments? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
@@ -41,26 +47,56 @@ class VkCommentsPresenter @Inject constructor(
     private var pendingAuthRequest: String? = null
     private var authRequestDisposable = Disposables.disposed()
 
+    private var hasJsError = false
+    private var jsErrorClosed = false
+
+    private val loadingController = DataLoadingController {
+        getDataSource().map { ScreenStateAction.Data(it, false) }
+    }
+
+    private val stateController = StateController(
+        VkCommentsScreenState(
+            pageState = WebPageViewState.Loading
+        )
+    )
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        val releaseItem = releaseInteractor.getItem(releaseId, releaseIdCode)
-        if (releaseItem == null) {
-            loadRelease()
-        } else {
-            currentData = ReleaseFull(releaseItem)
-        }
-        loadData()
 
         userHolder
             .observeUser()
             .map { it.authState }
             .distinctUntilChanged()
-            .subscribe { updateComments() }
+            .subscribe { viewState.pageReloadAction() }
             .addToDisposable()
 
         authHolder.observeVkAuthChange()
-            .subscribe { updateComments() }
+            .subscribe { viewState.pageReloadAction() }
             .addToDisposable()
+
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        loadingController
+            .observeState()
+            .subscribe { loadingData ->
+                stateController.updateState {
+                    it.copy(data = loadingData)
+                }
+            }
+            .addToDisposable()
+
+        loadingController.refresh()
+    }
+
+    fun refresh() {
+        loadingController.refresh()
+    }
+
+    fun pageReload() {
+        viewState.pageReloadAction()
     }
 
     fun setVisibleToUser(isVisible: Boolean) {
@@ -81,6 +117,28 @@ class VkCommentsPresenter @Inject constructor(
         commentsAnalytics.error(error)
     }
 
+    fun notifyNewJsError() {
+        hasJsError = true
+        updateJsErrorState()
+    }
+
+    fun closeJsError() {
+        jsErrorClosed = true
+        updateJsErrorState()
+    }
+
+    fun onNewPageState(pageState: WebPageViewState) {
+        stateController.updateState {
+            it.copy(pageState = pageState)
+        }
+    }
+
+    private fun updateJsErrorState() {
+        stateController.updateState {
+            it.copy(jsErrorVisible = hasJsError && !jsErrorClosed)
+        }
+    }
+
     private fun tryExecutePendingAuthRequest() {
         authRequestDisposable.dispose()
         authRequestDisposable = Completable
@@ -97,42 +155,30 @@ class VkCommentsPresenter @Inject constructor(
             .addToDisposable()
     }
 
-    private fun loadData() {
-        pageRepository
-            .getComments()
-            .subscribe({
-                currentVkComments = it
-                updateComments()
-            }, {
-                commentsAnalytics.error(it)
-                errorHandler.handle(it)
+    private fun getDataSource(): Single<VkCommentsState> {
+        val commentsSource = pageRepository.getComments()
+        val releaseSource = Maybe
+            .fromCallable<ReleaseItem> {
+                releaseInteractor.getItem(releaseId, releaseIdCode)
+            }
+            .switchIfEmpty(Single.defer<ReleaseItem> {
+                releaseInteractor.loadRelease(releaseId, releaseIdCode).firstOrError()
             })
-            .addToDisposable()
-    }
 
-    private fun loadRelease() {
-        releaseInteractor
-            .loadRelease(releaseId, releaseIdCode)
-            .subscribe({ release ->
-                currentData = release
-                updateComments()
-            }) {
+        return Single
+            .zip(
+                releaseSource,
+                commentsSource,
+                BiFunction<ReleaseItem, VkComments, VkCommentsState> { result1, result2 ->
+                    return@BiFunction VkCommentsState(
+                        "${result2.baseUrl}release/${result1.code}.html",
+                        result2.script
+                    )
+                }
+            )
+            .doOnError {
                 commentsAnalytics.error(it)
                 errorHandler.handle(it)
             }
-            .addToDisposable()
-    }
-
-    private fun updateComments() {
-        if (currentData != null && currentVkComments != null) {
-            currentVkComments?.also {
-                viewState.showBody(
-                    VkComments(
-                        "${it.baseUrl}release/${currentData?.code}.html",
-                        it.script
-                    )
-                )
-            }
-        }
     }
 }

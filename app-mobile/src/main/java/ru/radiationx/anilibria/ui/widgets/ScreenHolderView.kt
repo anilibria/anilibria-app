@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.view_screenholder.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getCompatDrawable
 
 class ScreenHolderView @JvmOverloads constructor(
     context: Context,
@@ -24,7 +25,10 @@ class ScreenHolderView @JvmOverloads constructor(
         attrs ?: return
         val array = context.obtainStyledAttributes(attrs, R.styleable.ScreenHolderView)
         try {
-            setIcon(array.getDrawable(R.styleable.ScreenHolderView_shvIcon))
+            val iconRes = array.getResourceId(R.styleable.ScreenHolderView_shvIcon, -1)
+            if (iconRes != -1) {
+                setIcon(context.getCompatDrawable(iconRes))
+            }
             setTitle(array.getText(R.styleable.ScreenHolderView_shvTitle))
             setSubtitle(array.getText(R.styleable.ScreenHolderView_shvSubtitle))
             setPrimaryButtonText(array.getText(R.styleable.ScreenHolderView_shvPrimaryButton))

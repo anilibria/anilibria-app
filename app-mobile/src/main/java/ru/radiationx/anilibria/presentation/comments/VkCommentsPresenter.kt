@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -27,7 +26,6 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -93,19 +91,14 @@ class VkCommentsPresenter @Inject constructor(
             }
             .addToDisposable()
 
-        loadingController
-            .observeState()
-            .filter { it.data != null }
-            .map { it.data!! }
-            .distinctUntilChanged { t1, t2 ->
-                t1 == t2 && vkBlockedErrorClosed
-            }
-            .debounce(1L, TimeUnit.SECONDS)
-            .switchMapSingle { pageRepository.checkVkBlocked() }
-            .subscribe { vkBlocked ->
+        pageRepository
+            .checkVkBlocked()
+            .subscribe({ vkBlocked ->
                 hasVkBlockedError = vkBlocked
                 updateVkBlockedState()
-            }
+            }, {
+                it.printStackTrace()
+            })
             .addToDisposable()
 
         loadingController.refresh()
@@ -150,7 +143,6 @@ class VkCommentsPresenter @Inject constructor(
     fun closeVkBlockedError() {
         vkBlockedErrorClosed = true
         updateVkBlockedState()
-        refresh()
     }
 
     fun onNewPageState(pageState: WebPageViewState) {

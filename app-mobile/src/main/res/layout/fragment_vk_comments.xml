@@ -35,10 +35,9 @@
         android:background="?colorSurface"
         android:visibility="gone"
         app:shvIcon="@drawable/ic_alert_outline"
-        app:shvPrimaryButton="Обновить"
-        app:shvSecondaryButton="Скрыть"
-        app:shvSubtitle="Нет доступа к vk.com, возможно он заблокирован"
-        app:shvTitle="Не удалось загрузить страницу" />
+        app:shvSecondaryButton="Скрыть предупреждение"
+        app:shvSubtitle="Комментарии могут не работать"
+        app:shvTitle="Нет доступа к vk.com" />
 
     <ru.radiationx.anilibria.ui.widgets.ScreenHolderView
         android:id="@+id/dataErrorView"

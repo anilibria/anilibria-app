@@ -20,13 +20,22 @@ class PageRepository @Inject constructor(
     private val pageApi: PageApi
 ) {
 
+    private var currentComments: VkComments? = null
+
     fun getPage(pagePath: String): Single<PageLibria> = pageApi
         .getPage(pagePath)
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
-    fun getComments(): Single<VkComments> = pageApi
-        .getComments()
+    fun getComments(): Single<VkComments> = Single
+        .defer {
+            val comments = currentComments
+            if (comments == null) {
+                pageApi.getComments()
+            } else {
+                Single.just(comments)
+            }
+        }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 

@@ -83,9 +83,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             presenter.pageReload()
         }
 
-        vkBlockedErrorView.setPrimaryButtonClickListener {
-            presenter.refresh()
-        }
         vkBlockedErrorView.setSecondaryClickListener {
             presenter.closeVkBlockedError()
         }

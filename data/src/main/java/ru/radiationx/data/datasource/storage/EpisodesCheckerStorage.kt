@@ -7,7 +7,6 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import javax.inject.Inject
@@ -16,8 +15,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class EpisodesCheckerStorage @Inject constructor(
-    @DataPreferences private val sharedPreferences: SharedPreferences,
-    private val appAnalytics: AppAnalytics
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : EpisodesCheckerHolder {
 
     companion object {
@@ -31,9 +29,11 @@ class EpisodesCheckerStorage @Inject constructor(
         loadAll()
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> = localEpisodesRelay
+    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> =
+        localEpisodesRelay
 
-    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> = Single.fromCallable { localEpisodesRelay.value!! }
+    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> =
+        Single.fromCallable { localEpisodesRelay.value!! }
 
     override fun putEpisode(episode: ReleaseFull.Episode) {
         localEpisodes
@@ -66,7 +66,6 @@ class EpisodesCheckerStorage @Inject constructor(
     }
 
     private fun saveAll() {
-        appAnalytics.episodePut()
         val jsonEpisodes = JSONArray()
         localEpisodes.forEach {
             jsonEpisodes.put(JSONObject().apply {

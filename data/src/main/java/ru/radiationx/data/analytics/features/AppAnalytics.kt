@@ -30,17 +30,4 @@ class AppAnalytics(
             timeInMillis.toPreciseTimeParam()
         )
     }
-
-    fun episodePut() {
-        sender.send(AnalyticsConstants.app_episode_put)
-    }
-
-    fun historyPut() {
-        sender.send(AnalyticsConstants.app_history_put)
-    }
-
-    fun releasePut() {
-        sender.send(AnalyticsConstants.app_release_put)
-    }
-
 }

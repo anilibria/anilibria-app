@@ -8,7 +8,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
@@ -18,9 +17,8 @@ import javax.inject.Inject
  * Created by radiationx on 18.02.18.
  */
 class ReleaseUpdateStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences,
-        private val schedulers: SchedulersProvider,
-        private val appAnalytics: AppAnalytics
+    @DataPreferences private val sharedPreferences: SharedPreferences,
+    private val schedulers: SchedulersProvider
 ) : ReleaseUpdateHolder {
 
     companion object {
@@ -35,8 +33,8 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     override fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>> = localReleasesRelay
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
 
     override fun getReleases(): Single<List<ReleaseUpdate>> = Single.fromCallable {
         localReleasesRelay.value?.toList().orEmpty()
@@ -53,8 +51,8 @@ class ReleaseUpdateStorage @Inject constructor(
     override fun updAllRelease(releases: List<ReleaseUpdate>) {
         releases.forEach { release ->
             localReleases
-                    .firstOrNull { it.id == release.id }
-                    ?.let { localReleases.remove(it) }
+                .firstOrNull { it.id == release.id }
+                ?.let { localReleases.remove(it) }
             localReleases.add(ReleaseUpdate().apply {
                 id = release.id
                 timestamp = release.timestamp
@@ -72,8 +70,8 @@ class ReleaseUpdateStorage @Inject constructor(
     override fun putAllRelease(releases: List<ReleaseItem>) {
         releases.forEach { release ->
             localReleases
-                    .firstOrNull { it.id == release.id }
-                    ?.let { localReleases.remove(it) }
+                .firstOrNull { it.id == release.id }
+                ?.let { localReleases.remove(it) }
             localReleases.add(ReleaseUpdate().apply {
                 id = release.id
                 timestamp = release.torrentUpdate
@@ -85,7 +83,6 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     private fun saveAll() {
-        appAnalytics.releasePut()
         val jsonEpisodes = JSONArray()
         localReleases.forEach {
             jsonEpisodes.put(JSONObject().apply {
@@ -95,9 +92,9 @@ class ReleaseUpdateStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_HISTORY_KEY, jsonEpisodes.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_HISTORY_KEY, jsonEpisodes.toString())
+            .apply()
     }
 
     private fun loadAll() {

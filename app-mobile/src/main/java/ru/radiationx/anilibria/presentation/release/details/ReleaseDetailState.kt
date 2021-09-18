@@ -54,6 +54,7 @@ data class ReleaseEpisodeItemState(
     val hasHd: Boolean,
     val hasFullHd: Boolean,
     val type: ReleaseEpisodeItemType,
+    val tag: String,
     val actionTitle: String?,
     val actionColorRes:Int?,
     val actionIconRes:Int?,

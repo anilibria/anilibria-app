@@ -103,21 +103,27 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     val sourceTab = EpisodesTabState(
         tag = "source",
         title = "Скачать",
-        episodes = episodesSource.map { it.toState() }
+        episodes = sourceEpisodes.map { it.toState() }
     )
-    val externalTab = EpisodesTabState(
-        tag = "external",
-        title = "Telegram",
-        episodes = episodesExternal.map { it.toState() }
-    )
-    return listOf(onlineTab, sourceTab, externalTab)
+    val externalTabs = externalPlaylists.map { it.toTabState() }
+
+    return listOf(onlineTab, sourceTab)
+        .plus(externalTabs)
         .filter { tab ->
             tab.episodes.isNotEmpty()
                     && tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
         }
 }
 
-fun ExternalEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
+    tag = tag,
+    title = title,
+    episodes = episodes.map { it.toState(this) }
+)
+
+fun ExternalEpisode.toState(
+    playlist: ExternalPlaylist
+): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
     releaseId = releaseId,
     title = title.orEmpty(),
@@ -127,13 +133,14 @@ fun ExternalEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState
     hasHd = false,
     hasFullHd = false,
     type = ReleaseEpisodeItemType.EXTERNAL,
-    actionTitle = actionTitle,
+    tag = playlist.tag,
+    actionTitle = playlist.actionText,
     hasActionUrl = url != null,
-    actionIconRes = when (service) {
+    actionIconRes = when (playlist.tag) {
         "telegram" -> R.drawable.ic_logo_telegram
         else -> null
     },
-    actionColorRes = when (service) {
+    actionColorRes = when (playlist.tag) {
         "telegram" -> R.color.brand_telegram
         else -> null
     }
@@ -149,6 +156,7 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     hasHd = urlHd != null,
     hasFullHd = urlFullHd != null,
     type = ReleaseEpisodeItemType.SOURCE,
+    tag = "source",
     actionTitle = null,
     hasActionUrl = false,
     actionIconRes = null,
@@ -171,6 +179,7 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         hasHd = urlHd != null,
         hasFullHd = urlFullHd != null,
         type = ReleaseEpisodeItemType.ONLINE,
+        tag = "online",
         actionTitle = null,
         hasActionUrl = false,
         actionIconRes = null,

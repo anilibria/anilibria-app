@@ -294,12 +294,16 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun getSourceEpisode(episode: ReleaseEpisodeItemState): SourceEpisode? {
         if (episode.type != ReleaseEpisodeItemType.SOURCE) return null
-        return currentData?.episodesSource?.find { it.id == episode.id }
+        return currentData?.sourceEpisodes?.find { it.id == episode.id }
     }
 
     private fun getExternalEpisode(episode: ReleaseEpisodeItemState): ExternalEpisode? {
         if (episode.type != ReleaseEpisodeItemType.EXTERNAL) return null
-        return currentData?.episodesExternal?.find { it.id == episode.id }
+        val release = currentData ?: return null
+        return release.externalPlaylists
+            .find { it.tag == episode.tag }
+            ?.episodes
+            ?.find { it.id == episode.id }
     }
 
     fun onClickLink(url: String) {

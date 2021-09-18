@@ -35,8 +35,8 @@ class ReleaseFull() : ReleaseItem(), Serializable {
 
     var moonwalkLink: String? = null
     val episodes = mutableListOf<Episode>()
-    val episodesSource = mutableListOf<SourceEpisode>()
-    val episodesExternal = mutableListOf<ExternalEpisode>()
+    val sourceEpisodes = mutableListOf<SourceEpisode>()
+    val externalPlaylists = mutableListOf<ExternalPlaylist>()
 
     val torrents = mutableListOf<TorrentItem>()
 
@@ -92,7 +92,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         if (blockedInfo != other.blockedInfo) return false
         if (moonwalkLink != other.moonwalkLink) return false
         if (episodes != other.episodes) return false
-        if (episodesSource != other.episodesSource) return false
+        if (sourceEpisodes != other.sourceEpisodes) return false
         if (torrents != other.torrents) return false
 
         return true
@@ -104,7 +104,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         result = 31 * result + blockedInfo.hashCode()
         result = 31 * result + (moonwalkLink?.hashCode() ?: 0)
         result = 31 * result + episodes.hashCode()
-        result = 31 * result + episodesSource.hashCode()
+        result = 31 * result + sourceEpisodes.hashCode()
         result = 31 * result + torrents.hashCode()
         return result
     }

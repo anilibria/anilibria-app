@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/item_title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:ellipsize="end"
@@ -20,6 +20,7 @@
         android:textColor="?textDefault"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/item_subtitle"
         app:layout_constraintEnd_toStartOf="@id/item_viewed_state"
         app:layout_constraintHorizontal_bias="0"
@@ -27,7 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintWidth_default="wrap"
         tools:text="Серия 660" />
 
     <androidx.appcompat.widget.AppCompatTextView

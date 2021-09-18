@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
@@ -32,7 +33,6 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.CommentsAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
@@ -65,7 +65,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     private val pagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter() }
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
-    private var toolbarHelperDisposable: Disposable? = null
+    private var toolbarHelperDisposable: Disposable = Disposables.disposed()
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
         .cacheInMemory(true)
@@ -101,12 +101,14 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         arguments?.also { bundle ->
             presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
             presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
+            presenter.argReleaseItem = bundle.getSerializable(ARG_ITEM) as ReleaseItem?
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.d("kukeki", "onViewCreated $transitionNameLocal")
             toolbarImage.transitionName = transitionNameLocal
         }
         postponeEnterTransition()
@@ -172,6 +174,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         viewPagerPaged.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
+                    appbarLayout.setExpanded(false)
                     presenter.onCommentsSwipe()
                 }
             }
@@ -199,47 +202,21 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         progressBarPaged.visible(refreshing)
     }
 
-    override fun showRelease(release: ReleaseFull) {
-        Log.e("S_DEF_LOG", "showRelease")
-        ImageLoader.getInstance().displayImage(
-            release.poster,
-            toolbarImage,
-            defaultOptionsUIL.build(),
-            object : UILImageListener() {
-                override fun onLoadingStarted(imageUri: String?, view: View?) {
-                    super.onLoadingStarted(imageUri, view)
-                    toolbarImageProgress?.visible()
-                }
+    override fun showState(state: ReleasePagerState) {
+        if (state.poster == null) {
+            startPostponedEnterTransition()
+        } else {
+            ImageLoader.getInstance().displayImage(
+                state.poster,
+                toolbarImage,
+                defaultOptionsUIL.build(),
+                imageListener
+            )
+        }
 
-                override fun onLoadingFinally(imageUrl: String?, view: View?) {
-                    toolbarImageProgress?.gone()
-                    startPostponedEnterTransition()
-                }
-
-                override fun onLoadingComplete(
-                    imageUri: String?,
-                    view: View?,
-                    loadedImage: Bitmap
-                ) {
-                    super.onLoadingComplete(imageUri, view, loadedImage)
-                    if (toolbarHelperDisposable == null) {
-                        toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
-                            currentColor = if (it) Color.WHITE else Color.BLACK
-
-                            toolbar.navigationIcon?.setColorFilter(
-                                currentColor,
-                                PorterDuff.Mode.SRC_ATOP
-                            )
-                            toolbar.overflowIcon?.setColorFilter(
-                                currentColor,
-                                PorterDuff.Mode.SRC_ATOP
-                            )
-                        })
-                    }
-                }
-            })
-
-        currentTitle = String.format("%s / %s", release.title, release.titleEng)
+        if (state.title != null) {
+            currentTitle = state.title
+        }
     }
 
     override fun shareRelease(text: String) {
@@ -256,8 +233,45 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun onDestroyView() {
-        toolbarHelperDisposable?.dispose()
+        toolbarHelperDisposable.dispose()
         super.onDestroyView()
+    }
+
+    private val imageListener = object : UILImageListener() {
+        override fun onLoadingStarted(imageUri: String?, view: View?) {
+            super.onLoadingStarted(imageUri, view)
+            toolbarImageProgress?.visible()
+        }
+
+        override fun onLoadingFinally(imageUrl: String?, view: View?) {
+            toolbarImageProgress?.gone()
+            startPostponedEnterTransition()
+        }
+
+        override fun onLoadingComplete(
+            imageUri: String?,
+            view: View?,
+            loadedImage: Bitmap
+        ) {
+            super.onLoadingComplete(imageUri, view, loadedImage)
+            updateToolbarColors(loadedImage)
+        }
+    }
+
+    private fun updateToolbarColors(loadedImage: Bitmap) {
+        toolbarHelperDisposable.dispose()
+        toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
+            currentColor = if (it) Color.WHITE else Color.BLACK
+
+            toolbar.navigationIcon?.setColorFilter(
+                currentColor,
+                PorterDuff.Mode.SRC_ATOP
+            )
+            toolbar.overflowIcon?.setColorFilter(
+                currentColor,
+                PorterDuff.Mode.SRC_ATOP
+            )
+        })
     }
 
     private inner class CustomPagerAdapter :

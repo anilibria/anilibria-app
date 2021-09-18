@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.youtube
 
 import android.os.Build
 import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_feed_youtube.view.*
@@ -42,9 +43,7 @@ class YoutubeDelegate(
                 item_comments_count.text = item.state.comments
 
                 ImageLoader.getInstance().displayImage(item.state.image, item_image)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.state.id}"
-                }
+                ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.state.id}")
                 setOnClickListener {
                     itemListener.onItemClick(item.state, layoutPosition)
                 }

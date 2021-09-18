@@ -9,10 +9,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
 
 /**
  * Created by radiationx on 13.01.18.
@@ -39,8 +37,8 @@ class FeedYoutubeDelegate(
             view.apply {
                 item_title.text = state.title
 
-                item_views_count.text = state.views.toString()
-                item_comments_count.text = state.comments.toString()
+                item_views_count.text = state.views
+                item_comments_count.text = state.comments
 
                 ImageLoader.getInstance().displayImage(state.image, item_image)
                 ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${state.id}")

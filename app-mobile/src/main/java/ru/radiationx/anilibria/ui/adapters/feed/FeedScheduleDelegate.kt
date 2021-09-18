@@ -56,7 +56,7 @@ class FeedScheduleDelegate(
             item_complete.visible(state.isCompleted)
             ViewCompat.setTransitionName(
                 item_image,
-                "${javaClass.simpleName}_${state.releaseId}"
+                "${item.javaClass.simpleName}_${state.releaseId}"
             )
             ImageLoader.getInstance().displayImage(state.posterUrl, item_image)
 

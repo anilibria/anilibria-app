@@ -9,8 +9,9 @@ import android.os.Message
 import android.util.Log
 import android.view.View
 import android.webkit.*
+import androidx.core.view.isVisible
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_webview.*
+import kotlinx.android.synthetic.main.fragment_vk_comments.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
@@ -18,9 +19,11 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
+import ru.radiationx.anilibria.model.loading.hasAnyLoading
 import ru.radiationx.anilibria.presentation.comments.VkCommentsPresenter
 import ru.radiationx.anilibria.presentation.comments.VkCommentsView
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
+import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
@@ -28,10 +31,8 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.data.entity.app.page.VkComments
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
 import toothpick.Toothpick
@@ -50,6 +51,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     private var webViewScrollPos = 0
+    private var currentVkCommentsState: VkCommentsState? = null
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -63,7 +65,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     fun providePresenter(): VkCommentsPresenter =
         getDependency(VkCommentsPresenter::class.java, screenScope)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_webview
+    override fun getBaseLayout(): Int = R.layout.fragment_vk_comments
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -77,20 +79,32 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        webErrorView.setPrimaryButtonClickListener {
+            presenter.pageReload()
+        }
+
+        vkBlockedErrorView.setSecondaryClickListener {
+            presenter.closeVkBlockedError()
+        }
+
+        dataErrorView.setPrimaryButtonClickListener {
+            presenter.refresh()
+        }
+
+        jsErrorView.setPrimaryButtonClickListener {
+            presenter.closeJsError()
+        }
+
         savedInstanceState?.let {
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
         webView.setJsLifeCycleListener(jsLifeCycleListener)
-
         webView.addJavascriptInterface(this, "KEK")
-
 
         webView.settings.apply {
             setAppCacheEnabled(true)
             this.databaseEnabled = true
-            //setSupportMultipleWindows(true)
-            //this.javaScriptCanOpenWindowsAutomatically = false
         }
 
         webView.webViewClient = composite
@@ -102,8 +116,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cookieManager.setAcceptThirdPartyCookies(webView, true)
         }
-        /*val template = App.instance.staticPageTemplate
-        webView.easyLoadData(Api.SITE_URL, template.generateWithTheme(appThemeHolder.getTheme()))*/
 
         disposables.add(
             appThemeHolder
@@ -136,23 +148,46 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         super.onDestroyView()
     }
 
-    override fun setRefreshing(refreshing: Boolean) {
-        progressBarWv.visible(refreshing)
+    override fun pageReloadAction() {
+        Log.d("kekeke", "pageReloadAction")
+        webView.reload()
     }
 
-    override fun showBody(comments: VkComments) {
-        if (webView.url != comments.baseUrl) {
-            val template = App.instance.vkCommentsTemplate
-            webView.easyLoadData(
-                comments.baseUrl,
-                template.generateWithTheme(appThemeHolder.getTheme())
-            )
-        }
-        webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
-        webView?.postDelayed({
-            webView?.evalJs("KEK.log('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')")
+    override fun showState(state: VkCommentsScreenState) {
+        Log.d("kekeke", "show state $state")
+        val anyLoading = state.data.hasAnyLoading() || state.pageState == WebPageViewState.Loading
+        progressBarWv.isVisible = anyLoading
 
-        }, 5000)
+        webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading
+        webErrorView.isVisible = state.pageState is WebPageViewState.Error
+        val webErrorDesc = (state.pageState as? WebPageViewState.Error?)?.error?.description
+        webErrorView.setSubtitle(webErrorDesc)
+
+        vkBlockedErrorView.isVisible = state.vkBlockedVisible
+
+        dataErrorView.isVisible = state.data.error != null
+
+        jsErrorView.isVisible = state.jsErrorVisible
+        state.data.data?.let { showBody(it) }
+    }
+
+    private fun showBody(comments: VkCommentsState) {
+        if (currentVkCommentsState == comments) {
+            return
+        }
+        currentVkCommentsState = comments
+
+        val template = App.instance.vkCommentsTemplate
+        webView.easyLoadData(
+            comments.url,
+            template.generateWithTheme(appThemeHolder.getTheme())
+        )
+        webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
+
+        // Uncomment for check generated html
+        /*webView?.postDelayed({
+            webView?.evalJs("KEK.log('<!DOCTYPE html><html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>')")
+        }, 5000)*/
     }
 
     override fun onBackPressed(): Boolean {
@@ -177,6 +212,22 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     private val vkWebChromeClient = object : WebChromeClient() {
 
+        private val jsErrorRegex = Regex("Uncaught (?:\\w+)Error:")
+        private val sourceRegex = Regex("https?://vk\\.com/")
+
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+            return super.onConsoleMessage(consoleMessage)
+        }
+
+        override fun onConsoleMessage(message: String?, lineNumber: Int, sourceID: String?) {
+            super.onConsoleMessage(message, lineNumber, sourceID)
+            val hasJsError = jsErrorRegex.containsMatchIn(message.orEmpty())
+            val isVkSource = sourceRegex.containsMatchIn(sourceID.orEmpty())
+            if (hasJsError && isVkSource) {
+                presenter.notifyNewJsError()
+            }
+        }
+
         override fun onCreateWindow(
             view: WebView?,
             isDialog: Boolean,
@@ -195,7 +246,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     private val stateClient = WebPageStateWebViewClient {
-        Log.d("kekeke", "S_DEF_LOG state $it")
+        presenter.onNewPageState(it)
     }
 
     private val vkWebViewClient = object : WebViewClient() {
@@ -344,11 +395,10 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 presenter.onPageCommitError(error.toException(request))
             }
         }
-
     }
+
     private val composite = compositeWebViewClientOf(
         stateClient,
         vkWebViewClient
     )
-
 }

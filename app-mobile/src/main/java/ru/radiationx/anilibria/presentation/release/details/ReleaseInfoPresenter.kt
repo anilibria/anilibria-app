@@ -228,12 +228,12 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
-    //todo analytics
     private fun onExternalEpisodeClick(
+        episodeState: ReleaseEpisodeItemState,
         release: ReleaseFull,
         episode: ExternalEpisode
     ) {
-
+        releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
         episode.url?.also { Utils.externalLink(it) }
     }
 
@@ -261,23 +261,23 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onEpisodeClick(
-        episode: ReleaseEpisodeItemState,
+        episodeState: ReleaseEpisodeItemState,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
         val release = currentData ?: return
-        when (episode.type) {
+        when (episodeState.type) {
             ReleaseEpisodeItemType.ONLINE -> {
-                val episodeItem = getEpisodeItem(episode) ?: return
+                val episodeItem = getEpisodeItem(episodeState) ?: return
                 onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
             }
             ReleaseEpisodeItemType.SOURCE -> {
-                val episodeItem = getSourceEpisode(episode) ?: return
+                val episodeItem = getSourceEpisode(episodeState) ?: return
                 onSourceEpisodeClick(release, episodeItem, quality)
             }
             ReleaseEpisodeItemType.EXTERNAL -> {
-                val episodeItem = getExternalEpisode(episode) ?: return
-                onExternalEpisodeClick(release, episodeItem)
+                val episodeItem = getExternalEpisode(episodeState) ?: return
+                onExternalEpisodeClick(episodeState, release, episodeItem)
             }
         }
     }

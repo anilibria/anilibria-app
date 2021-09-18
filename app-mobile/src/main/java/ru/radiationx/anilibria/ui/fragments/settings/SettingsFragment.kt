@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.settings
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -12,7 +11,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
@@ -183,8 +181,9 @@ class SettingsFragment : BaseSettingFragment() {
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
                 settingsAnalytics.checkUpdatesClick()
-                Screens.AppUpdateScreen(true, AnalyticsConstants.screen_settings)
+                val intent = Screens.AppUpdateScreen(true, AnalyticsConstants.screen_settings)
                     .getActivityIntent(requireContext())
+                startActivity(intent)
                 false
             }
         }

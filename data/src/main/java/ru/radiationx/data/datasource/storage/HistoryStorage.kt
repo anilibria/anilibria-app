@@ -7,7 +7,6 @@ import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.nullString
@@ -17,8 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 18.02.18.
  */
 class HistoryStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences,
-        private val appAnalytics: AppAnalytics
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : HistoryHolder {
 
     companion object {
@@ -32,14 +30,15 @@ class HistoryStorage @Inject constructor(
         loadAll()
     }
 
-    override fun getEpisodes(): Single<List<ReleaseItem>> = Single.fromCallable { localReleases.toList() }
+    override fun getEpisodes(): Single<List<ReleaseItem>> =
+        Single.fromCallable { localReleases.toList() }
 
     override fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
 
     override fun putRelease(release: ReleaseItem) {
         localReleases
-                .firstOrNull { it.id == release.id }
-                ?.let { localReleases.remove(it) }
+            .firstOrNull { it.id == release.id }
+            ?.let { localReleases.remove(it) }
         localReleases.add(release)
         saveAll()
         localReleasesRelay.accept(localReleases)
@@ -48,8 +47,8 @@ class HistoryStorage @Inject constructor(
     override fun putAllRelease(releases: List<ReleaseItem>) {
         releases.forEach { release ->
             localReleases
-                    .firstOrNull { it.id == release.id }
-                    ?.let { localReleases.remove(it) }
+                .firstOrNull { it.id == release.id }
+                ?.let { localReleases.remove(it) }
             localReleases.add(release)
         }
         saveAll()
@@ -64,7 +63,6 @@ class HistoryStorage @Inject constructor(
     }
 
     private fun saveAll() {
-        appAnalytics.historyPut()
         val jsonEpisodes = JSONArray()
         localReleases.forEach {
             jsonEpisodes.put(JSONObject().apply {
@@ -93,13 +91,14 @@ class HistoryStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_HISTORY_KEY, jsonEpisodes.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_HISTORY_KEY, jsonEpisodes.toString())
+            .apply()
     }
 
     private fun loadAll() {
-        val jsonEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
+        val jsonEpisodes =
+            sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
         if (jsonEpisodes != null) {
             (0 until jsonEpisodes.length()).forEach { releaseIndex ->
                 val jsonRelease = jsonEpisodes.getJSONObject(releaseIndex)

@@ -235,6 +235,9 @@ object AnalyticsConstants {
     const val updater_download_click = "updater_download_click"
     const val updater_source_download = "updater_source_download"
     const val updater_use_time = "updater_use_time"
+    const val app_update_card = "app_update_card"
+    const val app_update_card_click = "app_update_card_click"
+    const val app_update_card_close = "app_update_card_close"
 
     /* Static Page */
     const val page_open = "page_open"

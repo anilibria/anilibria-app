@@ -40,27 +40,32 @@ import javax.inject.Inject
 
 class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
-    private val adapter = FeedAdapter({
-        presenter.loadMore()
-    }, loadRetryListener = {
-        presenter.loadMore()
-    }, schedulesClickListener = {
-        presenter.onSchedulesClick()
-    }, scheduleScrollListener = { position ->
-        presenter.onScheduleScroll(position)
-    }, randomClickListener = {
-        presenter.onRandomClick()
-    }, releaseClickListener = { releaseItem, view ->
-        this.sharedViewLocal = view
-        presenter.onItemClick(releaseItem)
-    }, releaseLongClickListener = { releaseItem, view ->
-        releaseOnLongClick(releaseItem)
-    }, youtubeClickListener = { youtubeItem, view ->
-        presenter.onYoutubeClick(youtubeItem)
-    }, scheduleClickListener = { feedScheduleItem, view, position ->
-        this.sharedViewLocal = view
-        presenter.onScheduleItemClick(feedScheduleItem, position)
-    })
+    private val adapter = FeedAdapter(
+        loadMoreListener = {
+            presenter.loadMore()
+        }, loadRetryListener = {
+            presenter.loadMore()
+        }, appUpdateListener = {
+            presenter.appUpdateClick()
+        }, appUpdateCloseListener = {
+            presenter.appUpdateCloseClick()
+        }, schedulesClickListener = {
+            presenter.onSchedulesClick()
+        }, scheduleScrollListener = { position ->
+            presenter.onScheduleScroll(position)
+        }, randomClickListener = {
+            presenter.onRandomClick()
+        }, releaseClickListener = { releaseItem, view ->
+            this.sharedViewLocal = view
+            presenter.onItemClick(releaseItem)
+        }, releaseLongClickListener = { releaseItem, view ->
+            releaseOnLongClick(releaseItem)
+        }, youtubeClickListener = { youtubeItem, view ->
+            presenter.onYoutubeClick(youtubeItem)
+        }, scheduleClickListener = { feedScheduleItem, view, position ->
+            this.sharedViewLocal = view
+            presenter.onScheduleItemClick(feedScheduleItem, position)
+        })
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -245,7 +250,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             }
         }
 
-        adapter.bindState(state.data)
+        adapter.bindState(state)
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {

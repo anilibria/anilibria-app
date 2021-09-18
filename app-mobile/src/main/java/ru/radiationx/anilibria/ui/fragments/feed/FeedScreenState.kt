@@ -6,7 +6,8 @@ import ru.radiationx.anilibria.model.loading.DataLoadingState
 
 
 data class FeedScreenState(
-    val data: DataLoadingState<FeedDataState> = DataLoadingState()
+    val data: DataLoadingState<FeedDataState> = DataLoadingState(),
+    val hasAppUpdate: Boolean = true
 )
 
 data class FeedDataState(

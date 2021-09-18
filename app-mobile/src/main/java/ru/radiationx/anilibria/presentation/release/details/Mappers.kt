@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
@@ -10,10 +11,7 @@ fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
     episodesControl = toEpisodeControlState(),
-    episodes = mapOf(
-        ReleaseFull.Episode.Type.ONLINE to episodes.map { it.toState() },
-        ReleaseFull.Episode.Type.SOURCE to episodesSource.map { it.toState() }
-    ),
+    episodesTabs = toTabsState(),
     torrents = torrents.map { it.toState() },
     blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
 )
@@ -63,7 +61,7 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
     )
 }
 
-fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState {
+fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
     val hasViewed = episodes.any { it.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
@@ -74,12 +72,16 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState {
         "Начать просмотр"
     }
 
-    return ReleaseEpisodesControlState(
-        hasWeb = hasWeb,
-        hasEpisodes = hasEpisodes,
-        hasViewed = hasViewed,
-        continueTitle = continueTitle
-    )
+    return if (hasWeb || hasEpisodes) {
+        ReleaseEpisodesControlState(
+            hasWeb = hasWeb,
+            hasEpisodes = hasEpisodes,
+            hasViewed = hasViewed,
+            continueTitle = continueTitle
+        )
+    } else {
+        null
+    }
 }
 
 fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
@@ -90,6 +92,81 @@ fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
     seeders = seeders.toString(),
     leechers = leechers.toString(),
     date = null
+)
+
+fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
+    val onlineTab = EpisodesTabState(
+        tag = "online",
+        title = "Онлайн",
+        textColor = null,
+        episodes = episodes.map { it.toState() }
+    )
+    val sourceTab = EpisodesTabState(
+        tag = "source",
+        title = "Скачать",
+        textColor = null,
+        episodes = sourceEpisodes.map { it.toState() }
+    )
+    val externalTabs = externalPlaylists.map { it.toTabState() }
+
+    return listOf(onlineTab, sourceTab)
+        .plus(externalTabs)
+        .filter { tab ->
+            tab.episodes.isNotEmpty()
+                    && tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
+        }
+}
+
+fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
+    tag = tag,
+    title = title,
+    textColor = when (tag) {
+        "telegram" -> R.color.brand_telegram
+        else -> null
+    },
+    episodes = episodes.map { it.toState(this) }
+)
+
+fun ExternalEpisode.toState(
+    playlist: ExternalPlaylist
+): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    releaseId = releaseId,
+    title = title.orEmpty(),
+    subtitle = null,
+    isViewed = false,
+    hasSd = false,
+    hasHd = false,
+    hasFullHd = false,
+    type = ReleaseEpisodeItemType.EXTERNAL,
+    tag = playlist.tag,
+    actionTitle = playlist.actionText,
+    hasActionUrl = url != null,
+    actionIconRes = when (playlist.tag) {
+        "telegram" -> R.drawable.ic_logo_telegram
+        else -> null
+    },
+    actionColorRes = when (playlist.tag) {
+        "telegram" -> R.color.brand_telegram
+        else -> null
+    }
+)
+
+fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    releaseId = releaseId,
+    title = title.orEmpty(),
+    subtitle = null,
+    isViewed = false,
+    hasSd = urlSd != null,
+    hasHd = urlHd != null,
+    hasFullHd = urlFullHd != null,
+    type = ReleaseEpisodeItemType.SOURCE,
+    tag = "source",
+    actionTitle = null,
+    hasActionUrl = false,
+    actionIconRes = null,
+    actionColorRes = null
 )
 
 fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
@@ -106,6 +183,12 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         isViewed = isViewed,
         hasSd = urlSd != null,
         hasHd = urlHd != null,
-        hasFullHd = urlFullHd != null
+        hasFullHd = urlFullHd != null,
+        type = ReleaseEpisodeItemType.ONLINE,
+        tag = "online",
+        actionTitle = null,
+        hasActionUrl = false,
+        actionIconRes = null,
+        actionColorRes = null
     )
 }

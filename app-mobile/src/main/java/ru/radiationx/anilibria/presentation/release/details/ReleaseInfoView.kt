@@ -5,6 +5,7 @@ import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.app.release.TorrentItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
@@ -33,6 +34,12 @@ interface ReleaseInfoView : MvpView {
         release: ReleaseFull,
         episode: ReleaseFull.Episode,
         playFlag: Int? = null,
+        quality: Int? = null
+    )
+
+    @StateStrategyType(SkipStrategy::class)
+    fun downloadEpisode(
+        episode: SourceEpisode,
         quality: Int? = null
     )
 

@@ -87,6 +87,7 @@ object AnalyticsConstants {
     const val release_episodes_start = "release_episodes_start"
     const val release_episodes_continue = "release_episodes_continue"
     const val release_episode_play = "release_episode_play"
+    const val release_episode_external = "release_episode_external"
     const val release_episode_download = "release_episode_download"
     const val release_episode_download_url = "release_episode_download_url"
     const val release_web_player = "release_web_player"
@@ -99,6 +100,7 @@ object AnalyticsConstants {
     const val release_favorite_add = "release_favorite_add"
     const val release_favorite_remove = "release_favorite_remove"
     const val release_comments_click = "release_comments_click"
+    const val release_episodes_tab_click = "release_episodes_tab_click"
 
     /* Youtube Videos */
     const val youtube_videos_open = "youtube_videos_open"

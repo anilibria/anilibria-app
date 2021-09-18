@@ -5,10 +5,8 @@ import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.release.*
+import ru.radiationx.shared.ktx.android.mapObjects
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
@@ -17,12 +15,12 @@ import javax.inject.Inject
  * Created by radiationx on 18.12.17.
  */
 class ReleaseParser @Inject constructor(
-        private val apiUtils: IApiUtils,
-        private val apiConfig: ApiConfig
+    private val apiUtils: IApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
     fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
-            jsonItem.getString("code")
+        jsonItem.getString("code")
     )
 
     fun parseRelease(jsonItem: JSONObject): ReleaseItem {
@@ -116,36 +114,58 @@ class ReleaseParser @Inject constructor(
 
         release.moonwalkLink = jsonResponse.nullString("moon")
 
-        jsonResponse.optJSONArray("playlist")?.also { jsonPlaylist ->
-            for (j in 0 until jsonPlaylist.length()) {
-                val jsonEpisode = jsonPlaylist.getJSONObject(j)
-
-                val episodeId: Int = jsonEpisode.optInt("id")
-                val episodeTitle = jsonEpisode.nullString("title")
-
+        val onlineEpisodes = jsonResponse
+            .optJSONArray("playlist")
+            ?.mapObjects { jsonEpisode ->
                 ReleaseFull.Episode().also {
                     it.releaseId = release.id
-                    it.id = episodeId
-                    it.title = episodeTitle
+                    it.id = jsonEpisode.optInt("id")
+                    it.title = jsonEpisode.nullString("title")
                     it.urlSd = jsonEpisode.nullString("sd")
                     it.urlHd = jsonEpisode.nullString("hd")
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
-                    it.type = ReleaseFull.Episode.Type.ONLINE
-                    release.episodes.add(it)
-                }
-
-                ReleaseFull.Episode().also {
-                    it.releaseId = release.id
-                    it.id = episodeId
-                    it.title = episodeTitle
-                    it.urlSd = jsonEpisode.nullString("srcSd")
-                    it.urlHd = jsonEpisode.nullString("srcHd")
-                    it.urlFullHd = jsonEpisode.nullString("srcFullHd")
-                    it.type = ReleaseFull.Episode.Type.SOURCE
-                    release.episodesSource.add(it)
                 }
             }
-        }
+            .orEmpty()
+
+        val sourceEpisodes = jsonResponse
+            .optJSONArray("playlist")
+            ?.mapObjects { jsonEpisode ->
+                SourceEpisode(
+                    id = jsonEpisode.optInt("id"),
+                    releaseId = release.id,
+                    title = jsonEpisode.nullString("title"),
+                    urlSd = jsonEpisode.nullString("srcSd"),
+                    urlHd = jsonEpisode.nullString("srcHd")?.takeIf { !it.contains("vk.com") },
+                    urlFullHd = jsonEpisode.nullString("srcFullHd")
+                )
+            }
+            .orEmpty()
+
+        val externalPlaylists = jsonResponse
+            .optJSONArray("externalPlaylist")
+            ?.mapObjects { jsonPlaylist ->
+                val episodes = jsonPlaylist.getJSONArray("episodes").mapObjects { jsonEpisode ->
+                    ExternalEpisode(
+                        id = jsonEpisode.getInt("id"),
+                        releaseId = release.id,
+                        title = jsonEpisode.nullString("title"),
+                        url = jsonEpisode.nullString("url")
+                    )
+                }
+
+                ExternalPlaylist(
+                    tag = jsonPlaylist.getString("tag"),
+                    title = jsonPlaylist.getString("title"),
+                    actionText = jsonPlaylist.getString("actionText"),
+                    episodes = episodes
+                )
+            }
+            .orEmpty()
+
+        release.episodes.addAll(onlineEpisodes)
+        release.sourceEpisodes.addAll(sourceEpisodes)
+        release.externalPlaylists.addAll(externalPlaylists)
 
         jsonResponse.getJSONArray("torrents")?.also { jsonTorrents ->
             for (j in 0 until jsonTorrents.length()) {
@@ -169,6 +189,5 @@ class ReleaseParser @Inject constructor(
 
         return release
     }
-
 
 }

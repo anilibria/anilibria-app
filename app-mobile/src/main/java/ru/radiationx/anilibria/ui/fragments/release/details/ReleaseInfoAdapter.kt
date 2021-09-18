@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.app.release.ReleaseFull
 
 class ReleaseInfoAdapter(
     private val headListener: ReleaseHeadDelegate.Listener,
@@ -20,7 +19,7 @@ class ReleaseInfoAdapter(
     private val donateListener: ReleaseDonateDelegate.Listener,
     private val torrentClickListener: (ReleaseTorrentItemState) -> Unit,
     private val commentsClickListener: () -> Unit,
-    private val episodesTabListener: (ReleaseFull.Episode.Type) -> Unit,
+    private val episodesTabListener: (String) -> Unit,
     private val remindCloseListener: () -> Unit
 ) : ListItemAdapter() {
 
@@ -43,12 +42,15 @@ class ReleaseInfoAdapter(
         val modifications = screenState.modifiers
         val newItems = mutableListOf<ListItem>()
 
-        newItems.add(
-            ReleaseEpisodeControlItem(
-                releaseState.episodesControl.copy(hasWeb = false),
-                EpisodeControlPlace.TOP
+        if (releaseState.episodesControl != null) {
+            newItems.add(
+                ReleaseEpisodeControlItem(
+                    releaseState.episodesControl.copy(hasWeb = false),
+                    EpisodeControlPlace.TOP
+                )
             )
-        )
+        }
+
         newItems.add(
             ReleaseHeadListItem(
                 "head",
@@ -79,20 +81,33 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem("remind"))
         }
 
-        val episodesOnline = releaseState.episodes[ReleaseFull.Episode.Type.ONLINE].orEmpty()
-        val episodesSource = releaseState.episodes[ReleaseFull.Episode.Type.SOURCE].orEmpty()
-        if (episodesOnline.isNotEmpty() || episodesSource.isNotEmpty()) {
-            if (episodesOnline.isNotEmpty()) {
+        if (releaseState.episodesControl != null) {
+            newItems.add(
+                ReleaseEpisodeControlItem(
+                    releaseState.episodesControl,
+                    EpisodeControlPlace.BOTTOM
+                )
+            )
+        }
+
+        if (releaseState.episodesTabs.isNotEmpty()) {
+            val selectedEpisodesTabTag =
+                modifications.selectedEpisodesTabTag ?: releaseState.episodesTabs.firstOrNull()?.tag
+
+            if (releaseState.episodesTabs.size > 1) {
                 newItems.add(
-                    ReleaseEpisodeControlItem(
-                        releaseState.episodesControl,
-                        EpisodeControlPlace.BOTTOM
+                    ReleaseEpisodesHeadListItem(
+                        "tabs",
+                        releaseState.episodesTabs,
+                        selectedEpisodesTabTag
                     )
                 )
             }
-            newItems.add(ReleaseEpisodesHeadListItem("tabs", modifications.episodesType))
 
-            val episodes = releaseState.episodes[modifications.episodesType].orEmpty()
+            val episodes = releaseState.episodesTabs
+                .firstOrNull { it.tag == selectedEpisodesTabTag }
+                ?.episodes.orEmpty()
+
             val episodeListItems = episodes.mapIndexed { index, episode ->
                 ReleaseEpisodeListItem(episode, index % 2 == 0)
             }
@@ -101,10 +116,9 @@ class ReleaseInfoAdapter(
             } else {
                 newItems.addAll(episodeListItems)
             }
-
-            newItems.add(DividerShadowListItem("episodes"))
         }
 
+        newItems.add(DividerShadowListItem("episodes"))
         newItems.add(CommentRouteListItem("comments"))
         newItems.add(DividerShadowListItem("comments"))
 

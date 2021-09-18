@@ -35,7 +35,8 @@ class ReleaseFull() : ReleaseItem(), Serializable {
 
     var moonwalkLink: String? = null
     val episodes = mutableListOf<Episode>()
-    val episodesSource = mutableListOf<Episode>()
+    val sourceEpisodes = mutableListOf<SourceEpisode>()
+    val externalPlaylists = mutableListOf<ExternalPlaylist>()
 
     val torrents = mutableListOf<TorrentItem>()
 
@@ -50,11 +51,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var urlSd: String? = null
         var urlHd: String? = null
         var urlFullHd: String? = null
-        lateinit var type: Type
-
-        enum class Type : Serializable {
-            ONLINE, SOURCE
-        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -69,7 +65,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             if (urlSd != other.urlSd) return false
             if (urlHd != other.urlHd) return false
             if (urlFullHd != other.urlFullHd) return false
-            if (type != other.type) return false
 
             return true
         }
@@ -84,7 +79,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             result = 31 * result + (urlSd?.hashCode() ?: 0)
             result = 31 * result + (urlHd?.hashCode() ?: 0)
             result = 31 * result + (urlFullHd?.hashCode() ?: 0)
-            result = 31 * result + type.hashCode()
             return result
         }
     }
@@ -98,7 +92,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         if (blockedInfo != other.blockedInfo) return false
         if (moonwalkLink != other.moonwalkLink) return false
         if (episodes != other.episodes) return false
-        if (episodesSource != other.episodesSource) return false
+        if (sourceEpisodes != other.sourceEpisodes) return false
         if (torrents != other.torrents) return false
 
         return true
@@ -110,7 +104,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         result = 31 * result + blockedInfo.hashCode()
         result = 31 * result + (moonwalkLink?.hashCode() ?: 0)
         result = 31 * result + episodes.hashCode()
-        result = 31 * result + episodesSource.hashCode()
+        result = 31 * result + sourceEpisodes.hashCode()
         result = 31 * result + torrents.hashCode()
         return result
     }

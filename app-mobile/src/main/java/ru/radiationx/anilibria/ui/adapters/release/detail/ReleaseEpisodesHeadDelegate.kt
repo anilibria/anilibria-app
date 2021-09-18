@@ -6,6 +6,8 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_head_episodes.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.presentation.release.details.EpisodesTabState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
@@ -30,13 +32,17 @@ class ReleaseEpisodesHeadDelegate(
         private val itemListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
+        private var currentItem: ReleaseEpisodesHeadListItem? = null
+
         private val tabListener = object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabSelected(tab: TabLayout.Tab) {
-                itemListener.invoke(tab.tag as String)
+                val selectedTag = tab.tag as String
+                currentItem?.also { updateSelectedColors(it.tabs, selectedTag) }
+                itemListener.invoke(selectedTag)
             }
         }
 
@@ -45,10 +51,24 @@ class ReleaseEpisodesHeadDelegate(
         }
 
         fun bind(item: ReleaseEpisodesHeadListItem) {
+            currentItem = item
             tabLayout.removeOnTabSelectedListener(tabListener)
+            updateSelectedColors(item.tabs, item.selectedTag)
             updateTabsItems(item.tabs)
             updateSelectedTab(item.selectedTag)
             tabLayout.addOnTabSelectedListener(tabListener)
+        }
+
+        private fun updateSelectedColors(tabs: List<EpisodesTabState>, selectedTag: String?) {
+            val selectedState = tabs.find { it.tag == selectedTag }
+            val selectedColor = selectedState?.textColor
+                ?.let { tabLayout.getCompatColor(it) }
+                ?: tabLayout.context.getColorFromAttr(R.attr.colorAccent)
+            tabLayout.setTabTextColors(
+                tabLayout.context.getColorFromAttr(R.attr.textSecond),
+                selectedColor
+            )
+            tabLayout.setSelectedTabIndicatorColor(selectedColor)
         }
 
         private fun updateSelectedTab(selectedTag: String?) {

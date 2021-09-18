@@ -98,11 +98,13 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(
         tag = "online",
         title = "Онлайн",
+        textColor = null,
         episodes = episodes.map { it.toState() }
     )
     val sourceTab = EpisodesTabState(
         tag = "source",
         title = "Скачать",
+        textColor = null,
         episodes = sourceEpisodes.map { it.toState() }
     )
     val externalTabs = externalPlaylists.map { it.toTabState() }
@@ -118,6 +120,10 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
 fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
     tag = tag,
     title = title,
+    textColor = when (tag) {
+        "telegram" -> R.color.brand_telegram
+        else -> null
+    },
     episodes = episodes.map { it.toState(this) }
 )
 

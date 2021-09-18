@@ -9,6 +9,7 @@ data class ReleaseDetailScreenState(
 data class EpisodesTabState(
     val tag: String,
     val title: String,
+    val textColor: Int?,
     val episodes: List<ReleaseEpisodeItemState>
 )
 
@@ -56,8 +57,8 @@ data class ReleaseEpisodeItemState(
     val type: ReleaseEpisodeItemType,
     val tag: String,
     val actionTitle: String?,
-    val actionColorRes:Int?,
-    val actionIconRes:Int?,
+    val actionColorRes: Int?,
+    val actionIconRes: Int?,
     val hasActionUrl: Boolean
 )
 

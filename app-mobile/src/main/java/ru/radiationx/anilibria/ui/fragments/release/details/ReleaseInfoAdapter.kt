@@ -81,17 +81,18 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem("remind"))
         }
 
+        if (releaseState.episodesControl != null) {
+            newItems.add(
+                ReleaseEpisodeControlItem(
+                    releaseState.episodesControl,
+                    EpisodeControlPlace.BOTTOM
+                )
+            )
+        }
+
         if (releaseState.episodesTabs.isNotEmpty()) {
             val selectedEpisodesTabTag =
                 modifications.selectedEpisodesTabTag ?: releaseState.episodesTabs.firstOrNull()?.tag
-            if (releaseState.episodesControl != null) {
-                newItems.add(
-                    ReleaseEpisodeControlItem(
-                        releaseState.episodesControl,
-                        EpisodeControlPlace.BOTTOM
-                    )
-                )
-            }
 
             if (releaseState.episodesTabs.size > 1) {
                 newItems.add(
@@ -115,10 +116,9 @@ class ReleaseInfoAdapter(
             } else {
                 newItems.addAll(episodeListItems)
             }
-
-            newItems.add(DividerShadowListItem("episodes"))
         }
 
+        newItems.add(DividerShadowListItem("episodes"))
         newItems.add(CommentRouteListItem("comments"))
         newItems.add(DividerShadowListItem("comments"))
 

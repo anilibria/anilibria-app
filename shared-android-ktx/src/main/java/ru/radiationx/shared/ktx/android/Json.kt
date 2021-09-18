@@ -23,11 +23,19 @@ fun <T, R, C : MutableCollection<in R>> JSONArray.mapTo(destination: C, transfor
     return destination
 }
 
+fun JSONArray.toObjectsList(): List<JSONObject> {
+    val result = mutableListOf<JSONObject>()
+    for (j in 0 until this.length()) {
+        result.add(this.getJSONObject(j))
+    }
+    return result
+}
+
 fun <R> JSONArray.mapObjects(block: (JSONObject) -> R): List<R> {
     val result = mutableListOf<R>()
     for (j in 0 until this.length()) {
         val jsonObject = this.getJSONObject(j)
-        block.invoke(jsonObject)
+        result.add(block.invoke(jsonObject))
     }
     return result
 }

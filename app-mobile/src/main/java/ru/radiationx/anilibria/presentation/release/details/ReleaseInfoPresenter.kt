@@ -164,6 +164,9 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onEpisodeTabClick(tabTag: String) {
+        currentData?.let { release ->
+            releaseAnalytics.episodesTabClick(release.id, tabTag)
+        }
         updateModifiers {
             it.copy(selectedEpisodesTabTag = tabTag)
         }

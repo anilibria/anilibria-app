@@ -194,4 +194,12 @@ class ReleaseAnalytics(
             releaseId.toIdParam()
         )
     }
+
+    fun episodesTabClick(releaseId: Int, tabTag: String) {
+        sender.send(
+            AnalyticsConstants.release_episodes_tab_click,
+            releaseId.toIdParam(),
+            tabTag.toParam(PARAM_EXTERNAL_TAG)
+        )
+    }
 }

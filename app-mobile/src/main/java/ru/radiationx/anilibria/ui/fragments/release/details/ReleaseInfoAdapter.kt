@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.*
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.app.release.ReleaseFull
 
 class ReleaseInfoAdapter(
     private val headListener: ReleaseHeadDelegate.Listener,
@@ -83,6 +82,8 @@ class ReleaseInfoAdapter(
         }
 
         if (releaseState.episodesTabs.isNotEmpty()) {
+            val selectedEpisodesTabTag =
+                modifications.selectedEpisodesTabTag ?: releaseState.episodesTabs.firstOrNull()?.tag
             if (releaseState.episodesControl != null) {
                 newItems.add(
                     ReleaseEpisodeControlItem(
@@ -97,13 +98,13 @@ class ReleaseInfoAdapter(
                     ReleaseEpisodesHeadListItem(
                         "tabs",
                         releaseState.episodesTabs,
-                        modifications.selectedEpisodesTabTag
+                        selectedEpisodesTabTag
                     )
                 )
             }
 
             val episodes = releaseState.episodesTabs
-                .firstOrNull { it.tag == modifications.selectedEpisodesTabTag }
+                .firstOrNull { it.tag == selectedEpisodesTabTag }
                 ?.episodes.orEmpty()
 
             val episodeListItems = episodes.mapIndexed { index, episode ->

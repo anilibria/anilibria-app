@@ -5,6 +5,6 @@ data class ExternalEpisode(
     val releaseId: Int,
     val title: String?,
     val actionTitle: String,
-    val icon: String?,
-    val url: String
+    val service: String?,
+    val url: String?
 )

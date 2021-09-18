@@ -1,18 +1,21 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_release_episode.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import java.util.*
 
 /**
  * Created by radiationx on 13.01.18.
@@ -43,6 +46,24 @@ class ReleaseEpisodeDelegate(
             quality_sd.isVisible = state.hasSd
             quality_hd.isVisible = state.hasHd
             quality_full_hd.isVisible = state.hasFullHd
+
+            tvAction.isVisible = state.hasActionUrl
+            if (state.hasActionUrl) {
+                tvAction.text = state.actionTitle
+                val textColor = state.actionColorRes
+                    ?.let { tvAction.getCompatColor(it) }
+                    ?: tvAction.context.getColorFromAttr(R.attr.colorAccent)
+                val iconDrawable = state.actionIconRes?.let { tvAction.getCompatDrawable(it) }
+
+                tvAction.setTextColor(textColor)
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    tvAction,
+                    null,
+                    null,
+                    iconDrawable,
+                    null
+                )
+            }
 
             val bgColor = if (isEven) {
                 containerView.context.getColorFromAttr(R.attr.colorSurface)

@@ -234,7 +234,7 @@ class ReleaseInfoPresenter @Inject constructor(
         episode: ExternalEpisode
     ) {
 
-        Utils.externalLink(episode.url)
+        episode.url?.also { Utils.externalLink(it) }
     }
 
     private fun onSourceEpisodeClick(

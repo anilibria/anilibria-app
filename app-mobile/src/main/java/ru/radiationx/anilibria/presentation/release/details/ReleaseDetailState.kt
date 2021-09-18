@@ -53,7 +53,11 @@ data class ReleaseEpisodeItemState(
     val hasSd: Boolean,
     val hasHd: Boolean,
     val hasFullHd: Boolean,
-    val type: ReleaseEpisodeItemType
+    val type: ReleaseEpisodeItemType,
+    val actionTitle: String?,
+    val actionColorRes:Int?,
+    val actionIconRes:Int?,
+    val hasActionUrl: Boolean
 )
 
 enum class ReleaseEpisodeItemType {

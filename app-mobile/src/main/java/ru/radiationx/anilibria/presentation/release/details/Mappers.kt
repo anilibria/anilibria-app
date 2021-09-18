@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
@@ -111,7 +112,7 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     )
     return listOf(onlineTab, sourceTab, externalTab)
         .filter { tab ->
-            tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd }
+            tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
         }
 }
 
@@ -124,7 +125,17 @@ fun ExternalEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState
     hasSd = false,
     hasHd = false,
     hasFullHd = false,
-    type = ReleaseEpisodeItemType.EXTERNAL
+    type = ReleaseEpisodeItemType.EXTERNAL,
+    actionTitle = actionTitle,
+    hasActionUrl = url != null,
+    actionIconRes = when (service) {
+        "telegram" -> R.drawable.ic_logo_telegram
+        else -> null
+    },
+    actionColorRes = when (service) {
+        "telegram" -> R.color.brand_telegram
+        else -> null
+    }
 )
 
 fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
@@ -136,7 +147,11 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     hasSd = urlSd != null,
     hasHd = urlHd != null,
     hasFullHd = urlFullHd != null,
-    type = ReleaseEpisodeItemType.SOURCE
+    type = ReleaseEpisodeItemType.SOURCE,
+    actionTitle = null,
+    hasActionUrl = false,
+    actionIconRes = null,
+    actionColorRes = null
 )
 
 fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
@@ -154,6 +169,10 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         hasSd = urlSd != null,
         hasHd = urlHd != null,
         hasFullHd = urlFullHd != null,
-        type = ReleaseEpisodeItemType.ONLINE
+        type = ReleaseEpisodeItemType.ONLINE,
+        actionTitle = null,
+        hasActionUrl = false,
+        actionIconRes = null,
+        actionColorRes = null
     )
 }

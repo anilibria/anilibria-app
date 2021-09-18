@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
@@ -61,9 +61,11 @@
         android:id="@+id/quality_sd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_hd"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_hd"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_sd_base"
         app:tint="?colorAccent" />
 
@@ -71,9 +73,11 @@
         android:id="@+id/quality_hd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_full_hd"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_full_hd"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_hd_base"
         app:tint="?colorAccent" />
 
@@ -81,9 +85,32 @@
         android:id="@+id/quality_full_hd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_full_hd_base"
         app:tint="?colorAccent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="8dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="?colorAccent"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:drawableEndCompat="@drawable/ic_logo_telegram"
+        tools:text="Смотреть в Telegram"
+        tools:textColor="@color/brand_telegram"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

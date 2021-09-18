@@ -112,7 +112,8 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     )
     return listOf(onlineTab, sourceTab, externalTab)
         .filter { tab ->
-            tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
+            tab.episodes.isNotEmpty()
+                    && tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
         }
 }
 

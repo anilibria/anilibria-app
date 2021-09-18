@@ -20,7 +20,7 @@ class ReleaseInfoAdapter(
     private val donateListener: ReleaseDonateDelegate.Listener,
     private val torrentClickListener: (ReleaseTorrentItemState) -> Unit,
     private val commentsClickListener: () -> Unit,
-    private val episodesTabListener: (ReleaseFull.Episode.Type) -> Unit,
+    private val episodesTabListener: (String) -> Unit,
     private val remindCloseListener: () -> Unit
 ) : ListItemAdapter() {
 
@@ -43,12 +43,15 @@ class ReleaseInfoAdapter(
         val modifications = screenState.modifiers
         val newItems = mutableListOf<ListItem>()
 
-        newItems.add(
-            ReleaseEpisodeControlItem(
-                releaseState.episodesControl.copy(hasWeb = false),
-                EpisodeControlPlace.TOP
+        if (releaseState.episodesControl != null) {
+            newItems.add(
+                ReleaseEpisodeControlItem(
+                    releaseState.episodesControl.copy(hasWeb = false),
+                    EpisodeControlPlace.TOP
+                )
             )
-        )
+        }
+
         newItems.add(
             ReleaseHeadListItem(
                 "head",
@@ -79,10 +82,8 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem("remind"))
         }
 
-        val episodesOnline = releaseState.episodes[ReleaseFull.Episode.Type.ONLINE].orEmpty()
-        val episodesSource = releaseState.episodes[ReleaseFull.Episode.Type.SOURCE].orEmpty()
-        if (episodesOnline.isNotEmpty() || episodesSource.isNotEmpty()) {
-            if (episodesOnline.isNotEmpty()) {
+        if (releaseState.episodesTabs.isNotEmpty()) {
+            if (releaseState.episodesControl != null) {
                 newItems.add(
                     ReleaseEpisodeControlItem(
                         releaseState.episodesControl,
@@ -90,9 +91,21 @@ class ReleaseInfoAdapter(
                     )
                 )
             }
-            newItems.add(ReleaseEpisodesHeadListItem("tabs", modifications.episodesType))
 
-            val episodes = releaseState.episodes[modifications.episodesType].orEmpty()
+            if (releaseState.episodesTabs.size > 1) {
+                newItems.add(
+                    ReleaseEpisodesHeadListItem(
+                        "tabs",
+                        releaseState.episodesTabs,
+                        modifications.selectedEpisodesTabTag
+                    )
+                )
+            }
+
+            val episodes = releaseState.episodesTabs
+                .firstOrNull { it.tag == modifications.selectedEpisodesTabTag }
+                ?.episodes.orEmpty()
+
             val episodeListItems = episodes.mapIndexed { index, episode ->
                 ReleaseEpisodeListItem(episode, index % 2 == 0)
             }

@@ -16,8 +16,10 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.ExternalEpisode
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -161,9 +163,9 @@ class ReleaseInfoPresenter @Inject constructor(
         releaseInteractor.putEpisode(episode)
     }
 
-    fun onEpisodeTabClick(type: ReleaseFull.Episode.Type) {
+    fun onEpisodeTabClick(tabTag: String) {
         updateModifiers {
-            it.copy(episodesType = type)
+            it.copy(selectedEpisodesTabTag = tabTag)
         }
     }
 
@@ -226,39 +228,78 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
-    fun onPlayEpisodeClick(
+    //todo analytics
+    private fun onExternalEpisodeClick(
+        release: ReleaseFull,
+        episode: ExternalEpisode
+    ) {
+
+        Utils.externalLink(episode.url)
+    }
+
+    private fun onSourceEpisodeClick(
+        release: ReleaseFull,
+        episode: SourceEpisode,
+        quality: Int? = null
+    ) {
+        val analyticsQuality =
+            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id)
+        viewState.downloadEpisode(episode, quality)
+    }
+
+    private fun onOnlineEpisodeClick(
+        release: ReleaseFull,
+        episode: ReleaseFull.Episode,
+        playFlag: Int? = null,
+        quality: Int? = null
+    ) {
+        val analyticsQuality =
+            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
+        viewState.playEpisode(release, episode, playFlag, quality)
+    }
+
+    fun onEpisodeClick(
         episode: ReleaseEpisodeItemState,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
         val release = currentData ?: return
-        val episodeItem = getEpisodeItem(episode.id) ?: return
-
-        val analyticsQuality =
-            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-        when (stateController.currentState.modifiers.episodesType) {
-            ReleaseFull.Episode.Type.ONLINE -> {
-                releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
+        when (episode.type) {
+            ReleaseEpisodeItemType.ONLINE -> {
+                val episodeItem = getEpisodeItem(episode) ?: return
+                onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
             }
-            ReleaseFull.Episode.Type.SOURCE -> {
-                releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id)
+            ReleaseEpisodeItemType.SOURCE -> {
+                val episodeItem = getSourceEpisode(episode) ?: return
+                onSourceEpisodeClick(release, episodeItem, quality)
+            }
+            ReleaseEpisodeItemType.EXTERNAL -> {
+                val episodeItem = getExternalEpisode(episode) ?: return
+                onExternalEpisodeClick(release, episodeItem)
             }
         }
-        viewState.playEpisode(release, episodeItem, playFlag, quality)
     }
 
     fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
-        val episodeItem = getEpisodeItem(episode.id) ?: return
+        val episodeItem = getEpisodeItem(episode) ?: return
         viewState.showLongPressEpisodeDialog(episodeItem)
     }
 
-    private fun getEpisodeItem(episodeId: Int): ReleaseFull.Episode? {
-        val release = currentData ?: return null
-        val episodes = when (stateController.currentState.modifiers.episodesType) {
-            ReleaseFull.Episode.Type.ONLINE -> release.episodes
-            ReleaseFull.Episode.Type.SOURCE -> release.episodesSource
-        }
-        return episodes.find { it.id == episodeId }
+    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): ReleaseFull.Episode? {
+        if (episode.type != ReleaseEpisodeItemType.ONLINE) return null
+        return currentData?.episodes?.find { it.id == episode.id }
+    }
+
+    private fun getSourceEpisode(episode: ReleaseEpisodeItemState): SourceEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.SOURCE) return null
+        return currentData?.episodesSource?.find { it.id == episode.id }
+    }
+
+    private fun getExternalEpisode(episode: ReleaseEpisodeItemState): ExternalEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.EXTERNAL) return null
+        return currentData?.episodesExternal?.find { it.id == episode.id }
     }
 
     fun onClickLink(url: String) {

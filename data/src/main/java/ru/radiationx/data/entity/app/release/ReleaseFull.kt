@@ -35,7 +35,8 @@ class ReleaseFull() : ReleaseItem(), Serializable {
 
     var moonwalkLink: String? = null
     val episodes = mutableListOf<Episode>()
-    val episodesSource = mutableListOf<Episode>()
+    val episodesSource = mutableListOf<SourceEpisode>()
+    val episodesExternal = mutableListOf<ExternalEpisode>()
 
     val torrents = mutableListOf<TorrentItem>()
 
@@ -50,11 +51,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var urlSd: String? = null
         var urlHd: String? = null
         var urlFullHd: String? = null
-        lateinit var type: Type
-
-        enum class Type : Serializable {
-            ONLINE, SOURCE
-        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -69,7 +65,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             if (urlSd != other.urlSd) return false
             if (urlHd != other.urlHd) return false
             if (urlFullHd != other.urlFullHd) return false
-            if (type != other.type) return false
 
             return true
         }
@@ -84,7 +79,6 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             result = 31 * result + (urlSd?.hashCode() ?: 0)
             result = 31 * result + (urlHd?.hashCode() ?: 0)
             result = 31 * result + (urlFullHd?.hashCode() ?: 0)
-            result = 31 * result + type.hashCode()
             return result
         }
     }

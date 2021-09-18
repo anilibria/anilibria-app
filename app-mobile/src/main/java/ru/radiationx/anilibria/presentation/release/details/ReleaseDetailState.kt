@@ -1,15 +1,19 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import ru.radiationx.data.entity.app.release.ReleaseFull
-
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
     val modifiers: ReleaseDetailModifiersState = ReleaseDetailModifiersState(),
     val remindText: String? = null
 )
 
+data class EpisodesTabState(
+    val tag: String,
+    val title: String,
+    val episodes: List<ReleaseEpisodeItemState>
+)
+
 data class ReleaseDetailModifiersState(
-    val episodesType: ReleaseFull.Episode.Type = ReleaseFull.Episode.Type.ONLINE,
+    val selectedEpisodesTabTag: String? = null,
     val favoriteRefreshing: Boolean = false,
     val episodesReversed: Boolean = false,
     val descriptionExpanded: Boolean = false
@@ -18,8 +22,8 @@ data class ReleaseDetailModifiersState(
 data class ReleaseDetailState(
     val id: Int,
     val info: ReleaseInfoState,
-    val episodesControl: ReleaseEpisodesControlState,
-    val episodes: Map<ReleaseFull.Episode.Type, List<ReleaseEpisodeItemState>>,
+    val episodesControl: ReleaseEpisodesControlState?,
+    val episodesTabs: List<EpisodesTabState>,
     val torrents: List<ReleaseTorrentItemState>,
     val blockedInfo: ReleaseBlockedInfoState?
 )
@@ -48,8 +52,13 @@ data class ReleaseEpisodeItemState(
     val isViewed: Boolean,
     val hasSd: Boolean,
     val hasHd: Boolean,
-    val hasFullHd: Boolean
+    val hasFullHd: Boolean,
+    val type: ReleaseEpisodeItemType
 )
+
+enum class ReleaseEpisodeItemType {
+    ONLINE, SOURCE, EXTERNAL
+}
 
 data class ReleaseTorrentItemState(
     val id: Int,

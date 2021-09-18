@@ -10,10 +10,7 @@ fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
     episodesControl = toEpisodeControlState(),
-    episodes = mapOf(
-        ReleaseFull.Episode.Type.ONLINE to episodes.map { it.toState() },
-        ReleaseFull.Episode.Type.SOURCE to episodesSource.map { it.toState() }
-    ),
+    episodesTabs = toTabsState(),
     torrents = torrents.map { it.toState() },
     blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
 )
@@ -63,7 +60,7 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
     )
 }
 
-fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState {
+fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
     val hasViewed = episodes.any { it.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
@@ -74,12 +71,16 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState {
         "Начать просмотр"
     }
 
-    return ReleaseEpisodesControlState(
-        hasWeb = hasWeb,
-        hasEpisodes = hasEpisodes,
-        hasViewed = hasViewed,
-        continueTitle = continueTitle
-    )
+    return if (hasWeb || hasEpisodes) {
+        ReleaseEpisodesControlState(
+            hasWeb = hasWeb,
+            hasEpisodes = hasEpisodes,
+            hasViewed = hasViewed,
+            continueTitle = continueTitle
+        )
+    } else {
+        null
+    }
 }
 
 fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
@@ -90,6 +91,52 @@ fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
     seeders = seeders.toString(),
     leechers = leechers.toString(),
     date = null
+)
+
+fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
+    val onlineTab = EpisodesTabState(
+        tag = "online",
+        title = "Онлайн",
+        episodes = episodes.map { it.toState() }
+    )
+    val sourceTab = EpisodesTabState(
+        tag = "source",
+        title = "Скачать",
+        episodes = episodesSource.map { it.toState() }
+    )
+    val externalTab = EpisodesTabState(
+        tag = "external",
+        title = "Telegram",
+        episodes = episodesExternal.map { it.toState() }
+    )
+    return listOf(onlineTab, sourceTab, externalTab)
+        .filter { tab ->
+            tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd }
+        }
+}
+
+fun ExternalEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    releaseId = releaseId,
+    title = title.orEmpty(),
+    subtitle = null,
+    isViewed = false,
+    hasSd = false,
+    hasHd = false,
+    hasFullHd = false,
+    type = ReleaseEpisodeItemType.EXTERNAL
+)
+
+fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    releaseId = releaseId,
+    title = title.orEmpty(),
+    subtitle = null,
+    isViewed = false,
+    hasSd = urlSd != null,
+    hasHd = urlHd != null,
+    hasFullHd = urlFullHd != null,
+    type = ReleaseEpisodeItemType.SOURCE
 )
 
 fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
@@ -106,6 +153,7 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         isViewed = isViewed,
         hasSd = urlSd != null,
         hasHd = urlHd != null,
-        hasFullHd = urlFullHd != null
+        hasFullHd = urlFullHd != null,
+        type = ReleaseEpisodeItemType.ONLINE
     )
 }

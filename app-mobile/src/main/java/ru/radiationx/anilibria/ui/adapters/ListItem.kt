@@ -6,7 +6,6 @@ import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.app.release.ReleaseFull
 
 sealed class ListItem(private val idData: Any?) {
 
@@ -77,7 +76,8 @@ data class ReleaseEpisodeControlItem(
 
 data class ReleaseEpisodesHeadListItem(
     val id: Any,
-    val episodeType: ReleaseFull.Episode.Type
+    val tabs: List<EpisodesTabState>,
+    val selectedTag: String?
 ) : ListItem(id)
 
 data class ReleaseDonateListItem(val id: Any) : ListItem(id)

@@ -38,7 +38,7 @@ class ReleaseEpisodeControlDelegate(
             if (state.hasViewed) {
                 full_button_continue.setOnClickListener { itemListener.onClickContinue(place) }
             } else {
-                full_button_continue.text = "Начать просмотр"
+                full_button_continue.setOnClickListener { itemListener.onClickWatchAll(place) }
             }
             full_btn_episodes_menu.setOnClickListener { itemListener.onClickEpisodesMenu(place) }
             full_button_web.setOnClickListener { itemListener.onClickWatchWeb(place) }

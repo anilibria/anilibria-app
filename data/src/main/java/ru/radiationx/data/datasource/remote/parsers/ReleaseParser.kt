@@ -5,10 +5,7 @@ import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
@@ -120,30 +117,38 @@ class ReleaseParser @Inject constructor(
             for (j in 0 until jsonPlaylist.length()) {
                 val jsonEpisode = jsonPlaylist.getJSONObject(j)
 
-                val episodeId: Int = jsonEpisode.optInt("id")
+                val episodeId = jsonEpisode.optInt("id")
                 val episodeTitle = jsonEpisode.nullString("title")
 
-                ReleaseFull.Episode().also {
+                val episode = ReleaseFull.Episode().also {
                     it.releaseId = release.id
                     it.id = episodeId
                     it.title = episodeTitle
                     it.urlSd = jsonEpisode.nullString("sd")
                     it.urlHd = jsonEpisode.nullString("hd")
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
-                    it.type = ReleaseFull.Episode.Type.ONLINE
-                    release.episodes.add(it)
                 }
+                val sourceEpisode = SourceEpisode(
+                    episodeId,
+                    release.id,
+                    episodeTitle,
+                    jsonEpisode.nullString("srcSd"),
+                    jsonEpisode.nullString("srcHd"),
+                    jsonEpisode.nullString("srcFullHd")
+                )
 
-                ReleaseFull.Episode().also {
-                    it.releaseId = release.id
-                    it.id = episodeId
-                    it.title = episodeTitle
-                    it.urlSd = jsonEpisode.nullString("srcSd")
-                    it.urlHd = jsonEpisode.nullString("srcHd")
-                    it.urlFullHd = jsonEpisode.nullString("srcFullHd")
-                    it.type = ReleaseFull.Episode.Type.SOURCE
-                    release.episodesSource.add(it)
-                }
+                val externalEpisode = ExternalEpisode(
+                    episodeId,
+                    release.id,
+                    episodeTitle,
+                    "Смотреть в Telegram",
+                    "telegram",
+                    "https://vk.com/"
+                )
+
+                release.episodes.add(episode)
+                release.episodesSource.add(sourceEpisode)
+                release.episodesExternal.add(externalEpisode)
             }
         }
 

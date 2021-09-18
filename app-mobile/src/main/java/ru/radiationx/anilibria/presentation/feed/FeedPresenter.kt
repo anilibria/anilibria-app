@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedScheduleState
 import ru.radiationx.anilibria.ui.fragments.feed.FeedScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
@@ -29,6 +30,7 @@ import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
@@ -43,6 +45,8 @@ class FeedPresenter @Inject constructor(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val scheduleRepository: ScheduleRepository,
+    private val checkerRepository: CheckerRepository,
+    private val sharedBuildConfig: SharedBuildConfig,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -50,7 +54,8 @@ class FeedPresenter @Inject constructor(
     private val feedAnalytics: FeedAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
     private val youtubeAnalytics: YoutubeAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val updaterAnalytics: UpdaterAnalytics
 ) : BasePresenter<FeedView>(router) {
 
     private val loadingController = DataLoadingController {
@@ -67,8 +72,19 @@ class FeedPresenter @Inject constructor(
     private val currentItems = mutableListOf<FeedItem>()
     private val currentScheduleItems = mutableListOf<ScheduleItem>()
 
+    private var appUpdateNeedClose = false
+    private var hasAppUpdate = false
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        checkerRepository
+            .observeUpdate()
+            .subscribe {
+                hasAppUpdate = it.code > sharedBuildConfig.versionCode
+                updateAppUpdateState()
+            }
+            .addToDisposable()
 
         stateController
             .observeState()
@@ -174,6 +190,23 @@ class FeedPresenter @Inject constructor(
 
     fun onFastSearchOpen() {
         fastSearchAnalytics.open(AnalyticsConstants.screen_feed)
+    }
+
+    fun appUpdateClick() {
+        updaterAnalytics.appUpdateCardClick()
+        router.navigateTo(Screens.AppUpdateScreen(false, AnalyticsConstants.app_update_card))
+    }
+
+    fun appUpdateCloseClick() {
+        updaterAnalytics.appUpdateCardCloseClick()
+        appUpdateNeedClose = true
+        updateAppUpdateState()
+    }
+
+    private fun updateAppUpdateState() {
+        stateController.updateState {
+            it.copy(hasAppUpdate = hasAppUpdate && !appUpdateNeedClose)
+        }
     }
 
     fun onCopyClick(item: ReleaseItemState) {

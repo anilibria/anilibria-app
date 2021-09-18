@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.ui.activities.CountryBlockedActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.ui.fragments.auth.main.Auth2FaCodeFragment
 import ru.radiationx.anilibria.ui.fragments.auth.main.AuthFragment
@@ -28,6 +29,12 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
  * Created by radiationx on 17.11.17.
  */
 object Screens {
+
+    class AppUpdateScreen(val force: Boolean, val analyticsFrom: String) : BaseAppScreen() {
+        override fun getActivityIntent(context: Context): Intent {
+            return UpdateCheckerActivity.newIntent(context, force, analyticsFrom)
+        }
+    }
 
     class TabScreen(val rootScreen: BaseAppScreen) : BaseAppScreen() {
         override fun getFragment() = TabFragment.newInstance(rootScreen)

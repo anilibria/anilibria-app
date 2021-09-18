@@ -7,7 +7,6 @@ import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
@@ -20,6 +19,8 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 class FeedAdapter(
     private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
+    private val appUpdateListener: () -> Unit,
+    private val appUpdateCloseListener: () -> Unit,
     schedulesClickListener: () -> Unit,
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
@@ -41,6 +42,7 @@ class FeedAdapter(
     }
 
     init {
+        addDelegate(AppUpdateCardDelegate(appUpdateListener, appUpdateCloseListener))
         addDelegate(LoadMoreDelegate(null))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
@@ -66,11 +68,15 @@ class FeedAdapter(
         }
     }
 
-    fun bindState(state: DataLoadingState<FeedDataState>) {
+    fun bindState(state: FeedScreenState) {
+        val loadingState = state.data
         val newItems = mutableListOf<ListItem>()
 
+        if (state.hasAppUpdate && (loadingState.data != null || loadingState.error != null)) {
+            newItems.add(AppUpdateCardListItem("top"))
+        }
 
-        state.data?.schedule?.also { scheduleState ->
+        loadingState.data?.schedule?.also { scheduleState ->
             newItems.add(
                 FeedSectionListItem(
                     TAG_SCHEDULE_SECTION,
@@ -81,8 +87,7 @@ class FeedAdapter(
             newItems.add(FeedSchedulesListItem("actual", scheduleState.items))
         }
 
-
-        val feedItems = state.data?.feedItems.orEmpty()
+        val feedItems = loadingState.data?.feedItems.orEmpty()
         if (feedItems.isNotEmpty()) {
             newItems.add(FeedSectionListItem(TAG_FEED_SECTION, "Обновления", null, hasBg = true))
             newItems.add(FeedRandomBtnListItem("random"))
@@ -99,10 +104,10 @@ class FeedAdapter(
             }
         }
 
-        if (state.hasMorePages) {
-            if (state.error != null) {
+        if (loadingState.hasMorePages) {
+            if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else if (state.moreLoading) {
+            } else if (loadingState.moreLoading) {
                 newItems.add(LoadMoreListItem("bottom"))
             }
         }

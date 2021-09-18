@@ -41,4 +41,12 @@ class UpdaterAnalytics(
         )
     }
 
+    fun appUpdateCardClick() {
+        sender.send(AnalyticsConstants.app_update_card_click)
+    }
+
+    fun appUpdateCardCloseClick() {
+        sender.send(AnalyticsConstants.app_update_card_close)
+    }
+
 }

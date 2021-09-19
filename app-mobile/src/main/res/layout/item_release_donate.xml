@@ -5,25 +5,7 @@
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?selectableItemBackground"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp"
-    android:paddingEnd="12dp"
-    android:paddingBottom="16dp">
+    android:foreground="?selectableItemBackground">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_weight="1"
-        android:background="?colorSurface"
-        android:text="@string/item_donate"
-        android:textColor="?textDefault"
-        android:textSize="16sp" />
-
-    <include
-        layout="@layout/view_donation_icons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+    <include layout="@layout/view_donation_info" />
 </LinearLayout>

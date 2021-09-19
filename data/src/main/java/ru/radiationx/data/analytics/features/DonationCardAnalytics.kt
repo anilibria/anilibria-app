@@ -12,14 +12,14 @@ class DonationCardAnalytics(
 
     fun onNewDonationClick(from: String) {
         sender.send(
-            AnalyticsConstants.donation_card_click,
+            AnalyticsConstants.donation_card_new_click,
             from.toNavFromParam()
         )
     }
 
     fun onNewDonationCloseClick(from: String) {
         sender.send(
-            AnalyticsConstants.donation_card_close_click,
+            AnalyticsConstants.donation_card_new_close_click,
             from.toNavFromParam()
         )
     }

@@ -80,7 +80,7 @@ data class ReleaseEpisodesHeadListItem(
     val selectedTag: String?
 ) : ListItem(id)
 
-data class ReleaseDonateListItem(val id: Any) : ListItem(id)
+data class ReleaseDonateListItem(val state: DonationCardItemState) : ListItem(state.tag)
 data class ReleaseRemindListItem(val text: String) : ListItem(text)
 data class ReleaseBlockedListItem(val state: ReleaseBlockedInfoState) : ListItem(state.title)
 data class ReleaseHeadListItem(

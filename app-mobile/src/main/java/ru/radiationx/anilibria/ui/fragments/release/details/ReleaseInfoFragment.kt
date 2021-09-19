@@ -29,7 +29,10 @@ import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
-import ru.radiationx.anilibria.ui.adapters.release.detail.*
+import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
@@ -55,7 +58,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             headListener = headListener,
             episodeListener = episodeListener,
             episodeControlListener = episodeControlListener,
-            donateListener = donateListener,
+            donationListener = { presenter.onClickDonate() },
+            donationCloseListener = {},
             torrentClickListener = presenter::onTorrentClick,
             commentsClickListener = presenter::onCommentsClick,
             episodesTabListener = presenter::onEpisodeTabClick,
@@ -541,13 +545,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
         override fun onClickEpisodesMenu(place: EpisodeControlPlace) {
             presenter.onClickEpisodesMenu(place)
-        }
-    }
-
-    private val donateListener = object : ReleaseDonateDelegate.Listener {
-
-        override fun onClickDonate() {
-            presenter.onClickDonate()
         }
     }
 

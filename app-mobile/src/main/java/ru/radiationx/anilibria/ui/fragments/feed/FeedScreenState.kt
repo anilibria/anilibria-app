@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
+import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingState
@@ -7,7 +8,8 @@ import ru.radiationx.anilibria.model.loading.DataLoadingState
 
 data class FeedScreenState(
     val data: DataLoadingState<FeedDataState> = DataLoadingState(),
-    val hasAppUpdate: Boolean = false
+    val hasAppUpdate: Boolean = false,
+    val donationCardItemState: DonationCardItemState? = null
 )
 
 data class FeedDataState(

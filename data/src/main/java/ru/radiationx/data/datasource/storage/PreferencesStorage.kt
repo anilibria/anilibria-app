@@ -15,6 +15,7 @@ class PreferencesStorage @Inject constructor(
 ) : PreferencesHolder, AppThemeHolder {
 
     companion object {
+        private const val NEW_DONATION_REMIND_KEY = "new_donation_remind"
         private const val RELEASE_REMIND_KEY = "release_remind"
         private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
@@ -36,6 +37,7 @@ class PreferencesStorage @Inject constructor(
     private val searchRemindRelay = BehaviorRelay.createDefault<Boolean>(searchRemind)
     private val releaseRemindRelay = BehaviorRelay.createDefault<Boolean>(releaseRemind)
     private val episodesIsReverseRelay = BehaviorRelay.createDefault<Boolean>(episodesIsReverse)
+    private val newDonationRemindRelay = BehaviorRelay.createDefault<Boolean>(newDonationRemind)
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -48,12 +50,19 @@ class PreferencesStorage @Inject constructor(
             SEARCH_REMIND_KEY -> searchRemindRelay.accept(searchRemind)
             RELEASE_REMIND_KEY -> releaseRemindRelay.accept(releaseRemind)
             EPISODES_IS_REVERSE_KEY -> episodesIsReverseRelay.accept(episodesIsReverse)
+            NEW_DONATION_REMIND_KEY -> newDonationRemindRelay.accept(newDonationRemind)
         }
     }
 
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
+
+    override fun observeNewDonationRemind(): Observable<Boolean> = newDonationRemindRelay.hide()
+
+    override var newDonationRemind: Boolean
+        get() = sharedPreferences.getBoolean(NEW_DONATION_REMIND_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(NEW_DONATION_REMIND_KEY, value).apply()
 
     override fun observeReleaseRemind(): Observable<Boolean> = releaseRemindRelay.hide()
 

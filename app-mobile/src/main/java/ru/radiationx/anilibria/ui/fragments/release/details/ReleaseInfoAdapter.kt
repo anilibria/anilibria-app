@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseTorrentItemState
@@ -16,7 +17,8 @@ class ReleaseInfoAdapter(
     private val headListener: ReleaseHeadDelegate.Listener,
     private val episodeListener: ReleaseEpisodeDelegate.Listener,
     private val episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
-    private val donateListener: ReleaseDonateDelegate.Listener,
+    private val donationListener: (DonationCardItemState) -> Unit,
+    private val donationCloseListener: (DonationCardItemState) -> Unit,
     private val torrentClickListener: (ReleaseTorrentItemState) -> Unit,
     private val commentsClickListener: () -> Unit,
     private val episodesTabListener: (String) -> Unit,
@@ -31,7 +33,7 @@ class ReleaseInfoAdapter(
         addDelegate(ReleaseTorrentDelegate(torrentClickListener))
         addDelegate(ReleaseEpisodeControlDelegate(episodeControlListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodesTabListener))
-        addDelegate(ReleaseDonateDelegate(donateListener))
+        addDelegate(ReleaseDonateDelegate(donationListener, donationCloseListener))
         addDelegate(ReleaseRemindDelegate(remindCloseListener))
         addDelegate(ReleaseBlockedDelegate())
         addDelegate(CommentRouteDelegate(commentsClickListener))
@@ -65,8 +67,8 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem("blocked"))
         }
 
-        if (releaseState.blockedInfo == null) {
-            newItems.add(ReleaseDonateListItem("donate"))
+        if (releaseState.blockedInfo == null && screenState.donationCardState != null) {
+            newItems.add(ReleaseDonateListItem(screenState.donationCardState))
             newItems.add(DividerShadowListItem("donate"))
         }
 

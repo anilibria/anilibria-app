@@ -23,6 +23,10 @@
     <attr name="app_bar_overlay" extension="reference" />
     <attr name="popup_overlay" extension="reference" />
 
+    <attr name="bgDonationIconPt" extension="reference" />
+    <attr name="bgDonationIconYm" extension="reference" />
+    <attr name="bgDonationIconDa" extension="reference" />
+
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float" />
         <attr name="enabledAspectRatio" format="boolean" />

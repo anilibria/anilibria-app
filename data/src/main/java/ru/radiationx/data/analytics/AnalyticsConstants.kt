@@ -267,6 +267,10 @@ object AnalyticsConstants {
     const val donation_infra_link_click = "donation_infra_link_click"
     const val donation_infra_telegram_click = "donation_infra_telegram_click"
 
+    /* Donation Card */
+    const val donation_card_new_click = ""
+    const val donation_card_new_close_click = ""
+
     /*
     * Глобально добавить в профиль пользователя текущий adresss
     * Глобально добавить в профиль темную тему

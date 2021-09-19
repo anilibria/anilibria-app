@@ -1,9 +1,12 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import ru.radiationx.anilibria.model.DonationCardItemState
+
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
     val modifiers: ReleaseDetailModifiersState = ReleaseDetailModifiersState(),
-    val remindText: String? = null
+    val remindText: String? = null,
+    val donationCardState: DonationCardItemState? = null
 )
 
 data class EpisodesTabState(

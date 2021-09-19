@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import android.util.Log
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -54,7 +55,16 @@ class ReleaseInfoPresenter @Inject constructor(
     var releaseId = -1
     var releaseIdCode: String? = null
 
-    private val stateController = StateController(ReleaseDetailScreenState())
+    private val stateController = StateController(
+        ReleaseDetailScreenState(
+            donationCardState = DonationCardItemState(
+                "donate",
+                "Понравилась озвучка?\nПоддержи АниЛибрию ❤️",
+                null,
+                false
+            )
+        )
+    )
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         stateController.updateState {

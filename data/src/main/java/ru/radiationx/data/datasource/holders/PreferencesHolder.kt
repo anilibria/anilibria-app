@@ -22,6 +22,9 @@ interface PreferencesHolder {
         const val PIP_AUTO = 1
     }
 
+    fun observeNewDonationRemind(): Observable<Boolean>
+    var newDonationRemind: Boolean
+
     fun observeReleaseRemind(): Observable<Boolean>
     var releaseRemind: Boolean
 

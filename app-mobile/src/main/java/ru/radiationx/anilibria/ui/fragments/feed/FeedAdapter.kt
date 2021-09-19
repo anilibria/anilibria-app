@@ -1,10 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
-import ru.radiationx.anilibria.model.FeedItemState
-import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.ScheduleItemState
-import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
@@ -20,6 +17,8 @@ class FeedAdapter(
     private val loadRetryListener: () -> Unit,
     private val appUpdateListener: () -> Unit,
     private val appUpdateCloseListener: () -> Unit,
+    private val donationListener: (DonationCardItemState) -> Unit,
+    private val donationCloseListener: (DonationCardItemState) -> Unit,
     schedulesClickListener: () -> Unit,
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
@@ -44,6 +43,7 @@ class FeedAdapter(
 
     init {
         addDelegate(AppUpdateCardDelegate(appUpdateListener, appUpdateCloseListener))
+        addDelegate(DonationCardDelegate(donationListener, donationCloseListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
@@ -76,6 +76,10 @@ class FeedAdapter(
                 )
             )
             newItems.add(FeedSchedulesListItem("actual", scheduleState.items))
+        }
+
+        if (state.donationCardItemState != null && state.data.data != null) {
+            newItems.add(DonationCardListItem(state.donationCardItemState))
         }
 
         val feedItems = loadingState.data?.feedItems.orEmpty()

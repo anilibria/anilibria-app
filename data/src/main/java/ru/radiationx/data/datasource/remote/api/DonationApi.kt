@@ -9,7 +9,10 @@ import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.donation.DonationDetailResponse
+import ru.radiationx.data.entity.app.donation.DonationInfoResponse
 import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
+import ru.radiationx.data.entity.domain.donation.DonationInfo
+import ru.radiationx.data.entity.mapper.toDomain
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -20,13 +23,14 @@ class DonationApi(
     private val gson: Gson
 ) {
 
-    fun getDonationDetail(): Single<DonationDetailResponse> {
+    fun getDonationDetail(): Single<DonationInfo> {
         val args: Map<String, String> = mapOf(
             "query" to "donation_details"
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { gson.fromJson(it.toString(), DonationDetailResponse::class.java) }
+            .map { gson.fromJson(it.toString(), DonationInfoResponse::class.java) }
+            .map { it.toDomain() }
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms

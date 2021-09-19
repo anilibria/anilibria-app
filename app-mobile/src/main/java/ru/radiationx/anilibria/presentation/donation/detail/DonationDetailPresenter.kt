@@ -33,7 +33,7 @@ class DonationDetailPresenter(
             })
             .addToDisposable()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
                 currentData = it
                 viewState.showData(it)

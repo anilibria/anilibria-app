@@ -22,7 +22,7 @@ class DonationJoinTeamPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
                 val joinTeamInfo = it.otherSupport?.btJoinTeam?.info
                 if (joinTeamInfo != null) {

@@ -25,7 +25,7 @@ class DonationYooMoneyPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
                 val yooMoneyInfo = it.donateSupport?.btYooMoney?.info
                 val newState = currentState.copy(

@@ -22,7 +22,7 @@ class DonationInfraPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
                 val infraInfo = it.otherSupport?.btInfra?.info
                 if (infraInfo != null) {

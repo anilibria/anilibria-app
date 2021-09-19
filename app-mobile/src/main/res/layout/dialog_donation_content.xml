@@ -13,7 +13,9 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
         tools:itemCount="10" />
 
     <com.google.android.material.button.MaterialButton

@@ -18,10 +18,22 @@
         }
       },
       {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
         "type": "section",
         "section": {
           "title": "Немного о нас",
           "subtitle": "– Один из самых качественных дубляжей аниме, способный потягаться с платными сервисами<br>– Команда более чем из 100 человек, любящих своё дело<br>– Весь контент доступен абсолютно бесплатно<br>– У нас много классных <a href=\"https://anilibria.app/\">приложений</a><br>– Усть множество <a href=\"https://t.me/TeleAniLibria/4985\">полезных ботов</a> в Telegram<br>– Мы постоянно совершенствуемся"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 8
         }
       },
       {
@@ -32,9 +44,21 @@
         }
       },
       {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
         "type": "section",
         "section": {
           "title": "Вы можете поддержать проект материально"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 6
         }
       },
       {
@@ -65,9 +89,21 @@
         }
       },
       {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
         "type": "section",
         "section": {
           "title": "И нематериально"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 6
         }
       },
       {
@@ -85,7 +121,13 @@
           "tag": "infra_dialog",
           "text": "Предоставить сервер для онлайн плеера",
           "brand": "anilibria",
-          "icon": "anilibria"
+          "icon": "infra"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 24
         }
       },
       {
@@ -147,9 +189,21 @@
             }
           },
           {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
             "type": "section",
             "section": {
               "subtitle": "Какие роли у нас есть:<br><b>Войсер</b> - озвучивает персонажей<br><b>Саббер</b> - переводит субтитры<br><b>Технарь</b> - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки<br><b>Сидер</b> - раздаёт серии через torrent"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
             }
           },
           {
@@ -165,6 +219,12 @@
               "link": "https://youtu.be/J4AKmleW7Ls",
               "brand": "youtube",
               "icon": "youtube"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 24
             }
           },
           {
@@ -189,9 +249,21 @@
             }
           },
           {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
             "type": "section",
             "section": {
               "subtitle": "Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..."
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
             }
           },
           {

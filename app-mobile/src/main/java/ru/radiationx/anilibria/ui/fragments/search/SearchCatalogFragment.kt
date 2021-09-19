@@ -52,17 +52,19 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     private lateinit var genresDialog: GenresDialog
     private val adapter = SearchAdapter(
-        loadRetryListener = {
-            presenter.loadMore()
-        },
+        loadMoreListener = { presenter.loadMore() },
+        loadRetryListener = { presenter.loadMore() },
         listener = this,
-        remindCloseListener = {
-            presenter.onRemindClose()
-        },
-        placeholder = PlaceholderListItem(
+        remindCloseListener = { presenter.onRemindClose() },
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_toolbar_search,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 
@@ -110,7 +112,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_feed
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override val statusBarVisible: Boolean = true
 
@@ -296,10 +298,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         progressBarList.isVisible = state.data.emptyLoading
         refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
-    }
-
-    override fun onLoadMore() {
-        presenter.loadMore()
     }
 
     override fun onItemClick(position: Int, view: View) {

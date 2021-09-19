@@ -41,12 +41,18 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
+        loadMoreListener = { presenter.loadMore() },
         loadRetryListener = { presenter.loadMore() },
         listener = this,
-        placeHolder = PlaceholderListItem(
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_fav_border,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_favorites
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_fav_border,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 
@@ -174,11 +180,6 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         adapter.bindState(state.data)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
-
-    override fun onLoadMore() {
-        presenter.loadMore()
-    }
-
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view

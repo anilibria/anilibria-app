@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.os.Handler
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
@@ -27,7 +26,9 @@ class FeedAdapter(
     releaseClickListener: (ReleaseItemState, View) -> Unit,
     releaseLongClickListener: (ReleaseItemState, View) -> Unit,
     youtubeClickListener: (YoutubeItemState, View) -> Unit,
-    scheduleClickListener: (ScheduleItemState, View, Int) -> Unit
+    scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     companion object {
@@ -43,7 +44,7 @@ class FeedAdapter(
 
     init {
         addDelegate(AppUpdateCardDelegate(appUpdateListener, appUpdateCloseListener))
-        addDelegate(LoadMoreDelegate(null))
+        addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
         addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
@@ -51,21 +52,7 @@ class FeedAdapter(
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any?>
-    ) {
-        super.onBindViewHolder(holder, position, payloads)
-
-        val threshold = (items.lastIndex - position)
-        if (threshold <= 3) {
-            Handler().post {
-                loadMoreListener.invoke()
-            }
-        }
+        addDelegate(PlaceholderDelegate())
     }
 
     fun bindState(state: FeedScreenState) {
@@ -74,6 +61,10 @@ class FeedAdapter(
 
         if (state.hasAppUpdate && (loadingState.data != null || loadingState.error != null)) {
             newItems.add(AppUpdateCardListItem("top"))
+        }
+
+        getPlaceholder(state)?.also {
+            newItems.add(it)
         }
 
         loadingState.data?.schedule?.also { scheduleState ->
@@ -107,11 +98,24 @@ class FeedAdapter(
         if (loadingState.hasMorePages) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else if (loadingState.moreLoading) {
-                newItems.add(LoadMoreListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom", !loadingState.moreLoading))
             }
         }
 
         items = newItems
+    }
+
+    private fun getPlaceholder(state: FeedScreenState): PlaceholderListItem? {
+        val loadingState = state.data
+        val needPlaceholder = loadingState.needShowPlaceholder { data ->
+            data?.let { it.feedItems.isNotEmpty() || it.schedule != null } ?: false
+        }
+
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
+        }
     }
 }

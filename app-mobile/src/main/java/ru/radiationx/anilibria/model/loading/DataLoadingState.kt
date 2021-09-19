@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.model.loading
 
 data class DataLoadingState<T>(
+    val initialState: Boolean = true,
     val emptyLoading: Boolean = false,
     val refreshLoading: Boolean = false,
     val moreLoading: Boolean = false,
@@ -13,20 +14,35 @@ fun DataLoadingState<*>.hasAnyLoading(): Boolean {
     return emptyLoading || refreshLoading || moreLoading
 }
 
+fun <T> DataLoadingState<T>.hasData(condition: (T?) -> Boolean = { it != null }): Boolean {
+    return condition.invoke(data)
+}
+
+fun <T> DataLoadingState<List<T>>.hasListData() = hasData { it?.isNotEmpty() ?: false }
+
+fun <T> DataLoadingState<T>.needShowPlaceholder(dataCondition: (T?) -> Boolean = { it != null }): Boolean {
+    return !hasData(dataCondition) && !emptyLoading && !initialState
+}
+
+
 fun <T> DataLoadingState<T>.applyAction(action: ScreenStateAction<T>): DataLoadingState<T> {
     return when (action) {
         is ScreenStateAction.EmptyLoading -> copy(
+            initialState = false,
             emptyLoading = true,
             error = null
         )
         is ScreenStateAction.MoreLoading -> copy(
+            initialState = false,
             moreLoading = true,
             error = null
         )
         is ScreenStateAction.Refresh -> copy(
+            initialState = false,
             refreshLoading = true
         )
         is ScreenStateAction.Data -> copy(
+            initialState = false,
             emptyLoading = false,
             refreshLoading = false,
             moreLoading = false,
@@ -35,10 +51,12 @@ fun <T> DataLoadingState<T>.applyAction(action: ScreenStateAction<T>): DataLoadi
             error = null
         )
         is ScreenStateAction.DataModify -> copy(
+            initialState = false,
             data = action.data,
             error = null
         )
         is ScreenStateAction.Error -> copy(
+            initialState = false,
             emptyLoading = false,
             refreshLoading = false,
             moreLoading = false,

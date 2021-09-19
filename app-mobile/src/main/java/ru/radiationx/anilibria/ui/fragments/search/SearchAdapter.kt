@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import android.os.Handler
-import androidx.recyclerview.widget.RecyclerView
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
@@ -14,34 +13,21 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
  * Created by radiationx on 04.03.18.
  */
 class SearchAdapter(
+    private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
     private val listener: ReleasesAdapter.ItemListener,
     private val remindCloseListener: () -> Unit,
-    private val placeholder: PlaceholderListItem
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     init {
         delegatesManager.run {
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
             addDelegate(ReleaseItemDelegate(listener))
-            addDelegate(LoadMoreDelegate(null))
+            addDelegate(LoadMoreDelegate(loadMoreListener))
             addDelegate(LoadErrorDelegate(loadRetryListener))
             addDelegate(PlaceholderDelegate())
-        }
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any?>
-    ) {
-        super.onBindViewHolder(holder, position, payloads)
-
-        val threshold = (items.lastIndex - position)
-        if (threshold <= 3) {
-            Handler().post {
-                listener.onLoadMore()
-            }
         }
     }
 
@@ -54,7 +40,10 @@ class SearchAdapter(
             state.remindText?.also {
                 newItems.add(ReleaseRemindListItem(it))
             }
-            newItems.add(placeholder)
+        }
+
+        getPlaceholder(state)?.also {
+            newItems.add(it)
         }
 
         loadingState.data?.let { data ->
@@ -64,11 +53,22 @@ class SearchAdapter(
         if (loadingState.hasMorePages) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else if (loadingState.moreLoading) {
-                newItems.add(LoadMoreListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom", !loadingState.moreLoading))
             }
         }
 
         items = newItems
+    }
+
+    private fun getPlaceholder(state: SearchScreenState): PlaceholderListItem? {
+        val loadingState = state.data
+        val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
+
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
+        }
     }
 }

@@ -54,12 +54,18 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
 
     private val adapter = ReleasesAdapter(
+        loadMoreListener = { },
         loadRetryListener = {},
         listener = this,
-        placeHolder = PlaceholderListItem(
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_history,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_history
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_history,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 
@@ -187,8 +193,6 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         }
         return false
     }
-
-    override fun onLoadMore() {}
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view

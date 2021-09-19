@@ -41,7 +41,7 @@ data class DividerShadowListItem(val id: Any) : ListItem(id)
 
 /* Common */
 
-data class LoadMoreListItem(val id: Any) : ListItem(id)
+data class LoadMoreListItem(val id: Any, val needNotify: Boolean) : ListItem(id)
 data class LoadErrorListItem(val id: Any) : ListItem(id)
 data class CommentRouteListItem(val id: Any) : ListItem(id)
 data class BottomTabListItem(

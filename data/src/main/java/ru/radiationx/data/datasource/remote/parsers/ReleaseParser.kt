@@ -136,7 +136,7 @@ class ReleaseParser @Inject constructor(
                     releaseId = release.id,
                     title = jsonEpisode.nullString("title"),
                     urlSd = jsonEpisode.nullString("srcSd"),
-                    urlHd = jsonEpisode.nullString("srcHd")?.takeIf { !it.contains("vk.com") },
+                    urlHd = jsonEpisode.nullString("srcHd"),
                     urlFullHd = jsonEpisode.nullString("srcFullHd")
                 )
             }

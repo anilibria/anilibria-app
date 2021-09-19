@@ -13,7 +13,7 @@ class DonationButtonDelegate(
     private val clickListener: (DonationContentButton) -> Unit
 ) : AppAdapterDelegate<DonationButtonListItem, ListItem, DonationButtonDelegate.ViewHolder>(
     R.layout.item_donation_button,
-    { it is DonationDividerListItem },
+    { it is DonationButtonListItem },
     { ViewHolder(it, clickListener) }
 ) {
 

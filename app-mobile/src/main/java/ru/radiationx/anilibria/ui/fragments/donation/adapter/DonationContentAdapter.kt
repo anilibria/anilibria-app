@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
+import android.util.Log
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.data.entity.domain.donation.*
 
@@ -30,6 +31,9 @@ class DonationContentAdapter(
                 else -> null
             }
         }
+        newItems.mapIndexed { index, listItem ->
+            "$index : ${listItem.javaClass.simpleName}"
+        }.let { Log.d("kekeke", it.toString()) }
         items = newItems
     }
 }

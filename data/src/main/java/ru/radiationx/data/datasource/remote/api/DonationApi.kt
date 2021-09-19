@@ -1,17 +1,15 @@
 package ru.radiationx.data.datasource.remote.api
 
-import android.util.Log
 import com.google.gson.Gson
 import io.reactivex.Single
-import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.donation.DonationDetail
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.app.donation.DonationDetailResponse
+import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -22,25 +20,25 @@ class DonationApi(
     private val gson: Gson
 ) {
 
-    fun getDonationDetail(): Single<DonationDetail> {
+    fun getDonationDetail(): Single<DonationDetailResponse> {
         val args: Map<String, String> = mapOf(
             "query" to "donation_details"
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { gson.fromJson(it.toString(), DonationDetail::class.java) }
+            .map { gson.fromJson(it.toString(), DonationDetailResponse::class.java) }
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms
     fun createYooMoneyPayLink(
         amount: Int,
         type: String,
-        form: DonationYooMoneyInfo.YooMoneyForm
+        form: YooMoneyDialogResponse.YooMoneyForm
     ): Single<String> {
         val yooMoneyType = when (type) {
-            DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> "PC"
-            DonationYooMoneyInfo.TYPE_ID_CARD -> "AC"
-            DonationYooMoneyInfo.TYPE_ID_MOBILE -> "MC"
+            YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> "PC"
+            YooMoneyDialogResponse.TYPE_ID_CARD -> "AC"
+            YooMoneyDialogResponse.TYPE_ID_MOBILE -> "MC"
             else -> null
         }
         val params = mapOf(

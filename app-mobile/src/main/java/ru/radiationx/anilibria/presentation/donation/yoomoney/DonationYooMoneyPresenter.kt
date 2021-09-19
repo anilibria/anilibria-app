@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -114,9 +114,9 @@ class DonationYooMoneyPresenter(
     }
 
     private fun String.toAnalyticsPaymentType() = when (this) {
-        DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> AnalyticsDonationPaymentType.ACCOUNT
-        DonationYooMoneyInfo.TYPE_ID_CARD -> AnalyticsDonationPaymentType.CARD
-        DonationYooMoneyInfo.TYPE_ID_MOBILE -> AnalyticsDonationPaymentType.MOBILE
+        YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> AnalyticsDonationPaymentType.ACCOUNT
+        YooMoneyDialogResponse.TYPE_ID_CARD -> AnalyticsDonationPaymentType.CARD
+        YooMoneyDialogResponse.TYPE_ID_MOBILE -> AnalyticsDonationPaymentType.MOBILE
         else -> null
     }
 }

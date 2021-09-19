@@ -13,17 +13,14 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailPresenter
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.infra.DonationInfraDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationJoinTeamDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.LinkMovementMethod
-import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.entity.app.donation.DonationDetail
+import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.shared.ktx.android.bindOptionalView
 import ru.radiationx.shared.ktx.android.bindOptionalViews
-import ru.radiationx.shared_app.di.getDependency
 
 class DonationDetailFragment : BaseFragment(), DonationDetailView {
 
@@ -86,7 +83,7 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
         }
     }
 
-    override fun showData(data: DonationDetail) {
+    override fun showData(data: DonationDetailResponse) {
         donationTitle.text = data.title
 
         val goodViews = listOf<View>(donationGoodTitle, donationGoodDesc)

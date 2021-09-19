@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyPresenter
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared_app.di.getDependency
@@ -64,9 +64,9 @@ class DonationYooMoneyDialogFragment :
         yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked && checkedId != View.NO_ID) {
                 val paymentTypeId = when (checkedId) {
-                    R.id.yooMoneyTypeAccount -> DonationYooMoneyInfo.TYPE_ID_ACCOUNT
-                    R.id.yooMoneyTypeCard -> DonationYooMoneyInfo.TYPE_ID_CARD
-                    R.id.yooMoneyTypeMobile -> DonationYooMoneyInfo.TYPE_ID_MOBILE
+                    R.id.yooMoneyTypeAccount -> YooMoneyDialogResponse.TYPE_ID_ACCOUNT
+                    R.id.yooMoneyTypeCard -> YooMoneyDialogResponse.TYPE_ID_CARD
+                    R.id.yooMoneyTypeMobile -> YooMoneyDialogResponse.TYPE_ID_MOBILE
                     else -> null
                 }
                 if (paymentTypeId != null) {
@@ -110,9 +110,9 @@ class DonationYooMoneyDialogFragment :
         }
 
         val selectedTypeViewId = when (state.selectedPaymentTypeId) {
-            DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
-            DonationYooMoneyInfo.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
-            DonationYooMoneyInfo.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
+            YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
+            YooMoneyDialogResponse.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
+            YooMoneyDialogResponse.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
             else -> null
         }
         if (selectedTypeViewId != null) {
@@ -124,7 +124,7 @@ class DonationYooMoneyDialogFragment :
         yooMoneyAccept.isEnabled = state.acceptEnabled
     }
 
-    private fun bindData(data: DonationYooMoneyInfo) {
+    private fun bindData(data: YooMoneyDialogResponse) {
         yooMoneyTitle.text = data.title
 
         if (data.help != null) {
@@ -157,25 +157,25 @@ class DonationYooMoneyDialogFragment :
             val mobileViews = listOf<View>(yooMoneyTypeMobile, yooMoneyTypeMobileName)
 
             types.items
-                .firstOrNull { it.id == DonationYooMoneyInfo.TYPE_ID_ACCOUNT }
+                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_ACCOUNT }
                 .bindOptionalViews(accountViews) {
                     yooMoneyTypeAccountName.text = it.title
                 }
             types.items
-                .firstOrNull { it.id == DonationYooMoneyInfo.TYPE_ID_CARD }
+                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_CARD }
                 .bindOptionalViews(cardViews) {
                     yooMoneyTypeCardName.text = it.title
                 }
             types.items
-                .firstOrNull { it.id == DonationYooMoneyInfo.TYPE_ID_MOBILE }
+                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_MOBILE }
                 .bindOptionalViews(mobileViews) {
                     yooMoneyTypeMobileName.text = it.title
                 }
 
             val hasSupportedTypes = types.items.any {
-                it.id == DonationYooMoneyInfo.TYPE_ID_ACCOUNT ||
-                        it.id == DonationYooMoneyInfo.TYPE_ID_CARD ||
-                        it.id == DonationYooMoneyInfo.TYPE_ID_MOBILE
+                it.id == YooMoneyDialogResponse.TYPE_ID_ACCOUNT ||
+                        it.id == YooMoneyDialogResponse.TYPE_ID_CARD ||
+                        it.id == YooMoneyDialogResponse.TYPE_ID_MOBILE
             }
             yooMoneyTypeTitle.isVisible = hasSupportedTypes
             yooMoneyTypes.isVisible = hasSupportedTypes

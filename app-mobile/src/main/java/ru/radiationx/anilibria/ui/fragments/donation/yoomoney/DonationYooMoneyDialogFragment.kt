@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyPr
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared_app.di.getDependency
@@ -124,7 +125,7 @@ class DonationYooMoneyDialogFragment :
         yooMoneyAccept.isEnabled = state.acceptEnabled
     }
 
-    private fun bindData(data: YooMoneyDialogResponse) {
+    private fun bindData(data: YooMoneyDialog) {
         yooMoneyTitle.text = data.title
 
         if (data.help != null) {

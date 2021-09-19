@@ -9,6 +9,7 @@ import ru.radiationx.data.datasource.remote.api.DonationApi
 import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.entity.domain.donation.DonationInfo
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -32,7 +33,7 @@ class DonationRepository(
     fun createYooMoneyPayLink(
         amount: Int,
         type: String,
-        form: YooMoneyDialogResponse.YooMoneyForm
+        form: YooMoneyDialog.YooMoneyForm
     ): Single<String> = donationApi
         .createYooMoneyPayLink(amount, type, form)
         .subscribeOn(schedulers.io())

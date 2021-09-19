@@ -12,6 +12,7 @@ import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.data.entity.app.donation.DonationInfoResponse
 import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.entity.domain.donation.DonationInfo
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.entity.mapper.toDomain
 import toothpick.InjectConstructor
 
@@ -37,7 +38,7 @@ class DonationApi(
     fun createYooMoneyPayLink(
         amount: Int,
         type: String,
-        form: YooMoneyDialogResponse.YooMoneyForm
+        form: YooMoneyDialog.YooMoneyForm
     ): Single<String> {
         val yooMoneyType = when (type) {
             YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> "PC"

@@ -96,7 +96,7 @@ class MenuStorage @Inject constructor(
                             it.getString("title"),
                             it.nullString("absoluteLink"),
                             it.nullString("sitePagePath"),
-                            it.nullString("sitePagePath")
+                            it.nullString("icon")
                         )
                     )
                 }

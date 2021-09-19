@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.presentation.other
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.asDataIconRes
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter

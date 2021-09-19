@@ -8,6 +8,6 @@ data class DonationDialogResponse(
     val tag: String,
     @SerializedName("content")
     val content: List<DonationContentItemResponse>,
-    @SerializedName("cancelText")
+    @SerializedName("cancel_text")
     val cancelText: String?
 )

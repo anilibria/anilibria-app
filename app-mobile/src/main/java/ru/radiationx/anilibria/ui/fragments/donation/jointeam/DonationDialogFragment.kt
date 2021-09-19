@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.donation.jointeam
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_donation_content.*
 import moxy.presenter.InjectPresenter
@@ -73,5 +74,6 @@ class DonationDialogFragment :
     override fun showData(data: DonationDialog) {
         contentAdapter.bindState(data.content)
         btCancel.text = data.cancelText
+        btCancel.isVisible = data.cancelText != null
     }
 }

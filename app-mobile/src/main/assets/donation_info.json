@@ -42,7 +42,8 @@
         "button": {
           "text": "Оформить подписку на Patreon",
           "link": "https://www.patreon.com/anilibria",
-          "brand": "patreon"
+          "brand": "patreon",
+          "icon": "patreon"
         }
       },
       {
@@ -50,7 +51,8 @@
         "button": {
           "tag": "yoomoney_dialog",
           "text": "Денежный перевод на ЮMoney",
-          "brand": "yoomoney"
+          "brand": "yoomoney",
+          "icon": "yoomoney"
         }
       },
       {
@@ -58,7 +60,8 @@
         "button": {
           "text": "Донат на DonationAlerts",
           "link": "https://www.donationalerts.com/r/anilibria",
-          "brand": "donationalerts"
+          "brand": "donationalerts",
+          "icon": "donationalerts"
         }
       },
       {
@@ -72,7 +75,8 @@
         "button": {
           "tag": "join_team_dialog",
           "text": "Вступить в команду AniLibria",
-          "brand": "anilibria"
+          "brand": "anilibria",
+          "icon": "anilibria"
         }
       },
       {
@@ -80,7 +84,8 @@
         "button": {
           "tag": "infra_dialog",
           "text": "Предоставить сервер для онлайн плеера",
-          "brand": "anilibria"
+          "brand": "anilibria",
+          "icon": "anilibria"
         }
       },
       {
@@ -158,7 +163,8 @@
             "button": {
               "text": "Первые шаги для озвучивания аниме",
               "link": "https://youtu.be/J4AKmleW7Ls",
-              "brand": "youtube"
+              "brand": "youtube",
+              "icon": "youtube"
             }
           },
           {
@@ -166,7 +172,8 @@
             "button": {
               "text": "Подать заявку через Telegram",
               "link": "https://t.me/joinlibria_bot",
-              "brand": "telegram"
+              "brand": "telegram",
+              "icon": "telegram"
             }
           }
         ],
@@ -192,7 +199,8 @@
             "button": {
               "text": "Техподдержка в Telegram",
               "link": "tg://resolve?domain=Libria911Bot",
-              "brand": "telegram"
+              "brand": "telegram",
+              "icon": "telegram"
             }
           }
         ],

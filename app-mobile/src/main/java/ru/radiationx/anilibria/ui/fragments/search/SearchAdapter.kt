@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import android.os.Handler
-import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
@@ -14,6 +12,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
  * Created by radiationx on 04.03.18.
  */
 class SearchAdapter(
+    private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
     private val listener: ReleasesAdapter.ItemListener,
     private val remindCloseListener: () -> Unit,
@@ -24,24 +23,9 @@ class SearchAdapter(
         delegatesManager.run {
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
             addDelegate(ReleaseItemDelegate(listener))
-            addDelegate(LoadMoreDelegate(null))
+            addDelegate(LoadMoreDelegate(loadMoreListener))
             addDelegate(LoadErrorDelegate(loadRetryListener))
             addDelegate(PlaceholderDelegate())
-        }
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any?>
-    ) {
-        super.onBindViewHolder(holder, position, payloads)
-
-        val threshold = (items.lastIndex - position)
-        if (threshold <= 3) {
-            Handler().post {
-                listener.onLoadMore()
-            }
         }
     }
 
@@ -64,8 +48,8 @@ class SearchAdapter(
         if (loadingState.hasMorePages) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else if (loadingState.moreLoading) {
-                newItems.add(LoadMoreListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom", !loadingState.moreLoading))
             }
         }
 

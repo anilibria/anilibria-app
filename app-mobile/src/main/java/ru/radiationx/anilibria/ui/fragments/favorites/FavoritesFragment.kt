@@ -41,6 +41,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
+        loadMoreListener = { presenter.loadMore() },
         loadRetryListener = { presenter.loadMore() },
         listener = this,
         placeHolder = PlaceholderListItem(
@@ -174,11 +175,6 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         adapter.bindState(state.data)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
-
-    override fun onLoadMore() {
-        presenter.loadMore()
-    }
-
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view

@@ -22,9 +22,8 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
-            loadRetryListener = {
-                presenter.loadMore()
-            },
+            loadMoreListener = { presenter.loadMore() },
+            loadRetryListener = { presenter.loadMore() },
             listener = adapterListener,
             placeHolder = PlaceholderListItem(
                 R.drawable.ic_toolbar_search,
@@ -85,9 +84,6 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {
-        override fun onLoadMore() {
-            presenter.loadMore()
-        }
 
         override fun onItemClick(item: YoutubeItemState, position: Int) {
             presenter.onItemClick(item)

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.global
 
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -16,18 +15,18 @@ import ru.radiationx.shared.ktx.android.visible
  * Created by radiationx on 13.01.18.
  */
 class LoadMoreDelegate(
-    private val listener: Listener?
+    private val listener: (() -> Unit)?
 ) : AppAdapterDelegate<LoadMoreListItem, ListItem, LoadMoreDelegate.ViewHolder>(
     R.layout.item_load_more,
     { it is LoadMoreListItem },
     { ViewHolder(it, listener) }
 ) {
 
-    override fun bindData(item: LoadMoreListItem, holder: ViewHolder) = holder.bind()
+    override fun bindData(item: LoadMoreListItem, holder: ViewHolder) = holder.bind(item.needNotify)
 
     class ViewHolder(
         override val containerView: View,
-        private val listener: Listener?
+        private val listener: (() -> Unit)?
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
@@ -35,13 +34,10 @@ class LoadMoreDelegate(
             itemLoadMoreContainer.visible()
         }
 
-        fun bind() {
-            Log.d("S_DEF_LOG", "BIND LOAD_MORE")
-            listener?.onLoadMore()
+        fun bind(needNotify: Boolean) {
+            if (needNotify) {
+                listener?.invoke()
+            }
         }
-    }
-
-    interface Listener {
-        fun onLoadMore()
     }
 }

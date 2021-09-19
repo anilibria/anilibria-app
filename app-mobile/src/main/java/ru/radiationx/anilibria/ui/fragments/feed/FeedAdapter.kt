@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
-import android.os.Handler
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
@@ -43,7 +41,7 @@ class FeedAdapter(
 
     init {
         addDelegate(AppUpdateCardDelegate(appUpdateListener, appUpdateCloseListener))
-        addDelegate(LoadMoreDelegate(null))
+        addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
         addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
@@ -51,21 +49,6 @@ class FeedAdapter(
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any?>
-    ) {
-        super.onBindViewHolder(holder, position, payloads)
-
-        val threshold = (items.lastIndex - position)
-        if (threshold <= 3) {
-            Handler().post {
-                loadMoreListener.invoke()
-            }
-        }
     }
 
     fun bindState(state: FeedScreenState) {
@@ -107,8 +90,8 @@ class FeedAdapter(
         if (loadingState.hasMorePages) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
-            } else if (loadingState.moreLoading) {
-                newItems.add(LoadMoreListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom", !loadingState.moreLoading))
             }
         }
 

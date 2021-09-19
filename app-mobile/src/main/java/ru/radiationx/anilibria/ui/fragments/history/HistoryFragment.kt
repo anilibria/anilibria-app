@@ -54,6 +54,7 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
 
     private val adapter = ReleasesAdapter(
+        loadMoreListener = { },
         loadRetryListener = {},
         listener = this,
         placeHolder = PlaceholderListItem(
@@ -187,8 +188,6 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         }
         return false
     }
-
-    override fun onLoadMore() {}
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view

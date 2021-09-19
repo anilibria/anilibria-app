@@ -248,24 +248,15 @@ object AnalyticsConstants {
     /* Donation */
     const val donation_detail_open = "donation_detail_open"
     const val donation_detail_link_click = "donation_detail_link_click"
-    const val donation_detail_patreon_click = "donation_detail_patreon_click"
-    const val donation_detail_yoomoney_click = "donation_detail_yoomoney_click"
-    const val donation_detail_donationalerts_click = "donation_detail_donationalerts_click"
-    const val donation_detail_jointeam_click = "donation_detail_jointeam_click"
-    const val donation_detail_infra_click = "donation_detail_infra_click"
+    const val donation_detail_button_click = "donation_detail_patreon_click"
 
     const val donation_yoomoney_open = "donation_yoomoney_open"
     const val donation_yoomoney_help_click = "donation_yoomoney_help_click"
     const val donation_yoomoney_accept_click = "donation_yoomoney_accept_click"
 
-    const val donation_jointeam_open = "donation_jointeam_open"
-    const val donation_jointeam_link_click = "donation_jointeam_link_click"
-    const val donation_jointeam_notice_click = "donation_jointeam_notice_click"
-    const val donation_jointeam_telegram_click = "donation_jointeam_telegram_click"
-
-    const val donation_infra_open = "donation_infra_open"
-    const val donation_infra_link_click = "donation_infra_link_click"
-    const val donation_infra_telegram_click = "donation_infra_telegram_click"
+    const val donation_dialog_open = "donation_dialog_open"
+    const val donation_dialog_link_click = "donation_dialog_link_click"
+    const val donation_dialog_button_click = "donation_dialog_button_click"
 
     /* Donation Card */
     const val donation_card_new_click = ""

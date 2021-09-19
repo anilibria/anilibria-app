@@ -98,49 +98,50 @@
         }
       }
     ],
-    "content_data": {
-      "yoomoney_dialog": {
-        "title": "Перевод на ЮMoney",
-        "help": "ЮMoney - бывший сервис Яндекс.Деньги",
-        "amounts": {
-          "title": "Сумма перевода",
-          "hint": "Своё значение",
-          "default_value": 250,
-          "items": [
-            150,
-            250,
-            500,
-            1000
-          ]
-        },
-        "payment_types": {
-          "title": "Способ оплаты",
-          "selected_id": "card",
-          "items": [
-            {
-              "id": "account",
-              "title": "Кошелёк\nЮMoney"
-            },
-            {
-              "id": "card",
-              "title": "Банковская\nкарта"
-            },
-            {
-              "id": "mobile",
-              "title": "Баланс\nмобильного"
-            }
-          ]
-        },
-        "form": {
-          "receiver": "4100115839344905",
-          "target": "Добровольное пожертвование",
-          "short_desc": "short_desc",
-          "label": "label"
-        },
-        "bt_donate_text": "Далее",
-        "bt_cancel_text": "Отмена"
+    "yoomoney_dialog": {
+      "title": "Перевод на ЮMoney",
+      "help": "ЮMoney - бывший сервис Яндекс.Деньги",
+      "amounts": {
+        "title": "Сумма перевода",
+        "hint": "Своё значение",
+        "default_value": 250,
+        "items": [
+          150,
+          250,
+          500,
+          1000
+        ]
       },
-      "join_team_dialog": {
+      "payment_types": {
+        "title": "Способ оплаты",
+        "selected_id": "card",
+        "items": [
+          {
+            "id": "account",
+            "title": "Кошелёк\nЮMoney"
+          },
+          {
+            "id": "card",
+            "title": "Банковская\nкарта"
+          },
+          {
+            "id": "mobile",
+            "title": "Баланс\nмобильного"
+          }
+        ]
+      },
+      "form": {
+        "receiver": "4100115839344905",
+        "target": "Добровольное пожертвование",
+        "short_desc": "short_desc",
+        "label": "label"
+      },
+      "bt_donate_text": "Далее",
+      "bt_cancel_text": "Отмена"
+    },
+    "content_dialogs": [
+      {
+        "tag": "join_team_dialog",
         "content": [
           {
             "type": "section",
@@ -179,7 +180,8 @@
         ],
         "cancel_text": "Отмена"
       },
-      "join_infra": {
+      {
+        "tag": "infra_dialog",
         "content": [
           {
             "type": "section",
@@ -204,6 +206,6 @@
         ],
         "cancel_text": "Отмена"
       }
-    }
+    ]
   }
 }

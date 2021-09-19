@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.presentation.donation.infra
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.analytics.features.DonationInfraAnalytics
 import ru.radiationx.data.entity.app.donation.other.DonationInfraInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router

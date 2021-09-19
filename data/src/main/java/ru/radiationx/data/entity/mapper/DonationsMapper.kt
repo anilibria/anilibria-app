@@ -1,7 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
 import ru.radiationx.data.entity.app.donation.DonationCardResponse
-import ru.radiationx.data.entity.app.donation.DonationContentDataResponse
 import ru.radiationx.data.entity.app.donation.DonationContentItemResponse
 import ru.radiationx.data.entity.app.donation.DonationInfoResponse
 import ru.radiationx.data.entity.app.donation.content.*
@@ -12,7 +11,8 @@ fun DonationInfoResponse.toDomain() = DonationInfo(
     cardNewDonations = cards.newDonations?.toDomain(),
     cardRelease = cards.release?.toDomain(),
     detailContent = detail.content.toDomain(),
-    detailContentData = detail.contentData.toDomain()
+    contentDialogs = detail.contentDialogs.map { it.toDomain() },
+    yooMoneyDialog = detail.yooMoneyDialog?.toDomain()
 )
 
 fun DonationCardResponse.toDomain() = DonationCard(
@@ -35,7 +35,8 @@ fun DonationContentButtonResponse.toDomain() = DonationContentButton(
     tag = tag,
     text = text,
     link = link,
-    brand = brand
+    brand = brand,
+    icon = icon
 )
 
 fun DonationContentCaptionResponse.toDomain() = DonationContentCaption(
@@ -55,13 +56,8 @@ fun DonationContentSectionResponse.toDomain() = DonationContentSection(
     subtitle = subtitle
 )
 
-fun DonationContentDataResponse.toDomain() = DonationContentData(
-    joinTeamDialog = joinTeamDialog?.toDomain(),
-    infraDialog = infraDialog?.toDomain(),
-    yooMoneyDialog = yooMoneyDialog?.toDomain()
-)
-
 fun DonationDialogResponse.toDomain() = DonationDialog(
+    tag = tag,
     content = content.toDomain(),
     cancelText = cancelText
 )

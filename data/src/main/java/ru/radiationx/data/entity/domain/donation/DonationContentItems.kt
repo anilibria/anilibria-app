@@ -6,7 +6,8 @@ data class DonationContentButton(
     val tag: String?,
     val text: String,
     val link: String?,
-    val brand: String?
+    val brand: String?,
+    val icon: String?
 ) : DonationContentItem()
 
 data class DonationContentCaption(

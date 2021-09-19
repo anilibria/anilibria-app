@@ -154,7 +154,7 @@ class DataModule(context: Context) : Module() {
         bind(YoutubeVideosAnalytics::class.java).singleton()
         bind(DonationDetailAnalytics::class.java).singleton()
         bind(DonationInfraAnalytics::class.java).singleton()
-        bind(DonationJoinTeamAnalytics::class.java).singleton()
+        bind(DonationDialogAnalytics::class.java).singleton()
         bind(DonationYooMoneyAnalytics::class.java).singleton()
     }
 

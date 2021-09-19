@@ -3,31 +3,34 @@ package ru.radiationx.anilibria.presentation.donation.jointeam
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.analytics.features.DonationJoinTeamAnalytics
-import ru.radiationx.data.entity.app.donation.other.DonationJoinTeamInfo
+import ru.radiationx.data.analytics.features.DonationDialogAnalytics
+import ru.radiationx.data.entity.domain.donation.DonationContentButton
+import ru.radiationx.data.entity.domain.donation.DonationDialog
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class DonationJoinTeamPresenter(
+class DonationDialogPresenter(
     router: Router,
     private val donationRepository: DonationRepository,
     private val errorHandler: ErrorHandler,
-    private val analytics: DonationJoinTeamAnalytics
+    private val analytics: DonationDialogAnalytics
 ) : BasePresenter<DonationJoinTeamView>(router) {
 
-    private var currentData: DonationJoinTeamInfo? = null
+    private var currentData: DonationDialog? = null
+
+    var argTag: String? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
             .observerDonationInfo()
             .subscribe({
-                val joinTeamInfo = it.otherSupport?.btJoinTeam?.info
-                if (joinTeamInfo != null) {
-                    currentData = joinTeamInfo
-                    viewState.showData(joinTeamInfo)
+                val donationDialog = it.contentDialogs.find { it.tag == argTag }
+                if (donationDialog != null) {
+                    currentData = donationDialog
+                    viewState.showData(donationDialog)
                 }
             }, {
                 errorHandler.handle(it)
@@ -35,22 +38,15 @@ class DonationJoinTeamPresenter(
             .addToDisposable()
     }
 
-    fun onNoticeClick() {
-        analytics.noticeClick()
-        currentData?.btVoicer?.link?.let {
-            Utils.externalLink(it)
-        }
-    }
-
-    fun onTelegramClick() {
-        analytics.telegramClick()
-        currentData?.btTelegram?.link?.let {
-            Utils.externalLink(it)
-        }
-    }
-
     fun onLinkClick(url: String) {
         analytics.linkClick(url)
         Utils.externalLink(url)
+    }
+
+    fun onButtonClick(button: DonationContentButton) {
+        analytics.buttonClick(button.text)
+        button.link?.also {
+            Utils.externalLink(it)
+        }
     }
 }

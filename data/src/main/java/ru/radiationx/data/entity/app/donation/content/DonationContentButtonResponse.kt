@@ -10,5 +10,7 @@ data class DonationContentButtonResponse(
     @SerializedName("link")
     val link: String?,
     @SerializedName("brand")
-    val brand: String?
+    val brand: String?,
+    @SerializedName("icon")
+    val icon: String?
 )

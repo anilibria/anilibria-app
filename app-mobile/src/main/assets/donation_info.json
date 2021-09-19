@@ -12,14 +12,6 @@
   "detail": {
     "content": [
       {
-        "type": null,
-        "header": null,
-        "caption": null,
-        "section": null,
-        "button": null,
-        "divider": null
-      },
-      {
         "type": "header",
         "header": {
           "text": "AniLibria – творческое объединение, занимающееся озвучиванием аниме"

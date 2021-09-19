@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import ru.radiationx.data.entity.app.donation.DonationContentItemResponse
 
 data class DonationDialogResponse(
-    @SerializedName("content")
+    @SerializedName("tag")
     val tag: String,
     @SerializedName("content")
     val content: List<DonationContentItemResponse>,

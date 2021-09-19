@@ -10,6 +10,7 @@ import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.entity.mapper.toDomain
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -27,6 +28,7 @@ class DonationRepository(
 
     fun observerDonationInfo(): Observable<DonationInfo> = donationHolder
         .observe()
+        .map { it.toDomain() }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 

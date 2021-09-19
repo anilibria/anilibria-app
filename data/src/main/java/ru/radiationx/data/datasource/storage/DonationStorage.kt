@@ -10,6 +10,7 @@ import io.reactivex.Single
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.entity.app.donation.DonationDetailResponse
+import ru.radiationx.data.entity.app.donation.DonationInfoResponse
 import toothpick.InjectConstructor
 import java.lang.Exception
 
@@ -24,9 +25,9 @@ class DonationStorage(
         private const val KEY_DONATION = "donation_detail"
     }
 
-    private val dataRelay = BehaviorRelay.create<DonationDetailResponse>()
+    private val dataRelay = BehaviorRelay.create<DonationInfoResponse>()
 
-    override fun observe(): Observable<DonationDetailResponse> = dataRelay
+    override fun observe(): Observable<DonationInfoResponse> = dataRelay
         .hide()
         .doOnSubscribe {
             if (!dataRelay.hasValue()) {
@@ -34,7 +35,7 @@ class DonationStorage(
             }
         }
 
-    override fun get(): Single<DonationDetailResponse> = Single
+    override fun get(): Single<DonationInfoResponse> = Single
         .fromCallable {
             if (!dataRelay.hasValue()) {
                 updateCurrentData()
@@ -42,7 +43,7 @@ class DonationStorage(
             requireNotNull(dataRelay.value)
         }
 
-    override fun save(data: DonationDetailResponse): Completable = Completable
+    override fun save(data: DonationInfoResponse): Completable = Completable
         .fromAction {
             saveToPrefs(data)
             updateCurrentData()
@@ -69,21 +70,21 @@ class DonationStorage(
         sharedPreferences.edit().remove(KEY_DONATION).apply()
     }
 
-    private fun saveToPrefs(data: DonationDetailResponse) {
-        val json = gson.toJson(data, DonationDetailResponse::class.java)
+    private fun saveToPrefs(data: DonationInfoResponse) {
+        val json = gson.toJson(data, DonationInfoResponse::class.java)
         sharedPreferences.edit()
             .putString(KEY_DONATION, json)
             .apply()
     }
 
-    private fun getFromPrefs(): DonationDetailResponse? = sharedPreferences
+    private fun getFromPrefs(): DonationInfoResponse? = sharedPreferences
         .getString(KEY_DONATION, null)
-        ?.let { gson.fromJson(it, DonationDetailResponse::class.java) }
+        ?.let { gson.fromJson(it, DonationInfoResponse::class.java) }
 
-    private fun getFromAssets(): DonationDetailResponse =
-        context.assets.open("donation_detail_info.json").use { stream ->
+    private fun getFromAssets(): DonationInfoResponse =
+        context.assets.open("donation_info.json").use { stream ->
             stream.bufferedReader().use { reader ->
-                gson.fromJson(reader, DonationDetailResponse::class.java)
+                gson.fromJson(reader, DonationInfoResponse::class.java)
             }
         }
 }

@@ -27,7 +27,7 @@ class DonationYooMoneyPresenter(
         donationRepository
             .observerDonationInfo()
             .subscribe({
-                val yooMoneyInfo = it.detailContentData.yooMoneyDialog
+                val yooMoneyInfo = it.yooMoneyDialog
                 val newState = currentState.copy(
                     data = yooMoneyInfo,
                     amountType = DonationYooMoneyState.AmountType.PRESET,

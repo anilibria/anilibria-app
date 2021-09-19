@@ -5,7 +5,7 @@ import ru.radiationx.data.entity.app.donation.content.*
 
 data class DonationContentItemResponse(
     @SerializedName("type")
-    val type: String,
+    val type: String?,
     @SerializedName("header")
     val header: DonationContentHeaderResponse?,
     @SerializedName("caption")

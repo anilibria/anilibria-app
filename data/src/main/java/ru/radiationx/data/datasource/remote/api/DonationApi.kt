@@ -24,14 +24,13 @@ class DonationApi(
     private val gson: Gson
 ) {
 
-    fun getDonationDetail(): Single<DonationInfo> {
+    fun getDonationDetail(): Single<DonationInfoResponse> {
         val args: Map<String, String> = mapOf(
             "query" to "donation_details"
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
             .map { gson.fromJson(it.toString(), DonationInfoResponse::class.java) }
-            .map { it.toDomain() }
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms

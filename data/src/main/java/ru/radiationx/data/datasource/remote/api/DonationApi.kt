@@ -40,9 +40,9 @@ class DonationApi(
         form: YooMoneyDialog.YooMoneyForm
     ): Single<String> {
         val yooMoneyType = when (type) {
-            YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> "PC"
-            YooMoneyDialogResponse.TYPE_ID_CARD -> "AC"
-            YooMoneyDialogResponse.TYPE_ID_MOBILE -> "MC"
+            YooMoneyDialog.TYPE_ID_ACCOUNT -> "PC"
+            YooMoneyDialog.TYPE_ID_CARD -> "AC"
+            YooMoneyDialog.TYPE_ID_MOBILE -> "MC"
             else -> null
         }
         val params = mapOf(

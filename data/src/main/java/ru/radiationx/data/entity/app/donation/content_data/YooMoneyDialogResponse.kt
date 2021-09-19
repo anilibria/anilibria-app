@@ -19,13 +19,6 @@ data class YooMoneyDialogResponse(
     val btCancelText: String
 ) {
 
-    //todo maybe can delete
-    companion object {
-        const val TYPE_ID_ACCOUNT = "account"
-        const val TYPE_ID_CARD = "card"
-        const val TYPE_ID_MOBILE = "mobile"
-    }
-
     data class Amounts(
         @SerializedName("title")
         val title: String,

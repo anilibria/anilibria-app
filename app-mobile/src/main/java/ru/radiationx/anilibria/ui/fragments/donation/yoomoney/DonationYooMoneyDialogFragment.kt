@@ -65,9 +65,9 @@ class DonationYooMoneyDialogFragment :
         yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked && checkedId != View.NO_ID) {
                 val paymentTypeId = when (checkedId) {
-                    R.id.yooMoneyTypeAccount -> YooMoneyDialogResponse.TYPE_ID_ACCOUNT
-                    R.id.yooMoneyTypeCard -> YooMoneyDialogResponse.TYPE_ID_CARD
-                    R.id.yooMoneyTypeMobile -> YooMoneyDialogResponse.TYPE_ID_MOBILE
+                    R.id.yooMoneyTypeAccount -> YooMoneyDialog.TYPE_ID_ACCOUNT
+                    R.id.yooMoneyTypeCard -> YooMoneyDialog.TYPE_ID_CARD
+                    R.id.yooMoneyTypeMobile -> YooMoneyDialog.TYPE_ID_MOBILE
                     else -> null
                 }
                 if (paymentTypeId != null) {
@@ -111,9 +111,9 @@ class DonationYooMoneyDialogFragment :
         }
 
         val selectedTypeViewId = when (state.selectedPaymentTypeId) {
-            YooMoneyDialogResponse.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
-            YooMoneyDialogResponse.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
-            YooMoneyDialogResponse.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
+            YooMoneyDialog.TYPE_ID_ACCOUNT -> R.id.yooMoneyTypeAccount
+            YooMoneyDialog.TYPE_ID_CARD -> R.id.yooMoneyTypeCard
+            YooMoneyDialog.TYPE_ID_MOBILE -> R.id.yooMoneyTypeMobile
             else -> null
         }
         if (selectedTypeViewId != null) {
@@ -158,25 +158,25 @@ class DonationYooMoneyDialogFragment :
             val mobileViews = listOf<View>(yooMoneyTypeMobile, yooMoneyTypeMobileName)
 
             types.items
-                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_ACCOUNT }
+                .firstOrNull { it.id == YooMoneyDialog.TYPE_ID_ACCOUNT }
                 .bindOptionalViews(accountViews) {
                     yooMoneyTypeAccountName.text = it.title
                 }
             types.items
-                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_CARD }
+                .firstOrNull { it.id == YooMoneyDialog.TYPE_ID_CARD }
                 .bindOptionalViews(cardViews) {
                     yooMoneyTypeCardName.text = it.title
                 }
             types.items
-                .firstOrNull { it.id == YooMoneyDialogResponse.TYPE_ID_MOBILE }
+                .firstOrNull { it.id == YooMoneyDialog.TYPE_ID_MOBILE }
                 .bindOptionalViews(mobileViews) {
                     yooMoneyTypeMobileName.text = it.title
                 }
 
             val hasSupportedTypes = types.items.any {
-                it.id == YooMoneyDialogResponse.TYPE_ID_ACCOUNT ||
-                        it.id == YooMoneyDialogResponse.TYPE_ID_CARD ||
-                        it.id == YooMoneyDialogResponse.TYPE_ID_MOBILE
+                it.id == YooMoneyDialog.TYPE_ID_ACCOUNT ||
+                        it.id == YooMoneyDialog.TYPE_ID_CARD ||
+                        it.id == YooMoneyDialog.TYPE_ID_MOBILE
             }
             yooMoneyTypeTitle.isVisible = hasSupportedTypes
             yooMoneyTypes.isVisible = hasSupportedTypes

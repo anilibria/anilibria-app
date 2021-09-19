@@ -22,7 +22,6 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
@@ -159,7 +158,7 @@ class SearchPresenter @Inject constructor(
         appPreferences
             .observeSearchRemind()
             .subscribe({ remindEnabled ->
-                val newRemindText = remindText/*.takeIf { remindEnabled }*/
+                val newRemindText = remindText.takeIf { remindEnabled }
                 stateController.updateState {
                     it.copy(remindText = newRemindText)
                 }
@@ -208,7 +207,6 @@ class SearchPresenter @Inject constructor(
                 completeStr,
                 params.page
             )
-            .map { Paginated(emptyList<ReleaseItem>()) }
             .map { paginated ->
                 if (params.isFirstPage) {
                     currentItems.clear()

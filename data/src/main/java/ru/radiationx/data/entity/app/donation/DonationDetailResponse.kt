@@ -6,5 +6,5 @@ data class DonationDetailResponse(
     @SerializedName("content")
     val content: List<DonationContentItemResponse>,
     @SerializedName("content_data")
-    val contentData: DonationContentDataResponse?
+    val contentData: DonationContentDataResponse
 )

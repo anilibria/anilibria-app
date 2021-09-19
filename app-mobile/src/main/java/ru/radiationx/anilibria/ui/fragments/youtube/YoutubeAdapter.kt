@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
@@ -12,7 +13,8 @@ class YoutubeAdapter(
     private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
     private val listener: ItemListener,
-    private val placeHolder: PlaceholderListItem
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     init {
@@ -27,8 +29,8 @@ class YoutubeAdapter(
 
         val loadingState = state.data
 
-        if (loadingState.data?.isEmpty() == true && !loadingState.emptyLoading) {
-            newItems.add(placeHolder)
+        getPlaceholder(state)?.also {
+            newItems.add(it)
         }
 
         loadingState.data?.let { data ->
@@ -44,6 +46,16 @@ class YoutubeAdapter(
         }
 
         items = newItems
+    }
+
+    private fun getPlaceholder(state: YoutubeScreenState): PlaceholderListItem? {
+        val loadingState = state.data
+        val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
+        }
     }
 
     interface ItemListener : YoutubeDelegate.Listener

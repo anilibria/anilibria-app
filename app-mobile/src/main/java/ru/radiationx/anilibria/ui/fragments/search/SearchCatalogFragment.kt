@@ -56,10 +56,15 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         loadRetryListener = { presenter.loadMore() },
         listener = this,
         remindCloseListener = { presenter.onRemindClose() },
-        placeholder = PlaceholderListItem(
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_toolbar_search,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 
@@ -107,7 +112,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_feed
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override val statusBarVisible: Boolean = true
 

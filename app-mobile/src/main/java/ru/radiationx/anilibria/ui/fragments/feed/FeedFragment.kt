@@ -6,14 +6,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
-import kotlinx.android.synthetic.main.fragment_feed.*
+import kotlinx.android.synthetic.main.fragment_list_refresh.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -25,13 +24,12 @@ import ru.radiationx.anilibria.presentation.feed.FeedView
 import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
 import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
 import ru.radiationx.anilibria.presentation.search.FastSearchView
-import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.datasource.holders.AppThemeHolder
-import ru.radiationx.shared.ktx.android.inflate
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -65,7 +63,16 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         }, scheduleClickListener = { feedScheduleItem, view, position ->
             this.sharedViewLocal = view
             presenter.onScheduleItemClick(feedScheduleItem, position)
-        })
+        }, emptyPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_newspaper,
+            R.string.placeholder_title_nodata_base,
+            R.string.placeholder_desc_nodata_search
+        ), errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_newspaper,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
+        )
+    )
 
     @Inject
     lateinit var appThemeHolder: AppThemeHolder
@@ -97,7 +104,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_feed
+    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
 
     override val statusBarVisible: Boolean = true
 
@@ -212,44 +219,9 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     }
 
     /* ReleaseView */
-
-    private val placeHolder by lazy {
-        PlaceholderDelegate.ViewHolder(
-            placeHolderContainer.inflate(
-                R.layout.item_placeholder,
-                true
-            )
-        )
-    }
-
     override fun showState(state: FeedScreenState) {
         progressBarList.isVisible = state.data.emptyLoading
         refreshLayout.isRefreshing = state.data.refreshLoading
-
-        val isDataEmpty = state.data.data?.let {
-            it.feedItems.isEmpty() && it.schedule == null
-        } ?: true
-        val isPlaceHolderVisible = isDataEmpty && !state.data.emptyLoading
-
-        recyclerView.isInvisible = isPlaceHolderVisible
-        placeHolderContainer.isVisible = isPlaceHolderVisible
-
-        if (isPlaceHolderVisible) {
-            if (state.data.error != null) {
-                placeHolder.bind(
-                    R.drawable.ic_newspaper,
-                    R.string.placeholder_title_errordata_base,
-                    R.string.placeholder_desc_nodata_base
-                )
-            } else {
-                placeHolder.bind(
-                    R.drawable.ic_newspaper,
-                    R.string.placeholder_title_nodata_base,
-                    R.string.placeholder_desc_nodata_base
-                )
-            }
-        }
-
         adapter.bindState(state)
     }
 

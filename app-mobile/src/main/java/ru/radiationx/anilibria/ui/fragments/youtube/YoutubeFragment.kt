@@ -25,9 +25,14 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
             loadMoreListener = { presenter.loadMore() },
             loadRetryListener = { presenter.loadMore() },
             listener = adapterListener,
-            placeHolder = PlaceholderListItem(
-                R.drawable.ic_toolbar_search,
+            emptyPlaceHolder = PlaceholderListItem(
+                R.drawable.ic_youtube,
                 R.string.placeholder_title_nodata_base,
+                R.string.placeholder_desc_nodata_base
+            ),
+            errorPlaceHolder = PlaceholderListItem(
+                R.drawable.ic_youtube,
+                R.string.placeholder_title_errordata_base,
                 R.string.placeholder_desc_nodata_base
             )
         )

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
@@ -16,7 +17,8 @@ class SearchAdapter(
     private val loadRetryListener: () -> Unit,
     private val listener: ReleasesAdapter.ItemListener,
     private val remindCloseListener: () -> Unit,
-    private val placeholder: PlaceholderListItem
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     init {
@@ -38,7 +40,10 @@ class SearchAdapter(
             state.remindText?.also {
                 newItems.add(ReleaseRemindListItem(it))
             }
-            newItems.add(placeholder)
+        }
+
+        getPlaceholder(state)?.also {
+            newItems.add(it)
         }
 
         loadingState.data?.let { data ->
@@ -54,5 +59,16 @@ class SearchAdapter(
         }
 
         items = newItems
+    }
+
+    private fun getPlaceholder(state: SearchScreenState): PlaceholderListItem? {
+        val loadingState = state.data
+        val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
+
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
+        }
     }
 }

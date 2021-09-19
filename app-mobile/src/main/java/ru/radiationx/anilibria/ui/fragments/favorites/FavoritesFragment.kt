@@ -44,10 +44,15 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         loadMoreListener = { presenter.loadMore() },
         loadRetryListener = { presenter.loadMore() },
         listener = this,
-        placeHolder = PlaceholderListItem(
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_fav_border,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_favorites
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_fav_border,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 

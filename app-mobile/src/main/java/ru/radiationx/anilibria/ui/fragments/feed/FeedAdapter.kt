@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.*
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
@@ -25,7 +26,9 @@ class FeedAdapter(
     releaseClickListener: (ReleaseItemState, View) -> Unit,
     releaseLongClickListener: (ReleaseItemState, View) -> Unit,
     youtubeClickListener: (YoutubeItemState, View) -> Unit,
-    scheduleClickListener: (ScheduleItemState, View, Int) -> Unit
+    scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     companion object {
@@ -49,6 +52,7 @@ class FeedAdapter(
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
+        addDelegate(PlaceholderDelegate())
     }
 
     fun bindState(state: FeedScreenState) {
@@ -57,6 +61,10 @@ class FeedAdapter(
 
         if (state.hasAppUpdate && (loadingState.data != null || loadingState.error != null)) {
             newItems.add(AppUpdateCardListItem("top"))
+        }
+
+        getPlaceholder(state)?.also {
+            newItems.add(it)
         }
 
         loadingState.data?.schedule?.also { scheduleState ->
@@ -96,5 +104,18 @@ class FeedAdapter(
         }
 
         items = newItems
+    }
+
+    private fun getPlaceholder(state: FeedScreenState): PlaceholderListItem? {
+        val loadingState = state.data
+        val needPlaceholder = loadingState.needShowPlaceholder { data ->
+            data?.let { it.feedItems.isNotEmpty() || it.schedule != null } ?: false
+        }
+
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
+        }
     }
 }

@@ -39,12 +39,12 @@ class DonationDialogPresenter(
     }
 
     fun onLinkClick(url: String) {
-        analytics.linkClick(url)
+        analytics.linkClick(argTag.toString(), url)
         Utils.externalLink(url)
     }
 
     fun onButtonClick(button: DonationContentButton) {
-        analytics.buttonClick(button.text)
+        analytics.buttonClick(argTag.toString(), button.text)
         button.link?.also {
             Utils.externalLink(it)
         }

@@ -248,7 +248,7 @@ object AnalyticsConstants {
     /* Donation */
     const val donation_detail_open = "donation_detail_open"
     const val donation_detail_link_click = "donation_detail_link_click"
-    const val donation_detail_button_click = "donation_detail_patreon_click"
+    const val donation_detail_button_click = "donation_detail_button_click"
 
     const val donation_yoomoney_open = "donation_yoomoney_open"
     const val donation_yoomoney_help_click = "donation_yoomoney_help_click"
@@ -259,8 +259,8 @@ object AnalyticsConstants {
     const val donation_dialog_button_click = "donation_dialog_button_click"
 
     /* Donation Card */
-    const val donation_card_new_click = ""
-    const val donation_card_new_close_click = ""
+    const val donation_card_new_click = "donation_card_new_click"
+    const val donation_card_new_close_click = "donation_card_new_close_click"
 
     /*
     * Глобально добавить в профиль пользователя текущий adresss

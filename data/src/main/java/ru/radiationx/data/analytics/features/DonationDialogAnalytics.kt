@@ -12,24 +12,27 @@ class DonationDialogAnalytics(
     private val sender: AnalyticsSender
 ) {
 
-    fun open(from: String) {
+    fun open(from: String, tag: String) {
         sender.send(
             AnalyticsConstants.donation_dialog_open,
-            from.toNavFromParam()
+            from.toNavFromParam(),
+            tag.toParam("tag")
         )
     }
 
-    fun linkClick(link: String) {
+    fun linkClick(fromTag: String, link: String) {
         sender.send(
             AnalyticsConstants.donation_dialog_link_click,
-            link.toLinkParam()
+            link.toLinkParam(),
+            fromTag.toParam("tag")
         )
     }
 
-    fun buttonClick(buttonText: String) {
+    fun buttonClick(fromTag: String, buttonText: String) {
         sender.send(
             AnalyticsConstants.donation_dialog_button_click,
-            buttonText.toParam("text")
+            buttonText.toParam("text"),
+            fromTag.toParam("tag")
         )
     }
 }

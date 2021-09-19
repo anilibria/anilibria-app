@@ -64,7 +64,7 @@ class DonationDetailPresenter(
                 viewState.openYooMoney()
             }
             dialog != null -> {
-                dialogAnalytics.open(AnalyticsConstants.screen_donation_detail)
+                dialogAnalytics.open(AnalyticsConstants.screen_donation_detail, dialog.tag)
                 viewState.openContentDialog(dialog.tag)
             }
             buttonLink != null -> {

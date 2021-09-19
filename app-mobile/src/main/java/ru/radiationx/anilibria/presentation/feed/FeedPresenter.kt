@@ -4,14 +4,11 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.BiFunction
 import moxy.InjectViewState
-import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.ScheduleItemState
-import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.model.loading.StateController
-import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -24,6 +21,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
@@ -48,6 +46,7 @@ class FeedPresenter @Inject constructor(
     private val checkerRepository: CheckerRepository,
     private val sharedBuildConfig: SharedBuildConfig,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
+    private val appPreferences: PreferencesHolder,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val fastSearchAnalytics: FastSearchAnalytics,
@@ -55,8 +54,14 @@ class FeedPresenter @Inject constructor(
     private val scheduleAnalytics: ScheduleAnalytics,
     private val youtubeAnalytics: YoutubeAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
-    private val updaterAnalytics: UpdaterAnalytics
+    private val updaterAnalytics: UpdaterAnalytics,
+    private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val donationCardAnalytics: DonationCardAnalytics
 ) : BasePresenter<FeedView>(router) {
+
+    companion object {
+        private const val DONATION_NEW_TAG = "donation_new"
+    }
 
     private val loadingController = DataLoadingController {
         submitPageAnalytics(it.page)
@@ -83,6 +88,25 @@ class FeedPresenter @Inject constructor(
             .subscribe {
                 hasAppUpdate = it.code > sharedBuildConfig.versionCode
                 updateAppUpdateState()
+            }
+            .addToDisposable()
+
+        appPreferences
+            .observeNewDonationRemind()
+            .subscribe { enabled ->
+                val newDonationState = if (enabled) {
+                    DonationCardItemState(
+                        DONATION_NEW_TAG,
+                        "Поддержать АниЛибрию",
+                        "Теперь все способы поддержки доступны в приложении",
+                        false
+                    )
+                } else {
+                    null
+                }
+                stateController.updateState {
+                    it.copy(donationCardItemState = newDonationState)
+                }
             }
             .addToDisposable()
 
@@ -201,6 +225,26 @@ class FeedPresenter @Inject constructor(
         updaterAnalytics.appUpdateCardCloseClick()
         appUpdateNeedClose = true
         updateAppUpdateState()
+    }
+
+    fun onDonationClick(state: DonationCardItemState) {
+        when (state.tag) {
+            DONATION_NEW_TAG -> {
+                donationCardAnalytics.onNewDonationClick(AnalyticsConstants.screen_feed)
+                appPreferences.newDonationRemind = false
+            }
+        }
+        donationDetailAnalytics.open(AnalyticsConstants.screen_feed)
+        router.navigateTo(Screens.DonationDetail())
+    }
+
+    fun onDonationCloseClick(state: DonationCardItemState) {
+        when (state.tag) {
+            DONATION_NEW_TAG -> {
+                donationCardAnalytics.onNewDonationCloseClick(AnalyticsConstants.screen_feed)
+                appPreferences.newDonationRemind = false
+            }
+        }
     }
 
     private fun updateAppUpdateState() {

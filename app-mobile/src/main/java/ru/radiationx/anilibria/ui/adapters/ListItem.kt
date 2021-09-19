@@ -115,3 +115,4 @@ data class FeedListItem(val item: FeedItemState) :
 
 data class FeedRandomBtnListItem(val id: Any) : ListItem(id)
 data class AppUpdateCardListItem(val id: Any) : ListItem(id)
+data class DonationCardListItem(val state: DonationCardItemState) : ListItem(state.tag)

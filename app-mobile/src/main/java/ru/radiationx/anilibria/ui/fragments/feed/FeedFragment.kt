@@ -47,6 +47,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             presenter.appUpdateClick()
         }, appUpdateCloseListener = {
             presenter.appUpdateCloseClick()
+        }, donationListener = {
+            presenter.onDonationClick(it)
+        }, donationCloseListener = {
+            presenter.onDonationCloseClick(it)
         }, schedulesClickListener = {
             presenter.onSchedulesClick()
         }, scheduleScrollListener = { position ->

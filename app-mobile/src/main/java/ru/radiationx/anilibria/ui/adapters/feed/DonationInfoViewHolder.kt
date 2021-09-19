@@ -16,6 +16,7 @@ class DonationInfoViewHolder(
     fun bind(state: DonationCardItemState) {
         tvTitle.text = state.title
         tvSubtitle.text = state.subtitle
+        tvTitle.isVisible = state.title != null
         tvSubtitle.isVisible = state.subtitle != null
         btClose.isVisible = state.canClose
 

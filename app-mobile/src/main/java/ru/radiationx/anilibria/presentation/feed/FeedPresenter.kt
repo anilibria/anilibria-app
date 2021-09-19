@@ -29,6 +29,7 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
@@ -47,6 +48,7 @@ class FeedPresenter @Inject constructor(
     private val sharedBuildConfig: SharedBuildConfig,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val appPreferences: PreferencesHolder,
+    private val donationRepository: DonationRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val fastSearchAnalytics: FastSearchAnalytics,
@@ -93,14 +95,21 @@ class FeedPresenter @Inject constructor(
 
         appPreferences
             .observeNewDonationRemind()
-            .subscribe { enabled ->
-                val newDonationState = if (enabled) {
-                    DonationCardItemState(
-                        DONATION_NEW_TAG,
-                        "Поддержать АниЛибрию",
-                        "Теперь все способы поддержки доступны в приложении",
-                        false
-                    )
+            .flatMap { enabled ->
+                donationRepository.observerDonationInfo().map {
+                    Pair(it.cardNewDonations, enabled)
+                }
+            }
+            .subscribe { pair ->
+                val newDonationState = if (pair.second) {
+                    pair.first?.let {
+                        DonationCardItemState(
+                            tag = DONATION_NEW_TAG,
+                            title = it.title,
+                            subtitle = it.subtitle,
+                            canClose = false
+                        )
+                    }
                 } else {
                     null
                 }

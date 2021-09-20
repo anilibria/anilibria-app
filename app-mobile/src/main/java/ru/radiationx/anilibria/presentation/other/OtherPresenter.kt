@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.presentation.other
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
@@ -179,7 +180,11 @@ class OtherPresenter @Inject constructor(
                 currentLinkMenuItems.addAll(linkItems)
                 allLinkMenu.clear()
                 allLinkMenu.addAll(linkItems.map {
-                    OtherMenuItem(it.hashCode(), it.title, getResIconByType(it.icon))
+                    OtherMenuItem(
+                        id = it.hashCode(),
+                        title = it.title,
+                        icon = it.icon?.asDataIconRes() ?: R.drawable.ic_link
+                    )
                 })
                 linksMap.clear()
                 linksMap.putAll(linkItems.associateBy { it.hashCode() })
@@ -207,19 +212,5 @@ class OtherPresenter @Inject constructor(
         stateController.updateState {
             it.copy(profile = profileState, menuItems = menuState)
         }
-    }
-
-    private fun getResIconByType(type: String?): Int = when (type) {
-        LinkMenuItem.IC_VK -> R.drawable.ic_logo_vk
-        LinkMenuItem.IC_YOUTUBE -> R.drawable.ic_logo_youtube
-        LinkMenuItem.IC_PATREON -> R.drawable.ic_logo_patreon
-        LinkMenuItem.IC_TELEGRAM -> R.drawable.ic_logo_telegram
-        LinkMenuItem.IC_DISCORD -> R.drawable.ic_logo_discord
-        LinkMenuItem.IC_ANILIBRIA -> R.drawable.ic_anilibria
-        LinkMenuItem.IC_INFO -> R.drawable.ic_information
-        LinkMenuItem.IC_RULES -> R.drawable.ic_book_open_variant
-        LinkMenuItem.IC_PERSON -> R.drawable.ic_person
-        LinkMenuItem.IC_SITE -> R.drawable.ic_link
-        else -> R.drawable.ic_link
     }
 }

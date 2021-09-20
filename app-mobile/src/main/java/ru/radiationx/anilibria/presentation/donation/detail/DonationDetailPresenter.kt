@@ -1,17 +1,13 @@
 package ru.radiationx.anilibria.presentation.donation.detail
 
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.ui.common.ErrorHandler
-import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
-import ru.radiationx.data.analytics.features.DonationInfraAnalytics
-import ru.radiationx.data.analytics.features.DonationJoinTeamAnalytics
+import ru.radiationx.data.analytics.features.DonationDialogAnalytics
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
-import ru.radiationx.data.entity.app.donation.DonationDetail
+import ru.radiationx.data.entity.domain.donation.DonationContentButton
+import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -22,11 +18,10 @@ class DonationDetailPresenter(
     private val donationRepository: DonationRepository,
     private val detailAnalytics: DonationDetailAnalytics,
     private val yooMoneyAnalytics: DonationYooMoneyAnalytics,
-    private val joinTeamAnalytics: DonationJoinTeamAnalytics,
-    private val infraAnalytics: DonationInfraAnalytics
+    private val dialogAnalytics: DonationDialogAnalytics
 ) : BasePresenter<DonationDetailView>(router) {
 
-    private var currentData: DonationDetail? = null
+    private var currentData: DonationInfo? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -37,7 +32,7 @@ class DonationDetailPresenter(
             })
             .addToDisposable()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
                 currentData = it
                 viewState.showData(it)
@@ -52,35 +47,30 @@ class DonationDetailPresenter(
         Utils.externalLink(url)
     }
 
-    fun onPatreonClick() {
-        detailAnalytics.patreonClick()
-        currentData?.donateSupport?.btPatreon?.link?.let {
-            Utils.externalLink(it)
+    fun onButtonClick(button: DonationContentButton) {
+        detailAnalytics.buttonClick(button.text)
+        val info = currentData ?: return
+        val buttonTag = button.tag
+        val buttonLink = button.link
+
+        val dialog = buttonTag?.let { tag -> info.contentDialogs.find { it.tag == tag } }
+        val yoomoneyDialog = buttonTag
+            ?.takeIf { it == DonationInfo.YOOMONEY_TAG }
+            ?.let { info.yooMoneyDialog }
+
+        when {
+            yoomoneyDialog != null -> {
+                yooMoneyAnalytics.open(AnalyticsConstants.screen_donation_detail)
+                viewState.openYooMoney()
+            }
+            dialog != null -> {
+                dialogAnalytics.open(AnalyticsConstants.screen_donation_detail, dialog.tag)
+                viewState.openContentDialog(dialog.tag)
+            }
+            buttonLink != null -> {
+                Utils.externalLink(buttonLink)
+            }
         }
     }
 
-    fun onYooMoneyClick() {
-        detailAnalytics.yoomoneyClick()
-        yooMoneyAnalytics.open(AnalyticsConstants.screen_donation_detail)
-        viewState.openYooMoney()
-    }
-
-    fun onDonationAlertsClick() {
-        detailAnalytics.donationalertsClick()
-        currentData?.donateSupport?.btDonationAlerts?.link?.let {
-            Utils.externalLink(it)
-        }
-    }
-
-    fun onJoinTeamClick() {
-        detailAnalytics.jointeamClick()
-        joinTeamAnalytics.open(AnalyticsConstants.screen_donation_detail)
-        viewState.openJoinTeam()
-    }
-
-    fun onInfraClick() {
-        detailAnalytics.infraClick()
-        infraAnalytics.open(AnalyticsConstants.screen_donation_detail)
-        viewState.openInfra()
-    }
 }

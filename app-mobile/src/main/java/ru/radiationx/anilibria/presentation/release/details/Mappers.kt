@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.asDataColorRes
+import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
@@ -120,10 +122,7 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
 fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
     tag = tag,
     title = title,
-    textColor = when (tag) {
-        "telegram" -> R.color.brand_telegram
-        else -> null
-    },
+    textColor = tag.asDataColorRes(),
     episodes = episodes.map { it.toState(this) }
 )
 
@@ -142,14 +141,8 @@ fun ExternalEpisode.toState(
     tag = playlist.tag,
     actionTitle = playlist.actionText,
     hasActionUrl = url != null,
-    actionIconRes = when (playlist.tag) {
-        "telegram" -> R.drawable.ic_logo_telegram
-        else -> null
-    },
-    actionColorRes = when (playlist.tag) {
-        "telegram" -> R.color.brand_telegram
-        else -> null
-    }
+    actionIconRes = playlist.tag.asDataIconRes(),
+    actionColorRes = playlist.tag.asDataColorRes()
 )
 
 fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(

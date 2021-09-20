@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 
-sealed class ListItem(private val idData: Any?) {
+open class ListItem(private val idData: Any?) {
 
     open fun getItemId(): Long {
         return generateIdentifier(this::class.java, idData)

@@ -9,16 +9,16 @@ import ru.radiationx.data.entity.app.other.LinkMenuItem
 import javax.inject.Inject
 
 class MenuRepository @Inject constructor(
-        private val menuHolder: MenuHolder,
-        private val menuApi: MenuApi,
-        private val schedulers: SchedulersProvider
+    private val menuHolder: MenuHolder,
+    private val menuApi: MenuApi,
+    private val schedulers: SchedulersProvider
 ) {
 
     fun observeMenu(): Observable<List<LinkMenuItem>> = menuHolder.observe()
 
     fun getMenu(): Single<List<LinkMenuItem>> = menuApi
-            .getMenu()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-            .doOnSuccess { menuHolder.save(it) }
+        .getMenu()
+        .subscribeOn(schedulers.io())
+        .observeOn(schedulers.ui())
+        .doOnSuccess { menuHolder.save(it) }
 }

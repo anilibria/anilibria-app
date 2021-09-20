@@ -1,15 +1,16 @@
 package ru.radiationx.data.repository
 
-import android.content.Context
-import com.google.gson.Gson
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.datasource.remote.api.DonationApi
-import ru.radiationx.data.entity.app.donation.DonationDetail
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.app.donation.DonationDetailResponse
+import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
+import ru.radiationx.data.entity.domain.donation.DonationInfo
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.entity.mapper.toDomain
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -25,15 +26,16 @@ class DonationRepository(
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
-    fun observerDonationDetail(): Observable<DonationDetail> = donationHolder
+    fun observerDonationInfo(): Observable<DonationInfo> = donationHolder
         .observe()
+        .map { it.toDomain() }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 
     fun createYooMoneyPayLink(
         amount: Int,
         type: String,
-        form: DonationYooMoneyInfo.YooMoneyForm
+        form: YooMoneyDialog.YooMoneyForm
     ): Single<String> = donationApi
         .createYooMoneyPayLink(amount, type, form)
         .subscribeOn(schedulers.io())

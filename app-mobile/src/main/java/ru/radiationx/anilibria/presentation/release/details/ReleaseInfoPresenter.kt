@@ -24,6 +24,7 @@ import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -35,6 +36,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
@@ -56,14 +58,7 @@ class ReleaseInfoPresenter @Inject constructor(
     var releaseIdCode: String? = null
 
     private val stateController = StateController(
-        ReleaseDetailScreenState(
-            donationCardState = DonationCardItemState(
-                "donate",
-                "Понравилась озвучка?\nПоддержи АниЛибрию ❤️",
-                null,
-                false
-            )
-        )
+        ReleaseDetailScreenState()
     )
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
@@ -80,6 +75,23 @@ class ReleaseInfoPresenter @Inject constructor(
         stateController
             .observeState()
             .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        donationRepository
+            .observerDonationInfo()
+            .subscribe { info ->
+                stateController.updateState { state ->
+                    val newCardState = info.cardRelease?.let {
+                        DonationCardItemState(
+                            tag = "donate",
+                            title = it.title,
+                            subtitle = it.subtitle,
+                            canClose = false
+                        )
+                    }
+                    state.copy(donationCardState = newCardState)
+                }
+            }
             .addToDisposable()
 
         appPreferences

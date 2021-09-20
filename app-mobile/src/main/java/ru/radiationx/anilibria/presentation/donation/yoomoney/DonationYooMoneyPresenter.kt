@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -25,9 +25,9 @@ class DonationYooMoneyPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         donationRepository
-            .observerDonationDetail()
+            .observerDonationInfo()
             .subscribe({
-                val yooMoneyInfo = it.donateSupport?.btYooMoney?.info
+                val yooMoneyInfo = it.yooMoneyDialog
                 val newState = currentState.copy(
                     data = yooMoneyInfo,
                     amountType = DonationYooMoneyState.AmountType.PRESET,
@@ -114,9 +114,9 @@ class DonationYooMoneyPresenter(
     }
 
     private fun String.toAnalyticsPaymentType() = when (this) {
-        DonationYooMoneyInfo.TYPE_ID_ACCOUNT -> AnalyticsDonationPaymentType.ACCOUNT
-        DonationYooMoneyInfo.TYPE_ID_CARD -> AnalyticsDonationPaymentType.CARD
-        DonationYooMoneyInfo.TYPE_ID_MOBILE -> AnalyticsDonationPaymentType.MOBILE
+        YooMoneyDialog.TYPE_ID_ACCOUNT -> AnalyticsDonationPaymentType.ACCOUNT
+        YooMoneyDialog.TYPE_ID_CARD -> AnalyticsDonationPaymentType.CARD
+        YooMoneyDialog.TYPE_ID_MOBILE -> AnalyticsDonationPaymentType.MOBILE
         else -> null
     }
 }

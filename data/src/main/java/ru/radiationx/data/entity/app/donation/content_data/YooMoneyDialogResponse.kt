@@ -1,8 +1,8 @@
-package ru.radiationx.data.entity.app.donation.donate
+package ru.radiationx.data.entity.app.donation.content_data
 
 import com.google.gson.annotations.SerializedName
 
-data class DonationYooMoneyInfo(
+data class YooMoneyDialogResponse(
     @SerializedName("title")
     val title: String,
     @SerializedName("help")
@@ -18,12 +18,6 @@ data class DonationYooMoneyInfo(
     @SerializedName("bt_cancel_text")
     val btCancelText: String
 ) {
-
-    companion object {
-        const val TYPE_ID_ACCOUNT = "account"
-        const val TYPE_ID_CARD = "card"
-        const val TYPE_ID_MOBILE = "mobile"
-    }
 
     data class Amounts(
         @SerializedName("title")

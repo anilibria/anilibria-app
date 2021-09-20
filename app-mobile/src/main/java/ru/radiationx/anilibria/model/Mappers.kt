@@ -75,26 +75,12 @@ fun OtherMenuItem.toState() = OtherMenuItemState(
     iconRes = icon
 )
 
-fun SocialAuth.toState(): SocialAuthItemState {
-    val icon = when (key) {
-        SocialAuth.KEY_VK -> R.drawable.ic_logo_vk
-        SocialAuth.KEY_PATREON -> R.drawable.ic_logo_patreon
-        else -> null
-    }
-
-    val color = when (key) {
-        SocialAuth.KEY_VK -> R.color.brand_vk
-        SocialAuth.KEY_PATREON -> R.color.brand_patreon
-        else -> null
-    }
-
-    return SocialAuthItemState(
-        key = key,
-        title = title,
-        iconRes = icon,
-        colorRes = color
-    )
-}
+fun SocialAuth.toState(): SocialAuthItemState = SocialAuthItemState(
+    key = key,
+    title = title,
+    iconRes = key.asDataIconRes(),
+    colorRes = key.asDataColorRes()
+)
 
 fun SuggestionItem.toState(query: String): SuggestionItemState {
     val itemTitle = names.firstOrNull().orEmpty()

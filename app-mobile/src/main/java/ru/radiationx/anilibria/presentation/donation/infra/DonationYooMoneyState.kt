@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.donation.infra
 
-import ru.radiationx.data.entity.app.donation.donate.DonationYooMoneyInfo
+import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 
 data class DonationYooMoneyState(
-    val data: DonationYooMoneyInfo? = null,
+    val data: YooMoneyDialog? = null,
     val selectedAmount: Int? = null,
     val amountType: AmountType = AmountType.PRESET,
     val customAmount: Int? = null,

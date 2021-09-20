@@ -1,23 +1,20 @@
 package ru.radiationx.anilibria.presentation.donation.detail
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.common.IBaseView
-import ru.radiationx.data.entity.app.donation.DonationDetail
+import ru.radiationx.data.entity.domain.donation.DonationInfo
 
 
-interface DonationDetailView : IBaseView {
+interface DonationDetailView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showData(data: DonationDetail)
+    fun showData(data: DonationInfo)
 
     @StateStrategyType(SkipStrategy::class)
     fun openYooMoney()
 
     @StateStrategyType(SkipStrategy::class)
-    fun openJoinTeam()
-
-    @StateStrategyType(SkipStrategy::class)
-    fun openInfra()
+    fun openContentDialog(tag: String)
 }

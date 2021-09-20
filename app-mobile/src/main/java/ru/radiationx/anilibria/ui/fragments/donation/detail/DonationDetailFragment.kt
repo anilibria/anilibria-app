@@ -46,6 +46,8 @@ class DonationDetailFragment : BaseFragment(), DonationDetailView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        donationToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
+
         donationRecycler.apply {
             adapter = contentAdapter
             layoutManager = LinearLayoutManager(context)

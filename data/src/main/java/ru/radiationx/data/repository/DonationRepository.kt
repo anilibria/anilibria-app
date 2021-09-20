@@ -30,7 +30,7 @@ class DonationRepository(
     fun observerDonationInfo(): Observable<DonationInfo> = donationHolder
         .observe()
         .map {
-            Log.d("kekeke","observerDonationInfo $it")
+            Log.d("kekeke","observerDonationInfo ${it.detail.yooMoneyDialog}")
             it.toDomain() }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())

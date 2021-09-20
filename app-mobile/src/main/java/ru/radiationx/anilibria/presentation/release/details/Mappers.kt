@@ -68,7 +68,7 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasViewed = episodes.any { it.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
-        val lastViewed = episodes.maxBy { it.lastAccess }
+        val lastViewed = episodes.maxByOrNull { it.lastAccess }
         "Продолжить c ${lastViewed?.id} серии"
     } else {
         "Начать просмотр"

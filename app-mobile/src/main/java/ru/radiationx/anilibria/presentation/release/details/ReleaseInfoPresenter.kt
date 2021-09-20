@@ -239,7 +239,7 @@ class ReleaseInfoPresenter @Inject constructor(
                 releaseAnalytics.episodesContinueClick(release.id)
             })
             Log.e("jojojo", release.episodes.joinToString { "${it.id}=>${it.lastAccess}" })
-            release.episodes.asReversed().maxBy { it.lastAccess }?.let { episode ->
+            release.episodes.asReversed().maxByOrNull { it.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
             }
         }

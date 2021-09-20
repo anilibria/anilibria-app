@@ -278,7 +278,7 @@ class ConfiguringInteractor @Inject constructor(
                 it.forEach {
                     apiConfig.setProxyPing(it.first, it.second.timeTaken)
                 }
-                val bestProxy = it.minBy { it.second.timeTaken }
+                val bestProxy = it.minByOrNull { it.second.timeTaken }
                 val addressByProxy =
                     apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
                 analytics.checkProxies(addressByProxy?.tag, timeCounter.elapsed(), true, null)

@@ -1,19 +1,21 @@
 package ru.radiationx.data.entity.app.donation
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import ru.radiationx.data.entity.app.donation.content.*
 
+@JsonClass(generateAdapter = true)
 data class DonationContentItemResponse(
-    @SerializedName("type")
+    @Json(name = "type")
     val type: String?,
-    @SerializedName("header")
+    @Json(name = "header")
     val header: DonationContentHeaderResponse?,
-    @SerializedName("caption")
+    @Json(name = "caption")
     val caption: DonationContentCaptionResponse?,
-    @SerializedName("section")
+    @Json(name = "section")
     val section: DonationContentSectionResponse?,
-    @SerializedName("button")
+    @Json(name = "button")
     val button: DonationContentButtonResponse?,
-    @SerializedName("divider")
+    @Json(name = "divider")
     val divider: DonationContentDividerResponse?
 )

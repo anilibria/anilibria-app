@@ -1,6 +1,6 @@
 package ru.radiationx.data.datasource.remote.api
 
-import com.google.gson.Gson
+import com.squareup.moshi.Moshi
 import io.reactivex.Single
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
@@ -8,12 +8,8 @@ import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.data.entity.app.donation.DonationInfoResponse
-import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
-import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
-import ru.radiationx.data.entity.mapper.toDomain
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -21,8 +17,12 @@ class DonationApi(
     @ApiClient private val client: IClient,
     @MainClient private val mainClient: IClient,
     private val apiConfig: ApiConfig,
-    private val gson: Gson
+    private val moshi: Moshi
 ) {
+
+    private val dataAdapter by lazy {
+        moshi.adapter(DonationInfoResponse::class.java)
+    }
 
     fun getDonationDetail(): Single<DonationInfoResponse> {
         val args: Map<String, String> = mapOf(
@@ -30,7 +30,7 @@ class DonationApi(
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { gson.fromJson(it.toString(), DonationInfoResponse::class.java) }
+            .map { dataAdapter.fromJson(it.toString()) }
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms

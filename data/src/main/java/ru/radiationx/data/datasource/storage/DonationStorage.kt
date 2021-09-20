@@ -2,27 +2,31 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import okio.buffer
+import okio.source
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DonationHolder
-import ru.radiationx.data.entity.app.donation.DonationDetailResponse
 import ru.radiationx.data.entity.app.donation.DonationInfoResponse
 import toothpick.InjectConstructor
-import java.lang.Exception
 
 @InjectConstructor
 class DonationStorage(
-    private val gson: Gson,
+    private val moshi: Moshi,
     private val context: Context,
     @DataPreferences private val sharedPreferences: SharedPreferences
 ) : DonationHolder {
 
     companion object {
         private const val KEY_DONATION = "donation_detail"
+    }
+
+    private val dataAdapter by lazy {
+        moshi.adapter(DonationInfoResponse::class.java)
     }
 
     private val dataRelay = BehaviorRelay.create<DonationInfoResponse>()
@@ -71,7 +75,7 @@ class DonationStorage(
     }
 
     private fun saveToPrefs(data: DonationInfoResponse) {
-        val json = gson.toJson(data, DonationInfoResponse::class.java)
+        val json = dataAdapter.toJson(data)
         sharedPreferences.edit()
             .putString(KEY_DONATION, json)
             .apply()
@@ -79,12 +83,12 @@ class DonationStorage(
 
     private fun getFromPrefs(): DonationInfoResponse? = sharedPreferences
         .getString(KEY_DONATION, null)
-        ?.let { gson.fromJson(it, DonationInfoResponse::class.java) }
+        ?.let { dataAdapter.fromJson(it) }
 
     private fun getFromAssets(): DonationInfoResponse =
         context.assets.open("donation_info.json").use { stream ->
-            stream.bufferedReader().use { reader ->
-                gson.fromJson(reader, DonationInfoResponse::class.java)
+            stream.source().buffer().use { reader ->
+                requireNotNull(dataAdapter.fromJson(reader))
             }
         }
 }

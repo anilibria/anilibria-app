@@ -1,59 +1,65 @@
 package ru.radiationx.data.entity.app.donation.content_data
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class YooMoneyDialogResponse(
-    @SerializedName("title")
+    @Json(name = "title")
     val title: String,
-    @SerializedName("help")
+    @Json(name = "help")
     val help: String?,
-    @SerializedName("amounts")
+    @Json(name = "amounts")
     val amounts: Amounts?,
-    @SerializedName("payment_types")
+    @Json(name = "payment_types")
     val paymentTypes: PaymentTypes,
-    @SerializedName("form")
+    @Json(name = "form")
     val form: YooMoneyForm,
-    @SerializedName("bt_donate_text")
+    @Json(name = "bt_donate_text")
     val btDonateText: String,
-    @SerializedName("bt_cancel_text")
+    @Json(name = "bt_cancel_text")
     val btCancelText: String
 ) {
 
+    @JsonClass(generateAdapter = true)
     data class Amounts(
-        @SerializedName("title")
+        @Json(name = "title")
         val title: String,
-        @SerializedName("hint")
+        @Json(name = "hint")
         val hint: String,
-        @SerializedName("default_value")
+        @Json(name = "default_value")
         val defaultValue: Int?,
-        @SerializedName("items")
+        @Json(name = "items")
         val items: List<Int>
     )
 
+    @JsonClass(generateAdapter = true)
     data class PaymentTypes(
-        @SerializedName("title")
+        @Json(name = "title")
         val title: String,
-        @SerializedName("selected_id")
+        @Json(name = "selected_id")
         val selectedId: String?,
-        @SerializedName("items")
+        @Json(name = "items")
         val items: List<PaymentType>
     )
 
+    @JsonClass(generateAdapter = true)
     data class PaymentType(
-        @SerializedName("id")
+        @Json(name = "id")
         val id: String,
-        @SerializedName("title")
+        @Json(name = "title")
         val title: String
     )
 
+    @JsonClass(generateAdapter = true)
     data class YooMoneyForm(
-        @SerializedName("receiver")
+        @Json(name = "receiver")
         val receiver: String,
-        @SerializedName("target")
+        @Json(name = "target")
         val target: String,
-        @SerializedName("short_desc")
+        @Json(name = "short_desc")
         val shortDesc: String?,
-        @SerializedName("label")
+        @Json(name = "label")
         val label: String?
     )
 }

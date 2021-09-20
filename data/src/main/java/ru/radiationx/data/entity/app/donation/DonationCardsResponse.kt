@@ -1,10 +1,12 @@
 package ru.radiationx.data.entity.app.donation
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class DonationCardsResponse(
-    @SerializedName("new_donations")
+    @Json(name = "new_donations")
     val newDonations: DonationCardResponse?,
-    @SerializedName("release")
+    @Json(name = "release")
     val release: DonationCardResponse?
 )

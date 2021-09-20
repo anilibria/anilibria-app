@@ -3,7 +3,7 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.google.gson.Gson
+import com.squareup.moshi.Moshi
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
@@ -39,7 +39,7 @@ class DataModule(context: Context) : Module() {
 
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
-        bind(Gson::class.java).toInstance(Gson())
+        bind(Moshi::class.java).toInstance(Moshi.Builder().build())
 
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
         bind(SharedPreferences::class.java).withName(DataPreferences::class.java)

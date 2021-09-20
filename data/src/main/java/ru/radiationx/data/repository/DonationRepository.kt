@@ -1,5 +1,6 @@
 package ru.radiationx.data.repository
 
+import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -28,7 +29,9 @@ class DonationRepository(
 
     fun observerDonationInfo(): Observable<DonationInfo> = donationHolder
         .observe()
-        .map { it.toDomain() }
+        .map {
+            Log.d("kekeke","observerDonationInfo ${it.detail.yooMoneyDialog}")
+            it.toDomain() }
         .subscribeOn(schedulers.io())
         .observeOn(schedulers.ui())
 

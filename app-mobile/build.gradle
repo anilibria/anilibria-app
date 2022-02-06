@@ -158,8 +158,8 @@ dependencies {
         transitive = true;
     }*/
 
-    implementation("org.permissionsdispatcher:permissionsdispatcher:4.6.0")
-    kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.6.0"
+    implementation("com.github.permissions-dispatcher:permissionsdispatcher:4.9.1")
+    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.1"
 
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 

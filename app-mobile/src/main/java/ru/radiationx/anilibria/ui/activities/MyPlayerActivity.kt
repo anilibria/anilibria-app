@@ -305,8 +305,8 @@ class MyPlayerActivity : BaseActivity() {
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
             let {
-                it.setNextButtonRemoved(false)
-                it.setPreviousButtonRemoved(false)
+                it.setNextButtonRemoved(currentEpisodeId == releaseData.episodes.last().id)
+                it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.first().id)
                 it.setButtonListener(controlsListener)
             }
         }

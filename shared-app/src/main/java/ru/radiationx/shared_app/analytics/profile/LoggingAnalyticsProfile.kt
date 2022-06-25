@@ -9,14 +9,24 @@ import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.data.entity.common.DataWrapper
 import ru.radiationx.data.extensions.nullOnError
 import ru.radiationx.data.extensions.toWrapper
+import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class LoggingAnalyticsProfile(
-    private val dataSource: AnalyticsProfileDataSource
+    private val dataSource: AnalyticsProfileDataSource,
+    private val codecs: CodecsProfileAnalytics
 ) : AnalyticsProfile {
 
     override fun update() {
+        try {
+            unsafeUpdate()
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+    }
+
+    private fun unsafeUpdate() {
         val singleSources = with(dataSource) {
             listOf<Single<DataWrapper<Pair<String, Any>>>>(
                 getApiAddressTag().mapToAttr(ProfileConstants.address_tag),
@@ -41,6 +51,11 @@ class LoggingAnalyticsProfile(
             .filter { it.data != null }
             .map { it.data!! }
             .toList()
+            .flatMap { mainParams ->
+                codecs
+                    .getCodecsInfo()
+                    .map { mainParams + it.toList() }
+            }
             .subscribe({
                 Log.d("LoggingAnalyticsProfile", it.toMap().toString())
             }, {

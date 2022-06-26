@@ -440,6 +440,11 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveEpisode()
+    }
+
     override fun onStop() {
         super.onStop()
         player.pause()

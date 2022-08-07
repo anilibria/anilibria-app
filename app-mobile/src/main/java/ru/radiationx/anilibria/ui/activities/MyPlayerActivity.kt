@@ -477,7 +477,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun saveEpisode(position: Long = player.currentPosition) {
-        if (position < 0) {
+        if (position <= 0) {
             return
         }
         releaseInteractor.putEpisode(getEpisode().apply {

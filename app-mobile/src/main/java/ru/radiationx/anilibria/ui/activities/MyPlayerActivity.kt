@@ -476,8 +476,15 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
+    private fun saveEpisodeAtNoZero(position: Long = player.currentPosition) {
+        if (position == 0L) {
+            return
+        }
+        saveEpisode(position)
+    }
+
     private fun saveEpisode(position: Long = player.currentPosition) {
-        if (position <= 0) {
+        if (position < 0) {
             return
         }
         releaseInteractor.putEpisode(getEpisode().apply {
@@ -501,7 +508,7 @@ class MyPlayerActivity : BaseActivity() {
                 playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
             }
         }
-        saveEpisode()
+        saveEpisodeAtNoZero()
         compositeDisposable.dispose()
         player.stopPlayback()
         super.onDestroy()

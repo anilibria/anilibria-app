@@ -46,6 +46,7 @@
         <item name="bg_release_remind">@drawable/bg_release_remind_light</item>
         <item name="bg_schedule_day">@drawable/bg_schedule_day_light</item>
         <item name="bgDonationIconPt">@drawable/bg_donation_icon_pt_light</item>
+        <item name="bgDonationIconBt">@drawable/bg_donation_icon_bt_light</item>
         <item name="bgDonationIconYm">@drawable/bg_donation_icon_ym_light</item>
         <item name="bgDonationIconDa">@drawable/bg_donation_icon_da_light</item>
 
@@ -165,6 +166,7 @@
         <item name="bg_release_remind">@drawable/bg_release_remind_dark</item>
         <item name="bg_schedule_day">@drawable/bg_schedule_day_dark</item>
         <item name="bgDonationIconPt">@drawable/bg_donation_icon_pt_dark</item>
+        <item name="bgDonationIconBt">@drawable/bg_donation_icon_bt_dark</item>
         <item name="bgDonationIconYm">@drawable/bg_donation_icon_ym_dark</item>
         <item name="bgDonationIconDa">@drawable/bg_donation_icon_da_dark</item>
 

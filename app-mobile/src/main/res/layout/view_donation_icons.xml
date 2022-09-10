@@ -34,12 +34,26 @@
         android:id="@+id/icPatreon"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:layout_marginStart="24dp"
         android:background="?bgDonationIconPt"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="@id/icBoosty"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo_patreon"
+        app:tint="@color/white" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icBoosty"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?bgDonationIconBt"
         android:padding="6dp"
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_logo_patreon"
+        app:srcCompat="@drawable/ic_boosty"
         app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -63,6 +63,15 @@
       {
         "type": "button",
         "button": {
+          "text": "Оформить подписку на boosty",
+          "link": "https://boosty.to/anilibriatv",
+          "brand": "boosty",
+          "icon": "boosty"
+        }
+      },
+      {
+        "type": "button",
+        "button": {
           "text": "Оформить подписку на Patreon",
           "link": "https://www.patreon.com/anilibria",
           "brand": "patreon",

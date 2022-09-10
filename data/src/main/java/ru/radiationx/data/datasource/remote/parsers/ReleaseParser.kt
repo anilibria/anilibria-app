@@ -19,6 +19,10 @@ class ReleaseParser @Inject constructor(
     private val apiConfig: ApiConfig
 ) {
 
+    companion object {
+        private const val VK_URL = "https://vk.com/anilibria?w=wall-37468416_493445"
+    }
+
     fun parseRandomRelease(jsonItem: JSONObject): RandomRelease = RandomRelease(
         jsonItem.getString("code")
     )
@@ -135,11 +139,28 @@ class ReleaseParser @Inject constructor(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
                     title = jsonEpisode.nullString("title"),
-                    urlSd = jsonEpisode.nullString("srcSd"),
-                    urlHd = jsonEpisode.nullString("srcHd"),
-                    urlFullHd = jsonEpisode.nullString("srcFullHd")
+                    urlSd = jsonEpisode.nullString("srcSd").takeIf { it != VK_URL },
+                    urlHd = jsonEpisode.nullString("srcHd").takeIf { it != VK_URL },
+                    urlFullHd = jsonEpisode.nullString("srcFullHd").takeIf { it != VK_URL }
                 )
             }
+            .orEmpty()
+
+        val rutubeEpisodes = jsonResponse
+            .optJSONArray("playlist")
+            ?.mapObjects { jsonEpisode ->
+                val rutubeId = jsonEpisode
+                    .nullString("rutube_id")
+                    ?: return@mapObjects null
+                RutubeEpisode(
+                    id = jsonEpisode.optInt("id"),
+                    releaseId = release.id,
+                    title = jsonEpisode.nullString("title"),
+                    rutubeId = rutubeId,
+                    url = "https://rutube.ru/play/embed/$rutubeId"
+                )
+            }
+            ?.filterNotNull()
             .orEmpty()
 
         val externalPlaylists = jsonResponse
@@ -166,6 +187,7 @@ class ReleaseParser @Inject constructor(
         release.episodes.addAll(onlineEpisodes)
         release.sourceEpisodes.addAll(sourceEpisodes)
         release.externalPlaylists.addAll(externalPlaylists)
+        release.rutubePlaylist.addAll(rutubeEpisodes)
 
         jsonResponse.getJSONArray("torrents")?.also { jsonTorrents ->
             for (j in 0 until jsonTorrents.length()) {

@@ -37,6 +37,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
     val episodes = mutableListOf<Episode>()
     val sourceEpisodes = mutableListOf<SourceEpisode>()
     val externalPlaylists = mutableListOf<ExternalPlaylist>()
+    val rutubePlaylist = mutableListOf<RutubeEpisode>()
 
     val torrents = mutableListOf<TorrentItem>()
 

@@ -44,7 +44,7 @@ class ReleaseInfoAdapter(
         val modifications = screenState.modifiers
         val newItems = mutableListOf<ListItem>()
 
-        if (releaseState.episodesControl != null) {
+        if (releaseState.episodesControl != null && releaseState.episodesControl.hasEpisodes) {
             newItems.add(
                 ReleaseEpisodeControlItem(
                     releaseState.episodesControl.copy(hasWeb = false),

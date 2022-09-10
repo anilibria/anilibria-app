@@ -31,8 +31,8 @@ class ReleaseEpisodeControlDelegate(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(state: ReleaseEpisodesControlState, place: EpisodeControlPlace) {
-            full_btn_episodes_menu.isEnabled = state.hasEpisodes
-            full_button_continue.isEnabled = state.hasEpisodes
+            full_btn_episodes_menu.isVisible = state.hasEpisodes
+            full_button_continue.isVisible = state.hasEpisodes
             full_button_web.isVisible = state.hasWeb
             full_button_continue.text = state.continueTitle
 

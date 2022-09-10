@@ -121,6 +121,9 @@ class ReleaseParser @Inject constructor(
         val onlineEpisodes = jsonResponse
             .optJSONArray("playlist")
             ?.mapObjects { jsonEpisode ->
+                parseSourceTypes(jsonEpisode)
+                    ?.takeIf { it.isAnilibria }
+                    ?: return@mapObjects null
                 ReleaseFull.Episode().also {
                     it.releaseId = release.id
                     it.id = jsonEpisode.optInt("id")
@@ -130,11 +133,15 @@ class ReleaseParser @Inject constructor(
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
                 }
             }
+            ?.filterNotNull()
             .orEmpty()
 
         val sourceEpisodes = jsonResponse
             .optJSONArray("playlist")
             ?.mapObjects { jsonEpisode ->
+                parseSourceTypes(jsonEpisode)
+                    ?.takeIf { it.isAnilibria }
+                    ?: return@mapObjects null
                 SourceEpisode(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
@@ -144,11 +151,15 @@ class ReleaseParser @Inject constructor(
                     urlFullHd = jsonEpisode.nullString("srcFullHd").takeIf { it != VK_URL }
                 )
             }
+            ?.filterNotNull()
             .orEmpty()
 
         val rutubeEpisodes = jsonResponse
             .optJSONArray("playlist")
             ?.mapObjects { jsonEpisode ->
+                parseSourceTypes(jsonEpisode)
+                    ?.takeIf { it.isRutube }
+                    ?: return@mapObjects null
                 val rutubeId = jsonEpisode
                     .nullString("rutube_id")
                     ?: return@mapObjects null
@@ -210,6 +221,15 @@ class ReleaseParser @Inject constructor(
         release.showDonateDialog = jsonResponse.optBoolean("showDonateDialog")
 
         return release
+    }
+
+    private fun parseSourceTypes(jsonResponse: JSONObject): SourceTypes? {
+        return jsonResponse.optJSONObject("sources")?.let {
+            SourceTypes(
+                it.optBoolean("is_rutube", false),
+                it.optBoolean("is_anilibria", false)
+            )
+        }
     }
 
 }

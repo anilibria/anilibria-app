@@ -17,4 +17,15 @@ object ProfileConstants {
     const val releases_count = "releases_count"
     const val downloads_count = "downloads_count"
     const val app_versions = "app_versions"
+
+    const val codec_audio_aac = "codec_audio_aac"
+    const val codec_audio_opus = "codec_audio_opus"
+    const val codec_audio_mp3 = "codec_audio_mp3"
+    const val codec_audio_vorbis = "codec_audio_vorbis"
+
+    const val codec_video_avc = "codec_video_avc"
+    const val codec_video_hevc = "codec_video_hevc"
+    const val codec_video_av1 = "codec_video_av1"
+    const val codec_video_vp9 = "codec_video_vp9"
+
 }

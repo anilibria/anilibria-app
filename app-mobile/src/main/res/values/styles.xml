@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
 
     <style name="BasePlayerTheme" parent="DarkAppTheme.NoActionBar">
@@ -11,6 +11,7 @@
 
     <!-- Base application theme. -->
     <style name="LightAppTheme" parent="Theme.MaterialComponents.Light">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
         <item name="colorPrimary">@color/light_colorAccent</item>
         <item name="colorSecondary">@color/light_colorAccent</item>
@@ -126,6 +127,7 @@
 
     <!-- Base application theme. -->
     <style name="DarkAppTheme" parent="Theme.MaterialComponents">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
         <item name="colorPrimary">@color/dark_colorAccent</item>
         <item name="colorSecondary">@color/dark_colorAccent</item>

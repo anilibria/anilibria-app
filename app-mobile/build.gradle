@@ -13,12 +13,12 @@ static def getDateTime() {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 58
         versionName "2.4.8"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'

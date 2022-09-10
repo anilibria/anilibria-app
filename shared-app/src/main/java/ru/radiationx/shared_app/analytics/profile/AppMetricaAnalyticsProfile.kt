@@ -12,11 +12,13 @@ import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.data.entity.common.DataWrapper
 import ru.radiationx.data.extensions.nullOnError
 import ru.radiationx.data.extensions.toWrapper
+import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class AppMetricaAnalyticsProfile(
-    private val dataSource: AnalyticsProfileDataSource
+    private val dataSource: AnalyticsProfileDataSource,
+    private val codecs: CodecsProfileAnalytics
 ) : AnalyticsProfile {
 
     override fun update() {
@@ -53,6 +55,16 @@ class AppMetricaAnalyticsProfile(
             .filter { it.data != null }
             .map { it.data!! }
             .toList()
+            .flatMap { mainParams ->
+                codecs
+                    .getCodecsInfo()
+                    .map { codecsMap ->
+                        codecsMap.toList().map {
+                            Attribute.customString(it.first).withValue(it.second)
+                        }
+                    }
+                    .map { mainParams + it }
+            }
             .map { attributes ->
                 UserProfile.newBuilder().run {
                     attributes.forEach { attribute ->

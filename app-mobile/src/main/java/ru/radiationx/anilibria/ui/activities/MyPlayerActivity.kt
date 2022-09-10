@@ -26,7 +26,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
-import com.devbrackets.android.exomedia.listener.*
+import com.devbrackets.android.exomedia.listener.OnCompletionListener
+import com.devbrackets.android.exomedia.listener.OnPreparedListener
+import com.devbrackets.android.exomedia.listener.VideoControlsButtonListener
+import com.devbrackets.android.exomedia.listener.VideoControlsVisibilityListener
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
@@ -437,6 +440,11 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveEpisode()
+    }
+
     override fun onStop() {
         super.onStop()
         player.pause()
@@ -580,6 +588,10 @@ class MyPlayerActivity : BaseActivity() {
             VAL_QUALITY_HD -> episode.urlHd
             VAL_QUALITY_FULL_HD -> episode.urlFullHd
             else -> null
+        }
+        videoControls?.also {
+            it.setNextButtonRemoved(currentEpisodeId == releaseData.episodes.firstOrNull()?.id)
+            it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.lastOrNull()?.id)
         }
         videoPath?.also {
             player.setVideoPath(it)

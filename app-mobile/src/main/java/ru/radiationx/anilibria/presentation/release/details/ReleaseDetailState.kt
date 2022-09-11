@@ -66,7 +66,7 @@ data class ReleaseEpisodeItemState(
 )
 
 enum class ReleaseEpisodeItemType {
-    ONLINE, SOURCE, EXTERNAL
+    ONLINE, SOURCE, EXTERNAL, RUTUBE
 }
 
 data class ReleaseTorrentItemState(

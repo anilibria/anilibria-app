@@ -109,6 +109,13 @@ class ReleaseAnalytics(
         )
     }
 
+    fun episodeRutubeClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episode_external,
+            releaseId.toIdParam()
+        )
+    }
+
     fun episodeDownloadClick(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_download,

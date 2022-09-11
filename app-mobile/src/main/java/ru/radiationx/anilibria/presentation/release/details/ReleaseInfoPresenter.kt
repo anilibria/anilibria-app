@@ -17,10 +17,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ExternalEpisode
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.SourceEpisode
+import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -253,6 +250,14 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
+    private fun onRutubeEpisodeClick(
+        release: ReleaseFull,
+        episode: RutubeEpisode
+    ) {
+        releaseAnalytics.episodeRutubeClick(release.id)
+        viewState.playWeb(episode.url, release.code.orEmpty())
+    }
+
     private fun onExternalEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
         release: ReleaseFull,
@@ -304,6 +309,10 @@ class ReleaseInfoPresenter @Inject constructor(
                 val episodeItem = getExternalEpisode(episodeState) ?: return
                 onExternalEpisodeClick(episodeState, release, episodeItem)
             }
+            ReleaseEpisodeItemType.RUTUBE -> {
+                val episodeItem = getRutubeEpisode(episodeState) ?: return
+                onRutubeEpisodeClick(release, episodeItem)
+            }
         }
     }
 
@@ -329,6 +338,11 @@ class ReleaseInfoPresenter @Inject constructor(
             .find { it.tag == episode.tag }
             ?.episodes
             ?.find { it.id == episode.id }
+    }
+
+    private fun getRutubeEpisode(episode: ReleaseEpisodeItemState): RutubeEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.RUTUBE) return null
+        return currentData?.rutubePlaylist?.find { it.id == episode.id }
     }
 
     fun onClickLink(url: String) {

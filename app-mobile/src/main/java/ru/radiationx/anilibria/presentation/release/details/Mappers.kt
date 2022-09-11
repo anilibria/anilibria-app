@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
@@ -103,6 +102,12 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
         textColor = null,
         episodes = episodes.map { it.toState() }
     )
+    val rutubeTab = EpisodesTabState(
+        "rutube",
+        "RUTUBE",
+        textColor = null,
+        episodes = rutubePlaylist.map { it.toState() }
+    )
     val sourceTab = EpisodesTabState(
         tag = "source",
         title = "Скачать",
@@ -111,7 +116,7 @@ fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     )
     val externalTabs = externalPlaylists.map { it.toTabState() }
 
-    return listOf(onlineTab, sourceTab)
+    return listOf(onlineTab, rutubeTab, sourceTab)
         .plus(externalTabs)
         .filter { tab ->
             tab.episodes.isNotEmpty()
@@ -185,3 +190,20 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         actionColorRes = null
     )
 }
+
+fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    releaseId = releaseId,
+    title = title.orEmpty(),
+    subtitle = null,
+    isViewed = false,
+    hasSd = false,
+    hasHd = false,
+    hasFullHd = false,
+    type = ReleaseEpisodeItemType.RUTUBE,
+    tag = "rutube",
+    actionTitle = "Смотреть",
+    actionColorRes = null,
+    actionIconRes = null,
+    hasActionUrl = true
+)

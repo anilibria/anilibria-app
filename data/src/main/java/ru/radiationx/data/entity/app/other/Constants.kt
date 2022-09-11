@@ -9,6 +9,7 @@ object DataIcons {
     const val DISCORD = "discord"
     const val YOOMONEY = "yoomoney"
     const val DONATIONALERTS = "donationalerts"
+    const val BOOSTY = "boosty"
     const val ANILIBRIA = "anilibria"
     const val INFO = "info"
     const val RULES = "rules"
@@ -26,5 +27,6 @@ object DataColor {
     const val DISCORD = "discord"
     const val YOOMONEY = "yoomoney"
     const val DONATIONALERTS = "donationalerts"
+    const val BOOSTY = "boosty"
     const val ANILIBRIA = "anilibria"
 }

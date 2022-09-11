@@ -16,6 +16,7 @@ fun String.asDataIconRes(): Int? = when (this) {
     DataIcons.DISCORD -> R.drawable.ic_logo_discord
     DataIcons.YOOMONEY -> R.drawable.ic_logo_yoomoney
     DataIcons.DONATIONALERTS -> R.drawable.ic_logo_donationalerts
+    DataIcons.BOOSTY -> R.drawable.ic_boosty
     DataIcons.ANILIBRIA -> R.drawable.ic_anilibria
     DataIcons.INFO -> R.drawable.ic_information
     DataIcons.RULES -> R.drawable.ic_book_open_variant
@@ -35,6 +36,7 @@ fun String.asDataColorRes(): Int? = when (this) {
     DataColor.DISCORD -> R.color.brand_discord
     DataColor.YOOMONEY -> R.color.brand_yoomoney
     DataColor.DONATIONALERTS -> R.color.brand_donationalerts
+    DataColor.BOOSTY -> R.color.brand_boosty
     DataColor.ANILIBRIA -> R.color.alib_red
     else -> null
 }

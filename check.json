@@ -1,32 +1,31 @@
 {
   "update": {
-    "version_code": "58",
-    "version_name": "2.4.8",
+    "version_code": "60",
+    "version_name": "2.6.0",
     "version_build": "0",
-    "build_date": "28 февраля 2021 г.",
+    "build_date": "11 сентября 2022 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.8/AniLibria_v2.4.8.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.6.0/AniLibria_v2.6.0.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.4.8/AniLibria_Lite_v2.4.8.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.6.0/AniLibria_Lite_v2.6.0.apk",
         "type": "file"
       }
     ],
-    "important": [
-      "В этом обновлении исправлены некоторые фундаментальные проблемы, а так-же внесены важные правки, которые помогут нам улучшать приложение в будущем"
+    "important": [],
+    "added": [
+      "Поддержка релизов с rutube плеером",
+      "Просмотр релизов через телеграм бота",
+      "Добавлена информация о различных способах поддержки проекта"
     ],
-    "added": [],
     "fixed": [
-      "Зависание приложения на проверке доступности сервера",
-      "Сбор отчетов об ошибках"
+      "Различные баги связанные с онлайн плеером",
+      "Создание шорткатов/ссылок на релиз"
     ],
-    "changed": [
-      "Увеличена скорость старта приложения",
-      "Увеличена стабильность сетевых запросов"
-    ]
+    "changed": []
   }
 }

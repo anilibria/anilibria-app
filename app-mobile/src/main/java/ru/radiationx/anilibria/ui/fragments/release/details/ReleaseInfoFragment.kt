@@ -396,13 +396,13 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         val savedQuality = presenter.getQuality()
 
         var correctQuality = savedQuality
-        if (correctQuality == PreferencesHolder.QUALITY_FULL_HD && qualityInfo.hasFullHd) {
+        if (correctQuality == PreferencesHolder.QUALITY_FULL_HD && !qualityInfo.hasFullHd) {
             correctQuality = PreferencesHolder.QUALITY_HD
         }
-        if (correctQuality == PreferencesHolder.QUALITY_HD && qualityInfo.hasHd) {
+        if (correctQuality == PreferencesHolder.QUALITY_HD && !qualityInfo.hasHd) {
             correctQuality = PreferencesHolder.QUALITY_SD
         }
-        if (correctQuality == PreferencesHolder.QUALITY_SD && qualityInfo.hasSd) {
+        if (correctQuality == PreferencesHolder.QUALITY_SD && !qualityInfo.hasSd) {
             correctQuality = PreferencesHolder.QUALITY_NO
         }
 

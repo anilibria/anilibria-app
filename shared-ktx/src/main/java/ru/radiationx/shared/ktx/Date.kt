@@ -1,6 +1,5 @@
 package ru.radiationx.shared.ktx
 
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -30,10 +29,7 @@ fun Date.asTimeSecString(): String {
     }
 }
 
-fun Long.asUtcTime(): Long = this - TimeZone.getDefault().rawOffset / 1000
-fun Long.asUtc(): Long = this - TimeZone.getDefault().rawOffset
-
-fun Long.asMskTime() = this.asUtcTime() + TimeUnit.HOURS.toSeconds(3)
+fun Long.asUtc(): Long = this - TimeZone.getDefault().getOffset(this)
 fun Long.asMsk() = this.asUtc() + TimeUnit.HOURS.toMillis(3)
 
 fun Long.getDayOfWeek() = Calendar.getInstance().also {

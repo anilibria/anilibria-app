@@ -54,6 +54,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var urlHd: String? = null
         var urlFullHd: String? = null
         var updatedAt: Date? = null
+        var skips: PlayerSkips? = null
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -69,6 +70,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             if (urlHd != other.urlHd) return false
             if (urlFullHd != other.urlFullHd) return false
             if (updatedAt != other.updatedAt) return false
+            if (skips != other.skips) return false
 
             return true
         }
@@ -84,8 +86,11 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             result = 31 * result + (urlHd?.hashCode() ?: 0)
             result = 31 * result + (urlFullHd?.hashCode() ?: 0)
             result = 31 * result + (updatedAt?.hashCode() ?: 0)
+            result = 31 * result + (skips?.hashCode() ?: 0)
             return result
         }
+
+
     }
 
     override fun equals(other: Any?): Boolean {

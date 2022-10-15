@@ -133,6 +133,7 @@ class ReleaseParser @Inject constructor(
                     it.urlHd = jsonEpisode.nullString("hd")
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
                     it.updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L)
+                    it.skips = parsePlayerSkips(jsonEpisode)
                 }
             }
             ?.filterNotNull()
@@ -235,6 +236,20 @@ class ReleaseParser @Inject constructor(
                 it.optBoolean("is_anilibria", false)
             )
         }
+    }
+
+    private fun parsePlayerSkips(jsonResponse: JSONObject): PlayerSkips? {
+        return jsonResponse.optJSONObject("skips")?.let {
+            val opening = it.optJSONArray("opening")?.let { parseSkipRange(it) }
+            val ending = it.optJSONArray("ending")?.let { parseSkipRange(it) }
+            PlayerSkips(opening, ending)
+        }
+    }
+
+    private fun parseSkipRange(jsonArray: JSONArray): PlayerSkips.Skip? {
+        val first = jsonArray.optInt(0, Int.MIN_VALUE).takeIf { it != Int.MIN_VALUE } ?: return null
+        val last = jsonArray.optInt(1, Int.MIN_VALUE).takeIf { it != Int.MIN_VALUE } ?: return null
+        return PlayerSkips.Skip(first * 1000L, last * 1000L)
     }
 
 }

@@ -590,6 +590,7 @@ class MyPlayerActivity : BaseActivity() {
             else -> null
         }
         videoControls?.also {
+            it.setSkips(episode.skips)
             it.setNextButtonRemoved(currentEpisodeId == releaseData.episodes.firstOrNull()?.id)
             it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.lastOrNull()?.id)
         }

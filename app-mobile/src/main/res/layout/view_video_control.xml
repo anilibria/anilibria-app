@@ -5,7 +5,8 @@
     android:id="@+id/videoControlsRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="false"
+    tools:background="#000">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -118,8 +119,10 @@
                 android:minWidth="@dimen/exomedia_min_button_height"
                 android:minHeight="@dimen/exomedia_min_button_height"
                 android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/exomedia_ic_play_arrow_white"
                 tools:ignore="ContentDescription" />
 
@@ -202,6 +205,40 @@
             android:textSize="28sp"
             android:textStyle="bold"
             android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btSkipsSkip"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_above="@id/timeControlsContainer"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Пропустить"
+            android:textAllCaps="false"
+            android:textColor="?colorOnPrimary"
+            android:visibility="gone"
+            app:strokeColor="?colorOnPrimary"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btSkipsCancel"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_above="@id/timeControlsContainer"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_toStartOf="@id/btSkipsSkip"
+            android:text="Смотреть"
+            android:textAllCaps="false"
+            android:textColor="?colorOnPrimary"
+            android:visibility="gone"
+            app:strokeColor="?colorOnPrimary"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/timeControlsContainer"

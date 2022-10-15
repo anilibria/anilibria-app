@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
@@ -16,6 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.shared.ktx.android.relativeDate
 
 /**
  * Created by radiationx on 13.01.18.
@@ -42,6 +42,15 @@ class ReleaseEpisodeDelegate(
             item_title.text = state.title
             item_subtitle.text = state.subtitle
             item_subtitle.isVisible = state.subtitle != null
+            item_date.text =
+                state.updatedAt?.relativeDate(item_date.context)?.let { "Обновлена $it" }
+            item_date.isVisible = state.updatedAt != null
+            val dateColor = if (state.hasUpdate) {
+                item_date.context.getCompatColor(R.color.md_green)
+            } else {
+                item_date.context.getColorFromAttr(R.attr.textSecond)
+            }
+            item_date.setTextColor(dateColor)
             item_viewed_state.isVisible = state.isViewed
             quality_sd.isVisible = state.hasSd
             quality_hd.isVisible = state.hasHd

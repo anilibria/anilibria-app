@@ -49,7 +49,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="4dp"
             app:srcCompat="@drawable/ic_check_outline"
-            app:tint="#4caf50" />
+            app:tint="@color/md_green" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentSize"
@@ -67,7 +67,7 @@
             android:layout_height="16dp"
             android:layout_marginTop="2dp"
             app:srcCompat="@drawable/ic_file_upload"
-            app:tint="#4caf50" />
+            app:tint="@color/md_green" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentSeeders"
@@ -84,7 +84,7 @@
             android:layout_height="16dp"
             android:layout_marginTop="2dp"
             app:srcCompat="@drawable/ic_file_download"
-            app:tint="#f44336" />
+            app:tint="@color/md_red" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentLeechers"

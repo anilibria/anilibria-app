@@ -149,7 +149,9 @@ fun ExternalEpisode.toState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = null,
     isViewed = false,
+    hasUpdate = false,
     hasSd = false,
     hasHd = false,
     hasFullHd = false,
@@ -166,7 +168,9 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = updatedAt,
     isViewed = false,
+    hasUpdate = false,
     hasSd = urlSd != null,
     hasHd = urlHd != null,
     hasFullHd = urlFullHd != null,
@@ -184,12 +188,17 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
     } else {
         null
     }
+    val hasUpdate = updatedAt?.time?.let { updatedTime ->
+        updatedTime > lastAccess
+    } ?: false
     return ReleaseEpisodeItemState(
         id = id,
         releaseId = releaseId,
         title = title.orEmpty(),
         subtitle = subtitle,
+        updatedAt = updatedAt,
         isViewed = isViewed,
+        hasUpdate = hasUpdate,
         hasSd = urlSd != null,
         hasHd = urlHd != null,
         hasFullHd = urlFullHd != null,
@@ -207,7 +216,9 @@ fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = updatedAt,
     isViewed = false,
+    hasUpdate = false,
     hasSd = false,
     hasHd = false,
     hasFullHd = false,

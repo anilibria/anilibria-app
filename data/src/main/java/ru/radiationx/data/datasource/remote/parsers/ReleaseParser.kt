@@ -132,6 +132,7 @@ class ReleaseParser @Inject constructor(
                     it.urlSd = jsonEpisode.nullString("sd")
                     it.urlHd = jsonEpisode.nullString("hd")
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
+                    it.updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L)
                 }
             }
             ?.filterNotNull()
@@ -146,6 +147,7 @@ class ReleaseParser @Inject constructor(
                 SourceEpisode(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
+                    updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     title = jsonEpisode.nullString("title"),
                     urlSd = jsonEpisode.nullString("srcSd").takeIf { it != VK_URL },
                     urlHd = jsonEpisode.nullString("srcHd").takeIf { it != VK_URL },
@@ -168,6 +170,7 @@ class ReleaseParser @Inject constructor(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
                     title = jsonEpisode.nullString("title"),
+                    updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     rutubeId = rutubeId,
                     url = "https://rutube.ru/play/embed/$rutubeId"
                 )

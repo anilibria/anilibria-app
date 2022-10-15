@@ -16,7 +16,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-
         app:flexWrap="wrap"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/itemTorrentDownload"
@@ -28,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:textSize="16sp"
             android:textColor="?textDefault"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -39,19 +38,27 @@
             android:id="@+id/itemTorrentDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?textSecond"
             android:layout_marginTop="1dp"
+            android:textColor="?textSecond"
             android:textSize="14sp"
             tools:text="[BDRip 1080p-LQ HEVC]" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemTorrentPreffer"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="4dp"
+            app:srcCompat="@drawable/ic_check_outline"
+            app:tint="#4caf50" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
             android:textColor="?textSecond"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_wrapBefore="true"
             tools:text="430.1 MB" />
 
@@ -66,10 +73,10 @@
             android:id="@+id/itemTorrentSeeders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
             android:textColor="?textSecond"
-            android:textSize="14sp"
+            android:textSize="12sp"
             tools:text="42" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -86,17 +93,24 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="8dp"
             android:textColor="?textSecond"
-            android:textSize="14sp"
+            android:textSize="12sp"
             tools:text="10" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="2dp"
+            app:srcCompat="@drawable/ic_calendar_month"
+            app:tint="?colorOnSurface" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?textSecond"
+            android:layout_marginStart="2dp"
             android:layout_marginTop="2dp"
-            android:textSize="14sp"
-            android:visibility="gone"
+            android:textColor="?textSecond"
+            android:textSize="12sp"
             tools:text="04.05.2019 13:43" />
     </com.google.android.flexbox.FlexboxLayout>
 

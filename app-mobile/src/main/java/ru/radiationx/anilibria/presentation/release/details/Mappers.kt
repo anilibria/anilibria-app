@@ -6,6 +6,9 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.asTimeSecString
+import ru.radiationx.shared_app.codecs.MediaCodecsFinder
+import ru.radiationx.shared_app.codecs.types.CodecProcessingType
+import ru.radiationx.shared_app.codecs.types.CodecQuery
 import java.util.*
 
 fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
@@ -85,15 +88,23 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     }
 }
 
-fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
-    id = id,
-    title = "Серия $series",
-    subtitle = quality.orEmpty(),
-    size = Utils.readableFileSize(size),
-    seeders = seeders.toString(),
-    leechers = leechers.toString(),
-    date = null
-)
+fun TorrentItem.toState(): ReleaseTorrentItemState {
+    val isTorrentHevc = quality?.contains("hevc", ignoreCase = true) ?: false
+    val isSupportHevcHw = MediaCodecsFinder
+        .find(CodecQuery("hevc", "hevc"))
+        .find { it.processingType == CodecProcessingType.HARDWARE } != null
+    val isPrefer = isSupportHevcHw == isTorrentHevc
+    return ReleaseTorrentItemState(
+        id = id,
+        title = "Серия $series",
+        subtitle = quality.orEmpty(),
+        size = Utils.readableFileSize(size),
+        seeders = seeders.toString(),
+        leechers = leechers.toString(),
+        date = date,
+        isPrefer = isPrefer
+    )
+}
 
 fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(

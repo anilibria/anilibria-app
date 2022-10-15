@@ -5,6 +5,7 @@ import android.text.format.DateUtils
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.shared.ktx.android.relativeDate
 import java.util.*
 
 class CardsDataConverter(
@@ -44,12 +45,4 @@ class CardsDataConverter(
             else -> throw RuntimeException("WataFuq")
         }
     }
-
-    fun Date.relativeDate(context: Context) = DateUtils.getRelativeDateTimeString(
-        context,
-        time,
-        DateUtils.MINUTE_IN_MILLIS,
-        DateUtils.DAY_IN_MILLIS * 2,
-        DateUtils.FORMAT_SHOW_TIME
-    ).toString()
 }

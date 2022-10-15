@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import java.util.*
+import ru.radiationx.shared.ktx.android.relativeDate
 
 /**
  * Created by radiationx on 13.01.18.
@@ -40,8 +40,9 @@ class ReleaseTorrentDelegate(
             itemTorrentSize.text = state.size
             itemTorrentSeeders.text = state.seeders
             itemTorrentLeechers.text = state.leechers
-            itemTorrentDate.text = state.date
+            itemTorrentDate.text = state.date?.relativeDate(itemTorrentDate.context)
             itemTorrentDate.isVisible = state.date != null
+            itemTorrentPreffer.isVisible = state.isPrefer
 
             containerView.setOnClickListener { clickListener.invoke(state) }
         }

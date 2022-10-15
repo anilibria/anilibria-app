@@ -9,6 +9,7 @@ import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.shared.ktx.android.mapObjects
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -213,6 +214,7 @@ class ReleaseParser @Inject constructor(
                         series = jsonTorrent.nullString("series")
                         size = jsonTorrent.optLong("size")
                         url = "${apiConfig.baseImagesUrl}${jsonTorrent.nullString("url")}"
+                        date = Date(jsonTorrent.optInt("ctime") * 1000L)
                     })
                 }
             }

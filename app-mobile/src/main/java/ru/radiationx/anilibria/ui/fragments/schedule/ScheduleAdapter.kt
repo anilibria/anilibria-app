@@ -22,7 +22,7 @@ class ScheduleAdapter(
     fun bindState(state: ScheduleScreenState) {
         val newItems = mutableListOf<ListItem>()
         state.dayItems.forEach { dayItem ->
-            newItems.add(FeedSectionListItem(dayItem.title, dayItem.title, null))
+            newItems.add(FeedSectionListItem(dayItem.title, dayItem.title, null, null))
             newItems.add(FeedSchedulesListItem(dayItem.title, dayItem.items))
         }
         items = newItems

@@ -1,6 +1,7 @@
 package ru.radiationx.data.entity.app.release
 
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by radiationx on 30.01.18.
@@ -15,6 +16,7 @@ class TorrentItem : Serializable {
     var series: String? = null
     var size: Long = 0
     var url: String? = null
+    var date: Date? = null
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is TorrentItem) return false

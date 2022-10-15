@@ -51,7 +51,7 @@ class SuggestionDelegate(
 
         private fun setTitle(state: SuggestionItemState) {
             val spannableTitle = SpannableString(state.title)
-            state.matchRanges.forEach {
+            state.matchRanges.filterNot { it.isEmpty() }.forEach {
                 val span = StyleSpan(Typeface.BOLD)
                 val flags = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 spannableTitle.setSpan(span, it.first, it.last, flags)

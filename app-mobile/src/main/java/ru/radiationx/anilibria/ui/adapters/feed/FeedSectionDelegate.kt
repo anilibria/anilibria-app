@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters.feed
 import android.graphics.Color
 import android.view.Gravity
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_section_header.*
@@ -13,6 +14,7 @@ import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.shared.ktx.android.setCompatDrawable
 import ru.radiationx.shared.ktx.android.visible
 
 /**
@@ -60,6 +62,10 @@ class FeedSectionDelegate(
             }
             itemFeedScheduleBtn.visible(item.route != null)
             itemFeedScheduleBtn.text = item.route
+            itemFeedScheduleIcon.isVisible = item.routeIconRes != null
+            item.routeIconRes?.also {
+                itemFeedScheduleIcon.setCompatDrawable(it)
+            }
 
             containerView.setBackgroundColor(
                 if (item.hasBg) {

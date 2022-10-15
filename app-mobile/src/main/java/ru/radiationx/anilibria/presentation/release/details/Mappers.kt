@@ -6,6 +6,9 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.asTimeSecString
+import ru.radiationx.shared_app.codecs.MediaCodecsFinder
+import ru.radiationx.shared_app.codecs.types.CodecProcessingType
+import ru.radiationx.shared_app.codecs.types.CodecQuery
 import java.util.*
 
 fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
@@ -43,6 +46,7 @@ fun ReleaseFull.toInfoState(): ReleaseInfoState {
         titleRus = title.orEmpty(),
         titleEng = titleEng.orEmpty(),
         description = description.orEmpty(),
+        updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == ReleaseItem.STATUS_CODE_PROGRESS,
@@ -85,15 +89,23 @@ fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     }
 }
 
-fun TorrentItem.toState(): ReleaseTorrentItemState = ReleaseTorrentItemState(
-    id = id,
-    title = "Серия $series",
-    subtitle = quality.orEmpty(),
-    size = Utils.readableFileSize(size),
-    seeders = seeders.toString(),
-    leechers = leechers.toString(),
-    date = null
-)
+fun TorrentItem.toState(): ReleaseTorrentItemState {
+    val isTorrentHevc = quality?.contains("hevc", ignoreCase = true) ?: false
+    val isSupportHevcHw = MediaCodecsFinder
+        .find(CodecQuery("hevc", "hevc"))
+        .find { it.processingType == CodecProcessingType.HARDWARE } != null
+    val isPrefer = isSupportHevcHw == isTorrentHevc
+    return ReleaseTorrentItemState(
+        id = id,
+        title = "Серия $series",
+        subtitle = quality.orEmpty(),
+        size = Utils.readableFileSize(size),
+        seeders = seeders.toString(),
+        leechers = leechers.toString(),
+        date = date,
+        isPrefer = isPrefer
+    )
+}
 
 fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(
@@ -138,7 +150,9 @@ fun ExternalEpisode.toState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = null,
     isViewed = false,
+    hasUpdate = false,
     hasSd = false,
     hasHd = false,
     hasFullHd = false,
@@ -155,7 +169,9 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = updatedAt,
     isViewed = false,
+    hasUpdate = false,
     hasSd = urlSd != null,
     hasHd = urlHd != null,
     hasFullHd = urlFullHd != null,
@@ -173,12 +189,17 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
     } else {
         null
     }
+    val hasUpdate = updatedAt?.time?.let { updatedTime ->
+        updatedTime > lastAccess
+    } ?: false
     return ReleaseEpisodeItemState(
         id = id,
         releaseId = releaseId,
         title = title.orEmpty(),
         subtitle = subtitle,
+        updatedAt = updatedAt,
         isViewed = isViewed,
+        hasUpdate = hasUpdate,
         hasSd = urlSd != null,
         hasHd = urlHd != null,
         hasFullHd = urlFullHd != null,
@@ -196,7 +217,9 @@ fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
+    updatedAt = updatedAt,
     isViewed = false,
+    hasUpdate = false,
     hasSd = false,
     hasHd = false,
     hasFullHd = false,

@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
+import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 
 /**
@@ -63,6 +64,9 @@ class ReleaseHeadDelegate(
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             full_title.text = state.titleRus
             full_title_en.text = state.titleEng
+            full_updated.text = state.updatedAt.relativeDate(full_updated.context).let {
+                "Обновлён $it"
+            }
             full_description.text = Html.fromHtml(state.description)
             full_description.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)

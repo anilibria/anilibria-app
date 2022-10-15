@@ -1,6 +1,7 @@
 package ru.radiationx.data.entity.app.release
 
 import java.io.Serializable
+import java.util.*
 
 class ReleaseFull() : ReleaseItem(), Serializable {
 
@@ -52,6 +53,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         var urlSd: String? = null
         var urlHd: String? = null
         var urlFullHd: String? = null
+        var updatedAt: Date? = null
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -66,6 +68,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             if (urlSd != other.urlSd) return false
             if (urlHd != other.urlHd) return false
             if (urlFullHd != other.urlFullHd) return false
+            if (updatedAt != other.updatedAt) return false
 
             return true
         }
@@ -80,6 +83,7 @@ class ReleaseFull() : ReleaseItem(), Serializable {
             result = 31 * result + (urlSd?.hashCode() ?: 0)
             result = 31 * result + (urlHd?.hashCode() ?: 0)
             result = 31 * result + (urlFullHd?.hashCode() ?: 0)
+            result = 31 * result + (updatedAt?.hashCode() ?: 0)
             return result
         }
     }

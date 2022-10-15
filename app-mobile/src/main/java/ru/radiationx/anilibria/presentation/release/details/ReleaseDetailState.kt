@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import ru.radiationx.anilibria.model.DonationCardItemState
+import java.util.*
 
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
@@ -35,6 +36,7 @@ data class ReleaseDetailState(
 data class ReleaseInfoState(
     val titleRus: String,
     val titleEng: String,
+    val updatedAt: Date,
     val description: String,
     val info: String,
     val days: List<Int>,
@@ -53,7 +55,9 @@ data class ReleaseEpisodeItemState(
     val releaseId: Int,
     val title: String,
     val subtitle: String?,
+    val updatedAt: Date?,
     val isViewed: Boolean,
+    val hasUpdate: Boolean,
     val hasSd: Boolean,
     val hasHd: Boolean,
     val hasFullHd: Boolean,
@@ -76,7 +80,8 @@ data class ReleaseTorrentItemState(
     val size: String,
     val seeders: String,
     val leechers: String,
-    val date: String?
+    val date: Date?,
+    val isPrefer: Boolean
 )
 
 data class ReleaseEpisodesControlState(

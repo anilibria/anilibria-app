@@ -9,6 +9,7 @@ import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.shared.ktx.android.mapObjects
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -131,6 +132,7 @@ class ReleaseParser @Inject constructor(
                     it.urlSd = jsonEpisode.nullString("sd")
                     it.urlHd = jsonEpisode.nullString("hd")
                     it.urlFullHd = jsonEpisode.nullString("fullhd")
+                    it.updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L)
                 }
             }
             ?.filterNotNull()
@@ -145,6 +147,7 @@ class ReleaseParser @Inject constructor(
                 SourceEpisode(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
+                    updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     title = jsonEpisode.nullString("title"),
                     urlSd = jsonEpisode.nullString("srcSd").takeIf { it != VK_URL },
                     urlHd = jsonEpisode.nullString("srcHd").takeIf { it != VK_URL },
@@ -167,6 +170,7 @@ class ReleaseParser @Inject constructor(
                     id = jsonEpisode.optInt("id"),
                     releaseId = release.id,
                     title = jsonEpisode.nullString("title"),
+                    updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     rutubeId = rutubeId,
                     url = "https://rutube.ru/play/embed/$rutubeId"
                 )
@@ -213,6 +217,7 @@ class ReleaseParser @Inject constructor(
                         series = jsonTorrent.nullString("series")
                         size = jsonTorrent.optLong("size")
                         url = "${apiConfig.baseImagesUrl}${jsonTorrent.nullString("url")}"
+                        date = Date(jsonTorrent.optInt("ctime") * 1000L)
                     })
                 }
             }

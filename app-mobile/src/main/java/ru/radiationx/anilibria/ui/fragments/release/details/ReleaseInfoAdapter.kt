@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailState
@@ -22,12 +23,21 @@ class ReleaseInfoAdapter(
     private val torrentClickListener: (ReleaseTorrentItemState) -> Unit,
     private val commentsClickListener: () -> Unit,
     private val episodesTabListener: (String) -> Unit,
-    private val remindCloseListener: () -> Unit
+    private val remindCloseListener: () -> Unit,
+    private val torrentInfoListener: () -> Unit
 ) : ListItemAdapter() {
+
+    companion object {
+        private const val TORRENT_TAG = "torrents"
+    }
 
     init {
         addDelegate(ReleaseHeadDelegate(headListener))
-        addDelegate(FeedSectionDelegate {})
+        addDelegate(FeedSectionDelegate {
+            if (it.tag == TORRENT_TAG) {
+                torrentInfoListener.invoke()
+            }
+        })
         addDelegate(ReleaseExpandDelegate {})
         addDelegate(ReleaseEpisodeDelegate(episodeListener))
         addDelegate(ReleaseTorrentDelegate(torrentClickListener))
@@ -73,7 +83,15 @@ class ReleaseInfoAdapter(
         }
 
         if (releaseState.torrents.isNotEmpty()) {
-            newItems.add(FeedSectionListItem("torrents", "Раздачи", null, hasBg = true))
+            newItems.add(
+                FeedSectionListItem(
+                    TORRENT_TAG,
+                    "Torrent раздачи",
+                    null,
+                    R.drawable.ic_info_outline,
+                    hasBg = true
+                )
+            )
             newItems.addAll(releaseState.torrents.map { ReleaseTorrentListItem(it) })
             newItems.add(DividerShadowListItem("torrents"))
         }

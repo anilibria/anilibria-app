@@ -6,6 +6,8 @@
     <color name="alib_red_launcher">@color/alib_red</color>
     <color name="alib_white_launcher">#fff</color>
     <color name="white">#fff</color>
+    <color name="md_red">#f44336</color>
+    <color name="md_green">#4caf50</color>
 
 
     <color name="playerColorPrimary">#66000000</color>

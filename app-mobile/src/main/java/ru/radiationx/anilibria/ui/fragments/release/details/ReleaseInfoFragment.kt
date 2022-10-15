@@ -63,7 +63,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             torrentClickListener = presenter::onTorrentClick,
             commentsClickListener = presenter::onCommentsClick,
             episodesTabListener = presenter::onEpisodeTabClick,
-            remindCloseListener = presenter::onRemindCloseClick
+            remindCloseListener = presenter::onRemindCloseClick,
+            torrentInfoListener = { showTorrentInfoDialog() }
         )
     }
 
@@ -469,6 +470,10 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
             .setNegativeButton("Нет", null)
             .show()
+    }
+
+    private fun showTorrentInfoDialog() {
+        TorrentInfoDialogFragment().show(childFragmentManager, "torrents")
     }
 
     private val headListener = object : ReleaseHeadDelegate.Listener {

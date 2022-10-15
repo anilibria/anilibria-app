@@ -106,6 +106,7 @@ data class FeedSectionListItem(
     val tag: String,
     val title: String,
     val route: String?,
+    val routeIconRes: Int?,
     val hasBg: Boolean = false,
     val center: Boolean = false
 ) : ListItem(tag)

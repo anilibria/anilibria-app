@@ -72,7 +72,8 @@ class FeedAdapter(
                 FeedSectionListItem(
                     TAG_SCHEDULE_SECTION,
                     scheduleState.title,
-                    "Расписание"
+                    "Расписание",
+                    null
                 )
             )
             newItems.add(FeedSchedulesListItem("actual", scheduleState.items))
@@ -84,7 +85,15 @@ class FeedAdapter(
 
         val feedItems = loadingState.data?.feedItems.orEmpty()
         if (feedItems.isNotEmpty()) {
-            newItems.add(FeedSectionListItem(TAG_FEED_SECTION, "Обновления", null, hasBg = true))
+            newItems.add(
+                FeedSectionListItem(
+                    TAG_FEED_SECTION,
+                    "Обновления",
+                    null,
+                    null,
+                    hasBg = true
+                )
+            )
             newItems.add(FeedRandomBtnListItem("random"))
 
             var lastFeedItem: FeedItemState? = null

@@ -46,6 +46,7 @@ fun ReleaseFull.toInfoState(): ReleaseInfoState {
         titleRus = title.orEmpty(),
         titleEng = titleEng.orEmpty(),
         description = description.orEmpty(),
+        updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == ReleaseItem.STATUS_CODE_PROGRESS,

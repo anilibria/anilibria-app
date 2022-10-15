@@ -36,6 +36,7 @@ data class ReleaseDetailState(
 data class ReleaseInfoState(
     val titleRus: String,
     val titleEng: String,
+    val updatedAt: Date,
     val description: String,
     val info: String,
     val days: List<Int>,

@@ -51,10 +51,22 @@
             tools:text="Typical short en title" />
 
         <TextView
-            android:id="@+id/full_info"
+            android:id="@+id/full_updated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/full_title_en"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="?textSecond"
+            android:textSize="12sp"
+            tools:text="Обновлен 12.12.12 12:12" />
+
+        <TextView
+            android:id="@+id/full_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/full_updated"
             android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"

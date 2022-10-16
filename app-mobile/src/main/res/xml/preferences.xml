@@ -27,11 +27,15 @@
         android:layout="@layout/preference_category_custom"
         android:title="Общие">
 
-        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
-            android:defaultValue="false"
-            android:key="app_theme_dark"
+        <ListPreference
+            android:defaultValue="system"
+            android:dialogTitle="@string/pref_title_theme_mode"
+            android:entries="@array/entries_theme_mode"
+            android:entryValues="@array/entry_values_theme_mode"
+            android:key="app_theme"
             android:layout="@layout/preference_custom"
-            android:title="Тёмная тема" />
+            android:summary="%s"
+            android:title="@string/pref_title_theme_mode" />
 
         <ru.radiationx.anilibria.ui.widgets.SwitchPreference
             android:defaultValue="false"

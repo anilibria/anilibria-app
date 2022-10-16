@@ -30,9 +30,7 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.02.18.
@@ -48,10 +46,6 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     }
 
     private var searchView: SearchMenuItem? = null
-
-    @Inject
-    lateinit var appThemeHolder: AppThemeHolder
-
 
     private val adapter = ReleasesAdapter(
         loadMoreListener = { },

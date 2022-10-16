@@ -34,4 +34,9 @@
 
     <string name="country_blocked_title">This application is not available in your country</string>
     <string name="country_blocked_exit">Close app</string>
+
+    <string name="pref_title_theme_mode">Тема приложения</string>
+    <string name="pref_value_theme_mode_light">Светлая</string>
+    <string name="pref_value_theme_mode_dark">Темная</string>
+    <string name="pref_value_theme_mode_system">Системная</string>
 </resources>

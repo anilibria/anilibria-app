@@ -4,13 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import io.reactivex.disposables.CompositeDisposable
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.anilibria.extension.getPrefStyleRes
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
-import ru.radiationx.data.datasource.holders.AppThemeHolder
-import javax.inject.Inject
+import ru.radiationx.shared_app.di.injectDependencies
 
 
 /**
@@ -19,16 +15,9 @@ import javax.inject.Inject
 
 class SettingsActivity : BaseActivity() {
 
-    @Inject
-    lateinit var appThemeHolder: AppThemeHolder
-
-    private val disposables = CompositeDisposable()
-
-    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
     override fun onCreate(savedInstanceState: Bundle?) {
         this.injectDependencies()
-        currentAppTheme = appThemeHolder.getTheme()
-        setTheme(currentAppTheme.getPrefStyleRes())
+        setTheme(R.style.PreferencesDayNightAppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
@@ -40,18 +29,9 @@ class SettingsActivity : BaseActivity() {
             actionBar.title = "Настройки"
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_content, SettingsFragment()).commit()
-
-        disposables.add(
-                appThemeHolder
-                        .observeTheme()
-                        .subscribe { appTheme ->
-                            if (currentAppTheme !== appTheme) {
-                                currentAppTheme = appTheme
-                                recreate()
-                            }
-                        }
-        )
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_content, SettingsFragment())
+            .commit()
     }
 
 
@@ -59,11 +39,6 @@ class SettingsActivity : BaseActivity() {
         if (item.itemId == android.R.id.home)
             finish()
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.clear()
     }
 
     companion object {

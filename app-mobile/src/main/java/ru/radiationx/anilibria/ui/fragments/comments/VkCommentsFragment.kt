@@ -16,6 +16,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
@@ -29,7 +30,6 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -38,7 +38,6 @@ import ru.radiationx.shared_app.di.injectDependencies
 import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
-import java.util.*
 import javax.inject.Inject
 
 
@@ -54,7 +53,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     private var currentVkCommentsState: VkCommentsState? = null
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeController: AppThemeController
 
     private val disposables = CompositeDisposable()
 
@@ -118,7 +117,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         }
 
         disposables.add(
-            appThemeHolder
+            appThemeController
                 .observeTheme()
                 .subscribe {
                     webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
@@ -178,7 +177,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         val template = App.instance.vkCommentsTemplate
         webView.easyLoadData(
             comments.url,
-            template.generateWithTheme(appThemeHolder.getTheme())
+            template.generateWithTheme(appThemeController.getTheme())
         )
         webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
 
@@ -298,7 +297,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 }
                 var newCss = cssSrc
 
-                val fixCss = if (appThemeHolder.getTheme().isDark()) {
+                val fixCss = if (appThemeController.getTheme().isDark()) {
                     App.instance.vkCommentCssFixDark
                 } else {
                     App.instance.vkCommentCssFixLight

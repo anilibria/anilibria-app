@@ -50,7 +50,6 @@ class DataModule(context: Context) : Module() {
         bind(PreferencesStorage::class.java).singleton()
 
         bind(PreferencesHolder::class.java).to(PreferencesStorage::class.java).singleton()
-        bind(AppThemeHolder::class.java).to(PreferencesStorage::class.java).singleton()
         bind(EpisodesCheckerHolder::class.java).to(EpisodesCheckerStorage::class.java).singleton()
         bind(HistoryHolder::class.java).to(HistoryStorage::class.java).singleton()
         bind(ReleaseUpdateHolder::class.java).to(ReleaseUpdateStorage::class.java).singleton()

@@ -1,10 +1,14 @@
 package ru.radiationx.anilibria.di
 
+import android.app.Application
 import android.content.Context
 import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.MobileCheckerSources
+import ru.radiationx.anilibria.apptheme.AnalyticsThemeProviderImpl
+import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.apptheme.AppThemeControllerImpl
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
@@ -16,6 +20,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
+import ru.radiationx.data.analytics.profile.AnalyticsThemeProvider
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.data.migration.MigrationExecutor
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
@@ -33,17 +38,22 @@ import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module
 
-class AppModule(context: Context) : Module() {
+class AppModule(application: Application) : Module() {
 
 
     init {
-        bind(Context::class.java).toInstance(context)
+        bind(Application::class.java).toInstance(application)
+        bind(Context::class.java).toInstance(application)
 
         bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singleton()
         bind(CheckerReserveSources::class.java).to(MobileCheckerSources::class.java).singleton()
         bind(MigrationExecutor::class.java).to(AppMigrationExecutor::class.java).singleton()
 
         bind(SystemMessenger::class.java).singleton()
+
+        bind(AppThemeController::class.java).to(AppThemeControllerImpl::class.java).singleton()
+        bind(AnalyticsThemeProvider::class.java).to(AnalyticsThemeProviderImpl::class.java)
+            .singleton()
 
         val ciceroneHolder = CiceroneHolder()
         bind(CiceroneHolder::class.java).toInstance(ciceroneHolder)

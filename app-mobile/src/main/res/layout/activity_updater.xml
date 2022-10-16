@@ -76,14 +76,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
+            android:background="?colorSurface"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:clipToPadding="false">
+                android:clipToPadding="false"
+                android:padding="16dp">
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -116,19 +116,19 @@
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:background="#ddd"
+                android:layout_marginEnd="16dp"
+                android:background="?divider_line"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/updateContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#fff"
+                android:background="?colorSurface"
                 android:orientation="vertical"
                 android:padding="16dp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.other
 
 data class ProfileScreenState(
     val profile: ProfileItemState? = null,
+    val profileMenuItems: List<OtherMenuItemState> = emptyList(),
     val menuItems: List<List<OtherMenuItemState>> = emptyList()
 )
 

@@ -88,7 +88,7 @@ class ReleaseInfoAdapter(
                     TORRENT_TAG,
                     "Torrent раздачи",
                     null,
-                    R.drawable.ic_info_outline,
+                    R.drawable.ic_help_circle_outline,
                     hasBg = true
                 )
             )

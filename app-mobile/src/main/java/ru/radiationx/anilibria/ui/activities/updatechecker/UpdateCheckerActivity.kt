@@ -17,7 +17,7 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -178,7 +178,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         sectionTitle.text = title
         sectionTitle.setPadding(0, 0, 0, (resources.displayMetrics.density * 8).toInt())
         sectionTitle.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        sectionTitle.setTextColor(getCompatColor(R.color.light_textDefault))
+        sectionTitle.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionTitle)
 
         val stringBuilder = StringBuilder()
@@ -193,7 +193,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         val sectionText = TextView(this)
         sectionText.text = apiUtils.toHtml(stringBuilder.toString())
         sectionText.setPadding((resources.displayMetrics.density * 8).toInt(), 0, 0, 0)
-        sectionText.setTextColor(getCompatColor(R.color.light_textDefault))
+        sectionText.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionText)
 
         updateContent.addView(

@@ -22,7 +22,6 @@ class AppThemeControllerImpl(
 
     companion object {
         private const val APP_THEME_KEY = "app_theme"
-        private const val APP_THEME_LEGACY_KEY = "app_theme_dark"
     }
 
     private val modeRelay by lazy { BehaviorRelay.createDefault(getMode()) }
@@ -68,21 +67,12 @@ class AppThemeControllerImpl(
             ?.let { prefMode ->
                 AppThemeMode.values().find { it.value == prefMode }
             }
-            ?: getLegacyThemePrefs().toMode()
+            ?: AppThemeMode.SYSTEM
     }
 
     override fun setMode(mode: AppThemeMode) {
         sharedPreferences.edit {
             putString(APP_THEME_KEY, mode.value)
-        }
-    }
-
-    private fun getLegacyThemePrefs(): AppTheme {
-        val isDark = sharedPreferences.getBoolean(APP_THEME_LEGACY_KEY, false)
-        return if (isDark) {
-            AppTheme.DARK
-        } else {
-            AppTheme.LIGHT
         }
     }
 

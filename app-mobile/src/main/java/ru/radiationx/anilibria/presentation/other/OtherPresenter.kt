@@ -56,6 +56,7 @@ class OtherPresenter @Inject constructor(
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
 
+    private val profileMenu = mutableListOf<OtherMenuItem>()
     private val allMainMenu = mutableListOf<OtherMenuItem>()
     private val allSystemMenu = mutableListOf<OtherMenuItem>()
     private val allLinkMenu = mutableListOf<OtherMenuItem>()
@@ -68,16 +69,17 @@ class OtherPresenter @Inject constructor(
             .subscribe { viewState.showState(it) }
             .addToDisposable()
 
-        allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
-        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
-        allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
-        allMainMenu.add(
+        profileMenu.add(
             OtherMenuItem(
                 MENU_OTP_CODE,
                 "Привязать устройство",
                 R.drawable.ic_devices_other
             )
         )
+
+        allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
+        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
+        allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
@@ -195,22 +197,28 @@ class OtherPresenter @Inject constructor(
 
     private fun updateMenuItems() {
         // Для фильтрации, если вдруг понадобится добавить
+        val profileMenu = profileMenu.toMutableList()
         val mainMenu = allMainMenu.toMutableList()
         val systemMenu = allSystemMenu.toMutableList()
         val linkMenu = allLinkMenu.toMutableList()
 
         if (currentProfileItem.authState != AuthState.AUTH) {
-            mainMenu.removeAll { it.id == MENU_OTP_CODE }
+            profileMenu.removeAll { it.id == MENU_OTP_CODE }
         }
 
         val profileState = currentProfileItem.toState()
+        val profileMenuState = profileMenu.map { it.toState() }
         val menuState = listOf(mainMenu, systemMenu, linkMenu)
             .filter { it.isNotEmpty() }
             .map { itemsGroup ->
                 itemsGroup.map { it.toState() }
             }
         stateController.updateState {
-            it.copy(profile = profileState, menuItems = menuState)
+            it.copy(
+                profile = profileState,
+                profileMenuItems = profileMenuState,
+                menuItems = menuState
+            )
         }
     }
 }

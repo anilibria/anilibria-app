@@ -61,6 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_info_outline"
+        app:tint="?textSecond"
+        tools:src="@drawable/ic_help_circle_outline"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

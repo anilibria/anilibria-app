@@ -85,6 +85,7 @@ class OtherFragment : BaseFragment(), OtherView {
             items = mutableListOf<ListItem>().apply {
                 state.profile?.also {
                     add(ProfileListItem("profile", it))
+                    addAll(state.profileMenuItems.map { MenuListItem(it) })
                     add(DividerShadowListItem("profile"))
                 }
 

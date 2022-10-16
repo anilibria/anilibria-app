@@ -1,20 +1,22 @@
 package ru.radiationx.anilibria.apptheme
 
-import android.content.Context
+import android.app.Activity
+import android.app.Application
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
+import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class AppThemeControllerImpl(
-    private val context: Context,
+    private val application: Application,
     private val sharedPreferences: SharedPreferences
 ) : AppThemeController {
 
@@ -31,30 +33,34 @@ class AppThemeControllerImpl(
         when (key) {
             APP_THEME_KEY -> {
                 val mode = getMode()
-                Log.d("kekeke","prefs updated $mode")
                 applyTheme(mode)
                 modeRelay.accept(mode)
+                triggerRelay.accept(Unit)
             }
+        }
+    }
+
+    private val lifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
+        override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
+            triggerRelay.accept(Unit)
         }
     }
 
     init {
         applyTheme(getMode())
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
     }
 
-    override fun observeTheme(): Observable<AppThemeController.AppTheme> = observeMode()
-        .map { getAppThemeByConfig() }
+    override fun observeTheme(): Observable<AppThemeController.AppTheme> = Observable
+        .fromCallable { getAppTheme() }
         .repeatWhen { triggerRelay }
+        .distinctUntilChanged()
 
-    override fun getTheme(): AppThemeController.AppTheme = getAppThemeByConfig()
-
-    override fun updateTheme() {
-        triggerRelay.accept(Unit)
-    }
+    override fun getTheme(): AppThemeController.AppTheme = getAppTheme()
 
     override fun observeMode(): Observable<AppThemeController.AppThemeMode> {
-        return modeRelay.hide()
+        return modeRelay.hide().distinctUntilChanged()
     }
 
     override fun getMode(): AppThemeController.AppThemeMode {
@@ -80,8 +86,14 @@ class AppThemeControllerImpl(
         }
     }
 
+    private fun getAppTheme(): AppThemeController.AppTheme = when (getMode()) {
+        AppThemeController.AppThemeMode.LIGHT -> AppThemeController.AppTheme.LIGHT
+        AppThemeController.AppThemeMode.DARK -> AppThemeController.AppTheme.DARK
+        AppThemeController.AppThemeMode.SYSTEM -> getAppThemeByConfig()
+    }
+
     private fun getAppThemeByConfig(): AppThemeController.AppTheme {
-        val currentNightMode = context.resources.configuration.uiMode.let {
+        val currentNightMode = application.resources.configuration.uiMode.let {
             it and Configuration.UI_MODE_NIGHT_MASK
         }
         return if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {

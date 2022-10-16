@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.di
 
+import android.app.Application
 import android.content.Context
 import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
@@ -37,11 +38,12 @@ import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module
 
-class AppModule(context: Context) : Module() {
+class AppModule(application: Application) : Module() {
 
 
     init {
-        bind(Context::class.java).toInstance(context)
+        bind(Application::class.java).toInstance(application)
+        bind(Context::class.java).toInstance(application)
 
         bind(SharedBuildConfig::class.java).to(AppBuildConfig::class.java).singleton()
         bind(CheckerReserveSources::class.java).to(MobileCheckerSources::class.java).singleton()

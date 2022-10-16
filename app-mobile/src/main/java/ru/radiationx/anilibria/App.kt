@@ -17,7 +17,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
-import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
@@ -92,15 +91,6 @@ class App : Application() {
             val appAnalytics = DI.get(AppAnalytics::class.java)
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
-
-            val appThemeController = DI.get(AppThemeController::class.java)
-
-            appThemeController.observeTheme().doOnEach {
-                Log.e("kekeke", "observeTheme $it")
-            }.subscribe()
-            appThemeController.observeMode().doOnEach {
-                Log.e("kekeke", "observeMode $it")
-            }.subscribe()
 
             registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
                 override fun onActivityCreated(p0: Activity?, p1: Bundle?) {

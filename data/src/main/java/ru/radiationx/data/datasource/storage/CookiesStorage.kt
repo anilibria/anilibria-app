@@ -21,10 +21,8 @@ class CookiesStorage @Inject constructor(
     init {
         cookieNames.forEachIndexed { _, s ->
             val savedCookie = sharedPreferences.getString("cookie_$s", null)
-            Log.e("CookiesStorage", "cookieName: $s : $savedCookie")
             savedCookie?.let {
                 val cookie = parseCookie(it)
-                Log.e("CookiesStorage", "initial putCookie: ${cookie?.name()}")
                 cookie?.let { it1 -> clientCookies.put(s, it1) }
             }
         }
@@ -43,7 +41,6 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun getCookies(): Map<String, Cookie> {
-        Log.e("CookiesStorage", "getCookies: ${clientCookies.map { it.value }.joinToString { "${it.name()}=${it.value()}" }}")
         return clientCookies
     }
 
@@ -52,7 +49,6 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun putCookie(url: String, cookie: Cookie) {
-        Log.e("CookiesStorage", "putCookie: ${"${cookie.name()}=${cookie.value()}"}")
         sharedPreferences
                 .edit()
                 .putString("cookie_${cookie.name()}", convertCookie(url, cookie))

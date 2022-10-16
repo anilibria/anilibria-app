@@ -78,8 +78,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
-        Log.e("S_DEF_LOG", "ONCRETE $this")
-        Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         arguments?.also { bundle ->
             presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
             presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)

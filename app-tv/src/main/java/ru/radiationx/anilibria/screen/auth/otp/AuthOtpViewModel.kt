@@ -88,7 +88,6 @@ class AuthOtpViewModel(
     private fun startTimer(otpInfo: OtpInfo) {
         timerDisposable.dispose()
         val time = otpInfo.expiresAt.time - System.currentTimeMillis()
-        Log.e("lalala", "startTimer for ${time}, ${otpInfo.remainingTime}, ${otpInfo.expiresAt} vs ${Date()}")
         if (time < 0) {
             setExpired()
             return

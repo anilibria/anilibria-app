@@ -140,7 +140,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             measure_root_content,
             object : DimensionHelper.DimensionsListener {
                 override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    Log.e("lalala", "Dim: $dimensions")
                     root_container.post {
                         root_container.setPadding(
                             root_container.paddingLeft,
@@ -171,7 +170,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             }
         }
         checkerPresenter.forceLoad = true
-        Log.e("S_DEF_LOG", "main oncreate")
     }
 
 
@@ -240,19 +238,15 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.e("lalala", "MainActivity, onNewIntent $intent")
         handleIntent(intent)
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
-        /*Log.e("lalala", "MainActivity, onResumeFragments $intent")
-        handleIntent(intent)*/
     }
 
     override fun onMainLogicCompleted() {
-        Log.e("lalala", "MainActivity, onMainLogicCompleted $intent")
         handleIntent(intent)
         checkerPresenter.checkUpdate()
     }
@@ -305,15 +299,12 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     private fun handleIntent(intent: Intent?) {
-        Log.e("lalala", "MainActivity, handleIntent $intent")
-
         intent?.data?.also { intentData ->
             val url = intentData.toString()
             var handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
                 handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
-            Log.e("lalala", "MainActivity, handled $handled")
         }
         intent?.data = null
     }
@@ -321,7 +312,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
         tabs.forEach {
-            Log.e("lalala", "findTabIntentHandler screen $it")
             fm.findFragmentByTag(it)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true
@@ -355,7 +345,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun updateTabs() {
-        Log.e("MainPresenter", "updateTabs")
         tabs.clear()
         if (presenter.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
@@ -366,7 +355,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun highlightTab(screenKey: String) {
-        Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
         val screen = tabs.first { it.screen.screenKey == screenKey }.screen
         presenter.submitScreenAnalytics(screen)
@@ -391,7 +379,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command?) {
-            Log.e("S_DEF_LOG", "ApplyCommand $command")
             if (command is Back) {
                 if (tabsStack.size <= 1) {
                     activityBack()
@@ -413,7 +400,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 val inTabs =
                     allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
                 if (inTabs) {
-                    Log.e("S_DEF_LOG", "Replace " + command.screen.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
                     allTabs.forEach {
@@ -425,10 +411,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                                 }
                                 ta.show(fragment)
                                 addInStack(it.screen.screenKey)
-                                Log.e(
-                                    "S_DEF_LOG",
-                                    "QUEUE: " + tabsStack.joinToString(", ", "[", "]")
-                                )
                             } else {
                                 ta.hide(fragment)
                             }
@@ -439,7 +421,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 }
             }
 
-            Log.e("S_DEF_LOG", "sector clear")
             super.applyCommand(command)
         }
 

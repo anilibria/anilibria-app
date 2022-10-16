@@ -15,8 +15,6 @@ class RouterModule(ciceroneTag: String = ROOT) : Module() {
 
     init {
         val cicerone = DI.get(CiceroneHolder::class.java).getCicerone(ciceroneTag)
-
-        Log.e("lalala", "router inst '$ciceroneTag': ${cicerone.router}")
         bind(Router::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
     }

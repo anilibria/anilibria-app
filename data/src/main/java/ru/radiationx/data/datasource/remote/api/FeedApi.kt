@@ -31,9 +31,6 @@ class FeedApi @Inject constructor(
         return client.post(apiConfig.apiUrl, args)
                 .compose(ApiResponse.fetchResult<JSONArray>())
                 .map { feedParser.feed(it, releaseParser, youtubeParser) }
-                .doOnError {
-                    Log.e("bobobo", "catch error $it")
-                }
     }
 
 }

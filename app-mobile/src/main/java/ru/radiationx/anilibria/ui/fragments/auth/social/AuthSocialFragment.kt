@@ -124,7 +124,6 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     }
 
     override fun showState(state: AuthSocialScreenState) {
-        Log.d("kekeke", "show state $state")
         val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
         progressBarWv.isVisible = anyLoading
         webView.isVisible =

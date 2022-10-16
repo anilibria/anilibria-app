@@ -130,7 +130,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                 }
 
                 override fun onCheckedGenres(items: List<String>) {
-                    Log.e("lululu", "onCheckedItems ${items.size}")
                     presenter.onChangeGenres(items)
                 }
 

@@ -37,13 +37,8 @@ class ApiOkHttpProvider @Inject constructor(
         .apply {
             val availableAddress = apiConfig.getAddresses().map { it.tag }.contains(apiConfig.active.tag)
 
-            Log.d(
-                "bobobo",
-                "create OkHttpClient with address ${apiConfig.active.tag}, available=$availableAddress"
-            )
             if (!availableAddress) {
                 val proxy = apiConfig.proxies.sortedBy { it.ping }.firstOrNull()
-                Log.d("bobobo", "create OkHttpClient with proxy $proxy")
                 proxy?.also {
                     proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(it.ip, it.port)))
                     val username = it.user
@@ -63,7 +58,6 @@ class ApiOkHttpProvider @Inject constructor(
             addNetworkInterceptor {
                 val hostAddress =
                     it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
-                Log.d("boboob", "hostAddress $hostAddress")
                 /*if (!apiConfig.getPossibleIps().contains(hostAddress)) {
                     apiConfig.updateNeedConfig(true)
                     throw WrongHostException(hostAddress)
@@ -93,7 +87,4 @@ class ApiOkHttpProvider @Inject constructor(
             cookieJar(appCookieJar)
         }
         .build()
-        .also {
-            Log.e("bobobo", "ApiOkHttpProvider provide $it")
-        }
 }

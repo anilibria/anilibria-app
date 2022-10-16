@@ -30,7 +30,6 @@ class WatchingContinueViewModel(
     override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = episodesCheckerHolder
         .getEpisodes()
         .map {
-            Log.e("lalala", "episoded ${it.map { it.lastAccess }}")
             it.sortedByDescending { it.lastAccess }.map { it.releaseId }
         }
         .flatMap { ids ->

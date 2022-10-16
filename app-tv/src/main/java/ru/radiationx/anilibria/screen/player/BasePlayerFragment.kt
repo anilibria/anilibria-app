@@ -55,7 +55,6 @@ open class BasePlayerFragment : ScopedVideoFragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.e("kokoko", "onPause BasePlayerFragment, ${playerGlue?.isPlaying}")
         playerGlue?.pause()
     }
 
@@ -95,14 +94,8 @@ open class BasePlayerFragment : ScopedVideoFragment() {
 
         player.addListener(object : Player.EventListener {
 
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                super.onIsPlayingChanged(isPlaying)
-                Log.e("EventListener", "onIsPlayingChanged $isPlaying")
-            }
-
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 super.onPlayerStateChanged(playWhenReady, playbackState)
-                Log.e("EventListener", "onPlayerStateChanged $playWhenReady, ${playbackState}")
                 when (playbackState) {
                     Player.STATE_ENDED -> onCompletePlaying()
                     Player.STATE_READY -> onPreparePlaying()

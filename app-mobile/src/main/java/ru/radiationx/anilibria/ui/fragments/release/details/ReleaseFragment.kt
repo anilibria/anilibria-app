@@ -96,8 +96,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
-        Log.e("S_DEF_LOG", "ONCRETE $this")
-        Log.e("S_DEF_LOG", "ONCRETE REL $arguments, $savedInstanceState")
         arguments?.also { bundle ->
             presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
             presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
@@ -108,7 +106,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("kukeki", "onViewCreated $transitionNameLocal")
             toolbarImage.transitionName = transitionNameLocal
         }
         postponeEnterTransition()
@@ -292,7 +289,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 it.putExtra {
                     putString(ARG_SCREEN_SCOPE, screenScope)
                 }
-                Log.e("lalallala", "CustomPagerAdapter ini $newBundle")
             }
         }
 

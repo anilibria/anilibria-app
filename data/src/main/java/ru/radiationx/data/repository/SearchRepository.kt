@@ -62,10 +62,6 @@ class SearchRepository @Inject constructor(
             val updItems = mutableListOf<ReleaseUpdate>()
             it.data.forEach { item ->
                 val updItem = releaseUpdateHolder.getRelease(item.id)
-                Log.e(
-                    "lalalupdata",
-                    "${item.id}, ${item.torrentUpdate} : ${updItem?.id}, ${updItem?.timestamp}, ${updItem?.lastOpenTimestamp}"
-                )
                 if (updItem == null) {
                     newItems.add(item)
                 } else {

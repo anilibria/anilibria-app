@@ -27,7 +27,6 @@ class SuggestionsRowsViewModel(
         suggestionsController
             .resultEvent
             .lifeSubscribe {
-                Log.e("kokoko", "resultEvent $it")
                 emptyResultState.value = it.validQuery && it.items.isEmpty()
                 updateAvailableRow(RESULT_ROW_ID, it.validQuery && it.items.isNotEmpty())
                 updateAvailableRow(RECOMMENDS_ROW_ID, !it.validQuery && it.items.isEmpty())

@@ -54,8 +54,7 @@ class App : Application() {
 
     private fun initInMainProcess() {
         RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler $throwable")
-            throwable.printStackTrace()
+            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler", throwable)
         }
 
         initDependencies()
@@ -68,8 +67,6 @@ class App : Application() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
         scope.installModules(AppModule(this), DataModule(this))
-
-        Log.e("lalala", "initDependencies ${Toothpick.openScope(DI.DEFAULT_SCOPE)}")
     }
 
 

@@ -123,7 +123,6 @@ class ReleaseInteractor @Inject constructor(
         .repeatWhen { fullUpdateTrigger }
 
     fun updateItemsCache(items: List<ReleaseItem>) {
-        Log.e("kekeke", "updateItemsCache ${items.size}")
         items.forEach { release ->
             releaseItemsById[release.id] = release
             release.code?.also { code ->

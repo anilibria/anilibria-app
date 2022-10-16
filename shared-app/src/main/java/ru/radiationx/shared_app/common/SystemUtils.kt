@@ -70,7 +70,6 @@ class SystemUtils(
     }
 
     fun externalLink(url: String) {
-        Log.e("S_DEF_LOG", "externalLink $url")
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }

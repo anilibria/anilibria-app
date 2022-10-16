@@ -20,7 +20,6 @@ class DimensionHelper(
     private var lastKh = 0
 
     private val layoutListener = View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-        Log.e("S_DEF_LOG", "OnLayoutChange $left $top $right $bottom ||| $oldLeft $oldTop $oldRight $oldBottom")
         val container = this.container ?: return@OnLayoutChangeListener
         val listener = this.listener ?: return@OnLayoutChangeListener
         var anyChanges = false

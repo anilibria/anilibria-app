@@ -79,13 +79,10 @@ class MainActivity : ScopedFragmentActivity() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        Log.e("lololo", "handleIntent ${intent?.action}, $intent, ${intent?.extras?.keySet()?.joinToString()}")
         intent ?: return
         if (intent.action == SuggestionsContentProvider.INTENT_ACTION) {
             val uri = intent.data ?: return
-            Log.e("lololo", "handleIntent uri $uri")
             val id = uri.lastPathSegment?.toInt() ?: return
-            Log.e("lololo", "handleIntent id $id")
             viewModel.openRelease(id)
         }
     }

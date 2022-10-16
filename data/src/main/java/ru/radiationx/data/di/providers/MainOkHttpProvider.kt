@@ -41,7 +41,4 @@ class MainOkHttpProvider @Inject constructor(
         }
         //.cookieJar(appCookieJar)
         .build()
-        .also {
-            Log.e("bobobo", "MainOkHttpProvider provide $it")
-        }
 }

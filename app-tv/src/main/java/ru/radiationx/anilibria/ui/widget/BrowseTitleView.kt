@@ -140,7 +140,6 @@ open class BrowseTitleView @JvmOverloads constructor(
     override fun getTitleViewAdapter(): TitleViewAdapter = mTitleViewAdapter
 
     override fun focusSearch(focused: View, direction: Int): View? {
-        Log.e("kokoko","focusSearch $direction, $focused")
         if ((direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT || direction == View.FOCUS_UP || direction == View.FOCUS_DOWN)) {
             var nextView: View? = when (direction) {
                 View.FOCUS_LEFT -> findViewById(focused.nextFocusLeftId)
@@ -149,7 +148,6 @@ open class BrowseTitleView @JvmOverloads constructor(
                 View.FOCUS_UP -> findViewById(focused.nextFocusUpId)
                 else -> null
             }
-            Log.e("kokoko","focusSearch next $direction, $nextView")
             if (focused.parent == this && (nextView == null || !nextView.isVisible || !(nextView.isFocusable || nextView is ViewGroup))) {
                 nextView = when (direction) {
                     View.FOCUS_LEFT -> findViewById(focused.nextFocusUpId)
@@ -160,8 +158,6 @@ open class BrowseTitleView @JvmOverloads constructor(
                     else -> null
                 }
             }
-
-            Log.e("kokoko","focusSearch final next $direction, $nextView")
 
             if (nextView != null && (nextView.isFocusable || nextView is ViewGroup)) {
                 return nextView

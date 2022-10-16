@@ -42,7 +42,6 @@ object ToolbarHelper {
             val toolbarTitleView: TextView
             val field = target::class.java.getDeclaredField("mTitleTextView")
             field.isAccessible = true
-            Log.e("S_DEF_LOG", "" + field + " : " + target + " : " + field.get(target))
             toolbarTitleView = field.get(target) as TextView
 
             toolbarTitleView.ellipsize = TextUtils.TruncateAt.MARQUEE
@@ -52,7 +51,7 @@ object ToolbarHelper {
             toolbarTitleView.isHorizontalFadingEdgeEnabled = true
             toolbarTitleView.setFadingEdgeLength((App.instance.resources.displayMetrics.density * 8).toInt())
         } catch (e: Exception) {
-            Log.e("error", e.message)
+            Log.e("ToolbarHelper","error", e)
         }
     }
 

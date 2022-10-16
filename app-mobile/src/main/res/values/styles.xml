@@ -121,7 +121,7 @@
     <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme" />
 
     <style name="Splash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowBackground">@drawable/bg_splash_light</item>
     </style>
 
 

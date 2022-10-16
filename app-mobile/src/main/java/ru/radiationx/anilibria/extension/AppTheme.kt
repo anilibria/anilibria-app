@@ -1,34 +1,20 @@
 package ru.radiationx.anilibria.extension
 
-import androidx.annotation.StyleRes
 import biz.source_code.miniTemplator.MiniTemplator
-import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.apptheme.AppTheme
 
 
-@StyleRes
-fun AppThemeController.AppTheme.getMainStyleRes() = when (this) {
-    AppThemeController.AppTheme.LIGHT -> R.style.DayNightAppTheme_NoActionBar
-    AppThemeController.AppTheme.DARK -> R.style.DayNightAppTheme_NoActionBar
+fun AppTheme.getWebStyleType() = when (this) {
+    AppTheme.LIGHT -> "light"
+    AppTheme.DARK -> "dark"
 }
 
-@StyleRes
-fun AppThemeController.AppTheme.getPrefStyleRes() = when (this) {
-    AppThemeController.AppTheme.LIGHT -> R.style.PreferencesDayNightAppTheme
-    AppThemeController.AppTheme.DARK -> R.style.PreferencesDayNightAppTheme
+fun AppTheme.isDark() = when (this) {
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
 }
 
-fun AppThemeController.AppTheme.getWebStyleType() = when (this) {
-    AppThemeController.AppTheme.LIGHT -> "light"
-    AppThemeController.AppTheme.DARK -> "dark"
-}
-
-fun AppThemeController.AppTheme.isDark() = when (this) {
-    AppThemeController.AppTheme.LIGHT -> false
-    AppThemeController.AppTheme.DARK -> true
-}
-
-fun MiniTemplator.generateWithTheme(appTheme: AppThemeController.AppTheme): String {
+fun MiniTemplator.generateWithTheme(appTheme: AppTheme): String {
     this.setVariableOpt("app_theme", appTheme.getWebStyleType())
     return generateOutput().also {
         reset()

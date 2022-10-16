@@ -20,11 +20,9 @@ import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
@@ -78,9 +76,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     @Inject
     lateinit var dimensionsProvider: DimensionsProvider
 
-    @Inject
-    lateinit var appThemeHolder: AppThemeController
-
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
@@ -116,7 +111,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             resources.configuration.locale
         }
         injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
-        setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
         if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(

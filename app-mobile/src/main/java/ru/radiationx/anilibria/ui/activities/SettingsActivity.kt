@@ -5,11 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.apptheme.AppThemeController
-import ru.radiationx.anilibria.extension.getPrefStyleRes
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
 import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
 
 
 /**
@@ -18,12 +15,9 @@ import javax.inject.Inject
 
 class SettingsActivity : BaseActivity() {
 
-    @Inject
-    lateinit var appThemeHolder: AppThemeController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         this.injectDependencies()
-        setTheme(appThemeHolder.getTheme().getPrefStyleRes())
+        setTheme(R.style.PreferencesDayNightAppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 

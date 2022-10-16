@@ -13,9 +13,9 @@ class AnalyticsThemeProviderImpl(
         return appThemeController.getMode().toAnalytics()
     }
 
-    private fun AppThemeController.AppThemeMode.toAnalytics() = when (this) {
-        AppThemeController.AppThemeMode.LIGHT -> AnalyticsAppTheme.LIGHT
-        AppThemeController.AppThemeMode.DARK -> AnalyticsAppTheme.DARK
-        AppThemeController.AppThemeMode.SYSTEM -> AnalyticsAppTheme.SYSTEM
+    private fun AppThemeMode.toAnalytics() = when (this) {
+        AppThemeMode.LIGHT -> AnalyticsAppTheme.LIGHT
+        AppThemeMode.DARK -> AnalyticsAppTheme.DARK
+        AppThemeMode.SYSTEM -> AnalyticsAppTheme.SYSTEM
     }
 }

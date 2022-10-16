@@ -9,11 +9,4 @@ interface AppThemeController {
     fun observeMode(): Observable<AppThemeMode>
     fun getMode(): AppThemeMode
     fun setMode(mode: AppThemeMode)
-
-    enum class AppTheme { LIGHT, DARK }
-    enum class AppThemeMode(val value: String) {
-        LIGHT("light"),
-        DARK("dark"),
-        SYSTEM("system")
-    }
 }

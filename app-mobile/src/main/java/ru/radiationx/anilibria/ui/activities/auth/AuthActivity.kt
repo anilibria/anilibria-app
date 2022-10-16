@@ -6,14 +6,12 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
@@ -43,16 +41,13 @@ class AuthActivity : BaseActivity() {
     lateinit var navigationHolder: NavigatorHolder
 
     @Inject
-    lateinit var appThemeHolder: AppThemeController
-
-    @Inject
     lateinit var dimensionsProvider: DimensionsProvider
 
     private var dimensionHelper: DimensionHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
-        setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

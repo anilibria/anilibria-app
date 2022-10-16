@@ -52,62 +52,62 @@ class AppThemeControllerImpl(
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
     }
 
-    override fun observeTheme(): Observable<AppThemeController.AppTheme> = Observable
+    override fun observeTheme(): Observable<AppTheme> = Observable
         .fromCallable { getAppTheme() }
         .repeatWhen { triggerRelay }
         .distinctUntilChanged()
 
-    override fun getTheme(): AppThemeController.AppTheme = getAppTheme()
+    override fun getTheme(): AppTheme = getAppTheme()
 
-    override fun observeMode(): Observable<AppThemeController.AppThemeMode> {
+    override fun observeMode(): Observable<AppThemeMode> {
         return modeRelay.hide().distinctUntilChanged()
     }
 
-    override fun getMode(): AppThemeController.AppThemeMode {
+    override fun getMode(): AppThemeMode {
         return sharedPreferences.getString(APP_THEME_KEY, null)
             ?.let { prefMode ->
-                AppThemeController.AppThemeMode.values().find { it.value == prefMode }
+                AppThemeMode.values().find { it.value == prefMode }
             }
             ?: getLegacyThemePrefs().toMode()
     }
 
-    override fun setMode(mode: AppThemeController.AppThemeMode) {
+    override fun setMode(mode: AppThemeMode) {
         sharedPreferences.edit {
             putString(APP_THEME_KEY, mode.value)
         }
     }
 
-    private fun getLegacyThemePrefs(): AppThemeController.AppTheme {
+    private fun getLegacyThemePrefs(): AppTheme {
         val isDark = sharedPreferences.getBoolean(APP_THEME_LEGACY_KEY, false)
         return if (isDark) {
-            AppThemeController.AppTheme.DARK
+            AppTheme.DARK
         } else {
-            AppThemeController.AppTheme.LIGHT
+            AppTheme.LIGHT
         }
     }
 
-    private fun getAppTheme(): AppThemeController.AppTheme = when (getMode()) {
-        AppThemeController.AppThemeMode.LIGHT -> AppThemeController.AppTheme.LIGHT
-        AppThemeController.AppThemeMode.DARK -> AppThemeController.AppTheme.DARK
-        AppThemeController.AppThemeMode.SYSTEM -> getAppThemeByConfig()
+    private fun getAppTheme(): AppTheme = when (getMode()) {
+        AppThemeMode.LIGHT -> AppTheme.LIGHT
+        AppThemeMode.DARK -> AppTheme.DARK
+        AppThemeMode.SYSTEM -> getAppThemeByConfig()
     }
 
-    private fun getAppThemeByConfig(): AppThemeController.AppTheme {
+    private fun getAppThemeByConfig(): AppTheme {
         val currentNightMode = application.resources.configuration.uiMode.let {
             it and Configuration.UI_MODE_NIGHT_MASK
         }
         return if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            AppThemeController.AppTheme.DARK
+            AppTheme.DARK
         } else {
-            AppThemeController.AppTheme.LIGHT
+            AppTheme.LIGHT
         }
     }
 
-    private fun applyTheme(mode: AppThemeController.AppThemeMode) {
+    private fun applyTheme(mode: AppThemeMode) {
         val delegateMode = when (mode) {
-            AppThemeController.AppThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-            AppThemeController.AppThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
-            AppThemeController.AppThemeMode.SYSTEM -> {
+            AppThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            AppThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            AppThemeMode.SYSTEM -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 } else {
@@ -118,8 +118,8 @@ class AppThemeControllerImpl(
         AppCompatDelegate.setDefaultNightMode(delegateMode)
     }
 
-    private fun AppThemeController.AppTheme.toMode() = when (this) {
-        AppThemeController.AppTheme.LIGHT -> AppThemeController.AppThemeMode.LIGHT
-        AppThemeController.AppTheme.DARK -> AppThemeController.AppThemeMode.DARK
+    private fun AppTheme.toMode() = when (this) {
+        AppTheme.LIGHT -> AppThemeMode.LIGHT
+        AppTheme.DARK -> AppThemeMode.DARK
     }
 }

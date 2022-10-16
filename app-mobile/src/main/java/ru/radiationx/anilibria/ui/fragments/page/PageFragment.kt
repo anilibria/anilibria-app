@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.presentation.page.PageView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.holders.AppThemeHolder
@@ -31,6 +32,7 @@ import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.common.SystemUtils
 import java.util.*
 import javax.inject.Inject
 
@@ -109,6 +111,11 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         webView.setJsLifeCycleListener(this)
 
         webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                Utils.externalLink(url.orEmpty())
+                return true
+            }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pageAnalytics.loaded()

@@ -55,7 +55,6 @@ class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
     }
 
     private fun updateScreen(screenState: ConfigScreenState) {
-        Log.e("lalala", "updateScreen $screenState")
         configErrorText.text = screenState.status
         configActionNext.setText(
             if (screenState.hasNext) {

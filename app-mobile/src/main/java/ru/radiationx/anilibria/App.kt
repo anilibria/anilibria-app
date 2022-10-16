@@ -119,8 +119,7 @@ class App : Application() {
         }
 
         RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler $throwable")
-            throwable.printStackTrace()
+            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler", throwable)
         }
 
         initDependencies()

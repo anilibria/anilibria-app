@@ -33,13 +33,10 @@ class ConfigurationRepository @Inject constructor(
 
     fun getPingHost(host: String): Single<PingResult> = Single
         .fromCallable {
-            Log.d("kekeke", "start ping to $host")
             PingTools.doNativePing(InetAddress.getByName(host), PingOptions())
         }
         .timeout(15, TimeUnit.MILLISECONDS)
         .doOnSuccess {
-
-            Log.d("kekeke", "end ping to $host with ${it}")
             val map = if (pingRelay.hasValue()) {
                 pingRelay.value!!.toMutableMap()
             } else {

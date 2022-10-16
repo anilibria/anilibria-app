@@ -71,7 +71,6 @@ class SearchFormViewModel(
     }
 
     private fun updateDataByForm() {
-        Log.e("kokoko", "updateDataByForm $searchForm")
         yearData.value = searchForm.years?.map { it.title }.generateListTitle("Все годы")
         seasonData.value = searchForm.seasons?.map { it.title }.generateListTitle("Все сезоны")
         genreData.value = searchForm.genres?.map { it.title }.generateListTitle("Все жанры")

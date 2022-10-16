@@ -207,10 +207,6 @@ class MyPlayerActivity : BaseActivity() {
         player.setOnPreparedListener(playerListener)
         player.setOnCompletionListener(playerListener)
         player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
-            Log.e(
-                "lalka",
-                "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio"
-            )
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
         player.setAnalyticsListener(object : AnalyticsListener {
@@ -341,10 +337,6 @@ class MyPlayerActivity : BaseActivity() {
         val height = min(size.x, size.y)
         val ratio = width.toFloat() / height.toFloat()
 
-        Log.e(
-            "lululu",
-            "checkSausage $width, $height, $ratio && $notSausage = ${ratio != notSausage}"
-        )
         return notSausage != ratio
     }
 
@@ -403,7 +395,6 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun updateScale(scale: ScaleType) {
         val inMultiWindow = getInMultiWindow()
-        Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
         scaleEnabled = !inMultiWindow
         if (!inMultiWindow) {
@@ -496,7 +487,6 @@ class MyPlayerActivity : BaseActivity() {
             return
         }
         releaseInteractor.putEpisode(getEpisode().apply {
-            Log.e("SUKA", "Set posistion seek: ${position}")
             seek = position
             lastAccess = System.currentTimeMillis()
             isViewed = true
@@ -532,7 +522,6 @@ class MyPlayerActivity : BaseActivity() {
     private fun getNextEpisode(): ReleaseFull.Episode? {
         val nextId = currentEpisodeId + 1
         if (checkIndex(nextId)) {
-            Log.e("S_DEF_LOG", "NEXT INDEX $nextId")
             return getEpisode(nextId)
         }
         return null
@@ -541,7 +530,6 @@ class MyPlayerActivity : BaseActivity() {
     private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevId = currentEpisodeId - 1
         if (checkIndex(prevId)) {
-            Log.e("S_DEF_LOG", "PREV INDEX $prevId")
             return getEpisode(prevId)
         }
         return null
@@ -645,7 +633,6 @@ class MyPlayerActivity : BaseActivity() {
                 return
             }
             val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
-            Log.d("lalka", "onReceive $remoteControl")
             when (remoteControl) {
                 REMOTE_CONTROL_PLAY -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PAUSE -> controlsListener.onPlayPauseClicked()
@@ -659,7 +646,6 @@ class MyPlayerActivity : BaseActivity() {
         isInPictureInPictureMode: Boolean, newConfig: Configuration
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        Log.d("lalka", "onPictureInPictureModeChanged $isInPictureInPictureMode")
         saveEpisode()
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
@@ -714,7 +700,6 @@ class MyPlayerActivity : BaseActivity() {
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
-                    Log.e("lalka", "setSourceRectHint ${rect.flattenToString()}")
                     pictureInPictureParams?.setSourceRectHint(rect)
                 }
         }
@@ -810,7 +795,6 @@ class MyPlayerActivity : BaseActivity() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun enterPipMode() {
         if (checkPipMode()) {
-            Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
             pictureInPictureParams?.also {
                 playerAnalytics.pip(getSeekPercent())
                 videoControls?.gone()
@@ -1267,12 +1251,9 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private inner class ControlsVisibilityListener : VideoControlsVisibilityListener {
-        override fun onControlsShown() {
-            Log.e("MyPlayer", "onControlsShown $supportActionBar, ${supportActionBar?.isShowing}")
-        }
+        override fun onControlsShown() {}
 
         override fun onControlsHidden() {
-            Log.e("MyPlayer", "onControlsHidden $supportActionBar")
             goFullscreen()
         }
     }

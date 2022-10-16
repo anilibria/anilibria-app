@@ -208,8 +208,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onTap(event: MotionEvent?) {
-                Log.e("gestureLalala", "onTap, $canViewHide, $isVisible, $tapSeekStarted")
-
                 videoView?.showControls()
                 if (tapSeekStarted) {
                     event?.also { tapRelay.accept(it) }
@@ -217,11 +215,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onDoubleTap(event: MotionEvent?) {
-                Log.e(
-                    "gestureLalala",
-                    "onDoubleTap,;;; ${event?.x}:${event?.y};;;;  $canViewHide, $isVisible"
-                )
-
                 if (!tapSeekStarted) {
                     gestureSeekValue.visible()
                     tapSeekStarted = true
@@ -249,39 +242,27 @@ class VideoControlsAlib @JvmOverloads constructor(
 
                 gestureSeekValue.text = textValue
                 localSeekDelta = seekMillis
-
-                Log.e(
-                    "gestureLalala",
-                    "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition"
-                )
             }
 
             override fun onVerticalScroll(event: MotionEvent?, delta: Float) {
-                Log.e("gestureLalala", "onVerticalScroll, d=$delta, e=${event?.action}")
             }
 
             override fun onSwipeRight() {
-                Log.e("gestureLalala", "onSwipeRight")
             }
 
             override fun onSwipeLeft() {
-                Log.e("gestureLalala", "onSwipeLeft")
             }
 
             override fun onSwipeBottom() {
-                Log.e("gestureLalala", "onSwipeBottom")
             }
 
             override fun onSwipeTop() {
-                Log.e("gestureLalala", "onSwipeTop")
             }
 
             override fun onStart() {
-                Log.e("gestureLalala", "onStart")
             }
 
             override fun onEnd() {
-                Log.e("gestureLalala", "onEnd, lsd=$localSeekDelta")
                 if (swipeSeekStarted) {
                     handleEndSwipeSeek()
                 }
@@ -296,7 +277,6 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun updatePlaybackState(isPlaying: Boolean) {
         super.updatePlaybackState(isPlaying)
-        Log.e("kulolo", "updatePlaybackState $isPlaying")
         if (!isPlaying && !isLoading) {
             hideDelayed()
         }
@@ -335,11 +315,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     }
 
     override fun animateVisibility(toVisible: Boolean) {
-
-        Log.e(
-            "lalka",
-            "animateVisibility $controlsEnabled, $toVisible, ${!controlsEnabled && toVisible}"
-        )
         if (!controlsEnabled && toVisible) {
             hide()
             return

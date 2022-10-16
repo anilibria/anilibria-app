@@ -53,7 +53,6 @@ class ChangeOutlineRadius : Transition {
             override fun set(view: View, value: Float) {
                 val radius = value.coerceAtLeast(0f)
 
-                Log.e("lalala", "set $value, $radius")
                 when (view) {
                     is MaterialCardView -> view.radius = radius
                     is CardView -> view.radius = radius
@@ -74,7 +73,6 @@ class ChangeOutlineRadius : Transition {
         // Here we get the radius our transition starts with.
         // Note that this can be the starting value for both the original transition *and the reverse*
         val view = transitionValues.view
-        //Log.e("lalala", "captureStartValues ${(view as? CardView)?.radius}")
         transitionValues.values[RADIUS] = OutlineRadiusProperty.get(view)
     }
 
@@ -82,7 +80,6 @@ class ChangeOutlineRadius : Transition {
         // Here we get the radius our transition ends with.
         // Note that this can be the ending value for both the original transition *and the reverse*
         val view = transitionValues.view
-        //Log.e("lalala", "captureEndValues ${(view as? CardView)?.radius}")
         transitionValues.values[RADIUS] = OutlineRadiusProperty.get(view)
     }
 
@@ -102,10 +99,6 @@ class ChangeOutlineRadius : Transition {
         val sR = startValues.values[RADIUS] as Float
         val eR = endValues.values[RADIUS] as Float
 
-        Log.e(
-            "lalala",
-            "createAnimator $sR, $eR, ${OutlineRadiusProperty.get(view)}"
-        )
         // Animator with Property allows us to adjust properties that aren't directly (available) on the View itself
         return ObjectAnimator.ofFloat(view, OutlineRadiusProperty, sR, eR)
     }

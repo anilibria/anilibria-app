@@ -89,7 +89,6 @@ class NotificationService : FirebaseMessagingService() {
         ?: "Тело уведомления. Похоже кто-то забыл указать указать правильные данные ¯\\_(ツ)_/¯"
 
     private fun getNotification(remote: Data): Notification {
-        Log.e("NotificationService", "getNotification $remote")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CALL_CHANNEL_ID,

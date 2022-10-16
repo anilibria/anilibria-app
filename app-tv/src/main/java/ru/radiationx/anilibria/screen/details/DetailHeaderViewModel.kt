@@ -57,7 +57,6 @@ class DetailHeaderViewModel(
             //.delay(2000, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .lifeSubscribe {
-                Log.e("kekeke", "observeFull")
                 currentRelease = it
                 update(it)
                 updateProgress()
@@ -72,7 +71,6 @@ class DetailHeaderViewModel(
             .selectEpisodeRelay
             .observeOn(AndroidSchedulers.mainThread())
             .lifeSubscribe { episodeId ->
-                Log.e("kokoko", "selectEpisodeRelay $releaseId, $episodeId")
                 router.navigateTo(PlayerScreen(releaseId, episodeId))
             }
     }

@@ -33,7 +33,6 @@ class ScheduleRepository @Inject constructor(
                     val calendarDay = Calendar.getInstance().also {
                         it.timeInMillis = currentTime
                     }.get(Calendar.DAY_OF_WEEK)
-                    Log.e("ninini", "DAY ${it.day}")
                     if (it.day == calendarDay) {
 
                         val scheduleItems = it.items.map {
@@ -56,12 +55,10 @@ class ScheduleRepository @Inject constructor(
 
                             val isSameDay = scheduleDates.any { scheduleDate ->
                                 deviceDates.any { deviceDate ->
-                                    //Log.e("ninini", "check same day ${Date(scheduleDate)} >>>>> ${Date(deviceDate)}")
                                     Date(scheduleDate).isSameDay(Date(deviceDate))
                                 }
                             }
                             val isCompleted = isSameDay
-                            Log.e("ninini", "check ${Date(millisTime)} >>>>> ${Date(deviceTime)} >>>> final $isCompleted;;; ${it.releaseItem.code}")
                             it.copy(completed = isCompleted)
                         }
                         it.copy(items = scheduleItems)

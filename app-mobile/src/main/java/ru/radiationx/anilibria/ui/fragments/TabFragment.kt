@@ -81,7 +81,6 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("lalala", "onViewCreated $localScreen $this")
         if (childFragmentManager.findFragmentById(R.id.fragments_container) == null) {
             updateNavQueue()
         }
@@ -106,13 +105,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
     override fun handle(url: String): Boolean {
         val linkHandler = linkHandler
-        Log.e("lalala", "IntentHandler $localScreen try handle $url")
         linkHandler.findScreen(url)?.let {
-            Log.e("lalala", "IntentHandler $localScreen handled to screen=$it")
-            Log.e(
-                "lalala",
-                "handle state $isAdded, $isDetached, $isHidden, $isInLayout, $isMenuVisible, $isRemoving, $isResumed, $isStateSaved, $isVisible"
-            )
             navigationQueue.add(Runnable {
                 linkHandler.handle(url, router)
             })
@@ -139,11 +132,6 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
                 nextFragment: Fragment?,
                 fragmentTransaction: FragmentTransaction
             ) {
-
-                Log.e(
-                    "lalala",
-                    "setupFragmentTransaction $currentFragment, $nextFragment ;;; $screenScope ;;; shv=${(currentFragment as? SharedProvider)?.sharedViewLocal}"
-                )
                 val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
                 nextFragment?.putExtra {
                     putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
@@ -227,7 +215,6 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             sharedProvider.getSharedView()?.let {
-                Log.e("lalala", "TABFRAGMENT $it\n${it.transitionName}")
                 sharedReceiver.setTransitionName(it.transitionName)
                 fragmentTransaction.addSharedElement(it, it.transitionName)
             }

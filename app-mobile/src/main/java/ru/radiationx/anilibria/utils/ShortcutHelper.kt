@@ -53,7 +53,6 @@ object ShortcutHelper {
         url: String,
         bitmap: Bitmap
     ) {
-        Log.e("lalala", "addShortcut $id, $shortLabel, $longLabel, $url")
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)

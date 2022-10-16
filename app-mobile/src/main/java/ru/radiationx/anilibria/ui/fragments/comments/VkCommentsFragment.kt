@@ -149,12 +149,10 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     }
 
     override fun pageReloadAction() {
-        Log.d("kekeke", "pageReloadAction")
         webView.reload()
     }
 
     override fun showState(state: VkCommentsScreenState) {
-        Log.d("kekeke", "show state $state")
         val anyLoading = state.data.hasAnyLoading() || state.pageState == WebPageViewState.Loading
         progressBarWv.isVisible = anyLoading
 
@@ -207,7 +205,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     @JavascriptInterface
     fun log(string: String) {
-        Log.d("kekbody", string)
+        Log.d("VkCommentsFragment.log", string)
     }
 
     private val vkWebChromeClient = object : WebChromeClient() {
@@ -275,7 +273,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 } else {
                     url.orEmpty()
                 }
-                Log.d("kekeke", "tryInterceptAuthCheck $url -> $mobileUrl")
                 presenter.authRequest(mobileUrl)
             }
             return null
@@ -284,11 +281,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
             val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
             return if (needIntercept) {
-                Log.d("kekeke", "tryInterceptComments $url")
                 val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope)
                     .getInstance(IClient::class.java, MainClient::class.java.name)
 
-                Log.d("S_DEF_LOG", "CHANGE CSS")
                 val cssSrc = try {
                     client.get(url.orEmpty(), emptyMap()).blockingGet()
                 } catch (ex: Throwable) {
@@ -320,9 +315,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
         @Suppress("OverridingDeprecatedMember")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            Log.e("S_DEF_LOG", "OverrideUrlLoading: $url")
             val cookies = CookieManager.getInstance().getCookie(url)
-            Log.d("S_DEF_LOG", "URL COOKIES: '$cookies'")
             if (!loadingFinished) {
                 redirect = true
             }
@@ -340,19 +333,12 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             authCheckIntercepted = false
-
-
             loadingFinished = false
-            //progressBar.visibility = View.VISIBLE
-
-            Log.e("S_DEF_LOG", "ON onPageStarted")
-            //SHOW LOADING IF IT ISNT ALREADY VISIBLE
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
 
-            Log.e("S_DEF_LOG", "ON onPageFinished")
             if (!redirect) {
                 loadingFinished = true
             }

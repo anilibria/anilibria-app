@@ -43,7 +43,6 @@ class MainPagesFragment : ScopedBrowseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        Log.e("kekeke", "onCreate $this, $savedInstanceState")
         mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
         setupUi()
         showMenu()
@@ -65,10 +64,6 @@ class MainPagesFragment : ScopedBrowseFragment() {
         })
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
-            override fun onHeadersTransitionStart(withHeaders: Boolean) {
-                super.onHeadersTransitionStart(withHeaders)
-                Log.e("lalala", "onHeadersTransitionStart $withHeaders, $selectedPosition")
-            }
 
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
@@ -83,14 +78,9 @@ class MainPagesFragment : ScopedBrowseFragment() {
                 }
                 title = getSelectedTitle()
                 lastSelectedPosition = selectedPosition
-                Log.e("lalala", "onHeadersTransitionStop $withHeaders")
             }
         })
 
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
-            Log.e("lalala", "setOnItemViewSelectedListener $itemViewHolder, $item, $rowViewHolder, $row")
-
-        }
         //brandColor = resources.getColor(R.color.dark_colorAccent)
         title = getSelectedTitle()
         badgeDrawable = if (isShowingHeaders) {
@@ -130,9 +120,6 @@ class MainPagesFragment : ScopedBrowseFragment() {
             titleView.findViewById(R.id.title_badge),
             ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
         )
-
-
-        Log.e("kekeke", "onViewCreated $selectedPosition, $savedInstanceState")
     }
 
     override fun onStart() {
@@ -160,11 +147,6 @@ class MainPagesFragment : ScopedBrowseFragment() {
             menuAdapter.add(PageRow(HeaderItem(it, MainPagesFragmentFactory.variant1[it])))
         }
         //startEntranceTransition()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.e("kekeke", "onSaveInstanceState")
     }
 
     override fun setTitleView(titleView: View?) {

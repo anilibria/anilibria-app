@@ -55,10 +55,6 @@ class ReleaseRepository @Inject constructor(
         val updItems = mutableListOf<ReleaseUpdate>()
         items.forEach { item ->
             val updItem = releaseUpdateHolder.getRelease(item.id)
-            Log.e(
-                "lalalupdata",
-                "${item.id}, ${item.torrentUpdate} : ${updItem?.id}, ${updItem?.timestamp}, ${updItem?.lastOpenTimestamp}"
-            )
             if (updItem == null) {
                 newItems.add(item)
             } else {
@@ -82,7 +78,6 @@ class ReleaseRepository @Inject constructor(
             item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp
             updItem.timestamp = item.torrentUpdate
             updItem.lastOpenTimestamp = updItem.timestamp
-            Log.e("lalalupdata", "updRelease, ${updItem.id}, ${updItem.timestamp}, ${updItem.lastOpenTimestamp}")
             releaseUpdateHolder.updRelease(updItem)
         }
     }

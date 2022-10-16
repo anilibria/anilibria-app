@@ -11,15 +11,9 @@ class ApiClientWrapper @Inject constructor(
 ) : ClientWrapper(provider) {
 
     init {
-        Log.d("bobobo", "init ApiClientWrapper")
         val disposable = configChanger
                 .observeConfigChanges()
-                .doOnSubscribe {
-
-                    Log.d("boboob", "ApiClientWrapper doOnSubscribe")
-                }
                 .subscribe {
-                    Log.d("boboob", "ApiClientWrapper subscribe")
                     set(provider.get())
                 }
     }

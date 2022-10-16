@@ -39,36 +39,17 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
     public void onLongPress(MotionEvent e) {
         // Touch has been long enough to indicate a long press.
         // Does not indicate motion is complete yet (no up event necessarily)
-        //Log.i(TAG, "Long Press");
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        //Log.i(TAG, "Scroll");
-
-        //Log.d("gestureLalala_int", "" + (e1.getAction()) + " : " + e2.getAction());
-
         float deltaY = e2.getY() - e1.getY();
         float deltaX = e2.getX() - e1.getX();
 
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            //if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
-                listener.onHorizontalScroll(e2, deltaX);
-                /*if (deltaX > 0) {
-                    Log.i(TAG, "Slide right");
-                } else {
-                    Log.i(TAG, "Slide left");
-                }*/
-            //}
+            listener.onHorizontalScroll(e2, deltaX);
         } else {
-            //if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
-                listener.onVerticalScroll(e2, deltaY);
-                /*if (deltaY > 0) {
-                    Log.i(TAG, "Slide down");
-                } else {
-                    Log.i(TAG, "Slide up");
-                }*/
-            //}
+            listener.onVerticalScroll(e2, deltaY);
         }
         return false;
     }
@@ -76,7 +57,6 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         // Fling event occurred.  Notification of this one happens after an "up" event.
-        //Log.i(TAG, "Fling");
         boolean result = false;
         try {
             float diffY = e2.getY() - e1.getY();
@@ -107,12 +87,10 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
 
     @Override
     public void onShowPress(MotionEvent e) {
-        //Log.i(TAG, "Show Press");
     }
 
     @Override
     public boolean onDown(MotionEvent e) {
-        //Log.i(TAG, "Down");
         return false;
     }
 

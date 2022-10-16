@@ -119,7 +119,6 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("S_DEF_LOG", "TEST onViewCreated $this")
         searchView = SearchView(coordinator_layout.context)
         refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
         recyclerView.apply {

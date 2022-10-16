@@ -69,6 +69,10 @@
 
     <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme" />
 
+    <style name="Splash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_dark</item>
+    </style>
+
     <style name="DayNightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>
         <item name="colorAccent">@color/white</item>

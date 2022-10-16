@@ -5,6 +5,9 @@ import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.MobileCheckerSources
+import ru.radiationx.anilibria.apptheme.AnalyticsThemeProviderImpl
+import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.apptheme.AppThemeControllerImpl
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
@@ -16,6 +19,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
+import ru.radiationx.data.analytics.profile.AnalyticsThemeProvider
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.data.migration.MigrationExecutor
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
@@ -44,6 +48,10 @@ class AppModule(context: Context) : Module() {
         bind(MigrationExecutor::class.java).to(AppMigrationExecutor::class.java).singleton()
 
         bind(SystemMessenger::class.java).singleton()
+
+        bind(AppThemeController::class.java).to(AppThemeControllerImpl::class.java).singleton()
+        bind(AnalyticsThemeProvider::class.java).to(AnalyticsThemeProviderImpl::class.java)
+            .singleton()
 
         val ciceroneHolder = CiceroneHolder()
         bind(CiceroneHolder::class.java).toInstance(ciceroneHolder)

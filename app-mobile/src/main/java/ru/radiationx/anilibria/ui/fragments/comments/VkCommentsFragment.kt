@@ -29,7 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -54,7 +54,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
     private var currentVkCommentsState: VkCommentsState? = null
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     private val disposables = CompositeDisposable()
 

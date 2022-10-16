@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -29,7 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -79,7 +78,7 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
     )
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     private val searchAdapter = FastSearchAdapter(
         clickListener = { searchPresenter.onItemClick(it) },

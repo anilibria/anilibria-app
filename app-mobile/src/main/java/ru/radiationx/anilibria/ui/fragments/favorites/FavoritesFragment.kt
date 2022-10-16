@@ -29,7 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -63,7 +63,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
     private var searchView: SearchMenuItem? = null
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     @InjectPresenter
     lateinit var presenter: FavoritesPresenter

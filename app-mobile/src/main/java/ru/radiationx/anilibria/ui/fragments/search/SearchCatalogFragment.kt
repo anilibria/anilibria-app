@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -25,7 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
@@ -69,7 +68,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
     )
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     private val fastSearchAdapter = FastSearchAdapter(
         clickListener = { searchPresenter.onItemClick(it) },

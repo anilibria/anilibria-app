@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
@@ -43,7 +43,7 @@ class AuthActivity : BaseActivity() {
     lateinit var navigationHolder: NavigatorHolder
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     @Inject
     lateinit var dimensionsProvider: DimensionsProvider

@@ -10,7 +10,7 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class AnalyticsProfileDataSource(
     private val preferencesHolder: PreferencesHolder,
-    private val appThemeHolder: AppThemeHolder,
+    private val analyticsThemeProvider: AnalyticsThemeProvider,
     private val apiConfig: ApiConfig,
     private val userHolder: UserHolder,
     private val historyHolder: HistoryHolder,
@@ -25,7 +25,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getAppTheme(): Single<String> = single {
-        appThemeHolder.getTheme().toAnalyticsAppTheme().value
+        analyticsThemeProvider.getTheme().value
     }
 
     fun getQualitySettings(): Single<String> = single {

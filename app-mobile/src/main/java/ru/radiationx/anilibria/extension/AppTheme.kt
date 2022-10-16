@@ -3,32 +3,32 @@ package ru.radiationx.anilibria.extension
 import androidx.annotation.StyleRes
 import biz.source_code.miniTemplator.MiniTemplator
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 
 
 @StyleRes
-fun AppThemeHolder.AppTheme.getMainStyleRes() = when (this) {
-    AppThemeHolder.AppTheme.LIGHT -> R.style.LightAppTheme_NoActionBar
-    AppThemeHolder.AppTheme.DARK -> R.style.DarkAppTheme_NoActionBar
+fun AppThemeController.AppTheme.getMainStyleRes() = when (this) {
+    AppThemeController.AppTheme.LIGHT -> R.style.DayNightAppTheme_NoActionBar
+    AppThemeController.AppTheme.DARK -> R.style.DayNightAppTheme_NoActionBar
 }
 
 @StyleRes
-fun AppThemeHolder.AppTheme.getPrefStyleRes() = when (this) {
-    AppThemeHolder.AppTheme.LIGHT -> R.style.PreferencesLightAppTheme
-    AppThemeHolder.AppTheme.DARK -> R.style.PreferencesDarkAppTheme
+fun AppThemeController.AppTheme.getPrefStyleRes() = when (this) {
+    AppThemeController.AppTheme.LIGHT -> R.style.PreferencesDayNightAppTheme
+    AppThemeController.AppTheme.DARK -> R.style.PreferencesDayNightAppTheme
 }
 
-fun AppThemeHolder.AppTheme.getWebStyleType() = when (this) {
-    AppThemeHolder.AppTheme.LIGHT -> "light"
-    AppThemeHolder.AppTheme.DARK -> "dark"
+fun AppThemeController.AppTheme.getWebStyleType() = when (this) {
+    AppThemeController.AppTheme.LIGHT -> "light"
+    AppThemeController.AppTheme.DARK -> "dark"
 }
 
-fun AppThemeHolder.AppTheme.isDark() = when (this) {
-    AppThemeHolder.AppTheme.LIGHT -> false
-    AppThemeHolder.AppTheme.DARK -> true
+fun AppThemeController.AppTheme.isDark() = when (this) {
+    AppThemeController.AppTheme.LIGHT -> false
+    AppThemeController.AppTheme.DARK -> true
 }
 
-fun MiniTemplator.generateWithTheme(appTheme: AppThemeHolder.AppTheme): String {
+fun MiniTemplator.generateWithTheme(appTheme: AppThemeController.AppTheme): String {
     this.setVariableOpt("app_theme", appTheme.getWebStyleType())
     return generateOutput().also {
         reset()

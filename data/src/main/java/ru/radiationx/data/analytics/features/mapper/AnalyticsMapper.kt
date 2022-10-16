@@ -1,15 +1,8 @@
 package ru.radiationx.data.analytics.features.mapper
 
 import ru.radiationx.data.analytics.features.model.*
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.AuthState
-
-fun AppThemeHolder.AppTheme.toAnalyticsAppTheme(): AnalyticsAppTheme = when (this) {
-    AppThemeHolder.AppTheme.LIGHT -> AnalyticsAppTheme.LIGHT
-    AppThemeHolder.AppTheme.DARK -> AnalyticsAppTheme.DARK
-    else -> AnalyticsAppTheme.UNKNOWN
-}
 
 fun AuthState.toAnalyticsAuthState(): AnalyticsAuthState = when (this) {
     AuthState.NO_AUTH -> AnalyticsAuthState.NO

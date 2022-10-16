@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -21,6 +20,7 @@ import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
@@ -39,7 +39,6 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.data.entity.common.AuthState
@@ -55,7 +54,6 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -81,7 +79,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     lateinit var dimensionsProvider: DimensionsProvider
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
@@ -95,8 +93,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private val tabs = mutableListOf<Tab>()
 
     private val tabsStack = mutableListOf<String>()
-
-    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
     private var dimensionHelper: DimensionHelper? = null
 
@@ -120,8 +116,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             resources.configuration.locale
         }
         injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
-        currentAppTheme = appThemeHolder.getTheme()
-        setTheme(currentAppTheme.getMainStyleRes())
+        setTheme(appThemeHolder.getTheme().getMainStyleRes())
         super.onCreate(savedInstanceState)
 
         if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(
@@ -222,17 +217,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             mBuilder.setDefaults(defaults)
 
             mNotificationManager.notify(update.code, mBuilder.build())
-        }
-    }
-
-    override fun changeTheme(appTheme: AppThemeHolder.AppTheme) {
-        if (currentAppTheme != appTheme) {
-            currentAppTheme = appTheme
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                Handler().post { recreate() }
-            } else {
-                recreate()
-            }
         }
     }
 

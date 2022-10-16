@@ -17,13 +17,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/LightAppTheme"
+        android:theme="@style/DayNightAppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
             android:name=".ui.activities.main.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Splash.LightAppTheme"
+            android:theme="@style/Splash.DayNightAppTheme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
 
         <activity
             android:name=".ui.activities.main.IntentActivity"
-            android:theme="@style/Splash.LightAppTheme">
+            android:theme="@style/Splash.DayNightAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -67,11 +67,11 @@
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="Настройки"
-            android:theme="@style/PreferencesLightAppTheme" />
+            android:theme="@style/PreferencesDayNightAppTheme" />
 
         <activity
             android:name=".ui.activities.auth.AuthActivity"
-            android:theme="@style/LightAppTheme.NoActionBar"
+            android:theme="@style/DayNightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
@@ -89,11 +89,11 @@
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
-            android:theme="@style/LightAppTheme.NoActionBar" />
+            android:theme="@style/DayNightAppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.CountryBlockedActivity"
-            android:theme="@style/Splash.LightAppTheme" />
+            android:theme="@style/Splash.DayNightAppTheme" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

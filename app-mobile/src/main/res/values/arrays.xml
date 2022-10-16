@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="entries_theme_mode">
+        <item>@string/pref_value_theme_mode_light</item>
+        <item>@string/pref_value_theme_mode_dark</item>
+        <item>@string/pref_value_theme_mode_system</item>
+    </string-array>
+
+    <string-array name="entry_values_theme_mode">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+
+</resources>

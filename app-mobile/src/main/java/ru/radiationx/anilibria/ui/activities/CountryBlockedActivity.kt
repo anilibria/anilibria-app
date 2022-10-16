@@ -9,17 +9,17 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder
 import javax.inject.Inject
 
 class CountryBlockedActivity : BaseActivity() {
 
-    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
+    private lateinit var currentAppTheme: AppThemeController.AppTheme
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeHolder: AppThemeController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()

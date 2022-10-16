@@ -4,12 +4,9 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
 import biz.source_code.miniTemplator.MiniTemplator
@@ -20,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.plugins.RxJavaPlugins
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
@@ -95,7 +93,16 @@ class App : Application() {
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
 
-            registerActivityLifecycleCallbacks(object :SimpleActivityLifecycleCallbacks(){
+            val appThemeController = DI.get(AppThemeController::class.java)
+
+            appThemeController.observeTheme().doOnEach {
+                Log.e("kekeke", "observeTheme $it")
+            }.subscribe()
+            appThemeController.observeMode().doOnEach {
+                Log.e("kekeke", "observeMode $it")
+            }.subscribe()
+
+            registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
                 override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
                     super.onActivityCreated(p0, p1)
                     val timeToActivity = timeCounter.elapsed()
@@ -108,7 +115,8 @@ class App : Application() {
 
     private fun initYandexAppMetrica() {
         //if (BuildConfig.DEBUG) return
-        val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
+        val config =
+            YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
     }
@@ -204,7 +212,8 @@ class App : Application() {
                 MiniTemplator.Builder().build(stream, charset)
             } catch (e: Exception) {
                 e.printStackTrace()
-                MiniTemplator.Builder().build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
+                MiniTemplator.Builder()
+                    .build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
             }
         } catch (e: IOException) {
             e.printStackTrace()

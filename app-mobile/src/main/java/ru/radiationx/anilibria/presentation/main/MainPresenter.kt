@@ -9,7 +9,7 @@ import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.datasource.holders.AppThemeHolder
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
@@ -24,22 +24,22 @@ import javax.inject.Inject
  */
 @InjectViewState
 class MainPresenter @Inject constructor(
-        private val router: Router,
-        private val systemMessenger: SystemMessenger,
-        private val errorHandler: IErrorHandler,
-        private val authRepository: AuthRepository,
-        private val donationRepository: DonationRepository,
-        private val appThemeHolder: AppThemeHolder,
-        private val apiConfig: ApiConfig,
-        private val schedulers: SchedulersProvider,
-        private val localeHolder: LocaleHolder,
-        private val analyticsProfile: AnalyticsProfile,
-        private val authMainAnalytics: AuthMainAnalytics,
-        private val catalogAnalytics: CatalogAnalytics,
-        private val favoritesAnalytics: FavoritesAnalytics,
-        private val feedAnalytics: FeedAnalytics,
-        private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
-        private val otherAnalytics: OtherAnalytics
+    private val router: Router,
+    private val systemMessenger: SystemMessenger,
+    private val errorHandler: IErrorHandler,
+    private val authRepository: AuthRepository,
+    private val donationRepository: DonationRepository,
+    private val appThemeHolder: AppThemeController,
+    private val apiConfig: ApiConfig,
+    private val schedulers: SchedulersProvider,
+    private val localeHolder: LocaleHolder,
+    private val analyticsProfile: AnalyticsProfile,
+    private val authMainAnalytics: AuthMainAnalytics,
+    private val catalogAnalytics: CatalogAnalytics,
+    private val favoritesAnalytics: FavoritesAnalytics,
+    private val feedAnalytics: FeedAnalytics,
+    private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
+    private val otherAnalytics: OtherAnalytics
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -49,10 +49,6 @@ class MainPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         analyticsProfile.update()
-        appThemeHolder
-                .observeTheme()
-                .subscribe { viewState.changeTheme(it) }
-                .addToDisposable()
 
         apiConfig
                 .observeNeedConfig()

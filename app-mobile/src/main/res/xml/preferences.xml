@@ -66,21 +66,6 @@
             android:layout="@layout/preference_custom"
             android:title="Проверить обновления" />
 
-        <Preference
-            android:key="about.app_other_apps"
-            android:layout="@layout/preference_custom"
-            android:title="Наши приложения" />
-
-        <Preference
-            android:key="about.app_topic_4pda"
-            android:layout="@layout/preference_custom"
-            android:title="Обсуждение на 4PDA" />
-
-        <!--setting <Preference
-             android:key="about.app_play_market"
-             android:layout="@layout/preference_custom"
-             android:title="Play Market" />-->
-
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_bottom" />
 </PreferenceScreen>

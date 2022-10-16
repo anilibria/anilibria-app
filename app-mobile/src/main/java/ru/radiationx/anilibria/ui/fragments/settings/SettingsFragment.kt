@@ -152,32 +152,6 @@ class SettingsFragment : BaseSettingFragment() {
             summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
         }
 
-        findPreference<Preference>("about.app_other_apps")?.apply {
-            icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
-            setOnPreferenceClickListener {
-                settingsAnalytics.otherAppsClick()
-                Utils.externalLink("https://anilibria.app/")
-                false
-            }
-        }
-
-        findPreference<Preference>("about.app_topic_4pda")?.apply {
-            icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
-            setOnPreferenceClickListener {
-                settingsAnalytics.fourPdaClick()
-                Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
-                false
-            }
-        }
-
-        /*findPreference("about.app_play_market")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_market)
-            setOnPreferenceClickListener { preference ->
-                Utils.externalLink("https://play.google.com/store/apps/details?id=ru.radiationx.anilibria")
-                false
-            }
-        }*/
-
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
                 settingsAnalytics.checkUpdatesClick()

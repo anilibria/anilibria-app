@@ -7,7 +7,10 @@ import ru.radiationx.shared_app.codecs.types.KnownCodec
 object MediaCodecsFinder {
 
     private val nameRegex by lazy {
-        Regex("(?:\\w+\\.\\w+\\.([\\w\\.]+?)\\.(?:decoder|encoder)(?:\\.(\\w+))?)")
+        Regex(
+            "(?:\\w+\\.\\w+\\.([\\w\\.]+?)\\.(?:decoder|encoder)(?:\\.(\\w+))?)",
+            RegexOption.IGNORE_CASE
+        )
     }
 
     private val typeRegex by lazy {

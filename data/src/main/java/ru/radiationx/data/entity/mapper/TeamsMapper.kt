@@ -1,5 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
+import android.graphics.Color
 import ru.radiationx.data.entity.app.team.TeamResponse
 import ru.radiationx.data.entity.app.team.TeamRoleResponse
 import ru.radiationx.data.entity.app.team.TeamUserResponse
@@ -29,5 +30,5 @@ fun TeamUserResponse.toDomain() = TeamUser(
 
 fun TeamRoleResponse.toDomain() = TeamRole(
     title = title,
-    color = color
+    color = color?.let { Color.parseColor(it) }
 )

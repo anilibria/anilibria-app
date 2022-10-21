@@ -6,10 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_team_section.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.presentation.teams.TeamSectionState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.anilibria.ui.fragments.teams.TeamSectionListItem
-import ru.radiationx.data.entity.domain.team.Team
 
 class TeamSectionDelegate :
     AppAdapterDelegate<TeamSectionListItem, ListItem, TeamSectionDelegate.ViewHolder>(
@@ -25,7 +24,7 @@ class TeamSectionDelegate :
         override val containerView: View,
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(data: Team) {
+        fun bind(data: TeamSectionState) {
             tvTeamTitle.text = data.title
             tvTeamDesc.text = data.description
             tvTeamDesc.isVisible = data.description != null

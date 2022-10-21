@@ -126,9 +126,9 @@ object Screens {
         }
     }
 
-    class Teams : BaseAppScreen() {
+    class Teams(private val query: String? = null) : BaseAppScreen() {
         override fun getFragment(): Fragment {
-            return TeamsFragment()
+            return TeamsFragment.newInstance(query)
         }
     }
 }

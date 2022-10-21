@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
 import kotlinx.android.synthetic.main.fragment_teams.*
@@ -11,14 +12,25 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.presentation.teams.TeamState
 import ru.radiationx.anilibria.presentation.teams.TeamsPresenter
 import ru.radiationx.anilibria.presentation.teams.TeamsView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.data.entity.domain.team.Teams
+import ru.radiationx.shared.ktx.android.putExtra
 
 class TeamsFragment : BaseFragment(), TeamsView {
+
+    companion object {
+        private const val ARG_QUERY = "arg_query"
+
+        fun newInstance(query: String?) = TeamsFragment().putExtra {
+            putString(ARG_QUERY, query)
+        }
+    }
+
+    private val argQuery by lazy { requireArguments().getString(ARG_QUERY) }
 
     @InjectPresenter
     lateinit var presenter: TeamsPresenter
@@ -46,6 +58,13 @@ class TeamsFragment : BaseFragment(), TeamsView {
             layoutManager = LinearLayoutManager(context)
             disableItemChangeAnimation()
         }
+
+        btSearchClear.setOnClickListener { etSearch.text?.clear() }
+        etSearch.doOnTextChanged { text, _, _, _ ->
+            presenter.setQueryText(text?.toString().orEmpty())
+            btSearchClear.isVisible = text?.isNotEmpty() == true
+        }
+        etSearch.setText(argQuery)
     }
 
     override fun onBackPressed(): Boolean {
@@ -59,7 +78,7 @@ class TeamsFragment : BaseFragment(), TeamsView {
         rvTeams.updatePadding(bottom = dimensions.navigationBar)
     }
 
-    override fun showData(data: Teams) {
+    override fun showData(data: List<TeamState>) {
         contentAdapter.bindState(data)
     }
 

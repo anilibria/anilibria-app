@@ -1,10 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.teams.adapter
 
+import ru.radiationx.anilibria.presentation.teams.TeamState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.teams.TeamSectionListItem
-import ru.radiationx.anilibria.ui.fragments.teams.TeamUserListItem
-import ru.radiationx.data.entity.domain.team.Teams
 
 class TeamsAdapter : ListItemAdapter() {
 
@@ -13,10 +11,10 @@ class TeamsAdapter : ListItemAdapter() {
         addDelegate(TeamUserDelegate())
     }
 
-    fun bindState(data: Teams) {
+    fun bindState(data: List<TeamState>) {
         val newItems = mutableListOf<ListItem>()
-        data.teams.forEach { team ->
-            newItems.add(TeamSectionListItem(team))
+        data.forEach { team ->
+            newItems.add(TeamSectionListItem(team.section))
             team.users.forEach { user ->
                 newItems.add(TeamUserListItem(user))
             }

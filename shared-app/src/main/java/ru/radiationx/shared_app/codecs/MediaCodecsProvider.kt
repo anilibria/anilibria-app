@@ -2,10 +2,8 @@ package ru.radiationx.shared_app.codecs
 
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
-import ru.radiationx.shared_app.codecs.types.Codec
-import ru.radiationx.shared_app.codecs.types.CodecOutputType
-import ru.radiationx.shared_app.codecs.types.CodecProcessingType
-import ru.radiationx.shared_app.codecs.types.CodecType
+import android.os.Build
+import ru.radiationx.shared_app.codecs.types.*
 
 object MediaCodecsProvider {
 
@@ -18,7 +16,12 @@ object MediaCodecsProvider {
                 firstMimeType.startsWith("video") -> CodecOutputType.VIDEO
                 else -> CodecOutputType.UNKNOWN
             }
-            val processingType = if (isSoftwareCodec(it.name)) {
+            val isSoftwareCodec = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                !it.isHardwareAccelerated
+            } else {
+                isSoftwareCodec(it.name)
+            }
+            val processingType = if (isSoftwareCodec) {
                 CodecProcessingType.SOFTWARE
             } else {
                 CodecProcessingType.HARDWARE
@@ -40,9 +43,6 @@ object MediaCodecsProvider {
     }
 
     private fun isSoftwareCodec(name: String): Boolean {
-        return name.startsWith("OMX.google.")
-                || name.startsWith("c2.android.")
-                || (!name.startsWith("OMX.")
-                && !name.startsWith("c2."))
+        return name.startsWith("OMX.google.") || name.startsWith("c2.android.")
     }
 }

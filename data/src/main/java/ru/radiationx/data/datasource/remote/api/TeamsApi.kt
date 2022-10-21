@@ -26,7 +26,7 @@ class TeamsApi(
 
     fun getTeams(): Single<TeamsResponse> {
         val args: Map<String, String> = mapOf(
-            "query" to "donation_details"
+            "query" to "teams"
         )
         return client.post(apiConfig.apiUrl, args)
             .compose(ApiResponse.fetchResult<JSONObject>())

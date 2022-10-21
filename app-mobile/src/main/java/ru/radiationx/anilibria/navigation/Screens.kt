@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.ui.fragments.page.PageFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
+import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.data.entity.app.release.ReleaseItem
 
@@ -122,6 +123,12 @@ object Screens {
     class DonationDetail : BaseAppScreen() {
         override fun getFragment(): Fragment {
             return DonationDetailFragment()
+        }
+    }
+
+    class Teams : BaseAppScreen() {
+        override fun getFragment(): Fragment {
+            return TeamsFragment()
         }
     }
 }

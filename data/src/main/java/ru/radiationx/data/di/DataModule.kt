@@ -108,6 +108,7 @@ class DataModule(context: Context) : Module() {
         bind(FeedApi::class.java).singleton()
         bind(MenuApi::class.java).singleton()
         bind(DonationApi::class.java).singleton()
+        bind(TeamsApi::class.java).singleton()
 
         bind(AuthRepository::class.java).singleton()
         bind(ReleaseRepository::class.java).singleton()
@@ -122,6 +123,7 @@ class DataModule(context: Context) : Module() {
         bind(FeedRepository::class.java).singleton()
         bind(MenuRepository::class.java).singleton()
         bind(DonationRepository::class.java).singleton()
+        bind(TeamsRepository::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.util.Log
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
@@ -435,12 +434,21 @@ class ReleaseInfoPresenter @Inject constructor(
         router.navigateTo(Screens.Auth())
     }
 
-    fun openSearch(genre: String) {
-        currentData?.also {
-            releaseAnalytics.genreClick(it.id)
+    fun openSearch(tag: String, index: Int) {
+        val data = currentData ?: return
+        when (tag) {
+            ReleaseInfoState.TAG_GENRE -> {
+                val genre = data.genres.getOrNull(index) ?: return
+                releaseAnalytics.genreClick(data.id)
+                catalogAnalytics.open(AnalyticsConstants.screen_release)
+                router.navigateTo(Screens.ReleasesSearch(genre))
+            }
+            ReleaseInfoState.TAG_VOICE -> {
+                val voice = data.voices.getOrNull(index) ?: return
+                releaseAnalytics.genreClick(data.id)
+                router.navigateTo(Screens.Teams(voice))
+            }
         }
-        catalogAnalytics.open(AnalyticsConstants.screen_release)
-        router.navigateTo(Screens.ReleasesSearch(genre))
     }
 
     fun onDownloadLinkSelected(url: String) {

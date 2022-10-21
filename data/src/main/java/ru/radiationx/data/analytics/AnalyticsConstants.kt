@@ -95,6 +95,7 @@ object AnalyticsConstants {
     const val release_description_link = "release_description_link"
     const val release_schedule_click = "release_schedule_click"
     const val release_genre_click = "release_genre_click"
+    const val release_voice_click = "release_voice_click"
     const val release_favorite_add = "release_favorite_add"
     const val release_favorite_remove = "release_favorite_remove"
     const val release_comments_click = "release_comments_click"

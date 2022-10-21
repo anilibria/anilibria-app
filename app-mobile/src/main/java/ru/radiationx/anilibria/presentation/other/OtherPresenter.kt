@@ -78,7 +78,7 @@ class OtherPresenter @Inject constructor(
         )
 
         allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
-        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
+        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Команда проекта", R.drawable.ic_account_multiple))
         allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
@@ -132,7 +132,7 @@ class OtherPresenter @Inject constructor(
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
                 pageAnalytics.open(AnalyticsConstants.screen_other, PageApi.PAGE_PATH_TEAM)
-                router.navigateTo(Screens.Teams("стажер"))
+                router.navigateTo(Screens.Teams())
             }
             MENU_DONATE -> {
                 otherAnalytics.donateClick()

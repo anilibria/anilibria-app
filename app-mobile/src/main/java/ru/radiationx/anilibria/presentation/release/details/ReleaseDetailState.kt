@@ -43,7 +43,12 @@ data class ReleaseInfoState(
     val isOngoing: Boolean,
     val announce: String?,
     val favorite: ReleaseFavoriteState
-)
+){
+    companion object{
+        const val TAG_GENRE = "genre"
+        const val TAG_VOICE = "voice"
+    }
+}
 
 data class ReleaseFavoriteState(
     val rating: String,

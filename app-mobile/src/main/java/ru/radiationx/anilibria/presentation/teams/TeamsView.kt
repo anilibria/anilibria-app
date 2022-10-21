@@ -8,7 +8,7 @@ import moxy.viewstate.strategy.StateStrategyType
 interface TeamsView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showData(data: List<TeamState>)
+    fun showData(data: TeamsState)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setLoading(isLoading: Boolean)

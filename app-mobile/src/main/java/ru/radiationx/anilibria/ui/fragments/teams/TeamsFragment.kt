@@ -12,8 +12,8 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.teams.TeamState
 import ru.radiationx.anilibria.presentation.teams.TeamsPresenter
+import ru.radiationx.anilibria.presentation.teams.TeamsState
 import ru.radiationx.anilibria.presentation.teams.TeamsView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
@@ -38,7 +38,9 @@ class TeamsFragment : BaseFragment(), TeamsView {
     @ProvidePresenter
     fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java, screenScope)
 
-    private val contentAdapter = TeamsAdapter()
+    private val contentAdapter = TeamsAdapter {
+        presenter.onHeaderActionClick()
+    }
 
     override fun getBaseLayout(): Int = R.layout.fragment_teams
 
@@ -77,7 +79,7 @@ class TeamsFragment : BaseFragment(), TeamsView {
         teamsToolbar.updatePadding(top = dimensions.statusBar)
     }
 
-    override fun showData(data: List<TeamState>) {
+    override fun showData(data: TeamsState) {
         contentAdapter.bindState(data)
     }
 

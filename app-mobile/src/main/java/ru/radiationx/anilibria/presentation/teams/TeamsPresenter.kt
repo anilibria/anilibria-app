@@ -4,8 +4,10 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.entity.common.DataWrapper
+import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -13,7 +15,8 @@ import toothpick.InjectConstructor
 class TeamsPresenter(
     router: Router,
     private val repository: TeamsRepository,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<TeamsView>(router) {
 
     private val currentDataRelay =
@@ -50,9 +53,6 @@ class TeamsPresenter(
                     teamStates.filterBy(query)
                 }
             }
-            .map { teamStates ->
-                teamStates.filter { it.users.isNotEmpty() }
-            }
             .subscribe {
                 viewState.showData(it)
             }
@@ -63,7 +63,17 @@ class TeamsPresenter(
         queryRelay.accept(queryRelay.value!!.copy(text = text))
     }
 
-    private fun Teams.toState(): List<TeamState> = teams.map { team ->
+    fun onHeaderActionClick() {
+        systemUtils.externalLink("https://t.me/joinlibria_bot")
+    }
+
+    private fun Teams.toState(): TeamsState = TeamsState(
+        false,
+        headerRoles,
+        teams.toState()
+    )
+
+    private fun List<Team>.toState(): List<TeamState> = map { team ->
         val section = TeamSectionState(team.title, team.description)
         val users = team.users.map { user ->
             val tags = mutableListOf<String>().apply {
@@ -84,8 +94,8 @@ class TeamsPresenter(
         TeamState(section, users)
     }
 
-    private fun List<TeamState>.filterBy(query: Query): List<TeamState> {
-        return map { teamState ->
+    private fun TeamsState.filterBy(query: Query): TeamsState {
+        val newTeams = teams.map { teamState ->
             val newUsers = teamState.users
                 .filter { user ->
                     query.text.isEmpty()
@@ -94,7 +104,10 @@ class TeamsPresenter(
                             || user.tags.any { it.contains(query.text, true) }
                 }
             teamState.copy(users = newUsers)
+        }.filter {
+            it.users.isNotEmpty()
         }
+        return copy(teams = newTeams, hasQuery = query.text.isNotEmpty())
     }
 
     private data class Query(

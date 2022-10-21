@@ -1,5 +1,13 @@
 package ru.radiationx.anilibria.presentation.teams
 
+import ru.radiationx.data.entity.domain.team.TeamRole
+
+data class TeamsState(
+    val hasQuery: Boolean = false,
+    val headerRoles: List<TeamRole>,
+    val teams: List<TeamState>
+)
+
 data class TeamState(
     val section: TeamSectionState,
     val users: List<TeamUserState>

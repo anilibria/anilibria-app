@@ -24,12 +24,19 @@ class TeamsPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         repository
-            .getTeams()
+            .requestUpdate()
+            .subscribe({}, {
+                it.printStackTrace()
+            })
+            .addToDisposable()
+        repository
+            .observeTeams()
             .doOnSubscribe { viewState.setLoading(true) }
-            .doFinally { viewState.setLoading(false) }
             .subscribe({
+                viewState.setLoading(false)
                 currentDataRelay.accept(DataWrapper(it))
             }, {
+                viewState.setLoading(false)
                 errorHandler.handle(it)
             })
             .addToDisposable()

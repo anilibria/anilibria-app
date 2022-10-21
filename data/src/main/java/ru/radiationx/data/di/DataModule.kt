@@ -59,6 +59,7 @@ class DataModule(context: Context) : Module() {
         bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
         bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
         bind(DonationHolder::class.java).to(DonationStorage::class.java).singleton()
+        bind(TeamsHolder::class.java).to(TeamsStorage::class.java).singleton()
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
         bind(UserHolder::class.java).to(UserStorage::class.java).singleton()

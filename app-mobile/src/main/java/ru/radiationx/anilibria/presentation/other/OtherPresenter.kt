@@ -131,7 +131,6 @@ class OtherPresenter @Inject constructor(
             }
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
-                pageAnalytics.open(AnalyticsConstants.screen_other, PageApi.PAGE_PATH_TEAM)
                 router.navigateTo(Screens.Teams())
             }
             MENU_DONATE -> {

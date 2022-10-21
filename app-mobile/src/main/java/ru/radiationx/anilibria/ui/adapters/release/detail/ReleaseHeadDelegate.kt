@@ -38,6 +38,8 @@ class ReleaseHeadDelegate(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         init {
+            val tagsRegex = Regex("(\\w+)_(\\d+)")
+
             full_fav_btn.setOnClickListener {
                 itemListener.onClickFav()
             }
@@ -45,7 +47,10 @@ class ReleaseHeadDelegate(
                 itemListener.onScheduleClick(it)
             }
             full_info.movementMethod = LinkMovementMethod {
-                itemListener.onClickTag(it)
+                val match = tagsRegex.find(it) ?: return@LinkMovementMethod true
+                val tag = match.groupValues[1]
+                val index = match.groupValues[2].toInt()
+                itemListener.onClickGenre(tag, index)
                 true
             }
             full_announce.movementMethod = LinkMovementMethod {
@@ -115,7 +120,7 @@ class ReleaseHeadDelegate(
     interface Listener {
         fun onClickSomeLink(url: String)
 
-        fun onClickTag(text: String)
+        fun onClickGenre(tag: String, index: Int)
 
         fun onClickFav()
 

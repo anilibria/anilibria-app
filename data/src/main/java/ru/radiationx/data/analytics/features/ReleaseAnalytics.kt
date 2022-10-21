@@ -181,6 +181,13 @@ class ReleaseAnalytics(
         )
     }
 
+    fun voiceClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_voice_click,
+            releaseId.toIdParam()
+        )
+    }
+
     fun favoriteAdd(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_favorite_add,

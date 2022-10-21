@@ -6,7 +6,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -480,8 +479,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             presenter.onClickLink(url)
         }
 
-        override fun onClickTag(text: String) {
-            presenter.openSearch(text)
+        override fun onClickGenre(tag: String, index: Int) {
+            presenter.openSearch(tag, index)
         }
 
         override fun onClickFav() {

@@ -27,12 +27,17 @@ fun FavoriteInfo.toState() = ReleaseFavoriteState(
 
 fun ReleaseFull.toInfoState(): ReleaseInfoState {
     val seasonsHtml = "<b>Год:</b> " + seasons.joinToString(", ")
-    val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ")
+    val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ") {
+        val index = voices.indexOf(it)
+        "<a href=\"${ReleaseInfoState.TAG_VOICE}_$index\">${it}</a>"
+    }
     val typesHtml = "<b>Тип:</b> " + types.joinToString(", ")
     val releaseStatus = status ?: "Не указано"
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
-    val genresHtml =
-        "<b>Жанр:</b> " + genres.joinToString(", ") { "<a href=\"$it\">${it.capitalize()}</a>" }
+    val genresHtml = "<b>Жанр:</b> " + genres.joinToString(", ") {
+        val index = genres.indexOf(it)
+        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalize()}</a>"
+    }
     val arrHtml = arrayOf(
         seasonsHtml,
         voicesHtml,

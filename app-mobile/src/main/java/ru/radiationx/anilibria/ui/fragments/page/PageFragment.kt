@@ -97,7 +97,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
         toolbar.apply {
             title = when (presenter.pagePath) {
-                PageApi.PAGE_PATH_TEAM -> "Список команды"
+                PageApi.PAGE_PATH_TEAM -> "Команда проекта"
                 PageApi.PAGE_PATH_DONATE -> "Поддержать"
                 else -> pageTitle ?: "Статическая страница"
             }

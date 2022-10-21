@@ -59,6 +59,7 @@ class DataModule(context: Context) : Module() {
         bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
         bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
         bind(DonationHolder::class.java).to(DonationStorage::class.java).singleton()
+        bind(TeamsHolder::class.java).to(TeamsStorage::class.java).singleton()
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
         bind(UserHolder::class.java).to(UserStorage::class.java).singleton()
@@ -108,6 +109,7 @@ class DataModule(context: Context) : Module() {
         bind(FeedApi::class.java).singleton()
         bind(MenuApi::class.java).singleton()
         bind(DonationApi::class.java).singleton()
+        bind(TeamsApi::class.java).singleton()
 
         bind(AuthRepository::class.java).singleton()
         bind(ReleaseRepository::class.java).singleton()
@@ -122,6 +124,7 @@ class DataModule(context: Context) : Module() {
         bind(FeedRepository::class.java).singleton()
         bind(MenuRepository::class.java).singleton()
         bind(DonationRepository::class.java).singleton()
+        bind(TeamsRepository::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
@@ -155,6 +158,7 @@ class DataModule(context: Context) : Module() {
         bind(DonationDetailAnalytics::class.java).singleton()
         bind(DonationDialogAnalytics::class.java).singleton()
         bind(DonationYooMoneyAnalytics::class.java).singleton()
+        bind(TeamsAnalytics::class.java).singleton()
     }
 
 }

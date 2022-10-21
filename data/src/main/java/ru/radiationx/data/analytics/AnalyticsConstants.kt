@@ -264,6 +264,10 @@ object AnalyticsConstants {
     const val donation_card_new_click = "donation_card_new_click"
     const val donation_card_new_close_click = "donation_card_new_close_click"
 
+    /* Teams */
+    const val teams_open = "teams_open"
+    const val teams_join_click = "teams_join_click"
+
     /*
     * Глобально добавить в профиль пользователя текущий adresss
     * Глобально добавить в профиль темную тему

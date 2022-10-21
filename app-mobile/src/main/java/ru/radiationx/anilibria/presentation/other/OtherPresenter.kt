@@ -39,7 +39,8 @@ class OtherPresenter @Inject constructor(
     private val otherAnalytics: OtherAnalytics,
     private val settingsAnalytics: SettingsAnalytics,
     private val pageAnalytics: PageAnalytics,
-    private val donationDetailAnalytics: DonationDetailAnalytics
+    private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val teamsAnalytics: TeamsAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -131,6 +132,7 @@ class OtherPresenter @Inject constructor(
             }
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
+                teamsAnalytics.open(AnalyticsConstants.screen_other)
                 router.navigateTo(Screens.Teams())
             }
             MENU_DONATE -> {

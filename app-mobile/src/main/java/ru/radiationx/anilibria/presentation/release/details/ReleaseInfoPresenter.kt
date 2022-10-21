@@ -43,7 +43,8 @@ class ReleaseInfoPresenter @Inject constructor(
     private val webPlayerAnalytics: WebPlayerAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
     private val playerAnalytics: PlayerAnalytics,
-    private val donationDetailAnalytics: DonationDetailAnalytics
+    private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val teamsAnalytics: TeamsAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
 
     private val remindText =
@@ -445,7 +446,8 @@ class ReleaseInfoPresenter @Inject constructor(
             }
             ReleaseInfoState.TAG_VOICE -> {
                 val voice = data.voices.getOrNull(index) ?: return
-                releaseAnalytics.genreClick(data.id)
+                releaseAnalytics.voiceClick(data.id)
+                teamsAnalytics.open(AnalyticsConstants.screen_release)
                 router.navigateTo(Screens.Teams(voice))
             }
         }

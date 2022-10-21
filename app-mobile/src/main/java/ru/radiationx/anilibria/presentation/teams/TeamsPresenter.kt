@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.presentation.teams
 import com.jakewharton.rxrelay2.BehaviorRelay
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.common.DataWrapper
 import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.Teams
@@ -16,7 +17,8 @@ class TeamsPresenter(
     router: Router,
     private val repository: TeamsRepository,
     private val errorHandler: IErrorHandler,
-    private val systemUtils: SystemUtils
+    private val systemUtils: SystemUtils,
+    private val analytics: TeamsAnalytics
 ) : BasePresenter<TeamsView>(router) {
 
     private val currentDataRelay =
@@ -64,6 +66,7 @@ class TeamsPresenter(
     }
 
     fun onHeaderActionClick() {
+        analytics.joinClick()
         systemUtils.externalLink("https://t.me/joinlibria_bot")
     }
 

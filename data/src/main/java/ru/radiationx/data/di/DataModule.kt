@@ -158,6 +158,7 @@ class DataModule(context: Context) : Module() {
         bind(DonationDetailAnalytics::class.java).singleton()
         bind(DonationDialogAnalytics::class.java).singleton()
         bind(DonationYooMoneyAnalytics::class.java).singleton()
+        bind(TeamsAnalytics::class.java).singleton()
     }
 
 }

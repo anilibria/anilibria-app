@@ -30,5 +30,16 @@ fun TeamUserResponse.toDomain() = TeamUser(
 
 fun TeamRoleResponse.toDomain() = TeamRole(
     title = title,
-    color = color?.let { Color.parseColor(it) }
+    color = color?.mapColorToMd()?.let { Color.parseColor(it) }
 )
+
+private fun String.mapColorToMd(): String = when (this) {
+    "#339966" -> "#4caf50"
+    "#800000" -> "#f44336"
+    "#ebd800" -> "#ffeb3b"
+    "#ff6600" -> "#ff9800"
+    "#b523c5" -> "#e91e63"
+    "#000080" -> "#3f51b5"
+    "#33cccc" -> "#00bcd4"
+    else -> this
+}

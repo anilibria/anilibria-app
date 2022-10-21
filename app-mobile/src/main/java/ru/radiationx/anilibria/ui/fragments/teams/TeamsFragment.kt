@@ -75,7 +75,6 @@ class TeamsFragment : BaseFragment(), TeamsView {
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
         teamsToolbar.updatePadding(top = dimensions.statusBar)
-        rvTeams.updatePadding(bottom = dimensions.navigationBar)
     }
 
     override fun showData(data: List<TeamState>) {

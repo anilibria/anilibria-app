@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.main
 
-import io.reactivex.Single
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -38,18 +39,19 @@ class MainFavoritesViewModel(
             .observeUser()
             .map { it.authState }
             .distinctUntilChanged()
-            .skip(1)
-            .lifeSubscribe {
+            .drop(1)
+            .onEach {
                 if (it == AuthState.AUTH) {
                     onRefreshClick()
                 }
             }
+            .launchIn(viewModelScope)
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = favoriteRepository
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
         .getFavorites(requestPage)
-        .doOnSuccess { releaseInteractor.updateItemsCache(it.data) }
-        .map { favoriteItems ->
+        .also { releaseInteractor.updateItemsCache(it.data) }
+        .let { favoriteItems ->
             favoriteItems.data.sortedByDescending { it.torrentUpdate }.map { converter.toCard(it) }
         }
 

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen
 
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.screen.details
 
-import android.util.Log
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -38,30 +38,37 @@ class DetailRecommendsViewModel(
         releaseInteractor
             .observeFull(releaseId)
             .distinctUntilChanged()
-            .lifeSubscribe {
+            .onEach {
                 onRefreshClick()
             }
+            .launchIn(viewModelScope)
     }
 
-    private fun searchGenres(genresCount: Int, requestPage: Int): Single<List<ReleaseItem>> = searchRepository
-        .searchReleases(SearchForm(genres = getGenres(genresCount), sort = SearchForm.Sort.RATING), requestPage)
-        .map { result -> result.data.filter { it.id != releaseId } }
+    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<ReleaseItem> =
+        searchRepository
+            .searchReleases(
+                SearchForm(
+                    genres = getGenres(genresCount),
+                    sort = SearchForm.Sort.RATING
+                ), requestPage
+            )
+            .let { result -> result.data.filter { it.id != releaseId } }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchGenres(3, requestPage)
-        .flatMap {
-            if (it.isEmpty()) {
-                searchGenres(2, requestPage)
-            } else {
-                Single.just(it)
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> =
+        searchGenres(3, requestPage)
+            .let {
+                if (it.isEmpty()) {
+                    searchGenres(2, requestPage)
+                } else {
+                    it
+                }
             }
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSuccess {
-            releaseInteractor.updateItemsCache(it)
-        }
-        .map { result ->
-            result.map { converter.toCard(it) }
-        }
+            .also {
+                releaseInteractor.updateItemsCache(it)
+            }
+            .let { result ->
+                result.map { converter.toCard(it) }
+            }
 
     private fun getGenres(count: Int): List<GenreItem> {
         val release = releaseInteractor.getFull(releaseId) ?: return emptyList()

@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.watching
 
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.common.AuthState
@@ -22,32 +24,34 @@ class WatchingViewModel(
         const val RECOMMENDS_ROW_ID = 4L
     }
 
-    override val rowIds: List<Long> = listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
+    override val rowIds: List<Long> =
+        listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override val availableRows: MutableSet<Long> = mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
+    override val availableRows: MutableSet<Long> =
+        mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
 
     override fun onCreate() {
         super.onCreate()
 
         episodesCheckerHolder
             .observeEpisodes()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 updateAvailableRow(CONTINUE_ROW_ID, it.isNotEmpty())
             }
+            .launchIn(viewModelScope)
 
         historyRepository
             .observeReleases()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 updateAvailableRow(HISTORY_ROW_ID, it.isNotEmpty())
             }
+            .launchIn(viewModelScope)
 
         authRepository
             .observeUser()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 updateAvailableRow(FAVORITES_ROW_ID, it.authState == AuthState.AUTH)
             }
+            .launchIn(viewModelScope)
     }
 }

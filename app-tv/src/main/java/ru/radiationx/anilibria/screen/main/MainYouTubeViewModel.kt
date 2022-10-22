@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.main
 
-import io.reactivex.Single
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -25,9 +24,9 @@ class MainYouTubeViewModel(
         onRefreshClick()
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = youtubeRepository
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = youtubeRepository
         .getYoutubeList(requestPage)
-        .map { youtubeItems ->
+        .let { youtubeItems ->
             youtubeItems.data.map { converter.toCard(it) }
         }
 

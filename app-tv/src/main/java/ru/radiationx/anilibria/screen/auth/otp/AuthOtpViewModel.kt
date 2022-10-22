@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.screen.auth.otp
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.app.auth.OtpInfo
@@ -12,8 +12,6 @@ import ru.radiationx.data.entity.app.auth.OtpNotAcceptedException
 import ru.radiationx.data.entity.app.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
 import toothpick.InjectConstructor
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class AuthOtpViewModel(
@@ -24,8 +22,8 @@ class AuthOtpViewModel(
     val otpInfoData = MutableLiveData<OtpInfo>()
     val state = MutableLiveData<State>()
 
-    private var timerDisposable = Disposables.disposed()
-    private var signInDisposable = Disposables.disposed()
+    private var timerJob: Job? = null
+    private var signInJob: Job? = null
 
     init {
         state.value = State()
@@ -52,27 +50,31 @@ class AuthOtpViewModel(
     }
 
     private fun signIn() {
-        signInDisposable.dispose()
-        signInDisposable = authRepository
-            .signInOtp(otpInfoData.value!!.code)
-            .lifeSubscribe({
+        signInJob?.cancel()
+        signInJob = viewModelScope.launch {
+            runCatching {
+                authRepository.signInOtp(otpInfoData.value!!.code)
+            }.onSuccess {
                 guidedRouter.finishGuidedChain()
-            }, {
+            }.onFailure {
                 handleError(it)
-            })
+            }
+        }
     }
 
     private fun loadOtpInfo() {
-        signInDisposable.dispose()
-        authRepository
-            .getOtpInfo()
-            .lifeSubscribe({
+        signInJob?.cancel()
+        signInJob = viewModelScope.launch {
+            runCatching {
+                authRepository.getOtpInfo()
+            }.onSuccess {
                 otpInfoData.value = it
                 startTimer(it)
                 updateState(ButtonState.COMPLETE, false)
-            }, {
+            }.onFailure {
                 handleError(it)
-            })
+            }
+        }
     }
 
     private fun handleError(error: Throwable) {
@@ -86,24 +88,20 @@ class AuthOtpViewModel(
     }
 
     private fun startTimer(otpInfo: OtpInfo) {
-        timerDisposable.dispose()
+        timerJob?.cancel()
         val time = otpInfo.expiresAt.time - System.currentTimeMillis()
         if (time < 0) {
             setExpired()
             return
         }
-        timerDisposable = Single
-            .timer(otpInfo.remainingTime, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe({
-                setExpired()
-            }, {
-                it.printStackTrace()
-            })
+        timerJob = viewModelScope.launch {
+            delay(otpInfo.remainingTime)
+            setExpired()
+        }
     }
 
     private fun setExpired() {
-        signInDisposable.dispose()
+        signInJob?.cancel()
         updateState(ButtonState.EXPIRED, false, "")
     }
 

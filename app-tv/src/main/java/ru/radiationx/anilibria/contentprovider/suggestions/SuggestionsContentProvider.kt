@@ -8,16 +8,11 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
-import android.util.Log
-import io.reactivex.Observable
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.DependencyInjector
-import toothpick.ktp.delegate.inject
-import javax.inject.Inject
 
 class SuggestionsContentProvider : ContentProvider() {
 
@@ -65,7 +60,12 @@ class SuggestionsContentProvider : ContentProvider() {
         throw UnsupportedOperationException("insert is not implemented.")
     }
 
-    override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?): Int {
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<out String>?
+    ): Int {
         throw UnsupportedOperationException("update is not implemented.")
     }
 
@@ -84,7 +84,8 @@ class SuggestionsContentProvider : ContentProvider() {
         return matrixCursor
     }
 
-    private fun appendProjectionColumns(id: Int, columns: Array<Any?>): Array<Any?> = columns + INTENT_ACTION + id
+    private fun appendProjectionColumns(id: Int, columns: Array<Any?>): Array<Any?> =
+        columns + INTENT_ACTION + id
 
     private fun SuggestionItem.convertToEntity() = SystemSuggestionEntity(
         id,

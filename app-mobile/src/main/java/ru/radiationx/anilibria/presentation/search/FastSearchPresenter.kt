@@ -66,7 +66,7 @@ class FastSearchPresenter @Inject constructor(
                 }
             }
             .filter { it.length >= 3 }
-            .map { query ->
+            .mapLatest { query ->
                 runCatching {
                     searchRepository.fastSearch(query)
                 }.getOrNull() ?: emptyList()

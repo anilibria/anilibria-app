@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import androidx.lifecycle.MutableLiveData
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -10,7 +10,6 @@ import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.concurrent.TimeUnit
 
 @InjectConstructor
 class SuggestionsResultViewModel(
@@ -20,7 +19,7 @@ class SuggestionsResultViewModel(
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
-    private var queryRelay = PublishRelay.create<String>()
+    private var queryRelay = MutableSharedFlow<String>()
 
     val progressState = MutableLiveData<Boolean>()
     val resultData = MutableLiveData<List<LibriaCard>>()
@@ -29,32 +28,31 @@ class SuggestionsResultViewModel(
         super.onColdCreate()
 
         queryRelay
-            .debounce(350L, TimeUnit.MILLISECONDS)
+            .debounce(350L)
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
+            .onEach {
                 if (it.length < 3) {
                     showItems(emptyList(), it, false)
                 }
             }
             .filter { it.length >= 3 }
-            .doOnNext { progressState.value = true }
-            .switchMapSingle { query ->
-                searchRepository
-                    .fastSearch(query)
-                    .onErrorReturnItem(emptyList())
+            .onEach { progressState.value = true }
+            .mapLatest { query ->
+                runCatching {
+                    searchRepository.fastSearch(query)
+                }.getOrNull() ?: emptyList()
             }
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe({
+            .onEach {
                 showItems(it, currentQuery, true)
-            }, {
-                it.printStackTrace()
-            })
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onQueryChange(query: String) {
-        currentQuery = query
-        queryRelay.accept(currentQuery)
+        viewModelScope.let {
+            currentQuery = query
+            queryRelay.emit(currentQuery)
+        }
     }
 
     fun onCardClick(item: LibriaCard) {

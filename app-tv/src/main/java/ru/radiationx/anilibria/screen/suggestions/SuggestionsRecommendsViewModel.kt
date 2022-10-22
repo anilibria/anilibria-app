@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import io.reactivex.Single
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -28,10 +27,10 @@ class SuggestionsRecommendsViewModel(
         onRefreshClick()
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchRepository
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = searchRepository
         .searchReleases(SearchForm(sort = SearchForm.Sort.RATING), requestPage)
-        .doOnSuccess { releaseInteractor.updateItemsCache(it.data) }
-        .map { result -> result.data.map { converter.toCard(it) } }
+        .also { releaseInteractor.updateItemsCache(it.data) }
+        .let { result -> result.data.map { converter.toCard(it) } }
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))

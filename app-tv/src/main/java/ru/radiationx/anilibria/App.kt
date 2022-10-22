@@ -1,18 +1,11 @@
 package ru.radiationx.anilibria
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.jakewharton.rxrelay2.PublishRelay
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
-import io.reactivex.Observable
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.subjects.BehaviorSubject
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared_app.common.ImageLoaderConfig
@@ -47,16 +40,13 @@ class App : Application() {
 
     private fun initYandexAppMetrica() {
         if (BuildConfig.DEBUG) return
-        val config = YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
+        val config =
+            YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
     }
 
     private fun initInMainProcess() {
-        RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler", throwable)
-        }
-
         initDependencies()
 
         val imageDownloader = DI.get(OkHttpImageDownloader::class.java)

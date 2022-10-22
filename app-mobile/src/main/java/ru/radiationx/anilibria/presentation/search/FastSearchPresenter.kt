@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.presentation.search
 
-import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
@@ -20,7 +21,6 @@ import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -42,7 +42,7 @@ class FastSearchPresenter @Inject constructor(
     private val stateController = StateController(FastSearchScreenState())
 
     private var currentQuery = ""
-    private var queryRelay = PublishRelay.create<String>()
+    private var queryRelay = MutableSharedFlow<String>()
     private var currentSuggestions = mutableListOf<SuggestionItem>()
 
     override fun onFirstViewAttach() {
@@ -50,14 +50,13 @@ class FastSearchPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         queryRelay
-            .debounce(350L, TimeUnit.MILLISECONDS)
+            .debounce(350L)
             .distinctUntilChanged()
-            .observeOn(schedulers.ui())
-            .doOnNext { query ->
+            .onEach { query ->
                 if (query.length >= 3) {
                     stateController.updateState {
                         it.copy(loading = true)
@@ -67,21 +66,15 @@ class FastSearchPresenter @Inject constructor(
                 }
             }
             .filter { it.length >= 3 }
-            .switchMapSingle { query ->
-                searchRepository
-                    .fastSearch(query)
-                    .onErrorReturnItem(emptyList())
+            .map { query ->
+                runCatching {
+                    searchRepository.fastSearch(query)
+                }.getOrNull() ?: emptyList()
             }
-            .observeOn(schedulers.ui())
-            .subscribe({
+            .onEach {
                 showItems(it, currentQuery)
-            }, { throwable ->
-                errorHandler.handle(throwable)
-                stateController.updateState {
-                    it.copy(loading = false)
-                }
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     fun onClose() {
@@ -122,8 +115,10 @@ class FastSearchPresenter @Inject constructor(
     }
 
     fun onQueryChange(query: String) {
-        currentQuery = query
-        queryRelay.accept(currentQuery)
+        presenterScope.launch {
+            currentQuery = query
+            queryRelay.emit(currentQuery)
+        }
     }
 
     fun onItemClick(item: SuggestionItemState) {

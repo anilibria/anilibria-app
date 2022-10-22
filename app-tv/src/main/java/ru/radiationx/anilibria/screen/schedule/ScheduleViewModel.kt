@@ -1,6 +1,10 @@
 package ru.radiationx.anilibria.screen.schedule
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
@@ -33,9 +37,10 @@ class ScheduleViewModel(
                     Pair(title, cards)
                 }
             }
-            .lifeSubscribe {
+            .onEach {
                 scheduleRows.value = it
             }
+            .launchIn(viewModelScope)
     }
 
     fun onCardClick(card: LibriaCard) {

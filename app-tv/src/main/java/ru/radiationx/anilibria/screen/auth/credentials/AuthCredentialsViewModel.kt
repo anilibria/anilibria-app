@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.auth.credentials
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.AuthRepository
@@ -18,17 +20,18 @@ class AuthCredentialsViewModel(
     val error = MutableLiveData<String>()
 
     fun onLoginClicked(login: String, password: String, code: String) {
-        progressState.value = true
-        error.value = ""
-
-        authRepository
-            .signIn(login, password, code)
-            .doFinally { progressState.value = false }
-            .lifeSubscribe({
+        viewModelScope.launch {
+            progressState.value = true
+            error.value = ""
+            runCatching {
+                authRepository.signIn(login, password, code)
+            }.onSuccess {
                 guidedRouter.finishGuidedChain()
-            }, {
+            }.onFailure {
                 it.printStackTrace()
                 error.value = it.message
-            })
+            }
+            progressState.value = false
+        }
     }
 }

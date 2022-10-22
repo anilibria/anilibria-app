@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -44,7 +46,9 @@ class PlayerEpisodesViewModel(
     }
 
     fun applyEpisode(index: Int) {
-        playerController.selectEpisodeRelay.accept(currentEpisodes[index].id)
-        guidedRouter.close()
+        viewModelScope.launch {
+            playerController.selectEpisodeRelay.emit(currentEpisodes[index].id)
+            guidedRouter.close()
+        }
     }
 }

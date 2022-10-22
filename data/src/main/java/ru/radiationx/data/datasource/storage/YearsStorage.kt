@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -14,7 +14,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class YearsStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : YearsHolder {
 
     companion object {
@@ -22,19 +22,19 @@ class YearsStorage @Inject constructor(
     }
 
     private val localYears = mutableListOf<YearItem>()
-    private val localYearsRelay = BehaviorRelay.createDefault(localYears)
+    private val localYearsRelay = MutableStateFlow(localYears.toList())
 
     init {
         loadAll()
     }
 
-    override fun observeYears(): Observable<MutableList<YearItem>> = localYearsRelay
+    override fun observeYears(): Flow<List<YearItem>> = localYearsRelay
 
     override fun saveYears(years: List<YearItem>) {
         localYears.clear()
         localYears.addAll(years)
         saveAll()
-        localYearsRelay.accept(localYears)
+        localYearsRelay.value = localYears.toList()
     }
 
     override fun getYears(): List<YearItem> = localYears
@@ -48,9 +48,9 @@ class YearsStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_YEARS_KEY, jsonYears.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_YEARS_KEY, jsonYears.toString())
+            .apply()
     }
 
     private fun loadAll() {
@@ -66,6 +66,6 @@ class YearsStorage @Inject constructor(
                 }
             }
         }
-        localYearsRelay.accept(localYears)
+        localYearsRelay.value = localYears.toList()
     }
 }

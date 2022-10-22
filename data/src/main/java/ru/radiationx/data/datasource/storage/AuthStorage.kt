@@ -1,8 +1,9 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.AuthHolder
 import java.util.*
@@ -19,12 +20,12 @@ class AuthStorage @Inject constructor(
         private const val KEY_DEVICE_UID = "device_uid"
     }
 
-    private val vkAuthRelay = PublishRelay.create<Boolean>()
+    private val vkAuthRelay = MutableSharedFlow<Boolean>()
 
-    override fun observeVkAuthChange(): Observable<Boolean> = vkAuthRelay.hide()
+    override fun observeVkAuthChange(): Flow<Boolean> = vkAuthRelay.asSharedFlow()
 
-    override fun changeVkAuth(value: Boolean) {
-        vkAuthRelay.accept(value)
+    override suspend fun changeVkAuth(value: Boolean) {
+        vkAuthRelay.emit(value)
     }
 
     override fun getDeviceId(): String {

@@ -1,15 +1,14 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.squareup.moshi.Moshi
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onSubscription
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.TeamsHolder
 import ru.radiationx.data.entity.app.team.TeamsResponse
-import ru.radiationx.data.entity.common.DataWrapper
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -26,38 +25,32 @@ class TeamsStorage(
         moshi.adapter(TeamsResponse::class.java)
     }
 
-    private val dataRelay =
-        BehaviorRelay.createDefault<DataWrapper<TeamsResponse>>(DataWrapper(null))
+    private val dataRelay = MutableStateFlow<TeamsResponse?>(null)
 
-    override fun observe(): Observable<TeamsResponse> = dataRelay
-        .hide()
-        .filter { it.data != null }
-        .map { requireNotNull(it.data) }
-        .doOnSubscribe {
-            if (dataRelay.value?.data == null) {
+    override fun observe(): Flow<TeamsResponse> = dataRelay
+        .onSubscription {
+            if (dataRelay.value == null) {
                 updateCurrentData()
             }
         }
+        .filterNotNull()
 
-    override fun get(): Single<TeamsResponse> = Single
-        .fromCallable {
-            if (dataRelay.value?.data == null) {
-                updateCurrentData()
-            }
-            requireNotNull(dataRelay.value?.data)
-        }
-
-    override fun save(data: TeamsResponse): Completable = Completable
-        .fromAction {
-            saveToPrefs(data)
+    override suspend fun get(): TeamsResponse {
+        if (dataRelay.value == null) {
             updateCurrentData()
         }
+        return requireNotNull(dataRelay.value)
+    }
 
-    override fun delete(): Completable = Completable
-        .fromAction {
-            deleteFromPrefs()
-            updateCurrentData()
-        }
+    override suspend fun save(data: TeamsResponse) {
+        saveToPrefs(data)
+        updateCurrentData()
+    }
+
+    override suspend fun delete() {
+        deleteFromPrefs()
+        updateCurrentData()
+    }
 
     private fun updateCurrentData() {
         val prefsData = try {
@@ -66,7 +59,7 @@ class TeamsStorage(
             ex.printStackTrace()
             null
         }
-        dataRelay.accept(DataWrapper(prefsData))
+        dataRelay.value = prefsData
     }
 
     private fun deleteFromPrefs() {

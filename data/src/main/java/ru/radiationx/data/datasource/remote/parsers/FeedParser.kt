@@ -8,13 +8,13 @@ import ru.radiationx.shared.ktx.android.nullGet
 import javax.inject.Inject
 
 class FeedParser @Inject constructor(
-        private val apiUtils: IApiUtils
+    private val apiUtils: IApiUtils
 ) {
 
     fun feed(
-            jsonResponse: JSONArray,
-            releaseParser: ReleaseParser,
-            youtubeParser: YoutubeParser
+        jsonResponse: JSONArray,
+        releaseParser: ReleaseParser,
+        youtubeParser: YoutubeParser
     ): List<FeedItem> {
         val result = mutableListOf<FeedItem>()
         for (i in 0 until jsonResponse.length()) {

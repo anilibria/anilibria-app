@@ -1,9 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -23,17 +22,18 @@ class EpisodesCheckerStorage @Inject constructor(
     }
 
     private val localEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private val localEpisodesRelay = BehaviorRelay.createDefault(localEpisodes)
+    private val localEpisodesRelay = MutableStateFlow(localEpisodes.toList())
 
     init {
         loadAll()
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> =
+    override fun observeEpisodes(): Flow<List<ReleaseFull.Episode>> =
         localEpisodesRelay
 
-    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> =
-        Single.fromCallable { localEpisodesRelay.value!! }
+    override suspend fun getEpisodes(): List<ReleaseFull.Episode> {
+        return localEpisodesRelay.value
+    }
 
     override fun putEpisode(episode: ReleaseFull.Episode) {
         localEpisodes
@@ -41,7 +41,7 @@ class EpisodesCheckerStorage @Inject constructor(
             ?.let { localEpisodes.remove(it) }
         localEpisodes.add(episode)
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
+        localEpisodesRelay.value = localEpisodes.toList()
     }
 
     override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
@@ -52,7 +52,7 @@ class EpisodesCheckerStorage @Inject constructor(
             localEpisodes.add(episode)
         }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
+        localEpisodesRelay.value = localEpisodes.toList()
     }
 
     override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
@@ -62,7 +62,7 @@ class EpisodesCheckerStorage @Inject constructor(
     override fun remove(releaseId: Int) {
         localEpisodes.removeAll { it.releaseId == releaseId }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
+        localEpisodesRelay.value = localEpisodes.toList()
     }
 
     private fun saveAll() {
@@ -98,6 +98,6 @@ class EpisodesCheckerStorage @Inject constructor(
                 }
             }
         }
-        localEpisodesRelay.accept(localEpisodes)
+        localEpisodesRelay.value = localEpisodes.toList()
     }
 }

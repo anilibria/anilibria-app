@@ -2,7 +2,6 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import android.net.Uri
-import android.util.Log
 import okhttp3.Cookie
 import okhttp3.HttpUrl
 import ru.radiationx.data.datasource.holders.CookieHolder
@@ -13,7 +12,7 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class CookiesStorage @Inject constructor(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : CookieHolder {
 
     private val clientCookies = mutableMapOf<String, Cookie>()
@@ -31,7 +30,7 @@ class CookiesStorage @Inject constructor(
     private fun parseCookie(cookieFields: String): Cookie? {
         val fields = cookieFields.split("\\|:\\|".toRegex())
         val httpUrl = HttpUrl.parse(fields[0])
-                ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
+            ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
         val cookieString = fields[1]
         return Cookie.parse(httpUrl, cookieString)
     }
@@ -45,14 +44,17 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun putCookie(url: String, name: String, value: String) {
-        putCookie(url, Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host).build())
+        putCookie(url,
+            Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host)
+                .build()
+        )
     }
 
     override fun putCookie(url: String, cookie: Cookie) {
         sharedPreferences
-                .edit()
-                .putString("cookie_${cookie.name()}", convertCookie(url, cookie))
-                .apply()
+            .edit()
+            .putString("cookie_${cookie.name()}", convertCookie(url, cookie))
+            .apply()
 
         if (!clientCookies.containsKey(cookie.name())) {
             clientCookies.remove(cookie.name())
@@ -62,9 +64,9 @@ class CookiesStorage @Inject constructor(
 
     override fun removeCookie(name: String) {
         sharedPreferences
-                .edit()
-                .remove("cookie_$name")
-                .apply()
+            .edit()
+            .remove("cookie_$name")
+            .apply()
 
         clientCookies.remove(name)
     }

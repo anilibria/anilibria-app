@@ -1,9 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -24,16 +23,15 @@ class HistoryStorage @Inject constructor(
     }
 
     private val localReleases = mutableListOf<ReleaseItem>()
-    private val localReleasesRelay = BehaviorRelay.createDefault(localReleases)
+    private val localReleasesRelay = MutableStateFlow(localReleases.toList())
 
     init {
         loadAll()
     }
 
-    override fun getEpisodes(): Single<List<ReleaseItem>> =
-        Single.fromCallable { localReleases.toList() }
+    override suspend fun getEpisodes() = localReleases.toList()
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
+    override fun observeEpisodes(): Flow<List<ReleaseItem>> = localReleasesRelay
 
     override fun putRelease(release: ReleaseItem) {
         localReleases
@@ -41,7 +39,7 @@ class HistoryStorage @Inject constructor(
             ?.let { localReleases.remove(it) }
         localReleases.add(release)
         saveAll()
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 
     override fun putAllRelease(releases: List<ReleaseItem>) {
@@ -52,13 +50,13 @@ class HistoryStorage @Inject constructor(
             localReleases.add(release)
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 
     override fun removerRelease(id: Int) {
         localReleases.firstOrNull { it.id == id }?.also {
             localReleases.remove(it)
-            localReleasesRelay.accept(localReleases)
+            localReleasesRelay.value = localReleases.toList()
         }
     }
 
@@ -139,6 +137,6 @@ class HistoryStorage @Inject constructor(
                 localReleases.add(release)
             }
         }
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 }

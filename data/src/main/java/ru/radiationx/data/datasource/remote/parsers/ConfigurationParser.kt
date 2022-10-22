@@ -11,7 +11,7 @@ import javax.inject.Inject
  * Created by radiationx on 27.01.18.
  */
 class ConfigurationParser @Inject constructor(
-        private val apiUtils: IApiUtils
+    private val apiUtils: IApiUtils
 ) {
 
     fun parse(responseJson: JSONObject): List<ApiAddress> {
@@ -45,26 +45,26 @@ class ConfigurationParser @Inject constructor(
             }
         }
         return ApiAddress(
-                addressJson.getString("tag"),
-                addressJson.nullString("name"),
-                addressJson.nullString("desc"),
-                addressJson.getString("widgetsSite"),
-                addressJson.getString("site"),
-                addressJson.getString("baseImages"),
-                addressJson.getString("base"),
-                addressJson.getString("api"),
-                ips,
-                proxies
+            addressJson.getString("tag"),
+            addressJson.nullString("name"),
+            addressJson.nullString("desc"),
+            addressJson.getString("widgetsSite"),
+            addressJson.getString("site"),
+            addressJson.getString("baseImages"),
+            addressJson.getString("base"),
+            addressJson.getString("api"),
+            ips,
+            proxies
         )
     }
 
     private fun parseProxy(proxyJson: JSONObject): ApiProxy = ApiProxy(
-            proxyJson.getString("tag"),
-            proxyJson.nullString("name"),
-            proxyJson.nullString("desc"),
-            proxyJson.getString("ip"),
-            proxyJson.getInt("port"),
-            proxyJson.nullString("user"),
-            proxyJson.nullString("password")
+        proxyJson.getString("tag"),
+        proxyJson.nullString("name"),
+        proxyJson.nullString("desc"),
+        proxyJson.getString("ip"),
+        proxyJson.getInt("port"),
+        proxyJson.nullString("user"),
+        proxyJson.nullString("password")
     )
 }

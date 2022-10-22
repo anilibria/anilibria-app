@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -52,19 +52,19 @@ class MenuStorage @Inject constructor(
             icon = DataIcons.ANILIBRIA
         )
     )
-    private val localMenuRelay = BehaviorRelay.createDefault<List<LinkMenuItem>>(localMenu)
+    private val localMenuRelay = MutableStateFlow(localMenu.toList())
 
     init {
         loadAll()
     }
 
-    override fun observe(): Observable<List<LinkMenuItem>> = localMenuRelay.hide()
+    override fun observe(): Flow<List<LinkMenuItem>> = localMenuRelay
 
     override fun save(items: List<LinkMenuItem>) {
         localMenu.clear()
         localMenu.addAll(items)
         saveAll()
-        localMenuRelay.accept(localMenu)
+        localMenuRelay.value = localMenu.toList()
     }
 
     override fun get(): List<LinkMenuItem> = localMenu
@@ -102,6 +102,6 @@ class MenuStorage @Inject constructor(
                 }
             }
         }
-        localMenuRelay.accept(localMenu)
+        localMenuRelay.value = localMenu.toList()
     }
 }

@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONObject
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.entity.app.other.ProfileItem
@@ -13,12 +13,12 @@ import javax.inject.Inject
  * Created by radiationx on 11.01.18.
  */
 class UserStorage @Inject constructor(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : UserHolder {
 
-    private val userRelay = BehaviorRelay.createDefault(getSavedUser())
+    private val userRelay = MutableStateFlow(getSavedUser())
 
-    override fun getUser(): ProfileItem = userRelay.value!!
+    override fun getUser(): ProfileItem = userRelay.value
 
     private fun getSavedUser(): ProfileItem {
         val user = ProfileItem()
@@ -47,11 +47,11 @@ class UserStorage @Inject constructor(
         sharedPreferences.edit().putString("saved_user", userJson.toString()).apply()
     }
 
-    override fun observeUser(): Observable<ProfileItem> = userRelay
+    override fun observeUser(): Flow<ProfileItem> = userRelay
 
     override fun saveUser(user: ProfileItem) {
         localSaveUser(user)
-        userRelay.accept(user)
+        userRelay.value = user
     }
 
     override fun delete() {

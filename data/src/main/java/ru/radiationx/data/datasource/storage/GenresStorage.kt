@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -14,7 +14,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class GenresStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : GenresHolder {
 
     companion object {
@@ -22,19 +22,19 @@ class GenresStorage @Inject constructor(
     }
 
     private val localGenres = mutableListOf<GenreItem>()
-    private val localGenresRelay = BehaviorRelay.createDefault(localGenres)
+    private val localGenresRelay = MutableStateFlow(localGenres.toList())
 
     init {
         loadAll()
     }
 
-    override fun observeGenres(): Observable<MutableList<GenreItem>> = localGenresRelay
+    override fun observeGenres(): Flow<List<GenreItem>> = localGenresRelay
 
     override fun saveGenres(genres: List<GenreItem>) {
         localGenres.clear()
         localGenres.addAll(genres)
         saveAll()
-        localGenresRelay.accept(localGenres)
+        localGenresRelay.value = localGenres.toList()
     }
 
     override fun getGenres(): List<GenreItem> = localGenres
@@ -48,9 +48,9 @@ class GenresStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_GENRES_KEY, jsonGenres.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_GENRES_KEY, jsonGenres.toString())
+            .apply()
     }
 
     private fun loadAll() {
@@ -66,6 +66,6 @@ class GenresStorage @Inject constructor(
                 }
             }
         }
-        localGenresRelay.accept(localGenres)
+        localGenresRelay.value = localGenres.toList()
     }
 }

@@ -1,9 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -26,19 +25,16 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     private val localReleases = mutableListOf<ReleaseUpdate>()
-    private val localReleasesRelay = BehaviorRelay.createDefault(localReleases)
+    private val localReleasesRelay = MutableStateFlow(localReleases.toList())
 
     init {
         loadAll()
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>> = localReleasesRelay
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    override fun observeEpisodes(): Flow<List<ReleaseUpdate>> = localReleasesRelay
 
-    override fun getReleases(): Single<List<ReleaseUpdate>> = Single.fromCallable {
-        localReleasesRelay.value?.toList().orEmpty()
-    }
+    override suspend fun getReleases(): List<ReleaseUpdate> =
+        localReleasesRelay.value.toList()
 
     override fun getRelease(id: Int): ReleaseUpdate? {
         return localReleases.firstOrNull { it.id == id }
@@ -60,7 +56,7 @@ class ReleaseUpdateStorage @Inject constructor(
             })
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 
     override fun putRelease(release: ReleaseItem) {
@@ -79,7 +75,7 @@ class ReleaseUpdateStorage @Inject constructor(
             })
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 
     private fun saveAll() {
@@ -111,6 +107,6 @@ class ReleaseUpdateStorage @Inject constructor(
                 }
             }
         }
-        localReleasesRelay.accept(localReleases)
+        localReleasesRelay.value = localReleases.toList()
     }
 }

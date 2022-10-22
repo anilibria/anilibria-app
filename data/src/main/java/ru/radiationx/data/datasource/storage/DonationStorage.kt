@@ -2,11 +2,11 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.squareup.moshi.Moshi
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onSubscription
 import okio.buffer
 import okio.source
 import ru.radiationx.data.DataPreferences
@@ -29,35 +29,35 @@ class DonationStorage(
         moshi.adapter(DonationInfoResponse::class.java)
     }
 
-    private val dataRelay = BehaviorRelay.create<DonationInfoResponse>()
+    private val dataRelay = MutableStateFlow<DonationInfoResponse?>(null)
 
-    override fun observe(): Observable<DonationInfoResponse> = dataRelay
-        .hide()
-        .doOnSubscribe {
-            if (!dataRelay.hasValue()) {
-                updateCurrentData()
+    override fun observe(): Flow<DonationInfoResponse> {
+        return dataRelay
+            .onSubscription {
+                if (dataRelay.value != null) {
+                    updateCurrentData()
+                }
             }
-        }
+            .filterNotNull()
+    }
 
-    override fun get(): Single<DonationInfoResponse> = Single
-        .fromCallable {
-            if (!dataRelay.hasValue()) {
-                updateCurrentData()
-            }
-            requireNotNull(dataRelay.value)
-        }
-
-    override fun save(data: DonationInfoResponse): Completable = Completable
-        .fromAction {
-            saveToPrefs(data)
+    override suspend fun get(): DonationInfoResponse {
+        if (dataRelay.value != null) {
             updateCurrentData()
         }
+        return requireNotNull(dataRelay.value)
+    }
 
-    override fun delete(): Completable = Completable
-        .fromAction {
-            deleteFromPrefs()
-            updateCurrentData()
-        }
+    override suspend fun save(data: DonationInfoResponse) {
+
+        saveToPrefs(data)
+        updateCurrentData()
+    }
+
+    override suspend fun delete() {
+        deleteFromPrefs()
+        updateCurrentData()
+    }
 
     private fun updateCurrentData() {
         val prefsData = try {
@@ -67,7 +67,7 @@ class DonationStorage(
             null
         }
         val data = prefsData ?: getFromAssets()
-        dataRelay.accept(data)
+        dataRelay.value = data
     }
 
     private fun deleteFromPrefs() {

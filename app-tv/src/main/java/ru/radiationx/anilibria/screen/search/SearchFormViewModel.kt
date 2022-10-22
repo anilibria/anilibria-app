@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.screen.search
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.entity.app.search.SearchForm
@@ -28,26 +31,26 @@ class SearchFormViewModel(
 
         updateDataByForm()
 
-        searchController.yearsEvent.lifeSubscribe {
+        searchController.yearsEvent.onEach {
             searchForm = searchForm.copy(years = it)
             updateDataByForm()
-        }
-        searchController.seasonsEvent.lifeSubscribe {
+        }.launchIn(viewModelScope)
+        searchController.seasonsEvent.onEach {
             searchForm = searchForm.copy(seasons = it)
             updateDataByForm()
-        }
-        searchController.genresEvent.lifeSubscribe {
+        }.launchIn(viewModelScope)
+        searchController.genresEvent.onEach {
             searchForm = searchForm.copy(genres = it)
             updateDataByForm()
-        }
-        searchController.sortEvent.lifeSubscribe {
+        }.launchIn(viewModelScope)
+        searchController.sortEvent.onEach {
             searchForm = searchForm.copy(sort = it)
             updateDataByForm()
-        }
-        searchController.completedEvent.lifeSubscribe {
+        }.launchIn(viewModelScope)
+        searchController.completedEvent.onEach {
             searchForm = searchForm.copy(onlyCompleted = it)
             updateDataByForm()
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun onYearClick() {
@@ -71,20 +74,22 @@ class SearchFormViewModel(
     }
 
     private fun updateDataByForm() {
-        yearData.value = searchForm.years?.map { it.title }.generateListTitle("Все годы")
-        seasonData.value = searchForm.seasons?.map { it.title }.generateListTitle("Все сезоны")
-        genreData.value = searchForm.genres?.map { it.title }.generateListTitle("Все жанры")
-        sortData.value = when (searchForm.sort) {
-            SearchForm.Sort.RATING -> "По популярности"
-            SearchForm.Sort.DATE -> "По новизне"
-        }
-        onlyCompletedData.value = if (searchForm.onlyCompleted) {
-            "Только завершенные"
-        } else {
-            "Все"
-        }
+        viewModelScope.launch {
+            yearData.value = searchForm.years?.map { it.title }.generateListTitle("Все годы")
+            seasonData.value = searchForm.seasons?.map { it.title }.generateListTitle("Все сезоны")
+            genreData.value = searchForm.genres?.map { it.title }.generateListTitle("Все жанры")
+            sortData.value = when (searchForm.sort) {
+                SearchForm.Sort.RATING -> "По популярности"
+                SearchForm.Sort.DATE -> "По новизне"
+            }
+            onlyCompletedData.value = if (searchForm.onlyCompleted) {
+                "Только завершенные"
+            } else {
+                "Все"
+            }
 
-        searchController.applyFormEvent.accept(searchForm)
+            searchController.applyFormEvent.emit(searchForm)
+        }
     }
 
     private fun List<String>?.generateListTitle(fallback: String, take: Int = 2): String {

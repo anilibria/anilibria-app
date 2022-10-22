@@ -73,10 +73,11 @@ class UpdateViewModel(
 
         updateController
             .downloadAction
-            .lifeSubscribe {
+            .onEach {
                 pendingInstall = true
                 startDownload(it.url)
             }
+            .launchIn(viewModelScope)
     }
 
     fun onActionClick() {
@@ -90,12 +91,14 @@ class UpdateViewModel(
     }
 
     private fun downloadClick() {
-        val data = updateData.value ?: return
-        if (data.links.size > 1) {
-            guidedRouter.open(UpdateSourceScreen())
-        } else {
-            val link = data.links.firstOrNull() ?: return
-            updateController.downloadAction.accept(link)
+        viewModelScope.launch {
+            val data = updateData.value ?: return@launch
+            if (data.links.size > 1) {
+                guidedRouter.open(UpdateSourceScreen())
+            } else {
+                val link = data.links.firstOrNull() ?: return@launch
+                updateController.downloadAction.emit(link)
+            }
         }
     }
 

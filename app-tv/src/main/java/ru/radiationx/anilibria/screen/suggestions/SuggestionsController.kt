@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class SuggestionsController {
 
-    val resultEvent = PublishRelay.create<SearchResult>()
+    val resultEvent = MutableSharedFlow<SearchResult>()
 
     data class SearchResult(
         val items: List<SuggestionItem>,

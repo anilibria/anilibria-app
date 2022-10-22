@@ -8,12 +8,16 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.di.DI
 
+// todo tr-274 check working
 class SuggestionsContentProvider : ContentProvider() {
 
     companion object {
@@ -45,7 +49,7 @@ class SuggestionsContentProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        App.appCreateAction.filter { it }.blockingFirst()
+        runBlocking { App.appCreateAction.filter { it }.first() }
 
         return if (uriMatcher.match(uri) == SEARCH_SUGGEST) {
             search(uri.lastPathSegment.orEmpty())
@@ -74,7 +78,7 @@ class SuggestionsContentProvider : ContentProvider() {
     }
 
     private fun search(query: String): Cursor {
-        val result = searchRepository.fastSearch(query).blockingGet()
+        val result = runBlocking { searchRepository.fastSearch(query) }
         val matrixCursor = MatrixCursor(queryProjection)
         result.forEach {
             val entity = it.convertToEntity()

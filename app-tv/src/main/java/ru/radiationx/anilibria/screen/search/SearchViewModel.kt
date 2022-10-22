@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.screen.search
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -30,10 +33,10 @@ class SearchViewModel(
     override fun onColdCreate() {
         super.onColdCreate()
 
-        searchController.applyFormEvent.lifeSubscribe {
+        searchController.applyFormEvent.onEach {
             searchForm = it
             onRefreshClick()
-        }
+        }.launchIn(viewModelScope)
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> {

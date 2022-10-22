@@ -3,9 +3,9 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared_app.common.ImageLoaderConfig
@@ -24,7 +24,7 @@ class App : Application() {
         * Логика такая - подписываемя с блокировкой на эту релейку в методах, которые выполняют запросы (query, insert, etc.)
         * Главное чтобы логика выполнилась после инициализации приложения
         * */
-        val appCreateAction = BehaviorRelay.createDefault(false)
+        val appCreateAction = MutableStateFlow(false)
     }
 
     override fun onCreate() {
@@ -35,7 +35,7 @@ class App : Application() {
         if (isMainProcess()) {
             initInMainProcess()
         }
-        appCreateAction.accept(true)
+        appCreateAction.value = true
     }
 
     private fun initYandexAppMetrica() {

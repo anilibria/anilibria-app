@@ -1,5 +1,9 @@
 package ru.radiationx.anilibria.screen.search.year
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -20,7 +24,7 @@ class SearchYearViewModel(
         super.onColdCreate()
         searchRepository
             .observeYears()
-            .lifeSubscribe {
+            .onEach {
                 currentYears.clear()
                 currentYears.addAll(it)
                 currentValues.clear()
@@ -30,19 +34,30 @@ class SearchYearViewModel(
                 updateChecked()
                 updateSelected()
             }
+            .launchIn(viewModelScope)
     }
 
     override fun onCreate() {
         super.onCreate()
-        progressState.value = true
-        searchRepository
-            .getYears()
-            .doFinally { progressState.value = false }
-            .lifeSubscribe({}, {})
+        viewModelScope.launch {
+            progressState.value = true
+            runCatching {
+                searchRepository.getYears()
+            }.onFailure {
+                it.printStackTrace()
+            }
+            progressState.value = false
+        }
+
     }
 
     override fun applyValues() {
-        searchController.yearsEvent.accept(currentYears.filterIndexed { index, item -> checkedValues.contains(item.value) })
-        guidedRouter.close()
+        viewModelScope.launch {
+            val newYears = currentYears.filterIndexed { index, item ->
+                checkedValues.contains(item.value)
+            }
+            searchController.yearsEvent.emit(newYears)
+            guidedRouter.close()
+        }
     }
 }

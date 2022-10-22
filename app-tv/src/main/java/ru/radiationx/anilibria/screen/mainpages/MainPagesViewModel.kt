@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.mainpages
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.SearchScreen
@@ -24,13 +26,15 @@ class MainPagesViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        checkerRepository
-            .checkUpdate(buildConfig.versionCode, true)
-            .lifeSubscribe({
+        viewModelScope.launch {
+            runCatching {
+                checkerRepository.checkUpdate(buildConfig.versionCode, true)
+            }.onSuccess {
                 hasUpdatesData.value = it.code > buildConfig.versionCode
-            }, {
+            }.onFailure {
                 it.printStackTrace()
-            })
+            }
+        }
     }
 
     fun onAppUpdateClick() {

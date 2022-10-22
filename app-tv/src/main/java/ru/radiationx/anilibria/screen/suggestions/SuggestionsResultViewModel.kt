@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.suggestions
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -49,7 +50,7 @@ class SuggestionsResultViewModel(
     }
 
     fun onQueryChange(query: String) {
-        viewModelScope.let {
+        viewModelScope.launch {
             currentQuery = query
             queryRelay.emit(currentQuery)
         }
@@ -60,17 +61,19 @@ class SuggestionsResultViewModel(
     }
 
     private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
-        val result = SuggestionsController.SearchResult(items, query, validQuery)
-        suggestionsController.resultEvent.accept(result)
-        progressState.value = false
-        resultData.value = items.map {
-            LibriaCard(
-                it.id,
-                it.names.getOrNull(0).orEmpty(),
-                it.names.getOrNull(1).orEmpty(),
-                it.poster.orEmpty(),
-                LibriaCard.Type.RELEASE
-            )
+        viewModelScope.launch {
+            val result = SuggestionsController.SearchResult(items, query, validQuery)
+            suggestionsController.resultEvent.emit(result)
+            progressState.value = false
+            resultData.value = items.map {
+                LibriaCard(
+                    it.id,
+                    it.names.getOrNull(0).orEmpty(),
+                    it.names.getOrNull(1).orEmpty(),
+                    it.poster.orEmpty(),
+                    LibriaCard.Type.RELEASE
+                )
+            }
         }
     }
 }

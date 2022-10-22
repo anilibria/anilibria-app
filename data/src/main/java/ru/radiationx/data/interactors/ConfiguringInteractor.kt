@@ -2,7 +2,6 @@ package ru.radiationx.data.interactors
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.ConfiguringAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsConfigState

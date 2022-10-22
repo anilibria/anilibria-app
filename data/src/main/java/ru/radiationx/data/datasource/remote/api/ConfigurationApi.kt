@@ -5,7 +5,6 @@ import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig

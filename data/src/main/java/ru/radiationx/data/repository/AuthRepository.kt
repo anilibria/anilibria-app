@@ -1,7 +1,6 @@
 package ru.radiationx.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder

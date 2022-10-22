@@ -2,7 +2,6 @@ package ru.radiationx.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject

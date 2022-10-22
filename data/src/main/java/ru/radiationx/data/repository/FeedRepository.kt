@@ -1,6 +1,5 @@
 package ru.radiationx.data.repository
 
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.remote.api.FeedApi
 import ru.radiationx.data.entity.app.feed.FeedItem

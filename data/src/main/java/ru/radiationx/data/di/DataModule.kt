@@ -7,7 +7,6 @@ import com.squareup.moshi.Moshi
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
@@ -26,7 +25,6 @@ import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
-import ru.radiationx.data.system.AppSchedulers
 import toothpick.config.Module
 
 class DataModule(context: Context) : Module() {
@@ -36,8 +34,6 @@ class DataModule(context: Context) : Module() {
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val dataStoragePreferences =
             context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
-
-        bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
         bind(Moshi::class.java).toInstance(Moshi.Builder().build())
 

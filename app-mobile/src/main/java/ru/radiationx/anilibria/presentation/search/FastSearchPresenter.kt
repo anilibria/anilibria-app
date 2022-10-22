@@ -10,9 +10,7 @@ import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
@@ -25,10 +23,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class FastSearchPresenter @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val searchRepository: SearchRepository,
     private val router: Router,
-    private val errorHandler: IErrorHandler,
     private val catalogAnalytics: CatalogAnalytics,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val releaseAnalytics: ReleaseAnalytics

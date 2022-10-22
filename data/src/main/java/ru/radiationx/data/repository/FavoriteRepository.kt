@@ -1,6 +1,5 @@
 package ru.radiationx.data.repository
 
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.api.FavoriteApi
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.ReleaseItem

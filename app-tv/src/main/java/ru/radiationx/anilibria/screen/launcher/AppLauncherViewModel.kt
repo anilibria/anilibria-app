@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.*
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
@@ -18,7 +17,6 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class AppLauncherViewModel(
     private val apiConfig: ApiConfig,
-    private val schedulersProvider: SchedulersProvider,
     private val router: Router,
     private val authRepository: AuthRepository
 ) : LifecycleViewModel() {

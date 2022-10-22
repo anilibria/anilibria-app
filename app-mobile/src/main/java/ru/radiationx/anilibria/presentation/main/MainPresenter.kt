@@ -7,7 +7,6 @@ import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
@@ -28,7 +27,6 @@ class MainPresenter @Inject constructor(
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
     private val apiConfig: ApiConfig,
-    private val schedulers: SchedulersProvider,
     private val analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,

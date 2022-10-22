@@ -3,7 +3,6 @@ package ru.radiationx.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.entity.app.updater.UpdateData
 import javax.inject.Inject

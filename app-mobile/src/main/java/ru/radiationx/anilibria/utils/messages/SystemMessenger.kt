@@ -1,14 +1,22 @@
 package ru.radiationx.anilibria.utils.messages
 
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
+// todo tr-274 check working
 class SystemMessenger @Inject constructor() {
-    private val messagesRelay = PublishRelay.create<SystemMessage>()
 
-    fun observe(): Observable<SystemMessage> = messagesRelay.hide()
+    private val messagesRelay = MutableSharedFlow<SystemMessage>()
 
-    fun showMessage(message: String) = messagesRelay.accept(SystemMessage(message))
-    fun showMessage(message: SystemMessage) = messagesRelay.accept(message)
+    fun observe(): Flow<SystemMessage> = messagesRelay
+
+    fun showMessage(message: String) = runBlocking {
+        messagesRelay.emit(SystemMessage(message))
+    }
+
+    fun showMessage(message: SystemMessage) = runBlocking {
+        messagesRelay.emit(message)
+    }
 }

@@ -1,25 +1,19 @@
 package ru.radiationx.data.datasource.remote.api
 
 import android.net.Uri
-import android.util.Log
-import io.reactivex.Completable
-import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.fetchResult
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.shared.ktx.android.nullString
-import java.text.NumberFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -32,52 +26,61 @@ class AuthApi @Inject constructor(
     private val apiConfig: ApiConfig
 ) {
 
-    fun loadUser(): Single<ProfileItem> {
+    suspend fun loadUser(): ProfileItem {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "user"
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { authParser.parseUser(it) }
+            .fetchResult<JSONObject>()
+            .let { authParser.parseUser(it) }
     }
 
-    fun loadOtpInfo(deviceId: String): Single<OtpInfo> {
+    suspend fun loadOtpInfo(deviceId: String): OtpInfo {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_get_otp",
             "deviceId" to deviceId
         )
-        return client
-            .post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
-            .map { authParser.parseOtp(it) }
+        return try {
+            client
+                .post(apiConfig.apiUrl, args)
+                .fetchResult<JSONObject>()
+                .let { authParser.parseOtp(it) }
+        } catch (ex: Throwable) {
+            throw authParser.checkOtpError(ex)
+        }
     }
 
-    fun acceptOtp(code: String): Completable {
+    suspend fun acceptOtp(code: String) {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_accept_otp",
             "code" to code
         )
-        return client
-            .post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
-            .ignoreElement()
+        try {
+            client
+                .post(apiConfig.apiUrl, args)
+                .fetchResult<JSONObject>()
+        } catch (ex: Throwable) {
+            throw authParser.checkOtpError(ex)
+        }
     }
 
-    fun signInOtp(code: String, deviceId: String): Single<ProfileItem> {
+    suspend fun signInOtp(code: String, deviceId: String): ProfileItem {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_login_otp",
             "deviceId" to deviceId,
             "code" to code
         )
-        return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .onErrorResumeNext { Single.error(authParser.checkOtpError(it)) }
-            .flatMap { loadUser() }
+        return try {
+            client
+                .post(apiConfig.apiUrl, args)
+                .fetchResult<JSONObject>()
+                .let { loadUser() }
+        } catch (ex: Throwable) {
+            throw authParser.checkOtpError(ex)
+        }
     }
 
-    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> {
+    suspend fun signIn(login: String, password: String, code2fa: String): ProfileItem {
         val args: MutableMap<String, String> = mutableMapOf(
             "mail" to login,
             "passwd" to password,
@@ -85,21 +88,21 @@ class AuthApi @Inject constructor(
         )
         val url = "${apiConfig.baseUrl}/public/login.php"
         return client.post(url, args)
-            .map { authParser.authResult(it) }
-            .flatMap { loadUser() }
+            .let { authParser.authResult(it) }
+            .let { loadUser() }
     }
 
-    fun loadSocialAuth(): Single<List<SocialAuth>> {
+    suspend fun loadSocialAuth(): List<SocialAuth> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "social_auth"
         )
         return client
             .post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONArray>())
-            .map { authParser.parseSocialAuth(it) }
+            .fetchResult<JSONArray>()
+            .let { authParser.parseSocialAuth(it) }
     }
 
-    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> {
+    suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem {
         val args: MutableMap<String, String> = mutableMapOf()
 
         val fixedUrl = Uri.parse(apiConfig.baseUrl).host?.let { redirectDomain ->
@@ -108,13 +111,13 @@ class AuthApi @Inject constructor(
 
         return client
             .getFull(fixedUrl, args)
-            .doOnSuccess { response ->
+            .also { response ->
                 val matcher = Pattern.compile(item.errorUrlPattern).matcher(response.redirect)
                 if (matcher.find()) {
                     throw SocialAuthException()
                 }
             }
-            .doOnSuccess {
+            .also {
                 val message = try {
                     JSONObject(it.body).nullString("mes")
                 } catch (ignore: Exception) {
@@ -124,10 +127,10 @@ class AuthApi @Inject constructor(
                     throw ApiError(400, message, null)
                 }
             }
-            .flatMap { loadUser() }
+            .let { loadUser() }
     }
 
-    fun signOut(): Single<String> {
+    suspend fun signOut(): String {
         val args = mapOf<String, String>()
         return client.post("${apiConfig.baseUrl}/public/logout.php", args)
     }

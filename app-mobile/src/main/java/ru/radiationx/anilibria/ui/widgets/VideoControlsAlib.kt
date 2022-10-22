@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
+import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator
 import com.devbrackets.android.exomedia.listener.VideoControlsSeekListener
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
@@ -17,12 +18,12 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
-import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import ru.radiationx.data.analytics.features.PlayerAnalytics
+import ru.radiationx.data.entity.app.release.PlayerSkips
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
@@ -42,6 +43,9 @@ class VideoControlsAlib @JvmOverloads constructor(
     private var pictureInPictureMenuItem: MenuItem? = null
     private var controlsEnabled = true
     private var playerAnalytics: PlayerAnalytics? = null
+
+    private var playerSkips: PlayerSkips? = null
+    private val skippedList = mutableSetOf<PlayerSkips.Skip>()
 
     init {
         setSeekListener(object : VideoControlsSeekListener {
@@ -74,6 +78,11 @@ class VideoControlsAlib @JvmOverloads constructor(
         pictureInPictureMenuItem?.isVisible = enabled
     }
 
+    fun setSkips(skips: PlayerSkips?) {
+        playerSkips = skips
+        skippedList.clear()
+    }
+
     /*override fun updateProgress(position: Long, duration: Long, bufferPercent: Int) {
         super.updateProgress(position, duration, bufferPercent)
         val percent = position.toFloat() / duration.toFloat()
@@ -89,12 +98,35 @@ class VideoControlsAlib @JvmOverloads constructor(
         return player.currentPosition / player.duration.toFloat()
     }
 
+    private fun getCurrentSkip(): PlayerSkips.Skip? {
+        return playerSkips?.opening?.takeIf { checkSkip(it) }
+            ?: playerSkips?.ending?.takeIf { checkSkip(it) }
+    }
+
+    private fun checkSkip(skip: PlayerSkips.Skip): Boolean {
+        val position = videoView?.currentPosition ?: return false
+        return !skippedList.contains(skip) && position >= skip.start && position <= skip.end
+    }
+
+    private fun cancelSkip() {
+        getCurrentSkip()?.also { skippedList.add(it) }
+    }
+
 
     override fun getLayoutResource() = R.layout.view_video_control
 
     override fun retrieveViews() {
         super.retrieveViews()
         textContainer = appbarLayout
+
+        btSkipsCancel.setOnClickListener {
+            cancelSkip()
+        }
+        btSkipsSkip.setOnClickListener {
+            getCurrentSkip()?.also {
+                videoView?.seekTo(it.end)
+            }
+        }
 
         appbarLayout.apply {
             background = context.getCompatDrawable(R.drawable.bg_video_toolbar)
@@ -176,8 +208,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onTap(event: MotionEvent?) {
-                Log.e("gestureLalala", "onTap, $canViewHide, $isVisible, $tapSeekStarted")
-
                 videoView?.showControls()
                 if (tapSeekStarted) {
                     event?.also { tapRelay.accept(it) }
@@ -185,11 +215,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onDoubleTap(event: MotionEvent?) {
-                Log.e(
-                    "gestureLalala",
-                    "onDoubleTap,;;; ${event?.x}:${event?.y};;;;  $canViewHide, $isVisible"
-                )
-
                 if (!tapSeekStarted) {
                     gestureSeekValue.visible()
                     tapSeekStarted = true
@@ -217,39 +242,27 @@ class VideoControlsAlib @JvmOverloads constructor(
 
                 gestureSeekValue.text = textValue
                 localSeekDelta = seekMillis
-
-                Log.e(
-                    "gestureLalala",
-                    "onHorizontalScroll, d=$delta, p=$percent, s=$seekMillis tv=$textValue, tp=$targetPosition"
-                )
             }
 
             override fun onVerticalScroll(event: MotionEvent?, delta: Float) {
-                Log.e("gestureLalala", "onVerticalScroll, d=$delta, e=${event?.action}")
             }
 
             override fun onSwipeRight() {
-                Log.e("gestureLalala", "onSwipeRight")
             }
 
             override fun onSwipeLeft() {
-                Log.e("gestureLalala", "onSwipeLeft")
             }
 
             override fun onSwipeBottom() {
-                Log.e("gestureLalala", "onSwipeBottom")
             }
 
             override fun onSwipeTop() {
-                Log.e("gestureLalala", "onSwipeTop")
             }
 
             override fun onStart() {
-                Log.e("gestureLalala", "onStart")
             }
 
             override fun onEnd() {
-                Log.e("gestureLalala", "onEnd, lsd=$localSeekDelta")
                 if (swipeSeekStarted) {
                     handleEndSwipeSeek()
                 }
@@ -264,7 +277,6 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun updatePlaybackState(isPlaying: Boolean) {
         super.updatePlaybackState(isPlaying)
-        Log.e("kulolo", "updatePlaybackState $isPlaying")
         if (!isPlaying && !isLoading) {
             hideDelayed()
         }
@@ -303,11 +315,6 @@ class VideoControlsAlib @JvmOverloads constructor(
     }
 
     override fun animateVisibility(toVisible: Boolean) {
-
-        Log.e(
-            "lalka",
-            "animateVisibility $controlsEnabled, $toVisible, ${!controlsEnabled && toVisible}"
-        )
         if (!controlsEnabled && toVisible) {
             hide()
             return
@@ -398,6 +405,13 @@ class VideoControlsAlib @JvmOverloads constructor(
             enabledViews.get(com.devbrackets.android.exomedia.R.id.exomedia_controls_next_btn, true)
 
         updatePlaybackState(videoView != null && videoView!!.isPlaying)
+    }
+
+    override fun updateProgress(position: Long, duration: Long, bufferPercent: Int) {
+        super.updateProgress(position, duration, bufferPercent)
+        val skip = getCurrentSkip()
+        btSkipsSkip.isVisible = skip != null
+        btSkipsCancel.isVisible = skip != null
     }
 
     fun setFullScreenMode(isFullscreen: Boolean) {

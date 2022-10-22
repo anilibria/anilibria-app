@@ -60,18 +60,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         init();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e(LOG_TAG, "onPause " + this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e(LOG_TAG, "onResume " + this);
-    }
-
     public void setOnDirectionListener(OnDirectionListener onDirectionListener) {
         this.onDirectionListener = onDirectionListener;
     }
@@ -115,7 +103,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public void easyLoadData(String baseUrl, String data) {
-        Log.d("kekeke", "easyLoadData " + baseUrl);
         loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
     }
 
@@ -148,28 +135,20 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         super.onAttachedToWindow();
         requestFocus();
         isJsReady = false;
-        /*Log.e(LOG_TAG, "onAttachedToWindow");
-        for (Runnable action : actionsForWebView) {
-            mHandler.removeCallbacks(action);
-        }
-        actionsForWebView.clear();*/
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Log.e(LOG_TAG, "onDetachedFromWindow");
         isJsReady = false;
         for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
-        Log.e(LOG_TAG, "CLEAR ACTIONS detach");
         actionsForWebView.clear();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
-        //Log.d("EWV", "evalJs: " + script);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 evalJs(script, null);
@@ -195,7 +174,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @JavascriptInterface
     public void domContentLoaded() {
         runInUiThread(() -> {
-            Log.d(LOG_TAG, "domContentLoaded " + isJsReady + ", actions: " + actionsForWebView.size());
             isJsReady = true;
             for (Runnable action : actionsForWebView) {
                 try {
@@ -204,7 +182,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
                     exception.printStackTrace();
                 }
             }
-            Log.e(LOG_TAG, "CLEAR ACTIONS loaded");
             actionsForWebView.clear();
 
             ArrayList<String> actions = new ArrayList<>();
@@ -224,7 +201,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     @JavascriptInterface
     public void onPageLoaded() {
         runInUiThread(() -> {
-            Log.d(LOG_TAG, "onPageLoaded " + isJsReady);
             ArrayList<String> actions = new ArrayList<>();
             if (jsLifeCycleListener != null) {
                 try {
@@ -244,7 +220,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     public final void runInUiThread(final Runnable action) {
-        //Log.d(LOG_TAG, "runInUiThread " + (Thread.currentThread() == mUiThread));
         if (Thread.currentThread() == mUiThread) {
             action.run();
         } else {
@@ -264,11 +239,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
 
     public void syncWithJs(final Runnable action) {
-        Log.d(LOG_TAG, "syncWithJs " + isJsReady);
         if (!isJsReady) {
-            Log.e(LOG_TAG, "ADD ACTION");
             actionsForWebView.add(action);
-            Log.e(LOG_TAG, "ACTION ADDED: " + actionsForWebView.size());
         } else {
             try {
                 runInUiThread(action);

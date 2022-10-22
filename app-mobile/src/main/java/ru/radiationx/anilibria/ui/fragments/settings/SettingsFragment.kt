@@ -1,21 +1,16 @@
 package ru.radiationx.anilibria.ui.fragments.settings
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
-import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
@@ -27,6 +22,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 /**
@@ -156,39 +152,12 @@ class SettingsFragment : BaseSettingFragment() {
             summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
         }
 
-        findPreference<Preference>("about.app_other_apps")?.apply {
-            icon = this.context.getCompatDrawable(R.drawable.ic_anilibria)
-            setOnPreferenceClickListener {
-                settingsAnalytics.otherAppsClick()
-                Utils.externalLink("https://anilibria.app/")
-                false
-            }
-        }
-
-        findPreference<Preference>("about.app_topic_4pda")?.apply {
-            icon = this.context.getCompatDrawable(R.drawable.ic_4pda)
-            setOnPreferenceClickListener {
-                settingsAnalytics.fourPdaClick()
-                Utils.externalLink("http://4pda.ru/forum/index.php?showtopic=886616")
-                false
-            }
-        }
-
-        /*findPreference("about.app_play_market")?.apply {
-            icon = ContextCompat.getDrawable(this.context, R.drawable.ic_play_market)
-            setOnPreferenceClickListener { preference ->
-                Utils.externalLink("https://play.google.com/store/apps/details?id=ru.radiationx.anilibria")
-                false
-            }
-        }*/
-
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
-                updaterAnalytics.open(AnalyticsConstants.screen_settings)
                 settingsAnalytics.checkUpdatesClick()
-                startActivity(Intent(activity, UpdateCheckerActivity::class.java).apply {
-                    putExtra(UpdateCheckerActivity.ARG_FORCE, true)
-                })
+                val intent = Screens.AppUpdateScreen(true, AnalyticsConstants.screen_settings)
+                    .getActivityIntent(requireContext())
+                startActivity(intent)
                 false
             }
         }

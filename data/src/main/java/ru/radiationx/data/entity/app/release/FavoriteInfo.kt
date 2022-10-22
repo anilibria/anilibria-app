@@ -8,6 +8,4 @@ import java.io.Serializable
 class FavoriteInfo : Serializable {
     var rating: Int = 0
     var isAdded: Boolean = false
-
-    var inProgress = false
 }

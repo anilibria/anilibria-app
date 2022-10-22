@@ -19,7 +19,6 @@ class ApiConfigStorage @Inject constructor(
     }
 
     fun saveJson(json: JSONObject) {
-        Log.d("bobobo", "ApiConfigStorage saveJson ${json.length()}")
         try {
             sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
         } catch (ex: Throwable) {
@@ -30,15 +29,9 @@ class ApiConfigStorage @Inject constructor(
     fun get(): List<ApiAddress>? = sharedPreferences
             .getString(KEY_API_CONFIG, null)
             ?.let { configurationParser.parse(JSONObject(it)) }
-            .also {
-                Log.e("bobobo", "get saved config: ${it?.size}")
-            }
 
     fun setActive(tag: String) = sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
 
     fun getActive(): String? = sharedPreferences
             .getString(KEY_API_CONFIG_ACTIVE, null)
-            .also {
-                Log.e("bobobo", "get saved active: ${it}")
-            }
 }

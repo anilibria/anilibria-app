@@ -47,7 +47,6 @@ class PlayerFragment : BasePlayerFragment() {
         }
 
         subscribeTo(viewModel.videoData) {
-            Log.e("kokoko", "video data $it")
             playerGlue?.apply {
                 title = it.title
                 subtitle = it.subtitle

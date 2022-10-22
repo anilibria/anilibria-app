@@ -136,7 +136,6 @@ class PlayerViewModel(
         } else {
             guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
         }
-        Log.e("kokoko", "onComplete $position")
     }
 
     fun onPrepare(position: Long, duration: Long) {
@@ -156,8 +155,6 @@ class PlayerViewModel(
         } else {
             playAction.value = true
         }
-
-        Log.e("kokoko", "onPrepare $position:${episode.seek}, $duration")
     }
 
     private fun getNextEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)

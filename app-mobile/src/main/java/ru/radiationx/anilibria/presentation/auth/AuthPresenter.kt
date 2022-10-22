@@ -1,17 +1,18 @@
 package ru.radiationx.anilibria.presentation.auth
 
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.SocialAuthItemState
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.app.auth.EmptyFieldException
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
@@ -22,41 +23,40 @@ import javax.inject.Inject
  */
 @InjectViewState
 class AuthPresenter @Inject constructor(
-        private val router: Router,
-        private val systemMessenger: SystemMessenger,
-        private val authRepository: AuthRepository,
-        private val errorHandler: IErrorHandler,
-        private val authMainAnalytics: AuthMainAnalytics,
-        private val authSocialAnalytics: AuthSocialAnalytics,
-        private val apiConfig: ApiConfig
+    private val router: Router,
+    private val systemMessenger: SystemMessenger,
+    private val authRepository: AuthRepository,
+    private val errorHandler: IErrorHandler,
+    private val authMainAnalytics: AuthMainAnalytics,
+    private val authSocialAnalytics: AuthSocialAnalytics,
+    private val apiConfig: ApiConfig
 ) : BasePresenter<AuthView>(router) {
 
     private var currentLogin = ""
     private var currentPassword = ""
-    private var currentCode2fa = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
         authRepository
-                .loadSocialAuth()
-                .subscribe({}, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .loadSocialAuth()
+            .subscribe({}, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
 
         authRepository
-                .observeSocialAuth()
-                .subscribe({
-                    viewState.showSocial(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+            .observeSocialAuth()
+            .subscribe({
+                viewState.showSocial(it.map { it.toState() })
+            }, {
+                errorHandler.handle(it)
+            })
+            .addToDisposable()
         updateButtonState()
     }
 
-    fun onSocialClick(item: SocialAuth) {
+    fun onSocialClick(item: SocialAuthItemState) {
         authMainAnalytics.socialClick(item.key)
         authSocialAnalytics.open(AnalyticsConstants.screen_auth_main)
         router.navigateTo(Screens.AuthSocial(item.key))
@@ -72,11 +72,6 @@ class AuthPresenter @Inject constructor(
         updateButtonState()
     }
 
-    fun setCode2fa(code2fa: String) {
-        currentCode2fa = code2fa
-        updateButtonState()
-    }
-
     private fun updateButtonState() {
         val enabled = currentLogin.isNotEmpty() && currentPassword.isNotEmpty()
         viewState.setSignButtonEnabled(enabled)
@@ -86,15 +81,25 @@ class AuthPresenter @Inject constructor(
         authMainAnalytics.loginClick()
         viewState.setRefreshing(true)
         authRepository
-                .signIn(currentLogin, currentPassword, currentCode2fa)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ user ->
-                    decideWhatToDo(user.authState)
-                }, {
+            .signIn(currentLogin, currentPassword, "")
+            .doAfterTerminate { viewState.setRefreshing(false) }
+            .subscribe({ user ->
+                decideWhatToDo(user.authState)
+            }, {
+                if (isEmpty2FaCode(it)) {
+                    router.navigateTo(Screens.Auth2FaCode(currentLogin, currentPassword))
+                } else {
                     authMainAnalytics.error(it)
                     errorHandler.handle(it)
-                })
-                .addToDisposable()
+                }
+            })
+            .addToDisposable()
+    }
+
+    private fun isEmpty2FaCode(error: Throwable): Boolean {
+        return currentLogin.isNotEmpty()
+                && currentPassword.isNotEmpty()
+                && error is EmptyFieldException
     }
 
     private fun decideWhatToDo(state: AuthState) {
@@ -118,12 +123,12 @@ class AuthPresenter @Inject constructor(
         viewState.showRegistrationDialog()
     }
 
-    fun registrationToSiteClick(){
+    fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
         Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
     }
 
-    fun submitUseTime(time:Long){
+    fun submitUseTime(time: Long) {
         authMainAnalytics.useTime(time)
     }
 

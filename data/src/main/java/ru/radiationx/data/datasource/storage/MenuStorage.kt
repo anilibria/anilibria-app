@@ -7,12 +7,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.MenuHolder
+import ru.radiationx.data.entity.app.other.DataIcons
 import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
 class MenuStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : MenuHolder {
 
     companion object {
@@ -20,12 +21,36 @@ class MenuStorage @Inject constructor(
     }
 
     private val localMenu = mutableListOf(
-            LinkMenuItem("Группа VK", absoluteLink = "https://vk.com/anilibria", icon = LinkMenuItem.IC_VK),
-            LinkMenuItem("Канал YouTube", absoluteLink = "https://youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg", icon = LinkMenuItem.IC_YOUTUBE),
-            LinkMenuItem("Patreon", absoluteLink = "https://patreon.com/anilibria", icon = LinkMenuItem.IC_PATREON),
-            LinkMenuItem("Канал Telegram", absoluteLink = "https://t.me/anilibria_tv", icon = LinkMenuItem.IC_TELEGRAM),
-            LinkMenuItem("Чат Discord", absoluteLink = "https://discord.gg/Kdr5sNw", icon = LinkMenuItem.IC_DISCORD),
-            LinkMenuItem("Сайт AniLibria", absoluteLink = "https://www.anilibria.tv/", icon = LinkMenuItem.IC_ANILIBRIA)
+        LinkMenuItem(
+            "Группа VK",
+            absoluteLink = "https://vk.com/anilibria",
+            icon = DataIcons.VK
+        ),
+        LinkMenuItem(
+            "Канал YouTube",
+            absoluteLink = "https://youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg",
+            icon = DataIcons.YOUTUBE
+        ),
+        LinkMenuItem(
+            "Patreon",
+            absoluteLink = "https://patreon.com/anilibria",
+            icon = DataIcons.PATREON
+        ),
+        LinkMenuItem(
+            "Канал Telegram",
+            absoluteLink = "https://t.me/anilibria_tv",
+            icon = DataIcons.TELEGRAM
+        ),
+        LinkMenuItem(
+            "Чат Discord",
+            absoluteLink = "https://discord.gg/Kdr5sNw",
+            icon = DataIcons.DISCORD
+        ),
+        LinkMenuItem(
+            "Сайт AniLibria",
+            absoluteLink = "https://www.anilibria.tv/",
+            icon = DataIcons.ANILIBRIA
+        )
     )
     private val localMenuRelay = BehaviorRelay.createDefault<List<LinkMenuItem>>(localMenu)
 
@@ -55,9 +80,9 @@ class MenuStorage @Inject constructor(
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_MENU_KEY, jsonMenu.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_MENU_KEY, jsonMenu.toString())
+            .apply()
     }
 
     private fun loadAll() {
@@ -66,12 +91,14 @@ class MenuStorage @Inject constructor(
             localMenu.clear()
             (0 until jsonMenu.length()).forEach { index ->
                 jsonMenu.getJSONObject(index).also {
-                    localMenu.add(LinkMenuItem(
+                    localMenu.add(
+                        LinkMenuItem(
                             it.getString("title"),
                             it.nullString("absoluteLink"),
                             it.nullString("sitePagePath"),
-                            it.nullString("sitePagePath")
-                    ))
+                            it.nullString("icon")
+                        )
+                    )
                 }
             }
         }

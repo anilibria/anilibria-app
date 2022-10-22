@@ -47,14 +47,11 @@ class MainFragment : ScopedRowsFragment() {
         lifecycle.addObserver(favoritesViewModel)
         lifecycle.addObserver(youtubeViewModel)
 
-        Log.e("kekeke", "$this oncreate $savedInstanceState")
-
         adapter = rowsAdapter
         onItemViewSelectedListener = ItemViewSelectedListener()
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
-                Log.e("lalala", "onclick $item")
                 val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
                 when (item) {
                     is LinkCard -> {

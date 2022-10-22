@@ -112,39 +112,6 @@
                 android:scrollHorizontally="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Design.TextInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            app:passwordToggleDrawable="@drawable/ic_eye"
-            app:passwordToggleEnabled="true">
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/auth2facode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:freezesText="true"
-                android:hint="@string/auth_2fa"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:scrollHorizontally="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:hint="@string/auth_2fa_desc"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:textColor="?textSecond"
-            android:textSize="12sp" />
-
         <ViewSwitcher
             android:id="@+id/authSwitcher"
             android:layout_width="match_parent"

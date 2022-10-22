@@ -65,8 +65,6 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     )
 
     private fun loadPage(requestPage: Int = currentPage) {
-
-        Log.e("lalala", "request load page $requestPage")
         if (requestPage != firstPage || progressOnRefresh) {
             cardsData.value = currentCards + loadingCard
         }
@@ -74,7 +72,6 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
         requestDisposable.dispose()
         requestDisposable = getLoader(requestPage)
             .lifeSubscribe({ newCards ->
-                Log.e("lalala", "loaded page $requestPage")
                 if (currentPage <= 1) {
                     currentCards.clear()
                 }

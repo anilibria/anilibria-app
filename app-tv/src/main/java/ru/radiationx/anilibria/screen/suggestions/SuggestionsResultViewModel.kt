@@ -65,7 +65,6 @@ class SuggestionsResultViewModel(
         val result = SuggestionsController.SearchResult(items, query, validQuery)
         suggestionsController.resultEvent.accept(result)
         progressState.value = false
-        items.forEach { it.query = query }
         resultData.value = items.map {
             LibriaCard(
                 it.id,

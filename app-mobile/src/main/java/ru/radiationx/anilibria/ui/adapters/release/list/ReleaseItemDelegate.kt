@@ -1,72 +1,63 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
-import android.os.Build
 import android.text.Html
 import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_feed_release.*
+import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.visible
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class ReleaseItemDelegate(
-        private val itemListener: Listener
+    private val itemListener: Listener
 ) : AppAdapterDelegate<ReleaseListItem, ListItem, ReleaseItemDelegate.ViewHolder>(
-        R.layout.item_feed_release,
-        { it is ReleaseListItem },
-        { ViewHolder(it, itemListener) }
+    R.layout.item_feed_release,
+    { it is ReleaseListItem },
+    { ViewHolder(it, itemListener) }
 ), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 10
 
-    override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item.item)
+    override fun bindData(item: ReleaseListItem, holder: ViewHolder) = holder.bind(item)
 
     class ViewHolder(
-            override val containerView: View,
-            private val itemListener: Listener
+        override val containerView: View,
+        private val itemListener: Listener
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private lateinit var currentItem: ReleaseItem
 
-        init {
+        fun bind(item: ReleaseListItem) {
+            val releaseItem = item.item
+            item_title.text = releaseItem.title
+
+            item_desc.text = Html.fromHtml(releaseItem.description)
+            ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${releaseItem.id}")
+            item_new_indicator.visible(releaseItem.isNew)
+            ImageLoader.getInstance().displayImage(releaseItem.posterUrl, item_image)
+
             containerView.setOnClickListener {
                 itemListener.onItemClick(layoutPosition, item_image)
-                itemListener.onItemClick(currentItem, layoutPosition)
+                itemListener.onItemClick(releaseItem, layoutPosition)
             }
             containerView.setOnLongClickListener {
-                itemListener.onItemLongClick(currentItem)
+                itemListener.onItemLongClick(releaseItem)
             }
-        }
-
-        fun bind(item: ReleaseItem) {
-            currentItem = item
-            if (item.series == null) {
-                item_title.text = item.title
-            } else {
-                item_title.text = String.format("%s (%s)", item.title, item.series)
-            }
-            item_desc.text = Html.fromHtml(item.description)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //item_image.transitionName = ReleaseFragment.TRANSACTION + "_" + position
-                item_image.transitionName = "${ReleaseFragment.TRANSACTION}_${item.id}"
-            }
-            item_new_indicator.visible(item.isNew)
-            ImageLoader.getInstance().displayImage(item.poster, item_image)
         }
     }
 
-    interface Listener : BaseItemListener<ReleaseItem> {
+    interface Listener : BaseItemListener<ReleaseItemState> {
         fun onItemClick(position: Int, view: View)
     }
 }

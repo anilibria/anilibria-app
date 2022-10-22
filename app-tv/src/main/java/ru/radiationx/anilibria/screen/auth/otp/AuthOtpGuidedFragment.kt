@@ -62,7 +62,6 @@ class AuthOtpGuidedFragment : ScopedGuidedStepFragment() {
         }
 
         subscribeTo(viewModel.state) {
-            Log.e("lalala", "State $it, ${it.progress}")
             val primaryAction = when (it.buttonState) {
                 AuthOtpViewModel.ButtonState.COMPLETE -> completeAction
                 AuthOtpViewModel.ButtonState.EXPIRED -> expiredAction

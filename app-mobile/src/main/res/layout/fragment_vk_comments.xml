@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/progressSwitcher"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorSurface">
+
+    <ru.radiationx.anilibria.ui.widgets.ExtendedWebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBarWv"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <ru.radiationx.anilibria.ui.widgets.ScreenHolderView
+        android:id="@+id/webErrorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:visibility="gone"
+        app:shvIcon="@drawable/ic_alert_outline"
+        app:shvPrimaryButton="Обновить"
+        app:shvTitle="Не удалось загрузить страницу" />
+
+    <ru.radiationx.anilibria.ui.widgets.ScreenHolderView
+        android:id="@+id/vkBlockedErrorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:visibility="gone"
+        app:shvIcon="@drawable/ic_alert_outline"
+        app:shvSecondaryButton="Скрыть предупреждение"
+        app:shvSubtitle="Комментарии могут не работать"
+        app:shvTitle="Нет доступа к vk.com" />
+
+    <ru.radiationx.anilibria.ui.widgets.ScreenHolderView
+        android:id="@+id/dataErrorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:visibility="gone"
+        app:shvIcon="@drawable/ic_alert_outline"
+        app:shvPrimaryButton="Обновить"
+        app:shvTitle="Не удалось загрузить данные" />
+
+    <ru.radiationx.anilibria.ui.widgets.ScreenHolderView
+        android:id="@+id/jsErrorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:visibility="gone"
+        app:shvIcon="@drawable/ic_alert_outline"
+        app:shvPrimaryButton="Ок"
+        app:shvSubtitle="Обнаружены проблемы с виджетом комментариев ВКонтакте. Комментарии могут работать неправильно или вообще не работать." />
+</FrameLayout>
+

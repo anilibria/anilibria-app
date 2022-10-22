@@ -1,0 +1,291 @@
+{
+  "cards": {
+    "new_donations": {
+      "title": "Поддержать АниЛибрию",
+      "subtitle": "Теперь все способы поддержки доступны в приложении"
+    },
+    "release": {
+      "title": "Понравилась озвучка?\nПоддержи АниЛибрию ❤️"
+    }
+  },
+  "detail": {
+    "content": [
+      {
+        "type": "header",
+        "header": {
+          "text": "AniLibria – творческое объединение, занимающееся озвучиванием аниме"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
+        "type": "section",
+        "section": {
+          "title": "Немного о нас",
+          "subtitle": "– Один из самых качественных дубляжей аниме, способный потягаться с платными сервисами<br>– Команда более чем из 100 человек, любящих своё дело<br>– Весь контент доступен абсолютно бесплатно<br>– У нас много классных <a href=\"https://anilibria.app/\">приложений</a><br>– Усть множество <a href=\"https://t.me/TeleAniLibria/4985\">полезных ботов</a> в Telegram<br>– Мы постоянно совершенствуемся"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 8
+        }
+      },
+      {
+        "type": "section",
+        "section": {
+          "title": "Что не круто",
+          "subtitle": "– Наш сайт заблокировал РосКомНадзор, поэтому у проекта сократились доходы"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
+        "type": "section",
+        "section": {
+          "title": "Вы можете поддержать проект материально"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 6
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "text": "Оформить подписку на boosty",
+          "link": "https://boosty.to/anilibriatv",
+          "brand": "boosty",
+          "icon": "boosty"
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "text": "Оформить подписку на Patreon",
+          "link": "https://www.patreon.com/anilibria",
+          "brand": "patreon",
+          "icon": "patreon"
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "tag": "yoomoney_dialog",
+          "text": "Денежный перевод на ЮMoney",
+          "brand": "yoomoney",
+          "icon": "yoomoney"
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "text": "Донат на DonationAlerts",
+          "link": "https://www.donationalerts.com/r/anilibria",
+          "brand": "donationalerts",
+          "icon": "donationalerts"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
+        "type": "section",
+        "section": {
+          "title": "И нематериально"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 6
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "tag": "join_team_dialog",
+          "text": "Вступить в команду AniLibria",
+          "brand": "anilibria",
+          "icon": "anilibria"
+        }
+      },
+      {
+        "type": "button",
+        "button": {
+          "tag": "infra_dialog",
+          "text": "Предоставить сервер для онлайн плеера",
+          "brand": "anilibria",
+          "icon": "infra"
+        }
+      },
+      {
+        "type": "divider",
+        "divider": {
+          "height": 24
+        }
+      },
+      {
+        "type": "caption",
+        "caption": {
+          "text": "На данный момент все средства пойдут на поддержку сайта, онлайн плеера и в целом на развитие проекта.<br>В дальнейшем планируется вернуть денежные премии для участников команды."
+        }
+      }
+    ],
+    "yoomoney_dialog": {
+      "title": "Перевод на ЮMoney",
+      "help": "ЮMoney - бывший сервис Яндекс.Деньги",
+      "amounts": {
+        "title": "Сумма перевода",
+        "hint": "Своё значение",
+        "default_value": 250,
+        "items": [
+          150,
+          250,
+          500,
+          1000
+        ]
+      },
+      "payment_types": {
+        "title": "Способ оплаты",
+        "selected_id": "card",
+        "items": [
+          {
+            "id": "account",
+            "title": "Кошелёк\nЮMoney"
+          },
+          {
+            "id": "card",
+            "title": "Банковская\nкарта"
+          },
+          {
+            "id": "mobile",
+            "title": "Баланс\nмобильного"
+          }
+        ]
+      },
+      "form": {
+        "receiver": "4100115839344905",
+        "target": "Добровольное пожертвование",
+        "short_desc": "short_desc",
+        "label": "label"
+      },
+      "bt_donate_text": "Далее",
+      "bt_cancel_text": "Отмена"
+    },
+    "content_dialogs": [
+      {
+        "tag": "join_team_dialog",
+        "content": [
+          {
+            "type": "section",
+            "section": {
+              "title": "Вступить в команду AniLibria"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
+            "type": "section",
+            "section": {
+              "subtitle": "Какие роли у нас есть:<br><b>Войсер</b> - озвучивает персонажей<br><b>Саббер</b> - переводит субтитры<br><b>Технарь</b> - делает хардсаб, накладывает звуковые эффекты и сводит звуковые дорожки<br><b>Сидер</b> - раздаёт серии через torrent"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
+            "type": "section",
+            "section": {
+              "subtitle": "Не знаете с чего начать озвучивать аниме? Советуем ознакомиться с этим видео от Lupin (руководитель проекта)"
+            }
+          },
+          {
+            "type": "button",
+            "button": {
+              "text": "Первые шаги для озвучивания аниме",
+              "link": "https://youtu.be/J4AKmleW7Ls",
+              "brand": "youtube",
+              "icon": "youtube"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 24
+            }
+          },
+          {
+            "type": "button",
+            "button": {
+              "text": "Подать заявку через Telegram",
+              "link": "https://t.me/joinlibria_bot",
+              "brand": "telegram",
+              "icon": "telegram"
+            }
+          }
+        ],
+        "cancel_text": "Отмена"
+      },
+      {
+        "tag": "infra_dialog",
+        "content": [
+          {
+            "type": "section",
+            "section": {
+              "title": "Предоставить сервер для онлайн плеера"
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
+            "type": "section",
+            "section": {
+              "subtitle": "Большая часть расходов проекта связана с затратами на сервера для онлайн плеера. Инфраструктура позволяет расширять количество серверов для плеера. Блаблабла..."
+            }
+          },
+          {
+            "type": "divider",
+            "divider": {
+              "height": 16
+            }
+          },
+          {
+            "type": "button",
+            "button": {
+              "text": "Техподдержка в Telegram",
+              "link": "tg://resolve?domain=Libria911Bot",
+              "brand": "telegram",
+              "icon": "telegram"
+            }
+          }
+        ],
+        "cancel_text": "Отмена"
+      }
+    ]
+  }
+}

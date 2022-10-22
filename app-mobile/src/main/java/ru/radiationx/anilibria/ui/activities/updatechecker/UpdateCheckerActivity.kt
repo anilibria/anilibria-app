@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.activities.updatechecker
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.ViewGroup
@@ -15,9 +17,7 @@ import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -28,6 +28,8 @@ import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.di.getDependency
+import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
 /**
@@ -38,8 +40,15 @@ import javax.inject.Inject
 class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
-        const val ARG_FORCE = "force"
-        const val ARG_ANALYTICS_FROM = "from"
+        private const val ARG_FORCE = "force"
+        private const val ARG_ANALYTICS_FROM = "from"
+
+        fun newIntent(context: Context, force: Boolean, analyticsFrom: String) =
+            Intent(context, UpdateCheckerActivity::class.java).apply {
+                putExtra(ARG_FORCE, true)
+                putExtra(ARG_ANALYTICS_FROM, analyticsFrom)
+                action = Intent.ACTION_VIEW
+            }
     }
 
     private val useTimeCounter by lazy {
@@ -169,7 +178,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         sectionTitle.text = title
         sectionTitle.setPadding(0, 0, 0, (resources.displayMetrics.density * 8).toInt())
         sectionTitle.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        sectionTitle.setTextColor(getCompatColor(R.color.light_textDefault))
+        sectionTitle.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionTitle)
 
         val stringBuilder = StringBuilder()
@@ -184,7 +193,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         val sectionText = TextView(this)
         sectionText.text = apiUtils.toHtml(stringBuilder.toString())
         sectionText.setPadding((resources.displayMetrics.density * 8).toInt(), 0, 0, 0)
-        sectionText.setTextColor(getCompatColor(R.color.light_textDefault))
+        sectionText.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionText)
 
         updateContent.addView(

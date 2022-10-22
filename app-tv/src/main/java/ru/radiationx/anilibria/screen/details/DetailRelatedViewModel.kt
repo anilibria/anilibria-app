@@ -55,7 +55,6 @@ class DetailRelatedViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .map { releases ->
                 releaseInteractor.updateItemsCache(releases)
-                Log.e("kekeke", "related releases ${releases.map { it.id }}")
                 releases.map { converter.toCard(it) }
             }
     }

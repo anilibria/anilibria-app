@@ -17,7 +17,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -26,7 +25,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
-import com.devbrackets.android.exomedia.listener.*
+import com.devbrackets.android.exomedia.listener.OnCompletionListener
+import com.devbrackets.android.exomedia.listener.OnPreparedListener
+import com.devbrackets.android.exomedia.listener.VideoControlsButtonListener
+import com.devbrackets.android.exomedia.listener.VideoControlsVisibilityListener
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
@@ -36,9 +38,8 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
@@ -52,15 +53,13 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsScale
 import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.VitalRepository
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.di.injectDependencies
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -119,13 +118,10 @@ class MyPlayerActivity : BaseActivity() {
     private val fullScreenListener = FullScreenListener()
 
     @Inject
-    lateinit var vitalRepository: VitalRepository
-
-    @Inject
     lateinit var releaseInteractor: ReleaseInteractor
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
+    lateinit var appThemeController: AppThemeController
 
     @Inject
     lateinit var defaultPreferences: SharedPreferences
@@ -149,7 +145,6 @@ class MyPlayerActivity : BaseActivity() {
         mutableMapOf<String, MutableList<Pair<AnalyticsQuality, Long>>>()
 
 
-    private val currentVitals = mutableListOf<VitalItem>()
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
 
@@ -199,7 +194,6 @@ class MyPlayerActivity : BaseActivity() {
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
         createPIPParams()
-        loadVital()
         initUiFlags()
         currentOrientation = resources.configuration.orientation
         goFullscreen()
@@ -212,10 +206,6 @@ class MyPlayerActivity : BaseActivity() {
         player.setOnPreparedListener(playerListener)
         player.setOnCompletionListener(playerListener)
         player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
-            Log.e(
-                "lalka",
-                "setOnVideoSizedChangedListener $intrinsicWidth, $intrinsicHeight, $pixelWidthHeightRatio"
-            )
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
         player.setAnalyticsListener(object : AnalyticsListener {
@@ -346,10 +336,6 @@ class MyPlayerActivity : BaseActivity() {
         val height = min(size.x, size.y)
         val ratio = width.toFloat() / height.toFloat()
 
-        Log.e(
-            "lululu",
-            "checkSausage $width, $height, $ratio && $notSausage = ${ratio != notSausage}"
-        )
         return notSausage != ratio
     }
 
@@ -408,32 +394,12 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun updateScale(scale: ScaleType) {
         val inMultiWindow = getInMultiWindow()
-        Log.d("MyPlayer", "updateScale $currentScale, $scale, $inMultiWindow, ${getInPIP()}")
         currentScale = scale
         scaleEnabled = !inMultiWindow
         if (!inMultiWindow) {
             saveScale(currentOrientation, currentScale)
         }
         player?.setScaleType(currentScale)
-    }
-
-    private fun loadVital() {
-        vitalRepository
-            .observeByRule(VitalItem.Rule.VIDEO_PLAYER)
-            .subscribe {
-                it.filter { it.events.contains(VitalItem.EVENT.EXIT_VIDEO) && it.type == VitalItem.VitalType.FULLSCREEN }
-                    .let {
-                        if (it.isNotEmpty()) {
-                            showVitalItems(it)
-                        }
-                    }
-            }
-            .addToDisposable()
-    }
-
-    fun showVitalItems(vital: List<VitalItem>) {
-        currentVitals.clear()
-        currentVitals.addAll(vital)
     }
 
     private fun updateQuality(newQuality: Int) {
@@ -462,6 +428,11 @@ class MyPlayerActivity : BaseActivity() {
         if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
             enterPipMode()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveEpisode()
     }
 
     override fun onStop() {
@@ -503,12 +474,18 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
+    private fun saveEpisodeAtNoZero(position: Long = player.currentPosition) {
+        if (position == 0L) {
+            return
+        }
+        saveEpisode(position)
+    }
+
     private fun saveEpisode(position: Long = player.currentPosition) {
         if (position < 0) {
             return
         }
         releaseInteractor.putEpisode(getEpisode().apply {
-            Log.e("SUKA", "Set posistion seek: ${position}")
             seek = position
             lastAccess = System.currentTimeMillis()
             isViewed = true
@@ -528,18 +505,11 @@ class MyPlayerActivity : BaseActivity() {
                 playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
             }
         }
-        saveEpisode()
+        saveEpisodeAtNoZero()
         compositeDisposable.dispose()
         player.stopPlayback()
         super.onDestroy()
         exitFullscreen()
-        if (currentVitals.isNotEmpty()) {
-            val randomVital = if (currentVitals.size > 1) rand(0, currentVitals.size) else 0
-            val listItem = currentVitals[randomVital]
-            startActivity(Intent(App.instance, FullScreenActivity::class.java).apply {
-                putExtra(FullScreenActivity.VITAL_ITEM, listItem)
-            })
-        }
     }
 
     private fun checkIndex(id: Int): Boolean {
@@ -551,7 +521,6 @@ class MyPlayerActivity : BaseActivity() {
     private fun getNextEpisode(): ReleaseFull.Episode? {
         val nextId = currentEpisodeId + 1
         if (checkIndex(nextId)) {
-            Log.e("S_DEF_LOG", "NEXT INDEX $nextId")
             return getEpisode(nextId)
         }
         return null
@@ -560,7 +529,6 @@ class MyPlayerActivity : BaseActivity() {
     private fun getPrevEpisode(): ReleaseFull.Episode? {
         val prevId = currentEpisodeId - 1
         if (checkIndex(prevId)) {
-            Log.e("S_DEF_LOG", "PREV INDEX $prevId")
             return getEpisode(prevId)
         }
         return null
@@ -607,6 +575,11 @@ class MyPlayerActivity : BaseActivity() {
             VAL_QUALITY_HD -> episode.urlHd
             VAL_QUALITY_FULL_HD -> episode.urlFullHd
             else -> null
+        }
+        videoControls?.also {
+            it.setSkips(episode.skips)
+            it.setNextButtonRemoved(currentEpisodeId == releaseData.episodes.firstOrNull()?.id)
+            it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.lastOrNull()?.id)
         }
         videoPath?.also {
             player.setVideoPath(it)
@@ -659,7 +632,6 @@ class MyPlayerActivity : BaseActivity() {
                 return
             }
             val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
-            Log.d("lalka", "onReceive $remoteControl")
             when (remoteControl) {
                 REMOTE_CONTROL_PLAY -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PAUSE -> controlsListener.onPlayPauseClicked()
@@ -673,7 +645,6 @@ class MyPlayerActivity : BaseActivity() {
         isInPictureInPictureMode: Boolean, newConfig: Configuration
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        Log.d("lalka", "onPictureInPictureModeChanged $isInPictureInPictureMode")
         saveEpisode()
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
@@ -728,7 +699,6 @@ class MyPlayerActivity : BaseActivity() {
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
-                    Log.e("lalka", "setSourceRectHint ${rect.flattenToString()}")
                     pictureInPictureParams?.setSourceRectHint(rect)
                 }
         }
@@ -824,7 +794,6 @@ class MyPlayerActivity : BaseActivity() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun enterPipMode() {
         if (checkPipMode()) {
-            Log.d("lalka", "enterPictureInPictureMode $maxNumPictureInPictureActions")
             pictureInPictureParams?.also {
                 playerAnalytics.pip(getSeekPercent())
                 videoControls?.gone()
@@ -960,7 +929,7 @@ class MyPlayerActivity : BaseActivity() {
                         }
                     }
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setDarkTheme(appThemeController.getTheme().isDark())
                 .setIconTintMode(PorterDuff.Mode.SRC_ATOP)
                 .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
@@ -997,7 +966,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setItems(titles) { _, which ->
                     updatePlaySpeed(values[which])
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setDarkTheme(appThemeController.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1027,7 +996,7 @@ class MyPlayerActivity : BaseActivity() {
                 .setItems(titles) { _, which ->
                     updateQuality(values[which])
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setDarkTheme(appThemeController.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1057,7 +1026,7 @@ class MyPlayerActivity : BaseActivity() {
                     playerAnalytics.settingsScaleChange(newScaleType.ordinal.toAnalyticsScale())
                     updateScale(newScaleType)
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setDarkTheme(appThemeController.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1086,7 +1055,7 @@ class MyPlayerActivity : BaseActivity() {
                     playerAnalytics.settingsPipChange(newPipControl.toAnalyticsPip())
                     updatePIPControl(newPipControl)
                 }
-                .setDarkTheme(appThemeHolder.getTheme().isDark())
+                .setDarkTheme(appThemeController.getTheme().isDark())
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1123,7 +1092,7 @@ class MyPlayerActivity : BaseActivity() {
                     }
                 }
             }
-            .setDarkTheme(appThemeHolder.getTheme().isDark())
+            .setDarkTheme(appThemeController.getTheme().isDark())
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1151,7 +1120,7 @@ class MyPlayerActivity : BaseActivity() {
                     }
                 }
             }
-            .setDarkTheme(appThemeHolder.getTheme().isDark())
+            .setDarkTheme(appThemeController.getTheme().isDark())
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
@@ -1281,12 +1250,9 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private inner class ControlsVisibilityListener : VideoControlsVisibilityListener {
-        override fun onControlsShown() {
-            Log.e("MyPlayer", "onControlsShown $supportActionBar, ${supportActionBar?.isShowing}")
-        }
+        override fun onControlsShown() {}
 
         override fun onControlsHidden() {
-            Log.e("MyPlayer", "onControlsHidden $supportActionBar")
             goFullscreen()
         }
     }

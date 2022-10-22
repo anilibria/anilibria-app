@@ -14,22 +14,18 @@ object OkHttpConfig {
 
     class DummyHostnameVerifier : HostnameVerifier {
         override fun verify(hostname: String?, session: SSLSession?): Boolean {
-            //Log.e("DummyHost", "verify $hostname, $session")
             return true
         }
     }
 
     class DummyTrustManager : X509TrustManager {
         override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-            //Log.e("DummyTrust", "checkClientTrusted ${chain?.size}, $authType")
         }
 
         override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-            //Log.e("DummyTrust", "checkServerTrusted ${chain?.size}, $authType")
         }
 
         override fun getAcceptedIssuers(): Array<X509Certificate> {
-            //Log.e("DummyTrust", "getAcceptedIssuers")
             return emptyArray()
         }
     }
@@ -62,7 +58,6 @@ fun OkHttpClient.Builder.appendSocketFactoryIfNeeded(): OkHttpClient.Builder {
             sslSocketFactory(TLSSocketFactory(), trustManager)
             hostnameVerifier(OkHttpConfig.DummyHostnameVerifier())
         } catch (ex: Exception) {
-            //Log.e("DummyException", "Hello: ${ex.message}")
             ex.printStackTrace()
         }
     }

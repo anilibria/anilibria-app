@@ -1,0 +1,120 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="DayNightAppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
+
+        <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
+
+
+        <!-- Attrs -->
+        <item name="divider_line">@color/dark_divider_line</item>
+        <item name="btn_border">@color/dark_btn_border</item>
+        <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>
+        <item name="imageBackground">@color/dark_imageBackground</item>
+
+        <item name="episode_even">@color/dark_episode_even</item>
+        <item name="bg_fav_btn">@drawable/bg_btn_favorite_dark</item>
+        <item name="bg_release_remind">@drawable/bg_release_remind_dark</item>
+        <item name="bg_schedule_day">@drawable/bg_schedule_day_dark</item>
+        <item name="bgDonationIconPt">@drawable/bg_donation_icon_pt_dark</item>
+        <item name="bgDonationIconBt">@drawable/bg_donation_icon_bt_dark</item>
+        <item name="bgDonationIconYm">@drawable/bg_donation_icon_ym_dark</item>
+        <item name="bgDonationIconDa">@drawable/bg_donation_icon_da_dark</item>
+
+        <item name="textDefault">@color/dark_textDefault</item>
+        <item name="textSecond">@color/dark_textSecond</item>
+
+        <item name="playerColorPrimary">@color/playerColorPrimary</item>
+
+        <item name="app_bar_overlay">@style/DayNightAppTheme.AppBarOverlay</item>
+        <item name="popup_overlay">@style/DayNightAppTheme.PopupOverlay</item>
+    </style>
+
+
+    <style name="DayNightAppTheme.NoActionBarBase" parent="DayNightAppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="DayNightAppTheme.NoActionBar" parent="DayNightAppTheme.NoActionBarBase" />
+
+    <style name="BasePreferencesDayNightAppTheme" parent="DayNightAppTheme">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme" />
+
+    <style name="Splash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_dark</item>
+    </style>
+
+    <style name="DayNightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
+        <item name="android:singleLine">true</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="DayNightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents">
+        <item name="elevation">0dp</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="DayNightAppTheme.Dialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_cardBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="dialogCornerRadius">8dp</item>
+    </style>
+
+    <style name="DayNightAppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_cardBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_base_icon</item>
+        <item name="colorOnSurface">@color/dark_base_icon</item>
+
+        <item name="bottomSheetStyle">@style/DayNightAppTheme.BottomSheet</item>
+    </style>
+
+    <style name="DayNightAppTheme.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/ShapeAppearanceBottomSheetDialog_Rounded</item>
+    </style>
+
+</resources>

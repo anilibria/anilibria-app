@@ -6,15 +6,14 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -29,9 +28,10 @@ class AuthActivity : BaseActivity() {
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
-        fun createIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent = Intent(context, AuthActivity::class.java).apply {
-            putExtra(ARG_INIT_SCREEN, rootScreen)
-        }
+        fun createIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent =
+            Intent(context, AuthActivity::class.java).apply {
+                putExtra(ARG_INIT_SCREEN, rootScreen)
+            }
     }
 
     @Inject
@@ -41,16 +41,13 @@ class AuthActivity : BaseActivity() {
     lateinit var navigationHolder: NavigatorHolder
 
     @Inject
-    lateinit var appThemeHolder: AppThemeHolder
-
-    @Inject
     lateinit var dimensionsProvider: DimensionsProvider
 
     private var dimensionHelper: DimensionHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
-        setTheme(appThemeHolder.getTheme().getMainStyleRes())
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -58,23 +55,26 @@ class AuthActivity : BaseActivity() {
         bottomShadow.gone()
         tabsRecycler.gone()
 
-        dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
-            override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                root_container.post {
-                    root_container.setPadding(
+        dimensionHelper = DimensionHelper(
+            measure_view,
+            measure_root_content,
+            object : DimensionHelper.DimensionsListener {
+                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
+                    root_container.post {
+                        root_container.setPadding(
                             root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
                             dimensions.keyboardHeight
-                    )
+                        )
+                    }
+                    dimensionsProvider.update(dimensions)
                 }
-                dimensionsProvider.update(dimensions)
-            }
-        })
+            })
 
         if (savedInstanceState == null) {
             val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
-                    ?: Screens.AuthMain()
+                ?: Screens.AuthMain()
             router.newRootScreen(initScreen)
         }
     }
@@ -92,6 +92,23 @@ class AuthActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         dimensionHelper?.destroy()
+    }
+
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.root_container)
+        val fragmentBackHandled = (fragment as? BackButtonListener)?.onBackPressed() ?: false
+        val canPopScreen = supportFragmentManager.backStackEntryCount >= 1
+        val handleResult = when {
+            fragmentBackHandled -> true
+            canPopScreen -> {
+                router.exit()
+                true
+            }
+            else -> false
+        }
+        if (!handleResult) {
+            super.onBackPressed()
+        }
     }
 
     private val navigatorNew by lazy {

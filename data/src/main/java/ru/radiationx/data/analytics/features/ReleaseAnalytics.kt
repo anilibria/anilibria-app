@@ -4,8 +4,8 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
-import ru.radiationx.data.analytics.features.extensions.toQualityParam
 import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toQualityParam
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import toothpick.InjectConstructor
 
@@ -17,6 +17,7 @@ class ReleaseAnalytics(
     private companion object {
         const val PARAM_HEVC = "hevc"
         const val PARAM_RELEASE_CODE = "code"
+        const val PARAM_EXTERNAL_TAG = "tag"
     }
 
     fun open(from: String, releaseId: Int?, releaseCode: String? = null) {
@@ -100,6 +101,21 @@ class ReleaseAnalytics(
         )
     }
 
+    fun episodeExternalClick(releaseId: Int, externalTag: String) {
+        sender.send(
+            AnalyticsConstants.release_episode_external,
+            releaseId.toIdParam(),
+            externalTag.toParam(PARAM_EXTERNAL_TAG)
+        )
+    }
+
+    fun episodeRutubeClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_episode_external,
+            releaseId.toIdParam()
+        )
+    }
+
     fun episodeDownloadClick(quality: AnalyticsQuality, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_episode_download,
@@ -165,6 +181,13 @@ class ReleaseAnalytics(
         )
     }
 
+    fun voiceClick(releaseId: Int) {
+        sender.send(
+            AnalyticsConstants.release_voice_click,
+            releaseId.toIdParam()
+        )
+    }
+
     fun favoriteAdd(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_favorite_add,
@@ -183,6 +206,14 @@ class ReleaseAnalytics(
         sender.send(
             AnalyticsConstants.release_comments_click,
             releaseId.toIdParam()
+        )
+    }
+
+    fun episodesTabClick(releaseId: Int, tabTag: String) {
+        sender.send(
+            AnalyticsConstants.release_episodes_tab_click,
+            releaseId.toIdParam(),
+            tabTag.toParam(PARAM_EXTERNAL_TAG)
         )
     }
 }

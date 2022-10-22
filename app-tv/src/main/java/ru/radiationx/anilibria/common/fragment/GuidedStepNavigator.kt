@@ -29,7 +29,6 @@ class GuidedStepNavigator(
 
     override fun applyCommands(commands: Array<out Command>) {
         val onlyGuidedCommands = commands.all { (it as? Forward)?.screen is GuidedAppScreen }
-        Log.e("GuidedStepNavigator", "applyCommands only $onlyGuidedCommands")
         if (onlyGuidedCommands) {
             for (command in commands) {
                 applyCommand(command)
@@ -40,8 +39,6 @@ class GuidedStepNavigator(
     }
 
     override fun applyCommand(command: Command?) {
-
-        Log.e("GuidedStepNavigator", "applyCommand $command")
         when (command) {
             is Forward -> guidedForward(command)
             is Replace -> guidedReplace(command)
@@ -51,8 +48,6 @@ class GuidedStepNavigator(
     }
 
     protected fun guidedForward(command: Forward) {
-
-        Log.e("GuidedStepNavigator", "guidedForward ${command.screen}")
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
@@ -75,8 +70,6 @@ class GuidedStepNavigator(
     }
 
     protected fun guidedReplace(command: Replace) {
-
-        Log.e("GuidedStepNavigator", "guidedForward ${command.screen}")
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
@@ -109,9 +102,7 @@ class GuidedStepNavigator(
             val key = command.screen?.screenKey
             val index = max(guidedStack.indexOf(key), 0)
             val range = (0 until guidedStack.size - index)
-            Log.e("GuidedStepNavigator", "guidedBackTo $key, $index, ${guidedStack.size}, $range")
             range.forEach {
-                Log.e("GuidedStepNavigator", "guidedBackTo remove $it")
                 guidedStack.removeLast()
                 fragmentManager.popBackStack(key, 0)
             }
@@ -121,18 +112,6 @@ class GuidedStepNavigator(
     }
 
     protected fun guidedBack() {
-        val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
-
-        Log.e(
-            "GuidedStepNavigator",
-            "guidedBack old current = $currentFragment, stack = ${(0 until fragmentManager.backStackEntryCount).map {
-                fragmentManager.getBackStackEntryAt(it)
-            }.joinToString()}"
-        )
-        Log.e(
-            "GuidedStepNavigator",
-            "guidedBack new current = $currentFragment, stack = ${guidedStack.joinToString()}"
-        )
         if (guidedStack.isNotEmpty()) {
             fragmentManager.popBackStack()
             guidedStack.removeLast()

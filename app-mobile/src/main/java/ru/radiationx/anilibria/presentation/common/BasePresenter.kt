@@ -19,7 +19,7 @@ open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPrese
         compositeDisposable.dispose()
     }
 
-    fun Disposable.addToDisposable(): Disposable {
+    fun <T : Disposable> T.addToDisposable(): T {
         compositeDisposable.add(this)
         return this
     }

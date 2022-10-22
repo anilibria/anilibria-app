@@ -11,6 +11,8 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
+import java.text.DecimalFormat
+import kotlin.math.pow
 
 /**
  * Created by isanechek on 30.07.16.
@@ -18,8 +20,23 @@ import java.net.URLDecoder
 
 object Utils {
 
+    fun readableFileSize(size: Long): String {
+        if (size <= 0) return "0"
+        val units = arrayOf("B", "kB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+
+        val number = size / 1024.0.pow(digitGroups.toDouble())
+        val formattedNumber = DecimalFormat("#,##0.#").format(number)
+        val unit = units[digitGroups]
+        return "$formattedNumber $unit"
+    }
+
     /* PLEASE CHECK STORAGE PERMISSION */
-    fun systemDownloader(context: Context, url: String, fileName: String = getFileNameFromUrl(url)) {
+    fun systemDownloader(
+        context: Context,
+        url: String,
+        fileName: String = getFileNameFromUrl(url)
+    ) {
         val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         dm?.let {
             val request = DownloadManager.Request(Uri.parse(url))
@@ -71,13 +88,16 @@ object Utils {
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
         sendIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-        App.instance.startActivity(Intent.createChooser(sendIntent, "Поделиться").addFlags(FLAG_ACTIVITY_NEW_TASK))
+        App.instance.startActivity(
+            Intent.createChooser(sendIntent, "Поделиться").addFlags(FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     fun externalLink(url: String) {
-        Log.e("S_DEF_LOG", "externalLink $url")
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(FLAG_ACTIVITY_NEW_TASK)
-        App.instance.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK))
+        App.instance.startActivity(
+            Intent.createChooser(intent, "Открыть в").addFlags(FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     fun longLog(msg: String) {

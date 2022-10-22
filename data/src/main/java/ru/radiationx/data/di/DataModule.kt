@@ -3,6 +3,7 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.squareup.moshi.Moshi
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
@@ -38,6 +39,7 @@ class DataModule(context: Context) : Module() {
 
         bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
 
+        bind(Moshi::class.java).toInstance(Moshi.Builder().build())
 
         bind(SharedPreferences::class.java).toInstance(defaultPreferences)
         bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
@@ -48,7 +50,6 @@ class DataModule(context: Context) : Module() {
         bind(PreferencesStorage::class.java).singleton()
 
         bind(PreferencesHolder::class.java).to(PreferencesStorage::class.java).singleton()
-        bind(AppThemeHolder::class.java).to(PreferencesStorage::class.java).singleton()
         bind(EpisodesCheckerHolder::class.java).to(EpisodesCheckerStorage::class.java).singleton()
         bind(HistoryHolder::class.java).to(HistoryStorage::class.java).singleton()
         bind(ReleaseUpdateHolder::class.java).to(ReleaseUpdateStorage::class.java).singleton()
@@ -57,6 +58,8 @@ class DataModule(context: Context) : Module() {
         bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singleton()
         bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
         bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
+        bind(DonationHolder::class.java).to(DonationStorage::class.java).singleton()
+        bind(TeamsHolder::class.java).to(TeamsStorage::class.java).singleton()
 
         bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
         bind(UserHolder::class.java).to(UserStorage::class.java).singleton()
@@ -89,7 +92,6 @@ class DataModule(context: Context) : Module() {
         bind(ProfileParser::class.java).singleton()
         bind(ReleaseParser::class.java).singleton()
         bind(SearchParser::class.java).singleton()
-        bind(VitalParser::class.java).singleton()
         bind(YoutubeParser::class.java).singleton()
         bind(ScheduleParser::class.java).singleton()
         bind(FeedParser::class.java).singleton()
@@ -102,18 +104,18 @@ class DataModule(context: Context) : Module() {
         bind(ReleaseApi::class.java).singleton()
         bind(SearchApi::class.java).singleton()
         bind(PageApi::class.java).singleton()
-        bind(VitalApi::class.java).singleton()
         bind(YoutubeApi::class.java).singleton()
         bind(ScheduleApi::class.java).singleton()
         bind(FeedApi::class.java).singleton()
         bind(MenuApi::class.java).singleton()
+        bind(DonationApi::class.java).singleton()
+        bind(TeamsApi::class.java).singleton()
 
         bind(AuthRepository::class.java).singleton()
         bind(ReleaseRepository::class.java).singleton()
         bind(ConfigurationRepository::class.java).singleton()
         bind(SearchRepository::class.java).singleton()
         bind(PageRepository::class.java).singleton()
-        bind(VitalRepository::class.java).singleton()
         bind(CheckerRepository::class.java).singleton()
         bind(HistoryRepository::class.java).singleton()
         bind(FavoriteRepository::class.java).singleton()
@@ -121,6 +123,8 @@ class DataModule(context: Context) : Module() {
         bind(ScheduleRepository::class.java).singleton()
         bind(FeedRepository::class.java).singleton()
         bind(MenuRepository::class.java).singleton()
+        bind(DonationRepository::class.java).singleton()
+        bind(TeamsRepository::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()
@@ -150,6 +154,11 @@ class DataModule(context: Context) : Module() {
         bind(WebPlayerAnalytics::class.java).singleton()
         bind(YoutubeAnalytics::class.java).singleton()
         bind(YoutubeVideosAnalytics::class.java).singleton()
+        bind(DonationCardAnalytics::class.java).singleton()
+        bind(DonationDetailAnalytics::class.java).singleton()
+        bind(DonationDialogAnalytics::class.java).singleton()
+        bind(DonationYooMoneyAnalytics::class.java).singleton()
+        bind(TeamsAnalytics::class.java).singleton()
     }
 
 }

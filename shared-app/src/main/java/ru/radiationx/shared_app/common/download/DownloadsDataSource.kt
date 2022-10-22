@@ -33,7 +33,6 @@ class DownloadsDataSource(
     private val completeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
-            Log.e(TAG, "onReceive $downloadId, ${fetchDownloadRow(downloadId)}, ${findCached(downloadId)}")
             updateComplete(downloadId)
         }
     }
@@ -56,18 +55,15 @@ class DownloadsDataSource(
     fun observeCompleted(): Observable<DownloadItem> = completeRelay.hide()
 
     fun notifyDownloadStart(downloadId: Long) {
-        Log.e(TAG, "notifyDownloadStart $downloadId")
         pendingDownloads.add(downloadId)
         fetchPendingDownloads()
     }
 
     fun notifyDownloadRemove(downloadId: Long) {
-        Log.e(TAG, "notifyDownloadRemove $downloadId")
         stopObserver(downloadId)
     }
 
     fun enableObserving(enabled: Boolean) {
-        Log.e(TAG, "enableObserving $enabled")
         if (enabled) {
             startTimer()
             context.registerReceiver(completeReceiver, completeFilter)
@@ -100,15 +96,12 @@ class DownloadsDataSource(
     }
 
     private fun fetchPendingDownloads() {
-        //Log.e(TAG, "fetchPendingDownloads pending=${pendingDownloads.size}, cached=${cachedDownloads.size}")
         if (pendingDownloads.isEmpty()) {
             return
         }
         val downloadIds = pendingDownloads.toLongArray()
         val downloads = fetchDownloadRows(downloadIds)
-        Log.e(TAG, "fetchPendingDownloads ids=${downloadIds.size}, fetched=${downloads.size}")
         downloads.forEach {
-            //Log.e(TAG, "fetchPendingDownloads fetched $it}")
             updateCache(it)
             startObserve(it.downloadId)
             downloadsRelay.accept(it)
@@ -140,18 +133,15 @@ class DownloadsDataSource(
             return
         }
         val downloadIds = savedIds.toLongArray()
-        Log.e(TAG, "updateAll ${downloadIds.joinToString()}")
         val downloads = fetchDownloadRows(downloadIds)
         fullUpdateCache(downloads)
         downloads.forEach {
-            Log.e(TAG, "updateAll new $it")
             startObserve(it.downloadId)
             downloadsRelay.accept(it)
         }
     }
 
     private fun update(downloadId: Long) {
-        Log.e(TAG, "update $downloadId")
         fetchDownloadRow(downloadId)?.also {
             updateCache(it)
             downloadsRelay.accept(it)
@@ -159,9 +149,7 @@ class DownloadsDataSource(
     }
 
     private fun updateComplete(downloadId: Long) {
-        Log.e(TAG, "updateComplete $downloadId")
         (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also {
-            //Log.e(TAG, "updateComplete $it")
             if (it.state != DownloadController.State.SUCCESSFUL) {
                 cachedDownloads.removeAll { it.downloadId == downloadId }
             }
@@ -170,19 +158,15 @@ class DownloadsDataSource(
     }
 
     private fun startObserve(downloadId: Long) {
-        Log.e(TAG, "startObserve $downloadId")
         val localUrl = findCached(downloadId)?.localUrl ?: return
         val contentObserver = observesMap[localUrl] ?: createContentObserver()
-        Log.e(TAG, "startObserve localUrl $localUrl")
         context.contentResolver.registerContentObserver(Uri.parse(localUrl), false, contentObserver)
         observesMap[localUrl] = contentObserver
     }
 
     private fun stopObserver(downloadId: Long) {
-        Log.e(TAG, "stopObserver $downloadId")
         val localUrl = findCached(downloadId)?.localUrl ?: return
         val contentObserver = observesMap[localUrl] ?: return
-        Log.e(TAG, "stopObserver localUrl $localUrl")
         context.contentResolver.unregisterContentObserver(contentObserver)
     }
 
@@ -190,14 +174,12 @@ class DownloadsDataSource(
         cachedDownloads.clear()
         cachedDownloads.addAll(items)
         downloadsHolder.saveDownloads(cachedDownloads.map { it.downloadId })
-        Log.e(TAG, "fullUpdateCache complete ${cachedDownloads.map { it.downloadId }}")
     }
 
     private fun updateCache(downloadItem: DownloadItem) {
         cachedDownloads.removeAll { it.downloadId == downloadItem.downloadId }
         cachedDownloads.add(downloadItem)
         downloadsHolder.saveDownloads(cachedDownloads.map { it.downloadId })
-        Log.e(TAG, "updateCache complete ${cachedDownloads.map { it.downloadId }}")
     }
 
     private fun findCached(downloadId: Long): DownloadItem? = cachedDownloads.firstOrNull { it.downloadId == downloadId }
@@ -206,7 +188,6 @@ class DownloadsDataSource(
 
     private fun createContentObserver() = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
-            Log.e(TAG, "onChange $uri")
             uri ?: return
             findCached(uri.toString())?.downloadId?.also { update(it) }
         }

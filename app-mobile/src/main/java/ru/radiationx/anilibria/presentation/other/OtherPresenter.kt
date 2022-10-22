@@ -2,9 +2,14 @@ package ru.radiationx.anilibria.presentation.other
 
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.model.asDataIconRes
+import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
+import ru.radiationx.anilibria.ui.fragments.other.ProfileScreenState
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -33,7 +38,9 @@ class OtherPresenter @Inject constructor(
     private val historyAnalytics: HistoryAnalytics,
     private val otherAnalytics: OtherAnalytics,
     private val settingsAnalytics: SettingsAnalytics,
-    private val pageAnalytics: PageAnalytics
+    private val pageAnalytics: PageAnalytics,
+    private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val teamsAnalytics: TeamsAnalytics
 ) : BasePresenter<OtherView>(router) {
 
     companion object {
@@ -44,10 +51,13 @@ class OtherPresenter @Inject constructor(
         const val MENU_OTP_CODE = 4
     }
 
+    private val stateController = StateController(ProfileScreenState())
+
     private var currentProfileItem: ProfileItem = authRepository.getUser()
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
 
+    private val profileMenu = mutableListOf<OtherMenuItem>()
     private val allMainMenu = mutableListOf<OtherMenuItem>()
     private val allSystemMenu = mutableListOf<OtherMenuItem>()
     private val allLinkMenu = mutableListOf<OtherMenuItem>()
@@ -55,10 +65,22 @@ class OtherPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        profileMenu.add(
+            OtherMenuItem(
+                MENU_OTP_CODE,
+                "Привязать устройство",
+                R.drawable.ic_devices_other
+            )
+        )
+
         allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
-        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Список команды", R.drawable.ic_account_multiple))
+        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Команда проекта", R.drawable.ic_account_multiple))
         allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
-        allMainMenu.add(OtherMenuItem(MENU_OTP_CODE, "Привязать устройство", R.drawable.ic_devices_other))
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
@@ -72,7 +94,6 @@ class OtherPresenter @Inject constructor(
         updateMenuItems()
     }
 
-
     override fun attachView(view: OtherView?) {
         super.attachView(view)
         authRepository
@@ -81,8 +102,7 @@ class OtherPresenter @Inject constructor(
             .addToDisposable()
     }
 
-
-    fun openAuth() {
+    fun onProfileClick() {
         if (currentProfileItem.authState == AuthState.AUTH) {
             otherAnalytics.profileClick()
             return
@@ -103,7 +123,7 @@ class OtherPresenter @Inject constructor(
             })
     }
 
-    fun onMenuClick(item: OtherMenuItem) {
+    fun onMenuClick(item: OtherMenuItemState) {
         when (item.id) {
             MENU_HISTORY -> {
                 otherAnalytics.historyClick()
@@ -112,12 +132,13 @@ class OtherPresenter @Inject constructor(
             }
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
-                pageAnalytics.open(AnalyticsConstants.screen_other, PageApi.PAGE_PATH_TEAM)
-                router.navigateTo(Screens.StaticPage(PageApi.PAGE_PATH_TEAM))
+                teamsAnalytics.open(AnalyticsConstants.screen_other)
+                router.navigateTo(Screens.Teams())
             }
             MENU_DONATE -> {
                 otherAnalytics.donateClick()
-                Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+                donationDetailAnalytics.open(AnalyticsConstants.screen_other)
+                router.navigateTo(Screens.DonationDetail())
             }
             MENU_SETTINGS -> {
                 otherAnalytics.settingsClick()
@@ -162,7 +183,11 @@ class OtherPresenter @Inject constructor(
                 currentLinkMenuItems.addAll(linkItems)
                 allLinkMenu.clear()
                 allLinkMenu.addAll(linkItems.map {
-                    OtherMenuItem(it.hashCode(), it.title, getResIconByType(it.icon))
+                    OtherMenuItem(
+                        id = it.hashCode(),
+                        title = it.title,
+                        icon = it.icon?.asDataIconRes() ?: R.drawable.ic_link
+                    )
                 })
                 linksMap.clear()
                 linksMap.putAll(linkItems.associateBy { it.hashCode() })
@@ -173,28 +198,28 @@ class OtherPresenter @Inject constructor(
 
     private fun updateMenuItems() {
         // Для фильтрации, если вдруг понадобится добавить
+        val profileMenu = profileMenu.toMutableList()
         val mainMenu = allMainMenu.toMutableList()
         val systemMenu = allSystemMenu.toMutableList()
         val linkMenu = allLinkMenu.toMutableList()
 
         if (currentProfileItem.authState != AuthState.AUTH) {
-            mainMenu.removeAll { it.id == MENU_OTP_CODE }
+            profileMenu.removeAll { it.id == MENU_OTP_CODE }
         }
 
-        viewState.showItems(currentProfileItem, listOf(mainMenu, systemMenu, linkMenu).filter { it.isNotEmpty() })
-    }
-
-    private fun getResIconByType(type: String?): Int = when (type) {
-        LinkMenuItem.IC_VK -> R.drawable.ic_logo_vk
-        LinkMenuItem.IC_YOUTUBE -> R.drawable.ic_logo_youtube
-        LinkMenuItem.IC_PATREON -> R.drawable.ic_logo_patreon
-        LinkMenuItem.IC_TELEGRAM -> R.drawable.ic_logo_telegram
-        LinkMenuItem.IC_DISCORD -> R.drawable.ic_logo_discord
-        LinkMenuItem.IC_ANILIBRIA -> R.drawable.ic_anilibria
-        LinkMenuItem.IC_INFO -> R.drawable.ic_information
-        LinkMenuItem.IC_RULES -> R.drawable.ic_book_open_variant
-        LinkMenuItem.IC_PERSON -> R.drawable.ic_person
-        LinkMenuItem.IC_SITE -> R.drawable.ic_link
-        else -> R.drawable.ic_link
+        val profileState = currentProfileItem.toState()
+        val profileMenuState = profileMenu.map { it.toState() }
+        val menuState = listOf(mainMenu, systemMenu, linkMenu)
+            .filter { it.isNotEmpty() }
+            .map { itemsGroup ->
+                itemsGroup.map { it.toState() }
+            }
+        stateController.updateState {
+            it.copy(
+                profile = profileState,
+                profileMenuItems = profileMenuState,
+                menuItems = menuState
+            )
+        }
     }
 }

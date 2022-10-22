@@ -32,6 +32,8 @@ class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
     private var otpInputField: TextInputEditText? = null
     private var otpProgressBar: ProgressBar? = null
     private var otpSuccess: AppCompatTextView? = null
+    private var otpTitle: AppCompatTextView? = null
+    private var otpHelp: AppCompatTextView? = null
 
     private val alertDialog: AlertDialog?
         get() = dialog as? AlertDialog?
@@ -63,6 +65,11 @@ class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
         otpInputField = otpLayout.otpInputField
         otpProgressBar = otpLayout.otpProgress
         otpSuccess = otpLayout.otpSuccess
+        otpTitle = otpLayout.otpTitle
+        otpHelp = otpLayout.otpHelp
+        otpTitle?.setOnClickListener {
+            otpHelp?.isVisible = !(otpHelp?.isVisible ?: false)
+        }
         alertDialog?.setView(otpLayout)
         return null
     }
@@ -86,6 +93,8 @@ class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
         otpInputField = null
         otpProgressBar = null
         otpSuccess = null
+        otpTitle = null
+        otpHelp = null
     }
 
     override fun close() {

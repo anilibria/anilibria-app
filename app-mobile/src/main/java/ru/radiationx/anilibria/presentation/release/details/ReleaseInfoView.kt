@@ -1,20 +1,18 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface ReleaseInfoView : IBaseView {
-    fun showVitalItems(vital: List<VitalItem>)
+interface ReleaseInfoView : MvpView {
 
-    fun updateFavCounter()
-
-    fun showRelease(release: ReleaseFull)
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showState(state:ReleaseDetailScreenState)
 
     @StateStrategyType(SkipStrategy::class)
     fun loadTorrent(torrent: TorrentItem)
@@ -32,7 +30,18 @@ interface ReleaseInfoView : IBaseView {
     fun playWeb(link: String, code: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playEpisode(release: ReleaseFull, episode: ReleaseFull.Episode, playFlag: Int? = null, quality: Int? = null)
+    fun playEpisode(
+        release: ReleaseFull,
+        episode: ReleaseFull.Episode,
+        playFlag: Int? = null,
+        quality: Int? = null
+    )
+
+    @StateStrategyType(SkipStrategy::class)
+    fun downloadEpisode(
+        episode: SourceEpisode,
+        quality: Int? = null
+    )
 
     @StateStrategyType(SkipStrategy::class)
     fun showFavoriteDialog()

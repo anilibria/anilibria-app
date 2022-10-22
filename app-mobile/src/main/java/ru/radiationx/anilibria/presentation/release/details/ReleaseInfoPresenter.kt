@@ -1,7 +1,8 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import android.util.Log
 import moxy.InjectViewState
+import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -14,18 +15,14 @@ import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.release.TorrentItem
-import ru.radiationx.data.entity.app.vital.VitalItem
+import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.data.repository.HistoryRepository
-import ru.radiationx.data.repository.VitalRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -33,33 +30,91 @@ import javax.inject.Inject
 class ReleaseInfoPresenter @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
-    private val vitalRepository: VitalRepository,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
-    private val apiConfig: ApiConfig,
+    private val appPreferences: PreferencesHolder,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
     private val webPlayerAnalytics: WebPlayerAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
-    private val playerAnalytics: PlayerAnalytics
+    private val playerAnalytics: PlayerAnalytics,
+    private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val teamsAnalytics: TeamsAnalytics
 ) : BasePresenter<ReleaseInfoView>(router) {
+
+    private val remindText =
+        "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
     private var currentData: ReleaseFull? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
+    private val stateController = StateController(
+        ReleaseDetailScreenState()
+    )
+
+    private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
+        stateController.updateState {
+            it.copy(
+                modifiers = block.invoke(it.modifiers)
+            )
+        }
+    }
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        stateController
+            .observeState()
+            .subscribe { viewState.showState(it) }
+            .addToDisposable()
+
+        donationRepository
+            .observerDonationInfo()
+            .subscribe { info ->
+                stateController.updateState { state ->
+                    val newCardState = info.cardRelease?.let {
+                        DonationCardItemState(
+                            tag = "donate",
+                            title = it.title,
+                            subtitle = it.subtitle,
+                            canClose = false
+                        )
+                    }
+                    state.copy(donationCardState = newCardState)
+                }
+            }
+            .addToDisposable()
+
+        appPreferences
+            .observeEpisodesIsReverse()
+            .subscribe { episodesReversed ->
+                updateModifiers {
+                    it.copy(episodesReversed = episodesReversed)
+                }
+
+            }
+            .addToDisposable()
+
+        appPreferences
+            .observeReleaseRemind()
+            .subscribe { remindEnabled ->
+                stateController.updateState {
+                    it.copy(remindText = remindText.takeIf { remindEnabled })
+                }
+            }
+            .addToDisposable()
+
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
         observeRelease()
         loadRelease()
-        loadVital()
         subscribeAuth()
     }
 
@@ -83,28 +138,12 @@ class ReleaseInfoPresenter @Inject constructor(
             .addToDisposable()
     }
 
-    private fun loadVital() {
-        vitalRepository
-            .observeByRule(VitalItem.Rule.RELEASE_DETAIL)
-            .subscribe { vitals ->
-                vitals.filter { it.type == VitalItem.VitalType.CONTENT_ITEM }.let {
-                    if (it.isNotEmpty()) {
-                        viewState.showVitalItems(it)
-                    }
-                }
-            }
-            .addToDisposable()
-    }
-
     private fun loadRelease() {
         releaseInteractor
             .loadRelease(releaseId, releaseIdCode)
-            .doOnSubscribe { viewState.setRefreshing(true) }
             .subscribe({ release ->
-                viewState.setRefreshing(false)
                 historyRepository.putRelease(release as ReleaseItem)
             }) {
-                viewState.setRefreshing(false)
                 errorHandler.handle(it)
             }
             .addToDisposable()
@@ -125,7 +164,9 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
-        viewState.showRelease(release)
+        stateController.updateState {
+            it.copy(data = release.toState())
+        }
     }
 
     fun markEpisodeViewed(episode: ReleaseFull.Episode) {
@@ -141,22 +182,24 @@ class ReleaseInfoPresenter @Inject constructor(
         releaseInteractor.putEpisode(episode)
     }
 
-    fun onTorrentClick() {
-        currentData?.let {
-            when {
-                it.torrents.size == 1 -> viewState.loadTorrent(it.torrents.last())
-                else -> viewState.showTorrentDialog(it.torrents)
-            }
+    fun onEpisodeTabClick(tabTag: String) {
+        currentData?.let { release ->
+            releaseAnalytics.episodesTabClick(release.id, tabTag)
+        }
+        updateModifiers {
+            it.copy(selectedEpisodesTabTag = tabTag)
         }
     }
 
-    fun onTorrentClick(item: TorrentItem) {
-        currentData?.let {
-            val isHevc = item.quality?.contains("HEVC", true) == true
-            releaseAnalytics.torrentClick(isHevc, it.id)
-            viewState.loadTorrent(item)
-        }
+    fun onRemindCloseClick() {
+        appPreferences.releaseRemind = false
+    }
 
+    fun onTorrentClick(item: ReleaseTorrentItemState) {
+        val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
+        val isHevc = torrentItem.quality?.contains("HEVC", true) == true
+        releaseAnalytics.torrentClick(isHevc, torrentItem.id)
+        viewState.loadTorrent(torrentItem)
     }
 
     fun onCommentsClick() {
@@ -192,8 +235,7 @@ class ReleaseInfoPresenter @Inject constructor(
             }, {
                 releaseAnalytics.episodesContinueClick(release.id)
             })
-            Log.e("jojojo", release.episodes.joinToString { "${it.id}=>${it.lastAccess}" })
-            release.episodes.asReversed().maxBy { it.lastAccess }?.let { episode ->
+            release.episodes.asReversed().maxByOrNull { it.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
             }
         }
@@ -207,28 +249,99 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData?.also { viewState.showEpisodesMenuDialog() }
     }
 
-    fun onPlayEpisodeClick(
+    private fun onRutubeEpisodeClick(
+        release: ReleaseFull,
+        episode: RutubeEpisode
+    ) {
+        releaseAnalytics.episodeRutubeClick(release.id)
+        viewState.playWeb(episode.url, release.code.orEmpty())
+    }
+
+    private fun onExternalEpisodeClick(
+        episodeState: ReleaseEpisodeItemState,
+        release: ReleaseFull,
+        episode: ExternalEpisode
+    ) {
+        releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
+        episode.url?.also { Utils.externalLink(it) }
+    }
+
+    private fun onSourceEpisodeClick(
+        release: ReleaseFull,
+        episode: SourceEpisode,
+        quality: Int? = null
+    ) {
+        val analyticsQuality =
+            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id)
+        viewState.downloadEpisode(episode, quality)
+    }
+
+    private fun onOnlineEpisodeClick(
+        release: ReleaseFull,
         episode: ReleaseFull.Episode,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
-        currentData?.let {
-            val analyticsQuality =
-                quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-            when (episode.type) {
-                ReleaseFull.Episode.Type.ONLINE -> {
-                    releaseAnalytics.episodePlayClick(analyticsQuality, it.id)
-                }
-                ReleaseFull.Episode.Type.SOURCE -> {
-                    releaseAnalytics.episodeDownloadClick(analyticsQuality, it.id)
-                }
+        val analyticsQuality =
+            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
+        viewState.playEpisode(release, episode, playFlag, quality)
+    }
+
+    fun onEpisodeClick(
+        episodeState: ReleaseEpisodeItemState,
+        playFlag: Int? = null,
+        quality: Int? = null
+    ) {
+        val release = currentData ?: return
+        when (episodeState.type) {
+            ReleaseEpisodeItemType.ONLINE -> {
+                val episodeItem = getEpisodeItem(episodeState) ?: return
+                onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
             }
-            viewState.playEpisode(it, episode, playFlag, quality)
+            ReleaseEpisodeItemType.SOURCE -> {
+                val episodeItem = getSourceEpisode(episodeState) ?: return
+                onSourceEpisodeClick(release, episodeItem, quality)
+            }
+            ReleaseEpisodeItemType.EXTERNAL -> {
+                val episodeItem = getExternalEpisode(episodeState) ?: return
+                onExternalEpisodeClick(episodeState, release, episodeItem)
+            }
+            ReleaseEpisodeItemType.RUTUBE -> {
+                val episodeItem = getRutubeEpisode(episodeState) ?: return
+                onRutubeEpisodeClick(release, episodeItem)
+            }
         }
     }
 
-    fun onLongClickEpisode(episode: ReleaseFull.Episode) {
-        currentData?.also { viewState.showLongPressEpisodeDialog(episode) }
+    fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
+        val episodeItem = getEpisodeItem(episode) ?: return
+        viewState.showLongPressEpisodeDialog(episodeItem)
+    }
+
+    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): ReleaseFull.Episode? {
+        if (episode.type != ReleaseEpisodeItemType.ONLINE) return null
+        return currentData?.episodes?.find { it.id == episode.id }
+    }
+
+    private fun getSourceEpisode(episode: ReleaseEpisodeItemState): SourceEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.SOURCE) return null
+        return currentData?.sourceEpisodes?.find { it.id == episode.id }
+    }
+
+    private fun getExternalEpisode(episode: ReleaseEpisodeItemState): ExternalEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.EXTERNAL) return null
+        val release = currentData ?: return null
+        return release.externalPlaylists
+            .find { it.tag == episode.tag }
+            ?.episodes
+            ?.find { it.id == episode.id }
+    }
+
+    private fun getRutubeEpisode(episode: ReleaseEpisodeItemState): RutubeEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.RUTUBE) return null
+        return currentData?.rutubePlaylist?.find { it.id == episode.id }
     }
 
     fun onClickLink(url: String) {
@@ -242,10 +355,10 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickDonate() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
         currentData?.also {
             releaseAnalytics.donateClick(it.id)
-            Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+            donationDetailAnalytics.open(AnalyticsConstants.screen_release)
+            router.navigateTo(Screens.DonationDetail())
         }
     }
 
@@ -271,17 +384,27 @@ class ReleaseInfoPresenter @Inject constructor(
 
         source
             .doOnSubscribe {
-                favInfo.inProgress = true
-                viewState.updateFavCounter()
+                updateModifiers {
+                    it.copy(favoriteRefreshing = true)
+                }
             }
             .doAfterTerminate {
-                favInfo.inProgress = false
-                viewState.updateFavCounter()
+                updateModifiers {
+                    it.copy(favoriteRefreshing = false)
+                }
             }
             .subscribe({ releaseItem ->
                 favInfo.rating = releaseItem.favoriteInfo.rating
                 favInfo.isAdded = releaseItem.favoriteInfo.isAdded
-                viewState.updateFavCounter()
+                stateController.updateState {
+                    it.copy(
+                        data = it.data?.copy(
+                            info = it.data.info.copy(
+                                favorite = releaseItem.favoriteInfo.toState()
+                            )
+                        )
+                    )
+                }
             }) {
                 errorHandler.handle(it)
             }
@@ -296,9 +419,12 @@ class ReleaseInfoPresenter @Inject constructor(
         router.navigateTo(Screens.Schedule(day))
     }
 
-    fun onDescriptionExpandChanged(isExpanded: Boolean) {
+    fun onDescriptionExpandClick() {
+        updateModifiers {
+            it.copy(descriptionExpanded = !it.descriptionExpanded)
+        }
         currentData?.also {
-            if (isExpanded) {
+            if (stateController.currentState.modifiers.descriptionExpanded) {
                 releaseAnalytics.descriptionExpand(it.id)
             }
         }
@@ -309,12 +435,22 @@ class ReleaseInfoPresenter @Inject constructor(
         router.navigateTo(Screens.Auth())
     }
 
-    fun openSearch(genre: String) {
-        currentData?.also {
-            releaseAnalytics.genreClick(it.id)
+    fun openSearch(tag: String, index: Int) {
+        val data = currentData ?: return
+        when (tag) {
+            ReleaseInfoState.TAG_GENRE -> {
+                val genre = data.genres.getOrNull(index) ?: return
+                releaseAnalytics.genreClick(data.id)
+                catalogAnalytics.open(AnalyticsConstants.screen_release)
+                router.navigateTo(Screens.ReleasesSearch(genre))
+            }
+            ReleaseInfoState.TAG_VOICE -> {
+                val voice = data.voices.getOrNull(index) ?: return
+                releaseAnalytics.voiceClick(data.id)
+                teamsAnalytics.open(AnalyticsConstants.screen_release)
+                router.navigateTo(Screens.Teams(voice))
+            }
         }
-        catalogAnalytics.open(AnalyticsConstants.screen_release)
-        router.navigateTo(Screens.ReleasesSearch(genre))
     }
 
     fun onDownloadLinkSelected(url: String) {
@@ -338,8 +474,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogDonateClick() {
-        //router.navigateTo(Screens.StaticPage(PageApi.PAGE_ID_DONATE))
-        Utils.externalLink("${apiConfig.siteUrl}/${PageApi.PAGE_PATH_DONATE}")
+        router.navigateTo(Screens.DonationDetail())
     }
 
     fun onResetEpisodesHistoryClick() {

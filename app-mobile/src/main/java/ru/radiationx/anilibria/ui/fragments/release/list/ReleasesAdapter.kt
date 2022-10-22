@@ -1,118 +1,63 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
-import android.util.Log
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingState
+import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.vital.VitalItem
-import java.util.*
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
 
 /* Created by radiationx on 31.10.17. */
 
-open class ReleasesAdapter(
-        var listener: ItemListener,
-        private val placeHolder: PlaceholderListItem
-) : OptimizeAdapter<MutableList<ListItem>>() {
-
-    private val vitalItems = mutableListOf<VitalItem>()
-    private val random = Random()
-
-    var endless: Boolean = false
-        set(enable) {
-            field = enable
-            removeLoadMore()
-            addLoadMore()
-            notifyDataSetChanged()
-        }
+class ReleasesAdapter(
+    private val loadMoreListener: () -> Unit,
+    private val loadRetryListener: () -> Unit,
+    private val listener: ItemListener,
+    private val emptyPlaceHolder: PlaceholderListItem,
+    private val errorPlaceHolder: PlaceholderListItem
+) : ListItemAdapter() {
 
     init {
-        items = mutableListOf()
         addDelegate(ReleaseItemDelegate(listener))
-        addDelegate(LoadMoreDelegate(listener))
+        addDelegate(LoadMoreDelegate(loadMoreListener))
+        addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(PlaceholderDelegate())
-        addDelegate(VitalWebItemDelegate())
-        addDelegate(VitalNativeItemDelegate())
     }
 
-    protected fun updatePlaceholder(condition: Boolean = items.isEmpty()) {
-        if (condition) {
-            items.add(placeHolder)
-        } else {
-            items.removeAll { it is PlaceholderListItem }
+    fun bindState(loadingState: DataLoadingState<List<ReleaseItemState>>) {
+        val newItems = mutableListOf<ListItem>()
+
+        getPlaceholder(loadingState)?.also {
+            newItems.add(it)
         }
-    }
 
-    private fun rand(from: Int, to: Int): Int {
-        return random.nextInt(to - from) + from
-    }
-
-    fun setVitals(vitals: List<VitalItem>) {
-        vitalItems.clear()
-        vitalItems.addAll(vitals)
-    }
-
-    private fun removeLoadMore() {
-        this.items.removeAll { it is LoadMoreListItem }
-    }
-
-    protected fun addLoadMore() {
-        if (endless) {
-            this.items.add(LoadMoreListItem())
+        loadingState.data?.let { data ->
+            newItems.addAll(data.map { ReleaseListItem(it) })
         }
-    }
 
-    protected fun randomInsertVitals() {
-        if (vitalItems.isNotEmpty() && items.isNotEmpty()) {
-            val randomIndex = rand(0, Math.min(8, items.size))
-            if (randomIndex < 6) {
-                val randomVital = if (vitalItems.size > 1) rand(0, vitalItems.size) else 0
-                val listItem = getVitalListItem(vitalItems[randomVital])
-                this.items.add(items.lastIndex - randomIndex, listItem)
+        if (loadingState.hasMorePages) {
+            if (loadingState.error != null) {
+                newItems.add(LoadErrorListItem("bottom"))
+            } else {
+                newItems.add(LoadMoreListItem("bottom", !loadingState.moreLoading))
             }
         }
+
+        items = newItems
     }
 
-    protected fun getVitalListItem(item: VitalItem) = when (item.contentType) {
-        VitalItem.ContentType.WEB -> VitalWebListItem(item)
-        else -> VitalNativeListItem(item)
-    }
 
-    fun insertMore(newItems: List<ReleaseItem>) {
-        val prevItems = itemCount
-        removeLoadMore()
-        this.items.addAll(newItems.map { ReleaseListItem(it) })
-        randomInsertVitals()
-        addLoadMore()
-        notifyItemRangeInserted(prevItems, itemCount)
-    }
-
-    open fun bindItems(newItems: List<ReleaseItem>) {
-        this.items.clear()
-        this.items.addAll(newItems.map { ReleaseListItem(it) })
-        updatePlaceholder()
-        randomInsertVitals()
-        addLoadMore()
-        notifyDataSetChanged()
-    }
-
-    fun removeItems(remItems: List<ReleaseItem>) {
-        remItems.forEach { remItem ->
-            val index = items.indexOfFirst { it is ReleaseListItem && it.item.id == remItem.id }
-            if (index != -1) {
-                items.removeAt(index)
-                notifyItemRemoved(index)
-            }
+    private fun getPlaceholder(loadingState: DataLoadingState<List<ReleaseItemState>>): PlaceholderListItem? {
+        val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
+        return when {
+            needPlaceholder && loadingState.error != null -> errorPlaceHolder
+            needPlaceholder && loadingState.error == null -> emptyPlaceHolder
+            else -> null
         }
     }
 
-    fun updateItems(updItems: List<ReleaseItem>) {
-        updItems.map { updItem -> items.indexOfFirst { it is ReleaseListItem && it.item.id == updItem.id } }.forEach {
-            Log.e("lalalupdata", "adapter notify index $it")
-            notifyItemChanged(it)
-        }
-    }
-
-    interface ItemListener : LoadMoreDelegate.Listener, ReleaseItemDelegate.Listener
+    interface ItemListener : ReleaseItemDelegate.Listener
 }

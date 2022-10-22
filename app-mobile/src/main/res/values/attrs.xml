@@ -23,8 +23,21 @@
     <attr name="app_bar_overlay" extension="reference" />
     <attr name="popup_overlay" extension="reference" />
 
+    <attr name="bgDonationIconPt" extension="reference" />
+    <attr name="bgDonationIconBt" extension="reference" />
+    <attr name="bgDonationIconYm" extension="reference" />
+    <attr name="bgDonationIconDa" extension="reference" />
+
     <declare-styleable name="AspectRatio">
         <attr name="aspectRatio" format="float" />
         <attr name="enabledAspectRatio" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ScreenHolderView">
+        <attr name="shvIcon" format="reference" />
+        <attr name="shvTitle" format="string" />
+        <attr name="shvSubtitle" format="string" />
+        <attr name="shvPrimaryButton" format="string" />
+        <attr name="shvSecondaryButton" format="string" />
     </declare-styleable>
 </resources>

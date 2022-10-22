@@ -29,24 +29,20 @@ class DownloadControllerImpl(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
-        Log.e("DownloadController", "start")
         dataSource.enableObserving(true)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stop() {
-        Log.e("DownloadController", "stop")
         dataSource.enableObserving(false)
     }
 
     override fun startDownload(url: String) {
-        Log.e("DownloadController", "startDownload $url")
         val downloadId = enqueueDownload(url, null)
         dataSource.notifyDownloadStart(downloadId)
     }
 
     override fun removeDownload(url: String) {
-        Log.e("DownloadController", "removeDownload $url")
         getDownload(url)?.also {
             downloadManager.remove(it.downloadId)
             dataSource.notifyDownloadRemove(it.downloadId)

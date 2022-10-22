@@ -67,8 +67,6 @@ class DetailFragment : ScopedRowsFragment() {
         relatedViewModel.releaseId = releaseId
         recommendsViewModel.releaseId = releaseId
 
-        Log.e("kekeke", "$this oncreate $savedInstanceState")
-
         adapter = rowsAdapter
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
@@ -81,7 +79,6 @@ class DetailFragment : ScopedRowsFragment() {
         }
 
         setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
-            Log.e("kekeke", "select $item, $row")
             if (row is ListRow) {
                 backgroundManager.applyCard(item)
             } else if (row is LibriaDetailsRow) {
@@ -150,7 +147,6 @@ class DetailFragment : ScopedRowsFragment() {
         backgroundManager.applyImage(image, colorSelector = {
             val swatch = it.darkVibrantSwatch ?: it.vibrantSwatch
             val color = swatch?.rgb
-            Log.e("kekeke", "apply detail $color")
             color
             null
         }) {

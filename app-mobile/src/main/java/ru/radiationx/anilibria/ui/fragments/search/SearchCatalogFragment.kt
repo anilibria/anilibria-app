@@ -1,11 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
@@ -14,28 +15,20 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
-import ru.radiationx.anilibria.presentation.search.FastSearchView
-import ru.radiationx.anilibria.presentation.search.SearchCatalogView
-import ru.radiationx.anilibria.presentation.search.SearchPresenter
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.presentation.search.*
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.vital.VitalItem
 import ru.radiationx.shared.ktx.android.putExtra
-import javax.inject.Inject
+import ru.radiationx.shared_app.di.injectDependencies
 
 
 class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView, SharedProvider,
@@ -56,22 +49,26 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     private lateinit var genresDialog: GenresDialog
     private val adapter = SearchAdapter(
-        this, PlaceholderListItem(
+        loadMoreListener = { presenter.loadMore() },
+        loadRetryListener = { presenter.loadMore() },
+        listener = this,
+        remindCloseListener = { presenter.onRemindClose() },
+        emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
             R.string.placeholder_desc_nodata_search
+        ),
+        errorPlaceHolder = PlaceholderListItem(
+            R.drawable.ic_toolbar_search,
+            R.string.placeholder_title_errordata_base,
+            R.string.placeholder_desc_nodata_base
         )
     )
 
-    @Inject
-    lateinit var appThemeHolder: AppThemeHolder
-
-    private val fastSearchAdapter = FastSearchAdapter {
-        //searchView?.close(true)
-        searchPresenter.onItemClick(it)
-    }.apply {
-        setHasStableIds(true)
-    }
+    private val fastSearchAdapter = FastSearchAdapter(
+        clickListener = { searchPresenter.onItemClick(it) },
+        localClickListener = { searchPresenter.onLocalItemClick(it) }
+    )
     private var searchView: SearchMenuItem? = null
 
     @InjectPresenter
@@ -127,7 +124,6 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                 }
 
                 override fun onCheckedGenres(items: List<String>) {
-                    Log.e("lululu", "onCheckedItems ${items.size}")
                     presenter.onChangeGenres(items)
                 }
 
@@ -153,11 +149,8 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
         recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
-            /*addItemDecoration(UniversalItemDecoration()
-                    .fullWidth(true)
-                    .spacingDp(8f)
-            )*/
+            layoutManager = LinearLayoutManager(this.context)
+            disableItemChangeAnimation()
         }
 
         ToolbarShadowController(
@@ -208,7 +201,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
                         searchPresenter.onClose()
-                    }else{
+                    } else {
                         presenter.onFastSearchOpen()
                     }
                 }
@@ -243,34 +236,12 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         return true
     }
 
-    override fun showSearchItems(items: List<SearchItem>) {
-        fastSearchAdapter.bindItems(items)
-    }
-
-    override fun setSearchProgress(isProgress: Boolean) {
-        searchView?.also {
-            /*if (isProgress) {
-                it.showProgress()
-            } else {
-                it.hideProgress()
-            }*/
-        }
+    override fun showState(state: FastSearchScreenState) {
+        fastSearchAdapter.bindItems(state)
     }
 
     override fun showDialog() {
         genresDialog.showDialog()
-    }
-
-    override fun showVitalBottom(vital: VitalItem) {
-
-    }
-
-    override fun showVitalItems(vital: List<VitalItem>) {
-
-    }
-
-    override fun setEndless(enable: Boolean) {
-        adapter.endless = enable
     }
 
     override fun showGenres(genres: List<GenreItem>) {
@@ -316,36 +287,21 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         toolbar.subtitle = subtitle
     }
 
-    override fun showReleases(releases: List<ReleaseItem>) {
-        adapter.bindItems(releases)
-    }
-
-    override fun insertMore(releases: List<ReleaseItem>) {
-        adapter.insertMore(releases)
-    }
-
-    override fun updateReleases(releases: List<ReleaseItem>) {
-        adapter.updateItems(releases)
-    }
-
-    override fun onLoadMore() {
-        presenter.loadMore()
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        refreshLayout.isRefreshing = refreshing
+    override fun showState(state: SearchScreenState) {
+        progressBarList.isVisible = state.data.emptyLoading
+        refreshLayout.isRefreshing = state.data.refreshLoading
+        adapter.bindState(state)
     }
 
     override fun onItemClick(position: Int, view: View) {
         sharedViewLocal = view
     }
 
-    override fun onItemClick(item: ReleaseItem, position: Int) {
+    override fun onItemClick(item: ReleaseItemState, position: Int) {
         presenter.onItemClick(item)
     }
 
-    override fun onItemLongClick(item: ReleaseItem): Boolean {
-        presenter.onItemLongClick(item)
+    override fun onItemLongClick(item: ReleaseItemState): Boolean {
         context?.let {
             val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
             AlertDialog.Builder(it)
@@ -353,17 +309,10 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
                     when (which) {
                         0 -> {
                             presenter.onCopyClick(item)
-                            Utils.copyToClipBoard(item.link.orEmpty())
                             Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> {
-                            presenter.onShareClick(item)
-                            Utils.shareText(item.link.orEmpty())
-                        }
-                        2 -> {
-                            presenter.onShortcutClick(item)
-                            ShortcutHelper.addShortcut(item)
-                        }
+                        1 -> presenter.onShareClick(item)
+                        2 -> presenter.onShortcutClick(item)
                     }
                 }
                 .show()

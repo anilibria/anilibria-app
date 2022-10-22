@@ -8,7 +8,6 @@ object AnalyticsConstants {
     const val screen_feed = "screen_feed"
     const val screen_schedule = "screen_schedule"
     const val screen_release = "screen_release"
-    const val screen_releases_list = "screen_releases_list"
     const val screen_release_comments = "screen_release_comments"
     const val screen_player = "screen_player"
     const val screen_web_player = "screen_web_player"
@@ -26,6 +25,10 @@ object AnalyticsConstants {
     const val screen_auth_main = "screen_auth_main"
     const val screen_auth_vk = "screen_auth_vk"
     const val screen_auth_social = "screen_auth_social"
+    const val screen_donation_detail = "screen_donation_detail"
+    const val screen_donation_yoomoney = "screen_donation_yoomoney"
+    const val screen_donation_jointeam = "screen_donation_jointeam"
+    const val screen_donation_infra = "screen_donation_infra"
     const val notification_local_update = "notification_local_update"
     const val notification_push_update = "notification_push_update"
     const val link_router = "link_router"
@@ -35,9 +38,6 @@ object AnalyticsConstants {
     const val app_time_to_create = "app_time_to_create"
     const val app_time_to_init = "app_time_to_init"
     const val app_time_to_activity = "app_time_to_activity"
-    const val app_episode_put = "app_episode_put"
-    const val app_history_put = "app_history_put"
-    const val app_release_put = "app_release_put"
 
     /* Configuring */
     const val config_open = "config_open"
@@ -84,6 +84,8 @@ object AnalyticsConstants {
     const val release_episodes_start = "release_episodes_start"
     const val release_episodes_continue = "release_episodes_continue"
     const val release_episode_play = "release_episode_play"
+    const val release_episode_external = "release_episode_external"
+    const val release_episode_rutube = "release_episode_rutube"
     const val release_episode_download = "release_episode_download"
     const val release_episode_download_url = "release_episode_download_url"
     const val release_web_player = "release_web_player"
@@ -93,9 +95,11 @@ object AnalyticsConstants {
     const val release_description_link = "release_description_link"
     const val release_schedule_click = "release_schedule_click"
     const val release_genre_click = "release_genre_click"
+    const val release_voice_click = "release_voice_click"
     const val release_favorite_add = "release_favorite_add"
     const val release_favorite_remove = "release_favorite_remove"
     const val release_comments_click = "release_comments_click"
+    const val release_episodes_tab_click = "release_episodes_tab_click"
 
     /* Youtube Videos */
     const val youtube_videos_open = "youtube_videos_open"
@@ -233,12 +237,36 @@ object AnalyticsConstants {
     const val updater_download_click = "updater_download_click"
     const val updater_source_download = "updater_source_download"
     const val updater_use_time = "updater_use_time"
+    const val app_update_card = "app_update_card"
+    const val app_update_card_click = "app_update_card_click"
+    const val app_update_card_close = "app_update_card_close"
 
     /* Static Page */
     const val page_open = "page_open"
     const val page_loaded = "page_loaded"
     const val page_error = "page_error"
     const val page_use_time = "page_use_time"
+
+    /* Donation */
+    const val donation_detail_open = "donation_detail_open"
+    const val donation_detail_link_click = "donation_detail_link_click"
+    const val donation_detail_button_click = "donation_detail_button_click"
+
+    const val donation_yoomoney_open = "donation_yoomoney_open"
+    const val donation_yoomoney_help_click = "donation_yoomoney_help_click"
+    const val donation_yoomoney_accept_click = "donation_yoomoney_accept_click"
+
+    const val donation_dialog_open = "donation_dialog_open"
+    const val donation_dialog_link_click = "donation_dialog_link_click"
+    const val donation_dialog_button_click = "donation_dialog_button_click"
+
+    /* Donation Card */
+    const val donation_card_new_click = "donation_card_new_click"
+    const val donation_card_new_close_click = "donation_card_new_close_click"
+
+    /* Teams */
+    const val teams_open = "teams_open"
+    const val teams_join_click = "teams_join_click"
 
     /*
     * Глобально добавить в профиль пользователя текущий adresss

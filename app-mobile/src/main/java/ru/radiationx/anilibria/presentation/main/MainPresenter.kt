@@ -3,17 +3,14 @@ package ru.radiationx.anilibria.presentation.main
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
 import javax.inject.Inject
@@ -23,21 +20,18 @@ import javax.inject.Inject
  */
 @InjectViewState
 class MainPresenter @Inject constructor(
-        private val router: Router,
-        private val systemMessenger: SystemMessenger,
-        private val errorHandler: IErrorHandler,
-        private val authRepository: AuthRepository,
-        private val appThemeHolder: AppThemeHolder,
-        private val apiConfig: ApiConfig,
-        private val schedulers: SchedulersProvider,
-        private val localeHolder: LocaleHolder,
-        private val analyticsProfile: AnalyticsProfile,
-        private val authMainAnalytics: AuthMainAnalytics,
-        private val catalogAnalytics: CatalogAnalytics,
-        private val favoritesAnalytics: FavoritesAnalytics,
-        private val feedAnalytics: FeedAnalytics,
-        private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
-        private val otherAnalytics: OtherAnalytics
+    private val router: Router,
+    private val authRepository: AuthRepository,
+    private val donationRepository: DonationRepository,
+    private val apiConfig: ApiConfig,
+    private val schedulers: SchedulersProvider,
+    private val analyticsProfile: AnalyticsProfile,
+    private val authMainAnalytics: AuthMainAnalytics,
+    private val catalogAnalytics: CatalogAnalytics,
+    private val favoritesAnalytics: FavoritesAnalytics,
+    private val feedAnalytics: FeedAnalytics,
+    private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
+    private val otherAnalytics: OtherAnalytics
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -47,29 +41,25 @@ class MainPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         analyticsProfile.update()
-        appThemeHolder
-                .observeTheme()
-                .subscribe { viewState.changeTheme(it) }
-                .addToDisposable()
 
         apiConfig
-                .observeNeedConfig()
-                .distinctUntilChanged()
-                .observeOn(schedulers.ui())
-                .subscribe({
-                    if (it) {
-                        viewState.showConfiguring()
-                    } else {
-                        viewState.hideConfiguring()
-                        if (firstLaunch) {
-                            initMain()
-                        }
+            .observeNeedConfig()
+            .distinctUntilChanged()
+            .observeOn(schedulers.ui())
+            .subscribe({
+                if (it) {
+                    viewState.showConfiguring()
+                } else {
+                    viewState.hideConfiguring()
+                    if (firstLaunch) {
+                        initMain()
                     }
-                }, {
-                    it.printStackTrace()
-                    throw it
-                })
-                .addToDisposable()
+                }
+            }, {
+                it.printStackTrace()
+                throw it
+            })
+            .addToDisposable()
 
         if (apiConfig.needConfig) {
             viewState.showConfiguring()
@@ -87,16 +77,20 @@ class MainPresenter @Inject constructor(
 
         selectTab(defaultScreen)
         authRepository
-                .observeUser()
-                .subscribe {
-                    viewState.updateTabs()
-                }
-                .addToDisposable()
+            .observeUser()
+            .subscribe {
+                viewState.updateTabs()
+            }
+            .addToDisposable()
         viewState.onMainLogicCompleted()
         authRepository
-                .loadUser()
-                .subscribe({}, {})
-                .addToDisposable()
+            .loadUser()
+            .subscribe({}, {})
+            .addToDisposable()
+        donationRepository
+            .requestUpdate()
+            .subscribe({}, { it.printStackTrace() })
+            .addToDisposable()
     }
 
     fun getAuthState() = authRepository.getAuthState()

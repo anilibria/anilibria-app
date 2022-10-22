@@ -13,11 +13,6 @@ import ru.radiationx.shared.ktx.addTo
 
 open class LifecycleViewModel : ViewModel(), LifecycleObserver {
 
-    init {
-
-        Log.e("kekeke", "inited $this")
-    }
-
     private val disposables = CompositeDisposable()
     private var created = false
 
@@ -55,7 +50,6 @@ open class LifecycleViewModel : ViewModel(), LifecycleObserver {
     protected fun Disposable.untilDestroy() = this.addTo(disposables)
 
     override fun onCleared() {
-        Log.e("lalala", "onCleared $this")
         disposables.dispose()
         super.onCleared()
     }

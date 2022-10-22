@@ -177,7 +177,6 @@ class GenresDialog(
         genresChips.clear()
         genreItems.forEach { genre ->
             val chip = Chip(genresChipGroup.context).also {
-                Log.e("lululu", "set id=${genre.value.hashCode()} to '${genre.value}'")
                 it.id = genre.value.hashCode()
                 it.text = genre.title
                 it.isCheckable = true
@@ -197,7 +196,6 @@ class GenresDialog(
         yearsChips.clear()
         yearItems.forEach { year ->
             val chip = Chip(yearsChipGroup.context).also {
-                Log.e("lululu", "set id=${year.value.hashCode()} to '${year.value}'")
                 it.id = year.value.hashCode()
                 it.text = year.title
                 it.isCheckable = true
@@ -217,7 +215,6 @@ class GenresDialog(
         seasonsChips.clear()
         seasonItems.forEach { season ->
             val chip = Chip(seasonsChipGroup.context).also {
-                Log.e("lululu", "set id=${season.value.hashCode()} to '${season.value}'")
                 it.id = season.value.hashCode()
                 it.text = season.title
                 it.isCheckable = true

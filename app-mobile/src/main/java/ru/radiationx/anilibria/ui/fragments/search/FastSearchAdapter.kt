@@ -1,40 +1,34 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
+import ru.radiationx.anilibria.model.SuggestionItemState
+import ru.radiationx.anilibria.model.SuggestionLocalItemState
+import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
 import ru.radiationx.anilibria.ui.adapters.ListItem
-import ru.radiationx.anilibria.ui.adapters.SearchListItem
-import ru.radiationx.anilibria.ui.adapters.SearchSuggestionListItem
-import ru.radiationx.anilibria.ui.adapters.search.SearchDelegate
-import ru.radiationx.anilibria.ui.adapters.search.SearchSuggestionDelegate
-import ru.radiationx.anilibria.ui.common.adapters.OptimizeAdapter
-import ru.radiationx.data.entity.app.search.SearchItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.anilibria.ui.adapters.SuggestionListItem
+import ru.radiationx.anilibria.ui.adapters.SuggestionLocalListItem
+import ru.radiationx.anilibria.ui.adapters.search.SuggestionDelegate
+import ru.radiationx.anilibria.ui.adapters.search.SuggestionLocalDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 /**
  * Created by radiationx on 24.12.17.
  */
 class FastSearchAdapter(
-        clickListener: (SearchItem) -> Unit
-) : OptimizeAdapter<MutableList<ListItem>>() {
+    clickListener: (SuggestionItemState) -> Unit,
+    localClickListener: (SuggestionLocalItemState) -> Unit
+) : ListItemAdapter() {
 
     init {
-        items = mutableListOf()
-        addDelegate(SearchSuggestionDelegate(clickListener))
-        addDelegate(SearchDelegate(clickListener))
+        addDelegate(SuggestionDelegate(clickListener))
+        addDelegate(SuggestionLocalDelegate(localClickListener))
     }
 
-    fun bindItems(newItems: List<SearchItem>) {
-        items.clear()
-        items.addAll(newItems.map { item ->
-            (item as? SuggestionItem)?.let {
-                SearchSuggestionListItem(it)
-            } ?: SearchListItem(item)
-        })
-        notifyDataSetChanged()
-    }
+    fun bindItems(state: FastSearchScreenState) {
+        val newItems = mutableListOf<ListItem>()
 
-    override fun getItemId(position: Int): Long {
-        val suggestionId = (items[position] as? SearchListItem)?.item?.id?.toLong()
-        return suggestionId ?: position.toLong()
-    }
+        newItems.addAll(state.localItems.map { SuggestionLocalListItem(it) })
+        newItems.addAll(state.items.map { SuggestionListItem(it) })
 
+        items = newItems
+    }
 }

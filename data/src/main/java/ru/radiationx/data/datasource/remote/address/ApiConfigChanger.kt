@@ -9,7 +9,6 @@ class ApiConfigChanger @Inject constructor(
     private val relay = PublishRelay.create<Unit>()
     fun observeConfigChanges() = relay.hide()
     fun onChange() {
-        Log.d("bobobo", "ApiConfigChanger onChange")
         relay.accept(Unit)
     }
 

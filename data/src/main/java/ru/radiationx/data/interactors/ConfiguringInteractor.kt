@@ -115,8 +115,6 @@ class ConfiguringInteractor @Inject constructor(
     private fun checkLast() {
         updateState(State.CHECK_LAST)
         val timeCounter = TimeCounter()
-        Log.e("bobobo", "active address ${apiConfig.active}")
-        Log.e("bobobo", "getAddresses ${apiConfig.getAddresses()}")
         compositeDisposable.clear()
         zipLastCheck()
             .observeOn(schedulers.ui())
@@ -138,7 +136,6 @@ class ConfiguringInteractor @Inject constructor(
                     loadConfig()
                 }
             }, {
-                Log.e("bobobo", "error on $currentState: $it, ${it is IOException}")
                 analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), false, it)
                 it.printStackTrace()
                 when (it) {
@@ -151,13 +148,7 @@ class ConfiguringInteractor @Inject constructor(
                     is SSLProtocolException,
                     is SSLPeerUnverifiedException -> loadConfig()
                     else -> {
-                        screenState.status =
-                            "Ошибка проверки доступности сервера: ${it.message}".also {
-                                Log.e(
-                                    "bobobo",
-                                    it
-                                )
-                            }
+                        screenState.status = "Ошибка проверки доступности сервера: ${it.message}"
                         screenState.needRefresh = true
                         notifyScreenChanged()
                     }
@@ -184,20 +175,14 @@ class ConfiguringInteractor @Inject constructor(
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
                 val addresses = apiConfig.getAddresses()
                 val proxies = addresses.sumBy { it.proxies.size }
-                screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies".also {
-                    Log.e(
-                        "bobobo",
-                        it
-                    )
-                }
+                screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies"
                 notifyScreenChanged()
                 checkAvail()
             }, {
-                Log.e("bobobo", "error on $currentState: $it")
                 analytics.loadConfig(timeCounter.elapsed(), false, it)
                 it.printStackTrace()
                 screenState.status =
-                    "Ошибка загрузки списка адресов: ${it.message}".also { Log.e("bobobo", it) }
+                    "Ошибка загрузки списка адресов: ${it.message}"
                 screenState.needRefresh = true
                 notifyScreenChanged()
             })
@@ -221,13 +206,11 @@ class ConfiguringInteractor @Inject constructor(
             .subscribe({ activeAddress ->
                 isFullSuccess = true
                 analytics.checkAvail(activeAddress.tag, timeCounter.elapsed(), true, null)
-                screenState.status = "Найдет доступный адрес".also { Log.e("bobobo", it) }
+                screenState.status = "Найдет доступный адрес"
                 notifyScreenChanged()
-                Log.e("boboob", "checkAvail $activeAddress")
                 apiConfig.updateActiveAddress(activeAddress)
                 apiConfig.updateNeedConfig(false)
             }, {
-                Log.e("bobobo", "error on $currentState: $it")
                 analytics.checkAvail(null, timeCounter.elapsed(), false, it)
                 it.printStackTrace()
                 when (it) {
@@ -236,9 +219,7 @@ class ConfiguringInteractor @Inject constructor(
                         checkProxies()
                     }
                     else -> {
-                        screenState.status =
-                            "Ошибка проверки доступности адресов: ${it.message}"
-                                .also { Log.e("bobobo", it) }
+                        screenState.status = "Ошибка проверки доступности адресов: ${it.message}"
                         screenState.needRefresh = true
                         notifyScreenChanged()
                     }
@@ -278,7 +259,7 @@ class ConfiguringInteractor @Inject constructor(
                 it.forEach {
                     apiConfig.setProxyPing(it.first, it.second.timeTaken)
                 }
-                val bestProxy = it.minBy { it.second.timeTaken }
+                val bestProxy = it.minByOrNull { it.second.timeTaken }
                 val addressByProxy =
                     apiConfig.getAddresses().find { it.proxies.contains(bestProxy?.first) }
                 analytics.checkProxies(addressByProxy?.tag, timeCounter.elapsed(), true, null)
@@ -286,12 +267,7 @@ class ConfiguringInteractor @Inject constructor(
                     isFullSuccess = true
                     apiConfig.updateActiveAddress(addressByProxy)
                     screenState.status =
-                        "Доступнные прокси: ${it.size}; будет использован ${bestProxy.first.tag} адреса ${addressByProxy.tag}".also {
-                            Log.e(
-                                "bobobo",
-                                it
-                            )
-                        }
+                        "Доступнные прокси: ${it.size}; будет использован ${bestProxy.first.tag} адреса ${addressByProxy.tag}"
                     notifyScreenChanged()
                     apiConfig.updateNeedConfig(false)
                 } else {
@@ -300,16 +276,10 @@ class ConfiguringInteractor @Inject constructor(
                     notifyScreenChanged()
                 }
             }, {
-                Log.e("bobobo", "error on $currentState: $it")
                 analytics.checkProxies(null, timeCounter.elapsed(), false, it)
                 it.printStackTrace()
                 screenState.status =
-                    "Ошибка проверки доступности прокси-серверов: ${it.message}".also {
-                        Log.e(
-                            "bobobo",
-                            it
-                        )
-                    }
+                    "Ошибка проверки доступности прокси-серверов: ${it.message}"
                 screenState.needRefresh = true
                 notifyScreenChanged()
             })

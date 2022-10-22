@@ -6,6 +6,8 @@ import java.util.*
 
 fun String?.toNavFromParam() = Pair("from", this.toString())
 
+fun String?.toLinkParam() = Pair("link", this.toString())
+
 fun Boolean?.toSuccessParam(name: String = "success") = Pair(name, this.toString())
 
 fun Any?.toParam(name: String) = Pair(name, this.toString())

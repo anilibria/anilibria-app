@@ -11,19 +11,19 @@
 
     <string name="download_torrent">Скачать торрент</string>
     <string name="watch_web">Веб-плеер</string>
-    <string name="item_donate">Понравилась озвучка?\nПоддержи проект :3</string>
+    <string name="item_donate">Понравилась озвучка?\nПоддержи АниЛибрию ❤️</string>
     <string name="updater_download">Загрузить</string>
     <string name="auth_sign_with">Войти через</string>
     <string name="or">или</string>
     <string name="auth_login">Логин или email</string>
     <string name="auth_password">Пароль</string>
     <string name="auth_2fa">Секретный код 2FA</string>
-    <string name="auth_2fa_desc">Оставьте поле пустым, если вы не настроили двухфакторную аутентификацию</string>
     <string name="auth_signin">Войти</string>
     <string name="auth_skip">Пропустить</string>
     <string name="comments_header">Комментарии</string>
     <string name="comments_notify_text">Сделайте свайп влево, чтобы открыть комментарии</string>
     <string name="loading">Загрузка</string>
+    <string name="item_loading_error">Произошла ошибка</string>
 
     <string name="placeholder_title_nodata_base">Нет данных</string>
     <string name="placeholder_title_errordata_base">Ошибка при загрузке данных</string>
@@ -34,4 +34,9 @@
 
     <string name="country_blocked_title">This application is not available in your country</string>
     <string name="country_blocked_exit">Close app</string>
+
+    <string name="pref_title_theme_mode">Тема приложения</string>
+    <string name="pref_value_theme_mode_light">Светлая</string>
+    <string name="pref_value_theme_mode_dark">Темная</string>
+    <string name="pref_value_theme_mode_system">Системная</string>
 </resources>

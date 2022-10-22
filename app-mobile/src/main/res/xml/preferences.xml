@@ -27,11 +27,15 @@
         android:layout="@layout/preference_category_custom"
         android:title="Общие">
 
-        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
-            android:defaultValue="false"
-            android:key="app_theme_dark"
+        <ListPreference
+            android:defaultValue="system"
+            android:dialogTitle="@string/pref_title_theme_mode"
+            android:entries="@array/entries_theme_mode"
+            android:entryValues="@array/entry_values_theme_mode"
+            android:key="app_theme"
             android:layout="@layout/preference_custom"
-            android:title="Тёмная тема" />
+            android:summary="%s"
+            android:title="@string/pref_title_theme_mode" />
 
         <ru.radiationx.anilibria.ui.widgets.SwitchPreference
             android:defaultValue="false"
@@ -65,21 +69,6 @@
             android:key="about.check_update"
             android:layout="@layout/preference_custom"
             android:title="Проверить обновления" />
-
-        <Preference
-            android:key="about.app_other_apps"
-            android:layout="@layout/preference_custom"
-            android:title="Наши приложения" />
-
-        <Preference
-            android:key="about.app_topic_4pda"
-            android:layout="@layout/preference_custom"
-            android:title="Обсуждение на 4PDA" />
-
-        <!--setting <Preference
-             android:key="about.app_play_market"
-             android:layout="@layout/preference_custom"
-             android:title="Play Market" />-->
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_bottom" />

@@ -78,7 +78,6 @@ class SuggestionsFragment : ScopedSearchFragment(), SearchSupportFragment.Search
 
 
         subscribeTo(rowsViewModel.emptyResultState) {
-            Log.e("kokoko", "emptyResultState $it")
             if (it) {
                 emptyTextManager.show()
                 backgroundManager.clearGradient()

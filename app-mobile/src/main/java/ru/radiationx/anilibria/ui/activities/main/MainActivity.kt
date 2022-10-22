@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -22,10 +21,8 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getMainStyleRes
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
@@ -33,7 +30,6 @@ import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
@@ -41,7 +37,6 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.datasource.holders.AppThemeHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.data.entity.common.AuthState
@@ -49,13 +44,14 @@ import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
+import ru.radiationx.shared_app.di.getDependency
+import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -80,23 +76,18 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     @Inject
     lateinit var dimensionsProvider: DimensionsProvider
 
-    @Inject
-    lateinit var appThemeHolder: AppThemeHolder
-
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
-            Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
-            Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
-            Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
-            Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
-            Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
+        Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
+        Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
+        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
+        Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
+        Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
     )
     private val tabs = mutableListOf<Tab>()
 
     private val tabsStack = mutableListOf<String>()
-
-    private lateinit var currentAppTheme: AppThemeHolder.AppTheme
 
     private var dimensionHelper: DimensionHelper? = null
 
@@ -120,11 +111,13 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             resources.configuration.locale
         }
         injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
-        currentAppTheme = appThemeHolder.getTheme()
-        setTheme(currentAppTheme.getMainStyleRes())
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
-        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(locale.country)) {
+        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(
+                locale.country
+            )
+        ) {
             startActivity(Screens.BlockedCountry().getActivityIntent(this))
             finish()
             return
@@ -132,24 +125,27 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
         setContentView(R.layout.activity_main)
 
-        dimensionHelper = DimensionHelper(measure_view, measure_root_content, object : DimensionHelper.DimensionsListener {
-            override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                Log.e("lalala", "Dim: $dimensions")
-                root_container.post {
-                    root_container.setPadding(
+        dimensionHelper = DimensionHelper(
+            measure_view,
+            measure_root_content,
+            object : DimensionHelper.DimensionsListener {
+                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
+                    root_container.post {
+                        root_container.setPadding(
                             root_container.paddingLeft,
                             root_container.paddingTop,
                             root_container.paddingRight,
                             max(dimensions.keyboardHeight - tabsRecycler.height, 0)
-                    )
+                        )
+                    }
+                    dimensionsProvider.update(dimensions)
                 }
-                dimensionsProvider.update(dimensions)
-            }
-        })
+            })
 
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
+            disableItemChangeAnimation()
         }
 
         updateTabs()
@@ -164,7 +160,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             }
         }
         checkerPresenter.forceLoad = true
-        Log.e("S_DEF_LOG", "main oncreate")
     }
 
 
@@ -179,7 +174,11 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             val channelName = "Обновления"
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
                 val manager = context.getSystemService(NotificationManager::class.java)
                 manager?.createNotificationChannel(channel)
             }
@@ -196,9 +195,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             mBuilder.setChannelId(channelId)
 
 
-            val notifyIntent = Intent(context, UpdateCheckerActivity::class.java)
-            notifyIntent.action = Intent.ACTION_VIEW
-            notifyIntent.putExtra(UpdateCheckerActivity.ARG_ANALYTICS_FROM, AnalyticsConstants.notification_local_update)
+            val notifyIntent =
+                Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
+                    .getActivityIntent(context)
             val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
             mBuilder.setContentIntent(notifyPendingIntent)
 
@@ -216,32 +215,17 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         }
     }
 
-    override fun changeTheme(appTheme: AppThemeHolder.AppTheme) {
-        if (currentAppTheme != appTheme) {
-            currentAppTheme = appTheme
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                Handler().post { recreate() }
-            } else {
-                recreate()
-            }
-        }
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.e("lalala", "MainActivity, onNewIntent $intent")
         handleIntent(intent)
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigationHolder.setNavigator(navigatorNew)
-        /*Log.e("lalala", "MainActivity, onResumeFragments $intent")
-        handleIntent(intent)*/
     }
 
     override fun onMainLogicCompleted() {
-        Log.e("lalala", "MainActivity, onMainLogicCompleted $intent")
         handleIntent(intent)
         checkerPresenter.checkUpdate()
     }
@@ -249,18 +233,18 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun showConfiguring() {
         configuring_container.visible()
         supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.configuring_container, ConfiguringFragment())
-                .commitNow()
+            .beginTransaction()
+            .replace(R.id.configuring_container, ConfiguringFragment())
+            .commitNow()
     }
 
     override fun hideConfiguring() {
         configuring_container.gone()
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
-                    .beginTransaction()
-                    .remove(it)
-                    .commitNow()
+                .beginTransaction()
+                .remove(it)
+                .commitNow()
         }
     }
 
@@ -294,15 +278,12 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     private fun handleIntent(intent: Intent?) {
-        Log.e("lalala", "MainActivity, handleIntent $intent")
-
         intent?.data?.also { intentData ->
             val url = intentData.toString()
             var handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
                 handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
-            Log.e("lalala", "MainActivity, handled $handled")
         }
         intent?.data = null
     }
@@ -310,7 +291,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
         tabs.forEach {
-            Log.e("lalala", "findTabIntentHandler screen $it")
             fm.findFragmentByTag(it)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true
@@ -344,7 +324,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun updateTabs() {
-        Log.e("MainPresenter", "updateTabs")
         tabs.clear()
         if (presenter.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
@@ -355,7 +334,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun highlightTab(screenKey: String) {
-        Log.e("MainPresenter", "highlightTab $screenKey")
         tabsAdapter.setSelected(screenKey)
         val screen = tabs.first { it.screen.screenKey == screenKey }.screen
         presenter.submitScreenAnalytics(screen)
@@ -380,7 +358,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command?) {
-            Log.e("S_DEF_LOG", "ApplyCommand $command")
             if (command is Back) {
                 if (tabsStack.size <= 1) {
                     activityBack()
@@ -399,9 +376,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 }
                 return
             } else if (command is Replace) {
-                val inTabs = allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
+                val inTabs =
+                    allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
                 if (inTabs) {
-                    Log.e("S_DEF_LOG", "Replace " + command.screen.screenKey)
                     val fm = supportFragmentManager
                     val ta = fm.beginTransaction()
                     allTabs.forEach {
@@ -413,7 +390,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                                 }
                                 ta.show(fragment)
                                 addInStack(it.screen.screenKey)
-                                Log.e("S_DEF_LOG", "QUEUE: " + tabsStack.joinToString(", ", "[", "]"))
                             } else {
                                 ta.hide(fragment)
                             }
@@ -424,7 +400,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 }
             }
 
-            Log.e("S_DEF_LOG", "sector clear")
             super.applyCommand(command)
         }
 
@@ -440,9 +415,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         }
     }
 
-    class Tab(
-            val title: Int,
-            val icon: Int,
-            val screen: BaseAppScreen
+    data class Tab(
+        val title: Int,
+        val icon: Int,
+        val screen: BaseAppScreen
     )
 }

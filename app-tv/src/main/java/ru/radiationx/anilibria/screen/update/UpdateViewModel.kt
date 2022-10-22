@@ -106,8 +106,6 @@ class UpdateViewModel(
         if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
             return
         }
-        Log.e("UpdateViewModel", "startDownload by url $url")
-        Log.e("UpdateViewModel", "startDownload item $downloadItem")
 
         updatesDisposable.dispose()
         updatesDisposable = downloadController
@@ -141,14 +139,12 @@ class UpdateViewModel(
     }
 
     private fun handleUpdate(downloadItem: DownloadItem) {
-        Log.e("UpdateViewModel", "handleUpdate ${currentDownload?.downloadId}, $downloadItem")
         currentDownload = downloadItem
         downloadProgressData.value = downloadItem.progress
         updateState(downloadItem.state)
     }
 
     private fun handleComplete(downloadItem: DownloadItem) {
-        Log.e("UpdateViewModel", "handleComplete $downloadItem")
         currentDownload = null
         updateState(null)
         startPendingInstall(downloadItem)
@@ -182,7 +178,6 @@ class UpdateViewModel(
     private fun installAction(downloadItem: DownloadItem) {
         val data = Uri.parse(downloadItem.localUrl)
         val type = MimeTypeUtil.getType(downloadItem.url)
-        Log.e("UpdateViewModel", "installAction $data, $type")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val install = Intent(Intent.ACTION_VIEW)
             install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

@@ -20,8 +20,8 @@
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
         android:fitsSystemWindows="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -123,24 +123,4 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <FrameLayout
-        android:id="@+id/vitalBottom"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom"
-        android:background="?colorSurface"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            app:srcCompat="@drawable/ic_anilibria" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center" />
-    </FrameLayout>
 </LinearLayout>

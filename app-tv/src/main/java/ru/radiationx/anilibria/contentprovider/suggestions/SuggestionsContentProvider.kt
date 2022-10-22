@@ -50,15 +50,11 @@ class SuggestionsContentProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        Log.d(TAG, uri.toString())
         App.appCreateAction.filter { it }.blockingFirst()
-        Log.d(TAG, "query appcreated")
 
         return if (uriMatcher.match(uri) == SEARCH_SUGGEST) {
-            Log.d(TAG, "Search suggestions requested.")
             search(uri.lastPathSegment.orEmpty())
         } else {
-            Log.d(TAG, "Unknown uri to query: $uri")
             throw IllegalArgumentException("Unknown Uri: $uri")
         }
     }
@@ -78,7 +74,6 @@ class SuggestionsContentProvider : ContentProvider() {
     }
 
     private fun search(query: String): Cursor {
-        Log.d(TAG, "Search suggestions query $query")
         val result = searchRepository.fastSearch(query).blockingGet()
         val matrixCursor = MatrixCursor(queryProjection)
         result.forEach {

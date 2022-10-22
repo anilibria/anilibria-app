@@ -8,34 +8,28 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.app.other.OtherMenuItem
+import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 
 class MenuItemDelegate(
-        private val clickListener: (OtherMenuItem) -> Unit
+    private val clickListener: (OtherMenuItemState) -> Unit
 ) : AppAdapterDelegate<MenuListItem, ListItem, MenuItemDelegate.ViewHolder>(
-        R.layout.item_other_menu,
-        { it is MenuListItem },
-        { ViewHolder(it, clickListener) }
+    R.layout.item_other_menu,
+    { it is MenuListItem },
+    { ViewHolder(it, clickListener) }
 ) {
 
     override fun bindData(item: MenuListItem, holder: ViewHolder) = holder.bind(item.menuItem)
 
     class ViewHolder(
-            override val containerView: View,
-            val clickListener: (OtherMenuItem) -> Unit
+        override val containerView: View,
+        val clickListener: (OtherMenuItemState) -> Unit
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        private lateinit var item: OtherMenuItem
-
-        init {
-            containerView.setOnClickListener { clickListener(item) }
-        }
-
-        fun bind(menuItem: OtherMenuItem) {
-            this.item = menuItem
-            otherMenuTitle.text = menuItem.title
-            otherMenuIcon.setCompatDrawable(menuItem.icon)
+        fun bind(state: OtherMenuItemState) {
+            otherMenuTitle.text = state.title
+            otherMenuIcon.setCompatDrawable(state.iconRes)
+            containerView.setOnClickListener { clickListener(state) }
         }
     }
 }

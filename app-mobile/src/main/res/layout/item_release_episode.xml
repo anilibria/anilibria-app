@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="72dp"
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/item_title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:ellipsize="end"
@@ -20,6 +20,7 @@
         android:textColor="?textDefault"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/item_subtitle"
         app:layout_constraintEnd_toStartOf="@id/item_viewed_state"
         app:layout_constraintHorizontal_bias="0"
@@ -27,7 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintWidth_default="wrap"
         tools:text="Серия 660" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -36,13 +36,25 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/item_date"
         app:layout_constraintStart_toStartOf="@id/item_title"
         app:layout_constraintTop_toBottomOf="@id/item_title"
         tools:text="Остановлена на 11:23"
         tools:visibility="visible" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/item_title"
+        app:layout_constraintTop_toBottomOf="@id/item_subtitle"
+        tools:text="Обновлена 12.12.12 12:00"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/item_viewed_state"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -61,9 +73,11 @@
         android:id="@+id/quality_sd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_hd"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_hd"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_sd_base"
         app:tint="?colorAccent" />
 
@@ -71,9 +85,11 @@
         android:id="@+id/quality_hd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_full_hd"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_full_hd"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_hd_base"
         app:tint="?colorAccent" />
 
@@ -81,9 +97,32 @@
         android:id="@+id/quality_full_hd"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_quality_full_hd_base"
         app:tint="?colorAccent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="8dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="?colorAccent"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:drawableEndCompat="@drawable/ic_logo_telegram"
+        tools:text="Смотреть в Telegram"
+        tools:textColor="@color/brand_telegram"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

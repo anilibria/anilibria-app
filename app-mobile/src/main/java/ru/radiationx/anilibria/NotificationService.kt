@@ -13,15 +13,15 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
-import ru.radiationx.shared_app.di.DI
 import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
+import ru.radiationx.shared_app.di.DI
 
 class NotificationService : FirebaseMessagingService() {
 
@@ -35,11 +35,11 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     private data class Data(
-            val title: String,
-            val body: String,
-            val url: String? = null,
-            val type: String? = null,
-            val payload: String? = null
+        val title: String,
+        val body: String,
+        val url: String? = null,
+        val type: String? = null,
+        val payload: String? = null
     )
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -49,17 +49,17 @@ class NotificationService : FirebaseMessagingService() {
         val notification = message.notification
         val data = if (notification != null) {
             Data(
-                    notification.title.defaultTitle(),
-                    notification.body.defaultBody(),
-                    notification.link?.toString()
+                notification.title.defaultTitle(),
+                notification.body.defaultBody(),
+                notification.link?.toString()
             )
         } else {
             Data(
-                    message.data["title"].defaultTitle(),
-                    message.data["body"].defaultBody(),
-                    message.data["link"],
-                    message.data["push_type"],
-                    message.data["push_data"]
+                message.data["title"].defaultTitle(),
+                message.data["body"].defaultBody(),
+                message.data["link"],
+                message.data["push_type"],
+                message.data["push_data"]
             )
         }
         manager.notify(System.nanoTime().toInt(), getNotification(data))
@@ -86,39 +86,37 @@ class NotificationService : FirebaseMessagingService() {
 
     private fun String?.defaultTitle() = this ?: "Заголовок уведомления"
     private fun String?.defaultBody() = this
-            ?: "Тело уведомления. Похоже кто-то забыл указать указать правильные данные ¯\\_(ツ)_/¯"
+        ?: "Тело уведомления. Похоже кто-то забыл указать указать правильные данные ¯\\_(ツ)_/¯"
 
     private fun getNotification(remote: Data): Notification {
-        Log.e("NotificationService", "getNotification $remote")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                    CALL_CHANNEL_ID,
-                    CALL_CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                CALL_CHANNEL_ID,
+                CALL_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-                    channel
+                channel
             )
         }
         return NotificationCompat
-                .Builder(this, CALL_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_push_notification)
-                .setColor(application.getCompatColor(R.color.alib_red))
-                .setContentTitle(remote.title)
-                .setAutoCancel(true)
-                .setContentText(remote.body)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(remote.body))
-                .setContentIntent(getPendingIntent(getDefaultIntent(remote)))
-                .setChannelId(CALL_CHANNEL_ID)
-                .build()
+            .Builder(this, CALL_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_push_notification)
+            .setColor(application.getCompatColor(R.color.alib_red))
+            .setContentTitle(remote.title)
+            .setAutoCancel(true)
+            .setContentText(remote.body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(remote.body))
+            .setContentIntent(getPendingIntent(getDefaultIntent(remote)))
+            .setChannelId(CALL_CHANNEL_ID)
+            .build()
     }
 
     private fun getDefaultIntent(remote: Data): Intent {
         return when (remote.type) {
-            CUSTOM_TYPE_APP_UPDATE -> Intent(this, UpdateCheckerActivity::class.java).apply {
-                putExtra(UpdateCheckerActivity.ARG_FORCE, true)
-                putExtra(UpdateCheckerActivity.ARG_ANALYTICS_FROM, AnalyticsConstants.notification_push_update)
-                action = Intent.ACTION_VIEW
+            CUSTOM_TYPE_APP_UPDATE -> {
+                Screens.AppUpdateScreen(true, AnalyticsConstants.notification_push_update)
+                    .getActivityIntent(this)
             }
             CUSTOM_TYPE_CONFIG -> Intent(this, MainActivity::class.java)
             else -> Intent(this, IntentActivity::class.java).apply {
@@ -129,10 +127,10 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     private fun getPendingIntent(defaultIntent: Intent): PendingIntent = PendingIntent
-            .getActivities(
-                    this,
-                    System.currentTimeMillis().toInt(),
-                    arrayOf(defaultIntent),
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
+        .getActivities(
+            this,
+            System.currentTimeMillis().toInt(),
+            arrayOf(defaultIntent),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 }

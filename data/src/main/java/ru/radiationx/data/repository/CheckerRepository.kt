@@ -23,7 +23,6 @@ class CheckerRepository @Inject constructor(
 
     fun checkUpdate(versionCode: Int, force: Boolean = false): Single<UpdateData> = Single
         .fromCallable {
-            Log.e("CHECKER", "fromCallable0 $versionCode : $force")
             return@fromCallable if (!force && currentDataRelay.hasValue())
                 currentDataRelay.value!!
             else
@@ -36,7 +35,6 @@ class CheckerRepository @Inject constructor(
             //it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4s.zip"
         }
         .doOnSuccess {
-            Log.e("CHECKER", "doOnSuccess $it")
             currentDataRelay.accept(it)
         }
         .subscribeOn(schedulers.io())

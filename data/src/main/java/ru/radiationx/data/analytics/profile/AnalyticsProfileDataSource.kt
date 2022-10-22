@@ -2,17 +2,15 @@ package ru.radiationx.data.analytics.profile
 
 import io.reactivex.Single
 import ru.radiationx.data.analytics.features.mapper.*
-import ru.radiationx.data.analytics.features.model.*
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.migration.MigrationDataSource
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class AnalyticsProfileDataSource(
     private val preferencesHolder: PreferencesHolder,
-    private val appThemeHolder: AppThemeHolder,
+    private val analyticsThemeProvider: AnalyticsThemeProvider,
     private val apiConfig: ApiConfig,
     private val userHolder: UserHolder,
     private val historyHolder: HistoryHolder,
@@ -27,7 +25,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getAppTheme(): Single<String> = single {
-        appThemeHolder.getTheme().toAnalyticsAppTheme().value
+        analyticsThemeProvider.getTheme().value
     }
 
     fun getQualitySettings(): Single<String> = single {
@@ -55,7 +53,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getEpisodeOrderSettings(): Single<Boolean> = single {
-        preferencesHolder.getEpisodesIsReverse()
+        preferencesHolder.episodesIsReverse
     }
 
     fun getAuthState(): Single<String> = single {

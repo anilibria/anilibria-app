@@ -1,39 +1,37 @@
 package ru.radiationx.anilibria.ui.activities.main
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.BottomTabListItem
-import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.main.BottomTabDelegate
+import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 /**
  * Created by radiationx on 25.02.18.
  */
-class BottomTabsAdapter(private val listener: BottomTabDelegate.Listener) : ListDelegationAdapter<MutableList<ListItem>>() {
+class BottomTabsAdapter(
+    private val listener: BottomTabDelegate.Listener
+) : ListItemAdapter() {
 
     private var currentScreenKey: String? = null
 
     init {
-        items = mutableListOf()
         delegatesManager.run {
             addDelegate(BottomTabDelegate(listener))
         }
     }
 
     fun bindItems(tabs: List<MainActivity.Tab>) {
-        this.items.clear()
-        this.items.addAll(tabs.map { BottomTabListItem(it) })
-        notifyDataSetChanged()
-        currentScreenKey?.let { setSelected(it) }
+        items = tabs.map {
+            BottomTabListItem(it, it.screen.screenKey == currentScreenKey)
+        }
     }
 
     fun setSelected(screenKey: String) {
         currentScreenKey = screenKey
-        items.forEachIndexed { index, item ->
-            val listItem = (item as BottomTabListItem)
-            val lastSelected = listItem.selected
-            listItem.selected = listItem.item.screen.screenKey == screenKey
-            if (lastSelected != listItem.selected) {
-                notifyItemChanged(index)
+        items = items.map {
+            if (it is BottomTabListItem) {
+                it.copy(selected = it.item.screen.screenKey == screenKey)
+            } else {
+                it
             }
         }
     }

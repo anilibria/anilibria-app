@@ -20,7 +20,6 @@ class ConfigurationApi @Inject constructor(
     private val configurationParser: ConfigurationParser,
     private val apiConfig: ApiConfig,
     private val apiConfigStorage: ApiConfigStorage,
-    private val schedulers: SchedulersProvider
 ) {
 
     suspend fun checkAvailable(apiUrl: String): Boolean {

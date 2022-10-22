@@ -13,7 +13,6 @@ import javax.inject.Inject
 
 class ConfigurationRepository @Inject constructor(
     private val configurationApi: ConfigurationApi,
-    private val schedulers: SchedulersProvider
 ) {
 
     private val pingRelay = MutableStateFlow<Map<String, PingResult>?>(null)

@@ -7,7 +7,6 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
 class FavoriteRepository @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val favoriteApi: FavoriteApi
 ) {
 

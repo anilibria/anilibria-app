@@ -22,7 +22,6 @@ class ReleaseInteractor @Inject constructor(
     private val releaseRepository: ReleaseRepository,
     private val episodesCheckerStorage: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
-    private val schedulers: SchedulersProvider
 ) {
 
     private val checkerCombiner: (suspend (ReleaseFull, List<ReleaseFull.Episode>) -> ReleaseFull) =

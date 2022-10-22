@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleRepository @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val scheduleApi: ScheduleApi
 ) {
 

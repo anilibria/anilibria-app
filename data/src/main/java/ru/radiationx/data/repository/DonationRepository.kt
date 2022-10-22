@@ -14,7 +14,6 @@ import toothpick.InjectConstructor
 class DonationRepository(
     private val donationApi: DonationApi,
     private val donationHolder: DonationHolder,
-    private val schedulers: SchedulersProvider
 ) {
 
     suspend fun requestUpdate() = donationApi

@@ -13,7 +13,6 @@ import ru.radiationx.data.entity.app.search.SuggestionItem
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val searchApi: SearchApi,
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,

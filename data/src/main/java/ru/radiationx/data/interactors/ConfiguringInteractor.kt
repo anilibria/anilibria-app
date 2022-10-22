@@ -19,7 +19,6 @@ import javax.net.ssl.*
 class ConfiguringInteractor @Inject constructor(
     private val apiConfig: ApiConfig,
     private val configurationRepository: ConfigurationRepository,
-    private val schedulers: SchedulersProvider,
     private val analytics: ConfiguringAnalytics
 ) {
 

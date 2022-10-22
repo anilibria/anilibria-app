@@ -17,7 +17,6 @@ import javax.inject.Inject
  */
 class ReleaseUpdateStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences,
-    private val schedulers: SchedulersProvider
 ) : ReleaseUpdateHolder {
 
     companion object {

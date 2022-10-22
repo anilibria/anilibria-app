@@ -13,7 +13,6 @@ import toothpick.InjectConstructor
 class TeamsRepository(
     private val teamsApi: TeamsApi,
     private val teamsHolder: TeamsHolder,
-    private val schedulers: SchedulersProvider
 ) {
 
     suspend fun requestUpdate() = teamsApi

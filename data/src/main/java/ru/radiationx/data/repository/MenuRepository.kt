@@ -10,7 +10,6 @@ import javax.inject.Inject
 class MenuRepository @Inject constructor(
     private val menuHolder: MenuHolder,
     private val menuApi: MenuApi,
-    private val schedulers: SchedulersProvider
 ) {
 
     fun observeMenu(): Flow<List<LinkMenuItem>> = menuHolder.observe()

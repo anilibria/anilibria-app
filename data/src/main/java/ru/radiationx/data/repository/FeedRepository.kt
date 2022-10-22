@@ -10,7 +10,6 @@ import javax.inject.Inject
 
 class FeedRepository @Inject constructor(
     private val feedApi: FeedApi,
-    private val schedulers: SchedulersProvider,
     private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 

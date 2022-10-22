@@ -15,7 +15,6 @@ import javax.inject.Inject
  */
 class PageRepository @Inject constructor(
     @MainClient private val mainClient: IClient,
-    private val schedulers: SchedulersProvider,
     private val pageApi: PageApi
 ) {
 

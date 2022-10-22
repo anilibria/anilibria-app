@@ -1,6 +1,5 @@
 package ru.radiationx.shared_app.analytics
 
-import io.reactivex.Single
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.codecs.*
 import ru.radiationx.shared_app.codecs.types.KnownCodec
@@ -9,8 +8,8 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class CodecsProfileAnalytics {
 
-    fun getCodecsInfo(): Single<Map<String, String>> = Single.fromCallable {
-        KnownCodec.values().associate { knownCodec ->
+    suspend fun getCodecsInfo(): Map<String, String> {
+        return KnownCodec.values().associate { knownCodec ->
             val codecs = MediaCodecsProvider.codecs.filterKnown(knownCodec)
             val hasSoftware = codecs.any {
                 it.isSoftware() && it.isDecoder()

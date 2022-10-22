@@ -2,6 +2,7 @@ package ru.radiationx.data.interactors
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
@@ -48,7 +49,7 @@ class ReleaseInteractor @Inject constructor(
     private val itemsUpdateTrigger = MutableSharedFlow<Boolean>()
     private val fullUpdateTrigger = MutableSharedFlow<Boolean>()
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
 

@@ -11,20 +11,21 @@ import android.widget.EditText
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main_base.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.MvpAppCompatFragment
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
+import ru.radiationx.shared_app.di.getDependency
 
 /* Created by radiationx on 18.11.17. */
 
@@ -35,7 +36,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     }
 
     private val dimensionsProvider = getDependency(DimensionsProvider::class.java)
-    private val disposables = CompositeDisposable()
 
     protected open val needToolbarShadow = true
     protected open val statusBarVisible = false
@@ -50,10 +50,18 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
         arguments?.getString(ARG_SCREEN_SCOPE, null) ?: DI.DEFAULT_SCOPE
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val newView: View? = inflater.inflate(getBaseLayout(), container, false)
         if (getLayoutResource() != View.NO_ID) {
-            inflater.inflate(getLayoutResource(), newView?.findViewById(R.id.fragment_content), true)
+            inflater.inflate(
+                getLayoutResource(),
+                newView?.findViewById(R.id.fragment_content),
+                true
+            )
         }
         return newView
     }
@@ -61,7 +69,17 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //updateToolbarShadow(true)
+        dimensionsProvider
+            .observe()
+            .onEach { dimension ->
+                toolbar?.post {
+                    toolbar?.let {
+                        localUpdateDimens(dimension)
+                    }
+                }
+                localUpdateDimens(dimension)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     protected fun updateToolbarShadow(isVisible: Boolean) {
@@ -71,17 +89,6 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setStatusBarVisibility(statusBarVisible)
-        dimensionsProvider
-            .observe()
-            .subscribe { dimension ->
-                toolbar?.post {
-                    toolbar?.let {
-                        localUpdateDimens(dimension)
-                    }
-                }
-                localUpdateDimens(dimension)
-            }
-            .addTo(disposables)
     }
 
     private fun localUpdateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -98,9 +105,10 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
     }
 
     open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
-        toolbar?.layoutParams = (toolbar?.layoutParams as CollapsingToolbarLayout.LayoutParams?)?.apply {
-            topMargin = dimensions.statusBar
-        }
+        toolbar?.layoutParams =
+            (toolbar?.layoutParams as CollapsingToolbarLayout.LayoutParams?)?.apply {
+                topMargin = dimensions.statusBar
+            }
     }
 
     fun setStatusBarColor(color: Int) {
@@ -120,24 +128,25 @@ abstract class BaseFragment : MvpAppCompatFragment(), ScopeProvider, BackButtonL
 
     protected fun hideSoftwareKeyboard() {
         activity?.also {
-            val inputManager = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            val inputManager =
+                it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             it.currentFocus?.let {
-                inputManager?.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                inputManager?.hideSoftInputFromWindow(
+                    it.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
             }
         }
     }
 
     protected fun showSoftwareKeyboard(editText: EditText) {
         activity?.also {
-            val inputManager = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            val inputManager =
+                it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             inputManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.dispose()
-    }
-
-    fun <T> Fragment.getDependency(clazz: Class<T>, scope: String): T = DI.get(clazz, DI.DEFAULT_SCOPE, scope)
+    fun <T> Fragment.getDependency(clazz: Class<T>, scope: String): T =
+        DI.get(clazz, DI.DEFAULT_SCOPE, scope)
 }

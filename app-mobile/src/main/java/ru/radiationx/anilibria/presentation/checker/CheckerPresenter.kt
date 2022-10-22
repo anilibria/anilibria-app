@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.presentation.checker
 
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -25,8 +23,6 @@ class CheckerPresenter @Inject constructor(
 ) : BasePresenter<CheckerView>(router) {
 
     var forceLoad = false
-
-    private var compositeDisposable = CompositeDisposable()
 
     fun submitUseTime(time: Long) {
         updaterAnalytics.useTime(time)
@@ -52,13 +48,5 @@ class CheckerPresenter @Inject constructor(
 
     fun onSourceDownloadClick(title: String) {
         updaterAnalytics.sourceDownload(title)
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-    }
-
-    fun Disposable.addToDisposable() {
-        compositeDisposable.add(this)
     }
 }

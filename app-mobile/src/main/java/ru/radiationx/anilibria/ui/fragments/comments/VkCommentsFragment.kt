@@ -10,8 +10,11 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.core.view.isVisible
-import io.reactivex.disposables.CompositeDisposable
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_vk_comments.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
@@ -54,8 +57,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     @Inject
     lateinit var appThemeController: AppThemeController
-
-    private val disposables = CompositeDisposable()
 
     @InjectPresenter
     lateinit var presenter: VkCommentsPresenter
@@ -116,13 +117,12 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             cookieManager.setAcceptThirdPartyCookies(webView, true)
         }
 
-        disposables.add(
-            appThemeController
-                .observeTheme()
-                .subscribe {
-                    webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
-                }
-        )
+        appThemeController
+            .observeTheme()
+            .onEach {
+                webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -284,7 +284,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                     .getInstance(IClient::class.java, MainClient::class.java.name)
 
                 val cssSrc = try {
-                    client.get(url.orEmpty(), emptyMap()).blockingGet()
+                    runBlocking { client.get(url.orEmpty(), emptyMap()) }
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                     return WebResourceResponse(

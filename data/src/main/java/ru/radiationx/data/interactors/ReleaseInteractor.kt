@@ -12,6 +12,7 @@ import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.shared.ktx.repeatWhen
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -182,14 +183,5 @@ class ReleaseInteractor @Inject constructor(
         this
     } else {
         null
-    }
-
-    private fun <T> Flow<T>.repeatWhen(repeat: Flow<*>): Flow<T> {
-        return flow {
-            collect { emit(it) }
-            repeat.collect {
-                collect { emit(it) }
-            }
-        }
     }
 }

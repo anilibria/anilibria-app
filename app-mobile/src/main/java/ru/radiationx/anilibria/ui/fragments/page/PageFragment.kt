@@ -5,9 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.*
-import io.reactivex.disposables.CompositeDisposable
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_webview.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.App
@@ -63,8 +65,6 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @Inject
     lateinit var pageAnalytics: PageAnalytics
-
-    private val disposables = CompositeDisposable()
 
     private var webViewScrollPos = 0
 
@@ -160,13 +160,12 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
             template.generateWithTheme(appThemeController.getTheme())
         )
 
-        disposables.add(
-            appThemeController
-                .observeTheme()
-                .subscribe {
-                    webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
-                }
-        )
+        appThemeController
+            .observeTheme()
+            .onEach {
+                webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onResume() {
@@ -177,11 +176,6 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     override fun onPause() {
         super.onPause()
         webView?.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.dispose()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -1,7 +1,6 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.MenuHolder
 import ru.radiationx.data.datasource.remote.api.MenuApi
@@ -14,11 +13,9 @@ class MenuRepository @Inject constructor(
     private val schedulers: SchedulersProvider
 ) {
 
-    fun observeMenu(): Observable<List<LinkMenuItem>> = menuHolder.observe()
+    fun observeMenu(): Flow<List<LinkMenuItem>> = menuHolder.observe()
 
-    fun getMenu(): Single<List<LinkMenuItem>> = menuApi
+    suspend fun getMenu(): List<LinkMenuItem> = menuApi
         .getMenu()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
-        .doOnSuccess { menuHolder.save(it) }
+        .also { menuHolder.save(it) }
 }

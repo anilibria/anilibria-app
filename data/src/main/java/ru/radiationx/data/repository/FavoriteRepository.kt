@@ -1,6 +1,5 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.api.FavoriteApi
 import ru.radiationx.data.entity.app.Paginated
@@ -8,22 +7,16 @@ import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
 class FavoriteRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val favoriteApi: FavoriteApi
+    private val schedulers: SchedulersProvider,
+    private val favoriteApi: FavoriteApi
 ) {
 
-    fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> = favoriteApi
-            .getFavorites(page)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    suspend fun getFavorites(page: Int): Paginated<List<ReleaseItem>> = favoriteApi
+        .getFavorites(page)
 
-    fun deleteFavorite(releaseId: Int): Single<ReleaseItem> = favoriteApi
-            .deleteFavorite(releaseId)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    suspend fun deleteFavorite(releaseId: Int): ReleaseItem = favoriteApi
+        .deleteFavorite(releaseId)
 
-    fun addFavorite(releaseId: Int): Single<ReleaseItem> = favoriteApi
-            .addFavorite(releaseId)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    suspend fun addFavorite(releaseId: Int): ReleaseItem = favoriteApi
+        .addFavorite(releaseId)
 }

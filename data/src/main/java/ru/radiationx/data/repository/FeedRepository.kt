@@ -1,6 +1,5 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.remote.api.FeedApi
@@ -15,9 +14,9 @@ class FeedRepository @Inject constructor(
     private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
-    fun getFeed(page: Int): Single<List<FeedItem>> = feedApi
+    suspend fun getFeed(page: Int): List<FeedItem> = feedApi
         .getFeed(page)
-        .doOnSuccess {
+        .also {
             val newItems = mutableListOf<ReleaseItem>()
             val updItems = mutableListOf<ReleaseUpdate>()
             it.filterNot { it.release == null }.map { it.release!! }.forEach { item ->
@@ -32,7 +31,5 @@ class FeedRepository @Inject constructor(
             releaseUpdateHolder.putAllRelease(newItems)
             releaseUpdateHolder.updAllRelease(updItems)
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
 }

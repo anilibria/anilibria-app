@@ -1,9 +1,8 @@
 package ru.radiationx.data.repository
 
-import android.util.Log
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.entity.app.updater.UpdateData
@@ -17,27 +16,18 @@ class CheckerRepository @Inject constructor(
     private val checkerApi: CheckerApi
 ) {
 
-    private val currentDataRelay = BehaviorRelay.create<UpdateData>()
+    private val currentDataRelay = MutableStateFlow<UpdateData?>(null)
 
-    fun observeUpdate(): Observable<UpdateData> = currentDataRelay.hide()
+    fun observeUpdate(): Flow<UpdateData> = currentDataRelay.filterNotNull()
 
-    fun checkUpdate(versionCode: Int, force: Boolean = false): Single<UpdateData> = Single
-        .fromCallable {
-            return@fromCallable if (!force && currentDataRelay.hasValue())
-                currentDataRelay.value!!
-            else
-                checkerApi.checkUpdate(versionCode).blockingGet()
+    suspend fun checkUpdate(versionCode: Int, force: Boolean = false): UpdateData {
+        return if (!force && currentDataRelay.value != null) {
+            currentDataRelay.value!!
+        } else {
+            checkerApi.checkUpdate(versionCode)
+        }.also {
+            currentDataRelay.value = it
         }
-        .doOnSuccess {
-            /*it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4.zip"
-            it.links[1].url = "https://github.com/anilibria/anilibria-app/archive/2.4.3.zip"*/
-
-            //it.links[0].url = "https://github.com/anilibria/anilibria-app/archive/2.4.4s.zip"
-        }
-        .doOnSuccess {
-            currentDataRelay.accept(it)
-        }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    }
 
 }

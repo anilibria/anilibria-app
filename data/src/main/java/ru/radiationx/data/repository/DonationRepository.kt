@@ -1,8 +1,7 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.datasource.remote.api.DonationApi
@@ -18,24 +17,17 @@ class DonationRepository(
     private val schedulers: SchedulersProvider
 ) {
 
-    fun requestUpdate(): Completable = donationApi
+    suspend fun requestUpdate() = donationApi
         .getDonationDetail()
-        .flatMapCompletable { donationHolder.save(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { donationHolder.save(it) }
 
-    fun observerDonationInfo(): Observable<DonationInfo> = donationHolder
+    fun observerDonationInfo(): Flow<DonationInfo> = donationHolder
         .observe()
         .map { it.toDomain() }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun createYooMoneyPayLink(
+    suspend fun createYooMoneyPayLink(
         amount: Int,
         type: String,
         form: YooMoneyDialog.YooMoneyForm
-    ): Single<String> = donationApi
-        .createYooMoneyPayLink(amount, type, form)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    ): String = donationApi.createYooMoneyPayLink(amount, type, form)
 }

@@ -1,7 +1,7 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Completable
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.TeamsHolder
 import ru.radiationx.data.datasource.remote.api.TeamsApi
@@ -16,15 +16,11 @@ class TeamsRepository(
     private val schedulers: SchedulersProvider
 ) {
 
-    fun requestUpdate(): Completable = teamsApi
+    suspend fun requestUpdate() = teamsApi
         .getTeams()
-        .flatMapCompletable { teamsHolder.save(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { teamsHolder.save(it) }
 
-    fun observeTeams(): Observable<Teams> = teamsHolder
+    fun observeTeams(): Flow<Teams> = teamsHolder
         .observe()
         .map { it.toDomain() }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 }

@@ -1,7 +1,5 @@
 package ru.radiationx.data.repository
 
-import android.util.Log
-import io.reactivex.Single
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.remote.api.ReleaseApi
@@ -21,34 +19,23 @@ class ReleaseRepository @Inject constructor(
     private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
-    fun getRandomRelease(): Single<RandomRelease> = releaseApi
-        .getRandomRelease()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun getRandomRelease(): RandomRelease = releaseApi.getRandomRelease()
 
-    fun getRelease(releaseId: Int): Single<ReleaseFull> = releaseApi
+    suspend fun getRelease(releaseId: Int): ReleaseFull = releaseApi
         .getRelease(releaseId)
-        .doOnSuccess(this::fillReleaseUpdate)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also(this::fillReleaseUpdate)
 
-    fun getRelease(releaseIdName: String): Single<ReleaseFull> = releaseApi
+    suspend fun getRelease(releaseIdName: String): ReleaseFull = releaseApi
         .getRelease(releaseIdName)
-        .doOnSuccess(this::fillReleaseUpdate)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also(this::fillReleaseUpdate)
 
-    fun getReleasesById(ids: List<Int>): Single<List<ReleaseItem>> = releaseApi
+    suspend fun getReleasesById(ids: List<Int>): List<ReleaseItem> = releaseApi
         .getReleasesByIds(ids)
-        .doOnSuccess { fillReleasesUpdate(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { fillReleasesUpdate(it) }
 
-    fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> = releaseApi
+    suspend fun getReleases(page: Int): Paginated<List<ReleaseItem>> = releaseApi
         .getReleases(page)
-        .doOnSuccess { fillReleasesUpdate(it.data) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { fillReleasesUpdate(it.data) }
 
     private fun fillReleasesUpdate(items: List<ReleaseItem>) {
         val newItems = mutableListOf<ReleaseItem>()
@@ -58,7 +45,8 @@ class ReleaseRepository @Inject constructor(
             if (updItem == null) {
                 newItems.add(item)
             } else {
-                item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                item.isNew =
+                    item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
                 /*if (item.torrentUpdate > updItem.timestamp) {
                     updItem.timestamp = item.torrentUpdate
                     updItems.add(updItem)

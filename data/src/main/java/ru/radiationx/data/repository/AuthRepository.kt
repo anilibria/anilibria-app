@@ -1,8 +1,6 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
@@ -35,10 +33,7 @@ class AuthRepository @Inject constructor(
             "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/pages\\/vk\\.php"
     ))*/
 
-    fun observeUser(): Observable<ProfileItem> = userHolder
-        .observeUser()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    fun observeUser(): Flow<ProfileItem> = userHolder.observeUser()
 
     fun getUser() = userHolder.getUser()
 
@@ -56,69 +51,51 @@ class AuthRepository @Inject constructor(
     }
 
     // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.
-    fun loadUser(): Single<ProfileItem> = authApi
-        .loadUser()
-        .doOnSuccess { updateUser(it) }
-        .doOnError {
-            it.printStackTrace()
-            val code = ((it as? ApiError)?.code ?: (it as? HttpException)?.code)
+    suspend fun loadUser(): ProfileItem {
+        return try {
+            authApi
+                .loadUser()
+                .also { updateUser(it) }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            val code = ((ex as? ApiError)?.code ?: (ex as? HttpException)?.code)
             if (code == 401) {
                 userHolder.delete()
             }
+            throw ex
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    }
 
-    fun getOtpInfo(): Single<OtpInfo> = authApi
-        .loadOtpInfo(authHolder.getDeviceId())
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun getOtpInfo(): OtpInfo = authApi.loadOtpInfo(authHolder.getDeviceId())
 
-    fun acceptOtp(code: String): Completable = authApi
-        .acceptOtp(code)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun acceptOtp(code: String) = authApi.acceptOtp(code)
 
-    fun signInOtp(code: String): Single<ProfileItem> = authApi
+    suspend fun signInOtp(code: String): ProfileItem = authApi
         .signInOtp(code, authHolder.getDeviceId())
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { userHolder.saveUser(it) }
 
-    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
-        .signIn(login, password, code2fa)
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun signIn(login: String, password: String, code2fa: String): ProfileItem =
+        authApi
+            .signIn(login, password, code2fa)
+            .also { userHolder.saveUser(it) }
 
-    fun signOut(): Single<String> = authApi
+    suspend fun signOut(): String = authApi
         .signOut()
-        .doOnSuccess {
+        .also {
             userHolder.delete()
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun observeSocialAuth(): Observable<List<SocialAuth>> = socialAuthHolder
-        .observe()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    fun observeSocialAuth(): Flow<List<SocialAuth>> = socialAuthHolder.observe()
 
-    fun loadSocialAuth(): Single<List<SocialAuth>> = authApi
+    suspend fun loadSocialAuth(): List<SocialAuth> = authApi
         .loadSocialAuth()
-        .doOnSuccess { socialAuthHolder.save(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { socialAuthHolder.save(it) }
 
-    fun getSocialAuth(key: String): Single<SocialAuth> = Single
-        .just(socialAuthHolder.get().first { it.key == key })
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun getSocialAuth(key: String): SocialAuth =
+        socialAuthHolder.get().first { it.key == key }
 
-    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> = authApi
+    suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem = authApi
         .signInSocial(resultUrl, item)
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .also { userHolder.saveUser(it) }
 
 }

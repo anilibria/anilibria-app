@@ -1,12 +1,14 @@
 package ru.radiationx.data.system
 
-import android.util.Log
-import io.reactivex.Single
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 open class Client @Inject constructor(
@@ -26,61 +28,56 @@ open class Client @Inject constructor(
             "mobileApp Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68"
     }
 
-    override fun get(url: String, args: Map<String, String>): Single<String> =
-        getFull(url, args).map { it.body }
+    override suspend fun get(url: String, args: Map<String, String>): String =
+        requireNotNull(getFull(url, args).body)
 
-    override fun post(url: String, args: Map<String, String>): Single<String> =
-        postFull(url, args).map { it.body }
+    override suspend fun post(url: String, args: Map<String, String>): String =
+        requireNotNull(postFull(url, args).body)
 
-    override fun put(url: String, args: Map<String, String>): Single<String> =
-        putFull(url, args).map { it.body }
+    override suspend fun put(url: String, args: Map<String, String>): String =
+        requireNotNull(putFull(url, args).body)
 
-    override fun delete(url: String, args: Map<String, String>): Single<String> =
-        deleteFull(url, args).map { it.body }
+    override suspend fun delete(url: String, args: Map<String, String>): String =
+        requireNotNull(deleteFull(url, args).body)
 
-    override fun getFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun getFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_GET, url, args)
 
-    override fun postFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun postFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_POST, url, args)
 
-    override fun putFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun putFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_PUT, url, args)
 
-    override fun deleteFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun deleteFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_DELETE, url, args)
 
-    private fun request(
+    private suspend fun request(
         method: String,
         url: String,
         args: Map<String, String>
-    ): Single<NetworkResponse> = Single
-        .fromCallable {
-            val body = getRequestBody(method, args)
-            val httpUrl = getHttpUrl(url, method, args)
-            val request = Request.Builder()
-                .url(httpUrl)
-                .method(method, body)
-                .build()
+    ): NetworkResponse {
+        val body = getRequestBody(method, args)
+        val httpUrl = getHttpUrl(url, method, args)
+        val request = Request.Builder()
+            .url(httpUrl)
+            .method(method, body)
+            .build()
 
-            clientWrapper.get().newCall(request)
+        val call = clientWrapper.get().newCall(request)
+        val callResponse = call.awaitResponse()
+        if (!callResponse.isSuccessful) {
+            throw HttpException(callResponse.code(), callResponse.message(), callResponse)
         }
-        .flatMap { CallExecuteSingle(it) }
-        .doOnSuccess {
-            if (!it.isSuccessful) {
-                throw HttpException(it.code(), it.message(), it)
-            }
-        }
-        .map {
-            NetworkResponse(
-                getHttpUrl(url, method, args).toString(),
-                it.code(),
-                it.message(),
-                it.request().url().toString(),
-                it.body()?.string().orEmpty(),
-                it.headers(HEADER_HOST_IP)?.firstOrNull()
-            )
-        }
+        return NetworkResponse(
+            getHttpUrl(url, method, args).toString(),
+            callResponse.code(),
+            callResponse.message(),
+            callResponse.request().url().toString(),
+            callResponse.body()?.string().orEmpty(),
+            callResponse.headers(HEADER_HOST_IP).firstOrNull()
+        )
+    }
 
     private fun getRequestBody(
         method: String,
@@ -111,5 +108,22 @@ open class Client @Inject constructor(
             }
         }
         return httpUrl
+    }
+
+    private suspend fun Call.awaitResponse(): Response {
+        return suspendCancellableCoroutine { continuation ->
+            continuation.invokeOnCancellation {
+                cancel()
+            }
+            enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    continuation.resume(response)
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(e)
+                }
+            })
+        }
     }
 }

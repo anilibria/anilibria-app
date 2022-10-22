@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.configuring
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -11,22 +11,17 @@ import javax.inject.Inject
 @InjectViewState
 class ConfiguringPresenter @Inject constructor(
     private val router: Router,
-    private val configuringInteractor: ConfiguringInteractor,
-    private val schedulersProvider: SchedulersProvider,
-    private val errorHandler: IErrorHandler
+    private val configuringInteractor: ConfiguringInteractor
 ) : BasePresenter<ConfiguringView>(router) {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         configuringInteractor
             .observeScreenState()
-            .observeOn(schedulersProvider.ui())
-            .subscribe({
+            .onEach {
                 viewState.updateScreen(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
 
         configuringInteractor.initCheck()
     }

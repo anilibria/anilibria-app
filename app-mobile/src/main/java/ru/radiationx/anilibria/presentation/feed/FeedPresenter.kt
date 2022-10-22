@@ -10,7 +10,6 @@ import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.feed.FeedDataState
@@ -300,7 +299,7 @@ class FeedPresenter @Inject constructor(
     private suspend fun getFeedSource(page: Int): List<FeedItem> = feedRepository
         .getFeed(page)
         .also {
-            if (page == Paginator.FIRST_PAGE) {
+            if (page == 1) {
                 currentItems.clear()
             }
             currentItems.addAll(it)

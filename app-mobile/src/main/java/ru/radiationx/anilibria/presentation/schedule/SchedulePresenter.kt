@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.schedule
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.toState
@@ -42,7 +45,7 @@ class SchedulePresenter @Inject constructor(
         super.onFirstViewAttach()
         scheduleRepository
             .observeSchedule()
-            .subscribe { scheduleDays ->
+            .onEach { scheduleDays ->
                 currentDays.clear()
                 currentDays.addAll(scheduleDays)
                 val dayStates = scheduleDays.map { scheduleDay ->
@@ -60,7 +63,7 @@ class SchedulePresenter @Inject constructor(
                 }
                 handleFirstData()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun handleFirstData() {
@@ -93,21 +96,18 @@ class SchedulePresenter @Inject constructor(
     }
 
     fun refresh() {
-        scheduleRepository
-            .loadSchedule()
-            .doOnSubscribe {
-                updateState {
-                    it.copy(refreshing = true)
-                }
+        presenterScope.launch {
+            updateState {
+                it.copy(refreshing = true)
             }
-            .doFinally {
-                updateState {
-                    it.copy(refreshing = false)
-                }
-            }
-            .subscribe({}, {
+            runCatching {
+                scheduleRepository.loadSchedule()
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            updateState {
+                it.copy(refreshing = false)
+            }
+        }
     }
 }

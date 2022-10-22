@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.presentation.teams
 
-import com.jakewharton.rxrelay2.BehaviorRelay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.TeamsAnalytics
-import ru.radiationx.data.entity.common.DataWrapper
 import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
@@ -21,48 +21,44 @@ class TeamsPresenter(
     private val analytics: TeamsAnalytics
 ) : BasePresenter<TeamsView>(router) {
 
-    private val currentDataRelay =
-        BehaviorRelay.createDefault<DataWrapper<Teams>>(DataWrapper(null))
+    private val currentDataRelay = MutableStateFlow<Teams?>(null)
 
-    private val queryRelay = BehaviorRelay.createDefault(Query())
+    private val queryRelay = MutableStateFlow(Query())
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        repository
-            .requestUpdate()
-            .subscribe({}, {
+        presenterScope.launch {
+            runCatching {
+                repository.requestUpdate()
+            }.onFailure {
                 it.printStackTrace()
-            })
-            .addToDisposable()
+            }
+        }
         repository
             .observeTeams()
-            .doOnSubscribe { viewState.setLoading(true) }
-            .subscribe({
+            .onStart { viewState.setLoading(true) }
+            .onEach {
                 viewState.setLoading(false)
-                currentDataRelay.accept(DataWrapper(it))
-            }, {
-                viewState.setLoading(false)
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+                currentDataRelay.value = it
+            }
+            .launchIn(presenterScope)
 
         currentDataRelay
-            .filter { it.data != null }
-            .map { it.data!! }
+            .filterNotNull()
             .map { it.toState() }
-            .flatMap { teamStates ->
+            .flatMapLatest { teamStates ->
                 queryRelay.map { query ->
                     teamStates.filterBy(query)
                 }
             }
-            .subscribe {
+            .onEach {
                 viewState.showData(it)
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     fun setQueryText(text: String) {
-        queryRelay.accept(queryRelay.value!!.copy(text = text))
+        queryRelay.update { it.copy(text = text) }
     }
 
     fun onHeaderActionClick() {

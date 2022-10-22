@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.auth
 
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -43,20 +44,20 @@ class Auth2FaCodePresenter @Inject constructor(
     }
 
     fun signIn() {
-        viewState.setRefreshing(true)
-        authRepository
-            .signIn(currentLogin, currentPassword, currentCode2fa)
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({ user ->
-                decideWhatToDo(user.authState)
-            }, {
+        presenterScope.launch {
+            viewState.setRefreshing(true)
+            runCatching {
+                authRepository.signIn(currentLogin, currentPassword, currentCode2fa)
+            }.onSuccess {
+                decideWhatToDo(it.authState)
+            }.onFailure {
                 authMainAnalytics.error(it)
                 errorHandler.handle(it)
                 if (it is WrongPasswordException) {
                     router.exit()
                 }
-            })
-            .addToDisposable()
+            }
+        }
     }
 
     private fun decideWhatToDo(state: AuthState) {

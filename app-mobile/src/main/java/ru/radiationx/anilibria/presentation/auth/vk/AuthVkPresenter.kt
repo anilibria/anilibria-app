@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.auth.vk
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.auth.social.WebAuthSoFastDetector
@@ -35,8 +38,8 @@ class AuthVkPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
         resetPage()
     }
 
@@ -80,7 +83,9 @@ class AuthVkPresenter @Inject constructor(
     }
 
     private fun successSignVk(resultUrl: String) {
-        authHolder.changeVkAuth(true)
-        router.exit()
+        presenterScope.launch {
+            authHolder.changeVkAuth(true)
+            router.exit()
+        }
     }
 }

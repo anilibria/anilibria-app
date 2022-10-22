@@ -5,7 +5,6 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 19
@@ -23,11 +22,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
-    lintOptions {
-        disable 'RestrictedApi'
+    lint {
         checkReleaseBuilds false
+        disable 'RestrictedApi'
     }
+    namespace 'ru.radiationx.data'
+
 }
 ext {
     okHttpVersion = '3.12.3'
@@ -40,17 +40,17 @@ dependencies {
     api "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     api "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
-    api 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    api 'io.reactivex.rxjava2:rxjava:2.2.6'
-    api "com.jakewharton.rxrelay2:rxrelay:2.1.0"
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    api 'io.reactivex.rxjava2:rxjava:2.2.10'
+    api "com.jakewharton.rxrelay2:rxrelay:2.1.1"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     api 'org.bsc.util:minitemplator-repackaged:1.2'
 
-    api "com.squareup.moshi:moshi:1.12.0"
-    api "com.squareup.moshi:moshi-adapters:1.12.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.12.0"
+    api "com.squareup.moshi:moshi:1.14.0"
+    api "com.squareup.moshi:moshi-adapters:1.13.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.14.0"
 
     implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0"
     implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0"

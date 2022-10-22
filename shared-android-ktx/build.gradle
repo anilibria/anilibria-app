@@ -25,11 +25,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    lintOptions {
-        disable 'RestrictedApi'
+    lint {
         checkReleaseBuilds false
+        disable 'RestrictedApi'
     }
+    namespace 'ru.radiationx.shared.ktx.android'
+
 }
 
 ext {

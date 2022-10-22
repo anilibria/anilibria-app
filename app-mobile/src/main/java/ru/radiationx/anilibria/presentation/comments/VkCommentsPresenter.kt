@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.presentation.comments
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
@@ -21,8 +18,6 @@ import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
-import ru.radiationx.data.entity.app.page.VkComments
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
@@ -45,7 +40,7 @@ class VkCommentsPresenter @Inject constructor(
 
     private var isVisibleToUser = false
     private var pendingAuthRequest: String? = null
-    private var authRequestDisposable = Disposables.disposed()
+    private var authRequestJob: Job? = null
 
     private var hasJsError = false
     private var jsErrorClosed = false
@@ -53,8 +48,8 @@ class VkCommentsPresenter @Inject constructor(
     private var hasVkBlockedError = false
     private var vkBlockedErrorClosed = false
 
-    private val loadingController = DataLoadingController {
-        getDataSource().map { ScreenStateAction.Data(it, false) }
+    private val loadingController = DataLoadingController(presenterScope) {
+        getDataSource().let { ScreenStateAction.Data(it, false) }
     }
 
     private val stateController = StateController(
@@ -70,36 +65,38 @@ class VkCommentsPresenter @Inject constructor(
             .observeUser()
             .map { it.authState }
             .distinctUntilChanged()
-            .subscribe { viewState.pageReloadAction() }
-            .addToDisposable()
+            .onEach { viewState.pageReloadAction() }
+            .launchIn(presenterScope)
 
         authHolder.observeVkAuthChange()
-            .subscribe { viewState.pageReloadAction() }
-            .addToDisposable()
+            .onEach { viewState.pageReloadAction() }
+            .launchIn(presenterScope)
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         loadingController
             .observeState()
-            .subscribe { loadingData ->
+            .onEach { loadingData ->
                 stateController.updateState {
                     it.copy(data = loadingData)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
-        pageRepository
-            .checkVkBlocked()
-            .subscribe({ vkBlocked ->
-                hasVkBlockedError = vkBlocked
+        presenterScope.launch {
+            runCatching {
+                pageRepository
+                    .checkVkBlocked()
+            }.onSuccess {
+                hasVkBlockedError = it
                 updateVkBlockedState()
-            }, {
+            }.onFailure {
                 it.printStackTrace()
-            })
-            .addToDisposable()
+            }
+        }
 
         loadingController.refresh()
     }
@@ -164,45 +161,35 @@ class VkCommentsPresenter @Inject constructor(
     }
 
     private fun tryExecutePendingAuthRequest() {
-        authRequestDisposable.dispose()
-        authRequestDisposable = Completable
-            .fromAction {
-                val url = pendingAuthRequest
-                if (isVisibleToUser && url != null) {
-                    pendingAuthRequest = null
-                    authVkAnalytics.open(AnalyticsConstants.screen_auth_vk)
-                    router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
-                }
+        authRequestJob?.cancel()
+        authRequestJob = presenterScope.launch {
+            val url = pendingAuthRequest
+            if (isVisibleToUser && url != null) {
+                pendingAuthRequest = null
+                authVkAnalytics.open(AnalyticsConstants.screen_auth_vk)
+                router.navigateTo(Screens.Auth(Screens.AuthVk(url)))
             }
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-            .addToDisposable()
+        }
     }
 
-    private fun getDataSource(): Single<VkCommentsState> {
-        val commentsSource = pageRepository.getComments()
-        val releaseSource = Maybe
-            .fromCallable<ReleaseItem> {
-                releaseInteractor.getItem(releaseId, releaseIdCode)
-            }
-            .switchIfEmpty(Single.defer<ReleaseItem> {
-                releaseInteractor.loadRelease(releaseId, releaseIdCode).firstOrError()
-            })
-
-        return Single
-            .zip(
-                releaseSource,
-                commentsSource,
-                BiFunction<ReleaseItem, VkComments, VkCommentsState> { result1, result2 ->
-                    return@BiFunction VkCommentsState(
-                        url = "${result2.baseUrl}release/${result1.code}.html",
-                        script = result2.script
-                    )
-                }
-            )
-            .doOnError {
-                commentsAnalytics.error(it)
-                errorHandler.handle(it)
-            }
+    private suspend fun getDataSource(): VkCommentsState {
+        val commentsSource = flow { emit(pageRepository.getComments()) }
+        val releaseSource = flow {
+            emit(releaseInteractor.getItem(releaseId, releaseIdCode))
+        }.map {
+            it ?: releaseInteractor.loadRelease(releaseId, releaseIdCode).first()
+        }
+        return try {
+            combine(releaseSource, commentsSource) { release, comments ->
+                VkCommentsState(
+                    url = "${comments.baseUrl}release/${release.code}.html",
+                    script = comments.script
+                )
+            }.first()
+        } catch (ex: Throwable) {
+            commentsAnalytics.error(ex)
+            errorHandler.handle(ex)
+            throw ex
+        }
     }
 }

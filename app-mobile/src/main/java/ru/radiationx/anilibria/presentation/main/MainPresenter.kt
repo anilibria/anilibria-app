@@ -1,5 +1,9 @@
 package ru.radiationx.anilibria.presentation.main
 
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -45,8 +49,7 @@ class MainPresenter @Inject constructor(
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
-            .observeOn(schedulers.ui())
-            .subscribe({
+            .onEach {
                 if (it) {
                     viewState.showConfiguring()
                 } else {
@@ -55,11 +58,8 @@ class MainPresenter @Inject constructor(
                         initMain()
                     }
                 }
-            }, {
-                it.printStackTrace()
-                throw it
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
 
         if (apiConfig.needConfig) {
             viewState.showConfiguring()
@@ -78,19 +78,24 @@ class MainPresenter @Inject constructor(
         selectTab(defaultScreen)
         authRepository
             .observeUser()
-            .subscribe {
+            .onEach {
                 viewState.updateTabs()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
         viewState.onMainLogicCompleted()
-        authRepository
-            .loadUser()
-            .subscribe({}, {})
-            .addToDisposable()
-        donationRepository
-            .requestUpdate()
-            .subscribe({}, { it.printStackTrace() })
-            .addToDisposable()
+
+        presenterScope.launch {
+            runCatching {
+                authRepository.loadUser()
+            }.onFailure {
+                it.printStackTrace()
+            }
+            runCatching {
+                donationRepository.requestUpdate()
+            }.onFailure {
+                it.printStackTrace()
+            }
+        }
     }
 
     fun getAuthState() = authRepository.getAuthState()

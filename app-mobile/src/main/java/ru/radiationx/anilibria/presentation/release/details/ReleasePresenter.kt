@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -47,34 +50,30 @@ class ReleasePresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
     }
 
     private fun loadRelease() {
         releaseInteractor
             .loadRelease(releaseId, releaseIdCode)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .subscribe({
+            .onStart { viewState.setRefreshing(true) }
+            .onEach {
                 viewState.setRefreshing(false)
                 historyRepository.putRelease(it as ReleaseItem)
-            }, {
-                viewState.setRefreshing(false)
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     private fun observeRelease() {
         releaseInteractor
             .observeFull(releaseId, releaseIdCode)
-            .subscribe({ release ->
+            .onEach { release ->
                 updateLocalRelease(release)
                 historyRepository.putRelease(release as ReleaseItem)
-            }) {
-                errorHandler.handle(it)
+
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun updateLocalRelease(release: ReleaseItem) {

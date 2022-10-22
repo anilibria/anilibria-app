@@ -1,5 +1,10 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
@@ -71,12 +76,12 @@ class ReleaseInfoPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         donationRepository
             .observerDonationInfo()
-            .subscribe { info ->
+            .onEach { info ->
                 stateController.updateState { state ->
                     val newCardState = info.cardRelease?.let {
                         DonationCardItemState(
@@ -89,26 +94,25 @@ class ReleaseInfoPresenter @Inject constructor(
                     state.copy(donationCardState = newCardState)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         appPreferences
             .observeEpisodesIsReverse()
-            .subscribe { episodesReversed ->
+            .onEach { episodesReversed ->
                 updateModifiers {
                     it.copy(episodesReversed = episodesReversed)
                 }
-
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         appPreferences
             .observeReleaseRemind()
-            .subscribe { remindEnabled ->
+            .onEach { remindEnabled ->
                 stateController.updateState {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
@@ -131,33 +135,25 @@ class ReleaseInfoPresenter @Inject constructor(
         authRepository
             .observeUser()
             .distinctUntilChanged()
-            .skip(1)
-            .subscribe {
-                loadRelease()
-            }
-            .addToDisposable()
+            .drop(1)
+            .onEach { loadRelease() }
+            .launchIn(presenterScope)
     }
 
     private fun loadRelease() {
         releaseInteractor
             .loadRelease(releaseId, releaseIdCode)
-            .subscribe({ release ->
-                historyRepository.putRelease(release as ReleaseItem)
-            }) {
-                errorHandler.handle(it)
+            .onEach {
+                historyRepository.putRelease(it as ReleaseItem)
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun observeRelease() {
         releaseInteractor
             .observeFull(releaseId, releaseIdCode)
-            .subscribe({ release ->
-                updateLocalRelease(release)
-            }) {
-                errorHandler.handle(it)
-            }
-            .addToDisposable()
+            .onEach { updateLocalRelease(it) }
+            .launchIn(presenterScope)
     }
 
     private fun updateLocalRelease(release: ReleaseFull) {
@@ -376,24 +372,17 @@ class ReleaseInfoPresenter @Inject constructor(
             releaseAnalytics.favoriteAdd(releaseId)
         }
 
-        val source = if (favInfo.isAdded) {
-            favoriteRepository.deleteFavorite(releaseId)
-        } else {
-            favoriteRepository.addFavorite(releaseId)
-        }
-
-        source
-            .doOnSubscribe {
-                updateModifiers {
-                    it.copy(favoriteRefreshing = true)
-                }
+        presenterScope.launch {
+            updateModifiers {
+                it.copy(favoriteRefreshing = true)
             }
-            .doAfterTerminate {
-                updateModifiers {
-                    it.copy(favoriteRefreshing = false)
+            runCatching {
+                if (favInfo.isAdded) {
+                    favoriteRepository.deleteFavorite(releaseId)
+                } else {
+                    favoriteRepository.addFavorite(releaseId)
                 }
-            }
-            .subscribe({ releaseItem ->
+            }.onSuccess { releaseItem ->
                 favInfo.rating = releaseItem.favoriteInfo.rating
                 favInfo.isAdded = releaseItem.favoriteInfo.isAdded
                 stateController.updateState {
@@ -405,10 +394,13 @@ class ReleaseInfoPresenter @Inject constructor(
                         )
                     )
                 }
-            }) {
+            }.onFailure {
                 errorHandler.handle(it)
             }
-            .addToDisposable()
+            updateModifiers {
+                it.copy(favoriteRefreshing = false)
+            }
+        }
     }
 
     fun onScheduleClick(day: Int) {

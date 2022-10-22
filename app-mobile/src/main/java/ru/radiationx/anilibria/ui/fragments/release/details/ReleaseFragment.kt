@@ -5,20 +5,19 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
-import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -65,7 +64,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     private val pagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter() }
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
-    private var toolbarHelperDisposable: Disposable = Disposables.disposed()
+    private var toolbarHelperJob: Job? = null
 
     private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
         .cacheInMemory(true)
@@ -230,7 +229,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun onDestroyView() {
-        toolbarHelperDisposable.dispose()
+        toolbarHelperJob?.cancel()
         super.onDestroyView()
     }
 
@@ -256,9 +255,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     private fun updateToolbarColors(loadedImage: Bitmap) {
-        toolbarHelperDisposable.dispose()
-        toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
-            currentColor = if (it) Color.WHITE else Color.BLACK
+        toolbarHelperJob?.cancel()
+        toolbarHelperJob = viewLifecycleOwner.lifecycleScope.launch {
+            val isDark = ToolbarHelper.isDarkImage(loadedImage)
+            currentColor = if (isDark) Color.WHITE else Color.BLACK
 
             toolbar.navigationIcon?.setColorFilter(
                 currentColor,
@@ -268,7 +268,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
-        })
+        }
     }
 
     private inner class CustomPagerAdapter :

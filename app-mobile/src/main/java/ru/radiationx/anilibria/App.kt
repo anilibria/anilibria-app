@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
 import com.google.firebase.messaging.FirebaseMessaging
@@ -63,6 +64,7 @@ class App : Application() {
             initInMainProcess()
 
             val timeToInit = timeCounter.elapsed()
+            Log.d("kekeke", "init time. $timeToCreate, $timeToInit")
             val appAnalytics = DI.get(AppAnalytics::class.java)
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)

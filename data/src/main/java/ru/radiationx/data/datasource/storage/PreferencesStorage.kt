@@ -10,7 +10,7 @@ import javax.inject.Inject
  * Created by radiationx on 03.02.18.
  */
 class PreferencesStorage @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val prefs: SharedPreferences
 ) : PreferencesHolder {
 
     companion object {
@@ -49,8 +49,9 @@ class PreferencesStorage @Inject constructor(
         }
     }
 
-    init {
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+    private val sharedPreferences by lazy {
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        prefs
     }
 
     override fun observeNewDonationRemind(): Flow<Boolean> = newDonationRemindRelay

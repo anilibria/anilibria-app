@@ -53,27 +53,22 @@ class MenuStorage @Inject constructor(
         )
     )
 
-    private val localMenu by lazy {
-        loadAll().toMutableList()
-    }
     private val localMenuRelay by lazy {
-        MutableStateFlow(localMenu.toList())
+        MutableStateFlow(loadAll())
     }
 
     override fun observe(): Flow<List<LinkMenuItem>> = localMenuRelay
 
     override fun save(items: List<LinkMenuItem>) {
-        localMenu.clear()
-        localMenu.addAll(items)
+        localMenuRelay.value = items.toList()
         saveAll()
-        localMenuRelay.value = localMenu.toList()
     }
 
-    override fun get(): List<LinkMenuItem> = localMenu
+    override fun get(): List<LinkMenuItem> = localMenuRelay.value
 
     private fun saveAll() {
         val jsonMenu = JSONArray()
-        localMenu.forEach {
+        localMenuRelay.value.forEach {
             jsonMenu.put(JSONObject().apply {
                 put("title", it.title)
                 put("absoluteLink", it.absoluteLink)

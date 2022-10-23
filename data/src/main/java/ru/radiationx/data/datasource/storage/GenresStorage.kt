@@ -21,27 +21,22 @@ class GenresStorage @Inject constructor(
         private const val LOCAL_GENRES_KEY = "data.local_genres"
     }
 
-    private val localGenres by lazy {
-        loadAll().toMutableList()
-    }
     private val localGenresRelay by lazy {
-        MutableStateFlow(localGenres.toList())
+        MutableStateFlow(loadAll())
     }
 
     override fun observeGenres(): Flow<List<GenreItem>> = localGenresRelay
 
     override fun saveGenres(genres: List<GenreItem>) {
-        localGenres.clear()
-        localGenres.addAll(genres)
+        localGenresRelay.value = genres.toList()
         saveAll()
-        localGenresRelay.value = localGenres.toList()
     }
 
-    override fun getGenres(): List<GenreItem> = localGenres
+    override fun getGenres(): List<GenreItem> = localGenresRelay.value
 
     private fun saveAll() {
         val jsonGenres = JSONArray()
-        localGenres.forEach {
+        localGenresRelay.value.forEach {
             jsonGenres.put(JSONObject().apply {
                 put("title", it.title)
                 put("value", it.value)

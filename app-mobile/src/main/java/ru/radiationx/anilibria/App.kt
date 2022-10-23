@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
-import biz.source_code.miniTemplator.MiniTemplator
 import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
@@ -28,9 +27,6 @@ import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -50,22 +46,6 @@ class App : Application() {
         start()
     }
 
-    lateinit var staticPageTemplate: MiniTemplator
-    lateinit var vkCommentsTemplate: MiniTemplator
-    lateinit var videoPageTemplate: MiniTemplator
-
-    val vkCommentCssFixLight: String by lazy {
-        assets.open("styles/vk_comments_fix_light.css").bufferedReader().use {
-            it.readText()
-        }
-    }
-
-    val vkCommentCssFixDark: String by lazy {
-        assets.open("styles/vk_comments_fix_dark.css").bufferedReader().use {
-            it.readText()
-        }
-    }
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         when (BuildConfig.FLAVOR) {
@@ -81,6 +61,7 @@ class App : Application() {
 
         if (isMainProcess()) {
             initInMainProcess()
+
             val timeToInit = timeCounter.elapsed()
             val appAnalytics = DI.get(AppAnalytics::class.java)
             appAnalytics.timeToCreate(timeToCreate)
@@ -115,16 +96,16 @@ class App : Application() {
 
         initDependencies()
 
-        findTemplate("static_page")?.let { staticPageTemplate = it }
-        findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
-        findTemplate("video_page")?.let { videoPageTemplate = it }
-
         val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
         ImageLoaderConfig.init(this, imageDownloader)
         appVersionCheck()
 
-        FirebaseMessaging.getInstance().apply {
-            isAutoInitEnabled = true
+        try {
+            FirebaseMessaging.getInstance().apply {
+                isAutoInitEnabled = true
+            }
+        } catch (ex: Throwable) {
+            Timber.e(ex)
         }
 
         val preferencesHolder = DI.get(PreferencesHolder::class.java)
@@ -166,30 +147,12 @@ class App : Application() {
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
-        scope.installModules(AppModule(this), DataModule(this))
+        scope.installModules(AppModule(this), DataModule())
     }
 
     private fun appVersionCheck() {
         val migrationDataSource = DI.get(MigrationDataSource::class.java)
         migrationDataSource.update()
-    }
-
-    private fun findTemplate(name: String): MiniTemplator? {
-        var template: MiniTemplator? = null
-        try {
-            val stream = assets.open("templates/$name.html")
-            val charset: Charset = Charset.forName("utf-8")
-            template = try {
-                MiniTemplator.Builder().build(stream, charset)
-            } catch (e: Exception) {
-                Timber.e(e)
-                MiniTemplator.Builder()
-                    .build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
-            }
-        } catch (e: IOException) {
-            Timber.e(e)
-        }
-        return template
     }
 
     private fun isMainProcess() = packageName == getCurrentProcessName()

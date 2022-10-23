@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.generateWithTheme
@@ -26,6 +25,7 @@ import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.model.loading.hasAnyLoading
 import ru.radiationx.anilibria.presentation.comments.VkCommentsPresenter
 import ru.radiationx.anilibria.presentation.comments.VkCommentsView
+import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
@@ -175,7 +175,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         }
         currentVkCommentsState = comments
 
-        val template = App.instance.vkCommentsTemplate
+        val template = DI.get(Templates::class.java).vkCommentsTemplate
         webView.easyLoadData(
             comments.url,
             template.generateWithTheme(appThemeController.getTheme())
@@ -298,10 +298,11 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 }
                 var newCss = cssSrc
 
+                val commentsCss = DI.get(VkCommentsCss::class.java)
                 val fixCss = if (appThemeController.getTheme().isDark()) {
-                    App.instance.vkCommentCssFixDark
+                    commentsCss.dark
                 } else {
-                    App.instance.vkCommentCssFixLight
+                    commentsCss.light
                 }
 
                 newCss += fixCss

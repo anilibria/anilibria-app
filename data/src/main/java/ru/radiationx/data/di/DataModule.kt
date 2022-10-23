@@ -25,21 +25,23 @@ import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
+import toothpick.InjectConstructor
 import toothpick.config.Module
+import javax.inject.Provider
 
-class DataModule(context: Context) : Module() {
-
+class DataModule : Module() {
 
     init {
-        val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val dataStoragePreferences =
-            context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
-
         bind(Moshi::class.java).toInstance(Moshi.Builder().build())
 
-        bind(SharedPreferences::class.java).toInstance(defaultPreferences)
-        bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
-            .toInstance(dataStoragePreferences)
+        bind(SharedPreferences::class.java)
+            .toProvider(PreferencesProvider::class.java)
+            .providesSingleton()
+
+        bind(SharedPreferences::class.java)
+            .withName(DataPreferences::class.java)
+            .toProvider(DataPreferencesProvider::class.java)
+            .providesSingleton()
 
         bind(MigrationDataSource::class.java).to(MigrationDataSourceImpl::class.java).singleton()
 
@@ -155,6 +157,28 @@ class DataModule(context: Context) : Module() {
         bind(DonationDialogAnalytics::class.java).singleton()
         bind(DonationYooMoneyAnalytics::class.java).singleton()
         bind(TeamsAnalytics::class.java).singleton()
+    }
+
+
+    @InjectConstructor
+    class PreferencesProvider(
+        private val context: Context
+    ) : Provider<SharedPreferences> {
+        override fun get(): SharedPreferences {
+            return PreferenceManager.getDefaultSharedPreferences(context)
+        }
+    }
+
+    @InjectConstructor
+    class DataPreferencesProvider(
+        private val context: Context
+    ) : Provider<SharedPreferences> {
+        override fun get(): SharedPreferences {
+            return context.getSharedPreferences(
+                "${context.packageName}_datastorage",
+                Context.MODE_PRIVATE
+            )
+        }
     }
 
 }

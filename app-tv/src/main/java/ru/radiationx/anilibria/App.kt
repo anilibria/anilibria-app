@@ -59,7 +59,7 @@ class App : Application() {
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
-        scope.installModules(AppModule(this), DataModule(this))
+        scope.installModules(AppModule(this), DataModule())
     }
 
 

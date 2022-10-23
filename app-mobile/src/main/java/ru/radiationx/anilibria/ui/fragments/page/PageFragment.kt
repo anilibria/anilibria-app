@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.presentation.page.PagePresenter
 import ru.radiationx.anilibria.presentation.page.PageView
+import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.ToolbarHelper
@@ -32,6 +32,7 @@ import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -154,7 +155,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
-        val template = App.instance.staticPageTemplate
+        val template = DI.get(Templates::class.java).staticPageTemplate
         webView.easyLoadData(
             apiConfig.siteUrl,
             template.generateWithTheme(appThemeController.getTheme())

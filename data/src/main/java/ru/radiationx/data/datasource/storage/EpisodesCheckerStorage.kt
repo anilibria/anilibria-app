@@ -21,11 +21,11 @@ class EpisodesCheckerStorage @Inject constructor(
         private const val LOCAL_EPISODES_KEY = "data.local_episodes"
     }
 
-    private val localEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private val localEpisodesRelay = MutableStateFlow(localEpisodes.toList())
-
-    init {
-        loadAll()
+    private val localEpisodes by lazy {
+        loadAll().toMutableList()
+    }
+    private val localEpisodesRelay by lazy {
+        MutableStateFlow(localEpisodes.toList())
     }
 
     override fun observeEpisodes(): Flow<List<ReleaseFull.Episode>> =
@@ -82,13 +82,14 @@ class EpisodesCheckerStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseFull.Episode> {
+        val result = mutableListOf<ReleaseFull.Episode>()
         val savedEpisodes = sharedPreferences.getString(LOCAL_EPISODES_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach {
                 jsonEpisodes.getJSONObject(it).let {
-                    localEpisodes.add(ReleaseFull.Episode().apply {
+                    result.add(ReleaseFull.Episode().apply {
                         releaseId = it.getInt("releaseId")
                         id = it.getInt("id")
                         seek = it.optLong("seek", 0L)
@@ -98,6 +99,6 @@ class EpisodesCheckerStorage @Inject constructor(
                 }
             }
         }
-        localEpisodesRelay.value = localEpisodes.toList()
+        return result
     }
 }

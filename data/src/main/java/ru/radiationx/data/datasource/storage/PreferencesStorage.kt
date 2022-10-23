@@ -26,14 +26,14 @@ class PreferencesStorage @Inject constructor(
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
     }
 
-    private val qualityRelay = MutableStateFlow(getQuality())
-    private val playSpeedRelay = MutableStateFlow(playSpeed)
-    private val notificationsAllRelay = MutableStateFlow(notificationsAll)
-    private val notificationsServiceRelay = MutableStateFlow(notificationsService)
-    private val searchRemindRelay = MutableStateFlow(searchRemind)
-    private val releaseRemindRelay = MutableStateFlow(releaseRemind)
-    private val episodesIsReverseRelay = MutableStateFlow(episodesIsReverse)
-    private val newDonationRemindRelay = MutableStateFlow(newDonationRemind)
+    private val qualityRelay by lazy { MutableStateFlow(getQuality()) }
+    private val playSpeedRelay by lazy { MutableStateFlow(playSpeed) }
+    private val notificationsAllRelay by lazy { MutableStateFlow(notificationsAll) }
+    private val notificationsServiceRelay by lazy { MutableStateFlow(notificationsService) }
+    private val searchRemindRelay by lazy { MutableStateFlow(searchRemind) }
+    private val releaseRemindRelay by lazy { MutableStateFlow(releaseRemind) }
+    private val episodesIsReverseRelay by lazy { MutableStateFlow(episodesIsReverse) }
+    private val newDonationRemindRelay by lazy { MutableStateFlow(newDonationRemind) }
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->

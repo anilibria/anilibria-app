@@ -22,11 +22,11 @@ class ReleaseUpdateStorage @Inject constructor(
         private const val LOCAL_HISTORY_KEY = "data.release_update"
     }
 
-    private val localReleases = mutableListOf<ReleaseUpdate>()
-    private val localReleasesRelay = MutableStateFlow(localReleases.toList())
-
-    init {
-        loadAll()
+    private val localReleases by lazy {
+        loadAll().toMutableList()
+    }
+    private val localReleasesRelay by lazy {
+        MutableStateFlow(localReleases.toList())
     }
 
     override fun observeEpisodes(): Flow<List<ReleaseUpdate>> = localReleasesRelay
@@ -91,13 +91,14 @@ class ReleaseUpdateStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseUpdate> {
+        val result = mutableListOf<ReleaseUpdate>()
         val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach { index ->
                 jsonEpisodes.getJSONObject(index).let {
-                    localReleases.add(ReleaseUpdate().apply {
+                    result.add(ReleaseUpdate().apply {
                         id = it.getInt("id")
                         timestamp = it.getInt("timestamp")
                         lastOpenTimestamp = it.getInt("lastOpenTimestamp")
@@ -105,6 +106,6 @@ class ReleaseUpdateStorage @Inject constructor(
                 }
             }
         }
-        localReleasesRelay.value = localReleases.toList()
+        return result
     }
 }

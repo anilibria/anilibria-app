@@ -21,11 +21,11 @@ class GenresStorage @Inject constructor(
         private const val LOCAL_GENRES_KEY = "data.local_genres"
     }
 
-    private val localGenres = mutableListOf<GenreItem>()
-    private val localGenresRelay = MutableStateFlow(localGenres.toList())
-
-    init {
-        loadAll()
+    private val localGenres by lazy {
+        loadAll().toMutableList()
+    }
+    private val localGenresRelay by lazy {
+        MutableStateFlow(localGenres.toList())
     }
 
     override fun observeGenres(): Flow<List<GenreItem>> = localGenresRelay
@@ -53,19 +53,20 @@ class GenresStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<GenreItem> {
+        val result = mutableListOf<GenreItem>()
         val savedGenres = sharedPreferences.getString(LOCAL_GENRES_KEY, null)
         savedGenres?.let {
             val jsonGenres = JSONArray(it)
             (0 until jsonGenres.length()).forEach {
                 jsonGenres.getJSONObject(it).let {
-                    localGenres.add(GenreItem().apply {
+                    result.add(GenreItem().apply {
                         title = it.getString("title")
                         value = it.getString("value")
                     })
                 }
             }
         }
-        localGenresRelay.value = localGenres.toList()
+        return result
     }
 }

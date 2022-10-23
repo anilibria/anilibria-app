@@ -21,11 +21,11 @@ class YearsStorage @Inject constructor(
         private const val LOCAL_YEARS_KEY = "data.local_years"
     }
 
-    private val localYears = mutableListOf<YearItem>()
-    private val localYearsRelay = MutableStateFlow(localYears.toList())
-
-    init {
-        loadAll()
+    private val localYears by lazy {
+        loadAll().toMutableList()
+    }
+    private val localYearsRelay by lazy {
+        MutableStateFlow(localYears.toList())
     }
 
     override fun observeYears(): Flow<List<YearItem>> = localYearsRelay
@@ -53,19 +53,20 @@ class YearsStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<YearItem> {
+        val result = mutableListOf<YearItem>()
         val savedYears = sharedPreferences.getString(LOCAL_YEARS_KEY, null)
         savedYears?.let {
             val jsonYears = JSONArray(it)
             (0 until jsonYears.length()).forEach { index ->
                 jsonYears.getJSONObject(index).let {
-                    localYears.add(YearItem().apply {
+                    result.add(YearItem().apply {
                         title = it.getString("title")
                         value = it.getString("value")
                     })
                 }
             }
         }
-        localYearsRelay.value = localYears.toList()
+        return result
     }
 }

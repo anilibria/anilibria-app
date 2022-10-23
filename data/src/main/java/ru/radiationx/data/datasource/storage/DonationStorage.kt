@@ -6,7 +6,6 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.onSubscription
 import okio.buffer
 import okio.source
 import ru.radiationx.data.DataPreferences
@@ -30,27 +29,19 @@ class DonationStorage(
         moshi.adapter(DonationInfoResponse::class.java)
     }
 
-    private val dataRelay = MutableStateFlow<DonationInfoResponse?>(null)
+    private val dataRelay by lazy {
+        MutableStateFlow(getCurrentData())
+    }
 
     override fun observe(): Flow<DonationInfoResponse> {
-        return dataRelay
-            .onSubscription {
-                if (dataRelay.value == null) {
-                    updateCurrentData()
-                }
-            }
-            .filterNotNull()
+        return dataRelay.filterNotNull()
     }
 
     override suspend fun get(): DonationInfoResponse {
-        if (dataRelay.value == null) {
-            updateCurrentData()
-        }
-        return requireNotNull(dataRelay.value)
+        return dataRelay.value
     }
 
     override suspend fun save(data: DonationInfoResponse) {
-
         saveToPrefs(data)
         updateCurrentData()
     }
@@ -61,14 +52,17 @@ class DonationStorage(
     }
 
     private fun updateCurrentData() {
+        dataRelay.value = getCurrentData()
+    }
+
+    private fun getCurrentData(): DonationInfoResponse {
         val prefsData = try {
             getFromPrefs()
         } catch (ex: Exception) {
             Timber.e(ex)
             null
         }
-        val data = prefsData ?: getFromAssets()
-        dataRelay.value = data
+        return prefsData ?: getFromAssets()
     }
 
     private fun deleteFromPrefs() {

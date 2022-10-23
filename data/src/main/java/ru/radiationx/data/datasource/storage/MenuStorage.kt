@@ -20,7 +20,7 @@ class MenuStorage @Inject constructor(
         private const val LOCAL_MENU_KEY = "data.local_menu"
     }
 
-    private val localMenu = mutableListOf(
+    private val defaultLocalMenu = listOf(
         LinkMenuItem(
             "Группа VK",
             absoluteLink = "https://vk.com/anilibria",
@@ -52,10 +52,12 @@ class MenuStorage @Inject constructor(
             icon = DataIcons.ANILIBRIA
         )
     )
-    private val localMenuRelay = MutableStateFlow(localMenu.toList())
 
-    init {
-        loadAll()
+    private val localMenu by lazy {
+        loadAll().toMutableList()
+    }
+    private val localMenuRelay by lazy {
+        MutableStateFlow(localMenu.toList())
     }
 
     override fun observe(): Flow<List<LinkMenuItem>> = localMenuRelay
@@ -85,13 +87,14 @@ class MenuStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<LinkMenuItem> {
+        val result = defaultLocalMenu.toMutableList()
         sharedPreferences.getString(LOCAL_MENU_KEY, null)?.also { savedMenu ->
             val jsonMenu = JSONArray(savedMenu)
-            localMenu.clear()
+            result.clear()
             (0 until jsonMenu.length()).forEach { index ->
                 jsonMenu.getJSONObject(index).also {
-                    localMenu.add(
+                    result.add(
                         LinkMenuItem(
                             it.getString("title"),
                             it.nullString("absoluteLink"),
@@ -102,6 +105,6 @@ class MenuStorage @Inject constructor(
                 }
             }
         }
-        localMenuRelay.value = localMenu.toList()
+        return result
     }
 }

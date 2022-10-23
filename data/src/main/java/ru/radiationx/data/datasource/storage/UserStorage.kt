@@ -16,7 +16,7 @@ class UserStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : UserHolder {
 
-    private val userRelay = MutableStateFlow(getSavedUser())
+    private val userRelay by lazy { MutableStateFlow(getSavedUser()) }
 
     override fun getUser(): ProfileItem = userRelay.value
 

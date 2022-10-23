@@ -14,7 +14,7 @@ class SocialAuthStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences
 ) : SocialAuthHolder {
 
-    private val dataRelay = MutableStateFlow(getSavedData())
+    private val dataRelay by lazy { MutableStateFlow(getSavedData()) }
 
     override fun get(): List<SocialAuth> = dataRelay.value
 

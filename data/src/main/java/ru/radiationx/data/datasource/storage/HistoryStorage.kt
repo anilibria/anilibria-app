@@ -22,11 +22,11 @@ class HistoryStorage @Inject constructor(
         private const val LOCAL_HISTORY_KEY = "data.local_history_new"
     }
 
-    private val localReleases = mutableListOf<ReleaseItem>()
-    private val localReleasesRelay = MutableStateFlow(localReleases.toList())
-
-    init {
-        loadAll()
+    private val localReleases by lazy {
+        loadAll().toMutableList()
+    }
+    private val localReleasesRelay by lazy {
+        MutableStateFlow(localReleases.toList())
     }
 
     override suspend fun getEpisodes() = localReleases.toList()
@@ -94,7 +94,8 @@ class HistoryStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseItem> {
+        val result = mutableListOf<ReleaseItem>()
         val jsonEpisodes =
             sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
         if (jsonEpisodes != null) {
@@ -134,9 +135,9 @@ class HistoryStorage @Inject constructor(
                         favoriteInfo.isAdded = jsonFav.getBoolean("isAdded")
                     }
                 }
-                localReleases.add(release)
+                result.add(release)
             }
         }
-        localReleasesRelay.value = localReleases.toList()
+        return result
     }
 }

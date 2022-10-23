@@ -3,7 +3,6 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import android.net.Uri
 import okhttp3.Cookie
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.CookieHolder.Companion.cookieNames
@@ -16,16 +15,15 @@ class CookiesStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : CookieHolder {
 
-    private val clientCookies = mutableMapOf<String, Cookie>()
-
-    init {
+    private val clientCookies by lazy {
+        val result = mutableMapOf<String, Cookie>()
         cookieNames.forEachIndexed { _, s ->
-            val savedCookie = sharedPreferences.getString("cookie_$s", null)
-            savedCookie?.let {
-                val cookie = parseCookie(it)
-                cookie?.let { it1 -> clientCookies.put(s, it1) }
-            }
+            sharedPreferences
+                .getString("cookie_$s", null)
+                ?.let { parseCookie(it) }
+                ?.let { cookie -> result.put(s, cookie) }
         }
+        result
     }
 
     private fun parseCookie(cookieFields: String): Cookie? {
@@ -45,7 +43,8 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun putCookie(url: String, name: String, value: String) {
-        putCookie(url,
+        putCookie(
+            url,
             Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host)
                 .build()
         )

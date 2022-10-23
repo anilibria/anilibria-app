@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app.tv"
-        minSdkVersion 21
+        minSdkVersion tv_min_sdk_version
         targetSdkVersion 29
         versionCode 3
         versionName "1.0.0_RC5"
@@ -30,6 +30,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    namespace 'ru.radiationx.anilibria'
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -58,9 +59,9 @@ dependencies {
 
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
-    implementation "com.github.moxy-community:moxy:2.1.1"
-    implementation 'com.github.moxy-community:moxy-androidx:2.1.1'
-    kapt 'com.github.moxy-community:moxy-compiler:2.1.1'
+    implementation "com.github.moxy-community:moxy:2.2.2"
+    implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
+    kapt 'com.github.moxy-community:moxy-compiler:2.2.2'
 
     implementation 'ru.terrakok.cicerone:cicerone:5.0.0'
 

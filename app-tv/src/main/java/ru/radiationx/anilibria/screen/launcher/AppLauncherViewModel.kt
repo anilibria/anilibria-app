@@ -1,18 +1,23 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.*
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class AppLauncherViewModel(
     private val apiConfig: ApiConfig,
-    private val schedulersProvider: SchedulersProvider,
     private val router: Router,
     private val authRepository: AuthRepository
 ) : LifecycleViewModel() {
@@ -34,8 +39,7 @@ class AppLauncherViewModel(
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
-            .observeOn(schedulersProvider.ui())
-            .lifeSubscribe {
+            .onEach {
                 if (it) {
                     router.newRootScreen(ConfigScreen())
                 } else {
@@ -44,6 +48,7 @@ class AppLauncherViewModel(
                     }
                 }
             }
+            .launchIn(viewModelScope)
 
         if (apiConfig.needConfig) {
             router.newRootScreen(ConfigScreen())
@@ -60,9 +65,13 @@ class AppLauncherViewModel(
             router.navigateTo(AuthGuidedScreen())
         }
         appReadyAction.value = Unit
-        authRepository
-            .loadUser()
-            .lifeSubscribe({}, {})
+        GlobalScope.launch {
+            runCatching {
+                authRepository.loadUser()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 
 }

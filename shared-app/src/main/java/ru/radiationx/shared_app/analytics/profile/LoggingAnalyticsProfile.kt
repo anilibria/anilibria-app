@@ -1,15 +1,14 @@
 package ru.radiationx.shared_app.analytics.profile
 
 import android.util.Log
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
-import ru.radiationx.data.entity.common.DataWrapper
-import ru.radiationx.data.extensions.nullOnError
-import ru.radiationx.data.extensions.toWrapper
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -22,13 +21,13 @@ class LoggingAnalyticsProfile(
         try {
             unsafeUpdate()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 
     private fun unsafeUpdate() {
         val singleSources = with(dataSource) {
-            listOf<Single<DataWrapper<Pair<String, Any>>>>(
+            listOf<Flow<Pair<String, Any>>>(
                 getApiAddressTag().mapToAttr(ProfileConstants.address_tag),
                 getAppTheme().mapToAttr(ProfileConstants.app_theme),
                 getQualitySettings().mapToAttr(ProfileConstants.quality),
@@ -46,28 +45,27 @@ class LoggingAnalyticsProfile(
                 getAppVersionsHistory().mapToAttr(ProfileConstants.app_versions)
             )
         }
-        val ignoreDisposable = Single
-            .merge(singleSources)
-            .filter { it.data != null }
-            .map { it.data!! }
-            .toList()
-            .flatMap { mainParams ->
-                codecs
-                    .getCodecsInfo()
-                    .map { mainParams + it.toList() }
+
+        GlobalScope.launch {
+            flow {
+                emit(merge(*singleSources.toTypedArray()).toList())
             }
-            .subscribe({
-                Log.d("LoggingAnalyticsProfile", it.toMap().toString())
-            }, {
-                it.printStackTrace()
-            })
+                .map { mainParams ->
+                    codecs
+                        .getCodecsInfo()
+                        .let { mainParams + it.toList() }
+                }
+                .catch {
+                    Timber.e(it)
+                }
+                .onEach {
+                    Log.d("LoggingAnalyticsProfile", it.toMap().toString())
+                }
+                .launchIn(GlobalScope)
+        }
     }
 
-    private fun Single<out Any>.mapToAttr(name: String): Single<DataWrapper<Pair<String, Any>>> =
-        this
-            .attachScheduler()
-            .map { Pair(name, it).toWrapper() }
-            .nullOnError()
-
-    private fun <T> Single<T>.attachScheduler() = this.subscribeOn(Schedulers.io())
+    private fun Flow<Any>.mapToAttr(name: String): Flow<Pair<String, Any>> = map {
+        Pair(name, it)
+    }
 }

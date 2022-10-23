@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.screen.search
 
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Single
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -31,17 +33,20 @@ class SearchViewModel(
     override fun onColdCreate() {
         super.onColdCreate()
 
-        searchController.applyFormEvent.lifeSubscribe {
+        searchController.applyFormEvent.onEach {
             searchForm = it
             onRefreshClick()
-        }
+        }.launchIn(viewModelScope)
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchRepository
-        .searchReleases(searchForm, requestPage)
-        .map { it.data.map { converter.toCard(it) } }
-        .doOnSubscribe { progressState.value = requestPage == firstPage }
-        .doFinally { progressState.value = false }
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> {
+        progressState.value = requestPage == firstPage
+        val result = searchRepository
+            .searchReleases(searchForm, requestPage)
+            .let { it.data.map { converter.toCard(it) } }
+        progressState.value = false
+        return result
+    }
 
     fun onSearchClick() {
         router.navigateTo(SuggestionsScreen())

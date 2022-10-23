@@ -1,6 +1,7 @@
 package ru.radiationx.shared_app.common
 
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
+import timber.log.Timber
 import java.util.regex.Pattern
 
 class ImageFileNameGenerator : HashCodeFileNameGenerator() {
@@ -21,7 +22,7 @@ class ImageFileNameGenerator : HashCodeFileNameGenerator() {
                 }
             }
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
         return super.generate(imageUri)
     }

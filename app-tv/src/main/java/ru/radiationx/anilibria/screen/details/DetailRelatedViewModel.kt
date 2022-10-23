@@ -1,14 +1,11 @@
 package ru.radiationx.anilibria.screen.details
 
-import android.util.Log
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.terrakok.cicerone.Router
@@ -36,30 +33,31 @@ class DetailRelatedViewModel(
         releaseInteractor
             .observeFull(releaseId)
             .distinctUntilChanged()
-            .lifeSubscribe {
+            .onEach {
                 onRefreshClick()
             }
+            .launchIn(viewModelScope)
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> {
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> {
         val release = releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId)
         val releaseCodes = DetailsViewModel.getReleasesFromDesc(release?.description.orEmpty())
         if (releaseCodes.isEmpty()) {
-            return Single.just(emptyList())
+            return emptyList()
         }
-        val singles = releaseCodes.map { releaseRepository.getRelease(it) }
-        return Single.zip(singles) {
-                it.map { it as ReleaseFull }.toList()
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { releases ->
+
+        val singles = releaseCodes.map {
+            flow { emit(releaseRepository.getRelease(it)) }
+        }
+        return merge(*singles.toTypedArray()).toList()
+            .let { releases ->
                 releaseInteractor.updateItemsCache(releases)
                 releases.map { converter.toCard(it) }
             }
     }
 
-    override fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean = false
+    override fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean =
+        false
 
     override fun onLibriaCardClick(card: LibriaCard) {
         router.navigateTo(DetailsScreen(card.id))

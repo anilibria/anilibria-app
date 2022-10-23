@@ -33,8 +33,6 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_myplayer.*
 import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
@@ -151,7 +149,6 @@ class MyPlayerActivity : BaseActivity() {
     private var currentFullscreen = false
     private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED
 
-    private var compositeDisposable = CompositeDisposable()
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
     private var scaleEnabled = true
@@ -182,10 +179,6 @@ class MyPlayerActivity : BaseActivity() {
                         qualityMap.value.map { it.second }.average().toLong()
                     }
             }
-    }
-
-    fun Disposable.addToDisposable() {
-        compositeDisposable.add(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -506,7 +499,6 @@ class MyPlayerActivity : BaseActivity() {
             }
         }
         saveEpisodeAtNoZero()
-        compositeDisposable.dispose()
         player.stopPlayback()
         super.onDestroy()
         exitFullscreen()

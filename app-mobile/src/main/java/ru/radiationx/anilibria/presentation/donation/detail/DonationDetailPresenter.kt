@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.donation.detail
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -10,6 +13,7 @@ import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -25,21 +29,20 @@ class DonationDetailPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        donationRepository
-            .requestUpdate()
-            .subscribe({}, {
-                it.printStackTrace()
-            })
-            .addToDisposable()
+        presenterScope.launch {
+            runCatching {
+                donationRepository.requestUpdate()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
         donationRepository
             .observerDonationInfo()
-            .subscribe({
+            .onEach {
                 currentData = it
                 viewState.showData(it)
-            }, {
-                it.printStackTrace()
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     fun onLinkClick(url: String) {

@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.screen.player
 
-import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerController {
 
-    val selectEpisodeRelay = PublishRelay.create<Int>()
+    val selectEpisodeRelay = MutableSharedFlow<Int>()
 }

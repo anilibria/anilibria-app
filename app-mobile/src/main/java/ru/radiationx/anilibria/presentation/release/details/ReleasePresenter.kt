@@ -1,5 +1,10 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -11,6 +16,7 @@ import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -20,6 +26,7 @@ import javax.inject.Inject
 class ReleasePresenter @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
+    private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val commentsAnalytics: CommentsAnalytics,
@@ -44,37 +51,45 @@ class ReleasePresenter @Inject constructor(
         }
         observeRelease()
         loadRelease()
+        subscribeAuth()
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
+    }
+
+    private fun subscribeAuth() {
+        authRepository
+            .observeUser()
+            .distinctUntilChanged()
+            .drop(1)
+            .onEach { loadRelease() }
+            .launchIn(presenterScope)
     }
 
     private fun loadRelease() {
-        releaseInteractor
-            .loadRelease(releaseId, releaseIdCode)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .subscribe({
-                viewState.setRefreshing(false)
+        presenterScope.launch {
+            viewState.setRefreshing(true)
+            runCatching {
+                releaseInteractor.loadRelease(releaseId, releaseIdCode)
+            }.onSuccess {
                 historyRepository.putRelease(it as ReleaseItem)
-            }, {
-                viewState.setRefreshing(false)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun observeRelease() {
         releaseInteractor
             .observeFull(releaseId, releaseIdCode)
-            .subscribe({ release ->
+            .onEach { release ->
                 updateLocalRelease(release)
                 historyRepository.putRelease(release as ReleaseItem)
-            }) {
-                errorHandler.handle(it)
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun updateLocalRelease(release: ReleaseItem) {

@@ -8,10 +8,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.Screens
@@ -22,6 +23,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.shared_app.di.DI
+import timber.log.Timber
 
 class NotificationService : FirebaseMessagingService() {
 
@@ -71,7 +73,9 @@ class NotificationService : FirebaseMessagingService() {
                 val apiConfig = DI.get(ApiConfig::class.java)
                 val apiConfigStorage = DI.get(ApiConfigStorage::class.java)
 
-                apiConfig.updateNeedConfig(true)
+                GlobalScope.launch {
+                    apiConfig.updateNeedConfig(true)
+                }
 
                 val payload = data.payload.orEmpty()
                 val jsonObject = JSONObject(payload)
@@ -79,7 +83,7 @@ class NotificationService : FirebaseMessagingService() {
                 val addresses = configurationParser.parse(jsonObject)
                 apiConfig.setAddresses(addresses)
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                Timber.e(ex)
             }
         }
     }

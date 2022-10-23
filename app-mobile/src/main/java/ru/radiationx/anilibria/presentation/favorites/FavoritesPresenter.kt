@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.presentation.favorites
 
-import io.reactivex.Single
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -34,10 +36,10 @@ class FavoritesPresenter @Inject constructor(
     private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<FavoritesView>(router) {
 
-    private val loadingController = DataLoadingController {
+    private val loadingController = DataLoadingController(presenterScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
-    }.addToDisposable()
+    }
 
     private val stateController = StateController(FavoritesScreenState())
 
@@ -51,18 +53,18 @@ class FavoritesPresenter @Inject constructor(
         super.onFirstViewAttach()
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         loadingController
             .observeState()
-            .subscribe { loadingData ->
+            .onEach { loadingData ->
                 stateController.updateState {
                     it.copy(data = loadingData)
                 }
                 updateSearchState()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         refreshReleases()
     }
@@ -77,17 +79,13 @@ class FavoritesPresenter @Inject constructor(
 
     fun deleteFav(id: Int) {
         favoritesAnalytics.deleteFav()
-        stateController.updateState {
-            it.copy(deletingItemIds = it.deletingItemIds + id)
-        }
-        favoriteRepository
-            .deleteFavorite(id)
-            .doFinally {
-                stateController.updateState {
-                    it.copy(deletingItemIds = it.deletingItemIds - id)
-                }
+        presenterScope.launch {
+            stateController.updateState {
+                it.copy(deletingItemIds = it.deletingItemIds + id)
             }
-            .subscribe({ deletedItem ->
+            runCatching {
+                favoriteRepository.deleteFavorite(id)
+            }.onSuccess { deletedItem ->
                 loadingController.currentState.data?.also { dataState ->
                     val newItems = dataState.toMutableList()
                     newItems.find { it.id == deletedItem.id }?.also {
@@ -95,10 +93,13 @@ class FavoritesPresenter @Inject constructor(
                     }
                     loadingController.modifyData(newItems)
                 }
-            }) { throwable ->
-                errorHandler.handle(throwable)
+            }.onFailure {
+                errorHandler.handle(it)
             }
-            .addToDisposable()
+            stateController.updateState {
+                it.copy(deletingItemIds = it.deletingItemIds - id)
+            }
+        }
     }
 
     fun onCopyClick(item: ReleaseItemState) {
@@ -150,22 +151,24 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
-    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<ReleaseItemState>>> {
-        return favoriteRepository
-            .getFavorites(params.page)
-            .map { paginated ->
-                if (params.isFirstPage) {
-                    currentReleases.clear()
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItemState>> {
+        return try {
+            favoriteRepository
+                .getFavorites(params.page)
+                .let { paginated ->
+                    if (params.isFirstPage) {
+                        currentReleases.clear()
+                    }
+                    currentReleases.addAll(paginated.data)
+                    val newItems = currentReleases.map { it.toState() }
+                    ScreenStateAction.Data(newItems, !paginated.isEnd())
                 }
-                currentReleases.addAll(paginated.data)
-                val newItems = currentReleases.map { it.toState() }
-                ScreenStateAction.Data(newItems, !paginated.isEnd())
+        } catch (ex: Throwable) {
+            if (params.isFirstPage) {
+                errorHandler.handle(ex)
             }
-            .doOnError {
-                if (params.isFirstPage) {
-                    errorHandler.handle(it)
-                }
-            }
+            throw ex
+        }
     }
 
     private fun updateSearchState() {

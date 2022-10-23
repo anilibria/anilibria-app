@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -39,24 +42,25 @@ class AuthSocialPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         resetPage()
     }
 
     private fun resetPage() {
-        authRepository
-            .getSocialAuth(argKey)
-            .subscribe({
+        presenterScope.launch {
+            runCatching {
+                authRepository.getSocialAuth(argKey)
+            }.onSuccess {
                 currentData = it
                 detector.loadUrl(it.socialUrl)
                 viewState.loadPage(it)
-            }, {
+            }.onFailure {
                 authSocialAnalytics.error(it)
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+        }
     }
 
     fun onClearDataClick() {
@@ -108,20 +112,16 @@ class AuthSocialPresenter @Inject constructor(
     private fun signSocial(resultUrl: String) {
         val model = currentData ?: return
 
-        stateController.updateState {
-            it.copy(isAuthProgress = true)
-        }
-        authRepository
-            .signInSocial(resultUrl, model)
-            .doFinally {
-                stateController.updateState {
-                    it.copy(isAuthProgress = true)
-                }
+        presenterScope.launch {
+            stateController.updateState {
+                it.copy(isAuthProgress = true)
             }
-            .subscribe({
+            runCatching {
+                authRepository.signInSocial(resultUrl, model)
+            }.onSuccess {
                 authSocialAnalytics.success()
                 router.finishChain()
-            }, {
+            }.onFailure {
                 authSocialAnalytics.error(it)
                 if (it is SocialAuthException) {
                     viewState.showError()
@@ -129,8 +129,11 @@ class AuthSocialPresenter @Inject constructor(
                     errorHandler.handle(it)
                     router.exit()
                 }
-            })
-            .addToDisposable()
+            }
+            stateController.updateState {
+                it.copy(isAuthProgress = true)
+            }
+        }
     }
 
 }

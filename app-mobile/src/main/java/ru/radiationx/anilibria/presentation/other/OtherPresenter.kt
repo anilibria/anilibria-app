@@ -1,5 +1,9 @@
 package ru.radiationx.anilibria.presentation.other
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.asDataIconRes
@@ -15,7 +19,6 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
@@ -23,6 +26,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import javax.inject.Inject
 
 @InjectViewState
@@ -67,8 +71,8 @@ class OtherPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         profileMenu.add(
             OtherMenuItem(
@@ -84,22 +88,26 @@ class OtherPresenter @Inject constructor(
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
-        menuRepository
-            .getMenu()
-            .subscribe({}, {
-                it.printStackTrace()
-            })
-            .addToDisposable()
+        presenterScope.launch {
+            runCatching {
+                menuRepository.getMenu()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
         subscribeUpdate()
         updateMenuItems()
     }
 
     override fun attachView(view: OtherView?) {
         super.attachView(view)
-        authRepository
-            .loadUser()
-            .subscribe({}, {})
-            .addToDisposable()
+        presenterScope.launch {
+            runCatching {
+                authRepository.loadUser()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 
     fun onProfileClick() {
@@ -114,13 +122,15 @@ class OtherPresenter @Inject constructor(
 
     fun signOut() {
         otherAnalytics.logoutClick()
-        val disposable = authRepository
-            .signOut()
-            .subscribe({
+        GlobalScope.launch {
+            runCatching {
+                authRepository.signOut()
+            }.onSuccess {
                 systemMessenger.showMessage("Данные авторизации удалены")
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
+            }
+        }
     }
 
     fun onMenuClick(item: OtherMenuItemState) {
@@ -170,15 +180,15 @@ class OtherPresenter @Inject constructor(
     private fun subscribeUpdate() {
         authRepository
             .observeUser()
-            .subscribe {
+            .onEach {
                 currentProfileItem = it
                 updateMenuItems()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         menuRepository
             .observeMenu()
-            .subscribe { linkItems ->
+            .onEach { linkItems ->
                 currentLinkMenuItems.clear()
                 currentLinkMenuItems.addAll(linkItems)
                 allLinkMenu.clear()
@@ -193,7 +203,7 @@ class OtherPresenter @Inject constructor(
                 linksMap.putAll(linkItems.associateBy { it.hashCode() })
                 updateMenuItems()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun updateMenuItems() {

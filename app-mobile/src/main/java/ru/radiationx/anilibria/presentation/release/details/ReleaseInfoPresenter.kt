@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
@@ -16,7 +19,10 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.*
+import ru.radiationx.data.entity.app.release.ExternalEpisode
+import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.RutubeEpisode
+import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -71,12 +77,12 @@ class ReleaseInfoPresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         donationRepository
             .observerDonationInfo()
-            .subscribe { info ->
+            .onEach { info ->
                 stateController.updateState { state ->
                     val newCardState = info.cardRelease?.let {
                         DonationCardItemState(
@@ -89,33 +95,30 @@ class ReleaseInfoPresenter @Inject constructor(
                     state.copy(donationCardState = newCardState)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         appPreferences
             .observeEpisodesIsReverse()
-            .subscribe { episodesReversed ->
+            .onEach { episodesReversed ->
                 updateModifiers {
                     it.copy(episodesReversed = episodesReversed)
                 }
-
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         appPreferences
             .observeReleaseRemind()
-            .subscribe { remindEnabled ->
+            .onEach { remindEnabled ->
                 stateController.updateState {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(ReleaseFull(it))
         }
         observeRelease()
-        loadRelease()
-        subscribeAuth()
     }
 
     fun getQuality() = releaseInteractor.getQuality()
@@ -126,38 +129,11 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
 
-
-    private fun subscribeAuth() {
-        authRepository
-            .observeUser()
-            .distinctUntilChanged()
-            .skip(1)
-            .subscribe {
-                loadRelease()
-            }
-            .addToDisposable()
-    }
-
-    private fun loadRelease() {
-        releaseInteractor
-            .loadRelease(releaseId, releaseIdCode)
-            .subscribe({ release ->
-                historyRepository.putRelease(release as ReleaseItem)
-            }) {
-                errorHandler.handle(it)
-            }
-            .addToDisposable()
-    }
-
     private fun observeRelease() {
         releaseInteractor
             .observeFull(releaseId, releaseIdCode)
-            .subscribe({ release ->
-                updateLocalRelease(release)
-            }) {
-                errorHandler.handle(it)
-            }
-            .addToDisposable()
+            .onEach { updateLocalRelease(it) }
+            .launchIn(presenterScope)
     }
 
     private fun updateLocalRelease(release: ReleaseFull) {
@@ -376,24 +352,17 @@ class ReleaseInfoPresenter @Inject constructor(
             releaseAnalytics.favoriteAdd(releaseId)
         }
 
-        val source = if (favInfo.isAdded) {
-            favoriteRepository.deleteFavorite(releaseId)
-        } else {
-            favoriteRepository.addFavorite(releaseId)
-        }
-
-        source
-            .doOnSubscribe {
-                updateModifiers {
-                    it.copy(favoriteRefreshing = true)
-                }
+        presenterScope.launch {
+            updateModifiers {
+                it.copy(favoriteRefreshing = true)
             }
-            .doAfterTerminate {
-                updateModifiers {
-                    it.copy(favoriteRefreshing = false)
+            runCatching {
+                if (favInfo.isAdded) {
+                    favoriteRepository.deleteFavorite(releaseId)
+                } else {
+                    favoriteRepository.addFavorite(releaseId)
                 }
-            }
-            .subscribe({ releaseItem ->
+            }.onSuccess { releaseItem ->
                 favInfo.rating = releaseItem.favoriteInfo.rating
                 favInfo.isAdded = releaseItem.favoriteInfo.isAdded
                 stateController.updateState {
@@ -405,10 +374,13 @@ class ReleaseInfoPresenter @Inject constructor(
                         )
                     )
                 }
-            }) {
+            }.onFailure {
                 errorHandler.handle(it)
             }
-            .addToDisposable()
+            updateModifiers {
+                it.copy(favoriteRefreshing = false)
+            }
+        }
     }
 
     fun onScheduleClick(day: Int) {

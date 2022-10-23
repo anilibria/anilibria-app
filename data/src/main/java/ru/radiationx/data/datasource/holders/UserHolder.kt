@@ -1,6 +1,6 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.entity.app.other.ProfileItem
 
 /**
@@ -9,7 +9,7 @@ import ru.radiationx.data.entity.app.other.ProfileItem
 interface UserHolder {
     fun getUser(): ProfileItem
 
-    fun observeUser(): Observable<ProfileItem>
+    fun observeUser(): Flow<ProfileItem>
 
     fun saveUser(user: ProfileItem)
 

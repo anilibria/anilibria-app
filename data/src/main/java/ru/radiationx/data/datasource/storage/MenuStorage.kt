@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -20,7 +20,7 @@ class MenuStorage @Inject constructor(
         private const val LOCAL_MENU_KEY = "data.local_menu"
     }
 
-    private val localMenu = mutableListOf(
+    private val defaultLocalMenu = listOf(
         LinkMenuItem(
             "Группа VK",
             absoluteLink = "https://vk.com/anilibria",
@@ -52,26 +52,23 @@ class MenuStorage @Inject constructor(
             icon = DataIcons.ANILIBRIA
         )
     )
-    private val localMenuRelay = BehaviorRelay.createDefault<List<LinkMenuItem>>(localMenu)
 
-    init {
-        loadAll()
+    private val localMenuRelay by lazy {
+        MutableStateFlow(loadAll())
     }
 
-    override fun observe(): Observable<List<LinkMenuItem>> = localMenuRelay.hide()
+    override fun observe(): Flow<List<LinkMenuItem>> = localMenuRelay
 
     override fun save(items: List<LinkMenuItem>) {
-        localMenu.clear()
-        localMenu.addAll(items)
+        localMenuRelay.value = items.toList()
         saveAll()
-        localMenuRelay.accept(localMenu)
     }
 
-    override fun get(): List<LinkMenuItem> = localMenu
+    override fun get(): List<LinkMenuItem> = localMenuRelay.value
 
     private fun saveAll() {
         val jsonMenu = JSONArray()
-        localMenu.forEach {
+        localMenuRelay.value.forEach {
             jsonMenu.put(JSONObject().apply {
                 put("title", it.title)
                 put("absoluteLink", it.absoluteLink)
@@ -85,13 +82,14 @@ class MenuStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<LinkMenuItem> {
+        val result = defaultLocalMenu.toMutableList()
         sharedPreferences.getString(LOCAL_MENU_KEY, null)?.also { savedMenu ->
             val jsonMenu = JSONArray(savedMenu)
-            localMenu.clear()
+            result.clear()
             (0 until jsonMenu.length()).forEach { index ->
                 jsonMenu.getJSONObject(index).also {
-                    localMenu.add(
+                    result.add(
                         LinkMenuItem(
                             it.getString("title"),
                             it.nullString("absoluteLink"),
@@ -102,6 +100,6 @@ class MenuStorage @Inject constructor(
                 }
             }
         }
-        localMenuRelay.accept(localMenu)
+        return result
     }
 }

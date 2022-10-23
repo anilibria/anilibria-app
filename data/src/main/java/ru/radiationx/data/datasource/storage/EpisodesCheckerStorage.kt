@@ -1,9 +1,9 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -22,52 +22,59 @@ class EpisodesCheckerStorage @Inject constructor(
         private const val LOCAL_EPISODES_KEY = "data.local_episodes"
     }
 
-    private val localEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private val localEpisodesRelay = BehaviorRelay.createDefault(localEpisodes)
-
-    init {
-        loadAll()
+    private val localEpisodesRelay by lazy {
+        MutableStateFlow(loadAll())
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> =
+    override fun observeEpisodes(): Flow<List<ReleaseFull.Episode>> =
         localEpisodesRelay
 
-    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> =
-        Single.fromCallable { localEpisodesRelay.value!! }
+    override suspend fun getEpisodes(): List<ReleaseFull.Episode> {
+        return localEpisodesRelay.value
+    }
 
     override fun putEpisode(episode: ReleaseFull.Episode) {
-        localEpisodes
-            .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-            ?.let { localEpisodes.remove(it) }
-        localEpisodes.add(episode)
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            mutableLocalEpisodes
+                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                ?.let { mutableLocalEpisodes.remove(it) }
+            mutableLocalEpisodes.add(episode)
+            mutableLocalEpisodes
+        }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
     }
 
     override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
-        episodes.forEach { episode ->
-            localEpisodes
-                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-                ?.let { localEpisodes.remove(it) }
-            localEpisodes.add(episode)
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            episodes.forEach { episode ->
+                mutableLocalEpisodes
+                    .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                    ?.let { mutableLocalEpisodes.remove(it) }
+                mutableLocalEpisodes.add(episode)
+            }
+            mutableLocalEpisodes
         }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
     }
 
     override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
-        return localEpisodes.filter { it.releaseId == releaseId }
+        return localEpisodesRelay.value.filter { it.releaseId == releaseId }
     }
 
     override fun remove(releaseId: Int) {
-        localEpisodes.removeAll { it.releaseId == releaseId }
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            mutableLocalEpisodes.removeAll { it.releaseId == releaseId }
+            mutableLocalEpisodes
+        }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
     }
 
     private fun saveAll() {
         val jsonEpisodes = JSONArray()
-        localEpisodes.forEach {
+        localEpisodesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
                 put("releaseId", it.releaseId)
                 put("id", it.id)
@@ -82,13 +89,14 @@ class EpisodesCheckerStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseFull.Episode> {
+        val result = mutableListOf<ReleaseFull.Episode>()
         val savedEpisodes = sharedPreferences.getString(LOCAL_EPISODES_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach {
                 jsonEpisodes.getJSONObject(it).let {
-                    localEpisodes.add(ReleaseFull.Episode().apply {
+                    result.add(ReleaseFull.Episode().apply {
                         releaseId = it.getInt("releaseId")
                         id = it.getInt("id")
                         seek = it.optLong("seek", 0L)
@@ -98,6 +106,6 @@ class EpisodesCheckerStorage @Inject constructor(
                 }
             }
         }
-        localEpisodesRelay.accept(localEpisodes)
+        return result
     }
 }

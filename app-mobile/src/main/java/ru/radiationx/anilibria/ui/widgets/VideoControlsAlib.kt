@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import androidx.core.view.isVisible
@@ -15,10 +14,12 @@ import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.view_video_control.view.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
@@ -28,6 +29,7 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
 import java.lang.Math.pow
+import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -152,18 +154,18 @@ class VideoControlsAlib @JvmOverloads constructor(
             private var swipeSeekStarted = false
             private var tapSeekStarted = false
 
-            private var tapDisposable = Disposables.disposed()
+            private var tapJob: Job? = null
             private val tapSeekHandler = Handler()
             private val tapSeekRunnable = Runnable {
                 playerAnalytics?.rewindDoubleTap(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
                 gestureSeekValue.gone()
-                tapDisposable.dispose()
+                tapJob?.cancel()
                 tapSeekStarted = false
                 localSeekDelta = 0
             }
 
-            private val tapRelay = PublishRelay.create<MotionEvent>()
+            private val tapRelay = MutableSharedFlow<MotionEvent>()
 
             private fun handleEndSwipeSeek() {
                 playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
@@ -175,11 +177,11 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             private fun handleStartTapSeek() {
-                tapDisposable.dispose()
-                tapDisposable = tapRelay
-                    //.debounce(100L, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { handleTapSeek(it) }
+                tapJob?.cancel()
+                tapJob = tapRelay
+                    .onEach { handleTapSeek(it) }
+                    .flowOn(Dispatchers.Main.immediate)
+                    .launchIn(GlobalScope)
             }
 
             private fun handleTapSeek(event: MotionEvent?) {
@@ -208,19 +210,25 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             override fun onTap(event: MotionEvent?) {
+                event ?: return
                 videoView?.showControls()
                 if (tapSeekStarted) {
-                    event?.also { tapRelay.accept(it) }
+                    GlobalScope.launch {
+                        tapRelay.emit(event)
+                    }
                 }
             }
 
             override fun onDoubleTap(event: MotionEvent?) {
+                event ?: return
                 if (!tapSeekStarted) {
                     gestureSeekValue.visible()
                     tapSeekStarted = true
                     handleStartTapSeek()
                 }
-                event?.also { tapRelay.accept(it) }
+                GlobalScope.launch {
+                    tapRelay.emit(event)
+                }
             }
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {

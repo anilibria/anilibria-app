@@ -10,8 +10,8 @@ import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
 class YoutubeParser @Inject constructor(
-        private val apiUtils: IApiUtils,
-        private val apiConfig: ApiConfig
+    private val apiUtils: IApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
     fun youtube(jsonItem: JSONObject): YoutubeItem {

@@ -1,16 +1,16 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import android.util.Log
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import timber.log.Timber
 import javax.inject.Inject
 
 class ApiConfigStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences,
-        private val configurationParser: ConfigurationParser
+    @DataPreferences private val sharedPreferences: SharedPreferences,
+    private val configurationParser: ConfigurationParser
 ) {
 
     companion object {
@@ -22,16 +22,17 @@ class ApiConfigStorage @Inject constructor(
         try {
             sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 
     fun get(): List<ApiAddress>? = sharedPreferences
-            .getString(KEY_API_CONFIG, null)
-            ?.let { configurationParser.parse(JSONObject(it)) }
+        .getString(KEY_API_CONFIG, null)
+        ?.let { configurationParser.parse(JSONObject(it)) }
 
-    fun setActive(tag: String) = sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
+    fun setActive(tag: String) =
+        sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
 
     fun getActive(): String? = sharedPreferences
-            .getString(KEY_API_CONFIG_ACTIVE, null)
+        .getString(KEY_API_CONFIG_ACTIVE, null)
 }

@@ -1,13 +1,11 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.entity.app.team.TeamsResponse
 
 interface TeamsHolder {
-    fun observe(): Observable<TeamsResponse>
-    fun get(): Single<TeamsResponse>
-    fun save(data: TeamsResponse): Completable
-    fun delete(): Completable
+    fun observe(): Flow<TeamsResponse>
+    suspend fun get(): TeamsResponse
+    suspend fun save(data: TeamsResponse)
+    suspend fun delete()
 }

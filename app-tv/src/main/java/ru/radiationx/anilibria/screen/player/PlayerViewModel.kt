@@ -1,8 +1,10 @@
 package ru.radiationx.anilibria.screen.player
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -39,41 +41,43 @@ class PlayerViewModel(
 
         playerController
             .selectEpisodeRelay
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe { episodeId ->
+            .onEach { episodeId ->
                 currentEpisodes
                     .firstOrNull { it.id == episodeId }
                     ?.also { playEpisode(it, true) }
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
             .observeQuality()
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 currentQuality = handleRawQuality(it)
                 updateQuality()
                 updateEpisode()
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
             .observePlaySpeed()
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 speedState.value = it
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
             .observeFull(argReleaseId)
-            .lifeSubscribe { release ->
+            .onEach { release ->
                 currentRelease = release
                 currentEpisodes.clear()
                 currentEpisodes.addAll(release.episodes.reversed())
                 val episodeId = currentEpisode?.id ?: argEpisodeId
-                val episode = currentEpisodes.firstOrNull { it.id == episodeId } ?: currentEpisodes.firstOrNull()
+                val episode = currentEpisodes.firstOrNull { it.id == episodeId }
+                    ?: currentEpisodes.firstOrNull()
                 episode?.also { playEpisode(it) }
             }
+            .launchIn(viewModelScope)
     }
 
     fun onPlayClick(position: Long) {
@@ -157,11 +161,14 @@ class PlayerViewModel(
         }
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
+    private fun getNextEpisode(): ReleaseFull.Episode? =
+        currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
+    private fun getPrevEpisode(): ReleaseFull.Episode? =
+        currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
 
-    private fun getCurrentEpisodeIndex(): Int = currentEpisodes.indexOfFirst { it.id == currentEpisode?.id }
+    private fun getCurrentEpisodeIndex(): Int =
+        currentEpisodes.indexOfFirst { it.id == currentEpisode?.id }
 
     private fun saveEpisode(position: Long) {
         val episode = currentEpisode ?: return
@@ -223,10 +230,11 @@ class PlayerViewModel(
         return newQuality
     }
 
-    private fun getEpisodeUrl(episode: ReleaseFull.Episode, quality: Int): String? = when (getEpisodeQuality(episode, quality)) {
-        PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
-        PreferencesHolder.QUALITY_HD -> episode.urlHd
-        PreferencesHolder.QUALITY_SD -> episode.urlSd
-        else -> null
-    }
+    private fun getEpisodeUrl(episode: ReleaseFull.Episode, quality: Int): String? =
+        when (getEpisodeQuality(episode, quality)) {
+            PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
+            PreferencesHolder.QUALITY_HD -> episode.urlHd
+            PreferencesHolder.QUALITY_SD -> episode.urlSd
+            else -> null
+        }
 }

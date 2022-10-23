@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.presentation.search
 
-import io.reactivex.Single
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -64,10 +66,10 @@ class SearchPresenter @Inject constructor(
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
-    private val loadingController = DataLoadingController {
+    private val loadingController = DataLoadingController(presenterScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
-    }.addToDisposable()
+    }
     private val stateController = StateController(SearchScreenState())
 
     private fun findRelease(id: Int): ReleaseItem? {
@@ -90,7 +92,7 @@ class SearchPresenter @Inject constructor(
         loadingController.refresh()
         releaseUpdateHolder
             .observeEpisodes()
-            .subscribe { data ->
+            .onEach { data ->
                 val itemsNeedUpdate = mutableListOf<ReleaseItem>()
                 currentItems.forEach { item ->
                     data.firstOrNull { it.id == item.id }?.also { updItem ->
@@ -110,80 +112,76 @@ class SearchPresenter @Inject constructor(
                 }
                 loadingController.modifyData(newItems)
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
 
     private fun loadGenres() {
-        searchRepository
-            .getGenres()
-            .subscribe({ }) {
+        presenterScope.launch {
+            runCatching {
+                searchRepository.getGenres()
+            }.onFailure {
                 errorHandler.handle(it)
             }
-            .addToDisposable()
+        }
     }
 
     private fun observeGenres() {
         searchRepository
             .observeGenres()
-            .subscribe({
+            .onEach {
                 viewState.showGenres(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     private fun loadYears() {
-        searchRepository
-            .getYears()
-            .subscribe({ }) {
+        presenterScope.launch {
+            runCatching {
+                searchRepository.getYears()
+            }.onFailure {
                 errorHandler.handle(it)
             }
-            .addToDisposable()
+        }
     }
 
     private fun observeYears() {
         searchRepository
             .observeYears()
-            .subscribe({
+            .onEach {
                 viewState.showYears(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     private fun observeSearchRemind() {
         appPreferences
             .observeSearchRemind()
-            .subscribe({ remindEnabled ->
+            .onEach { remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
                 stateController.updateState {
                     it.copy(remindText = newRemindText)
                 }
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     private fun observeLoadingState() {
         loadingController
             .observeState()
-            .subscribe { loadingData ->
+            .onEach { loadingData ->
                 stateController.updateState {
                     it.copy(data = loadingData)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun observeScreenState() {
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
     }
 
     private fun submitPageAnalytics(page: Int) {
@@ -193,34 +191,35 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<ReleaseItemState>>> {
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItemState>> {
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")
         val completeStr = if (currentComplete) "2" else "1"
-        return searchRepository
-            .searchReleases(
-                genresQuery,
-                yearsQuery,
-                seasonsQuery,
-                currentSorting,
-                completeStr,
-                params.page
-            )
-            .map { paginated ->
-                if (params.isFirstPage) {
-                    currentItems.clear()
-                }
-                currentItems.addAll(paginated.data)
+        return runCatching {
+            searchRepository
+                .searchReleases(
+                    genresQuery,
+                    yearsQuery,
+                    seasonsQuery,
+                    currentSorting,
+                    completeStr,
+                    params.page
+                )
+                .let { paginated ->
+                    if (params.isFirstPage) {
+                        currentItems.clear()
+                    }
+                    currentItems.addAll(paginated.data)
 
-                val newItems = currentItems.map { it.toState() }
-                ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
-            }
-            .doOnError {
-                if (params.isFirstPage) {
-                    errorHandler.handle(it)
+                    val newItems = currentItems.map { it.toState() }
+                    ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
                 }
+        }.onFailure {
+            if (params.isFirstPage) {
+                errorHandler.handle(it)
             }
+        }.getOrThrow()
     }
 
     fun refreshReleases() {

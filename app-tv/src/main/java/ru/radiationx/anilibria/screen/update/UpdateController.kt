@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.screen.update
 
-import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import ru.radiationx.data.entity.app.updater.UpdateData
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class UpdateController {
 
-    val downloadAction = PublishRelay.create<UpdateData.UpdateLink>()
+    val downloadAction = MutableSharedFlow<UpdateData.UpdateLink>()
 }

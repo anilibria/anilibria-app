@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.watching
 
-import io.reactivex.Single
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -9,7 +10,6 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
-import ru.radiationx.data.repository.ReleaseRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -39,20 +39,21 @@ class WatchingFavoritesViewModel(
             .observeUser()
             .map { it.authState }
             .distinctUntilChanged()
-            .skip(1)
-            .lifeSubscribe {
+            .drop(1)
+            .onEach {
                 if (it == AuthState.AUTH) {
                     onRefreshClick()
                 }
             }
+            .launchIn(viewModelScope)
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = favoriteRepository
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
         .getFavorites(requestPage)
-        .doOnSuccess {
+        .also {
             releaseInteractor.updateItemsCache(it.data)
         }
-        .map { favoriteItems ->
+        .let { favoriteItems ->
             favoriteItems.data.map { converter.toCard(it) }
         }
 

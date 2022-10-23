@@ -1,18 +1,16 @@
 package ru.radiationx.data.datasource.remote
 
-import io.reactivex.Single
-import io.reactivex.SingleTransformer
 import org.json.JSONObject
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
 
 @Suppress("UNCHECKED_CAST")
 open class ApiResponse<T>(
-        jsonString: String
+    jsonString: String
 ) {
-    private var status: Boolean? = null
-    private var data: T? = null
-    private var error: ApiError? = null
+    val status: Boolean?
+    val data: T?
+    val error: ApiError?
 
     init {
         val jsonObject = JSONObject(jsonString)
@@ -20,24 +18,22 @@ open class ApiResponse<T>(
         data = jsonObject.nullGet("data") as T?
         error = (jsonObject.nullGet("error") as JSONObject?)?.let { jsonError ->
             ApiError(
-                    jsonError.optInt("code"),
-                    jsonError.nullString("message"),
-                    jsonError.nullString("description")
+                jsonError.optInt("code"),
+                jsonError.nullString("message"),
+                jsonError.nullString("description")
             )
         }
     }
 
-    open fun handleError(): Single<ApiResponse<T>> {
-        return when {
-            status == true && data != null -> Single.just(this)
-            error != null -> Single.error(error)
-            else -> Single.error(Exception("Wrong response"))
-        }
+    open suspend fun handleError(): ApiResponse<T> = when {
+        status == true && data != null -> this
+        error != null -> throw error
+        else -> throw Exception("Wrong response")
     }
+}
 
-    companion object {
-        fun <T> fetchResult(): SingleTransformer<String, T> = SingleTransformer {
-            it.flatMap { t -> ApiResponse<T>(t).handleError() }.map { t -> t.data }
-        }
-    }
+suspend fun <T> String.fetchResult(): T {
+    val apiResponse = ApiResponse<T>(this)
+    apiResponse.handleError()
+    return requireNotNull(apiResponse.data)
 }

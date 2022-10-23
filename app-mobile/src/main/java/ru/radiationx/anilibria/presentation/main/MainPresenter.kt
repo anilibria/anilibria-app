@@ -1,9 +1,13 @@
 package ru.radiationx.anilibria.presentation.main
 
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.data.SchedulersProvider
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
@@ -13,6 +17,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -24,14 +29,13 @@ class MainPresenter @Inject constructor(
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
     private val apiConfig: ApiConfig,
-    private val schedulers: SchedulersProvider,
     private val analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val favoritesAnalytics: FavoritesAnalytics,
     private val feedAnalytics: FeedAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
-    private val otherAnalytics: OtherAnalytics
+    private val otherAnalytics: OtherAnalytics,
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!
@@ -45,8 +49,7 @@ class MainPresenter @Inject constructor(
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
-            .observeOn(schedulers.ui())
-            .subscribe({
+            .onEach {
                 if (it) {
                     viewState.showConfiguring()
                 } else {
@@ -55,11 +58,8 @@ class MainPresenter @Inject constructor(
                         initMain()
                     }
                 }
-            }, {
-                it.printStackTrace()
-                throw it
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
 
         if (apiConfig.needConfig) {
             viewState.showConfiguring()
@@ -78,19 +78,24 @@ class MainPresenter @Inject constructor(
         selectTab(defaultScreen)
         authRepository
             .observeUser()
-            .subscribe {
+            .onEach {
                 viewState.updateTabs()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
         viewState.onMainLogicCompleted()
-        authRepository
-            .loadUser()
-            .subscribe({}, {})
-            .addToDisposable()
-        donationRepository
-            .requestUpdate()
-            .subscribe({}, { it.printStackTrace() })
-            .addToDisposable()
+
+        presenterScope.launch {
+            runCatching {
+                authRepository.loadUser()
+            }.onFailure {
+                Timber.e(it)
+            }
+            runCatching {
+                donationRepository.requestUpdate()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 
     fun getAuthState() = authRepository.getAuthState()

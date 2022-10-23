@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -53,7 +54,7 @@ class MigrationDataSourceImpl(
                 Toast.makeText(context, errMsg, Toast.LENGTH_SHORT).show()
             }
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
             val errMsg = "Сбой при проверке локальной версии."
             errorReporter.report(ANALYTIC_GROUP, errMsg, ex)
             val uiErr = "$errMsg\nПрограмма может работать не стабильно! Переустановите программу."

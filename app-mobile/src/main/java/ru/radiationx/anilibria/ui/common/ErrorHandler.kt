@@ -4,6 +4,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.system.HttpException
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -15,7 +16,7 @@ class ErrorHandler @Inject constructor(
 ) : IErrorHandler {
 
     override fun handle(throwable: Throwable, messageListener: ((Throwable, String?) -> Unit)?) {
-        throwable.printStackTrace()
+        Timber.e(throwable)
         val message = getMessage(throwable)
         if (messageListener != null) {
             messageListener.invoke(throwable, message)

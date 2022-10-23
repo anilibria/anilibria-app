@@ -7,7 +7,7 @@ import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import javax.inject.Inject
 
 class ScheduleParser @Inject constructor(
-        private val apiUtils: IApiUtils
+    private val apiUtils: IApiUtils
 ) {
 
     fun schedule(jsonResponse: JSONArray, releaseParser: ReleaseParser): List<ScheduleDay> {
@@ -17,8 +17,8 @@ class ScheduleParser @Inject constructor(
             val releases = releaseParser.releases(jsonItem.getJSONArray("items"))
             val strDay = jsonItem.getString("day")
             val item = ScheduleDay(
-                    ScheduleDay.toCalendarDay(strDay),
-                    releases.map { ScheduleItem(it) }
+                ScheduleDay.toCalendarDay(strDay),
+                releases.map { ScheduleItem(it) }
             )
             result.add(item)
         }

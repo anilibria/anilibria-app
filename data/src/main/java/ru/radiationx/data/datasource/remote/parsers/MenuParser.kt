@@ -19,10 +19,10 @@ class MenuParser @Inject constructor() {
     }
 
     fun parseItem(jsonItem: JSONObject): LinkMenuItem = LinkMenuItem(
-            jsonItem.getString("title"),
-            jsonItem.nullString("absoluteLink"),
-            jsonItem.getString("sitePagePath"),
-            jsonItem.getString("icon")
+        jsonItem.getString("title"),
+        jsonItem.nullString("absoluteLink"),
+        jsonItem.getString("sitePagePath"),
+        jsonItem.getString("icon")
     )
 
 }

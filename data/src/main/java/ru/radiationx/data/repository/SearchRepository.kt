@@ -1,9 +1,6 @@
 package ru.radiationx.data.repository
 
-import android.util.Log
-import io.reactivex.Observable
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.datasource.holders.GenresHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
@@ -15,27 +12,22 @@ import ru.radiationx.data.entity.app.search.SuggestionItem
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val searchApi: SearchApi,
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,
     private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
-    fun observeGenres(): Observable<MutableList<GenreItem>> = genresHolder
+    fun observeGenres(): Flow<List<GenreItem>> = genresHolder
         .observeGenres()
-        .observeOn(schedulers.ui())
 
-    fun observeYears(): Observable<MutableList<YearItem>> = yearsHolder
+    fun observeYears(): Flow<List<YearItem>> = yearsHolder
         .observeYears()
-        .observeOn(schedulers.ui())
 
-    fun fastSearch(query: String): Single<List<SuggestionItem>> = searchApi
+    suspend fun fastSearch(query: String): List<SuggestionItem> = searchApi
         .fastSearch(query)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun searchReleases(form: SearchForm, page: Int): Single<Paginated<List<ReleaseItem>>> {
+    suspend fun searchReleases(form: SearchForm, page: Int): Paginated<List<ReleaseItem>> {
         val yearsQuery = form.years?.joinToString(",") { it.value }.orEmpty()
         val seasonsQuery = form.seasons?.joinToString(",") { it.value }.orEmpty()
         val genresQuery = form.genres?.joinToString(",") { it.value }.orEmpty()
@@ -45,19 +37,26 @@ class SearchRepository @Inject constructor(
         }
         val onlyCompletedStr = if (form.onlyCompleted) "2" else "1"
 
-        return searchReleases(genresQuery, yearsQuery, seasonsQuery, sortStr, onlyCompletedStr, page)
+        return searchReleases(
+            genresQuery,
+            yearsQuery,
+            seasonsQuery,
+            sortStr,
+            onlyCompletedStr,
+            page
+        )
     }
 
-    fun searchReleases(
+    suspend fun searchReleases(
         genre: String,
         year: String,
         season: String,
         sort: String,
         onlyCompleted: String,
         page: Int
-    ): Single<Paginated<List<ReleaseItem>>> = searchApi
+    ): Paginated<List<ReleaseItem>> = searchApi
         .searchReleases(genre, year, season, sort, onlyCompleted, page)
-        .doOnSuccess {
+        .also {
             val newItems = mutableListOf<ReleaseItem>()
             val updItems = mutableListOf<ReleaseUpdate>()
             it.data.forEach { item ->
@@ -66,7 +65,8 @@ class SearchRepository @Inject constructor(
                     newItems.add(item)
                 } else {
 
-                    item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
+                    item.isNew =
+                        item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
                     /*if (item.torrentUpdate > updItem.timestamp) {
                         updItem.timestamp = item.torrentUpdate
                         updItems.add(updItem)
@@ -76,27 +76,21 @@ class SearchRepository @Inject constructor(
             releaseUpdateHolder.putAllRelease(newItems)
             releaseUpdateHolder.updAllRelease(updItems)
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-
-    fun getGenres(): Single<List<GenreItem>> = searchApi
+    suspend fun getGenres(): List<GenreItem> = searchApi
         .getGenres()
-        .doOnSuccess {
+        .also {
             genresHolder.saveGenres(it)
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun getYears(): Single<List<YearItem>> = searchApi
+    suspend fun getYears(): List<YearItem> = searchApi
         .getYears()
-        .doOnSuccess {
+        .also {
             yearsHolder.saveYears(it)
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun getSeasons(): Single<List<SeasonItem>> = Single
-        .just(listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalize(), it) })
+    suspend fun getSeasons(): List<SeasonItem> {
+        return listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalize(), it) }
+    }
 
 }

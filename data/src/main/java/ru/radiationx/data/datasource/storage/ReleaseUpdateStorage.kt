@@ -1,13 +1,12 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
@@ -18,30 +17,23 @@ import javax.inject.Inject
  */
 class ReleaseUpdateStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences,
-    private val schedulers: SchedulersProvider
 ) : ReleaseUpdateHolder {
 
     companion object {
         private const val LOCAL_HISTORY_KEY = "data.release_update"
     }
 
-    private val localReleases = mutableListOf<ReleaseUpdate>()
-    private val localReleasesRelay = BehaviorRelay.createDefault(localReleases)
-
-    init {
-        loadAll()
+    private val localReleasesRelay by lazy {
+        MutableStateFlow(loadAll())
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseUpdate>> = localReleasesRelay
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    override fun observeEpisodes(): Flow<List<ReleaseUpdate>> = localReleasesRelay
 
-    override fun getReleases(): Single<List<ReleaseUpdate>> = Single.fromCallable {
-        localReleasesRelay.value?.toList().orEmpty()
-    }
+    override suspend fun getReleases(): List<ReleaseUpdate> =
+        localReleasesRelay.value.toList()
 
     override fun getRelease(id: Int): ReleaseUpdate? {
-        return localReleases.firstOrNull { it.id == id }
+        return localReleasesRelay.value.firstOrNull { it.id == id }
     }
 
     override fun updRelease(release: ReleaseUpdate) {
@@ -49,18 +41,21 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     override fun updAllRelease(releases: List<ReleaseUpdate>) {
-        releases.forEach { release ->
-            localReleases
-                .firstOrNull { it.id == release.id }
-                ?.let { localReleases.remove(it) }
-            localReleases.add(ReleaseUpdate().apply {
-                id = release.id
-                timestamp = release.timestamp
-                lastOpenTimestamp = release.lastOpenTimestamp
-            })
+        localReleasesRelay.update { updates ->
+            val mutableUpdates = updates.toMutableList()
+            releases.forEach { release ->
+                mutableUpdates
+                    .firstOrNull { it.id == release.id }
+                    ?.let { mutableUpdates.remove(it) }
+                mutableUpdates.add(ReleaseUpdate().apply {
+                    id = release.id
+                    timestamp = release.timestamp
+                    lastOpenTimestamp = release.lastOpenTimestamp
+                })
+            }
+            mutableUpdates
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
     }
 
     override fun putRelease(release: ReleaseItem) {
@@ -68,23 +63,26 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     override fun putAllRelease(releases: List<ReleaseItem>) {
-        releases.forEach { release ->
-            localReleases
-                .firstOrNull { it.id == release.id }
-                ?.let { localReleases.remove(it) }
-            localReleases.add(ReleaseUpdate().apply {
-                id = release.id
-                timestamp = release.torrentUpdate
-                //lastOpenTimestamp = release.torrentUpdate
-            })
+        localReleasesRelay.update { updates ->
+            val mutableUpdates = updates.toMutableList()
+            releases.forEach { release ->
+                mutableUpdates
+                    .firstOrNull { it.id == release.id }
+                    ?.let { mutableUpdates.remove(it) }
+                mutableUpdates.add(ReleaseUpdate().apply {
+                    id = release.id
+                    timestamp = release.torrentUpdate
+                    //lastOpenTimestamp = release.torrentUpdate
+                })
+            }
+            mutableUpdates
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
     }
 
     private fun saveAll() {
         val jsonEpisodes = JSONArray()
-        localReleases.forEach {
+        localReleasesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
                 put("id", it.id)
                 put("timestamp", it.timestamp)
@@ -97,13 +95,14 @@ class ReleaseUpdateStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseUpdate> {
+        val result = mutableListOf<ReleaseUpdate>()
         val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach { index ->
                 jsonEpisodes.getJSONObject(index).let {
-                    localReleases.add(ReleaseUpdate().apply {
+                    result.add(ReleaseUpdate().apply {
                         id = it.getInt("id")
                         timestamp = it.getInt("timestamp")
                         lastOpenTimestamp = it.getInt("lastOpenTimestamp")
@@ -111,6 +110,6 @@ class ReleaseUpdateStorage @Inject constructor(
                 }
             }
         }
-        localReleasesRelay.accept(localReleases)
+        return result
     }
 }

@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.mainpages
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.SearchScreen
@@ -9,6 +11,7 @@ import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -24,13 +27,15 @@ class MainPagesViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        checkerRepository
-            .checkUpdate(buildConfig.versionCode, true)
-            .lifeSubscribe({
+        viewModelScope.launch {
+            runCatching {
+                checkerRepository.checkUpdate(buildConfig.versionCode, true)
+            }.onSuccess {
                 hasUpdatesData.value = it.code > buildConfig.versionCode
-            }, {
-                it.printStackTrace()
-            })
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 
     fun onAppUpdateClick() {

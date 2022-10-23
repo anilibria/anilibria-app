@@ -61,13 +61,14 @@ class AuthParser @Inject constructor(
     }
 
     fun parseUser(responseJson: JSONObject): ProfileItem {
-        val user = ProfileItem()
-        user.id = responseJson.getInt("id")
-        user.nick = responseJson.nullString("login").orEmpty()
-        user.avatarUrl = responseJson.nullString("avatar")?.let {
-            "${apiConfig.baseImagesUrl}$it"
-        }
-        user.authState = AuthState.AUTH
+        val user = ProfileItem(
+            id = responseJson.getInt("id"),
+            nick = responseJson.nullString("login").orEmpty(),
+            avatarUrl = responseJson.nullString("avatar")?.let {
+                "${apiConfig.baseImagesUrl}$it"
+            },
+            authState = AuthState.AUTH
+        )
         return user
     }
 

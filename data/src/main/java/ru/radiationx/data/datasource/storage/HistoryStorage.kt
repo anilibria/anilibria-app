@@ -1,9 +1,9 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -23,48 +23,55 @@ class HistoryStorage @Inject constructor(
         private const val LOCAL_HISTORY_KEY = "data.local_history_new"
     }
 
-    private val localReleases = mutableListOf<ReleaseItem>()
-    private val localReleasesRelay = BehaviorRelay.createDefault(localReleases)
-
-    init {
-        loadAll()
+    private val localReleasesRelay by lazy {
+        MutableStateFlow(loadAll())
     }
 
-    override fun getEpisodes(): Single<List<ReleaseItem>> =
-        Single.fromCallable { localReleases.toList() }
+    override suspend fun getEpisodes() = localReleasesRelay.value
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseItem>> = localReleasesRelay
+    override fun observeEpisodes(): Flow<List<ReleaseItem>> = localReleasesRelay
 
     override fun putRelease(release: ReleaseItem) {
-        localReleases
-            .firstOrNull { it.id == release.id }
-            ?.let { localReleases.remove(it) }
-        localReleases.add(release)
+        localReleasesRelay.update { localReleases ->
+            val mutableLocalReleases = localReleases.toMutableList()
+            mutableLocalReleases
+                .firstOrNull { it.id == release.id }
+                ?.let { mutableLocalReleases.remove(it) }
+            mutableLocalReleases.add(release)
+            mutableLocalReleases
+        }
         saveAll()
-        localReleasesRelay.accept(localReleases)
     }
 
     override fun putAllRelease(releases: List<ReleaseItem>) {
-        releases.forEach { release ->
-            localReleases
-                .firstOrNull { it.id == release.id }
-                ?.let { localReleases.remove(it) }
-            localReleases.add(release)
+        localReleasesRelay.update { localReleases ->
+            val mutableLocalReleases = localReleases.toMutableList()
+            releases.forEach { release ->
+                mutableLocalReleases
+                    .firstOrNull { it.id == release.id }
+                    ?.let { mutableLocalReleases.remove(it) }
+                mutableLocalReleases.add(release)
+            }
+            mutableLocalReleases
         }
         saveAll()
-        localReleasesRelay.accept(localReleases)
     }
 
     override fun removerRelease(id: Int) {
-        localReleases.firstOrNull { it.id == id }?.also {
-            localReleases.remove(it)
-            localReleasesRelay.accept(localReleases)
+        localReleasesRelay.update { localReleases ->
+            val mutableLocalReleases = localReleases.toMutableList()
+            mutableLocalReleases.firstOrNull { it.id == id }?.also {
+                mutableLocalReleases.remove(it)
+                localReleasesRelay.value = mutableLocalReleases.toList()
+            }
+            mutableLocalReleases
         }
+        saveAll()
     }
 
     private fun saveAll() {
         val jsonEpisodes = JSONArray()
-        localReleases.forEach {
+        localReleasesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
                 put("id", it.id)
                 put("code", it.code)
@@ -96,7 +103,8 @@ class HistoryStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<ReleaseItem> {
+        val result = mutableListOf<ReleaseItem>()
         val jsonEpisodes =
             sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
         if (jsonEpisodes != null) {
@@ -136,9 +144,9 @@ class HistoryStorage @Inject constructor(
                         favoriteInfo.isAdded = jsonFav.getBoolean("isAdded")
                     }
                 }
-                localReleases.add(release)
+                result.add(release)
             }
         }
-        localReleasesRelay.accept(localReleases)
+        return result
     }
 }

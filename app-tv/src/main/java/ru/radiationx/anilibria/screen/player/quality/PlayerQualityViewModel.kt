@@ -1,8 +1,9 @@
 package ru.radiationx.anilibria.screen.player.quality
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -34,10 +35,10 @@ class PlayerQualityViewModel(
 
         releaseInteractor
             .observeQuality()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 update(it)
             }
+            .launchIn(viewModelScope)
     }
 
     fun applyQuality(quality: Long) {
@@ -53,17 +54,18 @@ class PlayerQualityViewModel(
 
     private fun updateAvailable() {
         val available = mutableListOf(SD_ACTION_ID, HD_ACTION_ID, FULL_HD_ACTION_ID)
-        releaseInteractor.getFull(argReleaseId)?.episodes?.firstOrNull { it.id == argEpisodeId }?.also {
-            if (it.urlFullHd.isNullOrEmpty()) {
-                available.remove(FULL_HD_ACTION_ID)
+        releaseInteractor.getFull(argReleaseId)?.episodes?.firstOrNull { it.id == argEpisodeId }
+            ?.also {
+                if (it.urlFullHd.isNullOrEmpty()) {
+                    available.remove(FULL_HD_ACTION_ID)
+                }
+                if (it.urlHd.isNullOrEmpty()) {
+                    available.remove(HD_ACTION_ID)
+                }
+                if (it.urlSd.isNullOrEmpty()) {
+                    available.remove(SD_ACTION_ID)
+                }
             }
-            if (it.urlHd.isNullOrEmpty()) {
-                available.remove(HD_ACTION_ID)
-            }
-            if (it.urlSd.isNullOrEmpty()) {
-                available.remove(SD_ACTION_ID)
-            }
-        }
         availableData.value = available
     }
 

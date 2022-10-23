@@ -9,32 +9,25 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
-import biz.source_code.miniTemplator.MiniTemplator
 import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposables
-import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.di.AppModule
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
-import ru.radiationx.shared.ktx.addTo
 import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
+import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.nio.charset.Charset
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -54,24 +47,6 @@ class App : Application() {
         start()
     }
 
-    private var messengerDisposable = Disposables.disposed()
-
-    lateinit var staticPageTemplate: MiniTemplator
-    lateinit var vkCommentsTemplate: MiniTemplator
-    lateinit var videoPageTemplate: MiniTemplator
-
-    val vkCommentCssFixLight: String by lazy {
-        assets.open("styles/vk_comments_fix_light.css").bufferedReader().use {
-            it.readText()
-        }
-    }
-
-    val vkCommentCssFixDark: String by lazy {
-        assets.open("styles/vk_comments_fix_dark.css").bufferedReader().use {
-            it.readText()
-        }
-    }
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         when (BuildConfig.FLAVOR) {
@@ -87,7 +62,9 @@ class App : Application() {
 
         if (isMainProcess()) {
             initInMainProcess()
+
             val timeToInit = timeCounter.elapsed()
+            Log.d("kekeke", "init time. $timeToCreate, $timeToInit")
             val appAnalytics = DI.get(AppAnalytics::class.java)
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
@@ -115,100 +92,69 @@ class App : Application() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
-
-        RxJavaPlugins.setErrorHandler { throwable ->
-            Log.d("S_DEF_LOG", "RxJavaPlugins errorHandler", throwable)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
         }
 
         initDependencies()
-
-        findTemplate("static_page")?.let { staticPageTemplate = it }
-        findTemplate("vk_comments")?.let { vkCommentsTemplate = it }
-        findTemplate("video_page")?.let { videoPageTemplate = it }
-
-        val systemMessenger = DI.get(SystemMessenger::class.java)
-        val schedulers = DI.get(SchedulersProvider::class.java)
-
-        /*messengerDisposable = systemMessenger
-                .observe()
-                .observeOn(schedulers.ui())
-                .subscribe {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }*/
 
         val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
         ImageLoaderConfig.init(this, imageDownloader)
         appVersionCheck()
 
-        FirebaseMessaging.getInstance().apply {
-            isAutoInitEnabled = true
+        try {
+            FirebaseMessaging.getInstance().apply {
+                isAutoInitEnabled = true
+            }
+        } catch (ex: Throwable) {
+            Timber.e(ex)
         }
 
         val preferencesHolder = DI.get(PreferencesHolder::class.java)
-        val disposables = CompositeDisposable()
+
         preferencesHolder
             .observeNotificationsAll()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ enabled ->
-                changeSubscribeStatus(enabled, "all")
-            }, {
-                it.printStackTrace()
-            })
-            .addTo(disposables)
+            .onEach {
+                changeSubscribeStatus(it, "all")
+            }
+            .launchIn(GlobalScope)
 
         preferencesHolder
             .observeNotificationsService()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ enabled ->
-                changeSubscribeStatus(enabled, "service")
-                changeSubscribeStatus(enabled, "app_update")
-                changeSubscribeStatus(enabled, "config")
-            }, {
-                it.printStackTrace()
-            })
-            .addTo(disposables)
+            .onEach {
+                changeSubscribeStatus(it, "service")
+                changeSubscribeStatus(it, "app_update")
+                changeSubscribeStatus(it, "config")
+            }
+            .launchIn(GlobalScope)
 
     }
 
     private fun changeSubscribeStatus(enabled: Boolean, topic: String) {
-        FirebaseMessaging.getInstance().apply {
-            if (enabled) {
-                subscribeToTopic(topic)
-                subscribeToTopic("android_$topic")
-            } else {
-                unsubscribeFromTopic(topic)
-                unsubscribeFromTopic("android_$topic")
+        try {
+            FirebaseMessaging.getInstance().apply {
+                if (enabled) {
+                    subscribeToTopic(topic)
+                    subscribeToTopic("android_$topic")
+                } else {
+                    unsubscribeFromTopic(topic)
+                    unsubscribeFromTopic("android_$topic")
+                }
             }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
         val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
-        scope.installModules(AppModule(this), DataModule(this))
+        scope.installModules(AppModule(this), DataModule())
     }
 
     private fun appVersionCheck() {
         val migrationDataSource = DI.get(MigrationDataSource::class.java)
         migrationDataSource.update()
-    }
-
-    private fun findTemplate(name: String): MiniTemplator? {
-        var template: MiniTemplator? = null
-        try {
-            val stream = assets.open("templates/$name.html")
-            val charset: Charset = Charset.forName("utf-8")
-            template = try {
-                MiniTemplator.Builder().build(stream, charset)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                MiniTemplator.Builder()
-                    .build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return template
     }
 
     private fun isMainProcess() = packageName == getCurrentProcessName()

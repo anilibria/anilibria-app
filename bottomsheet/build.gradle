@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion app_min_sdk_version
         targetSdkVersion 28
     }
 
@@ -14,10 +14,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+    namespace 'org.michaelbel.bottomsheetdialog'
+
 }
 
 dependencies {

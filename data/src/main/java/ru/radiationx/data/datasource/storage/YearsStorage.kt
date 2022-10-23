@@ -1,8 +1,8 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
@@ -14,58 +14,54 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class YearsStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences
 ) : YearsHolder {
 
     companion object {
         private const val LOCAL_YEARS_KEY = "data.local_years"
     }
 
-    private val localYears = mutableListOf<YearItem>()
-    private val localYearsRelay = BehaviorRelay.createDefault(localYears)
-
-    init {
-        loadAll()
+    private val localYearsRelay by lazy {
+        MutableStateFlow(loadAll())
     }
 
-    override fun observeYears(): Observable<MutableList<YearItem>> = localYearsRelay
+    override fun observeYears(): Flow<List<YearItem>> = localYearsRelay
 
     override fun saveYears(years: List<YearItem>) {
-        localYears.clear()
-        localYears.addAll(years)
+        localYearsRelay.value = years.toList()
         saveAll()
-        localYearsRelay.accept(localYears)
     }
 
-    override fun getYears(): List<YearItem> = localYears
+    override fun getYears(): List<YearItem> = localYearsRelay.value
 
     private fun saveAll() {
         val jsonYears = JSONArray()
-        localYears.forEach {
+        localYearsRelay.value.forEach {
             jsonYears.put(JSONObject().apply {
                 put("title", it.title)
                 put("value", it.value)
             })
         }
         sharedPreferences
-                .edit()
-                .putString(LOCAL_YEARS_KEY, jsonYears.toString())
-                .apply()
+            .edit()
+            .putString(LOCAL_YEARS_KEY, jsonYears.toString())
+            .apply()
     }
 
-    private fun loadAll() {
+    private fun loadAll(): List<YearItem> {
+        val result = mutableListOf<YearItem>()
         val savedYears = sharedPreferences.getString(LOCAL_YEARS_KEY, null)
         savedYears?.let {
             val jsonYears = JSONArray(it)
             (0 until jsonYears.length()).forEach { index ->
                 jsonYears.getJSONObject(index).let {
-                    localYears.add(YearItem().apply {
+                    result.add(YearItem().apply {
                         title = it.getString("title")
                         value = it.getString("value")
                     })
                 }
             }
         }
-        localYearsRelay.accept(localYears)
+        return result
     }
 }

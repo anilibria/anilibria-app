@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.auth
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.model.toState
@@ -38,21 +41,21 @@ class AuthPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        authRepository
-            .loadSocialAuth()
-            .subscribe({}, {
+        presenterScope.launch {
+            runCatching {
+                authRepository.loadSocialAuth()
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+        }
 
         authRepository
             .observeSocialAuth()
-            .subscribe({
+            .onEach {
                 viewState.showSocial(it.map { it.toState() })
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
+
         updateButtonState()
     }
 
@@ -79,21 +82,22 @@ class AuthPresenter @Inject constructor(
 
     fun signIn() {
         authMainAnalytics.loginClick()
-        viewState.setRefreshing(true)
-        authRepository
-            .signIn(currentLogin, currentPassword, "")
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({ user ->
-                decideWhatToDo(user.authState)
-            }, {
+        presenterScope.launch {
+            viewState.setRefreshing(true)
+            runCatching {
+                authRepository.signIn(currentLogin, currentPassword, "")
+            }.onSuccess {
+                decideWhatToDo(it.authState)
+            }.onFailure {
                 if (isEmpty2FaCode(it)) {
                     router.navigateTo(Screens.Auth2FaCode(currentLogin, currentPassword))
                 } else {
                     authMainAnalytics.error(it)
                     errorHandler.handle(it)
                 }
-            })
-            .addToDisposable()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun isEmpty2FaCode(error: Throwable): Boolean {

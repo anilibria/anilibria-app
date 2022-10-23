@@ -14,6 +14,8 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
+import ru.radiationx.anilibria.ui.common.Templates
+import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
@@ -51,6 +53,8 @@ class AppModule(application: Application) : Module() {
 
         bind(SystemMessenger::class.java).singleton()
 
+        bind(Templates::class.java).singleton()
+        bind(VkCommentsCss::class.java).singleton()
         bind(AppThemeController::class.java).to(AppThemeControllerImpl::class.java).singleton()
         bind(AnalyticsThemeProvider::class.java).to(AnalyticsThemeProviderImpl::class.java)
             .singleton()

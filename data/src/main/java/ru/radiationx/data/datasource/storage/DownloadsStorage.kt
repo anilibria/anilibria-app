@@ -14,23 +14,23 @@ class DownloadsStorage(
         private const val KEY_DOWNLOADS = "data.download_ids"
     }
 
-    private val downloads = mutableListOf<Long>()
-
-    init {
+    private val currentDownloads by lazy {
+        val result = mutableListOf<Long>()
         sharedPreferences.getString(KEY_DOWNLOADS, null)
             ?.split(",")
             ?.filter { it.isNotEmpty() }
             ?.map { it.toLong() }
             ?.also {
-                downloads.addAll(it)
+                result.addAll(it)
             }
+        result
     }
 
-    override fun getDownloads(): List<Long> = downloads.toList()
+    override fun getDownloads(): List<Long> = currentDownloads.toList()
 
     override fun saveDownloads(items: List<Long>) {
         sharedPreferences.edit().putString(KEY_DOWNLOADS, items.joinToString(",")).apply()
-        downloads.clear()
-        downloads.addAll(items)
+        currentDownloads.clear()
+        currentDownloads.addAll(items)
     }
 }

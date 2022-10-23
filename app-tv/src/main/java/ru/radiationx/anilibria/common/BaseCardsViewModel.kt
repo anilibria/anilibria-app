@@ -1,10 +1,11 @@
 package ru.radiationx.anilibria.common
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Single
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
@@ -23,7 +24,8 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     protected val currentCards = mutableListOf<LibriaCard>()
     protected var currentPage = -1
         private set
-    private var requestDisposable = Disposables.disposed()
+
+    private var requestJob: Job? = null
 
     override fun onColdCreate() {
         super.onColdCreate()
@@ -53,9 +55,12 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
 
     open fun onLibriaCardClick(card: LibriaCard) {}
 
-    protected abstract fun getLoader(requestPage: Int): Single<List<LibriaCard>>
+    protected abstract suspend fun getLoader(requestPage: Int): List<LibriaCard>
 
-    protected open fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean =
+    protected open fun hasMoreCards(
+        newCards: List<LibriaCard>,
+        allCards: List<LibriaCard>
+    ): Boolean =
         newCards.size >= 10 && newCards.isNotEmpty()
 
     protected open fun getErrorCard(error: Throwable) = LoadingCard(
@@ -69,9 +74,11 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
             cardsData.value = currentCards + loadingCard
         }
 
-        requestDisposable.dispose()
-        requestDisposable = getLoader(requestPage)
-            .lifeSubscribe({ newCards ->
+        requestJob?.cancel()
+        requestJob = viewModelScope.launch {
+            runCatching {
+                getLoader(requestPage)
+            }.onSuccess { newCards ->
                 if (currentPage <= 1) {
                     currentCards.clear()
                 }
@@ -82,10 +89,11 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                 } else {
                     cardsData.value = currentCards
                 }
-            }, {
-                it.printStackTrace()
+            }.onFailure {
+                Timber.e(it)
                 cardsData.value = currentCards + getErrorCard(it)
-            })
+            }
+        }
     }
 
 }

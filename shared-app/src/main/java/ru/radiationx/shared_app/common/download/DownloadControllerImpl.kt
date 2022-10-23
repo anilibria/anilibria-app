@@ -1,16 +1,15 @@
 package ru.radiationx.shared_app.common.download
 
 import android.app.DownloadManager
-import android.content.*
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import io.reactivex.Maybe
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
@@ -49,13 +48,14 @@ class DownloadControllerImpl(
         }
     }
 
-    override fun getDownload(url: String): DownloadItem? = dataSource.getDownloads().firstOrNull { it.url == url }
+    override fun getDownload(url: String): DownloadItem? =
+        dataSource.getDownloads().firstOrNull { it.url == url }
 
-    override fun observeDownload(url: String): Observable<DownloadItem> = dataSource
+    override fun observeDownload(url: String): Flow<DownloadItem> = dataSource
         .observeDownload()
         .filter { it.url == url }
 
-    override fun observeCompleted(url: String): Observable<DownloadItem> = dataSource
+    override fun observeCompleted(url: String): Flow<DownloadItem> = dataSource
         .observeCompleted()
         .filter { it.url == url }
 

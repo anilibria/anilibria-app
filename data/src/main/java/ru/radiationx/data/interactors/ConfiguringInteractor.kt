@@ -1,23 +1,17 @@
 package ru.radiationx.data.interactors
 
-import android.util.Log
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
-import io.reactivex.subjects.BehaviorSubject
-import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.analytics.features.ConfiguringAnalytics
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.ConfiguringAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.system.WrongHostException
-import ru.radiationx.shared.ktx.addTo
+import timber.log.Timber
 import java.io.IOException
-import java.lang.Exception
 import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 import javax.net.ssl.*
@@ -25,24 +19,23 @@ import javax.net.ssl.*
 class ConfiguringInteractor @Inject constructor(
     private val apiConfig: ApiConfig,
     private val configurationRepository: ConfigurationRepository,
-    private val schedulers: SchedulersProvider,
     private val analytics: ConfiguringAnalytics
 ) {
 
-    private val subject = BehaviorSubject.create<ConfigScreenState>()
+    private val screenState = ConfigScreenState()
+
+    private val subject = MutableStateFlow(screenState.copy())
 
     private var currentState = State.CHECK_LAST
 
-    private val screenState = ConfigScreenState()
-
-    private val compositeDisposable = CompositeDisposable()
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val fullTimeCounter = TimeCounter()
 
     private var isFullSuccess = false
     private var startAddressTag = apiConfig.tag
 
-    fun observeScreenState(): Observable<ConfigScreenState> = subject.hide()
+    fun observeScreenState(): Flow<ConfigScreenState> = subject
 
     fun initCheck() {
         startAddressTag = apiConfig.tag
@@ -64,9 +57,11 @@ class ConfiguringInteractor @Inject constructor(
     }
 
     fun skipCheck() {
-        isFullSuccess = false
-        analytics.onSkipClick(currentState.toAnalyticsState())
-        apiConfig.updateNeedConfig(false)
+        scope.launch {
+            isFullSuccess = false
+            analytics.onSkipClick(currentState.toAnalyticsState())
+            apiConfig.updateNeedConfig(false)
+        }
     }
 
     fun finishCheck() {
@@ -77,11 +72,11 @@ class ConfiguringInteractor @Inject constructor(
             fullTimeCounter.elapsed(),
             isFullSuccess
         )
-        compositeDisposable.clear()
+        scope.cancel()
     }
 
     private fun notifyScreenChanged() {
-        subject.onNext(screenState)
+        subject.value = screenState.copy()
     }
 
     private fun updateState(newState: State) {
@@ -115,17 +110,16 @@ class ConfiguringInteractor @Inject constructor(
     private fun checkLast() {
         updateState(State.CHECK_LAST)
         val timeCounter = TimeCounter()
-        compositeDisposable.clear()
-        zipLastCheck()
-            .observeOn(schedulers.ui())
-            .doOnSubscribe {
-                timeCounter.start()
-                screenState.status = "Проверка доступности сервера"
-                screenState.needRefresh = false
-                notifyScreenChanged()
-            }
-            .doFinally { timeCounter.pause() }
-            .subscribe({
+
+
+        scope.launch {
+            timeCounter.start()
+            screenState.status = "Проверка доступности сервера"
+            screenState.needRefresh = false
+            notifyScreenChanged()
+            runCatching {
+                zipLastCheck()
+            }.onSuccess {
                 analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), it, null)
                 if (it) {
                     isFullSuccess = true
@@ -135,9 +129,9 @@ class ConfiguringInteractor @Inject constructor(
                 } else {
                     loadConfig()
                 }
-            }, {
+            }.onFailure {
                 analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), false, it)
-                it.printStackTrace()
+                Timber.e(it)
                 when (it) {
                     is WrongHostException,
                     is TimeoutException -> loadConfig()
@@ -153,66 +147,62 @@ class ConfiguringInteractor @Inject constructor(
                         notifyScreenChanged()
                     }
                 }
-            })
-            .addTo(compositeDisposable)
+            }
+        }
     }
 
     private fun loadConfig() {
         updateState(State.LOAD_CONFIG)
         val timeCounter = TimeCounter()
-        compositeDisposable.clear()
-        configurationRepository
-            .getConfiguration()
-            .observeOn(schedulers.ui())
-            .doOnSubscribe {
-                timeCounter.start()
-                screenState.status = "Загрузка списка адресов"
-                screenState.needRefresh = false
-                notifyScreenChanged()
-            }
-            .doFinally { timeCounter.pause() }
-            .subscribe({
+
+
+        scope.launch {
+            timeCounter.start()
+            screenState.status = "Загрузка списка адресов"
+            screenState.needRefresh = false
+            notifyScreenChanged()
+            runCatching {
+                configurationRepository.getConfiguration()
+            }.onSuccess {
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
                 val addresses = apiConfig.getAddresses()
                 val proxies = addresses.sumBy { it.proxies.size }
                 screenState.status = "Загружено адресов: ${addresses.size}; прокси: $proxies"
                 notifyScreenChanged()
                 checkAvail()
-            }, {
+            }.onFailure {
                 analytics.loadConfig(timeCounter.elapsed(), false, it)
-                it.printStackTrace()
+                Timber.e(it)
                 screenState.status =
                     "Ошибка загрузки списка адресов: ${it.message}"
                 screenState.needRefresh = true
                 notifyScreenChanged()
-            })
-            .addTo(compositeDisposable)
+            }
+        }
     }
 
     private fun checkAvail() {
         updateState(State.CHECK_AVAIL)
         val timeCounter = TimeCounter()
-        compositeDisposable.clear()
         val addresses = apiConfig.getAddresses()
-        mergeAvailCheck(addresses)
-            .observeOn(schedulers.ui())
-            .doOnSubscribe {
-                timeCounter.start()
-                screenState.status = "Проверка доступных адресов"
-                screenState.needRefresh = false
-                notifyScreenChanged()
-            }
-            .doFinally { timeCounter.pause() }
-            .subscribe({ activeAddress ->
+
+        scope.launch {
+            timeCounter.start()
+            screenState.status = "Проверка доступных адресов"
+            screenState.needRefresh = false
+            notifyScreenChanged()
+            runCatching {
+                mergeAvailCheck(addresses)
+            }.onSuccess { activeAddress ->
                 isFullSuccess = true
                 analytics.checkAvail(activeAddress.tag, timeCounter.elapsed(), true, null)
                 screenState.status = "Найдет доступный адрес"
                 notifyScreenChanged()
                 apiConfig.updateActiveAddress(activeAddress)
                 apiConfig.updateNeedConfig(false)
-            }, {
+            }.onFailure {
                 analytics.checkAvail(null, timeCounter.elapsed(), false, it)
-                it.printStackTrace()
+                Timber.e(it)
                 when (it) {
                     // from mergeAvailCheck
                     is NoSuchElementException -> {
@@ -224,38 +214,40 @@ class ConfiguringInteractor @Inject constructor(
                         notifyScreenChanged()
                     }
                 }
-            })
-            .addTo(compositeDisposable)
+            }
+            timeCounter.pause()
+        }
     }
 
     private fun checkProxies() {
         updateState(State.CHECK_PROXIES)
         val timeCounter = TimeCounter()
-        compositeDisposable.clear()
         val proxies =
             apiConfig.getAddresses().map { it.proxies }.reduce { acc, list -> acc.plus(list) }
-        Observable
-            .fromArray(proxies)
-            .doOnNext {
-                if (it.isEmpty()) {
-                    throw Exception("No proxies for adresses")
-                }
-            }
-            .flatMap { Observable.fromIterable(it) }
-            .concatMapSingle { proxy ->
-                configurationRepository.getPingHost(proxy.ip).map { Pair(proxy, it) }
-            }
-            .filter { !it.second.hasError() }
-            .toList()
-            .observeOn(schedulers.ui())
-            .doOnSubscribe {
-                timeCounter.start()
-                screenState.status = "Проверка доступных прокси"
-                screenState.needRefresh = false
-                notifyScreenChanged()
-            }
-            .doFinally { timeCounter.pause() }
-            .subscribe({
+
+
+        scope.launch {
+            timeCounter.start()
+            screenState.status = "Проверка доступных прокси"
+            screenState.needRefresh = false
+            notifyScreenChanged()
+            runCatching {
+                flowOf(proxies.toTypedArray())
+                    .onEach {
+                        if (it.isEmpty()) {
+                            throw Exception("No proxies for adresses")
+                        }
+                    }
+                    .flatMapLatest {
+                        it.asFlow()
+                    }
+                    .flatMapConcat { proxy ->
+                        flowOf(
+                            configurationRepository.getPingHost(proxy.ip).let { Pair(proxy, it) })
+                    }
+                    .filter { !it.second.hasError() }
+                    .toList()
+            }.onSuccess {
                 it.forEach {
                     apiConfig.setProxyPing(it.first, it.second.timeTaken)
                 }
@@ -275,42 +267,37 @@ class ConfiguringInteractor @Inject constructor(
                     screenState.needRefresh = true
                     notifyScreenChanged()
                 }
-            }, {
+            }.onFailure {
                 analytics.checkProxies(null, timeCounter.elapsed(), false, it)
-                it.printStackTrace()
+                Timber.e(it)
                 screenState.status =
                     "Ошибка проверки доступности прокси-серверов: ${it.message}"
                 screenState.needRefresh = true
                 notifyScreenChanged()
-            })
-            .addTo(compositeDisposable)
+            }
+            timeCounter.pause()
+        }
     }
 
-    private fun mergeAvailCheck(addresses: List<ApiAddress>): Single<ApiAddress> {
+    private suspend fun mergeAvailCheck(addresses: List<ApiAddress>): ApiAddress {
         val adressesSources = addresses.map { address ->
-            configurationRepository.checkAvailable(address.api)
-                .subscribeOn(schedulers.io())
-                .onErrorReturnItem(false)
+            flow { emit(configurationRepository.checkAvailable(address.api)) }
+                .catch { emit(false) }
                 .map { Pair(address, it) }
         }
-        return Single
-            .merge(adressesSources)
+        return merge(*adressesSources.toTypedArray())
             .filter { it.second }
             .map { it.first }
-            .firstOrError()
+            .first()
     }
 
-    private fun zipLastCheck(): Single<Boolean> = Single.zip(
-        configurationRepository
-            .checkAvailable(apiConfig.apiUrl)
-            .subscribeOn(schedulers.io()),
-        configurationRepository
-            .checkApiAvailable(apiConfig.apiUrl)
-            .subscribeOn(schedulers.io()),
-        BiFunction<Boolean, Boolean, Boolean> { result1, result2 ->
-            return@BiFunction result1 && result2
-        }
-    )
+    private suspend fun zipLastCheck(): Boolean {
+        val flowMain = flow { emit(configurationRepository.checkAvailable(apiConfig.apiUrl)) }
+        val flowApi = flow { emit(configurationRepository.checkApiAvailable(apiConfig.apiUrl)) }
+        return combine(flowMain, flowApi) { mainRes, apiRes ->
+            mainRes && apiRes
+        }.first()
+    }
 
     private fun State.toAnalyticsState(): AnalyticsConfigState = when (this) {
         State.CHECK_LAST -> AnalyticsConfigState.CHECK_LAST

@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.search.completed
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -29,14 +31,16 @@ class SearchCompletedViewModel(
     }
 
     fun applySort(index: Int) {
-        val sort = when (index) {
-            0 -> false
-            1 -> true
-            else -> null
+        viewModelScope.launch {
+            val sort = when (index) {
+                0 -> false
+                1 -> true
+                else -> null
+            }
+            sort?.also {
+                searchController.completedEvent.emit(it)
+            }
+            guidedRouter.close()
         }
-        sort?.also {
-            searchController.completedEvent.accept(it)
-        }
-        guidedRouter.close()
     }
 }

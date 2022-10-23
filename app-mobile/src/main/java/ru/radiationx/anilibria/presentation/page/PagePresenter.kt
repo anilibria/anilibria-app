@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.presentation.page
 
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -13,10 +14,10 @@ import javax.inject.Inject
  */
 @InjectViewState
 class PagePresenter @Inject constructor(
-        private val pageRepository: PageRepository,
-        private val router: Router,
-        private val errorHandler: IErrorHandler,
-        private val pageAnalytics: PageAnalytics
+    private val pageRepository: PageRepository,
+    private val router: Router,
+    private val errorHandler: IErrorHandler,
+    private val pageAnalytics: PageAnalytics
 ) : BasePresenter<PageView>(router) {
 
     var pagePath: String? = null
@@ -29,16 +30,17 @@ class PagePresenter @Inject constructor(
     }
 
     private fun loadPage(pagePath: String) {
-        viewState.setRefreshing(true)
-        pageRepository
-                .getPage(pagePath)
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ page ->
-                    viewState.showPage(page)
-                }, {
-                    pageAnalytics.error(it)
-                    errorHandler.handle(it)
-                })
-                .addToDisposable()
+        presenterScope.launch {
+            viewState.setRefreshing(true)
+            runCatching {
+                pageRepository.getPage(pagePath)
+            }.onSuccess {
+                viewState.showPage(it)
+            }.onFailure {
+                pageAnalytics.error(it)
+                errorHandler.handle(it)
+            }
+            viewState.setRefreshing(false)
+        }
     }
 }

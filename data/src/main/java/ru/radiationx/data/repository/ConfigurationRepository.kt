@@ -1,49 +1,41 @@
 package ru.radiationx.data.repository
 
-import android.util.Log
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.stealthcopter.networktools.ping.PingOptions
 import com.stealthcopter.networktools.ping.PingResult
 import com.stealthcopter.networktools.ping.PingTools
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.api.ConfigurationApi
 import java.net.InetAddress
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConfigurationRepository @Inject constructor(
     private val configurationApi: ConfigurationApi,
-    private val schedulers: SchedulersProvider
 ) {
-    private val pingRelay = BehaviorRelay.create<Map<String, PingResult>>()
 
-    fun checkAvailable(apiUrl: String): Single<Boolean> = configurationApi
+    private val pingRelay = MutableStateFlow<Map<String, PingResult>?>(null)
+
+    suspend fun checkAvailable(apiUrl: String): Boolean = configurationApi
         .checkAvailable(apiUrl)
-        .subscribeOn(schedulers.io())
 
-    fun checkApiAvailable(apiUrl: String): Single<Boolean> = configurationApi
+    suspend fun checkApiAvailable(apiUrl: String): Boolean = configurationApi
         .checkApiAvailable(apiUrl)
-        .subscribeOn(schedulers.io())
 
-    fun getConfiguration(): Single<List<ApiAddress>> = configurationApi
+    suspend fun getConfiguration(): List<ApiAddress> = configurationApi
         .getConfiguration()
-        .subscribeOn(schedulers.io())
 
-    fun getPingHost(host: String): Single<PingResult> = Single
-        .fromCallable {
+    suspend fun getPingHost(host: String): PingResult {
+        return withTimeout(15_000) {
             PingTools.doNativePing(InetAddress.getByName(host), PingOptions())
-        }
-        .timeout(15, TimeUnit.MILLISECONDS)
-        .doOnSuccess {
-            val map = if (pingRelay.hasValue()) {
+        }.also {
+            val map = if (pingRelay.value != null) {
                 pingRelay.value!!.toMutableMap()
             } else {
                 mutableMapOf()
             }
             map[host] = it
-            pingRelay.accept(map)
+            pingRelay.value = map
         }
-        .subscribeOn(schedulers.io())
+    }
 }

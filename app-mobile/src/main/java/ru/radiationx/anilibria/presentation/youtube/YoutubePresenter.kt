@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import io.reactivex.Single
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -29,10 +30,10 @@ class YoutubePresenter @Inject constructor(
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics
 ) : BasePresenter<YoutubeView>(router) {
 
-    private val loadingController = DataLoadingController {
+    private val loadingController = DataLoadingController(presenterScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
-    }.addToDisposable()
+    }
 
     private val stateController = StateController(YoutubeScreenState())
 
@@ -45,17 +46,17 @@ class YoutubePresenter @Inject constructor(
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
         loadingController
             .observeState()
-            .subscribe { loadingState ->
+            .onEach { loadingState ->
                 stateController.updateState {
                     it.copy(data = loadingState)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
         loadingController.refresh()
     }
 
@@ -81,23 +82,25 @@ class YoutubePresenter @Inject constructor(
         }
     }
 
-    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<List<YoutubeItemState>>> {
-        return youtubeRepository
-            .getYoutubeList(params.page)
-            .map { paginated ->
-                if (params.isFirstPage) {
-                    currentRawItems.clear()
-                }
-                currentRawItems.addAll(paginated.data)
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<YoutubeItemState>> {
+        return try {
+            youtubeRepository
+                .getYoutubeList(params.page)
+                .let { paginated ->
+                    if (params.isFirstPage) {
+                        currentRawItems.clear()
+                    }
+                    currentRawItems.addAll(paginated.data)
 
-                val newItems = currentRawItems.map { item -> item.toState() }
-                ScreenStateAction.Data(newItems, !paginated.isEnd())
-            }
-            .doOnError {
-                if (params.isFirstPage) {
-                    errorHandler.handle(it)
+                    val newItems = currentRawItems.map { item -> item.toState() }
+                    ScreenStateAction.Data(newItems, !paginated.isEnd())
                 }
+        } catch (ex: Throwable) {
+            if (params.isFirstPage) {
+                errorHandler.handle(ex)
             }
+            throw ex
+        }
     }
 
 }

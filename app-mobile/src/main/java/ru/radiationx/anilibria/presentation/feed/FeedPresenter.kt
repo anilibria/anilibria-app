@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.presentation.feed
 
-import io.reactivex.Single
-import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -10,7 +10,6 @@ import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.Paginator
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.feed.FeedDataState
@@ -65,14 +64,14 @@ class FeedPresenter @Inject constructor(
         private const val DONATION_NEW_TAG = "donation_new"
     }
 
-    private val loadingController = DataLoadingController {
+    private val loadingController = DataLoadingController(presenterScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
-    }.addToDisposable()
+    }
 
     private val stateController = StateController(FeedScreenState())
 
-    private var randomDisposable = Disposables.disposed()
+    private var randomJob: Job? = null
 
     private var lastLoadedPage: Int? = null
 
@@ -87,20 +86,20 @@ class FeedPresenter @Inject constructor(
 
         checkerRepository
             .observeUpdate()
-            .subscribe {
+            .onEach {
                 hasAppUpdate = it.code > sharedBuildConfig.versionCode
                 updateAppUpdateState()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         appPreferences
             .observeNewDonationRemind()
-            .flatMap { enabled ->
+            .flatMapLatest { enabled ->
                 donationRepository.observerDonationInfo().map {
                     Pair(it.cardNewDonations, enabled)
                 }
             }
-            .subscribe { pair ->
+            .onEach { pair ->
                 val newDonationState = if (pair.second) {
                     pair.first?.let {
                         DonationCardItemState(
@@ -117,26 +116,27 @@ class FeedPresenter @Inject constructor(
                     it.copy(donationCardItemState = newDonationState)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
 
-        loadingController.observeState()
-            .subscribe { loadingState ->
+        loadingController
+            .observeState()
+            .onEach { loadingState ->
                 stateController.updateState {
                     it.copy(data = loadingState)
                 }
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
 
         loadingController.refresh()
 
         releaseUpdateHolder
             .observeEpisodes()
-            .subscribe { data ->
+            .onEach { data ->
                 val itemsNeedUpdate = mutableListOf<FeedItem>()
                 currentItems.forEach { item ->
                     data.firstOrNull { it.id == item.release?.id }?.also { updItem ->
@@ -161,7 +161,7 @@ class FeedPresenter @Inject constructor(
 
                 loadingController.modifyData(dataState?.copy(feedItems = newFeedItems))
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     fun refreshReleases() {
@@ -207,18 +207,19 @@ class FeedPresenter @Inject constructor(
 
     fun onRandomClick() {
         feedAnalytics.randomClick()
-        if (!randomDisposable.isDisposed) {
+        if (randomJob?.isActive == true) {
             return
         }
-        randomDisposable = releaseInteractor
-            .getRandomRelease()
-            .subscribe({
+        randomJob = presenterScope.launch {
+            runCatching {
+                releaseInteractor.getRandomRelease()
+            }.onSuccess {
                 releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code)
                 router.navigateTo(Screens.ReleaseDetails(code = it.code))
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+        }
     }
 
     fun onFastSearchOpen() {
@@ -295,18 +296,18 @@ class FeedPresenter @Inject constructor(
         }
     }
 
-    private fun getFeedSource(page: Int): Single<List<FeedItem>> = feedRepository
+    private suspend fun getFeedSource(page: Int): List<FeedItem> = feedRepository
         .getFeed(page)
-        .doOnSuccess {
-            if (page == Paginator.FIRST_PAGE) {
+        .also {
+            if (page == 1) {
                 currentItems.clear()
             }
             currentItems.addAll(it)
         }
 
-    private fun getScheduleSource(): Single<FeedScheduleState> = scheduleRepository
+    private suspend fun getScheduleSource(): FeedScheduleState = scheduleRepository
         .loadSchedule()
-        .map { scheduleDays ->
+        .let { scheduleDays ->
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()
 
@@ -333,22 +334,20 @@ class FeedPresenter @Inject constructor(
         }
 
 
-    private fun getDataSource(params: PageLoadParams): Single<ScreenStateAction.Data<FeedDataState>> {
-        val feedSource = getFeedSource(params.page)
-        val scheduleDataSource = if (params.isFirstPage) {
-            getScheduleSource()
-        } else {
-            loadingController.currentState.data?.schedule?.let { Single.just(it) }
-                ?: getScheduleSource()
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<FeedDataState> {
+        val feedSource = flow { emit(getFeedSource(params.page)) }
+        val scheduleDataSource = flow {
+            val value = if (params.isFirstPage) {
+                getScheduleSource()
+            } else {
+                loadingController.currentState.data?.schedule ?: getScheduleSource()
+            }
+            emit(value)
         }
-        return Single
-            .zip(
-                feedSource,
-                scheduleDataSource,
-                BiFunction { feedItems: List<FeedItem>, scheduleState: FeedScheduleState ->
-                    Pair(feedItems, scheduleState)
-                }
-            )
+
+        return combine(feedSource, scheduleDataSource) { feedItems, scheduleState ->
+            Pair(feedItems, scheduleState)
+        }
             .map { (feedItems, scheduleState) ->
                 val feedDataState = FeedDataState(
                     feedItems = currentItems.map { it.toState() },
@@ -356,10 +355,12 @@ class FeedPresenter @Inject constructor(
                 )
                 ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
             }
-            .doOnError {
+            .catch {
                 if (params.isFirstPage) {
                     errorHandler.handle(it)
                 }
+                throw it
             }
+            .first()
     }
 }

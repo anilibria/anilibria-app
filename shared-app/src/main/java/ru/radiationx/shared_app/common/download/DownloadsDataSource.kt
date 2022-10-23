@@ -10,15 +10,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import android.util.Log
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.DownloadsHolder
+import timber.log.Timber
 import toothpick.InjectConstructor
-import java.util.concurrent.TimeUnit
 
+//todo tr-274 check working
 @InjectConstructor
 class DownloadsDataSource(
     private val context: Context,
@@ -42,17 +40,18 @@ class DownloadsDataSource(
 
     private val cachedDownloads = mutableListOf<DownloadItem>()
 
-    private val downloadsRelay = PublishRelay.create<DownloadItem>()
-    private val completeRelay = PublishRelay.create<DownloadItem>()
+    private val downloadsRelay = MutableSharedFlow<DownloadItem>()
+    private val completeRelay = MutableSharedFlow<DownloadItem>()
 
-    private var pendingTimerDisposable = Disposables.disposed()
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private var timerJob: Job? = null
     private val pendingDownloads = mutableListOf<Long>()
 
     fun getDownloads(): List<DownloadItem> = cachedDownloads.toList()
 
-    fun observeDownload(): Observable<DownloadItem> = downloadsRelay.hide()
+    fun observeDownload(): Flow<DownloadItem> = downloadsRelay
 
-    fun observeCompleted(): Observable<DownloadItem> = completeRelay.hide()
+    fun observeCompleted(): Flow<DownloadItem> = completeRelay
 
     fun notifyDownloadStart(downloadId: Long) {
         pendingDownloads.add(downloadId)
@@ -78,34 +77,39 @@ class DownloadsDataSource(
 
     private fun startTimer() {
         stopTimer()
-        pendingTimerDisposable = Observable
-            .interval(1L, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        timerJob = flow<Unit> {
+            while (true) {
+                emit(Unit)
+                delay(1000)
+            }
+        }
+            .catch { Timber.e(it) }
+            .onEach {
                 fetchPendingDownloads()
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && cachedDownloads.isNotEmpty()) {
                     updateAll()
                 }
-            }, {
-                it.printStackTrace()
-            })
+            }
+            .launchIn(scope)
     }
 
     private fun stopTimer() {
-        pendingTimerDisposable.dispose()
+        timerJob?.cancel()
     }
 
     private fun fetchPendingDownloads() {
-        if (pendingDownloads.isEmpty()) {
-            return
-        }
-        val downloadIds = pendingDownloads.toLongArray()
-        val downloads = fetchDownloadRows(downloadIds)
-        downloads.forEach {
-            updateCache(it)
-            startObserve(it.downloadId)
-            downloadsRelay.accept(it)
-            pendingDownloads.remove(it.downloadId)
+        scope.launch {
+            if (pendingDownloads.isEmpty()) {
+                return@launch
+            }
+            val downloadIds = pendingDownloads.toLongArray()
+            val downloads = fetchDownloadRows(downloadIds)
+            downloads.forEach {
+                updateCache(it)
+                startObserve(it.downloadId)
+                downloadsRelay.emit(it)
+                pendingDownloads.remove(it.downloadId)
+            }
         }
     }
 
@@ -128,32 +132,38 @@ class DownloadsDataSource(
     }
 
     private fun updateAll() {
-        val savedIds = downloadsHolder.getDownloads()
-        if (savedIds.isEmpty()) {
-            return
-        }
-        val downloadIds = savedIds.toLongArray()
-        val downloads = fetchDownloadRows(downloadIds)
-        fullUpdateCache(downloads)
-        downloads.forEach {
-            startObserve(it.downloadId)
-            downloadsRelay.accept(it)
+        scope.launch {
+            val savedIds = downloadsHolder.getDownloads()
+            if (savedIds.isEmpty()) {
+                return@launch
+            }
+            val downloadIds = savedIds.toLongArray()
+            val downloads = fetchDownloadRows(downloadIds)
+            fullUpdateCache(downloads)
+            downloads.forEach {
+                startObserve(it.downloadId)
+                downloadsRelay.emit(it)
+            }
         }
     }
 
     private fun update(downloadId: Long) {
-        fetchDownloadRow(downloadId)?.also {
-            updateCache(it)
-            downloadsRelay.accept(it)
+        scope.launch {
+            fetchDownloadRow(downloadId)?.also {
+                updateCache(it)
+                downloadsRelay.emit(it)
+            }
         }
     }
 
     private fun updateComplete(downloadId: Long) {
-        (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also {
-            if (it.state != DownloadController.State.SUCCESSFUL) {
-                cachedDownloads.removeAll { it.downloadId == downloadId }
+        scope.launch {
+            (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also {
+                if (it.state != DownloadController.State.SUCCESSFUL) {
+                    cachedDownloads.removeAll { it.downloadId == downloadId }
+                }
+                completeRelay.emit(it)
             }
-            completeRelay.accept(it)
         }
     }
 
@@ -182,9 +192,11 @@ class DownloadsDataSource(
         downloadsHolder.saveDownloads(cachedDownloads.map { it.downloadId })
     }
 
-    private fun findCached(downloadId: Long): DownloadItem? = cachedDownloads.firstOrNull { it.downloadId == downloadId }
+    private fun findCached(downloadId: Long): DownloadItem? =
+        cachedDownloads.firstOrNull { it.downloadId == downloadId }
 
-    private fun findCached(localUrl: String): DownloadItem? = cachedDownloads.firstOrNull { it.localUrl == localUrl }
+    private fun findCached(localUrl: String): DownloadItem? =
+        cachedDownloads.firstOrNull { it.localUrl == localUrl }
 
     private fun createContentObserver() = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {

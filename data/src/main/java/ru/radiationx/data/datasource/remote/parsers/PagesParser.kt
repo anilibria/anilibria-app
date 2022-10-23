@@ -11,10 +11,11 @@ import javax.inject.Inject
  * Created by radiationx on 13.01.18.
  */
 class PagesParser @Inject constructor(
-        private val apiUtils: IApiUtils
+    private val apiUtils: IApiUtils
 ) {
 
-    private val pagePatternSource = "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div[^>]*?(?:id=\"vk_comments|class=\"[^\"]*?side[^\"]*?\")"
+    private val pagePatternSource =
+        "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div[^>]*?(?:id=\"vk_comments|class=\"[^\"]*?side[^\"]*?\")"
     private val titlePatternSource = "<title>([\\s\\S]*?)<\\/title>"
 
     private val pagePattern: Pattern by lazy {
@@ -42,8 +43,8 @@ class PagesParser @Inject constructor(
 
     fun parseVkComments(jsonResponse: JSONObject): VkComments {
         return VkComments(
-                jsonResponse.getString("baseUrl"),
-                jsonResponse.getString("script")
+            jsonResponse.getString("baseUrl"),
+            jsonResponse.getString("script")
         )
     }
 }

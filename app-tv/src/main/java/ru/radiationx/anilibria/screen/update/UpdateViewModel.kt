@@ -1,15 +1,15 @@
 package ru.radiationx.anilibria.screen.update
 
-import android.app.DownloadManager
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -19,6 +19,7 @@ import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadItem
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -41,8 +42,8 @@ class UpdateViewModel(
     private var downloadState: DownloadController.State? = null
     private var pendingInstall = false
 
-    private var updatesDisposable = Disposables.disposed()
-    private var completedDisposable = Disposables.disposed()
+    private var updatesJob: Job? = null
+    private var completedJob: Job? = null
 
     init {
         progressState.value = true
@@ -54,26 +55,29 @@ class UpdateViewModel(
         super.onCreate()
         updateState()
 
-        checkerRepository
-            .checkUpdate(buildConfig.versionCode, false)
-            .doFinally {
-                progressState.value = false
-            }
-            .lifeSubscribe({
+        viewModelScope.launch {
+            progressState.value = true
+            runCatching {
+                checkerRepository
+                    .checkUpdate(buildConfig.versionCode, false)
+            }.onSuccess {
                 updateData.value = it
                 it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
                     startDownload(it.url)
                 }
-            }, {
-                it.printStackTrace()
-            })
+            }.onFailure {
+                Timber.e(it)
+            }
+            progressState.value = false
+        }
 
         updateController
             .downloadAction
-            .lifeSubscribe {
+            .onEach {
                 pendingInstall = true
                 startDownload(it.url)
             }
+            .launchIn(viewModelScope)
     }
 
     fun onActionClick() {
@@ -87,12 +91,14 @@ class UpdateViewModel(
     }
 
     private fun downloadClick() {
-        val data = updateData.value ?: return
-        if (data.links.size > 1) {
-            guidedRouter.open(UpdateSourceScreen())
-        } else {
-            val link = data.links.firstOrNull() ?: return
-            updateController.downloadAction.accept(link)
+        viewModelScope.launch {
+            val data = updateData.value ?: return@launch
+            if (data.links.size > 1) {
+                guidedRouter.open(UpdateSourceScreen())
+            } else {
+                val link = data.links.firstOrNull() ?: return@launch
+                updateController.downloadAction.emit(link)
+            }
         }
     }
 
@@ -107,23 +113,21 @@ class UpdateViewModel(
             return
         }
 
-        updatesDisposable.dispose()
-        updatesDisposable = downloadController
+        updatesJob?.cancel()
+        updatesJob = downloadController
             .observeDownload(url)
-            .lifeSubscribe({
+            .onEach {
                 handleUpdate(it)
-            }, {
-                it.printStackTrace()
-            })
+            }
+            .launchIn(viewModelScope)
 
-        completedDisposable.dispose()
-        completedDisposable = downloadController
+        completedJob?.cancel()
+        completedJob = downloadController
             .observeCompleted(url)
-            .lifeSubscribe({
+            .onEach {
                 handleComplete(it)
-            }, {
-                it.printStackTrace()
-            })
+            }
+            .launchIn(viewModelScope)
 
         if (downloadItem == null) {
             downloadController.startDownload(url)
@@ -148,8 +152,8 @@ class UpdateViewModel(
         currentDownload = null
         updateState(null)
         startPendingInstall(downloadItem)
-        updatesDisposable.dispose()
-        completedDisposable.dispose()
+        updatesJob?.cancel()
+        completedJob?.cancel()
     }
 
     private fun startPendingInstall(downloadItem: DownloadItem) {

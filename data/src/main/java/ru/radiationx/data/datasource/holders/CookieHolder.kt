@@ -10,7 +10,7 @@ interface CookieHolder {
         const val PHPSESSID = "PHPSESSID"
 
         val cookieNames = listOf(
-                PHPSESSID
+            PHPSESSID
         )
     }
 

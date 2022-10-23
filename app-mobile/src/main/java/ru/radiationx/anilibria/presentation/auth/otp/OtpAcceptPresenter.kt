@@ -1,17 +1,14 @@
 package ru.radiationx.anilibria.presentation.auth.otp
 
-import io.reactivex.Single
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.entity.app.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @InjectViewState
@@ -19,8 +16,6 @@ class OtpAcceptPresenter @Inject constructor(
     router: Router,
     private val authRepository: AuthRepository,
     private val errorHandler: IErrorHandler,
-    private val messenger: SystemMessenger,
-    private val schedulersProvider: SchedulersProvider,
     private val authDeviceAnalytics: AuthDeviceAnalytics
 ) : BasePresenter<OtpAcceptView>(router) {
 
@@ -47,28 +42,31 @@ class OtpAcceptPresenter @Inject constructor(
             updateState()
             return
         }
-        progress = true
-        updateState()
-        authRepository
-            .acceptOtp(code)
-            .doFinally {
-                progress = false
-                updateState()
-            }
-            .subscribe({
+
+        presenterScope.launch {
+            progress = true
+            updateState()
+
+            runCatching {
+                authRepository.acceptOtp(code)
+            }.onSuccess {
+
                 onSuccess()
-            }, {
+            }.onFailure {
                 authDeviceAnalytics.error(it)
                 if (it is OtpAcceptedException) {
                     onSuccess()
-                    return@subscribe
+                    return@onFailure
                 }
                 success = false
                 errorHandler.handle(it) { throwable, s ->
                     error = s.orEmpty()
                 }
-            })
-            .addToDisposable()
+            }
+
+            progress = false
+            updateState()
+        }
     }
 
     private fun updateState() {
@@ -83,15 +81,9 @@ class OtpAcceptPresenter @Inject constructor(
     }
 
     private fun startCloseTimer() {
-        Single
-            .timer(1500, TimeUnit.MILLISECONDS)
-            .observeOn(schedulersProvider.ui())
-            .subscribe({
-                viewState.close()
-            }, {
-                authDeviceAnalytics.error(it)
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+        presenterScope.launch {
+            delay(1500)
+            viewState.close()
+        }
     }
 }

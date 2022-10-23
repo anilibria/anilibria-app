@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.ui.common.ErrorHandler
@@ -26,7 +29,7 @@ class DonationYooMoneyPresenter(
         super.onFirstViewAttach()
         donationRepository
             .observerDonationInfo()
-            .subscribe({
+            .onEach {
                 val yooMoneyInfo = it.yooMoneyDialog
                 val newState = currentState.copy(
                     data = yooMoneyInfo,
@@ -35,10 +38,8 @@ class DonationYooMoneyPresenter(
                     selectedPaymentTypeId = yooMoneyInfo?.paymentTypes?.selectedId
                 )
                 tryUpdateState(newState)
-            }, {
-                errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            .launchIn(presenterScope)
     }
 
     fun setSelectedAmount(value: Int?) {
@@ -75,17 +76,18 @@ class DonationYooMoneyPresenter(
             currentState.amountType.toAnalytics(),
             paymentTypeId.toAnalyticsPaymentType()
         )
-        viewState.setRefreshing(true)
-        donationRepository
-            .createYooMoneyPayLink(amount, paymentTypeId, form)
-            .doFinally { viewState.setRefreshing(false) }
-            .subscribe({
+        presenterScope.launch {
+            viewState.setRefreshing(true)
+            runCatching {
+                donationRepository.createYooMoneyPayLink(amount, paymentTypeId, form)
+            }.onSuccess {
                 Utils.externalLink(it)
                 viewState.close()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .addToDisposable()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun DonationYooMoneyState.withValidation(): DonationYooMoneyState {

@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.presentation.history
 
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.StateController
@@ -38,15 +40,15 @@ class HistoryPresenter @Inject constructor(
         super.onFirstViewAttach()
         stateController
             .observeState()
-            .subscribe { viewState.showState(it) }
-            .addToDisposable()
+            .onEach { viewState.showState(it) }
+            .launchIn(presenterScope)
         observeReleases()
     }
 
     private fun observeReleases() {
         historyRepository
             .observeReleases()
-            .subscribe { releases ->
+            .onEach { releases ->
                 currentReleases.clear()
                 currentReleases.addAll(releases)
 
@@ -56,7 +58,7 @@ class HistoryPresenter @Inject constructor(
 
                 updateSearchState()
             }
-            .addToDisposable()
+            .launchIn(presenterScope)
     }
 
     private fun updateSearchState() {

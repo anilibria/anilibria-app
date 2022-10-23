@@ -1,8 +1,7 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Observable
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
@@ -11,21 +10,16 @@ import javax.inject.Inject
  * Created by radiationx on 18.02.18.
  */
 class HistoryRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val historyStorage: HistoryHolder
+    private val historyStorage: HistoryHolder
 ) {
 
-    fun getReleases():Single<List<ReleaseItem>> = historyStorage
+    suspend fun getReleases(): List<ReleaseItem> = historyStorage
         .getEpisodes()
-        .map { it.asReversed() }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .asReversed()
 
-    fun observeReleases(): Observable<MutableList<ReleaseItem>> = historyStorage
-            .observeEpisodes()
-            .map { it.asReversed() }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    fun observeReleases(): Flow<List<ReleaseItem>> = historyStorage
+        .observeEpisodes()
+        .map { it.asReversed() }
 
     fun putRelease(releaseItem: ReleaseItem) = historyStorage.putRelease(releaseItem)
 

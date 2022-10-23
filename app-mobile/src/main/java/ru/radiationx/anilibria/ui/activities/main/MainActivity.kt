@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.LocaleModule
@@ -169,7 +168,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
-            val context: Context = App.instance
             val channelId = "anilibria_channel_updates"
             val channelName = "Обновления"
 
@@ -179,16 +177,16 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                     channelName,
                     NotificationManager.IMPORTANCE_DEFAULT
                 )
-                val manager = context.getSystemService(NotificationManager::class.java)
+                val manager = getSystemService(NotificationManager::class.java)
                 manager?.createNotificationChannel(channel)
             }
 
-            val mBuilder = NotificationCompat.Builder(context, channelId)
+            val mBuilder = NotificationCompat.Builder(this, channelId)
 
-            val mNotificationManager = NotificationManagerCompat.from(context)
+            val mNotificationManager = NotificationManagerCompat.from(this)
 
             mBuilder.setSmallIcon(R.drawable.ic_notify)
-            mBuilder.color = context.getCompatColor(R.color.alib_red)
+            mBuilder.color = getCompatColor(R.color.alib_red)
 
             mBuilder.setContentTitle("Обновление AniLibria")
             mBuilder.setContentText("Новая версия: ${update.name}")
@@ -197,8 +195,8 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
             val notifyIntent =
                 Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
-                    .getActivityIntent(context)
-            val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
+                    .getActivityIntent(this)
+            val notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0)
             mBuilder.setContentIntent(notifyPendingIntent)
 
             mBuilder.setAutoCancel(true)

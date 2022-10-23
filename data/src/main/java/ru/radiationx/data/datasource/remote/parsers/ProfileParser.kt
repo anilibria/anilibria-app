@@ -11,8 +11,8 @@ import javax.inject.Inject
  * Created by radiationx on 03.01.18.
  */
 class ProfileParser @Inject constructor(
-        private val apiUtils: IApiUtils,
-        private val apiConfig: ApiConfig
+    private val apiUtils: IApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
     /*
@@ -28,7 +28,8 @@ class ProfileParser @Inject constructor(
     * 10.   String^ Интересы
     * 11.   String^ Подпись
     * */
-    private val mainPatternSrc = "<span id=\"profile-nickname\"[^>]*?><b>([\\s\\S]*?)<\\/b><\\/span>[\\s\\S]*?<div id=\"profile-avatar-wrapper\">[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<span id=\"user-status-([^\"]*?)\"[^>]*?>(?:[\\s\\S]*?<span id=\"user-offline-since\"[^>]*?>[^<]*?<b>был в сети ([^<]*?)<)?[\\s\\S]*?<span class=\"profile-left-info\"><b>(?:<font color=\"([^\"]*?)\">)?([^<]*?)(?:<\\/font>)?<\\/b>[\\s\\S]*?<span class=\"profile-left-info\">[^<]*?<font[^>]*?>(\\d+)<\\/font>[\\s\\S]*?<div id=\"profile-info-right-side\">[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content last\">[\\s\\S]*?<p class=\"data-label\">[^<]*?<span[^>]*?>([\\s\\S]+?)?<\\/span><\\/p>[\\s\\S]*?<p id=\"user-signature\">([\\s\\S]+?)?<\\/p>[^<]*?<\\/div>"
+    private val mainPatternSrc =
+        "<span id=\"profile-nickname\"[^>]*?><b>([\\s\\S]*?)<\\/b><\\/span>[\\s\\S]*?<div id=\"profile-avatar-wrapper\">[^<]*?<img[^>]*?src=\"([^\"]*?)\"[^>]*?>[\\s\\S]*?<span id=\"user-status-([^\"]*?)\"[^>]*?>(?:[\\s\\S]*?<span id=\"user-offline-since\"[^>]*?>[^<]*?<b>был в сети ([^<]*?)<)?[\\s\\S]*?<span class=\"profile-left-info\"><b>(?:<font color=\"([^\"]*?)\">)?([^<]*?)(?:<\\/font>)?<\\/b>[\\s\\S]*?<span class=\"profile-left-info\">[^<]*?<font[^>]*?>(\\d+)<\\/font>[\\s\\S]*?<div id=\"profile-info-right-side\">[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content\">([\\s\\S]*?)<\\/div>[^<]*?<div class=\"profile-right-block-content last\">[\\s\\S]*?<p class=\"data-label\">[^<]*?<span[^>]*?>([\\s\\S]+?)?<\\/span><\\/p>[\\s\\S]*?<p id=\"user-signature\">([\\s\\S]+?)?<\\/p>[^<]*?<\\/div>"
 
 
     /*
@@ -37,7 +38,8 @@ class ProfileParser @Inject constructor(
     * 3.    String? Link url
     * 4.    String? Link name
     * */
-    private val contentItemPatternSrc = "<p class=\"data-label\">([^:]*?):[^<]*?<span class=\"user-data\">((?!Не указано)(?:<a href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>|[\\s\\S]*?))<\\/span><\\/p>"
+    private val contentItemPatternSrc =
+        "<p class=\"data-label\">([^:]*?):[^<]*?<span class=\"user-data\">((?!Не указано)(?:<a href=\"([^\"]*?)\"[^>]*?>([\\s\\S]*?)<\\/a>|[\\s\\S]*?))<\\/span><\\/p>"
 
     private val mainPattern: Pattern by lazy {
         Pattern.compile(mainPatternSrc, Pattern.CASE_INSENSITIVE)
@@ -56,7 +58,11 @@ class ProfileParser @Inject constructor(
                 nick = matcher.group(1)
                 avatarUrl = "${apiConfig.baseImagesUrl}${matcher.group(2)}"
                 status = matcher.group(3).run {
-                    if (this.equals("Online", true)) Profile.Status.ONLINE else Profile.Status.OFFLINE
+                    if (this.equals(
+                            "Online",
+                            true
+                        )
+                    ) Profile.Status.ONLINE else Profile.Status.OFFLINE
                 }
                 lastOnline = matcher.group(4)
                 groupColor = matcher.group(5)

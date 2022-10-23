@@ -1,7 +1,11 @@
 package ru.radiationx.data.analytics.profile
 
-import io.reactivex.Single
-import ru.radiationx.data.analytics.features.mapper.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.migration.MigrationDataSource
@@ -20,65 +24,67 @@ class AnalyticsProfileDataSource(
     private val releaseUpdateHolder: ReleaseUpdateHolder
 ) {
 
-    fun getApiAddressTag(): Single<String> = single {
+    fun getApiAddressTag(): Flow<String> = single {
         apiConfig.tag
     }
 
-    fun getAppTheme(): Single<String> = single {
+    fun getAppTheme(): Flow<String> = single {
         analyticsThemeProvider.getTheme().value
     }
 
-    fun getQualitySettings(): Single<String> = single {
+    fun getQualitySettings(): Flow<String> = single {
         preferencesHolder.getQuality().toAnalyticsQuality().value
     }
 
-    fun getPlayerSettings(): Single<String> = single {
+    fun getPlayerSettings(): Flow<String> = single {
         preferencesHolder.getPlayerType().toAnalyticsPlayer().value
     }
 
-    fun getPipSettings(): Single<String> = single {
+    fun getPipSettings(): Flow<String> = single {
         preferencesHolder.pipControl.toAnalyticsPip().value
     }
 
-    fun getPlaySpeedSettings(): Single<Float> = single {
+    fun getPlaySpeedSettings(): Flow<Float> = single {
         preferencesHolder.playSpeed
     }
 
-    fun getNotificationsAllSettings(): Single<Boolean> = single {
+    fun getNotificationsAllSettings(): Flow<Boolean> = single {
         preferencesHolder.notificationsAll
     }
 
-    fun getNotificationsServiceSettings(): Single<Boolean> = single {
+    fun getNotificationsServiceSettings(): Flow<Boolean> = single {
         preferencesHolder.notificationsService
     }
 
-    fun getEpisodeOrderSettings(): Single<Boolean> = single {
+    fun getEpisodeOrderSettings(): Flow<Boolean> = single {
         preferencesHolder.episodesIsReverse
     }
 
-    fun getAuthState(): Single<String> = single {
+    fun getAuthState(): Flow<String> = single {
         userHolder.getUser().authState.toAnalyticsAuthState().value
     }
 
-    fun getHistoryItemsCount(): Single<Int> = historyHolder
-        .getEpisodes()
-        .map { it.size }
+    fun getHistoryItemsCount(): Flow<Int> = single {
+        historyHolder.getEpisodes().size
+    }
 
-    fun getEpisodesItemsCount(): Single<Int> = episodesCheckerHolder
-        .getEpisodes()
-        .map { it.size }
+    fun getEpisodesItemsCount(): Flow<Int> = single {
+        episodesCheckerHolder.getEpisodes().size
+    }
 
-    fun getReleasesItemsCount(): Single<Int> = releaseUpdateHolder
-        .getReleases()
-        .map { it.size }
+    fun getReleasesItemsCount(): Flow<Int> = single {
+        releaseUpdateHolder.getReleases().size
+    }
 
-    fun getDownloadsCount(): Single<Int> = single {
+    fun getDownloadsCount(): Flow<Int> = single {
         downloadsHolder.getDownloads().size
     }
 
-    fun getAppVersionsHistory(): Single<String> = single {
+    fun getAppVersionsHistory(): Flow<String> = single {
         migrationDataSource.getHistory().joinToString()
     }
 
-    private fun <T> single(callable: () -> T) = Single.fromCallable(callable)
+    private fun <T> single(callable: suspend () -> T) = flow<T> {
+        emit(callable.invoke())
+    }
 }

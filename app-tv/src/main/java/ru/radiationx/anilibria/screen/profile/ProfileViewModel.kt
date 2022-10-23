@@ -1,11 +1,17 @@
 package ru.radiationx.anilibria.screen.profile
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -21,9 +27,10 @@ class ProfileViewModel(
 
         authRepository
             .observeUser()
-            .lifeSubscribe {
+            .onEach {
                 profileData.value = it
             }
+            .launchIn(viewModelScope)
     }
 
     fun onSignInClick() {
@@ -31,8 +38,12 @@ class ProfileViewModel(
     }
 
     fun onSignOutClick() {
-        authRepository
-            .signOut()
-            .subscribe()
+        GlobalScope.launch {
+            runCatching {
+                authRepository.signOut()
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 }

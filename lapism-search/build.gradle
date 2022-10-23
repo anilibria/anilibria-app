@@ -12,10 +12,8 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion app_min_sdk_version
         targetSdkVersion 29
-        versionCode 1001000
-        versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -43,6 +41,7 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    namespace 'com.lapism.search'
 }
 
 dependencies {

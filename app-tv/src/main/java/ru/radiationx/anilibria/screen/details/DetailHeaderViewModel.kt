@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.screen.details
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.DetailDataConverter
 import ru.radiationx.anilibria.common.DetailsState
 import ru.radiationx.anilibria.common.LibriaDetails
@@ -20,6 +22,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -40,8 +43,8 @@ class DetailHeaderViewModel(
 
     private var currentRelease: ReleaseItem? = null
 
-    private var selectEpisodeDisposable = Disposables.disposed()
-    private var favoriteDisposable = Disposables.disposed()
+    private var selectEpisodeJob: Job? = null
+    private var favoriteDisposable: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -54,30 +57,29 @@ class DetailHeaderViewModel(
 
         releaseInteractor
             .observeFull(releaseId)
-            //.delay(2000, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 currentRelease = it
                 update(it)
                 updateProgress()
             }
+            .launchIn(viewModelScope)
     }
 
     override fun onResume() {
         super.onResume()
 
-        selectEpisodeDisposable.dispose()
-        selectEpisodeDisposable = playerController
+        selectEpisodeJob?.cancel()
+        selectEpisodeJob = playerController
             .selectEpisodeRelay
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe { episodeId ->
+            .onEach { episodeId ->
                 router.navigateTo(PlayerScreen(releaseId, episodeId))
             }
+            .launchIn(viewModelScope)
     }
 
     override fun onPause() {
         super.onPause()
-        selectEpisodeDisposable.dispose()
+        selectEpisodeJob?.cancel()
     }
 
     fun onContinueClick() {
@@ -92,7 +94,8 @@ class DetailHeaderViewModel(
         if (release.episodes.size == 1) {
             router.navigateTo(PlayerScreen(releaseId))
         } else {
-            val episodeId = releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
+            val episodeId =
+                releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         }
     }
@@ -108,22 +111,23 @@ class DetailHeaderViewModel(
             return
         }
 
-        val source = if (release.favoriteInfo.isAdded) {
-            favoriteRepository.deleteFavorite(releaseId)
-        } else {
-            favoriteRepository.addFavorite(releaseId)
-        }
-
-        favoriteDisposable.dispose()
-        favoriteDisposable = source
-            .doFinally { updateProgress() }
-            .lifeSubscribe({
+        favoriteDisposable?.cancel()
+        favoriteDisposable = viewModelScope.launch {
+            runCatching {
+                if (release.favoriteInfo.isAdded) {
+                    favoriteRepository.deleteFavorite(releaseId)
+                } else {
+                    favoriteRepository.addFavorite(releaseId)
+                }
+            }.onSuccess {
                 release.favoriteInfo.isAdded = it.favoriteInfo.isAdded
                 release.favoriteInfo.rating = it.favoriteInfo.rating
                 update(release)
-            }, {
-                it.printStackTrace()
-            })
+            }.onFailure {
+                Timber.e(it)
+            }
+            updateProgress()
+        }
 
         updateProgress()
     }
@@ -135,7 +139,7 @@ class DetailHeaderViewModel(
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
-            currentRelease !is ReleaseFull || !favoriteDisposable.isDisposed
+            currentRelease !is ReleaseFull || favoriteDisposable?.isActive ?: false
         )
     }
 

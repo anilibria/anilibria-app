@@ -1,12 +1,11 @@
 package ru.radiationx.data.datasource.remote.api
 
-import io.reactivex.Single
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
-import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.fetchResult
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
@@ -22,36 +21,36 @@ class ReleaseApi @Inject constructor(
     private val apiConfig: ApiConfig
 ) {
 
-    fun getRandomRelease(): Single<RandomRelease> {
+    suspend fun getRandomRelease(): RandomRelease {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "random_release"
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { releaseParser.parseRandomRelease(it) }
+            .fetchResult<JSONObject>()
+            .let { releaseParser.parseRandomRelease(it) }
     }
 
-    fun getRelease(releaseId: Int): Single<ReleaseFull> {
+    suspend fun getRelease(releaseId: Int): ReleaseFull {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { releaseParser.release(it) }
+            .fetchResult<JSONObject>()
+            .let { releaseParser.release(it) }
     }
 
-    fun getRelease(releaseCode: String): Single<ReleaseFull> {
+    suspend fun getRelease(releaseCode: String): ReleaseFull {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "code" to releaseCode
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { releaseParser.release(it) }
+            .fetchResult<JSONObject>()
+            .let { releaseParser.release(it) }
     }
 
-    fun getReleasesByIds(ids: List<Int>): Single<List<ReleaseItem>> {
+    suspend fun getReleasesByIds(ids: List<Int>): List<ReleaseItem> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "info",
             "id" to ids.joinToString(","),
@@ -59,11 +58,11 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONArray>())
-            .map { releaseParser.releases(it) }
+            .fetchResult<JSONArray>()
+            .let { releaseParser.releases(it) }
     }
 
-    fun getReleases(page: Int): Single<Paginated<List<ReleaseItem>>> {
+    suspend fun getReleases(page: Int): Paginated<List<ReleaseItem>> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",
             "page" to page.toString(),
@@ -71,8 +70,8 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { releaseParser.releases(it) }
+            .fetchResult<JSONObject>()
+            .let { releaseParser.releases(it) }
     }
 
 

@@ -7,10 +7,8 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion app_min_sdk_version
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -22,6 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'ru.radiationx.shared_app'
 
 }
 

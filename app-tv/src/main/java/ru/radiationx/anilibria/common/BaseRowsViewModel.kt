@@ -1,10 +1,7 @@
 package ru.radiationx.anilibria.common
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.common.AuthState
 
 abstract class BaseRowsViewModel : LifecycleViewModel() {
 
@@ -32,6 +29,7 @@ abstract class BaseRowsViewModel : LifecycleViewModel() {
         rowListData.value = getRows()
     }
 
-    protected fun getRows(): List<Long> = rowIds.toMutableList().filter { availableRows.contains(it) }
+    protected fun getRows(): List<Long> =
+        rowIds.toMutableList().filter { availableRows.contains(it) }
 
 }

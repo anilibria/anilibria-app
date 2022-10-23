@@ -124,7 +124,7 @@ class App : Application() {
         }
 
         val preferencesHolder = DI.get(PreferencesHolder::class.java)
-        //todo tr-274 check working
+
         preferencesHolder
             .observeNotificationsAll()
             .onEach {
@@ -144,14 +144,18 @@ class App : Application() {
     }
 
     private fun changeSubscribeStatus(enabled: Boolean, topic: String) {
-        FirebaseMessaging.getInstance().apply {
-            if (enabled) {
-                subscribeToTopic(topic)
-                subscribeToTopic("android_$topic")
-            } else {
-                unsubscribeFromTopic(topic)
-                unsubscribeFromTopic("android_$topic")
+        try {
+            FirebaseMessaging.getInstance().apply {
+                if (enabled) {
+                    subscribeToTopic(topic)
+                    subscribeToTopic("android_$topic")
+                } else {
+                    unsubscribeFromTopic(topic)
+                    unsubscribeFromTopic("android_$topic")
+                }
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

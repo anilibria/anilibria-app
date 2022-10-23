@@ -27,7 +27,7 @@ class ConfiguringInteractor @Inject constructor(
 
     private var currentState = State.CHECK_LAST
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val fullTimeCounter = TimeCounter()
 

@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.utils.messages.SystemMessage
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import javax.inject.Inject
 
-// todo tr-274 check working
 class ScreenMessagesObserver @Inject constructor(
     private val context: Context,
     private val screenMessenger: SystemMessenger
@@ -19,7 +18,7 @@ class ScreenMessagesObserver @Inject constructor(
 
     private val messageBufferTrigger = MutableSharedFlow<Boolean>()
     private val messagesBuffer = mutableListOf<SystemMessage>()
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     private var messengerJob: Job? = null
 
     init {

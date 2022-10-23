@@ -42,7 +42,7 @@ class DownloadsDataSource(
     private val downloadsRelay = MutableSharedFlow<DownloadItem>()
     private val completeRelay = MutableSharedFlow<DownloadItem>()
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     private var timerJob: Job? = null
     private val pendingDownloads = mutableListOf<Long>()
 

@@ -48,7 +48,7 @@ class ReleaseInteractor @Inject constructor(
     private val itemsUpdateTrigger = MutableSharedFlow<Boolean>()
     private val fullUpdateTrigger = MutableSharedFlow<Boolean>()
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
 

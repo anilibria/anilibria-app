@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
+import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
@@ -33,7 +34,7 @@ class MainPresenter @Inject constructor(
     private val favoritesAnalytics: FavoritesAnalytics,
     private val feedAnalytics: FeedAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
-    private val otherAnalytics: OtherAnalytics
+    private val otherAnalytics: OtherAnalytics,
 ) : BasePresenter<MainView>(router) {
 
     var defaultScreen = Screens.MainFeed().screenKey!!

@@ -15,12 +15,11 @@ import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
 import kotlinx.android.synthetic.main.view_video_control.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
@@ -30,6 +29,7 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
 import java.lang.Math.pow
+import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -180,6 +180,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 tapJob?.cancel()
                 tapJob = tapRelay
                     .onEach { handleTapSeek(it) }
+                    .flowOn(Dispatchers.Main.immediate)
                     .launchIn(GlobalScope)
             }
 
@@ -212,7 +213,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 event ?: return
                 videoView?.showControls()
                 if (tapSeekStarted) {
-                    runBlocking {
+                    GlobalScope.launch {
                         tapRelay.emit(event)
                     }
                 }
@@ -225,7 +226,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                     tapSeekStarted = true
                     handleStartTapSeek()
                 }
-                runBlocking {
+                GlobalScope.launch {
                     tapRelay.emit(event)
                 }
             }

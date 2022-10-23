@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="DayNightAppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="DayNightAppTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
         <item name="colorPrimary">@color/dark_colorAccent</item>

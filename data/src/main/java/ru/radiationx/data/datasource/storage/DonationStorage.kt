@@ -34,7 +34,7 @@ class DonationStorage(
     override fun observe(): Flow<DonationInfoResponse> {
         return dataRelay
             .onSubscription {
-                if (dataRelay.value != null) {
+                if (dataRelay.value == null) {
                     updateCurrentData()
                 }
             }
@@ -42,7 +42,7 @@ class DonationStorage(
     }
 
     override suspend fun get(): DonationInfoResponse {
-        if (dataRelay.value != null) {
+        if (dataRelay.value == null) {
             updateCurrentData()
         }
         return requireNotNull(dataRelay.value)

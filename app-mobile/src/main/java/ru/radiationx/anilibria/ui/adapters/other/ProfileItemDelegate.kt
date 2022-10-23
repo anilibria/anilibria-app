@@ -6,9 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
@@ -36,21 +33,15 @@ class ProfileItemDelegate(
 
         private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
 
-        init {
-            dimensionsProvider
-                .observe()
-                .onEach {
-                    containerView.setPadding(
-                        containerView.paddingLeft,
-                        it.statusBar,
-                        containerView.paddingRight,
-                        containerView.paddingBottom
-                    )
-                }
-                .launchIn(GlobalScope)
-        }
-
         fun bind(state: ProfileItemState) {
+            dimensionsProvider.get().also {
+                containerView.setPadding(
+                    containerView.paddingLeft,
+                    it.statusBar,
+                    containerView.paddingRight,
+                    containerView.paddingBottom
+                )
+            }
             profileNick.text = state.title
             profileDesc.text = state.subtitle
             profileLogout.isVisible = state.hasAuth

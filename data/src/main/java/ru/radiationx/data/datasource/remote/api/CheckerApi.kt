@@ -22,7 +22,6 @@ class CheckerApi @Inject constructor(
     private val reserveSources: CheckerReserveSources
 ) {
 
-    // todo tr-274 check working
     suspend fun checkUpdate(versionCode: Int): UpdateData {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "app_update",

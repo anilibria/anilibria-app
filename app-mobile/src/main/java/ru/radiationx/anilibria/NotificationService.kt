@@ -8,11 +8,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.Screens
@@ -72,7 +72,7 @@ class NotificationService : FirebaseMessagingService() {
                 val apiConfig = DI.get(ApiConfig::class.java)
                 val apiConfigStorage = DI.get(ApiConfigStorage::class.java)
 
-                runBlocking {
+                GlobalScope.launch {
                     apiConfig.updateNeedConfig(true)
                 }
 

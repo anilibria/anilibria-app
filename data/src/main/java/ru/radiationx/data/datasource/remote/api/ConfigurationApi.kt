@@ -37,7 +37,6 @@ class ConfigurationApi @Inject constructor(
         }
     }
 
-    // todo tr-274 check working
     suspend fun getConfiguration(): List<ApiAddress> {
         return getMergeConfig().also {
             if (it.isEmpty()) {

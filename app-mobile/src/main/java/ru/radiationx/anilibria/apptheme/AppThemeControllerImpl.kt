@@ -8,7 +8,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.shared.ktx.repeatWhen
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
@@ -34,7 +36,7 @@ class AppThemeControllerImpl(
                 val mode = getMode()
                 applyTheme(mode)
                 modeRelay.value = mode
-                runBlocking {
+                GlobalScope.launch {
                     triggerRelay.emit(Unit)
                 }
             }
@@ -43,7 +45,7 @@ class AppThemeControllerImpl(
 
     private val lifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
         override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
-            runBlocking {
+            GlobalScope.launch {
                 triggerRelay.emit(Unit)
             }
         }

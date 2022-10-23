@@ -18,7 +18,7 @@ class TeamsStorage(
 ) : TeamsHolder {
 
     companion object {
-        private const val KEY_DONATION = "teams3"
+        private const val KEY_DONATION = "teams"
     }
 
     private val dataAdapter by lazy {

@@ -16,7 +16,7 @@ import ru.terrakok.cicerone.Router
 open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPresenter<ViewT>() {
 
     val presenterScope by lazy {
-        CoroutineScope(Dispatchers.Main + SupervisorJob())
+        CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     }
 
     override fun onDestroy() {

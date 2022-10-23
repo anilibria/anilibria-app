@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.app_min_sdk_version = 23
+    ext.app_min_sdk_version = 21
     ext.tv_min_sdk_version = 21
     ext.kotlin_version = '1.7.10'
     ext.coroutines_version = '1.6.4'

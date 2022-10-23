@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatColor
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -131,7 +132,7 @@ class GradientBackgroundManager(
                 }
                 applyPalette(palette, colorSelector, colorModifier)
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

@@ -10,6 +10,7 @@ import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -31,7 +32,7 @@ class TeamsPresenter(
             runCatching {
                 repository.requestUpdate()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
         repository

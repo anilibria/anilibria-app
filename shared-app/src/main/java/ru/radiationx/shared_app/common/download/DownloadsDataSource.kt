@@ -13,6 +13,7 @@ import android.os.Handler
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.DownloadsHolder
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 //todo tr-274 check working
@@ -82,7 +83,7 @@ class DownloadsDataSource(
                 delay(1000)
             }
         }
-            .catch { it.printStackTrace() }
+            .catch { Timber.e(it) }
             .onEach {
                 fetchPendingDownloads()
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && cachedDownloads.isNotEmpty()) {

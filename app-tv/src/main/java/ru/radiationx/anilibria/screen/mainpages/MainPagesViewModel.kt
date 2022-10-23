@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -32,7 +33,7 @@ class MainPagesViewModel(
             }.onSuccess {
                 hasUpdatesData.value = it.code > buildConfig.versionCode
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

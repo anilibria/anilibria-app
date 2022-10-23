@@ -23,6 +23,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.shared_app.di.DI
+import timber.log.Timber
 
 class NotificationService : FirebaseMessagingService() {
 
@@ -82,7 +83,7 @@ class NotificationService : FirebaseMessagingService() {
                 val addresses = configurationParser.parse(jsonObject)
                 apiConfig.setAddresses(addresses)
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                Timber.e(ex)
             }
         }
     }

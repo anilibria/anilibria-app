@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
@@ -89,7 +90,7 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                     cardsData.value = currentCards
                 }
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
                 cardsData.value = currentCards + getErrorCard(it)
             }
         }

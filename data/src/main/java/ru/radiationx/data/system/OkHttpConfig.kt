@@ -4,6 +4,7 @@ import android.os.Build
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import timber.log.Timber
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
@@ -58,7 +59,7 @@ fun OkHttpClient.Builder.appendSocketFactoryIfNeeded(): OkHttpClient.Builder {
             sslSocketFactory(TLSSocketFactory(), trustManager)
             hostnameVerifier(OkHttpConfig.DummyHostnameVerifier())
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
     return this

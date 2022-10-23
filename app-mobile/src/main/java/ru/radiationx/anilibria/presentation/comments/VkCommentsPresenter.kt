@@ -21,6 +21,7 @@ import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import javax.inject.Inject
 
 @InjectViewState
@@ -94,7 +95,7 @@ class VkCommentsPresenter @Inject constructor(
                 hasVkBlockedError = it
                 updateVkBlockedState()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
 

@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -28,7 +29,7 @@ class AuthCredentialsViewModel(
             }.onSuccess {
                 guidedRouter.finishGuidedChain()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
                 error.value = it.message
             }
             progressState.value = false

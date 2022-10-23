@@ -11,6 +11,7 @@ import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.OtpNotAcceptedException
 import ru.radiationx.data.entity.app.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -78,7 +79,7 @@ class AuthOtpViewModel(
     }
 
     private fun handleError(error: Throwable) {
-        error.printStackTrace()
+        Timber.e(error)
         val buttonState = when (error) {
             is OtpNotFoundException -> ButtonState.EXPIRED
             is OtpNotAcceptedException -> ButtonState.COMPLETE

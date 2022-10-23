@@ -25,6 +25,7 @@ import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
+import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import java.io.ByteArrayInputStream
@@ -108,6 +109,9 @@ class App : Application() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
 
         initDependencies()
 
@@ -155,7 +159,7 @@ class App : Application() {
                 }
             }
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 
@@ -178,12 +182,12 @@ class App : Application() {
             template = try {
                 MiniTemplator.Builder().build(stream, charset)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 MiniTemplator.Builder()
                     .build(ByteArrayInputStream("Template error!".toByteArray(charset)), charset)
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.e(e)
         }
         return template
     }

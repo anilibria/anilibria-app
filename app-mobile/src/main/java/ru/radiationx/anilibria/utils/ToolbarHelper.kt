@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.utils
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.text.TextUtils
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.appbar.AppBarLayout
@@ -11,6 +10,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.App
+import timber.log.Timber
 
 /**
  * Created by radiationx on 23.12.17.
@@ -51,7 +51,7 @@ object ToolbarHelper {
             toolbarTitleView.isHorizontalFadingEdgeEnabled = true
             toolbarTitleView.setFadingEdgeLength((App.instance.resources.displayMetrics.density * 8).toInt())
         } catch (e: Exception) {
-            Log.e("ToolbarHelper", "error", e)
+            Timber.w(e)
         }
     }
 

@@ -12,6 +12,7 @@ import okio.source
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.entity.app.donation.DonationInfoResponse
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -63,7 +64,7 @@ class DonationStorage(
         val prefsData = try {
             getFromPrefs()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e(ex)
             null
         }
         val data = prefsData ?: getFromAssets()

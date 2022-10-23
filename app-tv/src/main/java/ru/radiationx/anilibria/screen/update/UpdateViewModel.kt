@@ -19,6 +19,7 @@ import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadItem
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -65,8 +66,7 @@ class UpdateViewModel(
                     startDownload(it.url)
                 }
             }.onFailure {
-                it.printStackTrace()
-
+                Timber.e(it)
             }
             progressState.value = false
         }

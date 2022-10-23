@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.onSubscription
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.TeamsHolder
 import ru.radiationx.data.entity.app.team.TeamsResponse
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -56,7 +57,7 @@ class TeamsStorage(
         val prefsData = try {
             getFromPrefs()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            Timber.e(ex)
             null
         }
         dataRelay.value = prefsData

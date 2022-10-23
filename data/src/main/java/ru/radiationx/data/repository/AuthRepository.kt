@@ -11,6 +11,7 @@ import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.system.HttpException
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -55,7 +56,7 @@ class AuthRepository @Inject constructor(
                 .loadUser()
                 .also { updateUser(it) }
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
             val code = ((ex as? ApiError)?.code ?: (ex as? HttpException)?.code)
             if (code == 401) {
                 userHolder.delete()

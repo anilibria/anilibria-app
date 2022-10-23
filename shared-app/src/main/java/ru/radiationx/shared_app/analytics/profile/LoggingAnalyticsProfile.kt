@@ -8,6 +8,7 @@ import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -20,7 +21,7 @@ class LoggingAnalyticsProfile(
         try {
             unsafeUpdate()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 
@@ -55,7 +56,7 @@ class LoggingAnalyticsProfile(
                         .let { mainParams + it.toList() }
                 }
                 .catch {
-                    it.printStackTrace()
+                    Timber.e(it)
                 }
                 .onEach {
                     Log.d("LoggingAnalyticsProfile", it.toMap().toString())

@@ -38,6 +38,7 @@ import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
+import timber.log.Timber
 import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
@@ -286,7 +287,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 val cssSrc = try {
                     runBlocking { client.get(url.orEmpty(), emptyMap()) }
                 } catch (ex: Throwable) {
-                    ex.printStackTrace()
+                    Timber.e(ex)
                     return WebResourceResponse(
                         "text/css",
                         "utf-8",

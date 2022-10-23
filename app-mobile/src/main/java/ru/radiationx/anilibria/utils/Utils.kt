@@ -9,6 +9,7 @@ import android.os.Environment
 import android.util.Log
 import ru.radiationx.anilibria.App
 import ru.radiationx.shared_app.common.MimeTypeUtil
+import timber.log.Timber
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.text.DecimalFormat
@@ -54,7 +55,7 @@ object Utils {
         try {
             fileName = URLDecoder.decode(url, "CP1251")
         } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
+            Timber.e(e)
         }
 
         val cut = fileName.lastIndexOf('/')

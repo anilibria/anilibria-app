@@ -2,6 +2,7 @@ package ru.radiationx.shared_app.analytics.errors
 
 import com.yandex.metrica.YandexMetrica
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -29,7 +30,7 @@ class AppMetricaErrorReporter : AnalyticsErrorReporter {
         try {
             block()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 }

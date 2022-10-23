@@ -4,6 +4,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
+import timber.log.Timber;
+
 public class VideoGestureListener extends GestureDetector.SimpleOnGestureListener {
 
     private static final int SWIPE_THRESHOLD = 100;
@@ -80,7 +82,7 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
             result = true;
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            Timber.e(exception);
         }
         return result;
     }

@@ -11,6 +11,7 @@ import ru.radiationx.data.di.DataModule
 import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.di.DI
+import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 
@@ -29,7 +30,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
         initYandexAppMetrica()
 
         if (isMainProcess()) {

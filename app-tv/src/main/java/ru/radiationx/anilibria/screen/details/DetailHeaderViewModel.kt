@@ -22,6 +22,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -123,8 +124,7 @@ class DetailHeaderViewModel(
                 release.favoriteInfo.rating = it.favoriteInfo.rating
                 update(release)
             }.onFailure {
-
-                it.printStackTrace()
+                Timber.e(it)
             }
             updateProgress()
         }

@@ -26,6 +26,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import javax.inject.Inject
 
 @InjectViewState
@@ -91,7 +92,7 @@ class OtherPresenter @Inject constructor(
             runCatching {
                 menuRepository.getMenu()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
         subscribeUpdate()
@@ -104,7 +105,7 @@ class OtherPresenter @Inject constructor(
             runCatching {
                 authRepository.loadUser()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

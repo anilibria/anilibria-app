@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -33,7 +34,7 @@ class SearchSeasonViewModel(
                 updateChecked()
                 updateSelected()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

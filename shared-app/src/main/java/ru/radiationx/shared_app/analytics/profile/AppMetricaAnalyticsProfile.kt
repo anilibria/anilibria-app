@@ -11,6 +11,7 @@ import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -23,7 +24,7 @@ class AppMetricaAnalyticsProfile(
         try {
             unsafeUpdate()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 
@@ -71,7 +72,7 @@ class AppMetricaAnalyticsProfile(
                     }
                 }
                 .catch {
-                    it.printStackTrace()
+                    Timber.e(it)
                 }
                 .onEach {
                     YandexMetrica.reportUserProfile(it)

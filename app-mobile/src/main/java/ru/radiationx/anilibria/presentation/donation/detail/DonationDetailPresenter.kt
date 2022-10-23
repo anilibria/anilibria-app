@@ -13,6 +13,7 @@ import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -32,7 +33,7 @@ class DonationDetailPresenter(
             runCatching {
                 donationRepository.requestUpdate()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
         donationRepository

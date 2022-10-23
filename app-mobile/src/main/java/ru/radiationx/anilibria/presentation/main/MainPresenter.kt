@@ -17,6 +17,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -87,12 +88,12 @@ class MainPresenter @Inject constructor(
             runCatching {
                 authRepository.loadUser()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
             runCatching {
                 donationRepository.requestUpdate()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

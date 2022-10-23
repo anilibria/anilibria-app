@@ -5,6 +5,7 @@ import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import timber.log.Timber
 import javax.inject.Inject
 
 class ApiConfigStorage @Inject constructor(
@@ -21,7 +22,7 @@ class ApiConfigStorage @Inject constructor(
         try {
             sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            Timber.e(ex)
         }
     }
 

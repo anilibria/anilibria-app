@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -41,7 +42,7 @@ class ProfileViewModel(
             runCatching {
                 authRepository.signOut()
             }.onFailure {
-                it.printStackTrace()
+                Timber.e(it)
             }
         }
     }

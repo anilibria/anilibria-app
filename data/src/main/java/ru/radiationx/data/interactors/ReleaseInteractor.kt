@@ -1,18 +1,12 @@
 package ru.radiationx.data.interactors
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.ReleaseRepository
-import ru.radiationx.shared.ktx.repeatWhen
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 /**
@@ -36,110 +30,63 @@ class ReleaseInteractor @Inject constructor(
             release
         }
 
-    private val fullLoadCacheById = ConcurrentHashMap<Int, Flow<ReleaseFull>>()
-    private val fullLoadCacheByCode = ConcurrentHashMap<String, Flow<ReleaseFull>>()
-
-    private val releaseItemsById = mutableMapOf<Int, ReleaseItem>()
-    private val releaseItemsByCode = mutableMapOf<String, ReleaseItem>()
-
-    private val releasesById = mutableMapOf<Int, ReleaseFull>()
-    private val releasesByCode = mutableMapOf<String, ReleaseFull>()
-
-    private val itemsUpdateTrigger = MutableSharedFlow<Boolean>()
-    private val fullUpdateTrigger = MutableSharedFlow<Boolean>()
-
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private val releaseItems = MutableStateFlow<List<ReleaseItem>>(emptyList())
+    private val releases = MutableStateFlow<List<ReleaseFull>>(emptyList())
 
     suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
 
-    private fun loadRelease(releaseId: Int): Flow<ReleaseFull> {
-        return flow { emit(releaseRepository.getRelease(releaseId)) }
-            .onEach(this::updateFullCache)
-            .onCompletion { fullLoadCacheById.remove(releaseId) }
-            .shareIn(scope, SharingStarted.Eagerly, 1)
-            .also { fullLoadCacheById[releaseId] = it }
+    private suspend fun loadRelease(releaseId: Int): ReleaseFull {
+        return releaseRepository.getRelease(releaseId).also(::updateFullCache)
     }
 
-    private fun loadRelease(releaseCode: String): Flow<ReleaseFull> {
-        return flow { emit(releaseRepository.getRelease(releaseCode)) }
-            .onEach(this::updateFullCache)
-            .onCompletion { fullLoadCacheByCode.remove(releaseCode) }
-            .shareIn(scope, SharingStarted.Eagerly, 1)
-            .also { fullLoadCacheByCode[releaseCode] = it }
+    private suspend fun loadRelease(releaseCode: String): ReleaseFull {
+        return releaseRepository.getRelease(releaseCode).also(::updateFullCache)
     }
 
-    fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): Flow<ReleaseFull> {
-        val releaseSource = releaseId.idOrNull()
-            ?.let { fullLoadCacheById[it] }
-            ?: releaseCode?.let { fullLoadCacheByCode[it] }
-        (releaseSource)?.also {
-            return it
-        }
-
+    suspend fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull {
         return when {
             releaseId != -1 -> loadRelease(releaseId)
             releaseCode != null -> loadRelease(releaseCode)
-            else -> flow { throw Exception("Unknown id=$releaseId or code=$releaseCode") }
+            else -> throw Exception("Unknown id=$releaseId or code=$releaseCode")
         }
     }
 
-    suspend fun loadReleases(page: Int): Paginated<List<ReleaseItem>> = releaseRepository
-        .getReleases(page)
-        .also { updateItemsCache(it.data) }
-
     fun getItem(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem? {
-        return releaseId.idOrNull()
-            ?.let { releaseItemsById[it] }
-            ?: releaseCode?.let { releaseItemsByCode[it] }
+        return releaseItems.value.findRelease(releaseId, releaseCode)
     }
 
     fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull? {
-        return releaseId.idOrNull()
-            ?.let { releasesById[it] }
-            ?: releaseCode?.let { releasesByCode[it] }
+        return releases.value.findRelease(releaseId, releaseCode)
     }
 
     fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Flow<ReleaseItem> {
-        return flowOf(true)
-            .filter { getItem(releaseId, releaseCode) != null }
-            .map { getItem(releaseId, releaseCode)!! }
-            .repeatWhen(itemsUpdateTrigger)
+        return releaseItems.mapNotNull { it.findRelease(releaseId, releaseCode) }
     }
 
     fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Flow<ReleaseFull> {
         return combine(
-            createFullObservable(releaseId, releaseCode),
+            releases.mapNotNull { it.findRelease(releaseId, releaseCode) },
             episodesCheckerStorage.observeEpisodes(),
             checkerCombiner
         )
     }
 
-    private fun createFullObservable(
-        releaseId: Int = -1,
-        releaseCode: String? = null
-    ): Flow<ReleaseFull> {
-        return flowOf(true)
-            .filter { getFull(releaseId, releaseCode) != null }
-            .map { getFull(releaseId, releaseCode)!! }
-            .repeatWhen(fullUpdateTrigger)
+    fun updateItemsCache(items: List<ReleaseItem>) {
+        releaseItems.update { releaseItems ->
+            releaseItems.filterNot { release ->
+                items.any {
+                    check(release, it.id, it.code)
+                }
+            } + items
+        }
     }
 
-    suspend fun updateItemsCache(items: List<ReleaseItem>) {
-        items.forEach { release ->
-            releaseItemsById[release.id] = release
-            release.code?.also { code ->
-                releaseItemsByCode[code] = release
-            }
+    fun updateFullCache(release: ReleaseFull) {
+        releases.update { releases ->
+            releases.filterNot {
+                check(it, release.id, release.code)
+            } + release
         }
-        itemsUpdateTrigger.emit(true)
-    }
-
-    suspend fun updateFullCache(release: ReleaseFull) {
-        releasesById[release.id] = release
-        release.code?.also { code ->
-            releasesByCode[code] = release
-        }
-        fullUpdateTrigger.emit(true)
     }
 
     /* Common */
@@ -183,4 +130,18 @@ class ReleaseInteractor @Inject constructor(
     } else {
         null
     }
+
+    private fun <T : ReleaseItem> List<T>.findRelease(id: Int, code: String?): T? = find {
+        check(it, id, code)
+    }
+
+    private fun <T : ReleaseItem> check(release: T, id: Int, code: String?): Boolean {
+        val nullId = id.idOrNull()
+        val releaseNullId = release.id.idOrNull()
+        val releaseCode = release.code
+        val foundById = releaseNullId != null && nullId != null && releaseNullId == nullId
+        val foundByCode = releaseCode != null && code != null && releaseCode == code
+        return foundById || foundByCode
+    }
+
 }

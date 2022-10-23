@@ -2,10 +2,12 @@ package ru.radiationx.anilibria.screen.details
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -64,9 +66,14 @@ class DetailsViewModel(
     }
 
     private fun loadRelease() {
-        releaseInteractor
-            .loadRelease(releaseId)
-            .map { historyRepository.putRelease(it) }
-            .launchIn(viewModelScope)
+        viewModelScope.launch{
+            runCatching {
+                releaseInteractor.loadRelease(releaseId)
+            }.onSuccess {
+                historyRepository.putRelease(it)
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
     }
 }

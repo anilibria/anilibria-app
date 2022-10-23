@@ -175,11 +175,7 @@ class VkCommentsPresenter @Inject constructor(
 
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(pageRepository.getComments()) }
-        val releaseSource = flow {
-            emit(releaseInteractor.getItem(releaseId, releaseIdCode))
-        }.map {
-            it ?: releaseInteractor.loadRelease(releaseId, releaseIdCode).first()
-        }
+        val releaseSource = releaseInteractor.observeFull(releaseId, releaseIdCode)
         return try {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(

@@ -21,21 +21,20 @@ class UserStorage @Inject constructor(
     override fun getUser(): ProfileItem = userRelay.value
 
     private fun getSavedUser(): ProfileItem {
-        val user = ProfileItem()
         val userSource = sharedPreferences.getString("saved_user", null)
-        if (userSource == null) {
-            user.authState = AuthState.NO_AUTH
+        return if (userSource == null) {
+            val user = ProfileItem()
             localSaveUser(user)
+            user
         } else {
             val userJson = JSONObject(userSource)
-            user.apply {
-                authState = AuthState.valueOf(userJson.getString("authState"))
-                id = userJson.getInt("id")
-                nick = userJson.getString("nick")
-                avatarUrl = userJson.getString("avatar")
-            }
+            ProfileItem(
+                id = userJson.getInt("id"),
+                nick = userJson.getString("nick"),
+                avatarUrl = userJson.getString("avatar"),
+                authState = AuthState.valueOf(userJson.getString("authState")),
+            )
         }
-        return user
     }
 
     private fun localSaveUser(user: ProfileItem) {
@@ -55,13 +54,7 @@ class UserStorage @Inject constructor(
     }
 
     override fun delete() {
-        val user = getUser()
-        user.apply {
-            authState = AuthState.AUTH_SKIPPED
-            id = ProfileItem.NO_ID
-            nick = ProfileItem.NO_VALUE
-            avatarUrl = ProfileItem.NO_VALUE
-        }
+        val user = ProfileItem(authState = AuthState.AUTH_SKIPPED)
         saveUser(user)
     }
 

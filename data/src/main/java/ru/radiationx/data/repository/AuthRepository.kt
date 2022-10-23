@@ -39,14 +39,17 @@ class AuthRepository @Inject constructor(
     fun getAuthState(): AuthState = userHolder.getUser().authState
 
     fun updateUser(authState: AuthState) {
-        val user = userHolder.getUser()
-        user.authState = authState
+        val user = userHolder.getUser().copy(
+            authState = authState
+        )
         userHolder.saveUser(user)
     }
 
     private fun updateUser(newUser: ProfileItem) {
-        newUser.authState = AuthState.AUTH
-        userHolder.saveUser(newUser)
+        val user = newUser.copy(
+            authState = AuthState.AUTH
+        )
+        userHolder.saveUser(user)
     }
 
     // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.

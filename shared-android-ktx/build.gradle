@@ -7,7 +7,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion app_min_sdk_version
         targetSdkVersion 29
     }
 
@@ -31,10 +31,6 @@ android {
     }
     namespace 'ru.radiationx.shared.ktx.android'
 
-}
-
-ext {
-    supportLibVersion = '28.0.0'
 }
 
 dependencies {

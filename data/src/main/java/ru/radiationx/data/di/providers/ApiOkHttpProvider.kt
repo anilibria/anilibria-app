@@ -38,7 +38,7 @@ class ApiOkHttpProvider @Inject constructor(
                     if (username != null && password != null) {
                         proxyAuthenticator { route, response ->
                             val credential = Credentials.basic(username, password)
-                            response.request().newBuilder()
+                            response.request.newBuilder()
                                 .header("Proxy-Authorization", credential)
                                 .build()
                         }
@@ -49,7 +49,7 @@ class ApiOkHttpProvider @Inject constructor(
 
             addNetworkInterceptor {
                 val hostAddress =
-                    it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
+                    it.connection()?.route()?.socketAddress?.address?.hostAddress.orEmpty()
                 /*if (!apiConfig.getPossibleIps().contains(hostAddress)) {
                     apiConfig.updateNeedConfig(true)
                     throw WrongHostException(hostAddress)

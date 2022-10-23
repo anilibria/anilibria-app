@@ -34,7 +34,7 @@ object OkHttpConfig {
 
 fun OkHttpClient.Builder.appendConnectionSpecs(): OkHttpClient.Builder {
     val cipherSuites = mutableListOf<CipherSuite>()
-    val suites = ConnectionSpec.MODERN_TLS.cipherSuites()
+    val suites = ConnectionSpec.MODERN_TLS.cipherSuites
     suites?.also { cipherSuites.addAll(it) }
 
     if (!cipherSuites.contains(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA)) {

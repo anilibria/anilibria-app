@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -70,14 +71,14 @@ open class Client @Inject constructor(
             val call = clientWrapper.get().newCall(request)
             val callResponse = call.awaitResponse()
             if (!callResponse.isSuccessful) {
-                throw HttpException(callResponse.code(), callResponse.message(), callResponse)
+                throw HttpException(callResponse.code, callResponse.message, callResponse)
             }
             NetworkResponse(
                 getHttpUrl(url, method, args).toString(),
-                callResponse.code(),
-                callResponse.message(),
-                callResponse.request().url().toString(),
-                callResponse.body()?.string().orEmpty(),
+                callResponse.code,
+                callResponse.message,
+                callResponse.request.url.toString(),
+                callResponse.body?.string().orEmpty(),
                 callResponse.headers(HEADER_HOST_IP).firstOrNull()
             )
         }
@@ -87,7 +88,7 @@ open class Client @Inject constructor(
         method: String,
         args: Map<String, String>
     ): RequestBody? = when (method) {
-        METHOD_POST -> {
+        METHOD_POST, METHOD_PUT -> {
             FormBody.Builder()
                 .apply {
                     args.forEach {
@@ -96,15 +97,12 @@ open class Client @Inject constructor(
                 }
                 .build()
         }
-        METHOD_PUT, METHOD_DELETE -> {
-            RequestBody.create(MediaType.parse("text/plain; charset=utf-8"), "")
-        }
-        METHOD_GET -> null
+        METHOD_GET, METHOD_DELETE -> null
         else -> throw Exception("Unknown method: $method")
     }
 
     private fun getHttpUrl(url: String, method: String, args: Map<String, String>): HttpUrl {
-        var httpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect: '$url'")
+        var httpUrl = url.toHttpUrlOrNull() ?: throw Exception("URL incorrect: '$url'")
         if (method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->
                 args.forEach { builder.addQueryParameter(it.key, it.value) }

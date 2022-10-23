@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import okhttp3.Cookie
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.CookieHolder.Companion.cookieNames
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class CookiesStorage @Inject constructor(
 
     private fun parseCookie(cookieFields: String): Cookie? {
         val fields = cookieFields.split("\\|:\\|".toRegex())
-        val httpUrl = HttpUrl.parse(fields[0])
+        val httpUrl = fields[0].toHttpUrlOrNull()
             ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
         val cookieString = fields[1]
         return Cookie.parse(httpUrl, cookieString)
@@ -53,13 +54,13 @@ class CookiesStorage @Inject constructor(
     override fun putCookie(url: String, cookie: Cookie) {
         sharedPreferences
             .edit()
-            .putString("cookie_${cookie.name()}", convertCookie(url, cookie))
+            .putString("cookie_${cookie.name}", convertCookie(url, cookie))
             .apply()
 
-        if (!clientCookies.containsKey(cookie.name())) {
-            clientCookies.remove(cookie.name())
+        if (!clientCookies.containsKey(cookie.name)) {
+            clientCookies.remove(cookie.name)
         }
-        clientCookies[cookie.name()] = cookie
+        clientCookies[cookie.name] = cookie
     }
 
     override fun removeCookie(name: String) {

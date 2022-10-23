@@ -7,7 +7,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion app_min_sdk_version
         targetSdkVersion 28
     }
 
@@ -28,10 +28,6 @@ android {
     }
     namespace 'ru.radiationx.data'
 
-}
-ext {
-    okHttpVersion = '3.12.3'
-    chucker_version = '3.5.2'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

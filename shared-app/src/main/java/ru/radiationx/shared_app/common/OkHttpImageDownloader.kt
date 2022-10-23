@@ -19,7 +19,7 @@ class OkHttpImageDownloader @Inject constructor(
         }
         val request = Request.Builder().url(imageUri).build()
         val response = clientWrapper.get().newCall(request).execute()
-        val responseBody = response.body()
+        val responseBody = response.body
         val inputStream = responseBody!!.byteStream()
         val contentLength = responseBody.contentLength().toInt()
         return ContentLengthInputStream(inputStream, contentLength)

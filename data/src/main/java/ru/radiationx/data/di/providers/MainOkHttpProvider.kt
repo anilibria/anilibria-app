@@ -25,7 +25,7 @@ class MainOkHttpProvider @Inject constructor(
         .appendTimeouts()
         .addNetworkInterceptor {
             val hostAddress =
-                it.connection()?.route()?.socketAddress()?.address?.hostAddress.orEmpty()
+                it.connection()?.route()?.socketAddress?.address?.hostAddress.orEmpty()
             it.proceed(it.request()).newBuilder()
                 .header("Remote-Address", hostAddress)
                 .build()

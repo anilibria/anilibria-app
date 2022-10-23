@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app.tv"
-        minSdkVersion 21
+        minSdkVersion tv_min_sdk_version
         targetSdkVersion 29
         versionCode 3
         versionName "1.0.0_RC5"

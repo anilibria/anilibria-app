@@ -1,6 +1,8 @@
 package ru.radiationx.data.system
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
@@ -57,26 +59,28 @@ open class Client @Inject constructor(
         url: String,
         args: Map<String, String>
     ): NetworkResponse {
-        val body = getRequestBody(method, args)
-        val httpUrl = getHttpUrl(url, method, args)
-        val request = Request.Builder()
-            .url(httpUrl)
-            .method(method, body)
-            .build()
+        return withContext(Dispatchers.IO) {
+            val body = getRequestBody(method, args)
+            val httpUrl = getHttpUrl(url, method, args)
+            val request = Request.Builder()
+                .url(httpUrl)
+                .method(method, body)
+                .build()
 
-        val call = clientWrapper.get().newCall(request)
-        val callResponse = call.awaitResponse()
-        if (!callResponse.isSuccessful) {
-            throw HttpException(callResponse.code(), callResponse.message(), callResponse)
+            val call = clientWrapper.get().newCall(request)
+            val callResponse = call.awaitResponse()
+            if (!callResponse.isSuccessful) {
+                throw HttpException(callResponse.code(), callResponse.message(), callResponse)
+            }
+            NetworkResponse(
+                getHttpUrl(url, method, args).toString(),
+                callResponse.code(),
+                callResponse.message(),
+                callResponse.request().url().toString(),
+                callResponse.body()?.string().orEmpty(),
+                callResponse.headers(HEADER_HOST_IP).firstOrNull()
+            )
         }
-        return NetworkResponse(
-            getHttpUrl(url, method, args).toString(),
-            callResponse.code(),
-            callResponse.message(),
-            callResponse.request().url().toString(),
-            callResponse.body()?.string().orEmpty(),
-            callResponse.headers(HEADER_HOST_IP).firstOrNull()
-        )
     }
 
     private fun getRequestBody(

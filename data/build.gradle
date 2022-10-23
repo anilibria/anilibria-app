@@ -31,6 +31,7 @@ android {
 }
 ext {
     okHttpVersion = '3.12.3'
+    chucker_version = '3.5.2'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -39,6 +40,7 @@ dependencies {
     api "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     api "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     api "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+    implementation "com.github.chuckerteam.chucker:library:$chucker_version"
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 

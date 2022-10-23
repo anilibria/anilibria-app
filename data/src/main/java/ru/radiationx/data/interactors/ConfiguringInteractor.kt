@@ -109,7 +109,7 @@ class ConfiguringInteractor @Inject constructor(
     private fun checkLast() {
         updateState(State.CHECK_LAST)
         val timeCounter = TimeCounter()
-        scope.cancel()
+
 
         scope.launch {
             timeCounter.start()
@@ -153,7 +153,7 @@ class ConfiguringInteractor @Inject constructor(
     private fun loadConfig() {
         updateState(State.LOAD_CONFIG)
         val timeCounter = TimeCounter()
-        scope.cancel()
+
 
         scope.launch {
             timeCounter.start()
@@ -184,7 +184,7 @@ class ConfiguringInteractor @Inject constructor(
         updateState(State.CHECK_AVAIL)
         val timeCounter = TimeCounter()
         val addresses = apiConfig.getAddresses()
-        scope.cancel()
+
         scope.launch {
             timeCounter.start()
             screenState.status = "Проверка доступных адресов"
@@ -223,7 +223,7 @@ class ConfiguringInteractor @Inject constructor(
         val timeCounter = TimeCounter()
         val proxies =
             apiConfig.getAddresses().map { it.proxies }.reduce { acc, list -> acc.plus(list) }
-        scope.cancel()
+
 
         scope.launch {
             timeCounter.start()

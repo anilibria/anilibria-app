@@ -5,7 +5,9 @@ import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiProxy
 import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.shared.ktx.android.mapObjects
 import ru.radiationx.shared.ktx.android.nullString
+import ru.radiationx.shared.ktx.android.toStringsList
 import javax.inject.Inject
 
 /**
@@ -70,58 +72,26 @@ class CheckerParser @Inject constructor(
     )
 
     fun parse(responseJson: JSONObject): UpdateData {
-        val resData = UpdateData()
         val jsonUpdate = responseJson.getJSONObject("update")
 
-        resData.code = jsonUpdate.optInt("version_code", Int.MAX_VALUE)
-        resData.build = jsonUpdate.optInt("version_build", Int.MAX_VALUE)
-        resData.name = jsonUpdate.optString("version_name")
-        resData.date = jsonUpdate.optString("build_date")
-
-        jsonUpdate.getJSONArray("links")?.let {
-            for (i in 0 until it.length()) {
-                it.optJSONObject(i)?.let { linkJson ->
-                    resData.links.add(UpdateData.UpdateLink().apply {
-                        name = linkJson.optString("name", "Unknown")
-                        url = linkJson.optString("url", "")
-                        type = linkJson.optString("type", "site")
-                    })
-                }
-            }
+        val links = jsonUpdate.getJSONArray("links")?.mapObjects { linkJson ->
+            UpdateData.UpdateLink(
+                name = linkJson.optString("name", "Unknown"),
+                url = linkJson.optString("url").orEmpty(),
+                type = linkJson.optString("type", "site")
+            )
         }
 
-        jsonUpdate.getJSONArray("important")?.let {
-            for (i in 0 until it.length()) {
-                it.optString(i, null)?.let {
-                    resData.important.add(it)
-                }
-            }
-        }
-
-        jsonUpdate.getJSONArray("added")?.let {
-            for (i in 0 until it.length()) {
-                it.optString(i, null)?.let {
-                    resData.added.add(it)
-                }
-            }
-        }
-
-        jsonUpdate.getJSONArray("fixed")?.let {
-            for (i in 0 until it.length()) {
-                it.optString(i, null)?.let {
-                    resData.fixed.add(it)
-                }
-            }
-        }
-
-        jsonUpdate.getJSONArray("changed")?.let {
-            for (i in 0 until it.length()) {
-                it.optString(i, null)?.let {
-                    resData.changed.add(it)
-                }
-            }
-        }
-
-        return resData
+        return UpdateData(
+            code = jsonUpdate.optInt("version_code", 0),
+            build = jsonUpdate.optInt("version_build", 0),
+            name = jsonUpdate.optString("version_name"),
+            date = jsonUpdate.optString("build_date"),
+            links = links.orEmpty(),
+            important = jsonUpdate.getJSONArray("important")?.toStringsList().orEmpty(),
+            added = jsonUpdate.getJSONArray("added")?.toStringsList().orEmpty(),
+            fixed = jsonUpdate.getJSONArray("fixed")?.toStringsList().orEmpty(),
+            changed = jsonUpdate.getJSONArray("changed")?.toStringsList().orEmpty()
+        )
     }
 }

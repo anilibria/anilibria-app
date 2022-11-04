@@ -87,7 +87,6 @@ class DataModule : Module() {
         bind(CheckerParser::class.java).singleton()
         bind(ConfigurationParser::class.java).singleton()
         bind(PagesParser::class.java).singleton()
-        bind(ProfileParser::class.java).singleton()
         bind(ReleaseParser::class.java).singleton()
         bind(SearchParser::class.java).singleton()
         bind(YoutubeParser::class.java).singleton()

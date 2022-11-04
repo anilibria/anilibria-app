@@ -6,9 +6,4 @@ data class SocialAuth(
     val socialUrl: String,
     val resultPattern: String,
     val errorUrlPattern: String
-) {
-    companion object {
-        const val KEY_VK = "vk"
-        const val KEY_PATREON = "patreon"
-    }
-}
+)

@@ -33,10 +33,10 @@ class SearchParser @Inject constructor(
         val result: MutableList<YearItem> = mutableListOf()
         for (i in 0 until jsonResponse.length()) {
             val yearText = jsonResponse.getString(i)
-            val genreItem = YearItem().apply {
-                title = yearText
+            val genreItem = YearItem(
+                title = yearText,
                 value = yearText
-            }
+            )
             result.add(genreItem)
         }
         return result
@@ -46,10 +46,10 @@ class SearchParser @Inject constructor(
         val result: MutableList<GenreItem> = mutableListOf()
         for (i in 0 until jsonResponse.length()) {
             val genreText = jsonResponse.getString(i)
-            val genreItem = GenreItem().apply {
-                title = genreText.capitalize()
+            val genreItem = GenreItem(
+                title = genreText.capitalize(),
                 value = genreText
-            }
+            )
             result.add(genreItem)
         }
         return result

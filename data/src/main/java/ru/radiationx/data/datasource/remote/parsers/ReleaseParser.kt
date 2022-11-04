@@ -41,10 +41,10 @@ class ReleaseParser @Inject constructor(
         item.series = jsonItem.nullString("series")
         item.poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}"
         jsonItem.optJSONObject("favorite")?.also { jsonFavorite ->
-            item.favoriteInfo.also {
-                it.rating = jsonFavorite.getInt("rating")
-                it.isAdded = jsonFavorite.getBoolean("added")
-            }
+            item.favoriteInfo = FavoriteInfo(
+                rating = jsonFavorite.getInt("rating"),
+                isAdded = jsonFavorite.getBoolean("added")
+            )
         }
         item.torrentUpdate = jsonItem.nullString("last")?.let {
             try {
@@ -105,10 +105,10 @@ class ReleaseParser @Inject constructor(
         val release = ReleaseFull(baseRelease)
 
         jsonResponse.optJSONObject("blockedInfo")?.also { jsonBlockedInfo ->
-            release.blockedInfo.also {
-                it.isBlocked = jsonBlockedInfo.getBoolean("blocked")
-                it.reason = jsonBlockedInfo.nullString("reason")
-            }
+            release.blockedInfo = BlockedInfo(
+                isBlocked = jsonBlockedInfo.getBoolean("blocked"),
+                reason = jsonBlockedInfo.nullString("reason")
+            )
         }
 
         release.moonwalkLink = jsonResponse.nullString("moon")

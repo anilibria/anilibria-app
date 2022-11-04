@@ -55,10 +55,12 @@ class GenresStorage @Inject constructor(
             val jsonGenres = JSONArray(it)
             (0 until jsonGenres.length()).forEach {
                 jsonGenres.getJSONObject(it).let {
-                    result.add(GenreItem().apply {
-                        title = it.getString("title")
-                        value = it.getString("value")
-                    })
+                    result.add(
+                        GenreItem(
+                            title = it.getString("title"),
+                            value = it.getString("value")
+                        )
+                    )
                 }
             }
         }

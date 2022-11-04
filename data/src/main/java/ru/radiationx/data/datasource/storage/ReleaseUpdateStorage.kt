@@ -47,11 +47,13 @@ class ReleaseUpdateStorage @Inject constructor(
                 mutableUpdates
                     .firstOrNull { it.id == release.id }
                     ?.let { mutableUpdates.remove(it) }
-                mutableUpdates.add(ReleaseUpdate().apply {
-                    id = release.id
-                    timestamp = release.timestamp
-                    lastOpenTimestamp = release.lastOpenTimestamp
-                })
+                mutableUpdates.add(
+                    ReleaseUpdate(
+                        id = release.id,
+                        timestamp = release.timestamp,
+                        lastOpenTimestamp = release.lastOpenTimestamp
+                    )
+                )
             }
             mutableUpdates
         }
@@ -69,11 +71,13 @@ class ReleaseUpdateStorage @Inject constructor(
                 mutableUpdates
                     .firstOrNull { it.id == release.id }
                     ?.let { mutableUpdates.remove(it) }
-                mutableUpdates.add(ReleaseUpdate().apply {
-                    id = release.id
-                    timestamp = release.torrentUpdate
-                    //lastOpenTimestamp = release.torrentUpdate
-                })
+                mutableUpdates.add(
+                    ReleaseUpdate(
+                        id = release.id,
+                        timestamp = release.torrentUpdate,
+                        lastOpenTimestamp = Int.MAX_VALUE
+                    )
+                )
             }
             mutableUpdates
         }
@@ -102,11 +106,13 @@ class ReleaseUpdateStorage @Inject constructor(
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach { index ->
                 jsonEpisodes.getJSONObject(index).let {
-                    result.add(ReleaseUpdate().apply {
-                        id = it.getInt("id")
-                        timestamp = it.getInt("timestamp")
-                        lastOpenTimestamp = it.getInt("lastOpenTimestamp")
-                    })
+                    result.add(
+                        ReleaseUpdate(
+                            id = it.getInt("id"),
+                            timestamp = it.getInt("timestamp"),
+                            lastOpenTimestamp = it.getInt("lastOpenTimestamp")
+                        )
+                    )
                 }
             }
         }

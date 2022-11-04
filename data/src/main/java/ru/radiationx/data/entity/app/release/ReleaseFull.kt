@@ -22,17 +22,14 @@ class ReleaseFull() : ReleaseItem(), Serializable {
         seasons.addAll(item.seasons)
         days.addAll(item.days)
         description = item.description
-        favoriteInfo.also {
-            it.rating = item.favoriteInfo.rating
-            it.isAdded = item.favoriteInfo.isAdded
-        }
+        favoriteInfo = item.favoriteInfo.copy()
 
         isNew = item.isNew
     }
 
     var showDonateDialog: Boolean = false
 
-    val blockedInfo = BlockedInfo()
+    var blockedInfo = BlockedInfo(false, null)
 
     var moonwalkLink: String? = null
     val episodes = mutableListOf<Episode>()

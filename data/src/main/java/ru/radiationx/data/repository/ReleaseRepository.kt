@@ -62,9 +62,11 @@ class ReleaseRepository @Inject constructor(
             releaseUpdateHolder.putRelease(item)
         } else {
             item.isNew = item.torrentUpdate > updItem.lastOpenTimestamp
-            updItem.timestamp = item.torrentUpdate
-            updItem.lastOpenTimestamp = updItem.timestamp
-            releaseUpdateHolder.updRelease(updItem)
+            val newUpdItem = updItem.copy(
+                timestamp = item.torrentUpdate,
+                lastOpenTimestamp = updItem.timestamp
+            )
+            releaseUpdateHolder.updRelease(newUpdItem)
         }
     }
 }

@@ -8,6 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
+import ru.radiationx.data.entity.app.release.FavoriteInfo
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
@@ -140,8 +141,10 @@ class HistoryStorage @Inject constructor(
                     }
                     description = jsonRelease.nullString("description")
                     jsonRelease.getJSONObject("favoriteInfo").also { jsonFav ->
-                        favoriteInfo.rating = jsonFav.getInt("rating")
-                        favoriteInfo.isAdded = jsonFav.getBoolean("isAdded")
+                        favoriteInfo = FavoriteInfo(
+                            rating = jsonFav.getInt("rating"),
+                            isAdded = jsonFav.getBoolean("isAdded")
+                        )
                     }
                 }
                 result.add(release)

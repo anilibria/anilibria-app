@@ -20,7 +20,7 @@ open class ReleaseItem : Serializable {
     val days = mutableListOf<String>()
     var description: String? = null
     var announce: String? = null
-    val favoriteInfo = FavoriteInfo()
+    var favoriteInfo = FavoriteInfo(0, false)
 
     var isNew: Boolean = false
 

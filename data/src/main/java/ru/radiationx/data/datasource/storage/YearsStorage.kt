@@ -55,10 +55,12 @@ class YearsStorage @Inject constructor(
             val jsonYears = JSONArray(it)
             (0 until jsonYears.length()).forEach { index ->
                 jsonYears.getJSONObject(index).let {
-                    result.add(YearItem().apply {
-                        title = it.getString("title")
-                        value = it.getString("value")
-                    })
+                    result.add(
+                        YearItem(
+                            title = it.getString("title"),
+                            value = it.getString("value")
+                        )
+                    )
                 }
             }
         }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
@@ -27,9 +28,9 @@ class PlayerViewModel(
     val speedState = MutableLiveData<Float>()
     val playAction = MutableLiveData<Boolean>()
 
-    private var currentEpisodes = mutableListOf<ReleaseFull.Episode>()
+    private var currentEpisodes = mutableListOf<Episode>()
     private var currentRelease: ReleaseFull? = null
-    private var currentEpisode: ReleaseFull.Episode? = null
+    private var currentEpisode: Episode? = null
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null
 
@@ -161,10 +162,10 @@ class PlayerViewModel(
         }
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? =
+    private fun getNextEpisode(): Episode? =
         currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? =
+    private fun getPrevEpisode(): Episode? =
         currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
 
     private fun getCurrentEpisodeIndex(): Int =
@@ -182,7 +183,7 @@ class PlayerViewModel(
         })
     }
 
-    private fun playEpisode(episode: ReleaseFull.Episode, force: Boolean = false) {
+    private fun playEpisode(episode: Episode, force: Boolean = false) {
         currentEpisode = episode
         currentComplete = null
         updateQuality()
@@ -214,7 +215,7 @@ class PlayerViewModel(
         else -> quality
     }
 
-    private fun getEpisodeQuality(episode: ReleaseFull.Episode, quality: Int): Int {
+    private fun getEpisodeQuality(episode: Episode, quality: Int): Int {
         var newQuality = quality
 
         if (newQuality == PreferencesHolder.QUALITY_FULL_HD && episode.urlFullHd.isNullOrEmpty()) {
@@ -230,7 +231,7 @@ class PlayerViewModel(
         return newQuality
     }
 
-    private fun getEpisodeUrl(episode: ReleaseFull.Episode, quality: Int): String? =
+    private fun getEpisodeUrl(episode: Episode, quality: Int): String? =
         when (getEpisodeQuality(episode, quality)) {
             PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
             PreferencesHolder.QUALITY_HD -> episode.urlHd

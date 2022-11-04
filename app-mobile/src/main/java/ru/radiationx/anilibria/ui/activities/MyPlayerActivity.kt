@@ -52,6 +52,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.android.gone
@@ -510,7 +511,7 @@ class MyPlayerActivity : BaseActivity() {
         return id in lastId..firstId
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? {
+    private fun getNextEpisode(): Episode? {
         val nextId = currentEpisodeId + 1
         if (checkIndex(nextId)) {
             return getEpisode(nextId)
@@ -518,7 +519,7 @@ class MyPlayerActivity : BaseActivity() {
         return null
     }
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? {
+    private fun getPrevEpisode(): Episode? {
         val prevId = currentEpisodeId - 1
         if (checkIndex(prevId)) {
             return getEpisode(prevId)
@@ -528,10 +529,10 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun getEpisode(id: Int = currentEpisodeId) = releaseData.episodes.first { it.id == id }
 
-    private fun getEpisodeId(episode: ReleaseFull.Episode) =
+    private fun getEpisodeId(episode: Episode) =
         releaseData.episodes.first { it == episode }.id
 
-    private fun playEpisode(episode: ReleaseFull.Episode) {
+    private fun playEpisode(episode: Episode) {
         when (playFlag) {
             PLAY_FLAG_DEFAULT -> {
                 hardPlayEpisode(episode)
@@ -559,7 +560,7 @@ class MyPlayerActivity : BaseActivity() {
         playFlag = PLAY_FLAG_FORCE_CONTINUE
     }
 
-    private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
+    private fun hardPlayEpisode(episode: Episode) {
         toolbar.subtitle = "${episode.title} [${dialogController.getQualityTitle(currentQuality)}]"
         currentEpisodeId = getEpisodeId(episode)
         val videoPath = when (currentQuality) {

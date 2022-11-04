@@ -19,10 +19,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ExternalEpisode
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.RutubeEpisode
-import ru.radiationx.data.entity.app.release.SourceEpisode
+import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -145,13 +142,13 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
-    fun markEpisodeViewed(episode: ReleaseFull.Episode) {
+    fun markEpisodeViewed(episode: Episode) {
         episode.isViewed = true
         episode.lastAccess = System.currentTimeMillis()
         releaseInteractor.putEpisode(episode)
     }
 
-    fun markEpisodeUnviewed(episode: ReleaseFull.Episode) {
+    fun markEpisodeUnviewed(episode: Episode) {
         releaseAnalytics.historyResetEpisode()
         episode.isViewed = false
         episode.lastAccess = 0
@@ -255,7 +252,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun onOnlineEpisodeClick(
         release: ReleaseFull,
-        episode: ReleaseFull.Episode,
+        episode: Episode,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
@@ -296,7 +293,7 @@ class ReleaseInfoPresenter @Inject constructor(
         viewState.showLongPressEpisodeDialog(episodeItem)
     }
 
-    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): ReleaseFull.Episode? {
+    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): Episode? {
         if (episode.type != ReleaseEpisodeItemType.ONLINE) return null
         return currentData?.episodes?.find { it.id == episode.id }
     }

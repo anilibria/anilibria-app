@@ -8,7 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.Episode
 import javax.inject.Inject
 
 /**
@@ -26,14 +26,14 @@ class EpisodesCheckerStorage @Inject constructor(
         MutableStateFlow(loadAll())
     }
 
-    override fun observeEpisodes(): Flow<List<ReleaseFull.Episode>> =
+    override fun observeEpisodes(): Flow<List<Episode>> =
         localEpisodesRelay
 
-    override suspend fun getEpisodes(): List<ReleaseFull.Episode> {
+    override suspend fun getEpisodes(): List<Episode> {
         return localEpisodesRelay.value
     }
 
-    override fun putEpisode(episode: ReleaseFull.Episode) {
+    override fun putEpisode(episode: Episode) {
         localEpisodesRelay.update { localEpisodes ->
             val mutableLocalEpisodes = localEpisodes.toMutableList()
             mutableLocalEpisodes
@@ -45,7 +45,7 @@ class EpisodesCheckerStorage @Inject constructor(
         saveAll()
     }
 
-    override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
+    override fun putAllEpisode(episodes: List<Episode>) {
         localEpisodesRelay.update { localEpisodes ->
             val mutableLocalEpisodes = localEpisodes.toMutableList()
             episodes.forEach { episode ->
@@ -59,7 +59,7 @@ class EpisodesCheckerStorage @Inject constructor(
         saveAll()
     }
 
-    override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
+    override fun getEpisodes(releaseId: Int): List<Episode> {
         return localEpisodesRelay.value.filter { it.releaseId == releaseId }
     }
 
@@ -89,14 +89,14 @@ class EpisodesCheckerStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll(): List<ReleaseFull.Episode> {
-        val result = mutableListOf<ReleaseFull.Episode>()
+    private fun loadAll(): List<Episode> {
+        val result = mutableListOf<Episode>()
         val savedEpisodes = sharedPreferences.getString(LOCAL_EPISODES_KEY, null)
         savedEpisodes?.let {
             val jsonEpisodes = JSONArray(it)
             (0 until jsonEpisodes.length()).forEach {
                 jsonEpisodes.getJSONObject(it).let {
-                    result.add(ReleaseFull.Episode().apply {
+                    result.add(Episode().apply {
                         releaseId = it.getInt("releaseId")
                         id = it.getInt("id")
                         seek = it.optLong("seek", 0L)

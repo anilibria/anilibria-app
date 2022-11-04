@@ -4,6 +4,7 @@ import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -24,7 +25,7 @@ interface ReleaseInfoView : MvpView {
     fun playEpisodes(release: ReleaseFull)
 
     @StateStrategyType(SkipStrategy::class)
-    fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode)
+    fun playContinue(release: ReleaseFull, startWith: Episode)
 
     @StateStrategyType(SkipStrategy::class)
     fun playWeb(link: String, code: String)
@@ -32,7 +33,7 @@ interface ReleaseInfoView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun playEpisode(
         release: ReleaseFull,
-        episode: ReleaseFull.Episode,
+        episode: Episode,
         playFlag: Int? = null,
         quality: Int? = null
     )
@@ -56,5 +57,5 @@ interface ReleaseInfoView : MvpView {
     fun showEpisodesMenuDialog()
 
     @StateStrategyType(SkipStrategy::class)
-    fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode)
+    fun showLongPressEpisodeDialog(episode: Episode)
 }

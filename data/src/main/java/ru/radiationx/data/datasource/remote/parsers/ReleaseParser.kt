@@ -94,7 +94,7 @@ class ReleaseParser @Inject constructor(
                 parseSourceTypes(jsonEpisode)
                     ?.takeIf { it.isAnilibria }
                     ?: return@mapObjects null
-                ReleaseFull.Episode().also {
+                Episode().also {
                     it.releaseId = baseRelease.id
                     it.id = jsonEpisode.optInt("id")
                     it.title = jsonEpisode.nullString("title")

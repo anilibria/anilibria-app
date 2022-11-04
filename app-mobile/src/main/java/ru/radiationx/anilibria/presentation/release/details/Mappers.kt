@@ -188,7 +188,7 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     actionColorRes = null
 )
 
-fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
+fun Episode.toState(): ReleaseEpisodeItemState {
     val subtitle = if (isViewed && seek > 0) {
         "Остановлена на ${Date(seek).asTimeSecString()}"
     } else {

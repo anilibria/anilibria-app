@@ -3,6 +3,7 @@ package ru.radiationx.data.interactors
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -18,7 +19,7 @@ class ReleaseInteractor @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
 ) {
 
-    private val checkerCombiner: (suspend (ReleaseFull, List<ReleaseFull.Episode>) -> ReleaseFull) =
+    private val checkerCombiner: (suspend (ReleaseFull, List<Episode>) -> ReleaseFull) =
         { release, savedEpisodes ->
             val localEpisodes = savedEpisodes.filter { it.releaseId == release.id }
             release.episodes.forEach { newEpisode ->
@@ -90,9 +91,9 @@ class ReleaseInteractor @Inject constructor(
     }
 
     /* Common */
-    fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
+    fun putEpisode(episode: Episode) = episodesCheckerStorage.putEpisode(episode)
 
-    fun putEpisodes(episodes: List<ReleaseFull.Episode>) =
+    fun putEpisodes(episodes: List<Episode>) =
         episodesCheckerStorage.putAllEpisode(episodes)
 
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)

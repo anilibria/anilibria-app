@@ -1,13 +1,13 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.Episode
 
 interface EpisodesCheckerHolder {
-    fun observeEpisodes(): Flow<List<ReleaseFull.Episode>>
-    suspend fun getEpisodes(): List<ReleaseFull.Episode>
-    fun putEpisode(episode: ReleaseFull.Episode)
-    fun putAllEpisode(episodes: List<ReleaseFull.Episode>)
-    fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode>
+    fun observeEpisodes(): Flow<List<Episode>>
+    suspend fun getEpisodes(): List<Episode>
+    fun putEpisode(episode: Episode)
+    fun putAllEpisode(episodes: List<Episode>)
+    fun getEpisodes(releaseId: Int): List<Episode>
     fun remove(releaseId: Int)
 }

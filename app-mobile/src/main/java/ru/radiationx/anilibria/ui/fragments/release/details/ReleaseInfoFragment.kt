@@ -37,6 +37,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.app.release.TorrentItem
@@ -130,7 +131,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         playEpisode(release, release.episodes.last())
     }
 
-    override fun playContinue(release: ReleaseFull, startWith: ReleaseFull.Episode) {
+    override fun playContinue(release: ReleaseFull, startWith: Episode) {
         playEpisode(release, startWith, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
     }
 
@@ -204,7 +205,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .show()
     }
 
-    override fun showLongPressEpisodeDialog(episode: ReleaseFull.Episode) {
+    override fun showLongPressEpisodeDialog(episode: Episode) {
         val context = context ?: return
         val items = arrayOf(
             "Отметить как непросмотренная"
@@ -231,7 +232,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     override fun playEpisode(
         release: ReleaseFull,
-        episode: ReleaseFull.Episode,
+        episode: Episode,
         playFlag: Int?,
         quality: Int?
     ) {
@@ -336,7 +337,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     private fun playInternal(
         release: ReleaseFull,
-        episode: ReleaseFull.Episode,
+        episode: Episode,
         quality: Int,
         playFlag: Int? = null
     ) {
@@ -354,7 +355,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         })
     }
 
-    private fun playExternal(release: ReleaseFull, episode: ReleaseFull.Episode, quality: Int) {
+    private fun playExternal(release: ReleaseFull, episode: Episode, quality: Int) {
         presenter.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()

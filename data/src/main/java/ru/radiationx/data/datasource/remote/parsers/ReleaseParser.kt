@@ -169,21 +169,23 @@ class ReleaseParser @Inject constructor(
             }
             .orEmpty()
 
-
-        val torrents = jsonResponse.getJSONArray("torrents")?.mapObjects { jsonTorrent ->
-            TorrentItem().apply {
-                id = jsonTorrent.optInt("id")
-                hash = jsonTorrent.nullString("hash")
-                leechers = jsonTorrent.optInt("leechers")
-                seeders = jsonTorrent.optInt("seeders")
-                completed = jsonTorrent.optInt("completed")
-                quality = jsonTorrent.nullString("quality")
-                series = jsonTorrent.nullString("series")
-                size = jsonTorrent.optLong("size")
-                url = "${apiConfig.baseImagesUrl}${jsonTorrent.nullString("url")}"
-                date = Date(jsonTorrent.optInt("ctime") * 1000L)
+        val torrents = jsonResponse
+            .getJSONArray("torrents")
+            ?.mapObjects { jsonTorrent ->
+                TorrentItem(
+                    id = jsonTorrent.optInt("id"),
+                    hash = jsonTorrent.nullString("hash"),
+                    leechers = jsonTorrent.optInt("leechers"),
+                    seeders = jsonTorrent.optInt("seeders"),
+                    completed = jsonTorrent.optInt("completed"),
+                    quality = jsonTorrent.nullString("quality"),
+                    series = jsonTorrent.nullString("series"),
+                    size = jsonTorrent.optLong("size"),
+                    url = "${apiConfig.baseImagesUrl}${jsonTorrent.nullString("url")}",
+                    date = Date(jsonTorrent.optInt("ctime") * 1000L)
+                )
             }
-        }.orEmpty()
+            .orEmpty()
 
         return ReleaseFull(
             item = baseRelease,

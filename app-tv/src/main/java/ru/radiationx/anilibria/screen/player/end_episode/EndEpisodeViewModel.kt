@@ -35,11 +35,13 @@ class EndEpisodeViewModel(
         val episode = currentEpisode ?: return
 
         viewModelScope.launch {
-            releaseInteractor.putEpisode(episode.apply {
-                seek = 0
-                lastAccess = System.currentTimeMillis()
-                isViewed = true
-            })
+            releaseInteractor.putEpisode(
+                episode.access.copy(
+                    seek = 0,
+                    lastAccess = System.currentTimeMillis(),
+                    isViewed = true
+                )
+            )
             playerController.selectEpisodeRelay.emit(episode.id)
             guidedRouter.close()
         }

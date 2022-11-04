@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.view_titleview.view.*
 import ru.radiationx.anilibria.R
 
 open class BrowseTitleView @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.browseTitleViewStyle
 ) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {

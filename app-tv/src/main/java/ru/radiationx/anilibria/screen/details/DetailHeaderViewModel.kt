@@ -52,6 +52,7 @@ class DetailHeaderViewModel(
         (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
             currentRelease = it
             update(it)
+            updateProgress()
         }
         updateProgress()
 
@@ -119,14 +120,20 @@ class DetailHeaderViewModel(
                 } else {
                     favoriteRepository.addFavorite(releaseId)
                 }
-            }.onSuccess {
-                release.favoriteInfo.isAdded = it.favoriteInfo.isAdded
-                release.favoriteInfo.rating = it.favoriteInfo.rating
-                update(release)
+            }.onSuccess { releaseItem ->
+                (currentRelease as? ReleaseFull?)?.also { data ->
+                    val newData = data.copy(
+                        item = data.item.copy(
+                            favoriteInfo = releaseItem.favoriteInfo
+                        )
+                    )
+                    releaseInteractor.updateFullCache(newData)
+                }
             }.onFailure {
                 Timber.e(it)
             }
-            updateProgress()
+        }.apply {
+            invokeOnCompletion { updateProgress() }
         }
 
         updateProgress()

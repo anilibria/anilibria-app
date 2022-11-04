@@ -35,8 +35,8 @@ class PlayerEpisodesViewModel(
             currentEpisodes.addAll(it.episodes.reversed())
         }
         episodesData.value = currentEpisodes.map {
-            val description = if (it.isViewed && it.seek > 0) {
-                "Остановлена на ${Date(it.seek).asTimeSecString()}"
+            val description = if (it.access.isViewed && it.access.seek > 0) {
+                "Остановлена на ${Date(it.access.seek).asTimeSecString()}"
             } else {
                 null
             }

@@ -146,7 +146,7 @@ class PlayerViewModel(
     fun onPrepare(position: Long, duration: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
-        val complete = episode.seek >= duration
+        val complete = episode.access.seek >= duration
         if (currentComplete == complete) return
         currentComplete = complete
         if (complete) {
@@ -176,11 +176,13 @@ class PlayerViewModel(
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(episode.apply {
-            seek = position
-            lastAccess = System.currentTimeMillis()
-            isViewed = true
-        })
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                seek = position,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
+            )
+        )
     }
 
     private fun playEpisode(episode: Episode, force: Boolean = false) {
@@ -202,7 +204,7 @@ class PlayerViewModel(
 
         val newVideo = episode.let {
             val url = getEpisodeUrl(it, quality)
-            Video(url!!, episode.seek, release.title.orEmpty(), it.title.orEmpty())
+            Video(url!!, episode.access.seek, release.title.orEmpty(), it.title.orEmpty())
         }
         if (force || videoData.value?.url != newVideo.url) {
             videoData.value = newVideo

@@ -3,7 +3,7 @@ package ru.radiationx.data.interactors
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.Episode
+import ru.radiationx.data.entity.app.release.EpisodeAccess
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
@@ -19,16 +19,19 @@ class ReleaseInteractor @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
 ) {
 
-    private val checkerCombiner: (suspend (ReleaseFull, List<Episode>) -> ReleaseFull) =
-        { release, savedEpisodes ->
-            val localEpisodes = savedEpisodes.filter { it.releaseId == release.id }
-            release.episodes.forEach { newEpisode ->
-                val localEpisode = localEpisodes.firstOrNull { it.id == newEpisode.id }
-                newEpisode.isViewed = localEpisode?.isViewed ?: false
-                newEpisode.seek = localEpisode?.seek ?: 0
-                newEpisode.lastAccess = localEpisode?.lastAccess ?: 0
+    private val checkerCombiner: (suspend (ReleaseFull, List<EpisodeAccess>) -> ReleaseFull) =
+        { release, episodeAccesses ->
+            val newEpisodes = release.episodes.map { episode ->
+                val episodeAccess = episodeAccesses.firstOrNull {
+                    it.releaseId == episode.releaseId && it.id == episode.id
+                }
+                if (episodeAccess != null) {
+                    episode.copy(access = episodeAccess)
+                } else {
+                    episode
+                }
             }
-            release
+            release.copy(episodes = newEpisodes)
         }
 
     private val releaseItems = MutableStateFlow<List<ReleaseItem>>(emptyList())
@@ -91,9 +94,9 @@ class ReleaseInteractor @Inject constructor(
     }
 
     /* Common */
-    fun putEpisode(episode: Episode) = episodesCheckerStorage.putEpisode(episode)
+    fun putEpisode(episode: EpisodeAccess) = episodesCheckerStorage.putEpisode(episode)
 
-    fun putEpisodes(episodes: List<Episode>) =
+    fun putEpisodes(episodes: List<EpisodeAccess>) =
         episodesCheckerStorage.putAllEpisode(episodes)
 
     fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)

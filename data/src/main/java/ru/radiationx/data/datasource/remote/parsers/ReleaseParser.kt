@@ -94,16 +94,23 @@ class ReleaseParser @Inject constructor(
                 parseSourceTypes(jsonEpisode)
                     ?.takeIf { it.isAnilibria }
                     ?: return@mapObjects null
-                Episode().also {
-                    it.releaseId = baseRelease.id
-                    it.id = jsonEpisode.optInt("id")
-                    it.title = jsonEpisode.nullString("title")
-                    it.urlSd = jsonEpisode.nullString("sd")
-                    it.urlHd = jsonEpisode.nullString("hd")
-                    it.urlFullHd = jsonEpisode.nullString("fullhd")
-                    it.updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L)
-                    it.skips = parsePlayerSkips(jsonEpisode)
-                }
+                Episode(
+                    releaseId = baseRelease.id,
+                    id = jsonEpisode.optInt("id"),
+                    title = jsonEpisode.nullString("title"),
+                    urlSd = jsonEpisode.nullString("sd"),
+                    urlHd = jsonEpisode.nullString("hd"),
+                    urlFullHd = jsonEpisode.nullString("fullhd"),
+                    updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
+                    skips = parsePlayerSkips(jsonEpisode),
+                    access = EpisodeAccess(
+                        releaseId = baseRelease.id,
+                        id = jsonEpisode.optInt("id"),
+                        seek = 0,
+                        isViewed = false,
+                        lastAccess = 0
+                    )
+                )
             }
             ?.filterNotNull()
             .orEmpty()

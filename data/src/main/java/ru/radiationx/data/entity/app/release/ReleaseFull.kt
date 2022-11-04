@@ -2,7 +2,7 @@ package ru.radiationx.data.entity.app.release
 
 import java.io.Serializable
 
-class ReleaseFull(
+data class ReleaseFull(
     val item: ReleaseItem,
     val showDonateDialog: Boolean,
     val blockedInfo: BlockedInfo,

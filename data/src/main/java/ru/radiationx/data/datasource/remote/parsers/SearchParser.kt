@@ -6,6 +6,8 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.shared.ktx.android.mapObjects
+import ru.radiationx.shared.ktx.android.mapStrings
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
@@ -15,22 +17,16 @@ class SearchParser @Inject constructor(
 ) {
 
     fun fastSearch(jsonResponse: JSONArray): List<SuggestionItem> {
-        val result: MutableList<SuggestionItem> = mutableListOf()
-        for (i in 0 until jsonResponse.length()) {
-            val jsonItem = jsonResponse.getJSONObject(i)
-            val item = SuggestionItem()
-
-            item.id = jsonItem.getInt("id")
-            item.code = jsonItem.getString("code")
-            item.names.addAll(jsonItem.getJSONArray("names").let { names ->
-                (0 until names.length()).map {
-                    apiUtils.escapeHtml(names.getString(it)).toString()
-                }
-            })
-            item.poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}"
-            result.add(item)
+        return jsonResponse.mapObjects { jsonItem ->
+            SuggestionItem(
+                id = jsonItem.getInt("id"),
+                code = jsonItem.getString("code"),
+                names = jsonItem.getJSONArray("names").mapStrings {
+                    apiUtils.escapeHtml(it).toString()
+                },
+                poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}"
+            )
         }
-        return result
     }
 
     fun years(jsonResponse: JSONArray): List<YearItem> {

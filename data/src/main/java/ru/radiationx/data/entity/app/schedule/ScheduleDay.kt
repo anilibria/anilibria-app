@@ -4,8 +4,8 @@ import ru.radiationx.data.entity.app.feed.ScheduleItem
 import java.util.*
 
 data class ScheduleDay(
-        val day: Int,
-        val items: List<ScheduleItem>
+    val day: Int,
+    val items: List<ScheduleItem>
 ) {
     companion object {
         const val MONDAY = "1"

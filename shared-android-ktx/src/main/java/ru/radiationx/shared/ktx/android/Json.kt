@@ -39,3 +39,12 @@ fun <R> JSONArray.mapObjects(block: (JSONObject) -> R): List<R> {
     }
     return result
 }
+
+fun <R> JSONArray.mapStrings(block: (String) -> R): List<R> {
+    val result = mutableListOf<R>()
+    for (j in 0 until this.length()) {
+        val jsonObject = this.getString(j)
+        result.add(block.invoke(jsonObject))
+    }
+    return result
+}

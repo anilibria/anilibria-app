@@ -16,15 +16,15 @@ class YoutubeParser @Inject constructor(
 ) {
 
     fun youtube(jsonItem: JSONObject): YoutubeItem {
-        val item = YoutubeItem()
-        item.id = jsonItem.getInt("id")
-        item.title = apiUtils.escapeHtml(jsonItem.nullString("title"))
-        item.image = "${apiConfig.baseImagesUrl}${jsonItem.nullString("image")}"
-        item.vid = jsonItem.nullString("vid")
-        item.views = jsonItem.getInt("views")
-        item.comments = jsonItem.getInt("comments")
-        item.timestamp = jsonItem.getInt("timestamp")
-        return item
+        return YoutubeItem(
+            id = jsonItem.getInt("id"),
+            title = apiUtils.escapeHtml(jsonItem.nullString("title")),
+            image = "${apiConfig.baseImagesUrl}${jsonItem.nullString("image")}",
+            vid = jsonItem.nullString("vid"),
+            views = jsonItem.getInt("views"),
+            comments = jsonItem.getInt("comments"),
+            timestamp = jsonItem.getInt("timestamp")
+        )
     }
 
     fun parse(jsonResponse: JSONObject): Paginated<List<YoutubeItem>> {

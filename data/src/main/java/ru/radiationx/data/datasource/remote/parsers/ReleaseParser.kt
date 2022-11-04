@@ -7,7 +7,6 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.shared.ktx.android.mapObjects
-import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
 import java.util.*
 import javax.inject.Inject
@@ -17,7 +16,8 @@ import javax.inject.Inject
  */
 class ReleaseParser @Inject constructor(
     private val apiUtils: IApiUtils,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val paginationParser: PaginationParser
 ) {
 
     companion object {
@@ -95,15 +95,9 @@ class ReleaseParser @Inject constructor(
     }
 
     fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
-        val jsonItems = jsonResponse.getJSONArray("items")
-        val resItems = releases(jsonItems)
-        val pagination = Paginated(resItems)
-        val jsonNav = jsonResponse.getJSONObject("pagination")
-        jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
-        jsonNav.nullGet("perPage")?.let { pagination.perPage = it.toString().toInt() }
-        jsonNav.nullGet("allPages")?.let { pagination.allPages = it.toString().toInt() }
-        jsonNav.nullGet("allItems")?.let { pagination.allItems = it.toString().toInt() }
-        return pagination
+        return paginationParser.parse(jsonResponse) {
+            releases(it)
+        }
     }
 
     fun release(jsonResponse: JSONObject): ReleaseFull {

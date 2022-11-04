@@ -5,13 +5,14 @@ import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.shared.ktx.android.nullGet
+import ru.radiationx.shared.ktx.android.mapObjects
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
 class YoutubeParser @Inject constructor(
     private val apiUtils: IApiUtils,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val paginationParser: PaginationParser
 ) {
 
     fun youtube(jsonItem: JSONObject): YoutubeItem {
@@ -27,20 +28,10 @@ class YoutubeParser @Inject constructor(
     }
 
     fun parse(jsonResponse: JSONObject): Paginated<List<YoutubeItem>> {
-        val result = mutableListOf<YoutubeItem>()
-        val jsonItems = jsonResponse.getJSONArray("items")
-        for (i in 0 until jsonItems.length()) {
-            val jsonItem = jsonItems.getJSONObject(i)
-            val item = youtube(jsonItem)
-            result.add(item)
+        return paginationParser.parse(jsonResponse) { jsonItems ->
+            jsonItems.mapObjects {
+                youtube(it)
+            }
         }
-
-        val pagination = Paginated(result)
-        val jsonNav = jsonResponse.getJSONObject("pagination")
-        jsonNav.nullGet("page")?.let { pagination.page = it.toString().toInt() }
-        jsonNav.nullGet("perPage")?.let { pagination.perPage = it.toString().toInt() }
-        jsonNav.nullGet("allPages")?.let { pagination.allPages = it.toString().toInt() }
-        jsonNav.nullGet("allItems")?.let { pagination.allItems = it.toString().toInt() }
-        return pagination
     }
 }

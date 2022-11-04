@@ -93,6 +93,7 @@ class DataModule : Module() {
         bind(ScheduleParser::class.java).singleton()
         bind(FeedParser::class.java).singleton()
         bind(MenuParser::class.java).singleton()
+        bind(PagesParser::class.java).singleton()
 
         bind(AuthApi::class.java).singleton()
         bind(CheckerApi::class.java).singleton()

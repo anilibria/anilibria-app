@@ -4,36 +4,33 @@ import java.io.Serializable
 
 /* Created by radiationx on 31.10.17. */
 
-open class ReleaseItem : Serializable {
-    var id: Int = -1
-    var code: String? = null
-    val names = mutableListOf<String>()
-    var series: String? = null
-    var poster: String? = null
-    var torrentUpdate: Int = 0
-    var status: String? = null
-    var statusCode: String? = null
-    val types = mutableListOf<String>()
-    val genres = mutableListOf<String>()
-    val voices = mutableListOf<String>()
-    val seasons = mutableListOf<String>()
-    val days = mutableListOf<String>()
-    var description: String? = null
-    var announce: String? = null
-    var favoriteInfo = FavoriteInfo(0, false)
-
-    var isNew: Boolean = false
-
-    var link: String? = null
+open class ReleaseItem(
+    val id: Int,
+    val code: String?,
+    val names: List<String>,
+    val series: String?,
+    val poster: String?,
+    val torrentUpdate: Int,
+    val status: String?,
+    val statusCode: String?,
+    val types: List<String>,
+    val genres: List<String>,
+    val voices: List<String>,
+    val seasons: List<String>,
+    val days: List<String>,
+    val description: String?,
+    val announce: String?,
+    val favoriteInfo: FavoriteInfo,
+    // todo TR-274 make val
+    var isNew: Boolean,
+    val link: String?
+) : Serializable {
 
     val title: String?
         get() = names.firstOrNull()
 
     val titleEng: String?
         get() = names.lastOrNull()
-
-
-
 
     companion object {
         const val STATUS_CODE_PROGRESS = "1"

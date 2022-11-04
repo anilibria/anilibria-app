@@ -3,7 +3,7 @@ package ru.radiationx.data.entity.app
 /**
  * Created by radiationx on 04.12.2017.
  */
-class Paginated<out T>(
+data class Paginated<out T>(
     val data: T,
     val page: Int?,
     val allPages: Int?,

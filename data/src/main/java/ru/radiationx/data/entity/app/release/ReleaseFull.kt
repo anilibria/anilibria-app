@@ -3,41 +3,36 @@ package ru.radiationx.data.entity.app.release
 import java.io.Serializable
 import java.util.*
 
-class ReleaseFull() : ReleaseItem(), Serializable {
-
-    constructor(item: ReleaseItem) : this() {
-        id = item.id
-        code = item.code
-        link = item.link
-        names.addAll(item.names)
-        series = item.series
-        poster = item.poster
-        torrentUpdate = item.torrentUpdate
-        status = item.status
-        statusCode = item.statusCode
-        announce = item.announce
-        types.addAll(item.types)
-        genres.addAll(item.genres)
-        voices.addAll(item.voices)
-        seasons.addAll(item.seasons)
-        days.addAll(item.days)
-        description = item.description
-        favoriteInfo = item.favoriteInfo.copy()
-
-        isNew = item.isNew
-    }
-
-    var showDonateDialog: Boolean = false
-
-    var blockedInfo = BlockedInfo(false, null)
-
-    var moonwalkLink: String? = null
-    val episodes = mutableListOf<Episode>()
-    val sourceEpisodes = mutableListOf<SourceEpisode>()
-    val externalPlaylists = mutableListOf<ExternalPlaylist>()
-    val rutubePlaylist = mutableListOf<RutubeEpisode>()
-
-    val torrents = mutableListOf<TorrentItem>()
+class ReleaseFull(
+    val item: ReleaseItem,
+    val showDonateDialog: Boolean,
+    val blockedInfo: BlockedInfo,
+    val moonwalkLink: String?,
+    val episodes: List<Episode>,
+    val sourceEpisodes: List<SourceEpisode>,
+    val externalPlaylists: List<ExternalPlaylist>,
+    val rutubePlaylist: List<RutubeEpisode>,
+    val torrents: List<TorrentItem>
+) : ReleaseItem(
+    id = item.id,
+    code = item.code,
+    names = item.names,
+    series = item.series,
+    poster = item.poster,
+    torrentUpdate = item.torrentUpdate,
+    status = item.status,
+    statusCode = item.statusCode,
+    types = item.types,
+    genres = item.genres,
+    voices = item.voices,
+    seasons = item.seasons,
+    days = item.days,
+    description = item.description,
+    announce = item.announce,
+    favoriteInfo = item.favoriteInfo,
+    isNew = item.isNew,
+    link = item.link
+), Serializable {
 
     class Episode : Serializable {
         var releaseId = 0

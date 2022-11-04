@@ -47,7 +47,7 @@ class ReleasePresenter @Inject constructor(
             updateLocalRelease(it)
         }
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
-            updateLocalRelease(ReleaseFull(it))
+            updateLocalRelease(ReleaseFull.emptyBy(it))
         }
         observeRelease()
         loadRelease()

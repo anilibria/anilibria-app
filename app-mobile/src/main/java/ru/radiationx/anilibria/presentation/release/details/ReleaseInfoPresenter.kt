@@ -113,7 +113,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
-            updateLocalRelease(ReleaseFull(it))
+            updateLocalRelease(ReleaseFull.emptyBy(it))
         }
         observeRelease()
     }
@@ -143,16 +143,22 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun markEpisodeViewed(episode: Episode) {
-        episode.isViewed = true
-        episode.lastAccess = System.currentTimeMillis()
-        releaseInteractor.putEpisode(episode)
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                isViewed = true,
+                lastAccess = System.currentTimeMillis()
+            )
+        )
     }
 
     fun markEpisodeUnviewed(episode: Episode) {
         releaseAnalytics.historyResetEpisode()
-        episode.isViewed = false
-        episode.lastAccess = 0
-        releaseInteractor.putEpisode(episode)
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                isViewed = false,
+                lastAccess = 0
+            )
+        )
     }
 
     fun onEpisodeTabClick(tabTag: String) {
@@ -208,7 +214,7 @@ class ReleaseInfoPresenter @Inject constructor(
             }, {
                 releaseAnalytics.episodesContinueClick(release.id)
             })
-            release.episodes.asReversed().maxByOrNull { it.lastAccess }?.let { episode ->
+            release.episodes.asReversed().maxByOrNull { it.access.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
             }
         }
@@ -360,16 +366,13 @@ class ReleaseInfoPresenter @Inject constructor(
                     favoriteRepository.addFavorite(releaseId)
                 }
             }.onSuccess { releaseItem ->
-                favInfo.rating = releaseItem.favoriteInfo.rating
-                favInfo.isAdded = releaseItem.favoriteInfo.isAdded
-                stateController.updateState {
-                    it.copy(
-                        data = it.data?.copy(
-                            info = it.data.info.copy(
-                                favorite = releaseItem.favoriteInfo.toState()
-                            )
+                currentData?.also { data ->
+                    val newData = data.copy(
+                        item = data.item.copy(
+                            favoriteInfo = releaseItem.favoriteInfo
                         )
                     )
+                    releaseInteractor.updateFullCache(newData)
                 }
             }.onFailure {
                 errorHandler.handle(it)
@@ -456,10 +459,10 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onCheckAllEpisodesHistoryClick() {
         releaseAnalytics.historyViewAll()
         currentData?.also {
-            it.episodes.forEach {
-                it.isViewed = true
+            val accesses = it.episodes.map {
+                it.access.copy(isViewed = true)
             }
-            releaseInteractor.putEpisodes(it.episodes)
+            releaseInteractor.putEpisodes(accesses)
         }
     }
 

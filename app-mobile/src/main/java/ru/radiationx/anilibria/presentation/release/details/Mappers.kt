@@ -73,10 +73,10 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
 
 fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
-    val hasViewed = episodes.any { it.isViewed }
+    val hasViewed = episodes.any { it.access.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
-        val lastViewed = episodes.maxByOrNull { it.lastAccess }
+        val lastViewed = episodes.maxByOrNull { it.access.lastAccess }
         "Продолжить c ${lastViewed?.id} серии"
     } else {
         "Начать просмотр"
@@ -189,13 +189,13 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
 )
 
 fun Episode.toState(): ReleaseEpisodeItemState {
-    val subtitle = if (isViewed && seek > 0) {
-        "Остановлена на ${Date(seek).asTimeSecString()}"
+    val subtitle = if (access.isViewed && access.seek > 0) {
+        "Остановлена на ${Date(access.seek).asTimeSecString()}"
     } else {
         null
     }
     val hasUpdate = updatedAt?.time?.let { updatedTime ->
-        updatedTime > lastAccess
+        updatedTime > access.lastAccess
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,
@@ -203,7 +203,7 @@ fun Episode.toState(): ReleaseEpisodeItemState {
         title = title.orEmpty(),
         subtitle = subtitle,
         updatedAt = updatedAt,
-        isViewed = isViewed,
+        isViewed = access.isViewed,
         hasUpdate = hasUpdate,
         hasSd = urlSd != null,
         hasHd = urlHd != null,

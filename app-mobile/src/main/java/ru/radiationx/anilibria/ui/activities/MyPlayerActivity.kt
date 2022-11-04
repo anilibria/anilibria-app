@@ -479,11 +479,13 @@ class MyPlayerActivity : BaseActivity() {
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(getEpisode().apply {
-            seek = position
-            lastAccess = System.currentTimeMillis()
-            isViewed = true
-        })
+        releaseInteractor.putEpisode(
+            getEpisode().access.copy(
+                seek = position,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
+            )
+        )
     }
 
 
@@ -536,14 +538,14 @@ class MyPlayerActivity : BaseActivity() {
         when (playFlag) {
             PLAY_FLAG_DEFAULT -> {
                 hardPlayEpisode(episode)
-                if (episode.seek > 0) {
+                if (episode.access.seek > 0) {
                     hardPlayEpisode(episode)
                     val titles = arrayOf("К началу", "К последней позиции")
                     AlertDialog.Builder(this)
                         .setTitle("Перемотать")
                         .setItems(titles) { _, which ->
                             if (which == 1) {
-                                player.seekTo(episode.seek)
+                                player.seekTo(episode.access.seek)
                             }
                         }
                         .show()
@@ -554,7 +556,7 @@ class MyPlayerActivity : BaseActivity() {
             }
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
-                player.seekTo(episode.seek)
+                player.seekTo(episode.access.seek)
             }
         }
         playFlag = PLAY_FLAG_FORCE_CONTINUE
@@ -1178,7 +1180,7 @@ class MyPlayerActivity : BaseActivity() {
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
         override fun onPrepared() {
             val episode = getEpisode()
-            if (episode.seek >= player.duration) {
+            if (episode.access.seek >= player.duration) {
                 player.stopPlayback()
                 if (getNextEpisode() == null) {
                     showSeasonFinishDialog()

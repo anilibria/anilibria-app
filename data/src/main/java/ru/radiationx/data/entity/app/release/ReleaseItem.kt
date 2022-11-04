@@ -32,6 +32,47 @@ open class ReleaseItem(
     val titleEng: String?
         get() = names.lastOrNull()
 
+    // todo TR-274 remove this shiet. replace this class to data-class
+    fun copy(
+        id: Int = this.id,
+        code: String? = this.code,
+        names: List<String> = this.names,
+        series: String? = this.series,
+        poster: String? = this.poster,
+        torrentUpdate: Int = this.torrentUpdate,
+        status: String? = this.status,
+        statusCode: String? = this.statusCode,
+        types: List<String> = this.types,
+        genres: List<String> = this.genres,
+        voices: List<String> = this.voices,
+        seasons: List<String> = this.seasons,
+        days: List<String> = this.days,
+        description: String? = this.description,
+        announce: String? = this.announce,
+        favoriteInfo: FavoriteInfo = this.favoriteInfo,
+        isNew: Boolean = this.isNew,
+        link: String? = this.link
+    ): ReleaseItem = ReleaseItem(
+        id = id,
+        code = code,
+        names = names,
+        series = series,
+        poster = poster,
+        torrentUpdate = torrentUpdate,
+        status = status,
+        statusCode = statusCode,
+        types = types,
+        genres = genres,
+        voices = voices,
+        seasons = seasons,
+        days = days,
+        description = description,
+        announce = announce,
+        favoriteInfo = favoriteInfo,
+        isNew = isNew,
+        link = link
+    )
+
     companion object {
         const val STATUS_CODE_PROGRESS = "1"
         const val STATUS_CODE_COMPLETE = "2"

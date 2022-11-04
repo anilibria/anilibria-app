@@ -4,7 +4,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.shared.ktx.android.nullGet
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class PaginationParser {
 
     fun <T> parse(jsonObject: JSONObject, mapper: (JSONArray) -> T): Paginated<T> {

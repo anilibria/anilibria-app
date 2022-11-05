@@ -1,46 +1,24 @@
 package ru.radiationx.data.datasource.remote
 
-import com.squareup.moshi.*
-import org.json.JSONObject
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import ru.radiationx.data.entity.response.PaginatedResponse
-import ru.radiationx.shared.ktx.android.nullGet
-import ru.radiationx.shared.ktx.android.nullString
 import java.lang.reflect.Type
 
-@Deprecated("use moshi response")
-@Suppress("UNCHECKED_CAST")
-open class ApiResponse<T>(
-    jsonString: String
+@JsonClass(generateAdapter = true)
+data class ApiResponse<T>(
+    @Json(name = "status") val status: Boolean?,
+    @Json(name = "data") val data: T?,
+    @Json(name = "error") val error: ApiErrorResponse?
 ) {
-    val status: Boolean?
-    val data: T?
-    val error: ApiError?
 
-    init {
-        val jsonObject = JSONObject(jsonString)
-        status = jsonObject.getBoolean("status")
-        data = jsonObject.nullGet("data") as T?
-        error = (jsonObject.nullGet("error") as JSONObject?)?.let { jsonError ->
-            ApiError(
-                jsonError.optInt("code"),
-                jsonError.nullString("message"),
-                jsonError.nullString("description")
-            )
-        }
-    }
-
-    open suspend fun handleError(): ApiResponse<T> = when {
-        status == true && data != null -> this
-        error != null -> throw error
+    fun fetch(): T = when {
+        status == true && data != null -> data
+        error != null -> throw ApiError(error.code, error.message, error.description)
         else -> throw Exception("Wrong response")
     }
-}
-
-@Deprecated("use moshi response")
-suspend fun <T> String.fetchResult(): T {
-    val apiResponse = ApiResponse<T>(this)
-    apiResponse.handleError()
-    return requireNotNull(apiResponse.data)
 }
 
 fun <T> String.fetchResponse(moshi: Moshi, dataType: Type): T {
@@ -57,8 +35,8 @@ inline fun <reified T> String.fetchResponse(moshi: Moshi): T {
 }
 
 fun <T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
-    val responseType = Types.newParameterizedType(MoshiApiResponse::class.java, dataType)
-    val adapter = moshi.adapter<MoshiApiResponse<T>>(responseType)
+    val responseType = Types.newParameterizedType(ApiResponse::class.java, dataType)
+    val adapter = moshi.adapter<ApiResponse<T>>(responseType)
     val apiResponse = adapter.fromJson(this)
     requireNotNull(apiResponse) {
         "Can't parse response, result is null"
@@ -82,18 +60,4 @@ inline fun <reified T> String.fetchPaginatedApiResponse(moshi: Moshi): Paginated
 
 fun String.fetchEmptyApiResponse(moshi: Moshi) {
     fetchApiResponse<Any>(moshi, Any::class.java)
-}
-
-@JsonClass(generateAdapter = true)
-data class MoshiApiResponse<T>(
-    @Json(name = "status") val status: Boolean?,
-    @Json(name = "data") val data: T?,
-    @Json(name = "error") val error: ApiErrorResponse?
-) {
-
-    fun fetch(): T = when {
-        status == true && data != null -> data
-        error != null -> throw ApiError(error.code, error.message, error.description)
-        else -> throw Exception("Wrong response")
-    }
 }

@@ -5,7 +5,6 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -29,7 +28,7 @@ class WatchingContinueViewModel(
         }
         .let { ids ->
             if (ids.isEmpty()) {
-                return@let emptyList<ReleaseFull>()
+                return@let emptyList()
             }
             historyRepository.getReleases().let { releases ->
                 releases.filter { ids.contains(it.id) }
@@ -37,7 +36,8 @@ class WatchingContinueViewModel(
         }
         .let { releases ->
             releases.map { release ->
-                val lastEpisode = releaseInteractor.getEpisodes(release.id).maxBy { it.lastAccess }
+                val lastEpisode =
+                    releaseInteractor.getEpisodes(release.id).maxByOrNull { it.lastAccess }
                 Pair(release, lastEpisode)
             }
         }

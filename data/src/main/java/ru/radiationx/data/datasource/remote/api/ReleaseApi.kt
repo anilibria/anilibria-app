@@ -9,7 +9,6 @@ import ru.radiationx.data.datasource.remote.fetchResult
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.parseRandomRelease(it) }
     }
 
-    suspend fun getRelease(releaseId: Int): ReleaseFull {
+    suspend fun getRelease(releaseId: Int): ReleaseItem {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "id" to releaseId.toString()
@@ -40,7 +39,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.release(it) }
     }
 
-    suspend fun getRelease(releaseCode: String): ReleaseFull {
+    suspend fun getRelease(releaseCode: String): ReleaseItem {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "code" to releaseCode

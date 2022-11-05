@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.common
 
 import android.content.Context
 import android.text.Html
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import toothpick.InjectConstructor
@@ -25,15 +24,16 @@ class DetailDataConverter(
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),
-            description = Html.fromHtml(description.orEmpty()).toString().trim().trim('"')/*.replace('\n', ' ')*/,
+            description = Html.fromHtml(description.orEmpty()).toString().trim()
+                .trim('"')/*.replace('\n', ' ')*/,
             announce = getAnnounce(),
             image = poster.orEmpty(),
             favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
-            hasFullHd = (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false,
+            hasFullHd = episodes.any { it.urlFullHd != null },
             isFavorite = favoriteInfo.isAdded,
-            hasEpisodes = (releaseItem as? ReleaseFull)?.episodes?.isNotEmpty() ?: false,
-            hasViewed = (releaseItem as? ReleaseFull)?.episodes?.any { it.access.isViewed } ?: false,
-            hasWebPlayer = false && (releaseItem as? ReleaseFull)?.moonwalkLink != null
+            hasEpisodes = episodes.isNotEmpty(),
+            hasViewed = episodes.any { it.access.isViewed },
+            hasWebPlayer = moonwalkLink != null
         )
     }
 

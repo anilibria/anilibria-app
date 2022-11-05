@@ -53,7 +53,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val remindText =
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
-    private var currentData: ReleaseFull? = null
+    private var currentData: ReleaseItem? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
@@ -113,7 +113,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
-            updateLocalRelease(ReleaseFull.emptyBy(it))
+            updateLocalRelease(it)
         }
         observeRelease()
     }
@@ -133,7 +133,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
     }
 
-    private fun updateLocalRelease(release: ReleaseFull) {
+    private fun updateLocalRelease(release: ReleaseItem) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
@@ -229,7 +229,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onRutubeEpisodeClick(
-        release: ReleaseFull,
+        release: ReleaseItem,
         episode: RutubeEpisode
     ) {
         releaseAnalytics.episodeRutubeClick(release.id)
@@ -238,7 +238,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun onExternalEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
-        release: ReleaseFull,
+        release: ReleaseItem,
         episode: ExternalEpisode
     ) {
         releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
@@ -246,7 +246,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onSourceEpisodeClick(
-        release: ReleaseFull,
+        release: ReleaseItem,
         episode: SourceEpisode,
         quality: Int? = null
     ) {
@@ -257,7 +257,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onOnlineEpisodeClick(
-        release: ReleaseFull,
+        release: ReleaseItem,
         episode: Episode,
         playFlag: Int? = null,
         quality: Int? = null
@@ -368,9 +368,7 @@ class ReleaseInfoPresenter @Inject constructor(
             }.onSuccess { releaseItem ->
                 currentData?.also { data ->
                     val newData = data.copy(
-                        item = data.item.copy(
-                            favoriteInfo = releaseItem.favoriteInfo
-                        )
+                        favoriteInfo = releaseItem.favoriteInfo
                     )
                     releaseInteractor.updateFullCache(newData)
                 }

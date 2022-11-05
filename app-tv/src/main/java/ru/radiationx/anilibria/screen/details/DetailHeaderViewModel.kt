@@ -15,7 +15,6 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -84,19 +83,19 @@ class DetailHeaderViewModel(
     }
 
     fun onContinueClick() {
-        releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.also {
+        releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
             router.navigateTo(PlayerScreen(releaseId, it.id))
         }
     }
 
     fun onPlayClick() {
-        val release = currentRelease as? ReleaseFull ?: return
+        val release = currentRelease ?: return
         if (release.episodes.isEmpty()) return
         if (release.episodes.size == 1) {
             router.navigateTo(PlayerScreen(releaseId))
         } else {
             val episodeId =
-                releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
+                releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         }
     }
@@ -121,11 +120,9 @@ class DetailHeaderViewModel(
                     favoriteRepository.addFavorite(releaseId)
                 }
             }.onSuccess { releaseItem ->
-                (currentRelease as? ReleaseFull?)?.also { data ->
+                currentRelease?.also { data ->
                     val newData = data.copy(
-                        item = data.item.copy(
-                            favoriteInfo = releaseItem.favoriteInfo
-                        )
+                        favoriteInfo = releaseItem.favoriteInfo
                     )
                     releaseInteractor.updateFullCache(newData)
                 }
@@ -146,7 +143,7 @@ class DetailHeaderViewModel(
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
-            currentRelease !is ReleaseFull || favoriteDisposable?.isActive ?: false
+            currentRelease == null || favoriteDisposable?.isActive ?: false
         )
     }
 

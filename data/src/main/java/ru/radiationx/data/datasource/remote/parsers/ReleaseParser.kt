@@ -30,55 +30,18 @@ class ReleaseParser @Inject constructor(
         jsonItem.getString("code")
     )
 
-    fun parseRelease(jsonItem: JSONObject): ReleaseItem {
-        val code = jsonItem.nullString("code")
-        val names = jsonItem.getJSONArray("names").mapStrings {
+    fun release(jsonResponse: JSONObject): ReleaseItem {
+        val releaseId = jsonResponse.getInt("id")
+        val releaseCode = jsonResponse.nullString("code")
+        val names = jsonResponse.getJSONArray("names").mapStrings {
             apiUtils.escapeHtml(it).toString()
         }
-        val favoriteInfo = jsonItem.optJSONObject("favorite")?.let { jsonFavorite ->
+        val favoriteInfo = jsonResponse.optJSONObject("favorite")?.let { jsonFavorite ->
             FavoriteInfo(
                 rating = jsonFavorite.getInt("rating"),
                 isAdded = jsonFavorite.getBoolean("added")
             )
         } ?: FavoriteInfo(0, false)
-        return ReleaseItem(
-            id = jsonItem.getInt("id"),
-            code = code,
-            names = names,
-            series = jsonItem.nullString("series"),
-            poster = "${apiConfig.baseImagesUrl}${jsonItem.nullString("poster")}",
-            torrentUpdate = jsonItem.nullString("last")?.toIntOrNull() ?: 0,
-            status = jsonItem.nullString("status"),
-            statusCode = jsonItem.nullString("statusCode"),
-            types = jsonItem.nullString("type")?.let { listOf(it) }.orEmpty(),
-            genres = jsonItem.optJSONArray("genres")?.toStringsList().orEmpty(),
-            voices = jsonItem.optJSONArray("voices")?.toStringsList().orEmpty(),
-            seasons = jsonItem.nullString("year")?.let { listOf(it) }.orEmpty(),
-            days = jsonItem.nullString("day")?.let { listOf(it) }.orEmpty(),
-            description = jsonItem.nullString("description")?.trim(),
-            announce = jsonItem.nullString("announce")?.trim(),
-            favoriteInfo = favoriteInfo,
-            link = "${apiConfig.siteUrl}/release/${code}.html"
-        )
-    }
-
-    fun releases(jsonItems: JSONArray): List<ReleaseItem> {
-        val resItems = mutableListOf<ReleaseItem>()
-        for (i in 0 until jsonItems.length()) {
-            val jsonItem = jsonItems.getJSONObject(i)
-            resItems.add(parseRelease(jsonItem))
-        }
-        return resItems
-    }
-
-    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
-        return paginationParser.parse(jsonResponse) {
-            releases(it)
-        }
-    }
-
-    fun release(jsonResponse: JSONObject): ReleaseFull {
-        val baseRelease = parseRelease(jsonResponse)
         val blockedInfo = jsonResponse.optJSONObject("blockedInfo")?.let { it ->
             BlockedInfo(
                 isBlocked = it.getBoolean("blocked"),
@@ -94,7 +57,7 @@ class ReleaseParser @Inject constructor(
                     ?.takeIf { it.isAnilibria }
                     ?: return@mapObjects null
                 Episode(
-                    releaseId = baseRelease.id,
+                    releaseId = releaseId,
                     id = jsonEpisode.optInt("id"),
                     title = jsonEpisode.nullString("title"),
                     urlSd = jsonEpisode.nullString("sd"),
@@ -103,7 +66,7 @@ class ReleaseParser @Inject constructor(
                     updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     skips = parsePlayerSkips(jsonEpisode),
                     access = EpisodeAccess(
-                        releaseId = baseRelease.id,
+                        releaseId = releaseId,
                         id = jsonEpisode.optInt("id"),
                         seek = 0,
                         isViewed = false,
@@ -122,7 +85,7 @@ class ReleaseParser @Inject constructor(
                     ?: return@mapObjects null
                 SourceEpisode(
                     id = jsonEpisode.optInt("id"),
-                    releaseId = baseRelease.id,
+                    releaseId = releaseId,
                     updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     title = jsonEpisode.nullString("title"),
                     urlSd = jsonEpisode.nullString("srcSd").takeIf { it != VK_URL },
@@ -144,7 +107,7 @@ class ReleaseParser @Inject constructor(
                     ?: return@mapObjects null
                 RutubeEpisode(
                     id = jsonEpisode.optInt("id"),
-                    releaseId = baseRelease.id,
+                    releaseId = releaseId,
                     title = jsonEpisode.nullString("title"),
                     updatedAt = Date(jsonEpisode.optInt("updated_at") * 1000L),
                     rutubeId = rutubeId,
@@ -160,7 +123,7 @@ class ReleaseParser @Inject constructor(
                 val episodes = jsonPlaylist.getJSONArray("episodes").mapObjects { jsonEpisode ->
                     ExternalEpisode(
                         id = jsonEpisode.getInt("id"),
-                        releaseId = baseRelease.id,
+                        releaseId = releaseId,
                         title = jsonEpisode.nullString("title"),
                         url = jsonEpisode.nullString("url")
                     )
@@ -176,7 +139,7 @@ class ReleaseParser @Inject constructor(
             .orEmpty()
 
         val torrents = jsonResponse
-            .getJSONArray("torrents")
+            .optJSONArray("torrents")
             ?.mapObjects { jsonTorrent ->
                 TorrentItem(
                     id = jsonTorrent.optInt("id"),
@@ -192,9 +155,24 @@ class ReleaseParser @Inject constructor(
                 )
             }
             .orEmpty()
-
-        return ReleaseFull(
-            item = baseRelease,
+        return ReleaseItem(
+            id = jsonResponse.getInt("id"),
+            code = releaseCode,
+            names = names,
+            series = jsonResponse.nullString("series"),
+            poster = "${apiConfig.baseImagesUrl}${jsonResponse.nullString("poster")}",
+            torrentUpdate = jsonResponse.nullString("last")?.toIntOrNull() ?: 0,
+            status = jsonResponse.nullString("status"),
+            statusCode = jsonResponse.nullString("statusCode"),
+            types = jsonResponse.nullString("type")?.let { listOf(it) }.orEmpty(),
+            genres = jsonResponse.optJSONArray("genres")?.toStringsList().orEmpty(),
+            voices = jsonResponse.optJSONArray("voices")?.toStringsList().orEmpty(),
+            seasons = jsonResponse.nullString("year")?.let { listOf(it) }.orEmpty(),
+            days = jsonResponse.nullString("day")?.let { listOf(it) }.orEmpty(),
+            description = jsonResponse.nullString("description")?.trim(),
+            announce = jsonResponse.nullString("announce")?.trim(),
+            favoriteInfo = favoriteInfo,
+            link = "${apiConfig.siteUrl}/release/${releaseCode}.html",
             showDonateDialog = jsonResponse.optBoolean("showDonateDialog"),
             blockedInfo = blockedInfo,
             moonwalkLink = jsonResponse.nullString("moon"),
@@ -204,6 +182,21 @@ class ReleaseParser @Inject constructor(
             rutubePlaylist = rutubeEpisodes,
             torrents = torrents
         )
+    }
+
+    fun releases(jsonItems: JSONArray): List<ReleaseItem> {
+        val resItems = mutableListOf<ReleaseItem>()
+        for (i in 0 until jsonItems.length()) {
+            val jsonItem = jsonItems.getJSONObject(i)
+            resItems.add(this.release(jsonItem))
+        }
+        return resItems
+    }
+
+    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
+        return paginationParser.parse(jsonResponse) {
+            releases(it)
+        }
     }
 
     private fun parseSourceTypes(jsonResponse: JSONObject): SourceTypes? {

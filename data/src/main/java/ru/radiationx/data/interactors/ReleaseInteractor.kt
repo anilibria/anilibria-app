@@ -5,7 +5,6 @@ import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.EpisodeAccess
 import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.repository.ReleaseRepository
 import javax.inject.Inject
@@ -19,7 +18,7 @@ class ReleaseInteractor @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
 ) {
 
-    private val checkerCombiner: (suspend (ReleaseFull, List<EpisodeAccess>) -> ReleaseFull) =
+    private val checkerCombiner: (suspend (ReleaseItem, List<EpisodeAccess>) -> ReleaseItem) =
         { release, episodeAccesses ->
             val newEpisodes = release.episodes.map { episode ->
                 val episodeAccess = episodeAccesses.firstOrNull {
@@ -35,19 +34,19 @@ class ReleaseInteractor @Inject constructor(
         }
 
     private val releaseItems = MutableStateFlow<List<ReleaseItem>>(emptyList())
-    private val releases = MutableStateFlow<List<ReleaseFull>>(emptyList())
+    private val releases = MutableStateFlow<List<ReleaseItem>>(emptyList())
 
     suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
 
-    private suspend fun loadRelease(releaseId: Int): ReleaseFull {
+    private suspend fun loadRelease(releaseId: Int): ReleaseItem {
         return releaseRepository.getRelease(releaseId).also(::updateFullCache)
     }
 
-    private suspend fun loadRelease(releaseCode: String): ReleaseFull {
+    private suspend fun loadRelease(releaseCode: String): ReleaseItem {
         return releaseRepository.getRelease(releaseCode).also(::updateFullCache)
     }
 
-    suspend fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull {
+    suspend fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem {
         return when {
             releaseId != -1 -> loadRelease(releaseId)
             releaseCode != null -> loadRelease(releaseCode)
@@ -59,7 +58,7 @@ class ReleaseInteractor @Inject constructor(
         return releaseItems.value.findRelease(releaseId, releaseCode)
     }
 
-    fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull? {
+    fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem? {
         return releases.value.findRelease(releaseId, releaseCode)
     }
 
@@ -67,7 +66,7 @@ class ReleaseInteractor @Inject constructor(
         return releaseItems.mapNotNull { it.findRelease(releaseId, releaseCode) }
     }
 
-    fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Flow<ReleaseFull> {
+    fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Flow<ReleaseItem> {
         return combine(
             releases.mapNotNull { it.findRelease(releaseId, releaseCode) },
             episodesCheckerStorage.observeEpisodes(),
@@ -85,7 +84,7 @@ class ReleaseInteractor @Inject constructor(
         }
     }
 
-    fun updateFullCache(release: ReleaseFull) {
+    fun updateFullCache(release: ReleaseItem) {
         releases.update { releases ->
             releases.filterNot {
                 check(it, release.id, release.code)

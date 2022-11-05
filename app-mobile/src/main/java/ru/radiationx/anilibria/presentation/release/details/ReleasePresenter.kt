@@ -13,7 +13,6 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseFull
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -47,7 +46,7 @@ class ReleasePresenter @Inject constructor(
             updateLocalRelease(it)
         }
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
-            updateLocalRelease(ReleaseFull.emptyBy(it))
+            updateLocalRelease(it)
         }
         observeRelease()
         loadRelease()

@@ -8,6 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
+import ru.radiationx.data.entity.app.release.BlockedInfo
 import ru.radiationx.data.entity.app.release.FavoriteInfo
 import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.shared.ktx.android.nullString
@@ -135,7 +136,18 @@ class HistoryStorage @Inject constructor(
                     description = jsonRelease.nullString("description"),
                     announce = jsonRelease.nullString("announce"),
                     favoriteInfo = favoriteInfo,
-                    link = jsonRelease.nullString("link")
+                    link = jsonRelease.nullString("link"),
+                    showDonateDialog = false,
+                    blockedInfo = BlockedInfo(
+                        isBlocked = false,
+                        reason = null
+                    ),
+                    moonwalkLink = null,
+                    episodes = listOf(),
+                    sourceEpisodes = listOf(),
+                    externalPlaylists = listOf(),
+                    rutubePlaylist = listOf(),
+                    torrents = listOf()
                 )
                 result.add(release)
             }

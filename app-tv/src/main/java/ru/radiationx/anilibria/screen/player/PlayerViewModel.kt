@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
@@ -29,7 +29,7 @@ class PlayerViewModel(
     val playAction = MutableLiveData<Boolean>()
 
     private var currentEpisodes = mutableListOf<Episode>()
-    private var currentRelease: ReleaseFull? = null
+    private var currentRelease: ReleaseItem? = null
     private var currentEpisode: Episode? = null
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null

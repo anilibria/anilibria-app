@@ -65,6 +65,18 @@ fun <T> DataLoadingState<T>.applyAction(action: ScreenStateAction<T>): DataLoadi
     }
 }
 
+fun <T, R> DataLoadingState<T>.mapData(
+    newDataMapper: (T) -> R
+): DataLoadingState<R> = DataLoadingState(
+    initialState = initialState,
+    emptyLoading = emptyLoading,
+    refreshLoading = refreshLoading,
+    moreLoading = moreLoading,
+    hasMorePages = hasMorePages,
+    error = error,
+    data = data?.let(newDataMapper)
+)
+
 sealed class ScreenStateAction<T> {
     class EmptyLoading<T> : ScreenStateAction<T>()
     class MoreLoading<T> : ScreenStateAction<T>()

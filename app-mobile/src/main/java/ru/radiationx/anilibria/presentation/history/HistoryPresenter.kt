@@ -14,7 +14,8 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -30,11 +31,13 @@ class HistoryPresenter @Inject constructor(
     private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<HistoryView>(router) {
 
-    private val currentReleases = mutableListOf<ReleaseItem>()
+    private val currentReleases = mutableListOf<Release>()
     private val stateController = StateController(HistoryScreenState())
 
     private var isSearchEnabled: Boolean = false
     private var currentQuery: String = ""
+
+    private val updates = emptyMap<Int, ReleaseUpdate>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -53,7 +56,7 @@ class HistoryPresenter @Inject constructor(
                 currentReleases.addAll(releases)
 
                 stateController.updateState {
-                    it.copy(items = currentReleases.map { it.toState() })
+                    it.copy(items = currentReleases.map { it.toState(updates) })
                 }
 
                 updateSearchState()
@@ -72,11 +75,11 @@ class HistoryPresenter @Inject constructor(
             emptyList()
         }
         stateController.updateState {
-            it.copy(searchItems = searchItes.map { it.toState() })
+            it.copy(searchItems = searchItes.map { it.toState(updates) })
         }
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
+    private fun findRelease(id: Int): Release? {
         return currentReleases.find { it.id == id }
     }
 

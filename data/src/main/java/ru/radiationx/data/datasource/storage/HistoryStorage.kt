@@ -8,8 +8,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.BlockedInfo
+import ru.radiationx.data.entity.app.release.FavoriteInfo
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.shared.ktx.android.nullString
+import ru.radiationx.shared.ktx.android.toStringsList
 import javax.inject.Inject
 
 /**
@@ -29,9 +32,9 @@ class HistoryStorage @Inject constructor(
 
     override suspend fun getEpisodes() = localReleasesRelay.value
 
-    override fun observeEpisodes(): Flow<List<ReleaseItem>> = localReleasesRelay
+    override fun observeEpisodes(): Flow<List<Release>> = localReleasesRelay
 
-    override fun putRelease(release: ReleaseItem) {
+    override fun putRelease(release: Release) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases
@@ -43,7 +46,7 @@ class HistoryStorage @Inject constructor(
         saveAll()
     }
 
-    override fun putAllRelease(releases: List<ReleaseItem>) {
+    override fun putAllRelease(releases: List<Release>) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             releases.forEach { release ->
@@ -103,47 +106,49 @@ class HistoryStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll(): List<ReleaseItem> {
-        val result = mutableListOf<ReleaseItem>()
+    private fun loadAll(): List<Release> {
+        val result = mutableListOf<Release>()
         val jsonEpisodes =
             sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
         if (jsonEpisodes != null) {
             (0 until jsonEpisodes.length()).forEach { releaseIndex ->
                 val jsonRelease = jsonEpisodes.getJSONObject(releaseIndex)
-                val release = ReleaseItem().apply {
-                    id = jsonRelease.getInt("id")
-                    code = jsonRelease.nullString("code")
-                    link = jsonRelease.nullString("link")
-                    jsonRelease.getJSONArray("names").also { jsonNames ->
-                        (0 until jsonNames.length()).mapTo(names) { jsonNames.getString(it) }
-                    }
-                    series = jsonRelease.nullString("series")
-                    poster = jsonRelease.nullString("poster")
-                    torrentUpdate = jsonRelease.getInt("torrentUpdate")
-                    status = jsonRelease.nullString("status")
-                    statusCode = jsonRelease.nullString("statusCode")
-                    announce = jsonRelease.nullString("announce")
-                    jsonRelease.getJSONArray("types").also { jsonTypes ->
-                        (0 until jsonTypes.length()).mapTo(types) { jsonTypes.getString(it) }
-                    }
-                    jsonRelease.getJSONArray("genres").also { jsonGenres ->
-                        (0 until jsonGenres.length()).mapTo(genres) { jsonGenres.getString(it) }
-                    }
-                    jsonRelease.getJSONArray("voices").also { jsonVoices ->
-                        (0 until jsonVoices.length()).mapTo(voices) { jsonVoices.getString(it) }
-                    }
-                    jsonRelease.getJSONArray("seasons").also { jsonSeasons ->
-                        (0 until jsonSeasons.length()).mapTo(seasons) { jsonSeasons.getString(it) }
-                    }
-                    jsonRelease.getJSONArray("days").also { jsonDays ->
-                        (0 until jsonDays.length()).mapTo(days) { jsonDays.getString(it) }
-                    }
-                    description = jsonRelease.nullString("description")
-                    jsonRelease.getJSONObject("favoriteInfo").also { jsonFav ->
-                        favoriteInfo.rating = jsonFav.getInt("rating")
-                        favoriteInfo.isAdded = jsonFav.getBoolean("isAdded")
-                    }
+                val favoriteInfo = jsonRelease.getJSONObject("favoriteInfo").let { jsonFav ->
+                    FavoriteInfo(
+                        rating = jsonFav.getInt("rating"),
+                        isAdded = jsonFav.getBoolean("isAdded")
+                    )
                 }
+                val release = Release(
+                    id = jsonRelease.getInt("id"),
+                    code = jsonRelease.nullString("code"),
+                    names = jsonRelease.getJSONArray("names").toStringsList(),
+                    series = jsonRelease.nullString("series"),
+                    poster = jsonRelease.nullString("poster"),
+                    torrentUpdate = jsonRelease.getInt("torrentUpdate"),
+                    status = jsonRelease.nullString("status"),
+                    statusCode = jsonRelease.nullString("statusCode"),
+                    types = jsonRelease.getJSONArray("types").toStringsList(),
+                    genres = jsonRelease.getJSONArray("genres").toStringsList(),
+                    voices = jsonRelease.getJSONArray("voices").toStringsList(),
+                    seasons = jsonRelease.getJSONArray("seasons").toStringsList(),
+                    days = jsonRelease.getJSONArray("days").toStringsList(),
+                    description = jsonRelease.nullString("description"),
+                    announce = jsonRelease.nullString("announce"),
+                    favoriteInfo = favoriteInfo,
+                    link = jsonRelease.nullString("link"),
+                    showDonateDialog = false,
+                    blockedInfo = BlockedInfo(
+                        isBlocked = false,
+                        reason = null
+                    ),
+                    moonwalkLink = null,
+                    episodes = listOf(),
+                    sourceEpisodes = listOf(),
+                    externalPlaylists = listOf(),
+                    rutubePlaylist = listOf(),
+                    torrents = listOf()
+                )
                 result.add(release)
             }
         }

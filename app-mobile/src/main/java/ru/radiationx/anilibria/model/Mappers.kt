@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.model
 
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.data.entity.app.auth.SocialAuth
@@ -8,17 +7,22 @@ import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.entity.common.AuthState
 
-fun ReleaseItem.toState(): ReleaseItemState {
+fun Release.toState(updates: Map<Int, ReleaseUpdate>): ReleaseItemState {
     val title = if (series == null) {
         title.toString()
     } else {
         "$title ($series)"
     }
+    val update = updates[id]
+    val isNew = update
+        ?.let { it.lastOpenTimestamp < torrentUpdate || it.timestamp < torrentUpdate }
+        ?: false
     return ReleaseItemState(
         id = id,
         title = title,
@@ -36,8 +40,8 @@ fun YoutubeItem.toState() = YoutubeItemState(
     comments = comments.toString()
 )
 
-fun FeedItem.toState() = FeedItemState(
-    release = release?.toState(),
+fun FeedItem.toState(updates: Map<Int, ReleaseUpdate>) = FeedItemState(
+    release = release?.toState(updates),
     youtube = youtube?.toState()
 )
 

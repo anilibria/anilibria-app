@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.datasource.remote.api.ScheduleApi
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.isSameDay
 import java.util.*
@@ -13,7 +14,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleRepository @Inject constructor(
-    private val scheduleApi: ScheduleApi
+    private val scheduleApi: ScheduleApi,
+    private val updateMiddleware: ReleaseUpdateMiddleware
 ) {
 
     private val dataRelay = MutableStateFlow<List<ScheduleDay>?>(null)
@@ -76,5 +78,9 @@ class ScheduleRepository @Inject constructor(
         }
         .also {
             dataRelay.value = it
+        }
+        .also { scheduleDays ->
+            val releases = scheduleDays.map { it.items }.flatten().map { it.releaseItem }
+            updateMiddleware.handle(releases)
         }
 }

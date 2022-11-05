@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.Episode
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
@@ -27,9 +28,9 @@ class PlayerViewModel(
     val speedState = MutableLiveData<Float>()
     val playAction = MutableLiveData<Boolean>()
 
-    private var currentEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private var currentRelease: ReleaseFull? = null
-    private var currentEpisode: ReleaseFull.Episode? = null
+    private var currentEpisodes = mutableListOf<Episode>()
+    private var currentRelease: Release? = null
+    private var currentEpisode: Episode? = null
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null
 
@@ -145,7 +146,7 @@ class PlayerViewModel(
     fun onPrepare(position: Long, duration: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
-        val complete = episode.seek >= duration
+        val complete = episode.access.seek >= duration
         if (currentComplete == complete) return
         currentComplete = complete
         if (complete) {
@@ -161,10 +162,10 @@ class PlayerViewModel(
         }
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? =
+    private fun getNextEpisode(): Episode? =
         currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? =
+    private fun getPrevEpisode(): Episode? =
         currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
 
     private fun getCurrentEpisodeIndex(): Int =
@@ -175,14 +176,16 @@ class PlayerViewModel(
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(episode.apply {
-            seek = position
-            lastAccess = System.currentTimeMillis()
-            isViewed = true
-        })
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                seek = position,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
+            )
+        )
     }
 
-    private fun playEpisode(episode: ReleaseFull.Episode, force: Boolean = false) {
+    private fun playEpisode(episode: Episode, force: Boolean = false) {
         currentEpisode = episode
         currentComplete = null
         updateQuality()
@@ -201,7 +204,7 @@ class PlayerViewModel(
 
         val newVideo = episode.let {
             val url = getEpisodeUrl(it, quality)
-            Video(url!!, episode.seek, release.title.orEmpty(), it.title.orEmpty())
+            Video(url!!, episode.access.seek, release.title.orEmpty(), it.title.orEmpty())
         }
         if (force || videoData.value?.url != newVideo.url) {
             videoData.value = newVideo
@@ -214,7 +217,7 @@ class PlayerViewModel(
         else -> quality
     }
 
-    private fun getEpisodeQuality(episode: ReleaseFull.Episode, quality: Int): Int {
+    private fun getEpisodeQuality(episode: Episode, quality: Int): Int {
         var newQuality = quality
 
         if (newQuality == PreferencesHolder.QUALITY_FULL_HD && episode.urlFullHd.isNullOrEmpty()) {
@@ -230,7 +233,7 @@ class PlayerViewModel(
         return newQuality
     }
 
-    private fun getEpisodeUrl(episode: ReleaseFull.Episode, quality: Int): String? =
+    private fun getEpisodeUrl(episode: Episode, quality: Int): String? =
         when (getEpisodeQuality(episode, quality)) {
             PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
             PreferencesHolder.QUALITY_HD -> episode.urlHd

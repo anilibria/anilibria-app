@@ -2,8 +2,7 @@ package ru.radiationx.data.entity.app.auth
 
 import ru.radiationx.data.datasource.remote.ApiError
 
-open class ApiWrapperException(apiError: ApiError) :
-    RuntimeException(apiError.message, apiError)
+open class ApiWrapperException(apiError: ApiError) : RuntimeException(apiError.message, apiError)
 
 data class AlreadyAuthorizedException(val apiError: ApiError) : ApiWrapperException(apiError)
 data class EmptyFieldException(val apiError: ApiError) : ApiWrapperException(apiError)

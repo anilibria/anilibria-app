@@ -20,6 +20,7 @@ import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
@@ -87,13 +88,13 @@ class DataModule : Module() {
         bind(CheckerParser::class.java).singleton()
         bind(ConfigurationParser::class.java).singleton()
         bind(PagesParser::class.java).singleton()
-        bind(ProfileParser::class.java).singleton()
         bind(ReleaseParser::class.java).singleton()
         bind(SearchParser::class.java).singleton()
         bind(YoutubeParser::class.java).singleton()
         bind(ScheduleParser::class.java).singleton()
         bind(FeedParser::class.java).singleton()
         bind(MenuParser::class.java).singleton()
+        bind(PagesParser::class.java).singleton()
 
         bind(AuthApi::class.java).singleton()
         bind(CheckerApi::class.java).singleton()
@@ -123,6 +124,8 @@ class DataModule : Module() {
         bind(MenuRepository::class.java).singleton()
         bind(DonationRepository::class.java).singleton()
         bind(TeamsRepository::class.java).singleton()
+
+        bind(ReleaseUpdateMiddleware::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()

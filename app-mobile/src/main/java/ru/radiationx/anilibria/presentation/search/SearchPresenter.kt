@@ -1,14 +1,12 @@
 package ru.radiationx.anilibria.presentation.search
 
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.loading.*
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -24,7 +22,7 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
@@ -58,7 +56,6 @@ class SearchPresenter @Inject constructor(
     private val currentSeasons = mutableListOf<String>()
     private var currentSorting = "1"
     private var currentComplete = false
-    private val currentItems = mutableListOf<ReleaseItem>()
 
     private val beforeOpenDialogGenres = mutableListOf<String>()
     private val beforeOpenDialogYears = mutableListOf<String>()
@@ -72,8 +69,8 @@ class SearchPresenter @Inject constructor(
     }
     private val stateController = StateController(SearchScreenState())
 
-    private fun findRelease(id: Int): ReleaseItem? {
-        return currentItems.find { it.id == id }
+    private fun findRelease(id: Int): Release? {
+        return loadingController.currentState.data?.find { it.id == id }
     }
 
     override fun onFirstViewAttach() {
@@ -90,31 +87,7 @@ class SearchPresenter @Inject constructor(
         onChangeComplete(currentComplete)
         observeLoadingState()
         loadingController.refresh()
-        releaseUpdateHolder
-            .observeEpisodes()
-            .onEach { data ->
-                val itemsNeedUpdate = mutableListOf<ReleaseItem>()
-                currentItems.forEach { item ->
-                    data.firstOrNull { it.id == item.id }?.also { updItem ->
-                        val isNew =
-                            item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                        if (item.isNew != isNew) {
-                            item.isNew = isNew
-                            itemsNeedUpdate.add(item)
-                        }
-                    }
-                }
-
-                val dataState = loadingController.currentState.data
-                val newItems = dataState?.map { itemState ->
-                    val releaseItem = itemsNeedUpdate.firstOrNull { it.id == itemState.id }
-                    releaseItem?.toState() ?: itemState
-                }
-                loadingController.modifyData(newItems)
-            }
-            .launchIn(presenterScope)
     }
-
 
     private fun loadGenres() {
         presenterScope.launch {
@@ -167,11 +140,18 @@ class SearchPresenter @Inject constructor(
     }
 
     private fun observeLoadingState() {
-        loadingController
-            .observeState()
-            .onEach { loadingData ->
+        combine(
+            loadingController.observeState(),
+            releaseUpdateHolder.observeEpisodes()
+        ) { loadingState, updates ->
+            val updatesMap = updates.associateBy { it.id }
+            loadingState.mapData { items ->
+                items.map { it.toState(updatesMap) }
+            }
+        }
+            .onEach { loadingState ->
                 stateController.updateState {
-                    it.copy(data = loadingData)
+                    it.copy(data = loadingState)
                 }
             }
             .launchIn(presenterScope)
@@ -191,7 +171,7 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItemState>> {
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")
@@ -207,12 +187,11 @@ class SearchPresenter @Inject constructor(
                     params.page
                 )
                 .let { paginated ->
-                    if (params.isFirstPage) {
-                        currentItems.clear()
+                    val newItems = if (params.isFirstPage) {
+                        paginated.data
+                    } else {
+                        loadingController.currentState.data.orEmpty() + paginated.data
                     }
-                    currentItems.addAll(paginated.data)
-
-                    val newItems = currentItems.map { it.toState() }
                     ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
                 }
         }.onFailure {

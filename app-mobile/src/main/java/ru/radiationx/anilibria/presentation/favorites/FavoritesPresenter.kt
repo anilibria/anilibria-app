@@ -1,14 +1,10 @@
 package ru.radiationx.anilibria.presentation.favorites
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.loading.*
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
@@ -19,7 +15,8 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FavoritesAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -33,7 +30,8 @@ class FavoritesPresenter @Inject constructor(
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val favoritesAnalytics: FavoritesAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val releaseUpdateHolder: ReleaseUpdateHolder
 ) : BasePresenter<FavoritesView>(router) {
 
     private val loadingController = DataLoadingController(presenterScope) {
@@ -44,10 +42,7 @@ class FavoritesPresenter @Inject constructor(
     private val stateController = StateController(FavoritesScreenState())
 
     private var lastLoadedPage: Int? = null
-    private var isSearchEnabled: Boolean = false
-    private var currentQuery: String = ""
-
-    private val currentReleases = mutableListOf<ReleaseItem>()
+    private val queryState = MutableStateFlow("")
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -56,13 +51,36 @@ class FavoritesPresenter @Inject constructor(
             .onEach { viewState.showState(it) }
             .launchIn(presenterScope)
 
-        loadingController
-            .observeState()
-            .onEach { loadingData ->
+        val updatesMapFlow = releaseUpdateHolder.observeEpisodes().map { updates ->
+            updates.associateBy { it.id }
+        }
+
+        combine(
+            loadingController.observeState().mapNotNull { it.data }.distinctUntilChanged(),
+            updatesMapFlow,
+            queryState
+        ) { currentItems, updates, query ->
+            currentItems.filterByQuery(query).map { it.toState(updates) }
+        }
+            .onEach { searchItems ->
                 stateController.updateState {
-                    it.copy(data = loadingData)
+                    it.copy(searchItems = searchItems)
                 }
-                updateSearchState()
+            }
+            .launchIn(presenterScope)
+
+        combine(
+            loadingController.observeState(),
+            updatesMapFlow,
+        ) { loadingState, updates ->
+            loadingState.mapData { items ->
+                items.map { it.toState(updates) }
+            }
+        }
+            .onEach { loadingState ->
+                stateController.updateState {
+                    it.copy(data = loadingState)
+                }
             }
             .launchIn(presenterScope)
 
@@ -121,8 +139,7 @@ class FavoritesPresenter @Inject constructor(
     }
 
     fun localSearch(query: String) {
-        currentQuery = query
-        updateSearchState()
+        queryState.value = query
     }
 
     fun onSearchClick() {
@@ -131,7 +148,7 @@ class FavoritesPresenter @Inject constructor(
 
     fun onItemClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        if (isSearchEnabled) {
+        if (queryState.value.isNotEmpty()) {
             favoritesAnalytics.searchReleaseClick()
         } else {
             favoritesAnalytics.releaseClick()
@@ -140,8 +157,8 @@ class FavoritesPresenter @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
-        return currentReleases.find { it.id == id }
+    private fun findRelease(id: Int): Release? {
+        return loadingController.currentState.data?.find { it.id == id }
     }
 
     private fun submitPageAnalytics(page: Int) {
@@ -151,16 +168,16 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItemState>> {
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         return try {
             favoriteRepository
                 .getFavorites(params.page)
                 .let { paginated ->
-                    if (params.isFirstPage) {
-                        currentReleases.clear()
+                    val newItems = if (params.isFirstPage) {
+                        paginated.data
+                    } else {
+                        loadingController.currentState.data.orEmpty() + paginated.data
                     }
-                    currentReleases.addAll(paginated.data)
-                    val newItems = currentReleases.map { it.toState() }
                     ScreenStateAction.Data(newItems, !paginated.isEnd())
                 }
         } catch (ex: Throwable) {
@@ -171,19 +188,13 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
-    private fun updateSearchState() {
-        isSearchEnabled = currentQuery.isNotEmpty()
-        val searchItems = if (currentQuery.isNotEmpty()) {
-            currentReleases.filter {
-                it.title.orEmpty().contains(currentQuery, true)
-                        || it.titleEng.orEmpty().contains(currentQuery, true)
-            }
-        } else {
-            emptyList()
+    private fun List<Release>.filterByQuery(query: String): List<Release> {
+        if (query.isEmpty()) {
+            return emptyList()
         }
-        val newItems = searchItems.map { it.toState() }
-        stateController.updateState {
-            it.copy(searchItems = newItems)
+        return filter {
+            it.title.orEmpty().contains(query, true)
+                    || it.titleEng.orEmpty().contains(query, true)
         }
     }
 

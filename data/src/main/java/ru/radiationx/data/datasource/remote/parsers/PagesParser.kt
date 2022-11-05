@@ -27,18 +27,20 @@ class PagesParser @Inject constructor(
     }
 
     fun baseParse(httpResponse: String): PageLibria {
-        val result = PageLibria()
         var matcher = pagePattern.matcher(httpResponse)
+        var title = ""
         var content = ""
         while (matcher.find()) {
             content += matcher.group(1)
         }
         matcher = titlePattern.matcher(httpResponse)
         if (matcher.find()) {
-            result.title = matcher.group(1)
+            title = matcher.group(1)
         }
-        result.content = content
-        return result
+        return PageLibria(
+            title = title,
+            content = content
+        )
     }
 
     fun parseVkComments(jsonResponse: JSONObject): VkComments {

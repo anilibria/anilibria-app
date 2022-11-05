@@ -2,8 +2,7 @@ package ru.radiationx.anilibria.common
 
 import android.content.Context
 import android.text.Html
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import toothpick.InjectConstructor
 import java.text.NumberFormat
@@ -14,31 +13,32 @@ class DetailDataConverter(
     private val context: Context
 ) {
 
-    fun toDetail(releaseItem: ReleaseItem): LibriaDetails = releaseItem.run {
+    fun toDetail(releaseItem: Release): LibriaDetails = releaseItem.run {
         LibriaDetails(
-            id,
-            title.orEmpty(),
-            titleEng.orEmpty(),
-            listOf(
+            id = id,
+            titleRu = title.orEmpty(),
+            titleEn = titleEng.orEmpty(),
+            extra = listOf(
                 genres.firstOrNull()?.capitalize()?.trim(),
                 "${seasons.firstOrNull()} год",
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),
-            Html.fromHtml(description.orEmpty()).toString().trim().trim('"')/*.replace('\n', ' ')*/,
-            getAnnounce(),
-            poster.orEmpty(),
-            NumberFormat.getNumberInstance().format(favoriteInfo.rating),
-            (releaseItem as? ReleaseFull)?.episodes?.any { it.urlFullHd != null } ?: false,
-            favoriteInfo.isAdded,
-            (releaseItem as? ReleaseFull)?.episodes?.isNotEmpty() ?: false,
-            (releaseItem as? ReleaseFull)?.episodes?.any { it.isViewed } ?: false,
-            false && (releaseItem as? ReleaseFull)?.moonwalkLink != null
+            description = Html.fromHtml(description.orEmpty()).toString().trim()
+                .trim('"')/*.replace('\n', ' ')*/,
+            announce = getAnnounce(),
+            image = poster.orEmpty(),
+            favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
+            hasFullHd = episodes.any { it.urlFullHd != null },
+            isFavorite = favoriteInfo.isAdded,
+            hasEpisodes = episodes.isNotEmpty(),
+            hasViewed = episodes.any { it.access.isViewed },
+            hasWebPlayer = moonwalkLink != null
         )
     }
 
-    fun ReleaseItem.getAnnounce(): String {
-        if (statusCode == ReleaseItem.STATUS_CODE_COMPLETE) {
+    fun Release.getAnnounce(): String {
+        if (statusCode == Release.STATUS_CODE_COMPLETE) {
             return "Релиз завершен"
         }
 

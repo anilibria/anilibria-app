@@ -1,6 +1,5 @@
 package ru.radiationx.data.entity.app.search
 
-import ru.radiationx.data.datasource.storage.GenresStorage
 import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem

@@ -23,7 +23,7 @@ class FeedParser @Inject constructor(
             val jsonYoutube = jsonItem.nullGet("youtube") as JSONObject?
             val item = when {
                 jsonRelease != null -> {
-                    FeedItem(release = releaseParser.parseRelease(jsonRelease))
+                    FeedItem(release = releaseParser.release(jsonRelease))
                 }
                 jsonYoutube != null -> {
                     FeedItem(youtube = youtubeParser.youtube(jsonYoutube))

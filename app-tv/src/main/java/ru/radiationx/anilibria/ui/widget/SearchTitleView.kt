@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.view_search_controls.view.*
 import ru.radiationx.anilibria.R
 
 class SearchTitleView @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.browseTitleViewStyle
 ) : BrowseTitleView(context, attrs, defStyleAttr) {

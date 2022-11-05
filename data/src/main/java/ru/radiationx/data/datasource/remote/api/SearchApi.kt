@@ -10,7 +10,7 @@ import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.datasource.remote.parsers.SearchParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import javax.inject.Inject
@@ -58,7 +58,7 @@ class SearchApi @Inject constructor(
         sort: String,
         complete: String,
         page: Int
-    ): Paginated<List<ReleaseItem>> {
+    ): Paginated<List<Release>> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "catalog",
             "search" to JSONObject().apply {

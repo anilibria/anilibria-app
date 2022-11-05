@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
@@ -44,7 +44,7 @@ class DetailRecommendsViewModel(
             .launchIn(viewModelScope)
     }
 
-    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<ReleaseItem> =
+    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<Release> =
         searchRepository
             .searchReleases(
                 SearchForm(

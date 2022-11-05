@@ -19,10 +19,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ExternalEpisode
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.RutubeEpisode
-import ru.radiationx.data.entity.app.release.SourceEpisode
+import ru.radiationx.data.entity.app.release.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -56,7 +53,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val remindText =
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
-    private var currentData: ReleaseFull? = null
+    private var currentData: Release? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
@@ -116,7 +113,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
-            updateLocalRelease(ReleaseFull(it))
+            updateLocalRelease(it)
         }
         observeRelease()
     }
@@ -136,7 +133,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
     }
 
-    private fun updateLocalRelease(release: ReleaseFull) {
+    private fun updateLocalRelease(release: Release) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
@@ -145,17 +142,23 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
-    fun markEpisodeViewed(episode: ReleaseFull.Episode) {
-        episode.isViewed = true
-        episode.lastAccess = System.currentTimeMillis()
-        releaseInteractor.putEpisode(episode)
+    fun markEpisodeViewed(episode: Episode) {
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                isViewed = true,
+                lastAccess = System.currentTimeMillis()
+            )
+        )
     }
 
-    fun markEpisodeUnviewed(episode: ReleaseFull.Episode) {
+    fun markEpisodeUnviewed(episode: Episode) {
         releaseAnalytics.historyResetEpisode()
-        episode.isViewed = false
-        episode.lastAccess = 0
-        releaseInteractor.putEpisode(episode)
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                isViewed = false,
+                lastAccess = 0
+            )
+        )
     }
 
     fun onEpisodeTabClick(tabTag: String) {
@@ -211,7 +214,7 @@ class ReleaseInfoPresenter @Inject constructor(
             }, {
                 releaseAnalytics.episodesContinueClick(release.id)
             })
-            release.episodes.asReversed().maxByOrNull { it.lastAccess }?.let { episode ->
+            release.episodes.asReversed().maxByOrNull { it.access.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
             }
         }
@@ -226,7 +229,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onRutubeEpisodeClick(
-        release: ReleaseFull,
+        release: Release,
         episode: RutubeEpisode
     ) {
         releaseAnalytics.episodeRutubeClick(release.id)
@@ -235,7 +238,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun onExternalEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
-        release: ReleaseFull,
+        release: Release,
         episode: ExternalEpisode
     ) {
         releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
@@ -243,7 +246,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onSourceEpisodeClick(
-        release: ReleaseFull,
+        release: Release,
         episode: SourceEpisode,
         quality: Int? = null
     ) {
@@ -254,8 +257,8 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onOnlineEpisodeClick(
-        release: ReleaseFull,
-        episode: ReleaseFull.Episode,
+        release: Release,
+        episode: Episode,
         playFlag: Int? = null,
         quality: Int? = null
     ) {
@@ -296,7 +299,7 @@ class ReleaseInfoPresenter @Inject constructor(
         viewState.showLongPressEpisodeDialog(episodeItem)
     }
 
-    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): ReleaseFull.Episode? {
+    private fun getEpisodeItem(episode: ReleaseEpisodeItemState): Episode? {
         if (episode.type != ReleaseEpisodeItemType.ONLINE) return null
         return currentData?.episodes?.find { it.id == episode.id }
     }
@@ -363,16 +366,11 @@ class ReleaseInfoPresenter @Inject constructor(
                     favoriteRepository.addFavorite(releaseId)
                 }
             }.onSuccess { releaseItem ->
-                favInfo.rating = releaseItem.favoriteInfo.rating
-                favInfo.isAdded = releaseItem.favoriteInfo.isAdded
-                stateController.updateState {
-                    it.copy(
-                        data = it.data?.copy(
-                            info = it.data.info.copy(
-                                favorite = releaseItem.favoriteInfo.toState()
-                            )
-                        )
+                currentData?.also { data ->
+                    val newData = data.copy(
+                        favoriteInfo = releaseItem.favoriteInfo
                     )
+                    releaseInteractor.updateFullCache(newData)
                 }
             }.onFailure {
                 errorHandler.handle(it)
@@ -459,10 +457,10 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onCheckAllEpisodesHistoryClick() {
         releaseAnalytics.historyViewAll()
         currentData?.also {
-            it.episodes.forEach {
-                it.isViewed = true
+            val accesses = it.episodes.map {
+                it.access.copy(isViewed = true)
             }
-            releaseInteractor.putEpisodes(it.episodes)
+            releaseInteractor.putEpisodes(accesses)
         }
     }
 

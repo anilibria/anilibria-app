@@ -7,7 +7,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchResult
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import javax.inject.Inject
 
 class FavoriteApi @Inject constructor(
@@ -16,7 +16,7 @@ class FavoriteApi @Inject constructor(
     private val apiConfig: ApiConfig
 ) {
 
-    suspend fun getFavorites(page: Int): Paginated<List<ReleaseItem>> {
+    suspend fun getFavorites(page: Int): Paginated<List<Release>> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "page" to page.toString(),
@@ -28,7 +28,7 @@ class FavoriteApi @Inject constructor(
             .let { releaseParser.releases(it) }
     }
 
-    suspend fun addFavorite(releaseId: Int): ReleaseItem {
+    suspend fun addFavorite(releaseId: Int): Release {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "add",
@@ -39,7 +39,7 @@ class FavoriteApi @Inject constructor(
             .let { releaseParser.release(it) }
     }
 
-    suspend fun deleteFavorite(releaseId: Int): ReleaseItem {
+    suspend fun deleteFavorite(releaseId: Int): Release {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "delete",

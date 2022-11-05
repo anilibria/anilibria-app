@@ -11,7 +11,7 @@ import ru.radiationx.shared_app.codecs.types.CodecProcessingType
 import ru.radiationx.shared_app.codecs.types.CodecQuery
 import java.util.*
 
-fun ReleaseFull.toState(): ReleaseDetailState = ReleaseDetailState(
+fun Release.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
     episodesControl = toEpisodeControlState(),
@@ -25,7 +25,7 @@ fun FavoriteInfo.toState() = ReleaseFavoriteState(
     isAdded = isAdded
 )
 
-fun ReleaseFull.toInfoState(): ReleaseInfoState {
+fun Release.toInfoState(): ReleaseInfoState {
     val seasonsHtml = "<b>Год:</b> " + seasons.joinToString(", ")
     val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ") {
         val index = voices.indexOf(it)
@@ -54,7 +54,7 @@ fun ReleaseFull.toInfoState(): ReleaseInfoState {
         updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
-        isOngoing = statusCode == ReleaseItem.STATUS_CODE_PROGRESS,
+        isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
         announce = announce,
         favorite = favoriteInfo.toState()
     )
@@ -71,12 +71,12 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
     )
 }
 
-fun ReleaseFull.toEpisodeControlState(): ReleaseEpisodesControlState? {
+fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
-    val hasViewed = episodes.any { it.isViewed }
+    val hasViewed = episodes.any { it.access.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
-        val lastViewed = episodes.maxByOrNull { it.lastAccess }
+        val lastViewed = episodes.maxByOrNull { it.access.lastAccess }
         "Продолжить c ${lastViewed?.id} серии"
     } else {
         "Начать просмотр"
@@ -112,7 +112,7 @@ fun TorrentItem.toState(): ReleaseTorrentItemState {
     )
 }
 
-fun ReleaseFull.toTabsState(): List<EpisodesTabState> {
+fun Release.toTabsState(): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(
         tag = "online",
         title = "Онлайн",
@@ -188,14 +188,14 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     actionColorRes = null
 )
 
-fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
-    val subtitle = if (isViewed && seek > 0) {
-        "Остановлена на ${Date(seek).asTimeSecString()}"
+fun Episode.toState(): ReleaseEpisodeItemState {
+    val subtitle = if (access.isViewed && access.seek > 0) {
+        "Остановлена на ${Date(access.seek).asTimeSecString()}"
     } else {
         null
     }
     val hasUpdate = updatedAt?.time?.let { updatedTime ->
-        updatedTime > lastAccess
+        updatedTime > access.lastAccess
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,
@@ -203,7 +203,7 @@ fun ReleaseFull.Episode.toState(): ReleaseEpisodeItemState {
         title = title.orEmpty(),
         subtitle = subtitle,
         updatedAt = updatedAt,
-        isViewed = isViewed,
+        isViewed = access.isViewed,
         hasUpdate = hasUpdate,
         hasSd = urlSd != null,
         hasHd = urlHd != null,

@@ -15,8 +15,7 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -41,7 +40,7 @@ class DetailHeaderViewModel(
     val releaseData = MutableLiveData<LibriaDetails>()
     val progressState = MutableLiveData<DetailsState>()
 
-    private var currentRelease: ReleaseItem? = null
+    private var currentRelease: Release? = null
 
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
@@ -52,6 +51,7 @@ class DetailHeaderViewModel(
         (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
             currentRelease = it
             update(it)
+            updateProgress()
         }
         updateProgress()
 
@@ -83,19 +83,19 @@ class DetailHeaderViewModel(
     }
 
     fun onContinueClick() {
-        releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.also {
+        releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
             router.navigateTo(PlayerScreen(releaseId, it.id))
         }
     }
 
     fun onPlayClick() {
-        val release = currentRelease as? ReleaseFull ?: return
+        val release = currentRelease ?: return
         if (release.episodes.isEmpty()) return
         if (release.episodes.size == 1) {
             router.navigateTo(PlayerScreen(releaseId))
         } else {
             val episodeId =
-                releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
+                releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id ?: -1
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         }
     }
@@ -119,14 +119,18 @@ class DetailHeaderViewModel(
                 } else {
                     favoriteRepository.addFavorite(releaseId)
                 }
-            }.onSuccess {
-                release.favoriteInfo.isAdded = it.favoriteInfo.isAdded
-                release.favoriteInfo.rating = it.favoriteInfo.rating
-                update(release)
+            }.onSuccess { releaseItem ->
+                currentRelease?.also { data ->
+                    val newData = data.copy(
+                        favoriteInfo = releaseItem.favoriteInfo
+                    )
+                    releaseInteractor.updateFullCache(newData)
+                }
             }.onFailure {
                 Timber.e(it)
             }
-            updateProgress()
+        }.apply {
+            invokeOnCompletion { updateProgress() }
         }
 
         updateProgress()
@@ -139,11 +143,11 @@ class DetailHeaderViewModel(
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
-            currentRelease !is ReleaseFull || favoriteDisposable?.isActive ?: false
+            currentRelease == null || favoriteDisposable?.isActive ?: false
         )
     }
 
-    private fun update(releaseItem: ReleaseItem) {
+    private fun update(releaseItem: Release) {
         releaseData.value = converter.toDetail(releaseItem)
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
@@ -25,7 +25,7 @@ class PlayerEpisodesViewModel(
     val episodesData = MutableLiveData<List<Pair<String, String?>>>()
     val selectedIndex = MutableLiveData<Int>()
 
-    private val currentEpisodes = mutableListOf<ReleaseFull.Episode>()
+    private val currentEpisodes = mutableListOf<Episode>()
 
     override fun onCreate() {
         super.onCreate()
@@ -35,8 +35,8 @@ class PlayerEpisodesViewModel(
             currentEpisodes.addAll(it.episodes.reversed())
         }
         episodesData.value = currentEpisodes.map {
-            val description = if (it.isViewed && it.seek > 0) {
-                "Остановлена на ${Date(it.seek).asTimeSecString()}"
+            val description = if (it.access.isViewed && it.access.seek > 0) {
+                "Остановлена на ${Date(it.access.seek).asTimeSecString()}"
             } else {
                 null
             }

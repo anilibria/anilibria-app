@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.app.release.Episode
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
@@ -19,7 +19,7 @@ class EndEpisodeViewModel(
     var argReleaseId = -1
     var argEpisodeId = -1
 
-    private val currentEpisodes = mutableListOf<ReleaseFull.Episode>()
+    private val currentEpisodes = mutableListOf<Episode>()
     private val currentEpisode
         get() = currentEpisodes.firstOrNull { it.id == argEpisodeId }
 
@@ -35,11 +35,13 @@ class EndEpisodeViewModel(
         val episode = currentEpisode ?: return
 
         viewModelScope.launch {
-            releaseInteractor.putEpisode(episode.apply {
-                seek = 0
-                lastAccess = System.currentTimeMillis()
-                isViewed = true
-            })
+            releaseInteractor.putEpisode(
+                episode.access.copy(
+                    seek = 0,
+                    lastAccess = System.currentTimeMillis(),
+                    isViewed = true
+                )
+            )
             playerController.selectEpisodeRelay.emit(episode.id)
             guidedRouter.close()
         }

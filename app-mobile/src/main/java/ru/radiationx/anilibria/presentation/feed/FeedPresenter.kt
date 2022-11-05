@@ -5,10 +5,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.*
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.StateController
+import ru.radiationx.anilibria.model.loading.*
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -24,7 +21,8 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.CheckerRepository
@@ -75,9 +73,6 @@ class FeedPresenter @Inject constructor(
 
     private var lastLoadedPage: Int? = null
 
-    private val currentItems = mutableListOf<FeedItem>()
-    private val currentScheduleItems = mutableListOf<ScheduleItem>()
-
     private var appUpdateNeedClose = false
     private var hasAppUpdate = false
 
@@ -123,8 +118,15 @@ class FeedPresenter @Inject constructor(
             .onEach { viewState.showState(it) }
             .launchIn(presenterScope)
 
-        loadingController
-            .observeState()
+        combine(
+            loadingController.observeState(),
+            releaseUpdateHolder.observeEpisodes()
+        ) { loadingState, updates ->
+            val updatesMap = updates.associateBy { it.id }
+            loadingState.mapData {
+                it.toState(updatesMap)
+            }
+        }
             .onEach { loadingState ->
                 stateController.updateState {
                     it.copy(data = loadingState)
@@ -133,35 +135,6 @@ class FeedPresenter @Inject constructor(
             .launchIn(presenterScope)
 
         loadingController.refresh()
-
-        releaseUpdateHolder
-            .observeEpisodes()
-            .onEach { data ->
-                val itemsNeedUpdate = mutableListOf<FeedItem>()
-                currentItems.forEach { item ->
-                    data.firstOrNull { it.id == item.release?.id }?.also { updItem ->
-                        val release = item.release!!
-                        val isNew =
-                            release.torrentUpdate > updItem.lastOpenTimestamp || release.torrentUpdate > updItem.timestamp
-                        if (release.isNew != isNew) {
-                            release.isNew = isNew
-                            itemsNeedUpdate.add(item)
-                        }
-                    }
-                }
-
-                val dataState = loadingController.currentState.data
-                val newFeedItems = dataState?.feedItems?.map { feedItemState ->
-                    val feedItem = itemsNeedUpdate.firstOrNull {
-                        it.release?.id == feedItemState.release?.id
-                                && it.youtube?.id == feedItemState.youtube?.id
-                    }
-                    feedItem?.toState() ?: feedItemState
-                }.orEmpty()
-
-                loadingController.modifyData(dataState?.copy(feedItems = newFeedItems))
-            }
-            .launchIn(presenterScope)
     }
 
     fun refreshReleases() {
@@ -177,9 +150,7 @@ class FeedPresenter @Inject constructor(
     }
 
     fun onScheduleItemClick(item: ScheduleItemState, position: Int) {
-        val releaseItem = currentScheduleItems
-            .find { it.releaseItem.id == item.releaseId }
-            ?.releaseItem ?: return
+        val releaseItem = findScheduleRelease(item.releaseId) ?: return
         feedAnalytics.scheduleReleaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
@@ -281,12 +252,19 @@ class FeedPresenter @Inject constructor(
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
-        return currentItems.mapNotNull { it.release }.firstOrNull { it.id == id }
+    private fun findScheduleRelease(id: Int): Release? {
+        val scheduleItems = loadingController.currentState.data?.schedule?.items
+        return scheduleItems?.find { it.releaseItem.id == id }?.releaseItem
+    }
+
+    private fun findRelease(id: Int): Release? {
+        val feedItems = loadingController.currentState.data?.feedItems
+        return feedItems?.mapNotNull { it.release }?.find { it.id == id }
     }
 
     private fun findYoutube(id: Int): YoutubeItem? {
-        return currentItems.mapNotNull { it.youtube }.firstOrNull { it.id == id }
+        val feedItems = loadingController.currentState.data?.feedItems
+        return feedItems?.mapNotNull { it.youtube }?.find { it.id == id }
     }
 
     private fun submitPageAnalytics(page: Int) {
@@ -296,16 +274,9 @@ class FeedPresenter @Inject constructor(
         }
     }
 
-    private suspend fun getFeedSource(page: Int): List<FeedItem> = feedRepository
-        .getFeed(page)
-        .also {
-            if (page == 1) {
-                currentItems.clear()
-            }
-            currentItems.addAll(it)
-        }
+    private suspend fun getFeedSource(page: Int): List<FeedItem> = feedRepository.getFeed(page)
 
-    private suspend fun getScheduleSource(): FeedScheduleState = scheduleRepository
+    private suspend fun getScheduleSource(): FeedScheduleData = scheduleRepository
         .loadSchedule()
         .let { scheduleDays ->
             val currentTime = System.currentTimeMillis()
@@ -322,20 +293,25 @@ class FeedPresenter @Inject constructor(
                 "Ожидается $preText $dayName (по МСК)"
             }
 
-            currentScheduleItems.clear()
             val items = scheduleDays
                 .firstOrNull { it.day == mskDay }
                 ?.items
-                ?.also { currentScheduleItems.addAll(it) }
-                ?.map { it.toState() }
                 .orEmpty()
 
-            FeedScheduleState(dayTitle, items)
+            FeedScheduleData(dayTitle, items)
         }
 
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<FeedDataState> {
-        val feedSource = flow { emit(getFeedSource(params.page)) }
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<FeedData> {
+        val feedSource = flow {
+            val newPage = getFeedSource(params.page)
+            val value = if (params.isFirstPage) {
+                newPage
+            } else {
+                loadingController.currentState.data?.feedItems.orEmpty() + newPage
+            }
+            emit(value)
+        }
         val scheduleDataSource = flow {
             val value = if (params.isFirstPage) {
                 getScheduleSource()
@@ -349,8 +325,8 @@ class FeedPresenter @Inject constructor(
             Pair(feedItems, scheduleState)
         }
             .map { (feedItems, scheduleState) ->
-                val feedDataState = FeedDataState(
-                    feedItems = currentItems.map { it.toState() },
+                val feedDataState = FeedData(
+                    feedItems = feedItems,
                     schedule = scheduleState
                 )
                 ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
@@ -363,4 +339,24 @@ class FeedPresenter @Inject constructor(
             }
             .first()
     }
+
+    private data class FeedData(
+        val feedItems: List<FeedItem> = emptyList(),
+        val schedule: FeedScheduleData? = null
+    )
+
+    private data class FeedScheduleData(
+        val title: String,
+        val items: List<ScheduleItem>
+    )
+
+    private fun FeedData.toState(updates: Map<Int, ReleaseUpdate>): FeedDataState = FeedDataState(
+        feedItems.map { it.toState(updates) },
+        schedule?.toState()
+    )
+
+    private fun FeedScheduleData.toState(): FeedScheduleState = FeedScheduleState(
+        title = title,
+        items = items.map { it.toState() }
+    )
 }

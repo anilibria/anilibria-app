@@ -1,8 +1,8 @@
 package ru.radiationx.data.entity.app.feed
 
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 
 data class ScheduleItem(
-        val releaseItem: ReleaseItem,
-        val completed: Boolean = false
+    val releaseItem: Release,
+    val completed: Boolean = false
 )

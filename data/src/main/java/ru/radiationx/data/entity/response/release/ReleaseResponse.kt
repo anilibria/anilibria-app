@@ -22,13 +22,13 @@ data class ReleaseResponse(
     @Json(name = "day") val day: String?,
     @Json(name = "description") val description: String?,
     @Json(name = "announce") val announce: String?,
-    @Json(name = "favorite") val favorite: FavoriteInfoResponse,
+    @Json(name = "favorite") val favorite: FavoriteInfoResponse?,
 
     // full
-    @Json(name = "showDonateDialog") val showDonateDialog: Boolean,
-    @Json(name = "blockedInfo") val blockedInfo: BlockedInfoResponse,
+    @Json(name = "showDonateDialog") val showDonateDialog: Boolean?,
+    @Json(name = "blockedInfo") val blockedInfo: BlockedInfoResponse?,
     @Json(name = "moon") val moonwalkLink: String?,
-    @Json(name = "playlist") val episodes: List<EpisodeResponse>,
-    @Json(name = "externalPlaylist") val externalPlaylists: List<ExternalPlaylistResponse>,
-    @Json(name = "torrents") val torrents: List<TorrentResponse>
+    @Json(name = "playlist") val episodes: List<EpisodeResponse>?,
+    @Json(name = "externalPlaylist") val externalPlaylists: List<ExternalPlaylistResponse>?,
+    @Json(name = "torrents") val torrents: List<TorrentResponse>?
 ) : Serializable

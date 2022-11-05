@@ -7,7 +7,7 @@ import java.io.Serializable
 data class Release(
     // base
     val id: Int,
-    val code: String?,
+    val code: String,
     val names: List<String>,
     val series: String?,
     val poster: String?,

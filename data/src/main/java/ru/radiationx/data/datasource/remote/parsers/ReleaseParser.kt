@@ -32,7 +32,7 @@ class ReleaseParser @Inject constructor(
 
     fun release(jsonResponse: JSONObject): Release {
         val releaseId = jsonResponse.getInt("id")
-        val releaseCode = jsonResponse.nullString("code")
+        val releaseCode = jsonResponse.getString("code")
         val names = jsonResponse.getJSONArray("names").mapStrings {
             apiUtils.escapeHtml(it).toString()
         }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
 
 /**
@@ -22,7 +23,7 @@ class CheckerRepository @Inject constructor(
         return if (!force && currentDataRelay.value != null) {
             currentDataRelay.value!!
         } else {
-            checkerApi.checkUpdate(versionCode)
+            checkerApi.checkUpdate(versionCode).update.toDomain()
         }.also {
             currentDataRelay.value = it
         }

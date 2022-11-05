@@ -6,21 +6,17 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
-import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.PaginatedResponse
 import ru.radiationx.data.entity.response.release.ReleaseResponse
-import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 class FavoriteApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi,
-    private val apiUtils: ApiUtils
+    private val moshi: Moshi
 ) {
 
-    suspend fun getFavorites(page: Int): Paginated<Release> {
+    suspend fun getFavorites(page: Int): PaginatedResponse<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "page" to page.toString(),
@@ -28,30 +24,27 @@ class FavoriteApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchPaginatedApiResponse<ReleaseResponse>(moshi)
-            .toDomain { it.toDomain(apiUtils, apiConfig) }
+            .fetchPaginatedApiResponse(moshi)
     }
 
-    suspend fun addFavorite(releaseId: Int): Release {
+    suspend fun addFavorite(releaseId: Int): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "add",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<ReleaseResponse>(moshi)
-            .toDomain(apiUtils, apiConfig)
+            .fetchApiResponse(moshi)
     }
 
-    suspend fun deleteFavorite(releaseId: Int): Release {
+    suspend fun deleteFavorite(releaseId: Int): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "delete",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<ReleaseResponse>(moshi)
-            .toDomain(apiUtils, apiConfig)
+            .fetchApiResponse(moshi)
     }
 
 }

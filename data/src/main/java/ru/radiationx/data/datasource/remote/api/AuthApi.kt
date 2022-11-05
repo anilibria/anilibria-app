@@ -7,11 +7,8 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
-import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.auth.OtpInfoResponse
 import ru.radiationx.data.entity.response.auth.SocialAuthResponse
 import ru.radiationx.data.entity.response.other.ProfileResponse
@@ -29,16 +26,15 @@ class AuthApi @Inject constructor(
     private val moshi: Moshi
 ) {
 
-    suspend fun loadUser(): ProfileItem {
+    suspend fun loadUser(): ProfileResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "user"
         )
         return client.post(apiConfig.apiUrl, args)
             .fetchApiResponse<ProfileResponse>(moshi)
-            .toDomain(apiConfig)
     }
 
-    suspend fun loadOtpInfo(deviceId: String): OtpInfo {
+    suspend fun loadOtpInfo(deviceId: String): OtpInfoResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_get_otp",
             "deviceId" to deviceId
@@ -46,8 +42,7 @@ class AuthApi @Inject constructor(
         return try {
             client
                 .post(apiConfig.apiUrl, args)
-                .fetchApiResponse<OtpInfoResponse>(moshi)
-                .toDomain()
+                .fetchApiResponse(moshi)
         } catch (ex: Throwable) {
             throw authParser.checkOtpError(ex)
         }
@@ -67,7 +62,7 @@ class AuthApi @Inject constructor(
         }
     }
 
-    suspend fun signInOtp(code: String, deviceId: String): ProfileItem {
+    suspend fun signInOtp(code: String, deviceId: String): ProfileResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "auth_login_otp",
             "deviceId" to deviceId,
@@ -83,7 +78,7 @@ class AuthApi @Inject constructor(
         }
     }
 
-    suspend fun signIn(login: String, password: String, code2fa: String): ProfileItem {
+    suspend fun signIn(login: String, password: String, code2fa: String): ProfileResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "mail" to login,
             "passwd" to password,
@@ -95,17 +90,16 @@ class AuthApi @Inject constructor(
             .let { loadUser() }
     }
 
-    suspend fun loadSocialAuth(): List<SocialAuth> {
+    suspend fun loadSocialAuth(): List<SocialAuthResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "social_auth"
         )
         return client
             .post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<SocialAuthResponse>(moshi)
-            .map { it.toDomain() }
+            .fetchListApiResponse(moshi)
     }
 
-    suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem {
+    suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileResponse {
         val args: MutableMap<String, String> = mutableMapOf()
 
         val fixedUrl = Uri.parse(apiConfig.baseUrl).host?.let { redirectDomain ->

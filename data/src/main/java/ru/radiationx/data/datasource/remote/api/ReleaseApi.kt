@@ -7,13 +7,9 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.fetchListApiResponse
 import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
-import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.PaginatedResponse
 import ru.radiationx.data.entity.response.release.RandomReleaseResponse
 import ru.radiationx.data.entity.response.release.ReleaseResponse
-import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 /* Created by radiationx on 31.10.17. */
@@ -21,40 +17,36 @@ import javax.inject.Inject
 class ReleaseApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi,
-    private val apiUtils: ApiUtils
+    private val moshi: Moshi
 ) {
 
-    suspend fun getRandomRelease(): RandomRelease {
+    suspend fun getRandomRelease(): RandomReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "random_release"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<RandomReleaseResponse>(moshi)
-            .toDomain()
+            .fetchApiResponse(moshi)
     }
 
-    suspend fun getRelease(releaseId: Int): Release {
+    suspend fun getRelease(releaseId: Int): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<ReleaseResponse>(moshi)
-            .toDomain(apiUtils, apiConfig)
+            .fetchApiResponse(moshi)
     }
 
-    suspend fun getRelease(releaseCode: String): Release {
+    suspend fun getRelease(releaseCode: String): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "code" to releaseCode
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<ReleaseResponse>(moshi)
-            .toDomain(apiUtils, apiConfig)
+            .fetchApiResponse(moshi)
     }
 
-    suspend fun getReleasesByIds(ids: List<Int>): List<Release> {
+    suspend fun getReleasesByIds(ids: List<Int>): List<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "info",
             "id" to ids.joinToString(","),
@@ -62,11 +54,10 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<ReleaseResponse>(moshi)
-            .map { it.toDomain(apiUtils, apiConfig) }
+            .fetchListApiResponse(moshi)
     }
 
-    suspend fun getReleases(page: Int): Paginated<Release> {
+    suspend fun getReleases(page: Int): PaginatedResponse<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",
             "page" to page.toString(),
@@ -74,8 +65,7 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchPaginatedApiResponse<ReleaseResponse>(moshi)
-            .toDomain { it.toDomain(apiUtils, apiConfig) }
+            .fetchPaginatedApiResponse(moshi)
     }
 
 

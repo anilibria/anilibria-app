@@ -6,12 +6,9 @@ import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.fetchResponse
-import ru.radiationx.data.datasource.storage.ApiConfigStorage
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import javax.inject.Inject
 
@@ -19,7 +16,6 @@ class ConfigurationApi @Inject constructor(
     @ApiClient private val client: IClient,
     @MainClient private val mainClient: IClient,
     private val apiConfig: ApiConfig,
-    private val apiConfigStorage: ApiConfigStorage,
     private val moshi: Moshi
 ) {
 
@@ -39,9 +35,9 @@ class ConfigurationApi @Inject constructor(
         }
     }
 
-    suspend fun getConfiguration(): List<ApiAddress> {
+    suspend fun getConfiguration(): ApiConfigResponse {
         return getMergeConfig().also {
-            if (it.isEmpty()) {
+            if (it.addresses.isEmpty()) {
                 throw IllegalStateException("Empty config adresses")
             }
         }
@@ -53,24 +49,24 @@ class ConfigurationApi @Inject constructor(
             .let { true }
     }
 
-    private suspend fun getMergeConfig(): List<ApiAddress> {
+    private suspend fun getMergeConfig(): ApiConfigResponse {
         val apiFlow = flow {
             emit(getConfigFromApi())
         }.catch {
-            emit(emptyList())
+            emit(ApiConfigResponse(emptyList()))
         }
         val reserveFlow = flow {
             emit(getConfigFromReserve())
         }.catch {
-            emit(emptyList())
+            emit(ApiConfigResponse(emptyList()))
         }
         return merge(apiFlow, reserveFlow)
-            .filter { it.isNotEmpty() }
-            .onEmpty { emit(emptyList()) }
+            .filter { it.addresses.isNotEmpty() }
+            .onEmpty { emit(ApiConfigResponse(emptyList())) }
             .first()
     }
 
-    private suspend fun getConfigFromApi(): List<ApiAddress> {
+    private suspend fun getConfigFromApi(): ApiConfigResponse {
         val args = mapOf(
             "query" to "config"
         )
@@ -78,14 +74,10 @@ class ConfigurationApi @Inject constructor(
             client.post(apiConfig.apiUrl, args)
         }
         return response
-            .fetchApiResponse<ApiConfigResponse>(moshi)
-            .also { apiConfigStorage.save(it) }
-            .toDomain()
-            .also { apiConfig.setConfig(it) }
-            .addresses
+            .fetchApiResponse(moshi)
     }
 
-    private suspend fun getConfigFromReserve(): List<ApiAddress> {
+    private suspend fun getConfigFromReserve(): ApiConfigResponse {
         return try {
             getReserve("https://raw.githubusercontent.com/anilibria/anilibria-app/master/config.json")
         } catch (ex: Throwable) {
@@ -93,12 +85,8 @@ class ConfigurationApi @Inject constructor(
         }
     }
 
-    private suspend fun getReserve(url: String): List<ApiAddress> = mainClient
+    private suspend fun getReserve(url: String): ApiConfigResponse = mainClient
         .get(url, emptyMap())
-        .fetchResponse<ApiConfigResponse>(moshi)
-        .also { apiConfigStorage.save(it) }
-        .toDomain()
-        .also { apiConfig.setConfig(it) }
-        .addresses
+        .fetchResponse(moshi)
 
 }

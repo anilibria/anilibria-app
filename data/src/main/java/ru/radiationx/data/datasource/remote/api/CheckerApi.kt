@@ -8,9 +8,8 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.fetchResponse
-import ru.radiationx.data.entity.app.updater.UpdateData
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.updater.UpdateDataResponse
+import ru.radiationx.data.entity.response.updater.UpdateDataRootResponse
 import javax.inject.Inject
 
 /**
@@ -24,7 +23,7 @@ class CheckerApi @Inject constructor(
     private val moshi: Moshi
 ) {
 
-    suspend fun checkUpdate(versionCode: Int): UpdateData {
+    suspend fun checkUpdate(versionCode: Int): UpdateDataRootResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "app_update",
             "current" to versionCode.toString()
@@ -32,8 +31,7 @@ class CheckerApi @Inject constructor(
         return try {
             client
                 .post(apiConfig.apiUrl, args)
-                .fetchApiResponse<UpdateDataResponse>(moshi)
-                .toDomain()
+                .fetchApiResponse(moshi)
         } catch (ex: Throwable) {
             reserveSources.sources.forEach { url ->
                 runCatching {
@@ -46,8 +44,7 @@ class CheckerApi @Inject constructor(
         }
     }
 
-    private suspend fun getReserve(url: String): UpdateData = mainClient
+    private suspend fun getReserve(url: String): UpdateDataRootResponse = mainClient
         .get(url, emptyMap())
-        .fetchResponse<UpdateDataResponse>(moshi)
-        .toDomain()
+        .fetchResponse(moshi)
 }

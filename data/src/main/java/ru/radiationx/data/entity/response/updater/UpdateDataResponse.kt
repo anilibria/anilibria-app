@@ -4,6 +4,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
+data class UpdateDataRootResponse(
+    @Json(name = "update") val update: UpdateDataResponse
+)
+
+@JsonClass(generateAdapter = true)
 data class UpdateDataResponse(
     @Json(name = "version_code") val code: String,
     @Json(name = "version_build") val build: String,
@@ -16,6 +21,7 @@ data class UpdateDataResponse(
     @Json(name = "changed") val changed: List<String>
 ) {
 
+    @JsonClass(generateAdapter = true)
     data class UpdateLink(
         @Json(name = "name") val name: String?,
         @Json(name = "url") val url: String?,

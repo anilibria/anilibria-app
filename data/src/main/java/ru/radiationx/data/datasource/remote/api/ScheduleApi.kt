@@ -5,20 +5,16 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchListApiResponse
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.schedule.ScheduleDayResponse
-import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 class ScheduleApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi,
-    private val apiUtils: ApiUtils
+    private val moshi: Moshi
 ) {
 
-    suspend fun getSchedule(): List<ScheduleDay> {
+    suspend fun getSchedule(): List<ScheduleDayResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "schedule",
             "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
@@ -26,7 +22,6 @@ class ScheduleApi @Inject constructor(
         )
         return client.post(apiConfig.apiUrl, args)
             .fetchListApiResponse<ScheduleDayResponse>(moshi)
-            .map { it.toDomain(apiUtils, apiConfig) }
     }
 
 }

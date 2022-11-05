@@ -7,8 +7,6 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.entity.app.page.PageLibria
-import ru.radiationx.data.entity.app.page.VkComments
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.page.VkCommentsResponse
 import javax.inject.Inject
 
@@ -38,12 +36,11 @@ class PageApi @Inject constructor(
             .let { pagesParser.baseParse(it) }
     }
 
-    suspend fun getComments(): VkComments {
+    suspend fun getComments(): VkCommentsResponse {
         val args: Map<String, String> = mapOf(
             "query" to "vkcomments"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<VkCommentsResponse>(moshi)
-            .toDomain()
+            .fetchApiResponse(moshi)
     }
 }

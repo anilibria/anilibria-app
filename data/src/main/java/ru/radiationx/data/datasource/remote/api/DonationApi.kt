@@ -1,14 +1,13 @@
 package ru.radiationx.data.datasource.remote.api
 
 import com.squareup.moshi.Moshi
-import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchResult
-import ru.radiationx.data.entity.response.donation.DonationInfoResponse
+import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -19,18 +18,13 @@ class DonationApi(
     private val moshi: Moshi
 ) {
 
-    private val dataAdapter by lazy {
-        moshi.adapter(DonationInfoResponse::class.java)
-    }
-
     suspend fun getDonationDetail(): DonationInfoResponse {
         val args: Map<String, String> = mapOf(
             "query" to "donation_details"
         )
-        return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { dataAdapter.fromJson(it.toString()) }
-            .let { requireNotNull(it) }
+        return client
+            .post(apiConfig.apiUrl, args)
+            .fetchApiResponse(moshi)
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms

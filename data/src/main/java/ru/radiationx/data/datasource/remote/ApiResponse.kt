@@ -5,6 +5,7 @@ import org.json.JSONObject
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
 
+@Deprecated("use moshi response")
 @Suppress("UNCHECKED_CAST")
 open class ApiResponse<T>(
     jsonString: String
@@ -33,6 +34,7 @@ open class ApiResponse<T>(
     }
 }
 
+@Deprecated("use moshi response")
 suspend fun <T> String.fetchResult(): T {
     val apiResponse = ApiResponse<T>(this)
     apiResponse.handleError()
@@ -52,6 +54,16 @@ inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
         "Can't parse response, result is null"
     }
     return apiResponse.fetch()
+}
+
+fun String.fetchEmptyApiResponse(moshi: Moshi) {
+    val type = Types.newParameterizedType(MoshiApiResponse::class.java, Any::class.java)
+    val adapter = moshi.adapter<MoshiApiResponse<Any>>(type)
+    val apiResponse = adapter.fromJson(this)
+    requireNotNull(apiResponse) {
+        "Can't parse response, result is null"
+    }
+    apiResponse.fetch()
 }
 
 @JsonClass(generateAdapter = true)

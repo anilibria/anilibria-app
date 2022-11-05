@@ -121,7 +121,7 @@ class HistoryStorage @Inject constructor(
                 }
                 val release = Release(
                     id = jsonRelease.getInt("id"),
-                    code = jsonRelease.nullString("code"),
+                    code = jsonRelease.getString("code"),
                     names = jsonRelease.getJSONArray("names").toStringsList(),
                     series = jsonRelease.nullString("series"),
                     poster = jsonRelease.nullString("poster"),

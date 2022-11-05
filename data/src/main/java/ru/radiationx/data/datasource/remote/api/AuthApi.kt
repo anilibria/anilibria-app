@@ -1,18 +1,23 @@
 package ru.radiationx.data.datasource.remote.api
 
 import android.net.Uri
-import org.json.JSONArray
+import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchResult
+import ru.radiationx.data.datasource.remote.fetchEmptyApiResponse
+import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.SocialAuth
 import ru.radiationx.data.entity.app.auth.SocialAuthException
 import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.auth.OtpInfoResponse
+import ru.radiationx.data.entity.response.auth.SocialAuthResponse
+import ru.radiationx.data.entity.response.other.ProfileResponse
 import ru.radiationx.shared.ktx.android.nullString
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -23,7 +28,8 @@ import javax.inject.Inject
 class AuthApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val authParser: AuthParser,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val moshi: Moshi
 ) {
 
     suspend fun loadUser(): ProfileItem {
@@ -31,8 +37,8 @@ class AuthApi @Inject constructor(
             "query" to "user"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { authParser.parseUser(it) }
+            .fetchApiResponse<ProfileResponse>(moshi)
+            .toDomain(apiConfig)
     }
 
     suspend fun loadOtpInfo(deviceId: String): OtpInfo {
@@ -43,8 +49,8 @@ class AuthApi @Inject constructor(
         return try {
             client
                 .post(apiConfig.apiUrl, args)
-                .fetchResult<JSONObject>()
-                .let { authParser.parseOtp(it) }
+                .fetchApiResponse<OtpInfoResponse>(moshi)
+                .toDomain()
         } catch (ex: Throwable) {
             throw authParser.checkOtpError(ex)
         }
@@ -58,7 +64,7 @@ class AuthApi @Inject constructor(
         try {
             client
                 .post(apiConfig.apiUrl, args)
-                .fetchResult<JSONObject>()
+                .fetchEmptyApiResponse(moshi)
         } catch (ex: Throwable) {
             throw authParser.checkOtpError(ex)
         }
@@ -73,7 +79,7 @@ class AuthApi @Inject constructor(
         return try {
             client
                 .post(apiConfig.apiUrl, args)
-                .fetchResult<JSONObject>()
+                .fetchEmptyApiResponse(moshi)
                 .let { loadUser() }
         } catch (ex: Throwable) {
             throw authParser.checkOtpError(ex)
@@ -98,8 +104,8 @@ class AuthApi @Inject constructor(
         )
         return client
             .post(apiConfig.apiUrl, args)
-            .fetchResult<JSONArray>()
-            .let { authParser.parseSocialAuth(it) }
+            .fetchApiResponse<List<SocialAuthResponse>>(moshi)
+            .map { it.toDomain() }
     }
 
     suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem {

@@ -1,11 +1,11 @@
 package ru.radiationx.data.datasource.remote.api
 
-import org.json.JSONArray
+import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchResult
+import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.datasource.remote.parsers.SearchParser
 import ru.radiationx.data.entity.app.Paginated
@@ -13,13 +13,22 @@ import ru.radiationx.data.entity.app.release.GenreItem
 import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.mapper.toGenreItem
+import ru.radiationx.data.entity.mapper.toYearItem
+import ru.radiationx.data.entity.response.PaginatedResponse
+import ru.radiationx.data.entity.response.release.ReleaseResponse
+import ru.radiationx.data.entity.response.search.SuggestionResponse
+import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 class SearchApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val releaseParser: ReleaseParser,
     private val searchParser: SearchParser,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val apiUtils: ApiUtils,
+    private val moshi: Moshi
 ) {
 
     suspend fun getGenres(): List<GenreItem> {
@@ -27,8 +36,8 @@ class SearchApi @Inject constructor(
             "query" to "genres"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONArray>()
-            .let { searchParser.genres(it) }
+            .fetchApiResponse<List<String>>(moshi)
+            .map { it.toGenreItem() }
     }
 
     suspend fun getYears(): List<YearItem> {
@@ -36,8 +45,8 @@ class SearchApi @Inject constructor(
             "query" to "years"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONArray>()
-            .let { searchParser.years(it) }
+            .fetchApiResponse<List<String>>(moshi)
+            .map { it.toYearItem() }
     }
 
     suspend fun fastSearch(name: String): List<SuggestionItem> {
@@ -47,8 +56,8 @@ class SearchApi @Inject constructor(
             "filter" to "id,code,names,poster"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONArray>()
-            .let { searchParser.fastSearch(it) }
+            .fetchApiResponse<List<SuggestionResponse>>(moshi)
+            .map { it.toDomain(apiUtils, apiConfig) }
     }
 
     suspend fun searchReleases(
@@ -74,8 +83,10 @@ class SearchApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { releaseParser.releases(it) }
+            .fetchApiResponse<PaginatedResponse<List<ReleaseResponse>>>(moshi)
+            .toDomain { data ->
+                data.map { it.toDomain(apiUtils, apiConfig) }
+            }
     }
 
 }

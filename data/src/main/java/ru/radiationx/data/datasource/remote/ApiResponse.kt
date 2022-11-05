@@ -1,6 +1,5 @@
 package ru.radiationx.data.datasource.remote
 
-import android.util.Log
 import com.squareup.moshi.*
 import org.json.JSONObject
 import ru.radiationx.data.entity.response.PaginatedResponse
@@ -44,12 +43,20 @@ suspend fun <T> String.fetchResult(): T {
     return requireNotNull(apiResponse.data)
 }
 
-
-inline fun <reified T, reified R : MoshiApiResponse<T>> createAdapter(moshi: Moshi): JsonAdapter<R> {
-    return moshi.adapter(R::class.java)
+fun <T> String.fetchResponse(moshi: Moshi, dataType: Type): T {
+    val adapter = moshi.adapter<T>(dataType)
+    val response = adapter.fromJson(this)
+    requireNotNull(response) {
+        "Can't parse response, result is null"
+    }
+    return response
 }
 
-inline fun <reified T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
+inline fun <reified T> String.fetchResponse(moshi: Moshi): T {
+    return fetchResponse(moshi, T::class.java)
+}
+
+fun <T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
     val responseType = Types.newParameterizedType(MoshiApiResponse::class.java, dataType)
     val adapter = moshi.adapter<MoshiApiResponse<T>>(responseType)
     val apiResponse = adapter.fromJson(this)

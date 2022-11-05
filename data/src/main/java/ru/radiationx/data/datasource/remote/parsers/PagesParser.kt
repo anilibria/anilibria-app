@@ -1,18 +1,13 @@
 package ru.radiationx.data.datasource.remote.parsers
 
-import org.json.JSONObject
-import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.app.page.PageLibria
-import ru.radiationx.data.entity.app.page.VkComments
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class PagesParser @Inject constructor(
-    private val apiUtils: IApiUtils
-) {
+class PagesParser @Inject constructor() {
 
     private val pagePatternSource =
         "(<div[^>]*?class=\"[^\"]*?news-body[^\"]*?\"[^>]*?>[\\s\\S]*?<\\/div>)[^<]*?<div[^>]*?(?:id=\"vk_comments|class=\"[^\"]*?side[^\"]*?\")"
@@ -43,10 +38,4 @@ class PagesParser @Inject constructor(
         )
     }
 
-    fun parseVkComments(jsonResponse: JSONObject): VkComments {
-        return VkComments(
-            jsonResponse.getString("baseUrl"),
-            jsonResponse.getString("script")
-        )
-    }
 }

@@ -5,7 +5,6 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchListApiResponse
-import ru.radiationx.data.datasource.remote.parsers.MenuParser
 import ru.radiationx.data.entity.app.other.LinkMenuItem
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.other.LinkMenuResponse
@@ -13,7 +12,6 @@ import javax.inject.Inject
 
 class MenuApi @Inject constructor(
     @ApiClient private val client: IClient,
-    private val menuParse: MenuParser,
     private val apiConfig: ApiConfig,
     private val moshi: Moshi
 ) {

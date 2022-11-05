@@ -2,20 +2,23 @@ package ru.radiationx.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.datasource.holders.GenresHolder
-import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.*
+import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.SeasonItem
+import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchForm
 import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
     private val searchApi: SearchApi,
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,
-    private val releaseUpdateHolder: ReleaseUpdateHolder
+    private val updateMiddleware: ReleaseUpdateMiddleware
 ) {
 
     fun observeGenres(): Flow<List<GenreItem>> = genresHolder
@@ -56,26 +59,7 @@ class SearchRepository @Inject constructor(
         page: Int
     ): Paginated<List<ReleaseItem>> = searchApi
         .searchReleases(genre, year, season, sort, onlyCompleted, page)
-        .also {
-            val newItems = mutableListOf<ReleaseItem>()
-            val updItems = mutableListOf<ReleaseUpdate>()
-            it.data.forEach { item ->
-                val updItem = releaseUpdateHolder.getRelease(item.id)
-                if (updItem == null) {
-                    newItems.add(item)
-                } else {
-
-                    item.isNew =
-                        item.torrentUpdate > updItem.lastOpenTimestamp || item.torrentUpdate > updItem.timestamp
-                    /*if (item.torrentUpdate > updItem.timestamp) {
-                        updItem.timestamp = item.torrentUpdate
-                        updItems.add(updItem)
-                    }*/
-                }
-            }
-            releaseUpdateHolder.putAllRelease(newItems)
-            releaseUpdateHolder.updAllRelease(updItems)
-        }
+        .also { updateMiddleware.handle(it.data) }
 
     suspend fun getGenres(): List<GenreItem> = searchApi
         .getGenres()

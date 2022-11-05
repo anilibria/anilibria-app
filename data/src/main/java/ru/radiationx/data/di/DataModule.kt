@@ -20,6 +20,7 @@ import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
@@ -123,6 +124,8 @@ class DataModule : Module() {
         bind(MenuRepository::class.java).singleton()
         bind(DonationRepository::class.java).singleton()
         bind(TeamsRepository::class.java).singleton()
+
+        bind(ReleaseUpdateMiddleware::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
         bind(ConfiguringInteractor::class.java).singleton()

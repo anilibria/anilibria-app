@@ -29,7 +29,6 @@ data class ReleaseFull(
     description = item.description,
     announce = item.announce,
     favoriteInfo = item.favoriteInfo,
-    isNew = item.isNew,
     link = item.link
 ), Serializable {
 

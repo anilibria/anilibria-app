@@ -58,7 +58,6 @@ class ReleaseParser @Inject constructor(
             description = jsonItem.nullString("description")?.trim(),
             announce = jsonItem.nullString("announce")?.trim(),
             favoriteInfo = favoriteInfo,
-            isNew = false,
             link = "${apiConfig.siteUrl}/release/${code}.html"
         )
     }

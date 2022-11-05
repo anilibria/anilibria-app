@@ -21,8 +21,6 @@ open class ReleaseItem(
     val description: String?,
     val announce: String?,
     val favoriteInfo: FavoriteInfo,
-    // todo TR-274 make val
-    var isNew: Boolean,
     val link: String?
 ) : Serializable {
 
@@ -50,7 +48,6 @@ open class ReleaseItem(
         description: String? = this.description,
         announce: String? = this.announce,
         favoriteInfo: FavoriteInfo = this.favoriteInfo,
-        isNew: Boolean = this.isNew,
         link: String? = this.link
     ): ReleaseItem = ReleaseItem(
         id = id,
@@ -69,7 +66,6 @@ open class ReleaseItem(
         description = description,
         announce = announce,
         favoriteInfo = favoriteInfo,
-        isNew = isNew,
         link = link
     )
 
@@ -100,7 +96,6 @@ open class ReleaseItem(
         if (description != other.description) return false
         if (announce != other.announce) return false
         if (favoriteInfo != other.favoriteInfo) return false
-        if (isNew != other.isNew) return false
         if (link != other.link) return false
 
         return true
@@ -123,7 +118,6 @@ open class ReleaseItem(
         result = 31 * result + (description?.hashCode() ?: 0)
         result = 31 * result + (announce?.hashCode() ?: 0)
         result = 31 * result + favoriteInfo.hashCode()
-        result = 31 * result + isNew.hashCode()
         result = 31 * result + (link?.hashCode() ?: 0)
         return result
     }

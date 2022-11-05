@@ -36,50 +36,39 @@ class ReleaseUpdateStorage @Inject constructor(
         return localReleasesRelay.value.firstOrNull { it.id == id }
     }
 
-    override fun updRelease(release: ReleaseUpdate) {
-        updAllRelease(listOf(release))
-    }
-
-    override fun updAllRelease(releases: List<ReleaseUpdate>) {
-        localReleasesRelay.update { updates ->
-            val mutableUpdates = updates.toMutableList()
-            releases.forEach { release ->
-                mutableUpdates
-                    .firstOrNull { it.id == release.id }
-                    ?.let { mutableUpdates.remove(it) }
-                mutableUpdates.add(
-                    ReleaseUpdate(
-                        id = release.id,
-                        timestamp = release.timestamp,
-                        lastOpenTimestamp = release.lastOpenTimestamp
-                    )
-                )
-            }
-            mutableUpdates
+    override fun viewRelease(release: ReleaseItem) {
+        getRelease(release.id)?.also { updItem ->
+            val newUpdItem = updItem.copy(
+                timestamp = release.torrentUpdate,
+                lastOpenTimestamp = updItem.timestamp
+            )
+            updAllRelease(listOf(newUpdItem))
         }
-        saveAll()
     }
 
-    override fun putRelease(release: ReleaseItem) {
-        putAllRelease(listOf(release))
-    }
-
-    override fun putAllRelease(releases: List<ReleaseItem>) {
-        localReleasesRelay.update { updates ->
-            val mutableUpdates = updates.toMutableList()
-            releases.forEach { release ->
-                mutableUpdates
-                    .firstOrNull { it.id == release.id }
-                    ?.let { mutableUpdates.remove(it) }
-                mutableUpdates.add(
-                    ReleaseUpdate(
-                        id = release.id,
-                        timestamp = release.torrentUpdate,
-                        lastOpenTimestamp = Int.MAX_VALUE
-                    )
+    override fun putInitialRelease(releases: List<ReleaseItem>) {
+        val putReleases = mutableListOf<ReleaseUpdate>()
+        releases.forEach { release ->
+            val updItem = getRelease(release.id)
+            if (updItem == null) {
+                val update = ReleaseUpdate(
+                    id = release.id,
+                    timestamp = release.torrentUpdate,
+                    lastOpenTimestamp = Int.MAX_VALUE
                 )
+                putReleases.add(update)
             }
-            mutableUpdates
+        }
+        updAllRelease(putReleases)
+    }
+
+
+    private fun updAllRelease(releases: List<ReleaseUpdate>) {
+        localReleasesRelay.update { updates ->
+            val newIds = releases.map { it.id }
+            updates
+                .filterNot { newIds.contains(it.id) }
+                .plus(releases)
         }
         saveAll()
     }

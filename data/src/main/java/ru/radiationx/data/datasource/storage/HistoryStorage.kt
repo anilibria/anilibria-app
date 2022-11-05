@@ -135,7 +135,6 @@ class HistoryStorage @Inject constructor(
                     description = jsonRelease.nullString("description"),
                     announce = jsonRelease.nullString("announce"),
                     favoriteInfo = favoriteInfo,
-                    isNew = false,
                     link = jsonRelease.nullString("link")
                 )
                 result.add(release)

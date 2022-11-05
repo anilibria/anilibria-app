@@ -1,9 +1,12 @@
 package ru.radiationx.data.datasource.remote
 
+import android.util.Log
 import com.squareup.moshi.*
 import org.json.JSONObject
+import ru.radiationx.data.entity.response.PaginatedResponse
 import ru.radiationx.shared.ktx.android.nullGet
 import ru.radiationx.shared.ktx.android.nullString
+import java.lang.reflect.Type
 
 @Deprecated("use moshi response")
 @Suppress("UNCHECKED_CAST")
@@ -46,9 +49,9 @@ inline fun <reified T, reified R : MoshiApiResponse<T>> createAdapter(moshi: Mos
     return moshi.adapter(R::class.java)
 }
 
-inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
-    val type = Types.newParameterizedType(MoshiApiResponse::class.java, T::class.java)
-    val adapter = moshi.adapter<MoshiApiResponse<T>>(type)
+inline fun <reified T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
+    val responseType = Types.newParameterizedType(MoshiApiResponse::class.java, dataType)
+    val adapter = moshi.adapter<MoshiApiResponse<T>>(responseType)
     val apiResponse = adapter.fromJson(this)
     requireNotNull(apiResponse) {
         "Can't parse response, result is null"
@@ -56,14 +59,22 @@ inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
     return apiResponse.fetch()
 }
 
+inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
+    return fetchApiResponse(moshi, T::class.java)
+}
+
+inline fun <reified T> String.fetchListApiResponse(moshi: Moshi): List<T> {
+    val dataType = Types.newParameterizedType(List::class.java, T::class.java)
+    return fetchApiResponse(moshi, dataType)
+}
+
+inline fun <reified T> String.fetchPaginatedApiResponse(moshi: Moshi): PaginatedResponse<T> {
+    val dataType = Types.newParameterizedType(PaginatedResponse::class.java, T::class.java)
+    return fetchApiResponse(moshi, dataType)
+}
+
 fun String.fetchEmptyApiResponse(moshi: Moshi) {
-    val type = Types.newParameterizedType(MoshiApiResponse::class.java, Any::class.java)
-    val adapter = moshi.adapter<MoshiApiResponse<Any>>(type)
-    val apiResponse = adapter.fromJson(this)
-    requireNotNull(apiResponse) {
-        "Can't parse response, result is null"
-    }
-    apiResponse.fetch()
+    fetchApiResponse<Any>(moshi, Any::class.java)
 }
 
 @JsonClass(generateAdapter = true)

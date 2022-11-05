@@ -80,7 +80,7 @@ class ApiOkHttpProvider @Inject constructor(
         }
         .apply {
             if (sharedBuildConfig.debug) {
-                addInterceptor(HttpLoggingInterceptor())
+                addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 addInterceptor(ChuckerInterceptor.Builder(context).build())
             }
         }

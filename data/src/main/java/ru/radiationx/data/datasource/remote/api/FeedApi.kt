@@ -4,7 +4,7 @@ import com.squareup.moshi.Moshi
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchListApiResponse
 import ru.radiationx.data.datasource.remote.parsers.FeedParser
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.datasource.remote.parsers.YoutubeParser
@@ -32,7 +32,7 @@ class FeedApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<FeedResponse>>(moshi)
+            .fetchListApiResponse<FeedResponse>(moshi)
             .map { it.toDomain(apiUtils, apiConfig) }
     }
 

@@ -11,7 +11,7 @@ class FavoriteRepository @Inject constructor(
     private val updateMiddleware: ReleaseUpdateMiddleware
 ) {
 
-    suspend fun getFavorites(page: Int): Paginated<List<Release>> = favoriteApi
+    suspend fun getFavorites(page: Int): Paginated<Release> = favoriteApi
         .getFavorites(page)
         .also { updateMiddleware.handle(it.data) }
 

@@ -9,6 +9,6 @@ class YoutubeRepository @Inject constructor(
     private val youtubeApi: YoutubeApi
 ) {
 
-    suspend fun getYoutubeList(page: Int): Paginated<List<YoutubeItem>> = youtubeApi
+    suspend fun getYoutubeList(page: Int): Paginated<YoutubeItem> = youtubeApi
         .getYoutubeList(page)
 }

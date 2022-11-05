@@ -30,7 +30,7 @@ class SearchRepository @Inject constructor(
     suspend fun fastSearch(query: String): List<SuggestionItem> = searchApi
         .fastSearch(query)
 
-    suspend fun searchReleases(form: SearchForm, page: Int): Paginated<List<Release>> {
+    suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {
         val yearsQuery = form.years?.joinToString(",") { it.value }.orEmpty()
         val seasonsQuery = form.seasons?.joinToString(",") { it.value }.orEmpty()
         val genresQuery = form.genres?.joinToString(",") { it.value }.orEmpty()
@@ -57,7 +57,7 @@ class SearchRepository @Inject constructor(
         sort: String,
         onlyCompleted: String,
         page: Int
-    ): Paginated<List<Release>> = searchApi
+    ): Paginated<Release> = searchApi
         .searchReleases(genre, year, season, sort, onlyCompleted, page)
         .also { updateMiddleware.handle(it.data) }
 

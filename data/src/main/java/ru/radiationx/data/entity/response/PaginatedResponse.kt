@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaginatedResponse<out T>(
-    @Json(name = "items") val data: T,
+data class PaginatedResponse<T>(
+    @Json(name = "items") val data: List<T>,
     @Json(name = "pagination") val meta: PaginationResponse,
 ) {
 

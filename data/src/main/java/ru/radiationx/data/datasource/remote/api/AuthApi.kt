@@ -4,11 +4,8 @@ import android.net.Uri
 import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
-import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchEmptyApiResponse
-import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.entity.app.auth.OtpInfo
 import ru.radiationx.data.entity.app.auth.SocialAuth
@@ -104,7 +101,7 @@ class AuthApi @Inject constructor(
         )
         return client
             .post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<SocialAuthResponse>>(moshi)
+            .fetchListApiResponse<SocialAuthResponse>(moshi)
             .map { it.toDomain() }
     }
 

@@ -4,7 +4,7 @@ import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.response.PaginatedResponse
 
 fun <T, R> PaginatedResponse<T>.toDomain(block: (T) -> R): Paginated<R> = Paginated(
-    data = block.invoke(data),
+    data = data.map(block),
     page = meta.page,
     allPages = meta.allPages,
     perPage = meta.perPage,

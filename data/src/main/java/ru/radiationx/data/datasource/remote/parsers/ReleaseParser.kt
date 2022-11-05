@@ -193,9 +193,9 @@ class ReleaseParser @Inject constructor(
         return resItems
     }
 
-    fun releases(jsonResponse: JSONObject): Paginated<List<Release>> {
+    fun releases(jsonResponse: JSONObject): Paginated<Release> {
         return paginationParser.parse(jsonResponse) {
-            releases(it)
+            release(it)
         }
     }
 

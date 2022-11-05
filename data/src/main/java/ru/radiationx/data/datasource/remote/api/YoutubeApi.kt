@@ -5,6 +5,7 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
 import ru.radiationx.data.datasource.remote.parsers.YoutubeParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
@@ -22,15 +23,13 @@ class YoutubeApi @Inject constructor(
     private val moshi: Moshi
 ) {
 
-    suspend fun getYoutubeList(page: Int): Paginated<List<YoutubeItem>> {
+    suspend fun getYoutubeList(page: Int): Paginated<YoutubeItem> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "youtube",
             "page" to page.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<PaginatedResponse<List<YoutubeResponse>>>(moshi)
-            .toDomain { data ->
-                data.map { it.toDomain(apiUtils, apiConfig) }
-            }
+            .fetchPaginatedApiResponse<YoutubeResponse>(moshi)
+            .toDomain { it.toDomain(apiUtils, apiConfig) }
     }
 }

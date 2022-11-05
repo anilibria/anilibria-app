@@ -5,12 +5,13 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchListApiResponse
+import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
 import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.mapper.toDomain
-import ru.radiationx.data.entity.response.PaginatedResponse
 import ru.radiationx.data.entity.response.release.RandomReleaseResponse
 import ru.radiationx.data.entity.response.release.ReleaseResponse
 import ru.radiationx.data.system.ApiUtils
@@ -63,11 +64,11 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<ReleaseResponse>>(moshi)
+            .fetchListApiResponse<ReleaseResponse>(moshi)
             .map { it.toDomain(apiUtils, apiConfig) }
     }
 
-    suspend fun getReleases(page: Int): Paginated<List<Release>> {
+    suspend fun getReleases(page: Int): Paginated<Release> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",
             "page" to page.toString(),
@@ -75,10 +76,8 @@ class ReleaseApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<PaginatedResponse<List<ReleaseResponse>>>(moshi)
-            .toDomain { data ->
-                data.map { it.toDomain(apiUtils, apiConfig) }
-            }
+            .fetchPaginatedApiResponse<ReleaseResponse>(moshi)
+            .toDomain { it.toDomain(apiUtils, apiConfig) }
     }
 
 

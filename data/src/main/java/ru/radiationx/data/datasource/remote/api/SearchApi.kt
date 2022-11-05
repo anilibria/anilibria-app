@@ -5,7 +5,8 @@ import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchListApiResponse
+import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.datasource.remote.parsers.SearchParser
 import ru.radiationx.data.entity.app.Paginated
@@ -16,7 +17,6 @@ import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.mapper.toGenreItem
 import ru.radiationx.data.entity.mapper.toYearItem
-import ru.radiationx.data.entity.response.PaginatedResponse
 import ru.radiationx.data.entity.response.release.ReleaseResponse
 import ru.radiationx.data.entity.response.search.SuggestionResponse
 import ru.radiationx.data.system.ApiUtils
@@ -36,7 +36,7 @@ class SearchApi @Inject constructor(
             "query" to "genres"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<String>>(moshi)
+            .fetchListApiResponse<String>(moshi)
             .map { it.toGenreItem() }
     }
 
@@ -45,7 +45,7 @@ class SearchApi @Inject constructor(
             "query" to "years"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<String>>(moshi)
+            .fetchListApiResponse<String>(moshi)
             .map { it.toYearItem() }
     }
 
@@ -56,7 +56,7 @@ class SearchApi @Inject constructor(
             "filter" to "id,code,names,poster"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<List<SuggestionResponse>>(moshi)
+            .fetchListApiResponse<SuggestionResponse>(moshi)
             .map { it.toDomain(apiUtils, apiConfig) }
     }
 
@@ -67,7 +67,7 @@ class SearchApi @Inject constructor(
         sort: String,
         complete: String,
         page: Int
-    ): Paginated<List<Release>> {
+    ): Paginated<Release> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "catalog",
             "search" to JSONObject().apply {
@@ -83,10 +83,8 @@ class SearchApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<PaginatedResponse<List<ReleaseResponse>>>(moshi)
-            .toDomain { data ->
-                data.map { it.toDomain(apiUtils, apiConfig) }
-            }
+            .fetchPaginatedApiResponse<ReleaseResponse>(moshi)
+            .toDomain { it.toDomain(apiUtils, apiConfig) }
     }
 
 }

@@ -29,7 +29,7 @@ class ReleaseRepository @Inject constructor(
         .getReleasesByIds(ids)
         .also { updateMiddleware.handle(it) }
 
-    suspend fun getReleases(page: Int): Paginated<List<Release>> = releaseApi
+    suspend fun getReleases(page: Int): Paginated<Release> = releaseApi
         .getReleases(page)
         .also { updateMiddleware.handle(it.data) }
 }

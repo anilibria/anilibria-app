@@ -37,10 +37,14 @@ fun PlayerSkipsResponse.toDomain(): PlayerSkips = PlayerSkips(
     ending = ending?.toSkipDomain()
 )
 
-private fun List<Int>.toSkipDomain(): PlayerSkips.Skip = PlayerSkips.Skip(
-    start = get(0).secToMillis(),
-    end = get(1).secToMillis()
-)
+private fun List<Int>.toSkipDomain(): PlayerSkips.Skip? {
+    val start = getOrNull(0)?.secToMillis() ?: return null
+    val end = getOrNull(0)?.secToMillis() ?: return null
+    return PlayerSkips.Skip(
+        start = start,
+        end = end
+    )
+}
 
 
 fun EpisodeResponse.toSourceDomain(releaseId: Int): SourceEpisode? {

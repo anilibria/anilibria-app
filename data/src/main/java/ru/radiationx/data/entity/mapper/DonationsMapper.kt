@@ -1,11 +1,12 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.app.donation.DonationCardResponse
-import ru.radiationx.data.entity.app.donation.DonationContentItemResponse
-import ru.radiationx.data.entity.app.donation.DonationInfoResponse
+import ru.radiationx.data.entity.response.donation.DonationCardResponse
+import ru.radiationx.data.entity.response.donation.DonationContentItemResponse
+import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import ru.radiationx.data.entity.app.donation.content.*
-import ru.radiationx.data.entity.app.donation.content_data.DonationDialogResponse
+import ru.radiationx.data.entity.response.donation.content_data.DonationDialogResponse
 import ru.radiationx.data.entity.domain.donation.*
+import ru.radiationx.data.entity.response.donation.content.*
 
 fun DonationInfoResponse.toDomain() = DonationInfo(
     cardNewDonations = cards.newDonations?.toDomain(),

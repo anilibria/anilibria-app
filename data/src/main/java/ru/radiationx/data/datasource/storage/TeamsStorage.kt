@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.TeamsHolder
-import ru.radiationx.data.entity.app.team.TeamsResponse
+import ru.radiationx.data.entity.response.team.TeamsResponse
 import timber.log.Timber
 import toothpick.InjectConstructor
 

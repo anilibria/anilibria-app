@@ -7,7 +7,7 @@ import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchResult
-import ru.radiationx.data.entity.app.donation.DonationInfoResponse
+import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import toothpick.InjectConstructor
 

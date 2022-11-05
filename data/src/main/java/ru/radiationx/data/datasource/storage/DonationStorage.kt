@@ -10,7 +10,7 @@ import okio.buffer
 import okio.source
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DonationHolder
-import ru.radiationx.data.entity.app.donation.DonationInfoResponse
+import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import timber.log.Timber
 import toothpick.InjectConstructor
 

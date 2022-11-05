@@ -6,7 +6,7 @@ import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchResult
-import ru.radiationx.data.entity.app.team.TeamsResponse
+import ru.radiationx.data.entity.response.team.TeamsResponse
 import toothpick.InjectConstructor
 
 @InjectConstructor

@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
@@ -32,10 +32,10 @@ class ReleasePresenter @Inject constructor(
     private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<ReleaseView>(router) {
 
-    private var currentData: ReleaseItem? = null
+    private var currentData: Release? = null
     var releaseId = -1
     var releaseIdCode: String? = null
-    var argReleaseItem: ReleaseItem? = null
+    var argReleaseItem: Release? = null
 
     private val stateController = StateController(ReleasePagerState())
 
@@ -73,7 +73,7 @@ class ReleasePresenter @Inject constructor(
             runCatching {
                 releaseInteractor.loadRelease(releaseId, releaseIdCode)
             }.onSuccess {
-                historyRepository.putRelease(it as ReleaseItem)
+                historyRepository.putRelease(it as Release)
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -86,12 +86,12 @@ class ReleasePresenter @Inject constructor(
             .observeFull(releaseId, releaseIdCode)
             .onEach { release ->
                 updateLocalRelease(release)
-                historyRepository.putRelease(release as ReleaseItem)
+                historyRepository.putRelease(release as Release)
             }
             .launchIn(presenterScope)
     }
 
-    private fun updateLocalRelease(release: ReleaseItem) {
+    private fun updateLocalRelease(release: Release) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code

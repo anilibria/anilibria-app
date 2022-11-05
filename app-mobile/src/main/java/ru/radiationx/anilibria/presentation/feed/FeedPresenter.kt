@@ -21,7 +21,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -252,12 +252,12 @@ class FeedPresenter @Inject constructor(
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
     }
 
-    private fun findScheduleRelease(id: Int): ReleaseItem? {
+    private fun findScheduleRelease(id: Int): Release? {
         val scheduleItems = loadingController.currentState.data?.schedule?.items
         return scheduleItems?.find { it.releaseItem.id == id }?.releaseItem
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
+    private fun findRelease(id: Int): Release? {
         val feedItems = loadingController.currentState.data?.feedItems
         return feedItems?.mapNotNull { it.release }?.find { it.id == id }
     }

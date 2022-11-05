@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -40,7 +40,7 @@ class DetailHeaderViewModel(
     val releaseData = MutableLiveData<LibriaDetails>()
     val progressState = MutableLiveData<DetailsState>()
 
-    private var currentRelease: ReleaseItem? = null
+    private var currentRelease: Release? = null
 
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
@@ -147,7 +147,7 @@ class DetailHeaderViewModel(
         )
     }
 
-    private fun update(releaseItem: ReleaseItem) {
+    private fun update(releaseItem: Release) {
         releaseData.value = converter.toDetail(releaseItem)
     }
 }

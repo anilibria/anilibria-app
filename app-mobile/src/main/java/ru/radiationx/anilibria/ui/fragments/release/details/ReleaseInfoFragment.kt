@@ -38,7 +38,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.SourceEpisode
 import ru.radiationx.data.entity.app.release.TorrentItem
 import ru.radiationx.shared_app.di.injectDependencies
@@ -127,11 +127,11 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .show()
     }
 
-    override fun playEpisodes(release: ReleaseItem) {
+    override fun playEpisodes(release: Release) {
         playEpisode(release, release.episodes.last())
     }
 
-    override fun playContinue(release: ReleaseItem, startWith: Episode) {
+    override fun playContinue(release: Release, startWith: Episode) {
         playEpisode(release, startWith, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
     }
 
@@ -231,7 +231,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun playEpisode(
-        release: ReleaseItem,
+        release: Release,
         episode: Episode,
         playFlag: Int?,
         quality: Int?
@@ -336,7 +336,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     private fun playInternal(
-        release: ReleaseItem,
+        release: Release,
         episode: Episode,
         quality: Int,
         playFlag: Int? = null
@@ -355,7 +355,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         })
     }
 
-    private fun playExternal(release: ReleaseItem, episode: Episode, quality: Int) {
+    private fun playExternal(release: Release, episode: Episode, quality: Int) {
         presenter.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()

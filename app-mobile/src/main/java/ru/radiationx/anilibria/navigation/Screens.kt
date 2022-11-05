@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 
 /**
  * Created by radiationx on 17.11.17.
@@ -90,7 +90,7 @@ object Screens {
     class ReleaseDetails(
         val id: Int = -1,
         val code: String? = null,
-        val item: ReleaseItem? = null
+        val item: Release? = null
     ) : BaseAppScreen() {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }

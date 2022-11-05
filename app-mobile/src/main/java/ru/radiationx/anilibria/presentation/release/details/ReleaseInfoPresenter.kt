@@ -53,7 +53,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val remindText =
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
-    private var currentData: ReleaseItem? = null
+    private var currentData: Release? = null
     var releaseId = -1
     var releaseIdCode: String? = null
 
@@ -133,7 +133,7 @@ class ReleaseInfoPresenter @Inject constructor(
             .launchIn(presenterScope)
     }
 
-    private fun updateLocalRelease(release: ReleaseItem) {
+    private fun updateLocalRelease(release: Release) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
@@ -229,7 +229,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onRutubeEpisodeClick(
-        release: ReleaseItem,
+        release: Release,
         episode: RutubeEpisode
     ) {
         releaseAnalytics.episodeRutubeClick(release.id)
@@ -238,7 +238,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     private fun onExternalEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
-        release: ReleaseItem,
+        release: Release,
         episode: ExternalEpisode
     ) {
         releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
@@ -246,7 +246,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onSourceEpisodeClick(
-        release: ReleaseItem,
+        release: Release,
         episode: SourceEpisode,
         quality: Int? = null
     ) {
@@ -257,7 +257,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     private fun onOnlineEpisodeClick(
-        release: ReleaseItem,
+        release: Release,
         episode: Episode,
         playFlag: Int? = null,
         quality: Int? = null

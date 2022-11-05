@@ -8,7 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ class ReleaseUpdateStorage @Inject constructor(
         return localReleasesRelay.value.firstOrNull { it.id == id }
     }
 
-    override fun viewRelease(release: ReleaseItem) {
+    override fun viewRelease(release: Release) {
         getRelease(release.id)?.also { updItem ->
             val newUpdItem = updItem.copy(
                 timestamp = release.torrentUpdate,
@@ -46,7 +46,7 @@ class ReleaseUpdateStorage @Inject constructor(
         }
     }
 
-    override fun putInitialRelease(releases: List<ReleaseItem>) {
+    override fun putInitialRelease(releases: List<Release>) {
         val putReleases = mutableListOf<ReleaseUpdate>()
         releases.forEach { release ->
             val updItem = getRelease(release.id)

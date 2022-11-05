@@ -22,7 +22,7 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
@@ -69,7 +69,7 @@ class SearchPresenter @Inject constructor(
     }
     private val stateController = StateController(SearchScreenState())
 
-    private fun findRelease(id: Int): ReleaseItem? {
+    private fun findRelease(id: Int): Release? {
         return loadingController.currentState.data?.find { it.id == id }
     }
 
@@ -171,7 +171,7 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItem>> {
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         val genresQuery = currentGenres.joinToString(",")
         val yearsQuery = currentYears.joinToString(",")
         val seasonsQuery = currentSeasons.joinToString(",")

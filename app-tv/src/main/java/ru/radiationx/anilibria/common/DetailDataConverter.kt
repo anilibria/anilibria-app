@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.common
 
 import android.content.Context
 import android.text.Html
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.schedule.ScheduleDay
 import toothpick.InjectConstructor
 import java.text.NumberFormat
@@ -13,7 +13,7 @@ class DetailDataConverter(
     private val context: Context
 ) {
 
-    fun toDetail(releaseItem: ReleaseItem): LibriaDetails = releaseItem.run {
+    fun toDetail(releaseItem: Release): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
             titleRu = title.orEmpty(),
@@ -37,8 +37,8 @@ class DetailDataConverter(
         )
     }
 
-    fun ReleaseItem.getAnnounce(): String {
-        if (statusCode == ReleaseItem.STATUS_CODE_COMPLETE) {
+    fun Release.getAnnounce(): String {
+        if (statusCode == Release.STATUS_CODE_COMPLETE) {
             return "Релиз завершен"
         }
 

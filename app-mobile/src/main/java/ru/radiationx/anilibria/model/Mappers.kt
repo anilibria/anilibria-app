@@ -7,13 +7,13 @@ import ru.radiationx.data.entity.app.feed.FeedItem
 import ru.radiationx.data.entity.app.feed.ScheduleItem
 import ru.radiationx.data.entity.app.other.OtherMenuItem
 import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.entity.app.search.SuggestionItem
 import ru.radiationx.data.entity.app.youtube.YoutubeItem
 import ru.radiationx.data.entity.common.AuthState
 
-fun ReleaseItem.toState(updates: Map<Int, ReleaseUpdate>): ReleaseItemState {
+fun Release.toState(updates: Map<Int, ReleaseUpdate>): ReleaseItemState {
     val title = if (series == null) {
         title.toString()
     } else {

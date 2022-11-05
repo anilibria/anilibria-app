@@ -9,7 +9,7 @@ import ru.radiationx.data.datasource.remote.fetchResult
 import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import javax.inject.Inject
 
 /* Created by radiationx on 31.10.17. */
@@ -29,7 +29,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.parseRandomRelease(it) }
     }
 
-    suspend fun getRelease(releaseId: Int): ReleaseItem {
+    suspend fun getRelease(releaseId: Int): Release {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "id" to releaseId.toString()
@@ -39,7 +39,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.release(it) }
     }
 
-    suspend fun getRelease(releaseCode: String): ReleaseItem {
+    suspend fun getRelease(releaseCode: String): Release {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "release",
             "code" to releaseCode
@@ -49,7 +49,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.release(it) }
     }
 
-    suspend fun getReleasesByIds(ids: List<Int>): List<ReleaseItem> {
+    suspend fun getReleasesByIds(ids: List<Int>): List<Release> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "info",
             "id" to ids.joinToString(","),
@@ -61,7 +61,7 @@ class ReleaseApi @Inject constructor(
             .let { releaseParser.releases(it) }
     }
 
-    suspend fun getReleases(page: Int): Paginated<List<ReleaseItem>> {
+    suspend fun getReleases(page: Int): Paginated<List<Release>> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",
             "page" to page.toString(),

@@ -10,7 +10,7 @@ import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.entity.app.release.BlockedInfo
 import ru.radiationx.data.entity.app.release.FavoriteInfo
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.shared.ktx.android.toStringsList
 import javax.inject.Inject
@@ -32,9 +32,9 @@ class HistoryStorage @Inject constructor(
 
     override suspend fun getEpisodes() = localReleasesRelay.value
 
-    override fun observeEpisodes(): Flow<List<ReleaseItem>> = localReleasesRelay
+    override fun observeEpisodes(): Flow<List<Release>> = localReleasesRelay
 
-    override fun putRelease(release: ReleaseItem) {
+    override fun putRelease(release: Release) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases
@@ -46,7 +46,7 @@ class HistoryStorage @Inject constructor(
         saveAll()
     }
 
-    override fun putAllRelease(releases: List<ReleaseItem>) {
+    override fun putAllRelease(releases: List<Release>) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             releases.forEach { release ->
@@ -106,8 +106,8 @@ class HistoryStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll(): List<ReleaseItem> {
-        val result = mutableListOf<ReleaseItem>()
+    private fun loadAll(): List<Release> {
+        val result = mutableListOf<Release>()
         val jsonEpisodes =
             sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
         if (jsonEpisodes != null) {
@@ -119,7 +119,7 @@ class HistoryStorage @Inject constructor(
                         isAdded = jsonFav.getBoolean("isAdded")
                     )
                 }
-                val release = ReleaseItem(
+                val release = Release(
                     id = jsonRelease.getInt("id"),
                     code = jsonRelease.nullString("code"),
                     names = jsonRelease.getJSONArray("names").toStringsList(),

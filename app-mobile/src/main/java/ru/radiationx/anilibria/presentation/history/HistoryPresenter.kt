@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.ReleaseUpdate
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -31,7 +31,7 @@ class HistoryPresenter @Inject constructor(
     private val releaseAnalytics: ReleaseAnalytics
 ) : BasePresenter<HistoryView>(router) {
 
-    private val currentReleases = mutableListOf<ReleaseItem>()
+    private val currentReleases = mutableListOf<Release>()
     private val stateController = StateController(HistoryScreenState())
 
     private var isSearchEnabled: Boolean = false
@@ -79,7 +79,7 @@ class HistoryPresenter @Inject constructor(
         }
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
+    private fun findRelease(id: Int): Release? {
         return currentReleases.find { it.id == id }
     }
 

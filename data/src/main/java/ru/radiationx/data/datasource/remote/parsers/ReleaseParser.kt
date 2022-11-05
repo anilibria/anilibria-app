@@ -30,7 +30,7 @@ class ReleaseParser @Inject constructor(
         jsonItem.getString("code")
     )
 
-    fun release(jsonResponse: JSONObject): ReleaseItem {
+    fun release(jsonResponse: JSONObject): Release {
         val releaseId = jsonResponse.getInt("id")
         val releaseCode = jsonResponse.nullString("code")
         val names = jsonResponse.getJSONArray("names").mapStrings {
@@ -155,7 +155,7 @@ class ReleaseParser @Inject constructor(
                 )
             }
             .orEmpty()
-        return ReleaseItem(
+        return Release(
             id = jsonResponse.getInt("id"),
             code = releaseCode,
             names = names,
@@ -184,8 +184,8 @@ class ReleaseParser @Inject constructor(
         )
     }
 
-    fun releases(jsonItems: JSONArray): List<ReleaseItem> {
-        val resItems = mutableListOf<ReleaseItem>()
+    fun releases(jsonItems: JSONArray): List<Release> {
+        val resItems = mutableListOf<Release>()
         for (i in 0 until jsonItems.length()) {
             val jsonItem = jsonItems.getJSONObject(i)
             resItems.add(this.release(jsonItem))
@@ -193,7 +193,7 @@ class ReleaseParser @Inject constructor(
         return resItems
     }
 
-    fun releases(jsonResponse: JSONObject): Paginated<List<ReleaseItem>> {
+    fun releases(jsonResponse: JSONObject): Paginated<List<Release>> {
         return paginationParser.parse(jsonResponse) {
             releases(it)
         }

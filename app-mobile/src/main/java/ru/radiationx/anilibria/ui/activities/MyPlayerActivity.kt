@@ -53,7 +53,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -106,7 +106,7 @@ class MyPlayerActivity : BaseActivity() {
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
-    private lateinit var releaseData: ReleaseItem
+    private lateinit var releaseData: Release
     private var playFlag = PLAY_FLAG_DEFAULT
     private var currentEpisodeId = NO_ID
 
@@ -334,7 +334,7 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        val release = intent.getSerializableExtra(ARG_RELEASE) as ReleaseItem? ?: return
+        val release = intent.getSerializableExtra(ARG_RELEASE) as Release? ?: return
         val episodeId =
             intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)

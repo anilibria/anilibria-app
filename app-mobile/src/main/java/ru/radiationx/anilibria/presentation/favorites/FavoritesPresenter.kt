@@ -16,7 +16,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.FavoritesAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -157,7 +157,7 @@ class FavoritesPresenter @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
-    private fun findRelease(id: Int): ReleaseItem? {
+    private fun findRelease(id: Int): Release? {
         return loadingController.currentState.data?.find { it.id == id }
     }
 
@@ -168,7 +168,7 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<ReleaseItem>> {
+    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         return try {
             favoriteRepository
                 .getFavorites(params.page)
@@ -188,7 +188,7 @@ class FavoritesPresenter @Inject constructor(
         }
     }
 
-    private fun List<ReleaseItem>.filterByQuery(query: String): List<ReleaseItem> {
+    private fun List<Release>.filterByQuery(query: String): List<Release> {
         if (query.isEmpty()) {
             return emptyList()
         }

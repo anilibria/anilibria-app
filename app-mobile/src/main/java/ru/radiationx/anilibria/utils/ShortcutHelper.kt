@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -15,14 +14,14 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import kotlin.math.min
 
 object ShortcutHelper {
 
-    fun addShortcut(data: ReleaseItem) {
+    fun addShortcut(data: Release) {
         ImageLoader.getInstance().loadImage(data.poster, object : SimpleImageLoadingListener() {
             override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
                 val minSize = min(loadedImage.width, loadedImage.height)
@@ -36,7 +35,7 @@ object ShortcutHelper {
         })
     }
 
-    fun addShortcut(data: ReleaseItem, bitmap: Bitmap) = addShortcut(
+    fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(
         App.instance,
         data.code ?: "release_${data.id}",
         (data.title ?: data.titleEng).toString(),

@@ -6,7 +6,7 @@ import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.app.Paginated
 import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 import ru.radiationx.data.entity.app.release.SeasonItem
 import ru.radiationx.data.entity.app.release.YearItem
 import ru.radiationx.data.entity.app.search.SearchForm
@@ -30,7 +30,7 @@ class SearchRepository @Inject constructor(
     suspend fun fastSearch(query: String): List<SuggestionItem> = searchApi
         .fastSearch(query)
 
-    suspend fun searchReleases(form: SearchForm, page: Int): Paginated<List<ReleaseItem>> {
+    suspend fun searchReleases(form: SearchForm, page: Int): Paginated<List<Release>> {
         val yearsQuery = form.years?.joinToString(",") { it.value }.orEmpty()
         val seasonsQuery = form.seasons?.joinToString(",") { it.value }.orEmpty()
         val genresQuery = form.genres?.joinToString(",") { it.value }.orEmpty()
@@ -57,7 +57,7 @@ class SearchRepository @Inject constructor(
         sort: String,
         onlyCompleted: String,
         page: Int
-    ): Paginated<List<ReleaseItem>> = searchApi
+    ): Paginated<List<Release>> = searchApi
         .searchReleases(genre, year, season, sort, onlyCompleted, page)
         .also { updateMiddleware.handle(it.data) }
 

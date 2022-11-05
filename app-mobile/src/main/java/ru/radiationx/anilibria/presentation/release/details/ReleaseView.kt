@@ -5,7 +5,7 @@ import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.app.release.Release
 
 /* Created by radiationx on 18.11.17. */
 
@@ -21,5 +21,5 @@ interface ReleaseView : IBaseView {
     fun copyLink(url: String)
 
     @StateStrategyType(SkipStrategy::class)
-    fun addShortCut(release: ReleaseItem)
+    fun addShortCut(release: Release)
 }

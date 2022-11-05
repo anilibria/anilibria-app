@@ -11,7 +11,7 @@ import ru.radiationx.shared_app.codecs.types.CodecProcessingType
 import ru.radiationx.shared_app.codecs.types.CodecQuery
 import java.util.*
 
-fun ReleaseItem.toState(): ReleaseDetailState = ReleaseDetailState(
+fun Release.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
     episodesControl = toEpisodeControlState(),
@@ -25,7 +25,7 @@ fun FavoriteInfo.toState() = ReleaseFavoriteState(
     isAdded = isAdded
 )
 
-fun ReleaseItem.toInfoState(): ReleaseInfoState {
+fun Release.toInfoState(): ReleaseInfoState {
     val seasonsHtml = "<b>Год:</b> " + seasons.joinToString(", ")
     val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ") {
         val index = voices.indexOf(it)
@@ -54,7 +54,7 @@ fun ReleaseItem.toInfoState(): ReleaseInfoState {
         updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
-        isOngoing = statusCode == ReleaseItem.STATUS_CODE_PROGRESS,
+        isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
         announce = announce,
         favorite = favoriteInfo.toState()
     )
@@ -71,7 +71,7 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
     )
 }
 
-fun ReleaseItem.toEpisodeControlState(): ReleaseEpisodesControlState? {
+fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
     val hasViewed = episodes.any { it.access.isViewed }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
@@ -112,7 +112,7 @@ fun TorrentItem.toState(): ReleaseTorrentItemState {
     )
 }
 
-fun ReleaseItem.toTabsState(): List<EpisodesTabState> {
+fun Release.toTabsState(): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(
         tag = "online",
         title = "Онлайн",

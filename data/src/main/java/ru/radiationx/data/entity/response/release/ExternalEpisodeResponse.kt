@@ -1,10 +1,12 @@
 package ru.radiationx.data.entity.response.release
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import java.io.Serializable
 
+@JsonClass(generateAdapter = true)
 data class ExternalEpisodeResponse(
-    val id: Int,
-    val releaseId: Int,
-    val title: String?,
-    val url: String?
+    @Json(name = "id") val id: Int,
+    @Json(name = "title") val title: String?,
+    @Json(name = "url") val url: String?
 ) : Serializable

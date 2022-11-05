@@ -1,8 +1,12 @@
 package ru.radiationx.data.entity.response.search
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class SuggestionResponse(
-    val id: Int,
-    val code: String,
-    val names: List<String>,
-    val poster: String?
+    @Json(name = "id") val id: Int,
+    @Json(name = "code") val code: String,
+    @Json(name = "names") val names: List<String>,
+    @Json(name = "poster") val poster: String?
 )

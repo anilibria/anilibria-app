@@ -1,16 +1,11 @@
 package ru.radiationx.data.entity.response.other
 
-import ru.radiationx.data.entity.common.AuthState
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class ProfileResponse(
-    val id: Int = NO_ID,
-    val nick: String = NO_VALUE,
-    val avatarUrl: String? = NO_VALUE,
-    val authState: AuthState = AuthState.NO_AUTH
-) {
-
-    companion object {
-        const val NO_ID = -1
-        const val NO_VALUE = ""
-    }
-}
+    @Json(name = "id") val id: Int,
+    @Json(name = "login") val nick: String?,
+    @Json(name = "avatar") val avatarUrl: String?,
+)

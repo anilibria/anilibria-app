@@ -1,24 +1,24 @@
 package ru.radiationx.data.entity.response.updater
 
-/**
- * Created by radiationx on 28.01.18.
- */
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class UpdateDataResponse(
-    val code: Int,
-    val build: Int,
-    val name: String?,
-    val date: String?,
-    val links: List<UpdateLink>,
-    val important: List<String>,
-    val added: List<String>,
-    val fixed: List<String>,
-    val changed: List<String>
+    @Json(name = "version_code") val code: String,
+    @Json(name = "version_build") val build: String,
+    @Json(name = "version_name") val name: String,
+    @Json(name = "build_date") val date: String,
+    @Json(name = "links") val links: List<UpdateLink>,
+    @Json(name = "important") val important: List<String>,
+    @Json(name = "added") val added: List<String>,
+    @Json(name = "fixed") val fixed: List<String>,
+    @Json(name = "changed") val changed: List<String>
 ) {
 
     data class UpdateLink(
-        val name: String,
-        val url: String,
-        val type: String
+        @Json(name = "name") val name: String,
+        @Json(name = "url") val url: String,
+        @Json(name = "type") val type: String
     )
 }

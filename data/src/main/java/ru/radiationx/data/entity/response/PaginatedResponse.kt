@@ -1,21 +1,19 @@
 package ru.radiationx.data.entity.response
 
-/**
- * Created by radiationx on 04.12.2017.
- */
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class PaginatedResponse<out T>(
-    val data: T,
-    val page: Int?,
-    val allPages: Int?,
-    val perPage: Int?,
-    val allItems: Int?
+    @Json(name = "items") val data: T,
+    @Json(name = "pagination") val meta: PaginationResponse,
 ) {
 
-    fun isEnd(): Boolean {
-        return if (page != null && allPages != null) {
-            page >= allPages
-        } else {
-            false
-        }
-    }
+    @JsonClass(generateAdapter = true)
+    data class PaginationResponse(
+        @Json(name = "page") val page: Int?,
+        @Json(name = "allPages") val allPages: Int?,
+        @Json(name = "perPage") val perPage: Int?,
+        @Json(name = "allItems") val allItems: Int?
+    )
 }

@@ -1,20 +1,19 @@
 package ru.radiationx.data.entity.response.release
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import java.io.Serializable
-import java.util.*
 
-/**
- * Created by radiationx on 30.01.18.
- */
+@JsonClass(generateAdapter = true)
 data class TorrentResponse(
-    val id: Int,
-    val hash: String?,
-    val leechers: Int,
-    val seeders: Int,
-    val completed: Int,
-    val quality: String?,
-    val series: String?,
-    val size: Long,
-    val url: String?,
-    val date: Date?
+    @Json(name = "id") val id: Int,
+    @Json(name = "hash") val hash: String?,
+    @Json(name = "leechers") val leechers: Int?,
+    @Json(name = "seeders") val seeders: Int?,
+    @Json(name = "completed") val completed: Int?,
+    @Json(name = "quality") val quality: String?,
+    @Json(name = "series") val series: String?,
+    @Json(name = "size") val size: Long?,
+    @Json(name = "url") val url: String?,
+    @Json(name = "ctime") val date: Int?
 ) : Serializable 

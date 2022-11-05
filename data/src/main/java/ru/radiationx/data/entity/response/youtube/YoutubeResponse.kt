@@ -1,14 +1,15 @@
 package ru.radiationx.data.entity.response.youtube
 
-data class YoutubeResponse(
-    val id: Int,
-    val title: String?,
-    val image: String?,
-    val vid: String?,
-    val views: Int,
-    val comments: Int,
-    val timestamp: Int
-) {
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-    val link = "https://www.youtube.com/watch?v=$vid"
-}
+@JsonClass(generateAdapter = true)
+data class YoutubeResponse(
+    @Json(name = "id") val id: Int,
+    @Json(name = "title") val title: String?,
+    @Json(name = "image") val image: String?,
+    @Json(name = "vid") val vid: String?,
+    @Json(name = "views") val views: Int,
+    @Json(name = "comments") val comments: Int,
+    @Json(name = "timestamp") val timestamp: Int
+)

@@ -1,51 +1,34 @@
 package ru.radiationx.data.entity.response.release
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import java.io.Serializable
 
-/* Created by radiationx on 31.10.17. */
-
+@JsonClass(generateAdapter = true)
 data class ReleaseResponse(
     // base
-    val id: Int,
-    val code: String?,
-    val names: List<String>,
-    val series: String?,
-    val poster: String?,
-    val torrentUpdate: Int,
-    val status: String?,
-    val statusCode: String?,
-    val types: List<String>,
-    val genres: List<String>,
-    val voices: List<String>,
-    val seasons: List<String>,
-    val days: List<String>,
-    val description: String?,
-    val announce: String?,
-    val favoriteInfo: FavoriteInfoResponse,
-    val link: String?,
+    @Json(name = "id") val id: Int,
+    @Json(name = "code") val code: String,
+    @Json(name = "names") val names: List<String>?,
+    @Json(name = "series") val series: String?,
+    @Json(name = "poster") val poster: String?,
+    @Json(name = "last") val torrentUpdate: Int?,
+    @Json(name = "status") val status: String?,
+    @Json(name = "statusCode") val statusCode: String?,
+    @Json(name = "type") val type: String?,
+    @Json(name = "genres") val genres: List<String>?,
+    @Json(name = "voices") val voices: List<String>?,
+    @Json(name = "year") val season: String?,
+    @Json(name = "day") val day: String?,
+    @Json(name = "description") val description: String?,
+    @Json(name = "announce") val announce: String?,
+    @Json(name = "favorite") val favorite: FavoriteInfoResponse,
 
     // full
-    val showDonateDialog: Boolean,
-    val blockedInfo: BlockedInfoResponse,
-    val moonwalkLink: String?,
-    val episodes: List<EpisodeResponse>,
-    val sourceEpisodes: List<SourceEpisode>,
-    val externalPlaylists: List<ExternalPlaylistResponse>,
-    val rutubePlaylist: List<RutubeEpisodeResponse>,
-    val torrents: List<TorrentResponse>
-) : Serializable {
-
-
-    companion object {
-        const val STATUS_CODE_PROGRESS = "1"
-        const val STATUS_CODE_COMPLETE = "2"
-        const val STATUS_CODE_HIDDEN = "3"
-        const val STATUS_CODE_NOT_ONGOING = "4"
-    }
-
-    val title: String?
-        get() = names.firstOrNull()
-
-    val titleEng: String?
-        get() = names.lastOrNull()
-}
+    @Json(name = "showDonateDialog") val showDonateDialog: Boolean,
+    @Json(name = "blockedInfo") val blockedInfo: BlockedInfoResponse,
+    @Json(name = "moon") val moonwalkLink: String?,
+    @Json(name = "playlist") val episodes: List<EpisodeResponse>,
+    @Json(name = "externalPlaylist") val externalPlaylists: List<ExternalPlaylistResponse>,
+    @Json(name = "torrents") val torrents: List<TorrentResponse>
+) : Serializable

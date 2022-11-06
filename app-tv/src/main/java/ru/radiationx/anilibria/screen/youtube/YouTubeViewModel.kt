@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.screen.youtube
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor

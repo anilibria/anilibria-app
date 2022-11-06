@@ -1,6 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.entity.response.updater.UpdateDataResponse
 
 fun UpdateDataResponse.toDomain() = UpdateData(

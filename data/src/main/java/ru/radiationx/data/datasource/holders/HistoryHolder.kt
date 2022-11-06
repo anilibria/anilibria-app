@@ -1,7 +1,7 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Release
 
 interface HistoryHolder {
     suspend fun getEpisodes(): List<Release>

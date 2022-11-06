@@ -3,8 +3,7 @@ package ru.radiationx.anilibria.presentation.release.details
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.entity.app.release.*
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.release.*
 import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.shared_app.codecs.MediaCodecsFinder
 import ru.radiationx.shared_app.codecs.types.CodecProcessingType
@@ -53,7 +52,7 @@ fun Release.toInfoState(): ReleaseInfoState {
         description = description.orEmpty(),
         updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
-        days = days.map { ScheduleDay.toCalendarDay(it) },
+        days = days.map { ru.radiationx.data.entity.domain.schedule.ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
         announce = announce,
         favorite = favoriteInfo.toState()

@@ -1,7 +1,7 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.domain.release.GenreItem
 
 interface GenresHolder {
     fun observeGenres(): Flow<List<GenreItem>>

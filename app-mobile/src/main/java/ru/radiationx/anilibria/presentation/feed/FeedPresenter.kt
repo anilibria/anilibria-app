@@ -19,11 +19,11 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.ReleaseUpdate
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.domain.feed.FeedItem
+import ru.radiationx.data.entity.domain.feed.ScheduleItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.DonationRepository

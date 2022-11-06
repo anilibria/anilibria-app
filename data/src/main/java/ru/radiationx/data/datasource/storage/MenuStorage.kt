@@ -7,8 +7,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.MenuHolder
-import ru.radiationx.data.entity.app.other.DataIcons
-import ru.radiationx.data.entity.app.other.LinkMenuItem
+import ru.radiationx.data.entity.domain.other.DataIcons
+import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 

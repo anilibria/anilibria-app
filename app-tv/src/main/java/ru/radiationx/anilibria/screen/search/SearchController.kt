@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.screen.search
 
 import kotlinx.coroutines.flow.MutableSharedFlow
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.SeasonItem
-import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.search.SearchForm
 import toothpick.InjectConstructor
 
 @InjectConstructor

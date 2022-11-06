@@ -2,15 +2,15 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.ReleaseUpdate
-import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.entity.domain.feed.FeedItem
+import ru.radiationx.data.entity.domain.feed.ScheduleItem
+import ru.radiationx.data.entity.domain.other.OtherMenuItem
+import ru.radiationx.data.entity.domain.other.ProfileItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.search.SuggestionItem
+import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.entity.common.AuthState
 
 fun Release.toState(updates: Map<Int, ReleaseUpdate>): ReleaseItemState {

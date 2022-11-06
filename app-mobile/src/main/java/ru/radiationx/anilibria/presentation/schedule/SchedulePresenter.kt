@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleScreenState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.asDayName
 import ru.terrakok.cicerone.Router

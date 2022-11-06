@@ -5,7 +5,7 @@ import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import ru.radiationx.anilibria.presentation.common.IBaseView
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Release
 
 /* Created by radiationx on 18.11.17. */
 

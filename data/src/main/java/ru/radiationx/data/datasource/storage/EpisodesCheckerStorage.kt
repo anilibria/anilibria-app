@@ -8,8 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import javax.inject.Inject
 
 /**

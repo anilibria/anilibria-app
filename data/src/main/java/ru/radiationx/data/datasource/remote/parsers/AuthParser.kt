@@ -2,7 +2,7 @@ package ru.radiationx.data.datasource.remote.parsers
 
 import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.entity.app.auth.*
+import ru.radiationx.data.entity.domain.auth.*
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 

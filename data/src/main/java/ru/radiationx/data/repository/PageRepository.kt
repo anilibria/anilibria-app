@@ -4,8 +4,8 @@ import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.entity.app.page.PageLibria
-import ru.radiationx.data.entity.app.page.VkComments
+import ru.radiationx.data.entity.domain.page.PageLibria
+import ru.radiationx.data.entity.domain.page.VkComments
 import ru.radiationx.data.entity.mapper.toDomain
 import java.net.UnknownHostException
 import javax.inject.Inject

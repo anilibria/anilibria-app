@@ -1,6 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.app.release.*
+import ru.radiationx.data.entity.domain.release.*
 import ru.radiationx.data.entity.response.release.EpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalEpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalPlaylistResponse

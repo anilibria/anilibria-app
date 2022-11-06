@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONObject
 import ru.radiationx.data.datasource.holders.UserHolder
-import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
 import javax.inject.Inject
 

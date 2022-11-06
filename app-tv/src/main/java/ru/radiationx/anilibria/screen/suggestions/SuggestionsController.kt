@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import kotlinx.coroutines.flow.MutableSharedFlow
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.SuggestionItem
 import toothpick.InjectConstructor
 
 @InjectConstructor

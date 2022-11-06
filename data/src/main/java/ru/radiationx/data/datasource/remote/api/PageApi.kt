@@ -6,7 +6,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
-import ru.radiationx.data.entity.app.page.PageLibria
+import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.entity.response.page.VkCommentsResponse
 import javax.inject.Inject
 

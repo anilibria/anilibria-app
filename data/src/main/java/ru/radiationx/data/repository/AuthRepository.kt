@@ -7,9 +7,9 @@ import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.AuthApi
-import ru.radiationx.data.entity.app.auth.OtpInfo
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.domain.auth.OtpInfo
+import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.system.HttpException

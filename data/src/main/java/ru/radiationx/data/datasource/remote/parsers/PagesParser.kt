@@ -1,6 +1,6 @@
 package ru.radiationx.data.datasource.remote.parsers
 
-import ru.radiationx.data.entity.app.page.PageLibria
+import ru.radiationx.data.entity.domain.page.PageLibria
 import java.util.regex.Pattern
 import javax.inject.Inject
 

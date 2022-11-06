@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor

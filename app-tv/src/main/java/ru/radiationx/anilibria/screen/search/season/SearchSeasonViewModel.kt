@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
-import ru.radiationx.data.entity.app.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
 import timber.log.Timber
 import toothpick.InjectConstructor

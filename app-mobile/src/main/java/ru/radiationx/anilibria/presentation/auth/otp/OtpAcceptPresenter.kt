@@ -6,7 +6,7 @@ import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
-import ru.radiationx.data.entity.app.auth.OtpAcceptedException
+import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject

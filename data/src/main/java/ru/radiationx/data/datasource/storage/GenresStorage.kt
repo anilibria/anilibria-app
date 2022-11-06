@@ -7,7 +7,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.GenresHolder
-import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.data.entity.domain.release.GenreItem
 import javax.inject.Inject
 
 /**

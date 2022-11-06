@@ -1,7 +1,7 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 
 interface EpisodesCheckerHolder {
     fun observeEpisodes(): Flow<List<EpisodeAccess>>

@@ -8,9 +8,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.entity.app.release.BlockedInfo
-import ru.radiationx.data.entity.app.release.FavoriteInfo
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.BlockedInfo
+import ru.radiationx.data.entity.domain.release.FavoriteInfo
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.shared.ktx.android.toStringsList
 import javax.inject.Inject

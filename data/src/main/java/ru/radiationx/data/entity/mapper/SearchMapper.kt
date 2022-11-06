@@ -1,9 +1,9 @@
 package ru.radiationx.data.entity.mapper
 
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.entity.response.search.SuggestionResponse
 import ru.radiationx.data.system.ApiUtils
 

@@ -3,9 +3,9 @@ package ru.radiationx.data.interactors
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.EpisodeAccess
-import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.release.RandomRelease
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.repository.ReleaseRepository
 import javax.inject.Inject
 

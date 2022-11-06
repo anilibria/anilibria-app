@@ -19,9 +19,9 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.other.LinkMenuItem
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
+import ru.radiationx.data.entity.domain.other.LinkMenuItem
+import ru.radiationx.data.entity.domain.other.OtherMenuItem
+import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository

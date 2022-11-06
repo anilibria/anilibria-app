@@ -14,8 +14,8 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject

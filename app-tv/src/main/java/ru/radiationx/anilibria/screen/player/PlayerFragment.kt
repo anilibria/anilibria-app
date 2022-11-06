@@ -1,11 +1,10 @@
 package ru.radiationx.anilibria.screen.player
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.leanback.media.PlaybackGlue
 import com.google.android.exoplayer2.PlaybackParameters
-import ru.radiationx.anilibria.di.PlayerModule
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
@@ -17,9 +16,12 @@ class PlayerFragment : BasePlayerFragment() {
         private const val ARG_RELEASE_ID = "release id"
         private const val ARG_EPISODE_ID = "episode id"
 
-        fun newInstance(releaseId: Int, episodeId: Int = -1): PlayerFragment = PlayerFragment().putExtra {
-            putInt(ARG_RELEASE_ID, releaseId)
-            putInt(ARG_EPISODE_ID, episodeId)
+        fun newInstance(
+            releaseId: ReleaseId,
+            episodeId: EpisodeId?
+        ): PlayerFragment = PlayerFragment().putExtra {
+            putParcelable(ARG_RELEASE_ID, releaseId)
+            putParcelable(ARG_EPISODE_ID, episodeId)
         }
     }
 
@@ -29,8 +31,8 @@ class PlayerFragment : BasePlayerFragment() {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         arguments?.apply {
-            viewModel.argReleaseId = getInt(ARG_RELEASE_ID, viewModel.argReleaseId)
-            viewModel.argEpisodeId = getInt(ARG_EPISODE_ID, viewModel.argEpisodeId)
+            viewModel.argReleaseId = getParcelable(ARG_RELEASE_ID)
+            viewModel.argEpisodeId = getParcelable(ARG_EPISODE_ID)
         }
     }
 

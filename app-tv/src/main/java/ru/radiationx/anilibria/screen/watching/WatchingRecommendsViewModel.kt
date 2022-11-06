@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.watching
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.search.SearchForm
@@ -18,7 +19,7 @@ class WatchingRecommendsViewModel(
     private val searchRepository: SearchRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Рекомендации"
@@ -58,7 +59,7 @@ class WatchingRecommendsViewModel(
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 
 }

@@ -92,7 +92,7 @@ class SuggestionsContentProvider : ContentProvider() {
         columns + INTENT_ACTION + id
 
     private fun SuggestionItem.convertToEntity() = SystemSuggestionEntity(
-        id,
+        id.id,
         names.joinToString(),
         -1,
         -1,

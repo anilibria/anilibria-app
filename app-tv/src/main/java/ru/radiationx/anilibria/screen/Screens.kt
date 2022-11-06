@@ -25,159 +25,173 @@ import ru.radiationx.anilibria.screen.search.season.SearchSeasonGuidedFragment
 import ru.radiationx.anilibria.screen.search.sort.SearchSortGuidedFragment
 import ru.radiationx.anilibria.screen.search.year.SearchYearGuidedFragment
 import ru.radiationx.anilibria.screen.suggestions.SuggestionsFragment
-import ru.radiationx.anilibria.screen.trash.TestFlowFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.update.UpdateFragment
 import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 
-class ConfigScreen() : SupportAppScreen() {
+class ConfigScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return ConfigFragment()
     }
 }
 
-class MainPagesScreen() : SupportAppScreen() {
+class MainPagesScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return MainPagesFragment()
     }
 }
 
-class DetailsScreen(private val releaseId: Int) : SupportAppScreen() {
+class DetailsScreen(private val releaseId: ReleaseId) : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return DetailFragment.newInstance(releaseId)
     }
 }
 
-class ScheduleScreen() : SupportAppScreen() {
+class ScheduleScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return ScheduleFragment()
     }
 }
 
-class UpdateScreen() : SupportAppScreen() {
+class UpdateScreen
+    : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return UpdateFragment()
     }
 }
 
-class UpdateSourceScreen() : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class UpdateSourceScreen : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return UpdateSourceGuidedFragment()
     }
 }
 
-class SuggestionsScreen() : SupportAppScreen() {
+class SuggestionsScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return SuggestionsFragment()
     }
 }
 
-class SearchScreen() : SupportAppScreen() {
+class SearchScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return SearchFragment()
     }
 }
 
 class SearchYearGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return SearchYearGuidedFragment().putValues(values)
     }
 }
 
 class SearchSeasonGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return SearchSeasonGuidedFragment().putValues(values)
     }
 }
 
 class SearchGenreGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return SearchGenreGuidedFragment().putValues(values)
     }
 }
 
 class SearchSortGuidedScreen(private val sort: SearchForm.Sort? = null) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return SearchSortGuidedFragment.newInstance(sort)
     }
 }
 
 class SearchCompletedGuidedScreen(private val onlyCompleted: Boolean) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return SearchCompletedGuidedFragment.newInstance(onlyCompleted)
     }
 }
 
-class FlowScreen() : SupportAppScreen() {
-    override fun getFragment(): Fragment {
-        return TestFlowFragment()
-    }
-}
-
-class TestScreen() : SupportAppScreen() {
+class TestScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return TestFragment()
     }
 }
 
 class AuthGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return AuthGuidedFragment()
     }
 }
 
 class AuthCredentialsGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return AuthCredentialsGuidedFragment()
     }
 }
 
 class AuthOtpGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return AuthOtpGuidedFragment()
     }
 }
 
-class PlayerScreen(val releaseId: Int, val episodeId: Int = -1) : SupportAppScreen() {
+class PlayerScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return PlayerFragment.newInstance(releaseId, episodeId)
     }
 }
 
-class PlayerQualityGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class PlayerQualityGuidedScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return PlayerQualityGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
-class PlayerSpeedGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class PlayerSpeedGuidedScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return PlayerSpeedGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
-class PlayerEpisodesGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class PlayerEpisodesGuidedScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return PlayerEpisodesGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
-class PlayerEndEpisodeGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class PlayerEndEpisodeGuidedScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return EndEpisodeGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
-class PlayerEndSeasonGuidedScreen(val releaseId: Int = -1, val episodeId: Int = -1) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+class PlayerEndSeasonGuidedScreen(
+    private val releaseId: ReleaseId,
+    private val episodeId: EpisodeId?
+) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
         return EndSeasonGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
 class TestGuidedStepScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment? {
+    override fun getFragment(): FakeGuidedStepFragment {
         return DialogExampleFragment()
     }
 }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.di
 
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
@@ -13,5 +14,6 @@ class NavigationModule : Module() {
         bind(Router::class.java).toInstance(cicerone.router)
         bind(GuidedRouter::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+        bind(LibriaCardRouter::class.java).singleton()
     }
 }

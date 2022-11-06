@@ -13,7 +13,6 @@ class CardsDataConverter(
 
     fun toCard(releaseItem: Release) = releaseItem.run {
         LibriaCard(
-            id,
             title.orEmpty(),
             "${seasons.firstOrNull()} год • ${genres.firstOrNull()
                 ?.capitalize()} • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context)
@@ -27,7 +26,6 @@ class CardsDataConverter(
 
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
         LibriaCard(
-            id,
             title.orEmpty(),
             "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
             image.orEmpty(),

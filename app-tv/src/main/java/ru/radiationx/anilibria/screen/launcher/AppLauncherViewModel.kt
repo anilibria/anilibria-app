@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
@@ -26,7 +27,7 @@ class AppLauncherViewModel(
 
     val appReadyAction = MutableLiveData<Unit>()
 
-    fun openRelease(id: Int) {
+    fun openRelease(id: ReleaseId) {
         router.navigateTo(DetailsScreen(id))
     }
 

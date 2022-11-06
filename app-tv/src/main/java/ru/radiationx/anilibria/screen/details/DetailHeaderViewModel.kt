@@ -15,8 +15,9 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
@@ -35,7 +36,7 @@ class DetailHeaderViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    var releaseId: Int = -1
+    lateinit var releaseId: ReleaseId
 
     val releaseData = MutableLiveData<LibriaDetails>()
     val progressState = MutableLiveData<DetailsState>()
@@ -92,10 +93,10 @@ class DetailHeaderViewModel(
         val release = currentRelease ?: return
         if (release.episodes.isEmpty()) return
         if (release.episodes.size == 1) {
-            router.navigateTo(PlayerScreen(releaseId))
+            router.navigateTo(PlayerScreen(releaseId, null))
         } else {
             val episodeId =
-                releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id ?: -1
+                releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id
             guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
         }
     }

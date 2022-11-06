@@ -6,6 +6,8 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -18,8 +20,8 @@ class EndSeasonViewModel(
     private val router: Router
 ) : LifecycleViewModel() {
 
-    var argReleaseId = -1
-    var argEpisodeId = -1
+    lateinit var argReleaseId: ReleaseId
+    var argEpisodeId: EpisodeId? = null
 
     private val currentEpisodes = mutableListOf<Episode>()
     private val currentEpisode

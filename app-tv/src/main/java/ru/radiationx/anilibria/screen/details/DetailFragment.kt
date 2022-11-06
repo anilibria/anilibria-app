@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
@@ -25,15 +26,19 @@ class DetailFragment : ScopedRowsFragment() {
     companion object {
         private const val ARG_ID = "id"
 
-        fun newInstance(releaseId: Int) = DetailFragment().putExtra {
-            putInt(ARG_ID, releaseId)
+        fun newInstance(releaseId: ReleaseId) = DetailFragment().putExtra {
+            putParcelable(ARG_ID, releaseId)
         }
     }
 
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
 
-    private val releaseId by lazy { arguments?.getInt(ARG_ID) ?: -1 }
+    private val releaseId by lazy {
+        requireNotNull(requireArguments().getParcelable<ReleaseId>(ARG_ID)) {
+            "Release id can't be null"
+        }
+    }
 
     private val rowsPresenter by lazy {
         ClassPresenterSelector().apply {

@@ -71,7 +71,7 @@ class YoutubePresenter @Inject constructor(
     fun onItemClick(item: YoutubeItemState) {
         val rawItem = currentRawItems.firstOrNull { it.id == item.id } ?: return
         youtubeVideosAnalytics.videoClick()
-        youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id, rawItem.vid)
+        youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id.id, rawItem.vid)
         Utils.externalLink(rawItem.link)
     }
 

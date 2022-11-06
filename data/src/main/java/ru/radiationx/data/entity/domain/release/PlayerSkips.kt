@@ -1,14 +1,17 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class PlayerSkips(
     val opening: Skip?,
     val ending: Skip?
-) : Serializable {
+) : Parcelable {
 
+    @Parcelize
     data class Skip(
         val start: Long,
         val end: Long
-    ) : Serializable
+    ) : Parcelable
 }

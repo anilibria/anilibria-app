@@ -65,7 +65,7 @@ data class ReleaseListItem(val item: ReleaseItemState) : ListItem(item.id)
 data class ReleaseEpisodeListItem(
     val state: ReleaseEpisodeItemState,
     val isEven: Boolean
-) : ListItem("${state.releaseId}_${state.id}")
+) : ListItem("${state.id}")
 
 data class ReleaseTorrentListItem(val state: ReleaseTorrentItemState) : ListItem(state.id)
 data class ReleaseExpandListItem(val title: String) : ListItem(title)
@@ -112,7 +112,7 @@ data class FeedSectionListItem(
 ) : ListItem(tag)
 
 data class FeedListItem(val item: FeedItemState) :
-    ListItem("${item.release?.id}_${item.youtube?.id}")
+    ListItem("${item.id}")
 
 data class FeedRandomBtnListItem(val id: Any) : ListItem(id)
 data class AppUpdateCardListItem(val id: Any) : ListItem(id)

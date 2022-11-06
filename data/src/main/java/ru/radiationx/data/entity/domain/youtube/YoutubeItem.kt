@@ -1,7 +1,9 @@
 package ru.radiationx.data.entity.domain.youtube
 
+import ru.radiationx.data.entity.domain.types.YoutubeId
+
 data class YoutubeItem(
-    val id: Int,
+    val id: YoutubeId,
     val title: String?,
     val image: String?,
     val vid: String?,

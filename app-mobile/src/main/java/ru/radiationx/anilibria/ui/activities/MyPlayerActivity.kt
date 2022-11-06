@@ -17,6 +17,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -54,6 +55,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -107,11 +109,11 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private lateinit var releaseData: Release
+    private lateinit var currentEpisodeId: EpisodeId
     private var playFlag = PLAY_FLAG_DEFAULT
-    private var currentEpisodeId = NO_ID
+    private var currentQuality = DEFAULT_QUALITY
 
     //private var currentEpisode = NOT_SELECTED
-    private var currentQuality = DEFAULT_QUALITY
     private var currentPlaySpeed = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
@@ -334,9 +336,12 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        val release = intent.getSerializableExtra(ARG_RELEASE) as Release? ?: return
-        val episodeId =
-            intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
+        val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
+            "Release must be not null"
+        }
+        val episodeId = requireNotNull(intent.getParcelableExtra<EpisodeId>(ARG_EPISODE_ID)) {
+            "Episode id must be not null"
+        }
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
         val playFlag = intent.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
 
@@ -507,29 +512,21 @@ class MyPlayerActivity : BaseActivity() {
         exitFullscreen()
     }
 
-    private fun checkIndex(id: Int): Boolean {
-        val lastId = releaseData.episodes.last().id
-        val firstId = releaseData.episodes.first().id
-        return id in lastId..firstId
-    }
-
     private fun getNextEpisode(): Episode? {
-        val nextId = currentEpisodeId + 1
-        if (checkIndex(nextId)) {
-            return getEpisode(nextId)
+        val currentIndex = releaseData.episodes.indexOfFirst { it.id == currentEpisodeId }
+        return releaseData.episodes.getOrNull(currentIndex - 1).also {
+            Log.d("kekeke", "getNextEpisode $it <- ${releaseData.episodes.map { it.id }}")
+
         }
-        return null
     }
 
     private fun getPrevEpisode(): Episode? {
-        val prevId = currentEpisodeId - 1
-        if (checkIndex(prevId)) {
-            return getEpisode(prevId)
-        }
-        return null
+        val currentIndex = releaseData.episodes.indexOfFirst { it.id == currentEpisodeId }
+        return releaseData.episodes.getOrNull(currentIndex + 1)
     }
 
-    private fun getEpisode(id: Int = currentEpisodeId) = releaseData.episodes.first { it.id == id }
+    private fun getEpisode(id: EpisodeId = currentEpisodeId) =
+        releaseData.episodes.first { it.id == id }
 
     private fun getEpisodeId(episode: Episode) =
         releaseData.episodes.first { it == episode }.id

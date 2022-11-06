@@ -37,7 +37,7 @@ object ShortcutHelper {
 
     fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(
         App.instance,
-        data.code ?: "release_${data.id}",
+        data.code.code,
         (data.title ?: data.titleEng).toString(),
         data.names.joinToString(" / ") { it },
         data.link.orEmpty(),

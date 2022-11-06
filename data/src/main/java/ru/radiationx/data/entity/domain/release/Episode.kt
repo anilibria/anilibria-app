@@ -1,11 +1,13 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import java.util.*
 
+@Parcelize
 data class Episode(
-    val releaseId: Int,
-    val id: Int,
+    val id: EpisodeId,
     val title: String?,
     val urlSd: String?,
     val urlHd: String?,
@@ -13,4 +15,4 @@ data class Episode(
     val updatedAt: Date?,
     val skips: PlayerSkips?,
     val access: EpisodeAccess
-) : Serializable
+) : Parcelable

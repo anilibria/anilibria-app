@@ -1,13 +1,13 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import ru.radiationx.data.entity.domain.types.TorrentId
 import java.util.*
 
-/**
- * Created by radiationx on 30.01.18.
- */
+@Parcelize
 data class TorrentItem(
-    val id: Int,
+    val id: TorrentId,
     val hash: String?,
     val leechers: Int,
     val seeders: Int,
@@ -17,4 +17,4 @@ data class TorrentItem(
     val size: Long,
     val url: String?,
     val date: Date?
-) : Serializable 
+) : Parcelable

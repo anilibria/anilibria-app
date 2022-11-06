@@ -120,7 +120,7 @@ class FastSearchPresenter @Inject constructor(
     fun onItemClick(item: SuggestionItemState) {
         val suggestionItem = currentSuggestions.find { it.id == item.id } ?: return
         fastSearchAnalytics.releaseClick()
-        releaseAnalytics.open(AnalyticsConstants.screen_fast_search, suggestionItem.id)
+        releaseAnalytics.open(AnalyticsConstants.screen_fast_search, suggestionItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(suggestionItem.id, suggestionItem.code))
     }
 

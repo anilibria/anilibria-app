@@ -1,11 +1,10 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-/**
- * Created by radiationx on 25.01.18.
- */
+@Parcelize
 data class FavoriteInfo(
     val rating: Int,
     val isAdded: Boolean
-) : Serializable
+) : Parcelable

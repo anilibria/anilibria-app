@@ -91,7 +91,7 @@ class SchedulePresenter @Inject constructor(
             .find { it.releaseItem.id == item.releaseId }
             ?.releaseItem ?: return
         scheduleAnalytics.releaseClick(position)
-        releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id)
+        releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id))
     }
 

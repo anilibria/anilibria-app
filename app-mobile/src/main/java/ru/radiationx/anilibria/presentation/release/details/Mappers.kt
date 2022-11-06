@@ -76,7 +76,7 @@ fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
         val lastViewed = episodes.maxByOrNull { it.access.lastAccess }
-        "Продолжить c ${lastViewed?.id} серии"
+        "Продолжить c ${lastViewed?.id?.id} серии"
     } else {
         "Начать просмотр"
     }
@@ -151,7 +151,6 @@ fun ExternalEpisode.toState(
     playlist: ExternalPlaylist
 ): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = null,
@@ -170,7 +169,6 @@ fun ExternalEpisode.toState(
 
 fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = updatedAt,
@@ -198,7 +196,6 @@ fun Episode.toState(): ReleaseEpisodeItemState {
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,
-        releaseId = releaseId,
         title = title.orEmpty(),
         subtitle = subtitle,
         updatedAt = updatedAt,
@@ -218,7 +215,6 @@ fun Episode.toState(): ReleaseEpisodeItemState {
 
 fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = updatedAt,

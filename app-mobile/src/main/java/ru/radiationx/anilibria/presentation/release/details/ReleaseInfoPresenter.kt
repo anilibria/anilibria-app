@@ -21,6 +21,8 @@ import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.*
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -54,8 +56,8 @@ class ReleaseInfoPresenter @Inject constructor(
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
     private var currentData: Release? = null
-    var releaseId = -1
-    var releaseIdCode: String? = null
+    var releaseId: ReleaseId? = null
+    var releaseIdCode: ReleaseCode? = null
 
     private val stateController = StateController(
         ReleaseDetailScreenState()
@@ -163,7 +165,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onEpisodeTabClick(tabTag: String) {
         currentData?.let { release ->
-            releaseAnalytics.episodesTabClick(release.id, tabTag)
+            releaseAnalytics.episodesTabClick(release.id.id, tabTag)
         }
         updateModifiers {
             it.copy(selectedEpisodesTabTag = tabTag)
@@ -177,21 +179,21 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onTorrentClick(item: ReleaseTorrentItemState) {
         val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
-        releaseAnalytics.torrentClick(isHevc, torrentItem.id)
+        releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
         viewState.loadTorrent(torrentItem)
     }
 
     fun onCommentsClick() {
         currentData?.also {
-            releaseAnalytics.commentsClick(it.id)
+            releaseAnalytics.commentsClick(it.id.id)
         }
     }
 
     fun onClickWatchWeb(place: EpisodeControlPlace) {
         currentData?.let { release ->
-            releaseAnalytics.webPlayerClick(release.id)
+            releaseAnalytics.webPlayerClick(release.id.id)
             release.moonwalkLink?.let {
-                viewState.playWeb(it, release.code.orEmpty())
+                viewState.playWeb(it, release.code.code)
             }
         }
     }
@@ -199,9 +201,9 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onPlayAllClick(place: EpisodeControlPlace) {
         currentData?.let {
             place.handle({
-                releaseAnalytics.episodesTopStartClick(it.id)
+                releaseAnalytics.episodesTopStartClick(it.id.id)
             }, {
-                releaseAnalytics.episodesStartClick(it.id)
+                releaseAnalytics.episodesStartClick(it.id.id)
             })
             viewState.playEpisodes(it)
         }
@@ -210,9 +212,9 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onClickContinue(place: EpisodeControlPlace) {
         currentData?.also { release ->
             place.handle({
-                releaseAnalytics.episodesTopContinueClick(release.id)
+                releaseAnalytics.episodesTopContinueClick(release.id.id)
             }, {
-                releaseAnalytics.episodesContinueClick(release.id)
+                releaseAnalytics.episodesContinueClick(release.id.id)
             })
             release.episodes.asReversed().maxByOrNull { it.access.lastAccess }?.let { episode ->
                 viewState.playContinue(release, episode)
@@ -232,8 +234,8 @@ class ReleaseInfoPresenter @Inject constructor(
         release: Release,
         episode: RutubeEpisode
     ) {
-        releaseAnalytics.episodeRutubeClick(release.id)
-        viewState.playWeb(episode.url, release.code.orEmpty())
+        releaseAnalytics.episodeRutubeClick(release.id.id)
+        viewState.playWeb(episode.url, release.code.code.orEmpty())
     }
 
     private fun onExternalEpisodeClick(
@@ -241,7 +243,7 @@ class ReleaseInfoPresenter @Inject constructor(
         release: Release,
         episode: ExternalEpisode
     ) {
-        releaseAnalytics.episodeExternalClick(release.id, episodeState.tag)
+        releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
         episode.url?.also { Utils.externalLink(it) }
     }
 
@@ -252,7 +254,7 @@ class ReleaseInfoPresenter @Inject constructor(
     ) {
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-        releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id)
+        releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
         viewState.downloadEpisode(episode, quality)
     }
 
@@ -264,7 +266,7 @@ class ReleaseInfoPresenter @Inject constructor(
     ) {
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
-        releaseAnalytics.episodePlayClick(analyticsQuality, release.id)
+        releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
         viewState.playEpisode(release, episode, playFlag, quality)
     }
 
@@ -325,7 +327,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickLink(url: String) {
         currentData?.also {
-            releaseAnalytics.descriptionLinkClick(it.id)
+            releaseAnalytics.descriptionLinkClick(it.id.id)
             val handled = linkHandler.handle(url, router)
             if (!handled) {
                 Utils.externalLink(url)
@@ -335,7 +337,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickDonate() {
         currentData?.also {
-            releaseAnalytics.donateClick(it.id)
+            releaseAnalytics.donateClick(it.id.id)
             donationDetailAnalytics.open(AnalyticsConstants.screen_release)
             router.navigateTo(Screens.DonationDetail())
         }
@@ -350,9 +352,9 @@ class ReleaseInfoPresenter @Inject constructor(
         val favInfo = currentData?.favoriteInfo ?: return
 
         if (favInfo.isAdded) {
-            releaseAnalytics.favoriteRemove(releaseId)
+            releaseAnalytics.favoriteRemove(releaseId.id)
         } else {
-            releaseAnalytics.favoriteAdd(releaseId)
+            releaseAnalytics.favoriteAdd(releaseId.id)
         }
 
         presenterScope.launch {
@@ -383,7 +385,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onScheduleClick(day: Int) {
         currentData?.also {
-            releaseAnalytics.scheduleClick(it.id)
+            releaseAnalytics.scheduleClick(it.id.id)
         }
         scheduleAnalytics.open(AnalyticsConstants.screen_release)
         router.navigateTo(Screens.Schedule(day))
@@ -395,7 +397,7 @@ class ReleaseInfoPresenter @Inject constructor(
         }
         currentData?.also {
             if (stateController.currentState.modifiers.descriptionExpanded) {
-                releaseAnalytics.descriptionExpand(it.id)
+                releaseAnalytics.descriptionExpand(it.id.id)
             }
         }
     }
@@ -410,13 +412,13 @@ class ReleaseInfoPresenter @Inject constructor(
         when (tag) {
             ReleaseInfoState.TAG_GENRE -> {
                 val genre = data.genres.getOrNull(index) ?: return
-                releaseAnalytics.genreClick(data.id)
+                releaseAnalytics.genreClick(data.id.id)
                 catalogAnalytics.open(AnalyticsConstants.screen_release)
                 router.navigateTo(Screens.ReleasesSearch(genre))
             }
             ReleaseInfoState.TAG_VOICE -> {
                 val voice = data.voices.getOrNull(index) ?: return
-                releaseAnalytics.voiceClick(data.id)
+                releaseAnalytics.voiceClick(data.id.id)
                 teamsAnalytics.open(AnalyticsConstants.screen_release)
                 router.navigateTo(Screens.Teams(voice))
             }
@@ -435,7 +437,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun submitDownloadEpisodeUrlAnalytics() {
         currentData?.also {
-            releaseAnalytics.episodeDownloadByUrl(it.id)
+            releaseAnalytics.episodeDownloadByUrl(it.id.id)
         }
     }
 
@@ -465,7 +467,9 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onWebPlayerClick() {
-        webPlayerAnalytics.open(AnalyticsConstants.screen_release, releaseId)
+        currentData?.also {
+            webPlayerAnalytics.open(AnalyticsConstants.screen_release, it.id.id)
+        }
     }
 
     private fun EpisodeControlPlace.handle(topListener: () -> Unit, bottomListener: () -> Unit) {

@@ -5,6 +5,8 @@ import ru.radiationx.data.entity.domain.release.BlockedInfo
 import ru.radiationx.data.entity.domain.release.FavoriteInfo
 import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.response.release.BlockedInfoResponse
 import ru.radiationx.data.entity.response.release.FavoriteInfoResponse
 import ru.radiationx.data.entity.response.release.RandomReleaseResponse
@@ -12,17 +14,17 @@ import ru.radiationx.data.entity.response.release.ReleaseResponse
 import ru.radiationx.data.system.ApiUtils
 
 fun RandomReleaseResponse.toDomain(): RandomRelease = RandomRelease(
-    code = code
+    code = ReleaseCode(code)
 )
 
 fun ReleaseResponse.toDomain(
     apiUtils: ApiUtils,
     apiConfig: ApiConfig
 ): Release {
-    val releaseId = id
+    val releaseId = ReleaseId(id)
     return Release(
         id = releaseId,
-        code = code,
+        code = ReleaseCode(code),
         names = names?.map { apiUtils.escapeHtml(it).toString() }.orEmpty(),
         series = series,
         poster = poster?.appendBaseUrl(apiConfig.baseImagesUrl),
@@ -45,7 +47,7 @@ fun ReleaseResponse.toDomain(
         sourceEpisodes = episodes?.mapNotNull { it.toSourceDomain(releaseId) }.orEmpty(),
         externalPlaylists = externalPlaylists?.map { it.toDomain(releaseId) }.orEmpty(),
         rutubePlaylist = episodes?.mapNotNull { it.toRutubeDomain(releaseId) }.orEmpty(),
-        torrents = torrents?.map { it.toDomain(apiConfig) }.orEmpty()
+        torrents = torrents?.map { it.toDomain(releaseId, apiConfig) }.orEmpty()
     )
 }
 

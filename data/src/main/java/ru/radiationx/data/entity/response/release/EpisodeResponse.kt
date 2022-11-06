@@ -2,7 +2,6 @@ package ru.radiationx.data.entity.response.release
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
 data class EpisodeResponse(
@@ -18,4 +17,4 @@ data class EpisodeResponse(
     @Json(name = "skips") val skips: PlayerSkipsResponse?,
     @Json(name = "sources") val sources: SourceTypesResponse?,
     @Json(name = "rutube_id") val rutubeId: String?,
-) : Serializable
+)

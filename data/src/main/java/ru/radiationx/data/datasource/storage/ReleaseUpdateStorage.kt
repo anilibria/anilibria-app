@@ -10,6 +10,7 @@ import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import javax.inject.Inject
 
 /**
@@ -32,7 +33,7 @@ class ReleaseUpdateStorage @Inject constructor(
     override suspend fun getReleases(): List<ReleaseUpdate> =
         localReleasesRelay.value.toList()
 
-    override fun getRelease(id: Int): ReleaseUpdate? {
+    override fun getRelease(id: ReleaseId): ReleaseUpdate? {
         return localReleasesRelay.value.firstOrNull { it.id == id }
     }
 
@@ -77,7 +78,7 @@ class ReleaseUpdateStorage @Inject constructor(
         val jsonEpisodes = JSONArray()
         localReleasesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
-                put("id", it.id)
+                put("id", it.id.id)
                 put("timestamp", it.timestamp)
                 put("lastOpenTimestamp", it.lastOpenTimestamp)
             })
@@ -97,7 +98,7 @@ class ReleaseUpdateStorage @Inject constructor(
                 jsonEpisodes.getJSONObject(index).let {
                     result.add(
                         ReleaseUpdate(
-                            id = it.getInt("id"),
+                            id = ReleaseId(it.getInt("id")),
                             timestamp = it.getInt("timestamp"),
                             lastOpenTimestamp = it.getInt("lastOpenTimestamp")
                         )

@@ -1,13 +1,17 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 
 /* Created by radiationx on 31.10.17. */
 
+@Parcelize
 data class Release(
     // base
-    val id: Int,
-    val code: String,
+    val id: ReleaseId,
+    val code: ReleaseCode,
     val names: List<String>,
     val series: String?,
     val poster: String?,
@@ -33,7 +37,7 @@ data class Release(
     val externalPlaylists: List<ExternalPlaylist>,
     val rutubePlaylist: List<RutubeEpisode>,
     val torrents: List<TorrentItem>
-) : Serializable {
+) : Parcelable {
 
 
     companion object {

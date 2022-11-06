@@ -2,7 +2,6 @@ package ru.radiationx.data.entity.response.release
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
 data class ReleaseResponse(
@@ -31,4 +30,4 @@ data class ReleaseResponse(
     @Json(name = "playlist") val episodes: List<EpisodeResponse>?,
     @Json(name = "externalPlaylist") val externalPlaylists: List<ExternalPlaylistResponse>?,
     @Json(name = "torrents") val torrents: List<TorrentResponse>?
-) : Serializable
+)

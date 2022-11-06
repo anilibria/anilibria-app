@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.map
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import javax.inject.Inject
 
 /**
@@ -28,5 +29,5 @@ class HistoryRepository @Inject constructor(
         updateHolder.viewRelease(releaseItem)
     }
 
-    fun removeRelease(id: Int) = historyStorage.removerRelease(id)
+    fun removeRelease(id: ReleaseId) = historyStorage.removerRelease(id)
 }

@@ -2,7 +2,6 @@ package ru.radiationx.data.entity.response.release
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
 data class TorrentResponse(
@@ -16,4 +15,4 @@ data class TorrentResponse(
     @Json(name = "size") val size: Long,
     @Json(name = "url") val url: String,
     @Json(name = "ctime") val date: Int
-) : Serializable 
+)

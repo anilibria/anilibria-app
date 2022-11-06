@@ -1,6 +1,8 @@
 package ru.radiationx.data.entity.mapper
 
 import ru.radiationx.data.entity.domain.release.*
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.response.release.EpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalEpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalPlaylistResponse
@@ -9,13 +11,13 @@ import ru.radiationx.data.entity.response.release.PlayerSkipsResponse
 // placeholder for moment when src downloading disabled
 private const val VK_URL = "https://vk.com/anilibria?w=wall-37468416_493445"
 
-fun EpisodeResponse.toOnlineDomain(releaseId: Int): Episode? {
+fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {
     if (sources?.isAnilibria != true) {
         return null
     }
+    val episodeId = EpisodeId(id, releaseId)
     return Episode(
-        releaseId = releaseId,
-        id = id,
+        id = episodeId,
         title = title,
         urlSd = urlSd,
         urlHd = urlHd,
@@ -23,8 +25,7 @@ fun EpisodeResponse.toOnlineDomain(releaseId: Int): Episode? {
         updatedAt = updatedAt?.secToDate(),
         skips = skips?.toDomain(),
         access = EpisodeAccess(
-            releaseId = releaseId,
-            id = id,
+            id = episodeId,
             seek = 0,
             isViewed = false,
             lastAccess = 0
@@ -47,13 +48,12 @@ private fun List<Int>.toSkipDomain(): PlayerSkips.Skip? {
 }
 
 
-fun EpisodeResponse.toSourceDomain(releaseId: Int): SourceEpisode? {
+fun EpisodeResponse.toSourceDomain(releaseId: ReleaseId): SourceEpisode? {
     if (sources?.isAnilibria != true) {
         return null
     }
     return SourceEpisode(
-        id = id,
-        releaseId = releaseId,
+        id = EpisodeId(id, releaseId),
         title = title,
         updatedAt = updatedAt?.secToDate(),
         urlSd = srcUrlSd?.takeIf { it != VK_URL },
@@ -62,13 +62,12 @@ fun EpisodeResponse.toSourceDomain(releaseId: Int): SourceEpisode? {
     )
 }
 
-fun EpisodeResponse.toRutubeDomain(releaseId: Int): RutubeEpisode? {
+fun EpisodeResponse.toRutubeDomain(releaseId: ReleaseId): RutubeEpisode? {
     if (sources?.isRutube != true || rutubeId == null) {
         return null
     }
     return RutubeEpisode(
-        id = id,
-        releaseId = releaseId,
+        id = EpisodeId(id, releaseId),
         title = title,
         updatedAt = updatedAt?.secToDate(),
         rutubeId = rutubeId,
@@ -76,7 +75,7 @@ fun EpisodeResponse.toRutubeDomain(releaseId: Int): RutubeEpisode? {
     )
 }
 
-fun ExternalPlaylistResponse.toDomain(releaseId: Int): ExternalPlaylist {
+fun ExternalPlaylistResponse.toDomain(releaseId: ReleaseId): ExternalPlaylist {
     return ExternalPlaylist(
         tag,
         title,
@@ -85,9 +84,8 @@ fun ExternalPlaylistResponse.toDomain(releaseId: Int): ExternalPlaylist {
     )
 }
 
-fun ExternalEpisodeResponse.toDomain(releaseId: Int): ExternalEpisode = ExternalEpisode(
-    id = id,
-    releaseId = releaseId,
+fun ExternalEpisodeResponse.toDomain(releaseId: ReleaseId): ExternalEpisode = ExternalEpisode(
+    id = EpisodeId(id, releaseId),
     title = title,
     url = url
 )

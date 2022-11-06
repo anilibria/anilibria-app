@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
@@ -10,10 +11,10 @@ import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.search.SuggestionItem
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
-import ru.radiationx.data.entity.common.AuthState
 
-fun Release.toState(updates: Map<Int, ReleaseUpdate>): ReleaseItemState {
+fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
     val title = if (series == null) {
         title.toString()
     } else {
@@ -40,7 +41,8 @@ fun YoutubeItem.toState() = YoutubeItemState(
     comments = comments.toString()
 )
 
-fun FeedItem.toState(updates: Map<Int, ReleaseUpdate>) = FeedItemState(
+fun FeedItem.toState(updates: Map<ReleaseId, ReleaseUpdate>) = FeedItemState(
+    id = id,
     release = release?.toState(updates),
     youtube = youtube?.toState()
 )

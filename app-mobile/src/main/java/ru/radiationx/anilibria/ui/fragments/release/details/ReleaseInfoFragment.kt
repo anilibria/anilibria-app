@@ -79,8 +79,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
-            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
+            presenter.releaseId = bundle.getParcelable(ARG_ID)
+            presenter.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
         }
     }
 
@@ -98,8 +98,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(ARG_ID, presenter.releaseId)
-        outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putParcelable(ARG_ID, presenter.releaseId)
+        outState.putParcelable(ARG_ID_CODE, presenter.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {

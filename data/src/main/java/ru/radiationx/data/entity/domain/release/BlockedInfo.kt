@@ -1,8 +1,10 @@
 package ru.radiationx.data.entity.domain.release
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class BlockedInfo(
     val isBlocked: Boolean,
     val reason: String?
-) : Serializable
+) : Parcelable

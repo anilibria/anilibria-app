@@ -9,6 +9,8 @@ import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import javax.inject.Inject
 
 /**
@@ -37,7 +39,7 @@ class EpisodesCheckerStorage @Inject constructor(
         localEpisodesRelay.update { localEpisodes ->
             val mutableLocalEpisodes = localEpisodes.toMutableList()
             mutableLocalEpisodes
-                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                .firstOrNull { it.id == episode.id }
                 ?.let { mutableLocalEpisodes.remove(it) }
             mutableLocalEpisodes.add(episode)
             mutableLocalEpisodes
@@ -50,7 +52,7 @@ class EpisodesCheckerStorage @Inject constructor(
             val mutableLocalEpisodes = localEpisodes.toMutableList()
             episodes.forEach { episode ->
                 mutableLocalEpisodes
-                    .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
+                    .firstOrNull { it.id == episode.id }
                     ?.let { mutableLocalEpisodes.remove(it) }
                 mutableLocalEpisodes.add(episode)
             }
@@ -59,14 +61,14 @@ class EpisodesCheckerStorage @Inject constructor(
         saveAll()
     }
 
-    override fun getEpisodes(releaseId: Int): List<EpisodeAccess> {
-        return localEpisodesRelay.value.filter { it.releaseId == releaseId }
+    override fun getEpisodes(releaseId: ReleaseId): List<EpisodeAccess> {
+        return localEpisodesRelay.value.filter { it.id.releaseId == releaseId }
     }
 
-    override fun remove(releaseId: Int) {
+    override fun remove(releaseId: ReleaseId) {
         localEpisodesRelay.update { localEpisodes ->
             val mutableLocalEpisodes = localEpisodes.toMutableList()
-            mutableLocalEpisodes.removeAll { it.releaseId == releaseId }
+            mutableLocalEpisodes.removeAll { it.id.releaseId == releaseId }
             mutableLocalEpisodes
         }
         saveAll()
@@ -76,8 +78,8 @@ class EpisodesCheckerStorage @Inject constructor(
         val jsonEpisodes = JSONArray()
         localEpisodesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
-                put("releaseId", it.releaseId)
-                put("id", it.id)
+                put("releaseId", it.id.releaseId.id)
+                put("id", it.id.id)
                 put("seek", it.seek)
                 put("isViewed", it.isViewed)
                 put("lastAccess", it.lastAccess)
@@ -98,8 +100,7 @@ class EpisodesCheckerStorage @Inject constructor(
                 jsonEpisodes.getJSONObject(it).let {
                     result.add(
                         EpisodeAccess(
-                            releaseId = it.getInt("releaseId"),
-                            id = it.getInt("id"),
+                            id = EpisodeId(it.getInt("id"), ReleaseId(it.getInt("releaseId"))),
                             seek = it.optLong("seek", 0L),
                             isViewed = it.optBoolean("isViewed", false),
                             lastAccess = it.optLong("lastAccess", 0L),

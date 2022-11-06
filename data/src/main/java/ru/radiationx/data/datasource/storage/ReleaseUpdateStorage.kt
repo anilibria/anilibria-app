@@ -1,16 +1,19 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.json.JSONArray
-import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.entity.db.ReleaseUpdateDb
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.mapper.toDb
+import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
 
 /**
@@ -18,10 +21,16 @@ import javax.inject.Inject
  */
 class ReleaseUpdateStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences,
+    private val moshi: Moshi
 ) : ReleaseUpdateHolder {
 
     companion object {
         private const val LOCAL_HISTORY_KEY = "data.release_update"
+    }
+
+    private val dataAdapter by lazy {
+        val type = Types.newParameterizedType(List::class.java, ReleaseUpdateDb::class.java)
+        moshi.adapter<List<ReleaseUpdateDb>>(type)
     }
 
     private val localReleasesRelay by lazy {
@@ -63,7 +72,6 @@ class ReleaseUpdateStorage @Inject constructor(
         updAllRelease(putReleases)
     }
 
-
     private fun updAllRelease(releases: List<ReleaseUpdate>) {
         localReleasesRelay.update { updates ->
             val newIds = releases.map { it.id }
@@ -75,37 +83,18 @@ class ReleaseUpdateStorage @Inject constructor(
     }
 
     private fun saveAll() {
-        val jsonEpisodes = JSONArray()
-        localReleasesRelay.value.forEach {
-            jsonEpisodes.put(JSONObject().apply {
-                put("id", it.id.id)
-                put("timestamp", it.timestamp)
-                put("lastOpenTimestamp", it.lastOpenTimestamp)
-            })
-        }
+        val jsonEpisodes = localReleasesRelay.value
+            .map { it.toDb() }
+            .let { dataAdapter.toJson(it) }
         sharedPreferences
             .edit()
-            .putString(LOCAL_HISTORY_KEY, jsonEpisodes.toString())
+            .putString(LOCAL_HISTORY_KEY, jsonEpisodes)
             .apply()
     }
 
-    private fun loadAll(): List<ReleaseUpdate> {
-        val result = mutableListOf<ReleaseUpdate>()
-        val savedEpisodes = sharedPreferences.getString(LOCAL_HISTORY_KEY, null)
-        savedEpisodes?.let {
-            val jsonEpisodes = JSONArray(it)
-            (0 until jsonEpisodes.length()).forEach { index ->
-                jsonEpisodes.getJSONObject(index).let {
-                    result.add(
-                        ReleaseUpdate(
-                            id = ReleaseId(it.getInt("id")),
-                            timestamp = it.getInt("timestamp"),
-                            lastOpenTimestamp = it.getInt("lastOpenTimestamp")
-                        )
-                    )
-                }
-            }
-        }
-        return result
-    }
+    private fun loadAll(): List<ReleaseUpdate> = sharedPreferences
+        .getString(LOCAL_HISTORY_KEY, null)
+        ?.let { dataAdapter.fromJson(it) }
+        ?.map { it.toDomain() }
+        .orEmpty()
 }

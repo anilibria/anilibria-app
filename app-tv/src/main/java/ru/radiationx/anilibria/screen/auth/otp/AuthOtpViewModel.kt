@@ -7,9 +7,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.app.auth.OtpInfo
-import ru.radiationx.data.entity.app.auth.OtpNotAcceptedException
-import ru.radiationx.data.entity.app.auth.OtpNotFoundException
+import ru.radiationx.data.entity.domain.auth.OtpInfo
+import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
+import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
 import timber.log.Timber
 import toothpick.InjectConstructor

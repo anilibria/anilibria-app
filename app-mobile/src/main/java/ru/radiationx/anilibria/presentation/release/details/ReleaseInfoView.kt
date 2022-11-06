@@ -4,10 +4,10 @@ import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.SourceEpisode
-import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.SourceEpisode
+import ru.radiationx.data.entity.domain.release.TorrentItem
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReleaseInfoView : MvpView {

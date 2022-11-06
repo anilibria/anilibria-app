@@ -3,8 +3,7 @@ package ru.radiationx.anilibria.presentation.release.details
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.entity.app.release.*
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.release.*
 import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.shared_app.codecs.MediaCodecsFinder
 import ru.radiationx.shared_app.codecs.types.CodecProcessingType
@@ -53,7 +52,7 @@ fun Release.toInfoState(): ReleaseInfoState {
         description = description.orEmpty(),
         updatedAt = Date(torrentUpdate * 1000L),
         info = infoStr,
-        days = days.map { ScheduleDay.toCalendarDay(it) },
+        days = days.map { ru.radiationx.data.entity.domain.schedule.ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
         announce = announce,
         favorite = favoriteInfo.toState()
@@ -77,7 +76,7 @@ fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
         val lastViewed = episodes.maxByOrNull { it.access.lastAccess }
-        "Продолжить c ${lastViewed?.id} серии"
+        "Продолжить c ${lastViewed?.id?.id} серии"
     } else {
         "Начать просмотр"
     }
@@ -152,7 +151,6 @@ fun ExternalEpisode.toState(
     playlist: ExternalPlaylist
 ): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = null,
@@ -171,7 +169,6 @@ fun ExternalEpisode.toState(
 
 fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = updatedAt,
@@ -199,7 +196,6 @@ fun Episode.toState(): ReleaseEpisodeItemState {
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,
-        releaseId = releaseId,
         title = title.orEmpty(),
         subtitle = subtitle,
         updatedAt = updatedAt,
@@ -219,7 +215,6 @@ fun Episode.toState(): ReleaseEpisodeItemState {
 
 fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
-    releaseId = releaseId,
     title = title.orEmpty(),
     subtitle = null,
     updatedAt = updatedAt,

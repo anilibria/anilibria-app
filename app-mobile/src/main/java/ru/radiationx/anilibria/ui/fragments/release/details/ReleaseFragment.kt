@@ -32,7 +32,9 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.CommentsAnalytics
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
@@ -49,13 +51,13 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
 
         fun newInstance(
-            id: Int = -1,
-            code: String? = null,
+            id: ReleaseId? = null,
+            code: ReleaseCode? = null,
             item: Release? = null
         ) = ReleaseFragment().putExtra {
-            putInt(ARG_ID, id)
-            putString(ARG_ID_CODE, code)
-            putSerializable(ARG_ITEM, item)
+            putParcelable(ARG_ID, id)
+            putParcelable(ARG_ID_CODE, code)
+            putParcelable(ARG_ITEM, item)
         }
     }
 
@@ -96,9 +98,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
-            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
-            presenter.argReleaseItem = bundle.getSerializable(ARG_ITEM) as Release?
+            presenter.releaseId = bundle.getParcelable(ARG_ID)
+            presenter.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
+            presenter.argReleaseItem = bundle.getParcelable(ARG_ITEM) as? Release?
         }
     }
 
@@ -181,8 +183,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(ARG_ID, presenter.releaseId)
-        outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putParcelable(ARG_ID, presenter.releaseId)
+        outState.putParcelable(ARG_ID_CODE, presenter.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {

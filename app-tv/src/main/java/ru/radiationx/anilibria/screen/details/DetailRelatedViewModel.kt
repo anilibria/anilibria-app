@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -16,10 +16,10 @@ class DetailRelatedViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val releaseRepository: ReleaseRepository,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    var releaseId: Int = -1
+    lateinit var releaseId: ReleaseId
 
     override val loadOnCreate: Boolean = false
 
@@ -60,6 +60,6 @@ class DetailRelatedViewModel(
         false
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

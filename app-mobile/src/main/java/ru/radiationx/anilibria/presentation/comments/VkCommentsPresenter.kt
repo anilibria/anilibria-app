@@ -18,6 +18,8 @@ import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
@@ -36,8 +38,8 @@ class VkCommentsPresenter @Inject constructor(
     private val commentsAnalytics: CommentsAnalytics
 ) : BasePresenter<VkCommentsView>(router) {
 
-    var releaseId = -1
-    var releaseIdCode: String? = null
+    var releaseId: ReleaseId? = null
+    var releaseCode: ReleaseCode? = null
 
     private var isVisibleToUser = false
     private var pendingAuthRequest: String? = null
@@ -175,11 +177,11 @@ class VkCommentsPresenter @Inject constructor(
 
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(pageRepository.getComments()) }
-        val releaseSource = releaseInteractor.observeFull(releaseId, releaseIdCode)
+        val releaseSource = releaseInteractor.observeFull(releaseId, releaseCode)
         return try {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(
-                    url = "${comments.baseUrl}release/${release.code}.html",
+                    url = "${comments.baseUrl}release/${release.code.code}.html",
                     script = comments.script
                 )
             }.first()

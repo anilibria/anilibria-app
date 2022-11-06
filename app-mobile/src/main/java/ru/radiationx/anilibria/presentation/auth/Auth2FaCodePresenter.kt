@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
-import ru.radiationx.data.entity.app.auth.WrongPasswordException
+import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router

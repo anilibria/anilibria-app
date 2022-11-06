@@ -72,8 +72,8 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
-            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
+            presenter.releaseId = bundle.getParcelable(ARG_ID)
+            presenter.releaseCode = bundle.getParcelable(ARG_ID_CODE)
         }
     }
 

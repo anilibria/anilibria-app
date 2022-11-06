@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import kotlin.math.min
@@ -37,7 +37,7 @@ object ShortcutHelper {
 
     fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(
         App.instance,
-        data.code ?: "release_${data.id}",
+        data.code.code,
         (data.title ?: data.titleEng).toString(),
         data.names.joinToString(" / ") { it },
         data.link.orEmpty(),

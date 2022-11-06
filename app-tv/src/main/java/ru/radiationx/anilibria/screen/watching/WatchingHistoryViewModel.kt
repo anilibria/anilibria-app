@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.watching
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
@@ -12,7 +13,7 @@ import toothpick.InjectConstructor
 class WatchingHistoryViewModel(
     private val historyRepository: HistoryRepository,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "История"
@@ -27,6 +28,6 @@ class WatchingHistoryViewModel(
         false
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

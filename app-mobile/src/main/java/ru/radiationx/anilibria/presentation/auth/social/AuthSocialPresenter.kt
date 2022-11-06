@@ -10,8 +10,8 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialScreenState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.auth.SocialAuthException
+import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject

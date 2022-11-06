@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.update
 
 import kotlinx.coroutines.flow.MutableSharedFlow
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import toothpick.InjectConstructor
 
 @InjectConstructor

@@ -5,7 +5,7 @@ import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 

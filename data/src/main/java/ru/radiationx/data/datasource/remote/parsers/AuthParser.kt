@@ -1,24 +1,15 @@
 package ru.radiationx.data.datasource.remote.parsers
 
-import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.datasource.remote.IApiUtils
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.auth.*
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.auth.*
 import ru.radiationx.shared.ktx.android.nullString
-import java.util.*
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthParser @Inject constructor(
-    private val apiUtils: IApiUtils,
-    private val apiConfig: ApiConfig
-) {
+class AuthParser @Inject constructor() {
 
     fun checkOtpError(error: Throwable): Throwable = if (error is ApiError) {
         when (error.description) {
@@ -29,15 +20,6 @@ class AuthParser @Inject constructor(
         }
     } else {
         error
-    }
-
-    fun parseOtp(responseJson: JSONObject): OtpInfo = responseJson.let {
-        OtpInfo(
-            it.getString("code"),
-            it.getString("description"),
-            Date(it.getInt("expiredAt") * 1000L),
-            it.getInt("remainingTime") * 1000L
-        )
     }
 
     fun authResult(responseText: String): String {
@@ -58,35 +40,6 @@ class AuthParser @Inject constructor(
             }
         }
         return message.orEmpty()
-    }
-
-    fun parseUser(responseJson: JSONObject): ProfileItem {
-        val user = ProfileItem(
-            id = responseJson.getInt("id"),
-            nick = responseJson.nullString("login").orEmpty(),
-            avatarUrl = responseJson.nullString("avatar")?.let {
-                "${apiConfig.baseImagesUrl}$it"
-            },
-            authState = AuthState.AUTH
-        )
-        return user
-    }
-
-    fun parseSocialAuth(responseJson: JSONArray): List<SocialAuth> {
-        val resultItems = mutableListOf<SocialAuth>()
-        for (j in 0 until responseJson.length()) {
-            val jsonItem = responseJson.getJSONObject(j)
-            resultItems.add(
-                SocialAuth(
-                    jsonItem.getString("key"),
-                    jsonItem.getString("title"),
-                    jsonItem.getString("socialUrl"),
-                    jsonItem.getString("resultPattern"),
-                    jsonItem.getString("errorUrlPattern")
-                )
-            )
-        }
-        return resultItems
     }
 
 }

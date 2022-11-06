@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.presentation.release.details
 
 import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.types.TorrentId
 import java.util.*
 
 data class ReleaseDetailScreenState(
@@ -25,7 +28,7 @@ data class ReleaseDetailModifiersState(
 )
 
 data class ReleaseDetailState(
-    val id: Int,
+    val id: ReleaseId,
     val info: ReleaseInfoState,
     val episodesControl: ReleaseEpisodesControlState?,
     val episodesTabs: List<EpisodesTabState>,
@@ -56,8 +59,7 @@ data class ReleaseFavoriteState(
 )
 
 data class ReleaseEpisodeItemState(
-    val id: Int,
-    val releaseId: Int,
+    val id: EpisodeId,
     val title: String,
     val subtitle: String?,
     val updatedAt: Date?,
@@ -79,7 +81,7 @@ enum class ReleaseEpisodeItemType {
 }
 
 data class ReleaseTorrentItemState(
-    val id: Int,
+    val id: TorrentId,
     val title: String,
     val subtitle: String,
     val size: String,

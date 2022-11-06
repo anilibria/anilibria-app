@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyPresenter
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
-import ru.radiationx.data.entity.app.donation.content_data.YooMoneyDialogResponse
+import ru.radiationx.data.entity.response.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews

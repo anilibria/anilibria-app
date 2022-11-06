@@ -12,7 +12,6 @@ import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.app.auth.SocialAuth
 
 class SocialAuthDelegate(
     private val clickListener: (SocialAuthItemState) -> Unit

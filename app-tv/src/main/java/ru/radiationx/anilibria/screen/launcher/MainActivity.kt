@@ -2,13 +2,13 @@ package ru.radiationx.anilibria.screen.launcher
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
 import ru.radiationx.anilibria.di.*
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.screen.ScopedFragmentActivity
@@ -83,7 +83,7 @@ class MainActivity : ScopedFragmentActivity() {
         if (intent.action == SuggestionsContentProvider.INTENT_ACTION) {
             val uri = intent.data ?: return
             val id = uri.lastPathSegment?.toInt() ?: return
-            viewModel.openRelease(id)
+            viewModel.openRelease(ReleaseId(id))
         }
     }
 }

@@ -5,13 +5,18 @@ import com.stealthcopter.networktools.ping.PingResult
 import com.stealthcopter.networktools.ping.PingTools
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withTimeout
-import ru.radiationx.data.datasource.remote.address.ApiAddress
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.address.ApiConfigData
 import ru.radiationx.data.datasource.remote.api.ConfigurationApi
+import ru.radiationx.data.datasource.storage.ApiConfigStorage
+import ru.radiationx.data.entity.mapper.toDomain
 import java.net.InetAddress
 import javax.inject.Inject
 
 class ConfigurationRepository @Inject constructor(
     private val configurationApi: ConfigurationApi,
+    private val apiConfig: ApiConfig,
+    private val apiConfigStorage: ApiConfigStorage,
 ) {
 
     private val pingRelay = MutableStateFlow<Map<String, PingResult>?>(null)
@@ -22,8 +27,11 @@ class ConfigurationRepository @Inject constructor(
     suspend fun checkApiAvailable(apiUrl: String): Boolean = configurationApi
         .checkApiAvailable(apiUrl)
 
-    suspend fun getConfiguration(): List<ApiAddress> = configurationApi
+    suspend fun getConfiguration(): ApiConfigData = configurationApi
         .getConfiguration()
+        .also { apiConfigStorage.save(it) }
+        .toDomain()
+        .also { apiConfig.setConfig(it) }
 
     suspend fun getPingHost(host: String): PingResult {
         return withTimeout(15_000) {

@@ -13,7 +13,9 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
@@ -33,8 +35,8 @@ class ReleasePresenter @Inject constructor(
 ) : BasePresenter<ReleaseView>(router) {
 
     private var currentData: Release? = null
-    var releaseId = -1
-    var releaseIdCode: String? = null
+    var releaseId: ReleaseId? = null
+    var releaseIdCode: ReleaseCode? = null
     var argReleaseItem: Release? = null
 
     private val stateController = StateController(ReleasePagerState())
@@ -108,7 +110,7 @@ class ReleasePresenter @Inject constructor(
 
     fun onShareClick() {
         currentData?.let {
-            releaseAnalytics.share(AnalyticsConstants.screen_release, it.id)
+            releaseAnalytics.share(AnalyticsConstants.screen_release, it.id.id)
         }
         currentData?.link?.let {
             viewState.shareRelease(it)
@@ -117,7 +119,7 @@ class ReleasePresenter @Inject constructor(
 
     fun onCopyLinkClick() {
         currentData?.let {
-            releaseAnalytics.copyLink(AnalyticsConstants.screen_release, it.id)
+            releaseAnalytics.copyLink(AnalyticsConstants.screen_release, it.id.id)
         }
         currentData?.link?.let {
             viewState.copyLink(it)
@@ -126,14 +128,14 @@ class ReleasePresenter @Inject constructor(
 
     fun onShortcutAddClick() {
         currentData?.let {
-            releaseAnalytics.shortcut(AnalyticsConstants.screen_release, it.id)
+            releaseAnalytics.shortcut(AnalyticsConstants.screen_release, it.id.id)
             viewState.addShortCut(it)
         }
     }
 
     fun onCommentsSwipe() {
         currentData?.also {
-            commentsAnalytics.open(AnalyticsConstants.screen_release, it.id)
+            commentsAnalytics.open(AnalyticsConstants.screen_release, it.id.id)
         }
     }
 

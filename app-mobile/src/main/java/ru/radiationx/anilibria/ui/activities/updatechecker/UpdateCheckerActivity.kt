@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter

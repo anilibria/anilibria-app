@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.di.DI
 
@@ -92,7 +92,7 @@ class SuggestionsContentProvider : ContentProvider() {
         columns + INTENT_ACTION + id
 
     private fun SuggestionItem.convertToEntity() = SystemSuggestionEntity(
-        id,
+        id.id,
         names.joinToString(),
         -1,
         -1,

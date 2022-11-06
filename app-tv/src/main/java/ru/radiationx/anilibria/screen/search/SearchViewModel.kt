@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.repository.SearchRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -19,6 +20,7 @@ class SearchViewModel(
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
     private val router: Router,
+    private val cardRouter: LibriaCardRouter,
     private val searchController: SearchController
 ) : BaseCardsViewModel() {
 
@@ -53,8 +55,6 @@ class SearchViewModel(
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        if (card.type == LibriaCard.Type.RELEASE) {
-            router.navigateTo(DetailsScreen(card.id))
-        }
+        cardRouter.navigate(card)
     }
 }

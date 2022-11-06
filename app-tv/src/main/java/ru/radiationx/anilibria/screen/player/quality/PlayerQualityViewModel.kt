@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
@@ -22,8 +24,8 @@ class PlayerQualityViewModel(
         const val FULL_HD_ACTION_ID = PreferencesHolder.QUALITY_FULL_HD.toLong()
     }
 
-    var argReleaseId = -1
-    var argEpisodeId = -1
+    lateinit var argReleaseId: ReleaseId
+    var argEpisodeId: EpisodeId? = null
 
     val availableData = MutableLiveData<List<Long>>()
     val selectedData = MutableLiveData<Long>()

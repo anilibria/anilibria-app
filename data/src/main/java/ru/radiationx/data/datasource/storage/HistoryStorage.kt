@@ -8,9 +8,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.entity.app.release.BlockedInfo
-import ru.radiationx.data.entity.app.release.FavoriteInfo
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.BlockedInfo
+import ru.radiationx.data.entity.domain.release.FavoriteInfo
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.nullString
 import ru.radiationx.shared.ktx.android.toStringsList
 import javax.inject.Inject
@@ -60,7 +62,7 @@ class HistoryStorage @Inject constructor(
         saveAll()
     }
 
-    override fun removerRelease(id: Int) {
+    override fun removerRelease(id: ReleaseId) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases.firstOrNull { it.id == id }?.also {
@@ -76,8 +78,8 @@ class HistoryStorage @Inject constructor(
         val jsonEpisodes = JSONArray()
         localReleasesRelay.value.forEach {
             jsonEpisodes.put(JSONObject().apply {
-                put("id", it.id)
-                put("code", it.code)
+                put("id", it.id.id)
+                put("code", it.code.code)
                 put("link", it.link)
                 put("names", JSONArray(it.names))
                 put("series", it.series)
@@ -120,8 +122,8 @@ class HistoryStorage @Inject constructor(
                     )
                 }
                 val release = Release(
-                    id = jsonRelease.getInt("id"),
-                    code = jsonRelease.nullString("code"),
+                    id = ReleaseId(jsonRelease.getInt("id")),
+                    code = ReleaseCode(jsonRelease.nullString("code").orEmpty()),
                     names = jsonRelease.getJSONArray("names").toStringsList(),
                     series = jsonRelease.nullString("series"),
                     poster = jsonRelease.nullString("poster"),

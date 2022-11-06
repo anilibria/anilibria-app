@@ -11,17 +11,19 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
 
@@ -69,19 +71,18 @@ class NotificationService : FirebaseMessagingService() {
 
         if (data.type == CUSTOM_TYPE_CONFIG) {
             try {
-                val configurationParser = DI.get(ConfigurationParser::class.java)
                 val apiConfig = DI.get(ApiConfig::class.java)
                 val apiConfigStorage = DI.get(ApiConfigStorage::class.java)
+                val moshi = DI.get(Moshi::class.java)
 
                 GlobalScope.launch {
                     apiConfig.updateNeedConfig(true)
                 }
 
                 val payload = data.payload.orEmpty()
-                val jsonObject = JSONObject(payload)
-                apiConfigStorage.saveJson(jsonObject)
-                val addresses = configurationParser.parse(jsonObject)
-                apiConfig.setAddresses(addresses)
+                val configResponse = payload.fetchResponse<ApiConfigResponse>(moshi)
+                apiConfigStorage.save(configResponse)
+                apiConfig.setConfig(configResponse.toDomain())
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

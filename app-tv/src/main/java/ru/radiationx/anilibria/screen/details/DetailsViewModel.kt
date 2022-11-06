@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
@@ -24,12 +26,16 @@ class DetailsViewModel(
         const val RELATED_ROW_ID = 2L
         const val RECOMMENDS_ROW_ID = 3L
 
-        fun getReleasesFromDesc(description: String): List<String> {
-            return linkPattern.findAll(description).map { it.groupValues[1] }.toList()
+        fun getReleasesFromDesc(description: String): List<ReleaseCode> {
+            return linkPattern
+                .findAll(description)
+                .map { it.groupValues[1] }
+                .map { ReleaseCode(it) }
+                .toList()
         }
     }
 
-    var releaseId: Int = -1
+    lateinit var releaseId: ReleaseId
 
     override val rowIds: List<Long> = listOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
 

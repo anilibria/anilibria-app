@@ -5,6 +5,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -38,7 +39,7 @@ class LinkRouter @Inject constructor(
         releaseDetail.matcher(url).let {
             if (it.find()) {
                 val code = it.group(1) ?: it.group(2)
-                return Screens.ReleaseDetails(code = code)
+                return Screens.ReleaseDetails(code = ReleaseCode(code))
             }
         }
         return null
@@ -47,7 +48,7 @@ class LinkRouter @Inject constructor(
     private fun sendNavigateAnalytics(screen: BaseAppScreen) {
         when (screen) {
             is Screens.ReleaseDetails -> {
-                releaseAnalytics.open(AnalyticsConstants.link_router, null, screen.code)
+                releaseAnalytics.open(AnalyticsConstants.link_router, null, screen.code?.code)
             }
         }
     }

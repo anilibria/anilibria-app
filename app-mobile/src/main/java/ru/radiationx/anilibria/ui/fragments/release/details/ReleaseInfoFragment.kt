@@ -37,10 +37,10 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.SourceEpisode
-import ru.radiationx.data.entity.app.release.TorrentItem
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.SourceEpisode
+import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.shared_app.di.injectDependencies
 import java.net.URLConnection
 import java.util.regex.Pattern
@@ -79,8 +79,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
-            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
+            presenter.releaseId = bundle.getParcelable(ARG_ID)
+            presenter.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
         }
     }
 
@@ -98,8 +98,8 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(ARG_ID, presenter.releaseId)
-        outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putParcelable(ARG_ID, presenter.releaseId)
+        outState.putParcelable(ARG_ID_CODE, presenter.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {

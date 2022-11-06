@@ -7,13 +7,13 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -21,10 +21,10 @@ class DetailRecommendsViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    var releaseId: Int = -1
+    lateinit var releaseId: ReleaseId
 
     override val loadOnCreate: Boolean = false
 
@@ -76,6 +76,6 @@ class DetailRecommendsViewModel(
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

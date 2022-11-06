@@ -1,7 +1,7 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.team.TeamsResponse
+import ru.radiationx.data.entity.response.team.TeamsResponse
 
 interface TeamsHolder {
     fun observe(): Flow<TeamsResponse>

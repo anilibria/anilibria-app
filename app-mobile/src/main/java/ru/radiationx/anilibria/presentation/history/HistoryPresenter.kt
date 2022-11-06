@@ -14,8 +14,9 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class HistoryPresenter @Inject constructor(
     private var isSearchEnabled: Boolean = false
     private var currentQuery: String = ""
 
-    private val updates = emptyMap<Int, ReleaseUpdate>()
+    private val updates = emptyMap<ReleaseId, ReleaseUpdate>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -79,7 +80,7 @@ class HistoryPresenter @Inject constructor(
         }
     }
 
-    private fun findRelease(id: Int): Release? {
+    private fun findRelease(id: ReleaseId): Release? {
         return currentReleases.find { it.id == id }
     }
 
@@ -95,7 +96,7 @@ class HistoryPresenter @Inject constructor(
         } else {
             historyAnalytics.releaseClick()
         }
-        releaseAnalytics.open(AnalyticsConstants.screen_history, releaseItem.id)
+        releaseAnalytics.open(AnalyticsConstants.screen_history, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
@@ -108,19 +109,19 @@ class HistoryPresenter @Inject constructor(
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         Utils.copyToClipBoard(releaseItem.link.orEmpty())
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, releaseItem.id)
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         Utils.shareText(releaseItem.link.orEmpty())
-        releaseAnalytics.share(AnalyticsConstants.screen_history, releaseItem.id)
+        releaseAnalytics.share(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         ShortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, releaseItem.id)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onSearchClick() {

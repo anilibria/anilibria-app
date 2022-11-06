@@ -1,9 +1,10 @@
 package ru.radiationx.anilibria.common
 
 import androidx.leanback.widget.Row
+import ru.radiationx.data.entity.domain.types.ReleaseId
 
 data class LibriaDetails(
-    val id: Int,
+    val id: ReleaseId,
     val titleRu: String,
     val titleEn: String,
     val extra: String,

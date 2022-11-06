@@ -19,11 +19,13 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.release.ReleaseUpdate
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
+import ru.radiationx.data.entity.domain.feed.FeedItem
+import ru.radiationx.data.entity.domain.feed.ScheduleItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.types.YoutubeId
+import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -152,20 +154,20 @@ class FeedPresenter @Inject constructor(
     fun onScheduleItemClick(item: ScheduleItemState, position: Int) {
         val releaseItem = findScheduleRelease(item.releaseId) ?: return
         feedAnalytics.scheduleReleaseClick(position)
-        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
     fun onItemClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         feedAnalytics.releaseClick()
-        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id)
+        releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
     }
 
     fun onYoutubeClick(item: YoutubeItemState) {
         val youtubeItem = findYoutube(item.id) ?: return
-        youtubeAnalytics.openVideo(AnalyticsConstants.screen_feed, youtubeItem.id, youtubeItem.vid)
+        youtubeAnalytics.openVideo(AnalyticsConstants.screen_feed, youtubeItem.id.id, youtubeItem.vid)
         feedAnalytics.youtubeClick()
         Utils.externalLink(youtubeItem.link)
     }
@@ -185,7 +187,7 @@ class FeedPresenter @Inject constructor(
             runCatching {
                 releaseInteractor.getRandomRelease()
             }.onSuccess {
-                releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code)
+                releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code.code)
                 router.navigateTo(Screens.ReleaseDetails(code = it.code))
             }.onFailure {
                 errorHandler.handle(it)
@@ -237,32 +239,32 @@ class FeedPresenter @Inject constructor(
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         Utils.copyToClipBoard(releaseItem.link.orEmpty())
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id)
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         Utils.shareText(releaseItem.link.orEmpty())
-        releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id)
+        releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         ShortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id.id)
     }
 
-    private fun findScheduleRelease(id: Int): Release? {
+    private fun findScheduleRelease(id: ReleaseId): Release? {
         val scheduleItems = loadingController.currentState.data?.schedule?.items
         return scheduleItems?.find { it.releaseItem.id == id }?.releaseItem
     }
 
-    private fun findRelease(id: Int): Release? {
+    private fun findRelease(id: ReleaseId): Release? {
         val feedItems = loadingController.currentState.data?.feedItems
         return feedItems?.mapNotNull { it.release }?.find { it.id == id }
     }
 
-    private fun findYoutube(id: Int): YoutubeItem? {
+    private fun findYoutube(id: YoutubeId): YoutubeItem? {
         val feedItems = loadingController.currentState.data?.feedItems
         return feedItems?.mapNotNull { it.youtube }?.find { it.id == id }
     }
@@ -350,10 +352,11 @@ class FeedPresenter @Inject constructor(
         val items: List<ScheduleItem>
     )
 
-    private fun FeedData.toState(updates: Map<Int, ReleaseUpdate>): FeedDataState = FeedDataState(
-        feedItems.map { it.toState(updates) },
-        schedule?.toState()
-    )
+    private fun FeedData.toState(updates: Map<ReleaseId, ReleaseUpdate>): FeedDataState =
+        FeedDataState(
+            feedItems.map { it.toState(updates) },
+            schedule?.toState()
+        )
 
     private fun FeedScheduleData.toState(): FeedScheduleState = FeedScheduleState(
         title = title,

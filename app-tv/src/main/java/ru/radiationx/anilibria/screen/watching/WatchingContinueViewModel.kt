@@ -3,11 +3,10 @@ package ru.radiationx.anilibria.screen.watching
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -16,7 +15,7 @@ class WatchingContinueViewModel(
     private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Продолжить просмотр"
@@ -24,7 +23,7 @@ class WatchingContinueViewModel(
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
         .let {
-            it.sortedByDescending { it.lastAccess }.map { it.releaseId }
+            it.sortedByDescending { it.lastAccess }.map { it.id.releaseId }
         }
         .let { ids ->
             if (ids.isEmpty()) {
@@ -53,6 +52,6 @@ class WatchingContinueViewModel(
 
     override fun onLibriaCardClick(card: LibriaCard) {
         super.onLibriaCardClick(card)
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.common
 
 import android.content.Context
 import android.text.Html
-import ru.radiationx.data.entity.app.release.Release
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import toothpick.InjectConstructor
 import java.text.NumberFormat
 import java.util.*

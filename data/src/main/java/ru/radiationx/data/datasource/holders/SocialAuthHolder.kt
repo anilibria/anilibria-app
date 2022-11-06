@@ -1,7 +1,7 @@
 package ru.radiationx.data.datasource.holders
 
 import kotlinx.coroutines.flow.Flow
-import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.data.entity.domain.auth.SocialAuth
 
 interface SocialAuthHolder {
     fun get(): List<SocialAuth>

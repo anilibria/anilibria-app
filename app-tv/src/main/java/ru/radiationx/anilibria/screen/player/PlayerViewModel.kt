@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.Episode
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
@@ -20,8 +22,8 @@ class PlayerViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    var argReleaseId = -1
-    var argEpisodeId = -1
+    var argReleaseId: ReleaseId? = null
+    var argEpisodeId: EpisodeId? = null
 
     val videoData = MutableLiveData<Video>()
     val qualityState = MutableLiveData<Int>()

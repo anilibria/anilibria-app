@@ -1,22 +1,22 @@
 package ru.radiationx.data.datasource.remote.api
 
-import org.json.JSONObject
+import com.squareup.moshi.Moshi
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchResult
-import ru.radiationx.data.datasource.remote.parsers.ReleaseParser
-import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchPaginatedApiResponse
+import ru.radiationx.data.entity.response.PaginatedResponse
+import ru.radiationx.data.entity.response.release.ReleaseResponse
 import javax.inject.Inject
 
 class FavoriteApi @Inject constructor(
     @ApiClient private val client: IClient,
-    private val releaseParser: ReleaseParser,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val moshi: Moshi
 ) {
 
-    suspend fun getFavorites(page: Int): Paginated<List<Release>> {
+    suspend fun getFavorites(page: Int): PaginatedResponse<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "page" to page.toString(),
@@ -24,30 +24,27 @@ class FavoriteApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { releaseParser.releases(it) }
+            .fetchPaginatedApiResponse(moshi)
     }
 
-    suspend fun addFavorite(releaseId: Int): Release {
+    suspend fun addFavorite(releaseId: Int): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "add",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { releaseParser.release(it) }
+            .fetchApiResponse(moshi)
     }
 
-    suspend fun deleteFavorite(releaseId: Int): Release {
+    suspend fun deleteFavorite(releaseId: Int): ReleaseResponse {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "favorites",
             "action" to "delete",
             "id" to releaseId.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchResult<JSONObject>()
-            .let { releaseParser.release(it) }
+            .fetchApiResponse(moshi)
     }
 
 }

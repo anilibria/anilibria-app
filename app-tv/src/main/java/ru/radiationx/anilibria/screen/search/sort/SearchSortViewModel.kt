@@ -6,7 +6,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.data.entity.domain.search.SearchForm
 import toothpick.InjectConstructor
 
 @InjectConstructor

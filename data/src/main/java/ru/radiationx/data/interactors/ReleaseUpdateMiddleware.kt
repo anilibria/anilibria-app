@@ -1,8 +1,8 @@
 package ru.radiationx.data.interactors
 
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.release.Release
+import ru.radiationx.data.entity.domain.feed.FeedItem
+import ru.radiationx.data.entity.domain.release.Release
 import toothpick.InjectConstructor
 
 @InjectConstructor

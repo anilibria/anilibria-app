@@ -5,17 +5,16 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.app.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class SuggestionsResultViewModel(
     private val searchRepository: SearchRepository,
-    private val router: Router,
+    private val cardRouter: LibriaCardRouter,
     private val suggestionsController: SuggestionsController
 ) : LifecycleViewModel() {
 
@@ -57,7 +56,7 @@ class SuggestionsResultViewModel(
     }
 
     fun onCardClick(item: LibriaCard) {
-        router.navigateTo(DetailsScreen(item.id))
+        cardRouter.navigate(item)
     }
 
     private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
@@ -67,7 +66,6 @@ class SuggestionsResultViewModel(
             progressState.value = false
             resultData.value = items.map {
                 LibriaCard(
-                    it.id,
                     it.names.getOrNull(0).orEmpty(),
                     it.names.getOrNull(1).orEmpty(),
                     it.poster.orEmpty(),

@@ -1,13 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import android.app.Dialog
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Build
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +10,6 @@ import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -25,9 +18,9 @@ import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.SeasonItem
-import ru.radiationx.data.entity.app.release.YearItem
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.shared.ktx.android.visible
 
 

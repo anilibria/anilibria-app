@@ -1,17 +1,14 @@
 package ru.radiationx.anilibria.screen.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.leanback.widget.*
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
-import ru.radiationx.anilibria.screen.GridScreen
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.terrakok.cicerone.Router
@@ -22,9 +19,6 @@ class MainFragment : ScopedRowsFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
-
-    @Inject
-    lateinit var mockData: MockData
 
     @Inject
     lateinit var router: Router
@@ -64,7 +58,7 @@ class MainFragment : ScopedRowsFragment() {
                         viewMode?.onLibriaCardClick(item)
                     }
                     else -> {
-                        router.navigateTo(GridScreen())
+                        // do nothing
                     }
                 }
             }

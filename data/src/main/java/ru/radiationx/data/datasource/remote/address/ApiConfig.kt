@@ -4,6 +4,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
@@ -21,8 +23,8 @@ class ApiConfig @Inject constructor(
 
     init {
         activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
-        val initAddresses = apiConfigStorage.get() ?: listOf(Api.DEFAULT_ADDRESS)
-        setAddresses(initAddresses)
+        val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
+        setConfig(initAddresses)
     }
 
     fun observeNeedConfig(): Flow<Boolean> = needConfigRelay
@@ -44,7 +46,8 @@ class ApiConfig @Inject constructor(
     }
 
     @Synchronized
-    fun setAddresses(items: List<ApiAddress>) {
+    fun setConfig(configData: ApiConfigData) {
+        val items = configData.addresses
         addresses.clear()
         /*if (items.find { it.tag == Api.DEFAULT_ADDRESS.tag } == null) {
             addresses.add(Api.DEFAULT_ADDRESS)

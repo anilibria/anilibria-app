@@ -7,18 +7,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.asDayName
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class ScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val dataConverter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : LifecycleViewModel() {
 
     val scheduleRows = MutableLiveData<List<Pair<String, List<LibriaCard>>>>()
@@ -44,6 +43,6 @@ class ScheduleViewModel(
     }
 
     fun onCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

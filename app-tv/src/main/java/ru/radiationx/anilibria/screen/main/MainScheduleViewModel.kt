@@ -1,10 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
-import ru.radiationx.anilibria.common.BaseCardsViewModel
-import ru.radiationx.anilibria.common.CardsDataConverter
-import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.common.LinkCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.screen.ScheduleScreen
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
@@ -18,7 +14,8 @@ class MainScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val router: Router,
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Ожидается сегодня"
@@ -71,6 +68,6 @@ class MainScheduleViewModel(
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

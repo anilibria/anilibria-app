@@ -121,7 +121,7 @@ class DataModule : Module() {
         bind(ReleaseUpdateMiddleware::class.java).singleton()
 
         bind(ReleaseInteractor::class.java).singleton()
-        bind(ConfiguringInteractor::class.java).singleton()
+        bind(ConfiguringInteractor::class.java)
 
 
         /* Analytics */

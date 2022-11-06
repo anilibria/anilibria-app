@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class EpisodeResponse(
-    @Json(name = "id") val id: Int,
+    @Json(name = "id") val id: Float,
     @Json(name = "title") val title: String?,
     @Json(name = "sd") val urlSd: String?,
     @Json(name = "hd") val urlHd: String?,

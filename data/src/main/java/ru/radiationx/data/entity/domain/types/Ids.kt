@@ -14,7 +14,7 @@ data class ReleaseId(val id: Int) : Parcelable
 data class ReleaseCode(val code: String) : Parcelable
 
 @Parcelize
-data class EpisodeId(val id: Int, val releaseId: ReleaseId) : Parcelable
+data class EpisodeId(val id: String, val releaseId: ReleaseId) : Parcelable
 
 @Parcelize
 data class YoutubeId(val id: Int) : Parcelable

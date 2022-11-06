@@ -1,5 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
+import android.util.Log
 import ru.radiationx.data.entity.domain.release.*
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -7,15 +8,24 @@ import ru.radiationx.data.entity.response.release.EpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalEpisodeResponse
 import ru.radiationx.data.entity.response.release.ExternalPlaylistResponse
 import ru.radiationx.data.entity.response.release.PlayerSkipsResponse
+import java.math.BigDecimal
 
 // placeholder for moment when src downloading disabled
 private const val VK_URL = "https://vk.com/anilibria?w=wall-37468416_493445"
+
+// episode ids can be float/double/int e.g. 25, 25.5.
+private fun Float.toId(releaseId: ReleaseId): EpisodeId {
+    val big = BigDecimal(toDouble())
+    return EpisodeId(big.toString(), releaseId).also {
+        Log.d("kekeke", "toId $this; ${big} -> $it")
+    }
+}
 
 fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {
     if (sources?.isAnilibria != true) {
         return null
     }
-    val episodeId = EpisodeId(id, releaseId)
+    val episodeId = id.toId(releaseId)
     return Episode(
         id = episodeId,
         title = title,
@@ -53,7 +63,7 @@ fun EpisodeResponse.toSourceDomain(releaseId: ReleaseId): SourceEpisode? {
         return null
     }
     return SourceEpisode(
-        id = EpisodeId(id, releaseId),
+        id = id.toId(releaseId),
         title = title,
         updatedAt = updatedAt?.secToDate(),
         urlSd = srcUrlSd?.takeIf { it != VK_URL },
@@ -67,7 +77,7 @@ fun EpisodeResponse.toRutubeDomain(releaseId: ReleaseId): RutubeEpisode? {
         return null
     }
     return RutubeEpisode(
-        id = EpisodeId(id, releaseId),
+        id = id.toId(releaseId),
         title = title,
         updatedAt = updatedAt?.secToDate(),
         rutubeId = rutubeId,
@@ -85,7 +95,7 @@ fun ExternalPlaylistResponse.toDomain(releaseId: ReleaseId): ExternalPlaylist {
 }
 
 fun ExternalEpisodeResponse.toDomain(releaseId: ReleaseId): ExternalEpisode = ExternalEpisode(
-    id = EpisodeId(id, releaseId),
+    id = id.toId(releaseId),
     title = title,
     url = url
 )

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.db.EpisodeAccessDb
+import ru.radiationx.data.entity.db.EpisodeAccessLegacyDb
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.mapper.toDb
@@ -24,7 +25,13 @@ class EpisodesCheckerStorage @Inject constructor(
 ) : EpisodesCheckerHolder {
 
     companion object {
-        private const val LOCAL_EPISODES_KEY = "data.local_episodes"
+        private const val LEGACY_LOCAL_EPISODES_KEY = "data.local_episodes"
+        private const val LOCAL_EPISODES_KEY = "data.local_episodes_v2"
+    }
+
+    private val legacyDataAdapter by lazy {
+        val type = Types.newParameterizedType(List::class.java, EpisodeAccessLegacyDb::class.java)
+        moshi.adapter<List<EpisodeAccessLegacyDb>>(type)
     }
 
     private val dataAdapter by lazy {
@@ -92,9 +99,15 @@ class EpisodesCheckerStorage @Inject constructor(
             .apply()
     }
 
-    private fun loadAll(): List<EpisodeAccess> = sharedPreferences
-        .getString(LOCAL_EPISODES_KEY, null)
-        ?.let { dataAdapter.fromJson(it) }
-        ?.map { it.toDomain() }
-        .orEmpty()
+    private fun loadAll(): List<EpisodeAccess> {
+        val actualData = sharedPreferences
+            .getString(LOCAL_EPISODES_KEY, null)
+            ?.let { dataAdapter.fromJson(it) }
+        val data = actualData ?: loadAllLegacy()?.map { it.toDb() }
+        return data?.map { it.toDomain() }.orEmpty()
+    }
+
+    private fun loadAllLegacy(): List<EpisodeAccessLegacyDb>? = sharedPreferences
+        .getString(LEGACY_LOCAL_EPISODES_KEY, null)
+        ?.let { legacyDataAdapter.fromJson(it) }
 }

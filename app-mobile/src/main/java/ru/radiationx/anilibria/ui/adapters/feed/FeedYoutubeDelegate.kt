@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.adapters.feed
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.item_feed_youtube.view.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.YoutubeItemState
@@ -11,6 +10,7 @@ import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
  * Created by radiationx on 13.01.18.
@@ -40,7 +40,7 @@ class FeedYoutubeDelegate(
                 item_views_count.text = state.views
                 item_comments_count.text = state.comments
 
-                ImageLoader.getInstance().displayImage(state.image, item_image)
+                item_image.showImageUrl(state.image)
                 ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${state.id}")
             }
             itemView.run {

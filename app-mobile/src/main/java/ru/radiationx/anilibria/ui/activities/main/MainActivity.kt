@@ -14,7 +14,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import moxy.presenter.InjectPresenter
@@ -261,8 +260,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun onDestroy() {
         super.onDestroy()
         dimensionHelper?.destroy()
-        ImageLoader.getInstance().clearMemoryCache()
-        ImageLoader.getInstance().stop()
     }
 
     override fun onBackPressed() {

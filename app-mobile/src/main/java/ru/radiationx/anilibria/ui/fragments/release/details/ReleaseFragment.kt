@@ -11,9 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
-import com.nostra13.universalimageloader.core.DisplayImageOptions
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import kotlinx.android.synthetic.main.fragment_main_base.*
 import kotlinx.android.synthetic.main.fragment_paged.*
 import kotlinx.coroutines.Job
@@ -27,7 +24,6 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
-import ru.radiationx.anilibria.ui.widgets.UILImageListener
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.anilibria.utils.Utils
@@ -39,6 +35,7 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.imageloader.showImageUrl
 import javax.inject.Inject
 
 
@@ -67,14 +64,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
     private var toolbarHelperJob: Job? = null
-
-    private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
-        .cacheInMemory(true)
-        .resetViewBeforeLoading(false)
-        .cacheInMemory(true)
-        .cacheOnDisk(true)
-        .displayer(FadeInBitmapDisplayer(1000, true, false, false))
-        .bitmapConfig(Bitmap.Config.ARGB_8888)
 
     @Inject
     lateinit var commentsAnalytics: CommentsAnalytics
@@ -204,12 +193,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         if (state.poster == null) {
             startPostponedEnterTransition()
         } else {
-            ImageLoader.getInstance().displayImage(
-                state.poster,
-                toolbarImage,
-                defaultOptionsUIL.build(),
-                imageListener
-            )
+            toolbarImage.showImageUrl(state.poster) {
+                onStart { toolbarImageProgress?.visible() }
+                onSuccess { updateToolbarColors(it) }
+                onComplete { startPostponedEnterTransition() }
+            }
         }
 
         if (state.title != null) {
@@ -233,27 +221,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override fun onDestroyView() {
         toolbarHelperJob?.cancel()
         super.onDestroyView()
-    }
-
-    private val imageListener = object : UILImageListener() {
-        override fun onLoadingStarted(imageUri: String?, view: View?) {
-            super.onLoadingStarted(imageUri, view)
-            toolbarImageProgress?.visible()
-        }
-
-        override fun onLoadingFinally(imageUrl: String?, view: View?) {
-            toolbarImageProgress?.gone()
-            startPostponedEnterTransition()
-        }
-
-        override fun onLoadingComplete(
-            imageUri: String?,
-            view: View?,
-            loadedImage: Bitmap
-        ) {
-            super.onLoadingComplete(imageUri, view, loadedImage)
-            updateToolbarColors(loadedImage)
-        }
     }
 
     private fun updateToolbarColors(loadedImage: Bitmap) {

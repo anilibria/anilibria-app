@@ -21,10 +21,12 @@ import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
-import ru.radiationx.shared_app.common.ImageLoaderConfig
 import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
+import ru.radiationx.shared_app.imageloader.CoilLibriaImageLoaderImpl
+import ru.radiationx.shared_app.imageloader.LibriaImageLoaderRoot
+import ru.radiationx.shared_app.imageloader.UilImageLoaderImpl
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -99,7 +101,9 @@ class App : Application() {
         initDependencies()
 
         val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
-        ImageLoaderConfig.init(this, imageDownloader)
+        val loaderImpl = UilImageLoaderImpl(this, imageDownloader)
+        val coilLoaderImpl = CoilLibriaImageLoaderImpl(this)
+        LibriaImageLoaderRoot.setImpl(coilLoaderImpl)
         appVersionCheck()
 
         try {

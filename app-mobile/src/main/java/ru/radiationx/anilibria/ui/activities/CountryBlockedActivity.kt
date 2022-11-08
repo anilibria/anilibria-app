@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.os.Build
 import android.os.Bundle
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_country_blocked.*
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
@@ -10,6 +9,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class CountryBlockedActivity : BaseActivity() {
 
@@ -29,7 +29,7 @@ class CountryBlockedActivity : BaseActivity() {
         }
 
         setContentView(R.layout.activity_country_blocked)
-        ImageLoader.getInstance().displayImage("assets://LibriaTyanDn.png", countryBlockedImage)
+        countryBlockedImage.showImageUrl("assets://LibriaTyanDn.png")
         countryBlockedExit.setOnClickListener { finish() }
     }
 }

@@ -6,25 +6,26 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
-import android.view.View
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import kotlin.math.min
 
 object ShortcutHelper {
 
     fun addShortcut(data: Release) {
-        ImageLoader.getInstance().loadImage(data.poster, object : SimpleImageLoadingListener() {
-            override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap) {
+        GlobalScope.launch {
+            runCatching {
+                val loadedImage = App.instance.loadImageBitmap(data.poster)
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val desiredSize = Resources.getSystem().displayMetrics.density * 48
                 val scaleFactor = minSize / desiredSize
@@ -33,7 +34,7 @@ object ShortcutHelper {
                     .createAvatar(isCircle = true)
                 addShortcut(data, bmp)
             }
-        })
+        }
     }
 
     fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(

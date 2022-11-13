@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.presenter
 
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +9,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
 import androidx.leanback.widget.RowPresenter
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.row_detail_release.*
 import ru.radiationx.anilibria.R
@@ -21,7 +17,7 @@ import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.LibriaDetailsRow
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ReleaseDetailsPresenter(
     private val continueClickListener: () -> Unit,
@@ -153,14 +149,6 @@ class LibriaReleaseViewHolder(
             rowReleaseActionPlay.requestFocus()
         }
 
-        if (rowReleaseImageCard.tag != details.image) {
-            ImageLoader.getInstance().displayImage(details.image, rowReleaseImageCard, object : SimpleImageLoadingListener() {
-
-                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                    super.onLoadingComplete(imageUri, view, loadedImage)
-                    view?.tag = details.image
-                }
-            })
-        }
+        rowReleaseImageCard.showImageUrl(details.image)
     }
 }

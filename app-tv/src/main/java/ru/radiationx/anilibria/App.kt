@@ -8,8 +8,6 @@ import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
-import ru.radiationx.shared_app.common.ImageLoaderConfig
-import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
 import toothpick.Toothpick
@@ -50,9 +48,6 @@ class App : Application() {
 
     private fun initInMainProcess() {
         initDependencies()
-
-        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
-        ImageLoaderConfig.init(this, imageDownloader)
     }
 
     private fun initDependencies() {

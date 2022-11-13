@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.dialog_file_download.view.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
@@ -43,6 +42,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 import java.util.regex.Pattern
 
@@ -169,8 +169,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                 )
             }
 
-        ImageLoader.getInstance()
-            .displayImage("assets://libria_tyan_type3.png", dialogView.dialogFileImage)
+        dialogView.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)

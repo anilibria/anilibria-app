@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.adapters.other
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_other_profile.*
 import ru.radiationx.anilibria.R
@@ -13,6 +12,7 @@ import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.shared_app.di.DI
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ProfileItemDelegate(
     private val clickListener: (ProfileItemState) -> Unit,
@@ -46,7 +46,7 @@ class ProfileItemDelegate(
             profileDesc.text = state.subtitle
             profileLogout.isVisible = state.hasAuth
             profileDesc.isVisible = state.subtitle != null
-            ImageLoader.getInstance().displayImage(state.avatar, profileAvatar)
+            profileAvatar.showImageUrl(state.avatar)
 
             containerView.setOnClickListener { clickListener(state) }
             profileLogout.setOnClickListener { logoutClickListener() }

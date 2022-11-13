@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.activities.main
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,12 +8,15 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import moxy.presenter.InjectPresenter
@@ -42,7 +44,9 @@ import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.shared.ktx.android.*
+import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
@@ -123,6 +127,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             return
         }
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
         dimensionHelper = DimensionHelper(
@@ -142,6 +147,11 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 }
             })
 
+        ViewCompat.setOnApplyWindowInsetsListener(tabsRecycler) { v, insets ->
+            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navigationBarInsets.bottom)
+            insets
+        }
         tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
@@ -261,8 +271,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     override fun onDestroy() {
         super.onDestroy()
         dimensionHelper?.destroy()
-        ImageLoader.getInstance().clearMemoryCache()
-        ImageLoader.getInstance().stop()
     }
 
     override fun onBackPressed() {

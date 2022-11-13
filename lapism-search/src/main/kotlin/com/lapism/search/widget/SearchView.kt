@@ -98,12 +98,12 @@ class SearchView @JvmOverloads constructor(
 
     class SuperTransition : TransitionSet() {
         init {
-            addTransition(Fade(Fade.OUT))
+            //addTransition(Fade(Fade.OUT))
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
             addTransition(ChangeElevation())
             addTransition(ChangeOutlineRadius())
-            addTransition(Fade(Fade.IN))
+            //addTransition(Fade(Fade.IN))
             interpolator = AccelerateDecelerateInterpolator()
         }
     }

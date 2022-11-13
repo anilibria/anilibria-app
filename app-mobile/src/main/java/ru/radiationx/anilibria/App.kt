@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,8 +20,6 @@ import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
-import ru.radiationx.shared_app.common.ImageLoaderConfig
-import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
@@ -64,7 +61,6 @@ class App : Application() {
             initInMainProcess()
 
             val timeToInit = timeCounter.elapsed()
-            Log.d("kekeke", "init time. $timeToCreate, $timeToInit")
             val appAnalytics = DI.get(AppAnalytics::class.java)
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
@@ -98,8 +94,6 @@ class App : Application() {
 
         initDependencies()
 
-        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
-        ImageLoaderConfig.init(this, imageDownloader)
         appVersionCheck()
 
         try {

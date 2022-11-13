@@ -1,29 +1,29 @@
-package ru.radiationx.shared_app.common
+package ru.radiationx.shared_app.imageloader.utils
 
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import timber.log.Timber
 import java.util.regex.Pattern
 
-class ImageFileNameGenerator : HashCodeFileNameGenerator() {
+object ImageCacheKeyGenerator {
 
     private val pattern by lazy {
         Pattern.compile("(?:[a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?\\/\\??([\\s\\S]*)$")
     }
 
-    override fun generate(imageUri: String?): String = localGenerate(imageUri)
-
-    private fun localGenerate(imageUri: String?): String {
+    fun generate(imageUri: String?): String? {
+        if (imageUri == null) {
+            return null
+        }
         try {
             val pathMatcher = pattern.matcher(imageUri)
             if (pathMatcher.find()) {
                 val path = pathMatcher.group(1)
                 if (!path.isNullOrEmpty()) {
-                    return path.hashCode().toString()
+                    return path
                 }
             }
         } catch (ex: Exception) {
             Timber.e(ex)
         }
-        return super.generate(imageUri)
+        return imageUri
     }
 }

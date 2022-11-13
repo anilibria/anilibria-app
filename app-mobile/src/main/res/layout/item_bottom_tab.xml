@@ -2,9 +2,9 @@
 <androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tabIcon"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="center"
+    android:layout_height="48dp"
     android:clickable="true"
     android:contentDescription="@null"
     android:focusable="true"
-    android:foreground="?selectableItemBackgroundBorderless" />
+    android:foreground="?selectableItemBackgroundBorderless"
+    android:scaleType="center" />

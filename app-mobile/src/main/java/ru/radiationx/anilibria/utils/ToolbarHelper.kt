@@ -10,6 +10,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.App
+import ru.radiationx.shared.ktx.android.asSoftware
 import timber.log.Timber
 
 /**
@@ -57,24 +58,25 @@ object ToolbarHelper {
 
     suspend fun isDarkImage(bitmap: Bitmap): Boolean {
         return withContext(Dispatchers.Default) {
-            val histogram = IntArray(256) { 0 }
+            bitmap.asSoftware { bitmapCopy ->
+                val histogram = IntArray(256) { 0 }
+                for (x in 0 until bitmapCopy.width) {
+                    for (y in 0 until bitmapCopy.height) {
+                        val pixel = bitmapCopy.getPixel(x, y)
+                        val r = Color.red(pixel)
+                        val g = Color.green(pixel)
+                        val b = Color.blue(pixel)
 
-            for (x in 0 until bitmap.width) {
-                for (y in 0 until bitmap.height) {
-                    val pixel = bitmap.getPixel(x, y)
-                    val r = Color.red(pixel)
-                    val g = Color.green(pixel)
-                    val b = Color.blue(pixel)
-
-                    val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
-                    histogram[brightness]++
+                        val brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
+                        histogram[brightness]++
+                    }
                 }
+
+                val allPixelsCount = bitmapCopy.width * bitmapCopy.height
+                val darkPixelCount = (0 until 64).sumBy { histogram[it] }
+
+                darkPixelCount > allPixelsCount * 0.25
             }
-
-            val allPixelsCount = bitmap.width * bitmap.height
-            val darkPixelCount = (0 until 64).sumBy { histogram[it] }
-
-            darkPixelCount > allPixelsCount * 0.25
         }
     }
 

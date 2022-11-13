@@ -121,8 +121,6 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
-    implementation "com.nostra13.universalimageloader:universal-image-loader:$uil_version"
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "com.github.moxy-community:moxy:$moxy_version"
@@ -144,8 +142,6 @@ dependencies {
     implementation "org.bsc.util:minitemplator-repackaged:$minitemplator_version"
 
     implementation "com.hannesdorfmann:adapterdelegates4:$adapterdelegates_version"
-
-    implementation "de.hdodenhof:circleimageview:$circleimageview_version"
 
     /*compile("com.crashlytics.sdk.android:crashlytics:2.8.0@aar") {
         transitive = true;

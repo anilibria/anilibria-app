@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_fast_search.*
 import ru.radiationx.anilibria.R
@@ -16,6 +15,7 @@ import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
  * Created by radiationx on 13.01.18.
@@ -40,8 +40,7 @@ class SuggestionDelegate(
         }
 
         fun bind(state: SuggestionItemState) {
-            ImageLoader.getInstance().cancelDisplayTask(item_image)
-            ImageLoader.getInstance().displayImage(state.poster, item_image)
+            item_image.showImageUrl(state.poster)
             setTitle(state)
 
             containerView.setOnClickListener {

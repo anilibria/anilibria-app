@@ -65,7 +65,7 @@ fun ProfileItem.toState(): ProfileItemState {
     } else {
         "Авторизоваться"
     }
-    val avatar = avatarUrl?.takeIf { it.isNotEmpty() } ?: "assets://res/alib_new_or_b.png"
+    val avatar = avatarUrl?.takeIf { it.isNotEmpty() } ?: "file:///android_asset/res/alib_new_or_b.png"
     return ProfileItemState(
         id = id,
         hasAuth = hasAuth,

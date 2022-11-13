@@ -43,11 +43,15 @@ class CookiesStorage @Inject constructor(
     }
 
     override fun putCookie(url: String, name: String, value: String) {
-        putCookie(
-            url,
-            Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host)
-                .build()
-        )
+        val domain = requireNotNull(Uri.parse(url).host) {
+            "cookie domain is null"
+        }
+        val cookie = Cookie.Builder()
+            .name(name.trim())
+            .value(value.trim())
+            .domain(domain)
+            .build()
+        putCookie(url, cookie)
     }
 
     override fun putCookie(url: String, cookie: Cookie) {

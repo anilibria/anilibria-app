@@ -1,6 +1,6 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
 
 buildscript {
     repositories {
@@ -9,19 +9,19 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
         minSdkVersion app_min_sdk_version
-        targetSdkVersion 29
+        targetSdkVersion app_target_sdk_version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 
@@ -39,18 +39,18 @@ android {
     }*/
 
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += "src/main/kotlin"
     }
-    namespace 'com.lapism.search'
+    namespace "com.lapism.search"
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
 
-    implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation "com.google.android.material:material:$material_version"
 }
 
 // $ ./gradlew clean build bintrayUpload -PbintrayUser=lapism -PbintrayKey= -PdryRun=false

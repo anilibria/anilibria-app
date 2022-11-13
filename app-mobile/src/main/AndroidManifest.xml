@@ -21,6 +21,7 @@
         tools:replace="android:allowBackup">
         <activity
             android:name=".ui.activities.main.MainActivity"
+            android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Splash.DayNightAppTheme"
             android:windowSoftInputMode="adjustResize">
@@ -33,6 +34,7 @@
 
         <activity
             android:name=".ui.activities.main.IntentActivity"
+            android:exported="true"
             android:theme="@style/Splash.DayNightAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -65,17 +67,20 @@
 
         <activity
             android:name=".ui.activities.SettingsActivity"
+            android:exported="false"
             android:label="Настройки"
             android:theme="@style/PreferencesDayNightAppTheme" />
 
         <activity
             android:name=".ui.activities.auth.AuthActivity"
+            android:exported="false"
             android:theme="@style/DayNightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.activities.MyPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize"
+            android:exported="false"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
             android:theme="@style/PlayerTheme" />
@@ -83,15 +88,18 @@
         <activity
             android:name=".ui.activities.WebPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:exported="false"
             android:theme="@style/PlayerTheme" />
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:exported="false"
             android:theme="@style/DayNightAppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.CountryBlockedActivity"
+            android:exported="false"
             android:theme="@style/Splash.DayNightAppTheme" />
 
         <meta-data
@@ -101,7 +109,9 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/alib_red" />
 
-        <service android:name=".NotificationService">
+        <service
+            android:name=".NotificationService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

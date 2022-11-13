@@ -1,14 +1,60 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.app_min_sdk_version = 21
-    ext.tv_min_sdk_version = 21
-    ext.kotlin_version = '1.7.10'
-    ext.coroutines_version = '1.6.4'
-    ext.timber_version = '5.0.1'
-    ext.supportLibVersion = '28.0.0'
-    ext.okHttpVersion = '4.9.3'
-    ext.chucker_version = '3.5.2'
+
+
+    ext {
+        // only tv
+        androidx_leanback_version = '1.1.0-alpha03'
+        exoplayer_leanback_version = '2.11.3'
+
+        // main
+        app_compile_sdk_version = 33
+        app_target_sdk_version = 33
+        app_min_sdk_version = 21
+        tv_min_sdk_version = 21
+
+        kotlin_version = '1.7.10'
+        coroutines_version = '1.6.4'
+        timber_version = '5.0.1'
+        cicerone_version = '5.0.0'
+        toothpick_version = '3.1.0'
+        uil_version = '1.9.5'
+
+        androidx_appcompat_version = '1.1.0'
+        androidx_core_version = '1.2.0'
+        androidx_collection_version = '1.1.0'
+        androidx_fragment_version = '1.2.4'
+        androidx_lifecycle_version = '2.2.0'
+        androidx_palette_version = '1.0.0'
+        androidx_recyclerview_version = '1.1.0'
+        androidx_constraint_version = '2.0.0-beta4'
+        androidx_cardview_version = '1.0.0'
+        androidx_preference_version = '1.1.0'
+        androidx_multidex_version = '2.0.1'
+
+        material_version = '1.2.0-alpha06'
+        flexbox_version = '1.1.0'
+
+        firebase_core_version = '21.1.1'
+        firebase_messaging_version = '23.1.0'
+
+        mobmetrica_version = '5.0.0'
+        moxy_version = '2.2.2'
+        permissionsdispatcher_version = '4.9.1'
+        exomedia_version = '4.3.0'
+        minitemplator_version = '1.2'
+        adapterdelegates_version = '4.3.0'
+        circleimageview_version = '3.0.0'
+        materialprogressbar_version = '1.4.2'
+        expandabletextview_version = '1.0.5'
+
+        chucker_version = '3.5.2'
+        okHttpVersion = '4.9.3'
+        moshi_version = '1.14.0'
+        androidnetworktools_version = '0.4.3'
+    }
+
 
     repositories {
         google()

@@ -63,7 +63,6 @@ class WebPlayerActivity : BaseActivity() {
         supportActionBar?.hide()
 
         webView.settings.apply {
-            setAppCacheEnabled(false)
             cacheMode = WebSettings.LOAD_NO_CACHE
             javaScriptEnabled = true
         }

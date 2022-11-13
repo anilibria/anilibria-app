@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -143,7 +144,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, maxSdkVersion = Build.VERSION_CODES.P)
     fun systemDownload(url: String) {
         Utils.systemDownloader(this, url)
     }

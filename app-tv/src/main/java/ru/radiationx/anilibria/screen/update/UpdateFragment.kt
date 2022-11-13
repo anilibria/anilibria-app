@@ -101,7 +101,7 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
         }
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, maxSdkVersion = Build.VERSION_CODES.P)
     fun onUpdateClick() {
         viewModel.onActionClick()
     }

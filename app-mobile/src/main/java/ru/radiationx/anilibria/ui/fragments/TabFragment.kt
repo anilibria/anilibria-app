@@ -190,7 +190,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
             currentFragment.exitTransition = enterFade
 
             val enterTransitionSet = TransitionSet()
-            enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
+            enterTransitionSet.addTransition(TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move))
             enterTransitionSet.setPathMotion(ArcMotion())
             enterTransitionSet.interpolator = FastOutSlowInInterpolator()
             enterTransitionSet.duration = TRANSITION_MOVE_TIME

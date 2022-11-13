@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.screen.player
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.leanback.app.VideoSupportFragmentGlueHost
@@ -10,9 +9,9 @@ import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MediaSourceFactory
@@ -92,10 +91,10 @@ open class BasePlayerFragment : ScopedVideoFragment() {
             .setTrackSelector(trackSelector)
             .build()
 
-        player.addListener(object : Player.EventListener {
+        player.addListener(object : Player.Listener {
 
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                super.onPlayerStateChanged(playWhenReady, playbackState)
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
                 when (playbackState) {
                     Player.STATE_ENDED -> onCompletePlaying()
                     Player.STATE_READY -> onPreparePlaying()
@@ -129,7 +128,7 @@ open class BasePlayerFragment : ScopedVideoFragment() {
     }
 
     private fun getMediaSource(url: String): MediaSource = Uri.parse(url).let {
-        getMediaSourceFactory(it).createMediaSource(it)
+        getMediaSourceFactory(it).createMediaSource(MediaItem.fromUri(it))
     }
 
     private fun getMediaSourceFactory(uri: Uri): MediaSourceFactory =

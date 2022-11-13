@@ -31,7 +31,6 @@ dependencies {
     implementation project(":data")
     implementation project(":shared-android-ktx")
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "com.nostra13.universalimageloader:universal-image-loader:$uil_version"
     implementation("io.coil-kt:coil:2.2.2")
 
 

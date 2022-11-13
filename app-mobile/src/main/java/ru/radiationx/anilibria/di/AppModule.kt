@@ -35,7 +35,8 @@ import ru.radiationx.shared_app.analytics.events.LoggingAnalyticsSender
 import ru.radiationx.shared_app.analytics.profile.AppMetricaAnalyticsProfile
 import ru.radiationx.shared_app.analytics.profile.CombinedAnalyticsProfile
 import ru.radiationx.shared_app.analytics.profile.LoggingAnalyticsProfile
-import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.imageloader.LibriaImageLoader
+import ru.radiationx.shared_app.imageloader.impls.CoilLibriaImageLoaderImpl
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import toothpick.config.Module
@@ -71,7 +72,7 @@ class AppModule(application: Application) : Module() {
 
         bind(ILinkHandler::class.java).to(LinkRouter::class.java).singleton()
         bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
-        bind(OkHttpImageDownloader::class.java).singleton()
+        bind(LibriaImageLoader::class.java).to(CoilLibriaImageLoaderImpl::class.java).singleton()
 
 
         /* Analytics */

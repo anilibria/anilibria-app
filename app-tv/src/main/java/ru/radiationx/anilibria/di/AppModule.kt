@@ -19,7 +19,8 @@ import ru.radiationx.shared_app.analytics.events.LoggingAnalyticsSender
 import ru.radiationx.shared_app.analytics.profile.AppMetricaAnalyticsProfile
 import ru.radiationx.shared_app.analytics.profile.CombinedAnalyticsProfile
 import ru.radiationx.shared_app.analytics.profile.LoggingAnalyticsProfile
-import ru.radiationx.shared_app.common.OkHttpImageDownloader
+import ru.radiationx.shared_app.imageloader.LibriaImageLoader
+import ru.radiationx.shared_app.imageloader.impls.CoilLibriaImageLoaderImpl
 import toothpick.config.Module
 
 class AppModule(context: Context) : Module() {
@@ -31,7 +32,7 @@ class AppModule(context: Context) : Module() {
         bind(CheckerReserveSources::class.java).to(TvCheckerSources::class.java).singleton()
         bind(MigrationExecutor::class.java).to(AppMigrationExecutor::class.java).singleton()
 
-        bind(OkHttpImageDownloader::class.java).singleton()
+        bind(LibriaImageLoader::class.java).to(CoilLibriaImageLoaderImpl::class.java).singleton()
 
         bind(AppMetricaAnalyticsSender::class.java).singleton()
         bind(AppMetricaAnalyticsProfile::class.java).singleton()

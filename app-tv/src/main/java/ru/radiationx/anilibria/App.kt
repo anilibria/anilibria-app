@@ -8,10 +8,7 @@ import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
-import ru.radiationx.shared_app.common.OkHttpImageDownloader
 import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.imageloader.LibriaImageLoaderRoot
-import ru.radiationx.shared_app.imageloader.UilImageLoaderImpl
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -51,10 +48,6 @@ class App : Application() {
 
     private fun initInMainProcess() {
         initDependencies()
-
-        val imageDownloader = DI.get(OkHttpImageDownloader::class.java)
-        val loaderImpl = UilImageLoaderImpl(this, imageDownloader)
-        LibriaImageLoaderRoot.setImpl(loaderImpl)
     }
 
     private fun initDependencies() {

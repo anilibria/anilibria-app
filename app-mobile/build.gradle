@@ -121,8 +121,6 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
-    implementation "com.nostra13.universalimageloader:universal-image-loader:$uil_version"
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "com.github.moxy-community:moxy:$moxy_version"

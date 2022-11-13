@@ -1,17 +1,10 @@
 package ru.radiationx.shared_app.imageloader
 
-object LibriaImageLoaderRoot {
+import ru.radiationx.shared_app.di.DI
 
-    private var currentLoader: LibriaImageLoader? = null
-
-    fun setImpl(loader: LibriaImageLoader) {
-        currentLoader = loader
-    }
+internal object LibriaImageLoaderRoot {
 
     fun getImpl(): LibriaImageLoader {
-        val loader = currentLoader
-        return requireNotNull(loader) {
-            "Set implementation first"
-        }
+        return DI.get(LibriaImageLoader::class.java)
     }
 }

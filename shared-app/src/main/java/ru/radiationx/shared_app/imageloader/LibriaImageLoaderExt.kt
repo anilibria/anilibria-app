@@ -2,6 +2,7 @@ package ru.radiationx.shared_app.imageloader
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.ImageView
 
 class ImageLoaderScope {

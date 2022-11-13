@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
+import ru.radiationx.shared.ktx.android.immutableFlag
 import kotlin.math.min
 
 object ShortcutHelper {
@@ -69,7 +70,8 @@ object ShortcutHelper {
         if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
             val callbackIntent = ShortcutManagerCompat.createShortcutResultIntent(context, shortcut)
 
-            val successCallback = PendingIntent.getBroadcast(context, 0, callbackIntent, 0)
+            val successCallback =
+                PendingIntent.getBroadcast(context, 0, callbackIntent, immutableFlag())
 
             ShortcutManagerCompat.requestPinShortcut(
                 context,

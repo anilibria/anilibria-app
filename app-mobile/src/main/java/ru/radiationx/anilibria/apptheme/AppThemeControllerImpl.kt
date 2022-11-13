@@ -44,7 +44,7 @@ class AppThemeControllerImpl(
     }
 
     private val lifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
-        override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
+        override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             GlobalScope.launch {
                 triggerRelay.emit(Unit)
             }

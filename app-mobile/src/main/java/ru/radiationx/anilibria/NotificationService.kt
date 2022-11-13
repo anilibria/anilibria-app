@@ -24,6 +24,7 @@ import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
+import ru.radiationx.shared.ktx.android.asMutableFlag
 import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
 
@@ -136,6 +137,6 @@ class NotificationService : FirebaseMessagingService() {
             this,
             System.currentTimeMillis().toInt(),
             arrayOf(defaultIntent),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT.asMutableFlag()
         )
 }

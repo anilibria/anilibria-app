@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -37,11 +39,10 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared.ktx.android.*
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
@@ -196,7 +197,8 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             val notifyIntent =
                 Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
                     .getActivityIntent(this)
-            val notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0)
+            val notifyPendingIntent =
+                PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
             mBuilder.setContentIntent(notifyPendingIntent)
 
             mBuilder.setAutoCancel(true)

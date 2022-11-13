@@ -104,7 +104,6 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
         webView.addJavascriptInterface(this, "KEK")
 
         webView.settings.apply {
-            setAppCacheEnabled(true)
             this.databaseEnabled = true
         }
 
@@ -232,8 +231,8 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
             isUserGesture: Boolean,
             resultMsg: Message
         ): Boolean {
-            val newWebView = WebView(context)
-            AlertDialog.Builder(context!!)
+            val newWebView = WebView(requireContext())
+            AlertDialog.Builder(requireContext())
                 .setView(newWebView)
                 .show()
             val transport = resultMsg.obj as WebView.WebViewTransport

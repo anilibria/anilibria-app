@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.auth.vk
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
+import android.webkit.WebViewClient
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.fragment_auth_social.*
 import kotlinx.android.synthetic.main.fragment_main_base.*
@@ -76,7 +77,6 @@ class AuthVkFragment : BaseFragment(), AuthVkView {
         }
 
         webView.settings.apply {
-            setAppCacheEnabled(false)
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
         webView.webViewClient = compositeWebViewClient
@@ -87,7 +87,7 @@ class AuthVkFragment : BaseFragment(), AuthVkView {
     }
 
     override fun onDestroyView() {
-        webView.webViewClient = null
+        webView.webViewClient = WebViewClient()
         webView.stopLoading()
         super.onDestroyView()
     }

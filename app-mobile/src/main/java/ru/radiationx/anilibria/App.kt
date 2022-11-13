@@ -70,7 +70,7 @@ class App : Application() {
             appAnalytics.timeToInit(timeToInit)
 
             registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
-                override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
+                override fun onActivityCreated(p0: Activity, p1: Bundle?) {
                     super.onActivityCreated(p0, p1)
                     val timeToActivity = timeCounter.elapsed()
                     appAnalytics.timeToActivity(timeToActivity)

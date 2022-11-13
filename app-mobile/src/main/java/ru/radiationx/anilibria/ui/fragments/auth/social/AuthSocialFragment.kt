@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.auth.social
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.fragment_auth_social.*
@@ -89,7 +90,6 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
         webView.apply {
             settings.apply {
-                setAppCacheEnabled(false)
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
             webViewClient = compositeWebViewClient
@@ -112,7 +112,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     }
 
     override fun onDestroyView() {
-        webView.webViewClient = null
+        webView.webViewClient = WebViewClient()
         webView.stopLoading()
         super.onDestroyView()
     }

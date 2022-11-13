@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.SystemClock
+import android.util.Log
 import android.widget.ImageView
 import coil.ImageLoader
 import coil.load
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import coil.transition.CrossfadeTransition
+import coil.transition.Transition
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -63,8 +66,12 @@ class CoilLibriaImageLoaderImpl(
         imageView.load(url, getImageLoader()) {
             diskCacheKey(url.toCacheKey())
             memoryCacheKey(url.toCacheKey())
+            transitionFactory { target, result ->
+                CrossfadeTransition(target, result)
+            }
             listener(
                 onStart = {
+                    Log.d("kekeke", "onStart ${it.diskCacheKey}")
                     config.onStart?.invoke()
                 },
                 onCancel = {
@@ -74,7 +81,8 @@ class CoilLibriaImageLoaderImpl(
                     config.onError?.invoke(errorResult.throwable)
                     config.onComplete?.invoke()
                 },
-                onSuccess = { _: ImageRequest, successResult: SuccessResult ->
+                onSuccess = { request: ImageRequest, successResult: SuccessResult ->
+                    Log.d("kekeke", "successResult ${request.diskCacheKey}, ${successResult.drawable}")
                     val bitmap = (successResult.drawable as BitmapDrawable).bitmap
                     config.onSuccess?.invoke(bitmap)
                     config.onComplete?.invoke()

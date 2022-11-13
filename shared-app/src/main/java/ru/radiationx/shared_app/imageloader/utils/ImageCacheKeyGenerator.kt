@@ -18,7 +18,7 @@ object ImageCacheKeyGenerator {
             if (pathMatcher.find()) {
                 val path = pathMatcher.group(1)
                 if (!path.isNullOrEmpty()) {
-                    return path.hashCode().toString()
+                    return path
                 }
             }
         } catch (ex: Exception) {

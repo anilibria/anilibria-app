@@ -69,7 +69,7 @@ class UilImageLoaderImpl(
         })
     }
 
-    override suspend fun loadImageBitmap(url: String?): Bitmap {
+    override suspend fun loadImageBitmap(context: Context, url: String?): Bitmap {
         return withContext(Dispatchers.IO) {
             ImageLoader.getInstance().loadImageSync(url)
         }

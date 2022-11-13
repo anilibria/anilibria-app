@@ -41,5 +41,5 @@ fun ImageView.showImageUrl(url: String?, block: ImageLoaderScope.() -> Unit = {}
 }
 
 suspend fun Context.loadImageBitmap(url: String?): Bitmap {
-    return LibriaImageLoaderRoot.getImpl().loadImageBitmap(url)
+    return LibriaImageLoaderRoot.getImpl().loadImageBitmap(this, url)
 }

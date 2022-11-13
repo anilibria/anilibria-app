@@ -196,7 +196,10 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             toolbarImage.showImageUrl(state.poster) {
                 onStart { toolbarImageProgress?.visible() }
                 onSuccess { updateToolbarColors(it) }
-                onComplete { startPostponedEnterTransition() }
+                onComplete {
+                    toolbarImageProgress?.gone()
+                    startPostponedEnterTransition()
+                }
             }
         }
 

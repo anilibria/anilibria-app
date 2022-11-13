@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -120,9 +121,13 @@ class GradientBackgroundManager(
         imageApplierJob?.cancel()
         imageApplierJob = activity.lifecycleScope.launch {
             runCatching {
-                val bitmap = activity.loadImageBitmap(url)
+                val bitmap = withContext(Dispatchers.IO) {
+                    activity.loadImageBitmap(url)
+                }
                 withContext(Dispatchers.Default) {
-                    Palette.Builder(bitmap).generate()
+                    bitmap.asSoftware {
+                        Palette.Builder(it).generate()
+                    }
                 }
             }.onSuccess { palette ->
                 if (colorSelector == defaultColorSelector) {

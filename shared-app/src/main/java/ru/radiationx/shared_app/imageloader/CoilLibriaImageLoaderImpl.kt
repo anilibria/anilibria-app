@@ -13,6 +13,7 @@ import coil.request.SuccessResult
 class CoilLibriaImageLoaderImpl(
     private val context: Context
 ) : LibriaImageLoader {
+
     override fun showImage(imageView: ImageView, url: String?, config: ImageLoaderScopeConfig) {
         imageView.load(url) {
             listener(
@@ -35,7 +36,7 @@ class CoilLibriaImageLoaderImpl(
         }
     }
 
-    override suspend fun loadImageBitmap(url: String?): Bitmap {
+    override suspend fun loadImageBitmap(context: Context, url: String?): Bitmap {
         val request = ImageRequest.Builder(context).data(url).build()
         val result = context.imageLoader.execute(request)
         val bitmap = (result.drawable as BitmapDrawable).bitmap

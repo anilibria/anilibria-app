@@ -14,10 +14,12 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
+import timber.log.Timber
 import kotlin.math.min
 
 object ShortcutHelper {
@@ -29,10 +31,12 @@ object ShortcutHelper {
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val desiredSize = Resources.getSystem().displayMetrics.density * 48
                 val scaleFactor = minSize / desiredSize
-                val bmp = loadedImage
-                    .centerCrop(minSize, minSize, scaleFactor)
-                    .createAvatar(isCircle = true)
+                val bmp = loadedImage.asSoftware {
+                    it.centerCrop(minSize, minSize, scaleFactor).createAvatar(isCircle = true)
+                }
                 addShortcut(data, bmp)
+            }.onFailure {
+                Timber.e(it)
             }
         }
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
@@ -12,18 +12,19 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingEnd="12dp"
         android:paddingStart="16dp"
-        android:paddingTop="12dp">
+        android:paddingTop="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profileAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/ShapeAppearance.Avatar" />
 
         <TextView
             android:id="@+id/profileNick"
@@ -36,7 +37,7 @@
             app:layout_constraintBottom_toTopOf="@+id/profileDesc"
             app:layout_constraintStart_toEndOf="@+id/profileAvatar"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="RadiationX"/>
+            tools:text="RadiationX" />
 
         <TextView
             android:id="@+id/profileDesc"
@@ -47,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/profileNick"
             app:layout_constraintTop_toBottomOf="@+id/profileNick"
-            tools:text="Перейти в профиль"/>
+            tools:text="Перейти в профиль" />
 
         <ImageButton
             android:id="@+id/profileLogout"

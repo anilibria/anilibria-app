@@ -29,7 +29,7 @@ class CountryBlockedActivity : BaseActivity() {
         }
 
         setContentView(R.layout.activity_country_blocked)
-        countryBlockedImage.showImageUrl("assets://LibriaTyanDn.png")
+        countryBlockedImage.showImageUrl("file:///android_asset/LibriaTyanDn.png")
         countryBlockedExit.setOnClickListener { finish() }
     }
 }

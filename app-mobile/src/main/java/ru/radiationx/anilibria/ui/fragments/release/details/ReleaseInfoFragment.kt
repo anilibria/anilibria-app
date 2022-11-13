@@ -169,7 +169,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                 )
             }
 
-        dialogView.dialogFileImage.showImageUrl("assets://libria_tyan_type3.png")
+        dialogView.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)

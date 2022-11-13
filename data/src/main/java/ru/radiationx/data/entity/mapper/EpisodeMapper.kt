@@ -1,6 +1,5 @@
 package ru.radiationx.data.entity.mapper
 
-import android.util.Log
 import ru.radiationx.data.entity.domain.release.*
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -16,9 +15,7 @@ private const val VK_URL = "https://vk.com/anilibria?w=wall-37468416_493445"
 // episode ids can be float/double/int e.g. 25, 25.5.
 private fun Float.toId(releaseId: ReleaseId): EpisodeId {
     val big = BigDecimal(toDouble())
-    return EpisodeId(big.toString(), releaseId).also {
-        Log.d("kekeke", "toId $this; ${big} -> $it")
-    }
+    return EpisodeId(big.toString(), releaseId)
 }
 
 fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {

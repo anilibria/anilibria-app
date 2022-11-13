@@ -17,7 +17,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -58,6 +57,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.di.injectDependencies
@@ -514,10 +514,7 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun getNextEpisode(): Episode? {
         val currentIndex = releaseData.episodes.indexOfFirst { it.id == currentEpisodeId }
-        return releaseData.episodes.getOrNull(currentIndex - 1).also {
-            Log.d("kekeke", "getNextEpisode $it <- ${releaseData.episodes.map { it.id }}")
-
-        }
+        return releaseData.episodes.getOrNull(currentIndex - 1)
     }
 
     private fun getPrevEpisode(): Episode? {
@@ -725,7 +722,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )
@@ -748,7 +745,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )
@@ -771,7 +768,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )

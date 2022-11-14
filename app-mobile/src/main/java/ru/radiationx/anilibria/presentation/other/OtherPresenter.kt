@@ -14,17 +14,16 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileScreenState
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
 import ru.radiationx.data.entity.domain.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,8 +34,8 @@ class OtherPresenter @Inject constructor(
     private val systemMessenger: SystemMessenger,
     private val authRepository: AuthRepository,
     private val errorHandler: IErrorHandler,
-    private val apiConfig: ApiConfig,
     private val menuRepository: MenuRepository,
+    private val systemUtils: SystemUtils,
     private val authDeviceAnalytics: AuthDeviceAnalytics,
     private val authMainAnalytics: AuthMainAnalytics,
     private val historyAnalytics: HistoryAnalytics,
@@ -166,7 +165,7 @@ class OtherPresenter @Inject constructor(
                     val absoluteLink = linkItem.absoluteLink
                     val pagePath = linkItem.sitePagePath
                     when {
-                        absoluteLink != null -> Utils.externalLink(absoluteLink)
+                        absoluteLink != null -> systemUtils.externalLink(absoluteLink)
                         pagePath != null -> {
                             pageAnalytics.open(AnalyticsConstants.screen_other, pagePath)
                             router.navigateTo(Screens.StaticPage(pagePath))

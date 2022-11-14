@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
 
@@ -16,6 +16,9 @@ class IntentActivity : BaseActivity() {
     @Inject
     lateinit var linkHandler: ILinkHandler
 
+    @Inject
+    lateinit var systemUtils: SystemUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
@@ -26,7 +29,7 @@ class IntentActivity : BaseActivity() {
                     data = intentUri
                 })
             } else {
-                Utils.externalLink(intentUri.toString())
+                systemUtils.externalLink(intentUri.toString())
             }
         }
         finish()

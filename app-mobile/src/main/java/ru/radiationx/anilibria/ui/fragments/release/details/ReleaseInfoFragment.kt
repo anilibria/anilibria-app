@@ -41,10 +41,12 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 @RuntimePermissions
 class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
@@ -68,6 +70,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             torrentInfoListener = { showTorrentInfoDialog() }
         )
     }
+
+    @Inject
+    lateinit var systemUtils: SystemUtils
 
     @InjectPresenter
     lateinit var presenter: ReleaseInfoPresenter
@@ -113,7 +118,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun loadTorrent(torrent: TorrentItem) {
-        torrent.url?.also { Utils.externalLink(it) }
+        torrent.url?.also { systemUtils.externalLink(it) }
     }
 
     override fun showTorrentDialog(torrents: List<TorrentItem>) {
@@ -152,7 +157,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .setItems(titles) { _, which ->
                 presenter.submitDownloadEpisodeUrlAnalytics()
                 when (which) {
-                    0 -> Utils.externalLink(url)
+                    0 -> systemUtils.externalLink(url)
                     1 -> systemDownloadWithPermissionCheck(url)
                 }
             }
@@ -314,15 +319,17 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
             .show()
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, maxSdkVersion = Build.VERSION_CODES.P)
+    @NeedsPermission(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        maxSdkVersion = Build.VERSION_CODES.P
+    )
     fun systemDownload(url: String) {
-        val context = context ?: return
-        var fileName = Utils.getFileNameFromUrl(url)
+        var fileName = systemUtils.getFileNameFromUrl(url)
         val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
         if (matcher.find()) {
             fileName = matcher.group(1)
         }
-        Utils.systemDownloader(context, url, fileName)
+        systemUtils.systemDownloader(url, fileName)
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")

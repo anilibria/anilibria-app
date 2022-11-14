@@ -13,7 +13,6 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedDataState
 import ru.radiationx.anilibria.ui.fragments.feed.FeedScheduleState
 import ru.radiationx.anilibria.ui.fragments.feed.FeedScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
@@ -32,6 +31,7 @@ import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject
@@ -50,6 +50,8 @@ class FeedPresenter @Inject constructor(
     private val donationRepository: DonationRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
+    private val shortcutHelper: ShortcutHelper,
+    private val systemUtils: SystemUtils,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val feedAnalytics: FeedAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -167,9 +169,13 @@ class FeedPresenter @Inject constructor(
 
     fun onYoutubeClick(item: YoutubeItemState) {
         val youtubeItem = findYoutube(item.id) ?: return
-        youtubeAnalytics.openVideo(AnalyticsConstants.screen_feed, youtubeItem.id.id, youtubeItem.vid)
+        youtubeAnalytics.openVideo(
+            AnalyticsConstants.screen_feed,
+            youtubeItem.id.id,
+            youtubeItem.vid
+        )
         feedAnalytics.youtubeClick()
-        Utils.externalLink(youtubeItem.link)
+        systemUtils.externalLink(youtubeItem.link)
     }
 
     fun onSchedulesClick() {
@@ -238,19 +244,19 @@ class FeedPresenter @Inject constructor(
 
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
         releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.shareText(releaseItem.link.orEmpty())
+        systemUtils.shareText(releaseItem.link.orEmpty())
         releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        ShortcutHelper.addShortcut(releaseItem)
+        shortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id.id)
     }
 

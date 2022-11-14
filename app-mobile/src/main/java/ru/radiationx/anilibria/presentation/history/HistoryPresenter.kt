@@ -10,7 +10,6 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.ui.fragments.history.HistoryScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
@@ -18,6 +17,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -29,7 +29,9 @@ class HistoryPresenter @Inject constructor(
     private val router: Router,
     private val historyRepository: HistoryRepository,
     private val historyAnalytics: HistoryAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val shortcutHelper: ShortcutHelper,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<HistoryView>(router) {
 
     private val currentReleases = mutableListOf<Release>()
@@ -108,19 +110,19 @@ class HistoryPresenter @Inject constructor(
 
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
         releaseAnalytics.copyLink(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.shareText(releaseItem.link.orEmpty())
+        systemUtils.shareText(releaseItem.link.orEmpty())
         releaseAnalytics.share(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        ShortcutHelper.addShortcut(releaseItem)
+        shortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 

@@ -22,13 +22,13 @@ import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
@@ -58,6 +58,9 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     @Inject
     lateinit var apiUtils: IApiUtils
+
+    @Inject
+    lateinit var systemUtils: SystemUtils
 
     @Inject
     lateinit var updaterAnalytics: UpdaterAnalytics
@@ -139,14 +142,17 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
     private fun decideDownload(link: UpdateData.UpdateLink) {
         when (link.type) {
             "file" -> systemDownloadWithPermissionCheck(link.url)
-            "site" -> Utils.externalLink(link.url)
-            else -> Utils.externalLink(link.url)
+            "site" -> systemUtils.externalLink(link.url)
+            else -> systemUtils.externalLink(link.url)
         }
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, maxSdkVersion = Build.VERSION_CODES.P)
+    @NeedsPermission(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        maxSdkVersion = Build.VERSION_CODES.P
+    )
     fun systemDownload(url: String) {
-        Utils.systemDownloader(this, url)
+        systemUtils.systemDownloader(url)
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")

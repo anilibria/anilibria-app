@@ -12,7 +12,6 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
@@ -27,20 +26,20 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @InjectViewState
 class ReleaseInfoPresenter @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
-    private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
     private val donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
+    private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
@@ -244,7 +243,7 @@ class ReleaseInfoPresenter @Inject constructor(
         episode: ExternalEpisode
     ) {
         releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
-        episode.url?.also { Utils.externalLink(it) }
+        episode.url?.also { systemUtils.externalLink(it) }
     }
 
     private fun onSourceEpisodeClick(
@@ -330,7 +329,7 @@ class ReleaseInfoPresenter @Inject constructor(
             releaseAnalytics.descriptionLinkClick(it.id.id)
             val handled = linkHandler.handle(url, router)
             if (!handled) {
-                Utils.externalLink(url)
+                systemUtils.externalLink(url)
             }
         }
     }
@@ -442,7 +441,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogPatreonClick() {
-        Utils.externalLink("https://www.patreon.com/anilibria")
+        systemUtils.externalLink("https://www.patreon.com/anilibria")
     }
 
     fun onDialogDonateClick() {

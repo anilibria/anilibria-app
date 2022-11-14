@@ -10,13 +10,13 @@ import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import java.net.URLEncoder
 import javax.inject.Inject
@@ -25,6 +25,7 @@ import javax.inject.Inject
 class FastSearchPresenter @Inject constructor(
     private val searchRepository: SearchRepository,
     private val router: Router,
+    private val systemUtils: SystemUtils,
     private val catalogAnalytics: CatalogAnalytics,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
@@ -129,7 +130,7 @@ class FastSearchPresenter @Inject constructor(
             ITEM_ID_GOOGLE -> {
                 fastSearchAnalytics.searchGoogleClick()
                 val urlQuery = URLEncoder.encode("anilibria $currentQuery", "utf-8")
-                Utils.externalLink("https://www.google.com/search?q=$urlQuery")
+                systemUtils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
             ITEM_ID_SEARCH -> {
                 catalogAnalytics.open(AnalyticsConstants.screen_fast_search)

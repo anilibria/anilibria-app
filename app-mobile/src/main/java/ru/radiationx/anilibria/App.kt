@@ -29,17 +29,6 @@ import toothpick.configuration.Configuration
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
 
-    companion object {
-
-        init {
-            //AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        }
-
-        lateinit var instance: App
-            private set
-
-    }
-
     private val timeCounter = TimeCounter().apply {
         start()
     }
@@ -54,7 +43,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         val timeToCreate = timeCounter.elapsed()
-        instance = this
         initYandexAppMetrica()
 
         if (isMainProcess()) {

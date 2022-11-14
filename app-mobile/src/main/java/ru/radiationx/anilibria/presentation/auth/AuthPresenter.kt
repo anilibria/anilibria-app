@@ -9,15 +9,15 @@ import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -32,7 +32,8 @@ class AuthPresenter @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val authMainAnalytics: AuthMainAnalytics,
     private val authSocialAnalytics: AuthSocialAnalytics,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<AuthView>(router) {
 
     private var currentLogin = ""
@@ -129,7 +130,7 @@ class AuthPresenter @Inject constructor(
 
     fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
-        Utils.externalLink("${apiConfig.siteUrl}/pages/login.php")
+        systemUtils.externalLink("${apiConfig.siteUrl}/pages/login.php")
     }
 
     fun submitUseTime(time: Long) {

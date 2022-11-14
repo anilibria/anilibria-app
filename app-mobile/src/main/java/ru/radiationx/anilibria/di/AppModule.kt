@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
@@ -53,6 +54,8 @@ class AppModule(application: Application) : Module() {
         bind(MigrationExecutor::class.java).to(AppMigrationExecutor::class.java).singleton()
 
         bind(SystemMessenger::class.java).singleton()
+
+        bind(ShortcutHelper::class.java).singleton()
 
         bind(Templates::class.java).singleton()
         bind(VkCommentsCss::class.java).singleton()

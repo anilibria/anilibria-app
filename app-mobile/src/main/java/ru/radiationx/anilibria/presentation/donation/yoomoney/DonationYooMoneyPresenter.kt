@@ -6,12 +6,12 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.ui.common.ErrorHandler
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -20,7 +20,8 @@ class DonationYooMoneyPresenter(
     router: Router,
     private val donationRepository: DonationRepository,
     private val errorHandler: ErrorHandler,
-    private val analytics: DonationYooMoneyAnalytics
+    private val analytics: DonationYooMoneyAnalytics,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<DonationYooMoneyView>(router) {
 
     private var currentState = DonationYooMoneyState()
@@ -81,7 +82,7 @@ class DonationYooMoneyPresenter(
             runCatching {
                 donationRepository.createYooMoneyPayLink(amount, paymentTypeId, form)
             }.onSuccess {
-                Utils.externalLink(it)
+                systemUtils.externalLink(it)
                 viewState.close()
             }.onFailure {
                 errorHandler.handle(it)

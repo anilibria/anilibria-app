@@ -31,11 +31,11 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
 import timber.log.Timber
@@ -58,6 +58,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     @Inject
     lateinit var appThemeController: AppThemeController
+
+    @Inject
+    lateinit var systemUtils: SystemUtils
 
     @InjectPresenter
     lateinit var presenter: VkCommentsPresenter
@@ -326,7 +329,7 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
                 presenter.authRequest(url.orEmpty())
                 return true
             }
-            Utils.externalLink(url.orEmpty())
+            systemUtils.externalLink(url.orEmpty())
             return true
         }
 

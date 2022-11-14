@@ -74,8 +74,6 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer:$exoplayer_leanback_version"
     implementation "com.google.android.exoplayer:extension-leanback:$exoplayer_leanback_version"
 
-    implementation 'com.github.mintrocket.MintPermissions:mintpermissions:1.1.1'
-    implementation 'com.github.mintrocket.MintPermissions:mintpermissions-flows:1.1.1'
-    implementation("com.github.permissions-dispatcher:permissionsdispatcher:$permissionsdispatcher_version")
-    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:$permissionsdispatcher_version"
+    implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
+    implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"
 }

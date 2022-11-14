@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -14,8 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_updater.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getColorFromAttr
@@ -28,7 +23,6 @@ import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
 import javax.inject.Inject
@@ -37,7 +31,6 @@ import javax.inject.Inject
  * Created by radiationx on 24.07.17.
  */
 
-@RuntimePermissions
 class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     companion object {
@@ -58,9 +51,6 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
     @Inject
     lateinit var apiUtils: IApiUtils
-
-    @Inject
-    lateinit var systemUtils: SystemUtils
 
     @Inject
     lateinit var updaterAnalytics: UpdaterAnalytics
@@ -123,46 +113,17 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
         if (update.links.size == 1) {
             val link = update.links.last()
-            presenter.onSourceDownloadClick(link.name)
-            decideDownload(link)
+            presenter.onSourceDownloadClick(link)
             return
         }
         val titles = update.links.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
             .setTitle("Источник")
             .setItems(titles) { _, which ->
-                //Utils.externalLink(update.links[titles[which]].orEmpty())
                 val link = update.links[which]
-                presenter.onSourceDownloadClick(link.name)
-                decideDownload(link)
+                presenter.onSourceDownloadClick(link)
             }
             .show()
-    }
-
-    private fun decideDownload(link: UpdateData.UpdateLink) {
-        when (link.type) {
-            "file" -> systemDownloadWithPermissionCheck(link.url)
-            "site" -> systemUtils.externalLink(link.url)
-            else -> systemUtils.externalLink(link.url)
-        }
-    }
-
-    @NeedsPermission(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        maxSdkVersion = Build.VERSION_CODES.P
-    )
-    fun systemDownload(url: String) {
-        systemUtils.systemDownloader(url)
-    }
-
-    @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {

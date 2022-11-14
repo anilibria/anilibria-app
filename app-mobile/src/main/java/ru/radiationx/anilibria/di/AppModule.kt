@@ -2,6 +2,12 @@ package ru.radiationx.anilibria.di
 
 import android.app.Application
 import android.content.Context
+import ru.mintrocket.lib.mintpermissions.MintPermissions
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.MintPermissionsManager
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlowManager
 import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.BuildConfig
@@ -56,6 +62,16 @@ class AppModule(application: Application) : Module() {
         bind(SystemMessenger::class.java).singleton()
 
         bind(ShortcutHelper::class.java).singleton()
+
+        bind(MintPermissionsController::class.java).toInstance(MintPermissions.controller)
+        bind(MintPermissionsManager::class.java).toProviderInstance {
+            MintPermissions.createManager()
+        }
+        bind(MintPermissionsDialogFlow::class.java).toInstance(MintPermissionsFlow.dialogFlow)
+        bind(MintPermissionsFlowManager::class.java).toProviderInstance {
+            MintPermissionsFlow.createManager()
+        }
+
 
         bind(Templates::class.java).singleton()
         bind(VkCommentsCss::class.java).singleton()

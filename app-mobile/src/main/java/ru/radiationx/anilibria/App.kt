@@ -14,6 +14,8 @@ import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AppAnalytics
@@ -110,6 +112,9 @@ class App : Application() {
             }
             .launchIn(GlobalScope)
 
+
+        initMintPermissions()
+        initMintPermissionsFlow()
     }
 
     private fun changeSubscribeStatus(enabled: Boolean, topic: String) {

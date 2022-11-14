@@ -147,6 +147,8 @@ dependencies {
         transitive = true;
     }*/
 
+    implementation 'com.github.mintrocket.MintPermissions:mintpermissions:1.1.1'
+    implementation 'com.github.mintrocket.MintPermissions:mintpermissions-flows:1.1.1'
     implementation("com.github.permissions-dispatcher:permissionsdispatcher:$permissionsdispatcher_version")
     kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:$permissionsdispatcher_version"
 

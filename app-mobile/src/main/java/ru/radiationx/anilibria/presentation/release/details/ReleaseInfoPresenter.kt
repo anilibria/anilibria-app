@@ -1,9 +1,13 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import android.Manifest
+import android.os.Build
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
@@ -28,6 +32,7 @@ import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @InjectViewState
@@ -41,6 +46,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
+    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -430,6 +436,27 @@ class ReleaseInfoPresenter @Inject constructor(
                 viewState.showFileDonateDialog(url)
             } else {
                 viewState.showDownloadDialog(url)
+            }
+        }
+    }
+
+    fun downloadFile(url: String) {
+        var fileName = systemUtils.getFileNameFromUrl(url)
+        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
+        if (matcher.find()) {
+            matcher.group(1)?.also {
+                fileName = it
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            systemUtils.systemDownloader(url, fileName)
+            return
+        }
+        presenterScope.launch {
+            val result =
+                mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (result.isSuccess()) {
+                systemUtils.systemDownloader(url, fileName)
             }
         }
     }

@@ -64,13 +64,7 @@ class AppModule(application: Application) : Module() {
         bind(ShortcutHelper::class.java).singleton()
 
         bind(MintPermissionsController::class.java).toInstance(MintPermissions.controller)
-        bind(MintPermissionsManager::class.java).toProviderInstance {
-            MintPermissions.createManager()
-        }
         bind(MintPermissionsDialogFlow::class.java).toInstance(MintPermissionsFlow.dialogFlow)
-        bind(MintPermissionsFlowManager::class.java).toProviderInstance {
-            MintPermissionsFlow.createManager()
-        }
 
 
         bind(Templates::class.java).singleton()

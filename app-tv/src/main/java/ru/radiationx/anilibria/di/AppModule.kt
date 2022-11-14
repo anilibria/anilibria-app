@@ -1,6 +1,10 @@
 package ru.radiationx.anilibria.di
 
 import android.content.Context
+import ru.mintrocket.lib.mintpermissions.MintPermissions
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
 import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.TvCheckerSources
@@ -33,6 +37,9 @@ class AppModule(context: Context) : Module() {
         bind(MigrationExecutor::class.java).to(AppMigrationExecutor::class.java).singleton()
 
         bind(LibriaImageLoader::class.java).to(CoilLibriaImageLoaderImpl::class.java).singleton()
+
+        bind(MintPermissionsController::class.java).toInstance(MintPermissions.controller)
+        bind(MintPermissionsDialogFlow::class.java).toInstance(MintPermissionsFlow.dialogFlow)
 
         bind(AppMetricaAnalyticsSender::class.java).singleton()
         bind(AppMetricaAnalyticsProfile::class.java).singleton()

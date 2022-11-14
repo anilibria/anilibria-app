@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +14,6 @@ import kotlinx.android.synthetic.main.dialog_file_download.view.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.RuntimePermissions
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
@@ -45,10 +40,8 @@ import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
-import java.util.regex.Pattern
 import javax.inject.Inject
 
-@RuntimePermissions
 class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     companion object {
@@ -158,7 +151,7 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                 presenter.submitDownloadEpisodeUrlAnalytics()
                 when (which) {
                     0 -> systemUtils.externalLink(url)
-                    1 -> systemDownloadWithPermissionCheck(url)
+                    1 -> presenter.downloadFile(url)
                 }
             }
             .show()
@@ -317,29 +310,6 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
                 }
             }
             .show()
-    }
-
-    @NeedsPermission(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        maxSdkVersion = Build.VERSION_CODES.P
-    )
-    fun systemDownload(url: String) {
-        var fileName = systemUtils.getFileNameFromUrl(url)
-        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
-        if (matcher.find()) {
-            fileName = matcher.group(1)
-        }
-        systemUtils.systemDownloader(url, fileName)
-    }
-
-    @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun playInternal(

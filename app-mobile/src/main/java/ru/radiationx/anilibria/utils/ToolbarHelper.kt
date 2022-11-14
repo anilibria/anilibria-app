@@ -9,7 +9,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.radiationx.anilibria.App
 import ru.radiationx.shared.ktx.android.asSoftware
 import timber.log.Timber
 
@@ -50,7 +49,7 @@ object ToolbarHelper {
             toolbarTitleView.marqueeRepeatLimit = 3
             toolbarTitleView.isSelected = true
             toolbarTitleView.isHorizontalFadingEdgeEnabled = true
-            toolbarTitleView.setFadingEdgeLength((App.instance.resources.displayMetrics.density * 8).toInt())
+            toolbarTitleView.setFadingEdgeLength((target.resources.displayMetrics.density * 8).toInt())
         } catch (e: Exception) {
             Timber.w(e)
         }

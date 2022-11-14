@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.update
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +11,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -29,6 +32,7 @@ class UpdateViewModel(
     private val guidedRouter: GuidedRouter,
     private val downloadController: DownloadController,
     private val updateController: UpdateController,
+    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val context: Context
 ) : LifecycleViewModel() {
 
@@ -108,38 +112,47 @@ class UpdateViewModel(
     }
 
     private fun startDownload(url: String) {
-        val downloadItem = downloadController.getDownload(url)
-        if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
-            return
-        }
-
-        updatesJob?.cancel()
-        updatesJob = downloadController
-            .observeDownload(url)
-            .onEach {
-                handleUpdate(it)
+        viewModelScope.launch {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                val result =
+                    mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (!result.isSuccess()) {
+                    return@launch
+                }
             }
-            .launchIn(viewModelScope)
 
-        completedJob?.cancel()
-        completedJob = downloadController
-            .observeCompleted(url)
-            .onEach {
-                handleComplete(it)
+
+            val downloadItem = downloadController.getDownload(url)
+            if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
+                return@launch
             }
-            .launchIn(viewModelScope)
 
-        if (downloadItem == null) {
-            downloadController.startDownload(url)
-        } else {
-            if (downloadItem.state == DownloadController.State.SUCCESSFUL) {
-                handleComplete(downloadItem)
+            updatesJob?.cancel()
+            updatesJob = downloadController
+                .observeDownload(url)
+                .onEach {
+                    handleUpdate(it)
+                }
+                .launchIn(viewModelScope)
+
+            completedJob?.cancel()
+            completedJob = downloadController
+                .observeCompleted(url)
+                .onEach {
+                    handleComplete(it)
+                }
+                .launchIn(viewModelScope)
+
+            if (downloadItem == null) {
+                downloadController.startDownload(url)
             } else {
-                handleUpdate(downloadItem)
+                if (downloadItem.state == DownloadController.State.SUCCESSFUL) {
+                    handleComplete(downloadItem)
+                } else {
+                    handleUpdate(downloadItem)
+                }
             }
         }
-
-
     }
 
     private fun handleUpdate(downloadItem: DownloadItem) {

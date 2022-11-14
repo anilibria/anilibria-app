@@ -1,19 +1,21 @@
 package ru.radiationx.anilibria.presentation.feed
 
+import android.Manifest
+import android.os.Build
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.ext.isGranted
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
 import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.model.loading.*
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.ui.fragments.feed.FeedDataState
-import ru.radiationx.anilibria.ui.fragments.feed.FeedScheduleState
-import ru.radiationx.anilibria.ui.fragments.feed.FeedScreenState
+import ru.radiationx.anilibria.ui.fragments.feed.*
 import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
@@ -32,6 +34,7 @@ import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import java.util.*
 import javax.inject.Inject
@@ -50,6 +53,10 @@ class FeedPresenter @Inject constructor(
     private val donationRepository: DonationRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
+    private val shortcutHelper: ShortcutHelper,
+    private val systemUtils: SystemUtils,
+    private val permissionsController: MintPermissionsController,
+    private val permissionsDialogFlow: MintPermissionsDialogFlow,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val feedAnalytics: FeedAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -64,6 +71,18 @@ class FeedPresenter @Inject constructor(
         private const val DONATION_NEW_TAG = "donation_new"
     }
 
+    private val appUpdateWarning = FeedAppWarning(
+        "update",
+        "Доступно обновление приложения",
+        FeedAppWarningType.INFO
+    )
+
+    private val appNotificationsWarning = FeedAppWarning(
+        "notifications",
+        "Приложению требуется разрешение на отправку уведомлений о новых сериях и обновлениях приложения",
+        FeedAppWarningType.WARNING
+    )
+
     private val loadingController = DataLoadingController(presenterScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
@@ -71,12 +90,11 @@ class FeedPresenter @Inject constructor(
 
     private val stateController = StateController(FeedScreenState())
 
+    private val warningsController = AppWarningsController()
+
     private var randomJob: Job? = null
 
     private var lastLoadedPage: Int? = null
-
-    private var appUpdateNeedClose = false
-    private var hasAppUpdate = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -84,10 +102,33 @@ class FeedPresenter @Inject constructor(
         checkerRepository
             .observeUpdate()
             .onEach {
-                hasAppUpdate = it.code > sharedBuildConfig.versionCode
-                updateAppUpdateState()
+                val hasAppUpdate = it.code > sharedBuildConfig.versionCode
+                if (hasAppUpdate) {
+                    warningsController.put(appUpdateWarning)
+                } else {
+                    warningsController.remove(appUpdateWarning.tag)
+                }
             }
             .launchIn(presenterScope)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsController
+                .observe(Manifest.permission.POST_NOTIFICATIONS)
+                .onEach {
+                    if (!it.isGranted()) {
+                        warningsController.put(appNotificationsWarning)
+                    } else {
+                        warningsController.remove(appNotificationsWarning.tag)
+                    }
+                }
+                .launchIn(presenterScope)
+        }
+
+        warningsController.warnings.onEach { warnings ->
+            stateController.updateState {
+                it.copy(warnings = warnings.values.toList())
+            }
+        }.launchIn(presenterScope)
 
         appPreferences
             .observeNewDonationRemind()
@@ -167,9 +208,13 @@ class FeedPresenter @Inject constructor(
 
     fun onYoutubeClick(item: YoutubeItemState) {
         val youtubeItem = findYoutube(item.id) ?: return
-        youtubeAnalytics.openVideo(AnalyticsConstants.screen_feed, youtubeItem.id.id, youtubeItem.vid)
+        youtubeAnalytics.openVideo(
+            AnalyticsConstants.screen_feed,
+            youtubeItem.id.id,
+            youtubeItem.vid
+        )
         feedAnalytics.youtubeClick()
-        Utils.externalLink(youtubeItem.link)
+        systemUtils.externalLink(youtubeItem.link)
     }
 
     fun onSchedulesClick() {
@@ -199,15 +244,29 @@ class FeedPresenter @Inject constructor(
         fastSearchAnalytics.open(AnalyticsConstants.screen_feed)
     }
 
-    fun appUpdateClick() {
-        updaterAnalytics.appUpdateCardClick()
-        router.navigateTo(Screens.AppUpdateScreen(false, AnalyticsConstants.app_update_card))
+    fun appWarningClick(warning: FeedAppWarning) {
+        when (warning.tag) {
+            appUpdateWarning.tag -> {
+                updaterAnalytics.appUpdateCardClick()
+                val screen = Screens.AppUpdateScreen(false, AnalyticsConstants.app_update_card)
+                router.navigateTo(screen)
+            }
+            appNotificationsWarning.tag -> {
+                requestNotificationsPermission()
+            }
+        }
     }
 
-    fun appUpdateCloseClick() {
-        updaterAnalytics.appUpdateCardCloseClick()
-        appUpdateNeedClose = true
-        updateAppUpdateState()
+    fun appWarningCloseClick(warning: FeedAppWarning) {
+        when (warning.tag) {
+            appUpdateWarning.tag -> {
+                updaterAnalytics.appUpdateCardCloseClick()
+            }
+            appNotificationsWarning.tag -> {
+                // do nothing
+            }
+        }
+        warningsController.close(warning.tag)
     }
 
     fun onDonationClick(state: DonationCardItemState) {
@@ -230,28 +289,31 @@ class FeedPresenter @Inject constructor(
         }
     }
 
-    private fun updateAppUpdateState() {
-        stateController.updateState {
-            it.copy(hasAppUpdate = hasAppUpdate && !appUpdateNeedClose)
-        }
-    }
-
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
         releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        Utils.shareText(releaseItem.link.orEmpty())
+        systemUtils.shareText(releaseItem.link.orEmpty())
         releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        ShortcutHelper.addShortcut(releaseItem)
+        shortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id.id)
+    }
+
+    private fun requestNotificationsPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+        presenterScope.launch {
+            permissionsDialogFlow.request(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private fun findScheduleRelease(id: ReleaseId): Release? {

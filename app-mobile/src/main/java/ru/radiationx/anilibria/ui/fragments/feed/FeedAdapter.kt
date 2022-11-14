@@ -15,8 +15,8 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 class FeedAdapter(
     private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
-    private val appUpdateListener: () -> Unit,
-    private val appUpdateCloseListener: () -> Unit,
+    private val warningClickListener: (FeedAppWarning) -> Unit,
+    private val warningClickCloseListener: (FeedAppWarning) -> Unit,
     private val donationListener: (DonationCardItemState) -> Unit,
     private val donationCloseListener: (DonationCardItemState) -> Unit,
     schedulesClickListener: () -> Unit,
@@ -42,7 +42,8 @@ class FeedAdapter(
     }
 
     init {
-        addDelegate(AppUpdateCardDelegate(appUpdateListener, appUpdateCloseListener))
+        addDelegate(AppInfoCardDelegate(warningClickListener, warningClickCloseListener))
+        addDelegate(AppWarningCardDelegate(warningClickListener, warningClickCloseListener))
         addDelegate(DonationCardDelegate(donationListener, donationCloseListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
@@ -59,8 +60,14 @@ class FeedAdapter(
         val loadingState = state.data
         val newItems = mutableListOf<ListItem>()
 
-        if (state.hasAppUpdate && (loadingState.data != null || loadingState.error != null)) {
-            newItems.add(AppUpdateCardListItem("top"))
+        if (loadingState.data != null || loadingState.error != null) {
+            val warningItems = state.warnings.map { warning ->
+                when (warning.type) {
+                    FeedAppWarningType.INFO -> AppInfoCardListItem(warning)
+                    FeedAppWarningType.WARNING -> AppWarningCardListItem(warning)
+                }
+            }
+            newItems.addAll(warningItems)
         }
 
         getPlaceholder(state)?.also {

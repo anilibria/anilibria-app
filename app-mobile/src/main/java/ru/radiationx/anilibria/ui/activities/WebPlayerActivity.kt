@@ -10,11 +10,11 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppTheme
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
 import java.util.regex.Pattern
@@ -37,6 +37,9 @@ class WebPlayerActivity : BaseActivity() {
 
     @Inject
     lateinit var apiConfig: ApiConfig
+
+    @Inject
+    lateinit var systemUtils: SystemUtils
 
     @Inject
     lateinit var webPlayerAnalytics: WebPlayerAnalytics
@@ -75,7 +78,7 @@ class WebPlayerActivity : BaseActivity() {
                 return if (matcher.find()) {
                     false
                 } else {
-                    Utils.externalLink(url.orEmpty())
+                    systemUtils.externalLink(url.orEmpty())
                     true
                 }
             }

@@ -4,6 +4,7 @@ import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.presentation.release.details.*
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
+import ru.radiationx.anilibria.ui.fragments.feed.FeedAppWarning
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 
@@ -115,5 +116,6 @@ data class FeedListItem(val item: FeedItemState) :
     ListItem("${item.id}")
 
 data class FeedRandomBtnListItem(val id: Any) : ListItem(id)
-data class AppUpdateCardListItem(val id: Any) : ListItem(id)
+data class AppInfoCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
+data class AppWarningCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
 data class DonationCardListItem(val state: DonationCardItemState) : ListItem(state.tag)

@@ -1,9 +1,13 @@
 package ru.radiationx.anilibria.presentation.release.details
 
+import android.Manifest
+import android.os.Build
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
@@ -12,7 +16,6 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
@@ -27,21 +30,23 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @InjectViewState
 class ReleaseInfoPresenter @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
-    private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
     private val donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
+    private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
+    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -244,7 +249,7 @@ class ReleaseInfoPresenter @Inject constructor(
         episode: ExternalEpisode
     ) {
         releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
-        episode.url?.also { Utils.externalLink(it) }
+        episode.url?.also { systemUtils.externalLink(it) }
     }
 
     private fun onSourceEpisodeClick(
@@ -330,7 +335,7 @@ class ReleaseInfoPresenter @Inject constructor(
             releaseAnalytics.descriptionLinkClick(it.id.id)
             val handled = linkHandler.handle(url, router)
             if (!handled) {
-                Utils.externalLink(url)
+                systemUtils.externalLink(url)
             }
         }
     }
@@ -435,6 +440,27 @@ class ReleaseInfoPresenter @Inject constructor(
         }
     }
 
+    fun downloadFile(url: String) {
+        var fileName = systemUtils.getFileNameFromUrl(url)
+        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
+        if (matcher.find()) {
+            matcher.group(1)?.also {
+                fileName = it
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            systemUtils.systemDownloader(url, fileName)
+            return
+        }
+        presenterScope.launch {
+            val result =
+                mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (result.isSuccess()) {
+                systemUtils.systemDownloader(url, fileName)
+            }
+        }
+    }
+
     fun submitDownloadEpisodeUrlAnalytics() {
         currentData?.also {
             releaseAnalytics.episodeDownloadByUrl(it.id.id)
@@ -442,7 +468,7 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onDialogPatreonClick() {
-        Utils.externalLink("https://www.patreon.com/anilibria")
+        systemUtils.externalLink("https://www.patreon.com/anilibria")
     }
 
     fun onDialogDonateClick() {

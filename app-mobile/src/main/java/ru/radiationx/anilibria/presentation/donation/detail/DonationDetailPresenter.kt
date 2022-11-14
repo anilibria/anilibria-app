@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
@@ -12,6 +11,7 @@ import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -22,7 +22,8 @@ class DonationDetailPresenter(
     private val donationRepository: DonationRepository,
     private val detailAnalytics: DonationDetailAnalytics,
     private val yooMoneyAnalytics: DonationYooMoneyAnalytics,
-    private val dialogAnalytics: DonationDialogAnalytics
+    private val dialogAnalytics: DonationDialogAnalytics,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<DonationDetailView>(router) {
 
     private var currentData: DonationInfo? = null
@@ -47,7 +48,7 @@ class DonationDetailPresenter(
 
     fun onLinkClick(url: String) {
         detailAnalytics.linkClick(url)
-        Utils.externalLink(url)
+        systemUtils.externalLink(url)
     }
 
     fun onButtonClick(button: DonationContentButton) {
@@ -71,7 +72,7 @@ class DonationDetailPresenter(
                 viewState.openContentDialog(dialog.tag)
             }
             buttonLink != null -> {
-                Utils.externalLink(buttonLink)
+                systemUtils.externalLink(buttonLink)
             }
         }
     }

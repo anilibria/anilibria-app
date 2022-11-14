@@ -26,7 +26,6 @@ import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -34,6 +33,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import javax.inject.Inject
@@ -67,6 +67,12 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     @Inject
     lateinit var commentsAnalytics: CommentsAnalytics
+
+    @Inject
+    lateinit var shortcutHelper: ShortcutHelper
+
+    @Inject
+    lateinit var systemUtils: SystemUtils
 
     @InjectPresenter
     lateinit var presenter: ReleasePresenter
@@ -209,16 +215,16 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun shareRelease(text: String) {
-        Utils.shareText(text)
+        systemUtils.shareText(text)
     }
 
     override fun copyLink(url: String) {
-        Utils.copyToClipBoard(url)
+        systemUtils.copyToClipBoard(url)
         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
     }
 
     override fun addShortCut(release: Release) {
-        ShortcutHelper.addShortcut(release)
+        shortcutHelper.addShortcut(release)
     }
 
     override fun onDestroyView() {

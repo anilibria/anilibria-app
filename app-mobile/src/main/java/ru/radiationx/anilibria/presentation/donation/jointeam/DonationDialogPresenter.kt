@@ -3,11 +3,11 @@ package ru.radiationx.anilibria.presentation.donation.jointeam
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.presentation.common.BasePresenter
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationDialog
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -15,7 +15,8 @@ import toothpick.InjectConstructor
 class DonationDialogPresenter(
     router: Router,
     private val donationRepository: DonationRepository,
-    private val analytics: DonationDialogAnalytics
+    private val analytics: DonationDialogAnalytics,
+    private val systemUtils: SystemUtils
 ) : BasePresenter<DonationJoinTeamView>(router) {
 
     private var currentData: DonationDialog? = null
@@ -38,13 +39,13 @@ class DonationDialogPresenter(
 
     fun onLinkClick(url: String) {
         analytics.linkClick(argTag.toString(), url)
-        Utils.externalLink(url)
+        systemUtils.externalLink(url)
     }
 
     fun onButtonClick(button: DonationContentButton) {
         analytics.buttonClick(argTag.toString(), button.text)
         button.link?.also {
-            Utils.externalLink(it)
+            systemUtils.externalLink(it)
         }
     }
 }

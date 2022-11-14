@@ -14,6 +14,8 @@ import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.analytics.TimeCounter
 import ru.radiationx.data.analytics.features.AppAnalytics
@@ -29,17 +31,6 @@ import toothpick.configuration.Configuration
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
 
-    companion object {
-
-        init {
-            //AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        }
-
-        lateinit var instance: App
-            private set
-
-    }
-
     private val timeCounter = TimeCounter().apply {
         start()
     }
@@ -54,7 +45,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         val timeToCreate = timeCounter.elapsed()
-        instance = this
         initYandexAppMetrica()
 
         if (isMainProcess()) {
@@ -122,6 +112,9 @@ class App : Application() {
             }
             .launchIn(GlobalScope)
 
+
+        initMintPermissions()
+        initMintPermissionsFlow()
     }
 
     private fun changeSubscribeStatus(enabled: Boolean, topic: String) {

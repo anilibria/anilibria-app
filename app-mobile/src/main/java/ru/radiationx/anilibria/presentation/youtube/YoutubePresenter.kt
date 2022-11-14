@@ -12,12 +12,12 @@ import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeScreenState
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
+import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -26,6 +26,7 @@ class YoutubePresenter @Inject constructor(
     private val youtubeRepository: YoutubeRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
+    private val systemUtils: SystemUtils,
     private val youtubeAnalytics: YoutubeAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics
 ) : BasePresenter<YoutubeView>(router) {
@@ -72,7 +73,7 @@ class YoutubePresenter @Inject constructor(
         val rawItem = currentRawItems.firstOrNull { it.id == item.id } ?: return
         youtubeVideosAnalytics.videoClick()
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id.id, rawItem.vid)
-        Utils.externalLink(rawItem.link)
+        systemUtils.externalLink(rawItem.link)
     }
 
     private fun submitPageAnalytics(page: Int) {

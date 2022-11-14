@@ -40,10 +40,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
             presenter.loadMore()
         }, loadRetryListener = {
             presenter.loadMore()
-        }, appUpdateListener = {
-            presenter.appUpdateClick()
-        }, appUpdateCloseListener = {
-            presenter.appUpdateCloseClick()
+        }, warningClickListener = {
+            presenter.appWarningClick(it)
+        }, warningClickCloseListener = {
+            presenter.appWarningCloseClick(it)
         }, donationListener = {
             presenter.onDonationClick(it)
         }, donationCloseListener = {

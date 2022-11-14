@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_paged.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import moxy.presenter.InjectPresenter
@@ -107,18 +105,18 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarImage.transitionName = transitionNameLocal
+            baseBinding.toolbarImage.transitionName = transitionNameLocal
         }
         postponeEnterTransition()
-        ToolbarHelper.setTransparent(toolbar, appbarLayout)
+        ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(
-            toolbarLayout,
+            baseBinding.toolbarLayout,
             AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
         )
-        ToolbarHelper.fixInsets(toolbar)
-        ToolbarHelper.marqueeTitle(toolbar)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
+        ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener {
                 presenter.onBackPressed()
@@ -142,25 +140,25 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
                     false
                 }
         }
-        toolbarInsetShadow.visible()
-        toolbarImage.visible()
+        baseBinding.toolbarInsetShadow.visible()
+        baseBinding.toolbarImage.visible()
 
 
 
-        toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
+        baseBinding.toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
-        val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
+        val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
-                toolbarInsetShadow.gone(scrim)
+                baseBinding.toolbarInsetShadow.gone(scrim)
                 if (scrim) {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.clearColorFilter()
                         it.overflowIcon?.clearColorFilter()
                         it.title = currentTitle
                     }
                 } else {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
@@ -169,16 +167,17 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             }
         })
 
-        viewPagerPaged.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        binding.viewPagerPaged.addOnPageChangeListener(object :
+            ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    appbarLayout.setExpanded(false)
+                    baseBinding.appbarLayout.setExpanded(false)
                     presenter.onCommentsSwipe()
                 }
             }
         })
 
-        viewPagerPaged.adapter = pagerAdapter
+        binding.viewPagerPaged.adapter = pagerAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -188,8 +187,8 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewPagerPaged.currentItem > 0) {
-            viewPagerPaged.currentItem = viewPagerPaged.currentItem - 1
+        if (binding.viewPagerPaged.currentItem > 0) {
+            binding.viewPagerPaged.currentItem = binding.viewPagerPaged.currentItem - 1
             return true
         }
         presenter.onBackPressed()
@@ -197,18 +196,18 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBarPaged.visible(refreshing)
+        binding.progressBarPaged.visible(refreshing)
     }
 
     override fun showState(state: ReleasePagerState) {
         if (state.poster == null) {
             startPostponedEnterTransition()
         } else {
-            toolbarImage.showImageUrl(state.poster) {
-                onStart { toolbarImageProgress?.visible() }
+            baseBinding.toolbarImage.showImageUrl(state.poster) {
+                onStart { baseBinding.toolbarImageProgress.visible() }
                 onSuccess { updateToolbarColors(it) }
                 onComplete {
-                    toolbarImageProgress?.gone()
+                    baseBinding.toolbarImageProgress.gone()
                     startPostponedEnterTransition()
                 }
             }
@@ -243,11 +242,11 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             val isDark = ToolbarHelper.isDarkImage(loadedImage)
             currentColor = if (isDark) Color.WHITE else Color.BLACK
 
-            toolbar.navigationIcon?.setColorFilter(
+            baseBinding.toolbar.navigationIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
-            toolbar.overflowIcon?.setColorFilter(
+            baseBinding.toolbar.overflowIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )

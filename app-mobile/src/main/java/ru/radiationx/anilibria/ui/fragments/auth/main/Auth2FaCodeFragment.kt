@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.text.isDigitsOnly
-import kotlinx.android.synthetic.main.fragment_auth_2fa_code.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -68,25 +66,25 @@ class Auth2FaCodeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        appbarLayout.gone()
-        btPasteClipboard.setOnClickListener {
+        baseBinding.appbarLayout.gone()
+        binding.btPasteClipboard.setOnClickListener {
             val value = systemUtils.readFromClipboard()
                 .orEmpty()
                 .replace(" ", "")
                 .trim()
             if (value.isDigitsOnly() && value.length == 6) {
-                auth2facode.setText(value)
+                binding.auth2facode.setText(value)
             } else {
                 Toast.makeText(requireContext(), "Неправильный формат 2fa кода", Toast.LENGTH_SHORT)
                     .show()
             }
         }
-        authSubmit.setOnClickListener { presenter.signIn() }
-        auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
+        binding.authSubmit.setOnClickListener { presenter.signIn() }
+        binding.auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
     }
 
     override fun setSignButtonEnabled(isEnabled: Boolean) {
-        authSubmit.isEnabled = isEnabled
+        binding.authSubmit.isEnabled = isEnabled
     }
 
     override fun onBackPressed(): Boolean {
@@ -94,6 +92,6 @@ class Auth2FaCodeFragment :
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        authSwitcher.displayedChild = if (refreshing) 1 else 0
+        binding.authSwitcher.displayedChild = if (refreshing) 1 else 0
     }
 }

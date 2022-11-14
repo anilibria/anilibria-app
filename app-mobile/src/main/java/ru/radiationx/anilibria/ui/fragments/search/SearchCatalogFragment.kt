@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -117,7 +115,7 @@ class SearchCatalogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = SearchMenuItem(coordinator_layout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onAccept() {
@@ -150,29 +148,29 @@ class SearchCatalogFragment :
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
-        refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
         ToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
         //ToolbarHelper.fixInsets(toolbar)
-        with(toolbar) {
+        with(baseBinding.toolbar) {
             title = "Поиск"
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
-        toolbar.menu.apply {
+        baseBinding.toolbar.menu.apply {
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
@@ -191,7 +189,7 @@ class SearchCatalogFragment :
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
                 width =
@@ -289,12 +287,12 @@ class SearchCatalogFragment :
             else -> "Ваще рандом"
         }
         subtitle += ", Фильтров: $filters"
-        toolbar.subtitle = subtitle
+        baseBinding.toolbar.subtitle = subtitle
     }
 
     override fun showState(state: SearchScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
     }
 

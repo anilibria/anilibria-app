@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_webview.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
@@ -100,10 +98,10 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
         //ToolbarHelper.setTransparent(toolbar, appbarLayout)
         //ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
-        ToolbarHelper.fixInsets(toolbar)
-        ToolbarHelper.marqueeTitle(toolbar)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
+        ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = when (presenter.pagePath) {
                 PageApi.PAGE_PATH_TEAM -> "Команда проекта"
                 PageApi.PAGE_PATH_DONATE -> "Поддержать"
@@ -113,9 +111,9 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        webView.setJsLifeCycleListener(this)
+        binding.webView.setJsLifeCycleListener(this)
 
-        webView.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 systemUtils.externalLink(url.orEmpty())
@@ -163,7 +161,7 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         }
 
         val template = DI.get(Templates::class.java).staticPageTemplate
-        webView.easyLoadData(
+        binding.webView.easyLoadData(
             apiConfig.siteUrl,
             template.generateWithTheme(appThemeController.getTheme())
         )
@@ -171,24 +169,24 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         appThemeController
             .observeTheme()
             .onEach {
-                webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                binding.webView.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onResume() {
         super.onResume()
-        webView?.onResume()
+        binding.webView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        webView?.onPause()
+        binding.webView.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        webView?.let {
+        binding.webView.let {
             outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
         }
     }
@@ -198,8 +196,8 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
     }
 
     override fun onPageComplete(actions: ArrayList<String>) {
-        webView?.syncWithJs {
-            webView?.scrollTo(0, webViewScrollPos)
+        binding.webView.syncWithJs {
+            binding.webView.scrollTo(0, webViewScrollPos)
         }
     }
 
@@ -209,12 +207,12 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBarWv.visible(refreshing)
+        binding.progressBarWv.visible(refreshing)
     }
 
     override fun showPage(page: PageLibria) {
         //toolbar.title = page.title
-        webView?.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
+        binding.webView.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
     }
 
 }

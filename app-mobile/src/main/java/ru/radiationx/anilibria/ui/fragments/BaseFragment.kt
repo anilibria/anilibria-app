@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.viewbinding.ViewBinding
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -17,8 +19,12 @@ import ru.radiationx.shared.ktx.android.visible
 /* Created by radiationx on 18.11.17. */
 
 abstract class BaseFragment<T : ViewBinding>(
-    @LayoutRes val contentLayoutId: Int
+    @LayoutRes private val contentLayoutId: Int
 ) : ScopeFragment(R.layout.fragment_main_base) {
+
+    companion object {
+        private const val CONTAINER_ID = R.id.fragment_content
+    }
 
     protected open val needToolbarShadow = true
 
@@ -26,7 +32,11 @@ abstract class BaseFragment<T : ViewBinding>(
 
     protected val binding by viewBinding(vbFactory = {
         onCreateBinding(it)
-    }, viewBindingRootId = R.id.fragment_content)
+    }, viewProvider = {
+        ViewCompat
+            .requireViewById<FrameLayout>(requireView(), CONTAINER_ID)
+            .getChildAt(0)
+    })
 
     protected val baseBinding by viewBinding<FragmentMainBaseBinding>()
 
@@ -39,7 +49,7 @@ abstract class BaseFragment<T : ViewBinding>(
     ): View? = super.onCreateView(inflater, container, savedInstanceState)?.also { view ->
         inflater.inflate(
             contentLayoutId,
-            view.findViewById(R.id.fragment_content),
+            view.findViewById(CONTAINER_ID),
             true
         )
     }

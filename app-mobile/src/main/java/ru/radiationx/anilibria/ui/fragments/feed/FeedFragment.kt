@@ -11,8 +11,6 @@ import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -34,7 +32,8 @@ import ru.radiationx.shared_app.di.injectDependencies
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SharedProvider, FeedView,
+class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider, FeedView,
     FastSearchView {
 
     private val adapter = FeedAdapter(
@@ -117,15 +116,15 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = SearchView(coordinator_layout.context)
-        refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
-        recyclerView.apply {
+        searchView = SearchView(baseBinding.coordinatorLayout.context)
+        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             title = "Лента"
             /*menu.add("Поиск")
@@ -140,14 +139,14 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
         }
 
         FeedToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width =
@@ -221,8 +220,8 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
 
     /* ReleaseView */
     override fun showState(state: FeedScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
     }
 

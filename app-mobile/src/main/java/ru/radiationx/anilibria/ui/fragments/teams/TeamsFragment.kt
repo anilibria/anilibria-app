@@ -8,7 +8,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.fragment_teams.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -55,20 +54,20 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        teamsToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
+        binding.teamsToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
 
-        rvTeams.apply {
+        binding.rvTeams.apply {
             adapter = contentAdapter
             layoutManager = LinearLayoutManager(context)
             disableItemChangeAnimation()
         }
 
-        btSearchClear.setOnClickListener { etSearch.text?.clear() }
-        etSearch.doOnTextChanged { text, _, _, _ ->
+        binding.btSearchClear.setOnClickListener { binding.etSearch.text?.clear() }
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
             presenter.setQueryText(text?.toString().orEmpty())
-            btSearchClear.isVisible = text?.isNotEmpty() == true
+            binding.btSearchClear.isVisible = text?.isNotEmpty() == true
         }
-        etSearch.setText(argQuery)
+        binding.etSearch.setText(argQuery)
     }
 
     override fun onBackPressed(): Boolean {
@@ -78,7 +77,7 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        teamsToolbar.updatePadding(top = dimensions.statusBar)
+        binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
     }
 
     override fun showData(data: TeamsState) {
@@ -86,7 +85,7 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
     }
 
     override fun setLoading(isLoading: Boolean) {
-        pbLoading.isVisible = isLoading
+        binding.pbLoading.isVisible = isLoading
     }
 
 }

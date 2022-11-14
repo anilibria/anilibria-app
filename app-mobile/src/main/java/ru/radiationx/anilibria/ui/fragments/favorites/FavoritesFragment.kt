@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -36,7 +34,8 @@ import ru.radiationx.shared_app.di.injectDependencies
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SharedProvider, FavoritesView,
+class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
@@ -92,30 +91,30 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
 
         //ToolbarHelper.fixInsets(toolbar)
 
-        searchView = SearchMenuItem(coordinator_layout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_favorites)
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
-        refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = this@FavoritesFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
         ToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
-        toolbar.menu.apply {
+        baseBinding.toolbar.menu.apply {
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
@@ -127,7 +126,7 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width =
@@ -173,8 +172,9 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
     }
 
     override fun showState(state: FavoritesScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing =
+            state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
         adapter.bindState(state.data)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }

@@ -7,7 +7,6 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.fragment_donation_detail.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -23,7 +22,8 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import kotlin.math.roundToInt
 
-class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail), DonationDetailView {
+class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail),
+    DonationDetailView {
 
     @InjectPresenter
     lateinit var presenter: DonationDetailPresenter
@@ -48,9 +48,9 @@ class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        donationToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
+        binding.donationToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
 
-        donationRecycler.apply {
+        binding.donationRecycler.apply {
             adapter = contentAdapter
             layoutManager = LinearLayoutManager(context)
             disableItemChangeAnimation()
@@ -59,9 +59,9 @@ class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail),
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        donationToolbar.updatePadding(top = dimensions.statusBar)
-        donationToolbar.doOnNextLayout {
-            donationRecycler.updatePadding(top = it.height + (16 * donationRecycler.resources.displayMetrics.density).roundToInt())
+        binding.donationToolbar.updatePadding(top = dimensions.statusBar)
+        binding.donationToolbar.doOnNextLayout {
+            binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
         }
     }
 

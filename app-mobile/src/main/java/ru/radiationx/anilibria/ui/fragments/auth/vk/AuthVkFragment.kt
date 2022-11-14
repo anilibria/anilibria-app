@@ -5,8 +5,6 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.fragment_auth_social.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -67,23 +65,23 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appbarLayout.gone()
+        baseBinding.appbarLayout.gone()
 
-        errorView.setPrimaryButtonClickListener {
-            webView.reload()
+        binding.errorView.setPrimaryButtonClickListener {
+            binding.webView.reload()
         }
 
-        cookieView.setPrimaryButtonClickListener {
+        binding.cookieView.setPrimaryButtonClickListener {
             presenter.onContinueClick()
         }
-        cookieView.setSecondaryClickListener {
+        binding.cookieView.setSecondaryClickListener {
             presenter.onClearDataClick()
         }
 
-        webView.settings.apply {
+        binding.webView.settings.apply {
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
-        webView.webViewClient = compositeWebViewClient
+        binding.webView.webViewClient = compositeWebViewClient
     }
 
     override fun onBackPressed(): Boolean {
@@ -91,20 +89,21 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
     }
 
     override fun onDestroyView() {
-        webView.webViewClient = WebViewClient()
-        webView.stopLoading()
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.stopLoading()
         super.onDestroyView()
     }
 
     override fun loadPage(url: String, resultPattern: String) {
         authPatternWebViewClient.resultPattern = resultPattern
-        webView.loadUrl(url)
+        binding.webView.loadUrl(url)
     }
 
     override fun showState(state: AuthVkScreenState) {
-        progressBarWv.isVisible = state.pageState == WebPageViewState.Loading
-        webView.isVisible = state.pageState == WebPageViewState.Success && !state.showClearCookies
-        errorView.isVisible = state.pageState is WebPageViewState.Error
-        cookieView.isVisible = state.showClearCookies
+        binding.progressBarWv.isVisible = state.pageState == WebPageViewState.Loading
+        binding.webView.isVisible =
+            state.pageState == WebPageViewState.Success && !state.showClearCookies
+        binding.errorView.isVisible = state.pageState is WebPageViewState.Error
+        binding.cookieView.isVisible = state.showClearCookies
     }
 }

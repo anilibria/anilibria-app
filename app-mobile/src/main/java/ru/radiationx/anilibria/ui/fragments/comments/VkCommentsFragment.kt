@@ -12,7 +12,6 @@ import android.webkit.*
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.fragment_vk_comments.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
@@ -85,19 +84,19 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkComme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        webErrorView.setPrimaryButtonClickListener {
+        binding.webErrorView.setPrimaryButtonClickListener {
             presenter.pageReload()
         }
 
-        vkBlockedErrorView.setSecondaryClickListener {
+        binding.vkBlockedErrorView.setSecondaryClickListener {
             presenter.closeVkBlockedError()
         }
 
-        dataErrorView.setPrimaryButtonClickListener {
+        binding.dataErrorView.setPrimaryButtonClickListener {
             presenter.refresh()
         }
 
-        jsErrorView.setPrimaryButtonClickListener {
+        binding.jsErrorView.setPrimaryButtonClickListener {
             presenter.closeJsError()
         }
 
@@ -105,34 +104,34 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkComme
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
-        webView.setJsLifeCycleListener(jsLifeCycleListener)
-        webView.addJavascriptInterface(this, "KEK")
+        binding.webView.setJsLifeCycleListener(jsLifeCycleListener)
+        binding.webView.addJavascriptInterface(this, "KEK")
 
-        webView.settings.apply {
+        binding.webView.settings.apply {
             this.databaseEnabled = true
         }
 
-        webView.webViewClient = composite
-        webView.webChromeClient = vkWebChromeClient
+        binding.webView.webViewClient = composite
+        binding.webView.webChromeClient = vkWebChromeClient
 
         val cookieManager = CookieManager.getInstance()
 
         cookieManager.setAcceptCookie(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.setAcceptThirdPartyCookies(webView, true)
+            cookieManager.setAcceptThirdPartyCookies(binding.webView, true)
         }
 
         appThemeController
             .observeTheme()
             .onEach {
-                webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                binding.webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        webView?.let {
+        binding.webView?.let {
             outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
         }
     }
@@ -148,28 +147,28 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkComme
     }
 
     override fun onDestroyView() {
-        webView.endWork()
+        binding.webView.endWork()
         super.onDestroyView()
     }
 
     override fun pageReloadAction() {
-        webView.reload()
+        binding.webView.reload()
     }
 
     override fun showState(state: VkCommentsScreenState) {
         val anyLoading = state.data.hasAnyLoading() || state.pageState == WebPageViewState.Loading
-        progressBarWv.isVisible = anyLoading
+        binding.progressBarWv.isVisible = anyLoading
 
-        webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading
-        webErrorView.isVisible = state.pageState is WebPageViewState.Error
+        binding.webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading
+        binding.webErrorView.isVisible = state.pageState is WebPageViewState.Error
         val webErrorDesc = (state.pageState as? WebPageViewState.Error?)?.error?.description
-        webErrorView.setSubtitle(webErrorDesc)
+        binding.webErrorView.setSubtitle(webErrorDesc)
 
-        vkBlockedErrorView.isVisible = state.vkBlockedVisible
+        binding.vkBlockedErrorView.isVisible = state.vkBlockedVisible
 
-        dataErrorView.isVisible = state.data.error != null
+        binding.dataErrorView.isVisible = state.data.error != null
 
-        jsErrorView.isVisible = state.jsErrorVisible
+        binding.jsErrorView.isVisible = state.jsErrorVisible
         state.data.data?.let { showBody(it) }
     }
 
@@ -180,11 +179,11 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkComme
         currentVkCommentsState = comments
 
         val template = DI.get(Templates::class.java).vkCommentsTemplate
-        webView.easyLoadData(
+        binding.webView.easyLoadData(
             comments.url,
             template.generateWithTheme(appThemeController.getTheme())
         )
-        webView?.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
+        binding.webView.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
 
         // Uncomment for check generated html
         /*webView?.postDelayed({
@@ -201,8 +200,8 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkComme
         }
 
         override fun onPageComplete(actions: ArrayList<String>?) {
-            webView?.syncWithJs {
-                webView?.scrollTo(0, webViewScrollPos)
+            binding.webView.syncWithJs {
+                binding.webView.scrollTo(0, webViewScrollPos)
             }
         }
     }

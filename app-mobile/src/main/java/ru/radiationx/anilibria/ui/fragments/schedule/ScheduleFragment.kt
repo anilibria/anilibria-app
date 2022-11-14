@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.schedule
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -71,22 +69,22 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             ToolbarHelper.fixInsets(this)
             title = getString(R.string.fragment_title_schedule)
             setNavigationOnClickListener { presenter.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        refreshLayout.setOnRefreshListener { presenter.refresh() }
+        binding.refreshLayout.setOnRefreshListener { presenter.refresh() }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = scheduleAdapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
-        ToolbarShadowController(recyclerView, appbarLayout) {
+        ToolbarShadowController(binding.recyclerView, baseBinding.appbarLayout) {
             updateToolbarShadow(it)
         }
     }
@@ -112,13 +110,13 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
     }
 
     override fun showState(state: ScheduleScreenState) {
-        refreshLayout.isRefreshing = state.refreshing
+        binding.refreshLayout.isRefreshing = state.refreshing
         scheduleAdapter.bindState(state)
     }
 
     override fun scrollToDay(day: ScheduleDayState) {
         val position = scheduleAdapter.getPositionByDay(day)
-        (recyclerView.layoutManager as? LinearLayoutManager)?.also {
+        (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
             it.scrollToPositionWithOffset(position, 0)
         }
     }

@@ -6,7 +6,6 @@ import android.transition.TransitionManager
 import android.view.View
 import androidx.transition.TransitionSet
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.fragment_configuring.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
@@ -33,28 +32,28 @@ class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring), Config
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
-        config_refresh.setOnClickListener { presenter.continueCheck() }
-        config_skip.setOnClickListener { presenter.skipCheck() }
-        config_next.setOnClickListener { presenter.nextCheck() }
+        binding.configRefresh.setOnClickListener { presenter.continueCheck() }
+        binding.configSkip.setOnClickListener { presenter.skipCheck() }
+        binding.configNext.setOnClickListener { presenter.nextCheck() }
     }
 
     override fun updateScreen(screenState: ConfigScreenState) {
-        config_status.text = screenState.status
-        config_next.text = if (screenState.hasNext) {
+        binding.configStatus.text = screenState.status
+        binding.configNext.text = if (screenState.hasNext) {
             "Следующий шаг"
         } else {
             "Начать проверку заново"
         }
 
-        TransitionManager.beginDelayedTransition(constraint, AutoTransition().apply {
+        TransitionManager.beginDelayedTransition(binding.constraint, AutoTransition().apply {
             duration = 225
             ordering = TransitionSet.ORDERING_TOGETHER
         })
         val needRefresh = screenState.needRefresh
-        config_refresh.visible(needRefresh)
-        config_skip.visible(needRefresh)
-        config_next.visible(needRefresh)
-        config_progress.gone(needRefresh)
+        binding.configRefresh.visible(needRefresh)
+        binding.configSkip.visible(needRefresh)
+        binding.configNext.visible(needRefresh)
+        binding.configProgress.gone(needRefresh)
     }
 
     override fun onBackPressed(): Boolean {

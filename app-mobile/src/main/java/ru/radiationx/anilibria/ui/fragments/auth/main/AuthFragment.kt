@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuthBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
@@ -26,7 +27,7 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthFragment : BaseFragment(), AuthView {
+class AuthFragment : BaseFragment<FragmentAuthBinding>(R.layout.fragment_auth), AuthView {
 
     private val socialAuthAdapter = SocialAuthAdapter {
         onSocialClick(it)
@@ -47,11 +48,13 @@ class AuthFragment : BaseFragment(), AuthView {
 
     @ProvidePresenter
     fun provideAuthPresenter(): AuthPresenter =
-        getDependency(AuthPresenter::class.java, screenScope)
-
-    override fun getLayoutResource(): Int = R.layout.fragment_auth
+        getDependency(AuthPresenter::class.java)
 
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthBinding {
+        return FragmentAuthBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

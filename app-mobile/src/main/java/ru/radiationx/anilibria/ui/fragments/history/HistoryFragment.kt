@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingState
@@ -35,7 +36,8 @@ import ru.radiationx.shared_app.di.injectDependencies
 /**
  * Created by radiationx on 18.02.18.
  */
-class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAdapter.ItemListener {
+class HistoryFragment : BaseFragment<FragmentListBinding>(R.layout.fragment_list), HistoryView, SharedProvider,
+    ReleasesAdapter.ItemListener {
 
     override var sharedViewLocal: View? = null
 
@@ -72,11 +74,13 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
     @ProvidePresenter
     fun provideHistoryPresenter(): HistoryPresenter =
-        getDependency(HistoryPresenter::class.java, screenScope)
+        getDependency(HistoryPresenter::class.java)
 
     override val statusBarVisible: Boolean = true
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list
+    override fun onCreateBinding(view: View): FragmentListBinding {
+        return FragmentListBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

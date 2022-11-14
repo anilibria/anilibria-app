@@ -6,14 +6,16 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
+import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.android.synthetic.main.fragment_donation_detail.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentDonationDetailBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailPresenter
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
@@ -21,21 +23,21 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import kotlin.math.roundToInt
 
-class DonationDetailFragment : BaseFragment(), DonationDetailView {
+class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail), DonationDetailView {
 
     @InjectPresenter
     lateinit var presenter: DonationDetailPresenter
 
     @ProvidePresenter
     fun provideAuthPresenter(): DonationDetailPresenter =
-        getDependency(DonationDetailPresenter::class.java, screenScope)
+        getDependency(DonationDetailPresenter::class.java)
 
     private val contentAdapter = DonationContentAdapter(
         buttonClickListener = { presenter.onButtonClick(it) },
         linkClickListener = { presenter.onLinkClick(it) }
     )
 
-    override fun getBaseLayout(): Int = R.layout.fragment_donation_detail
+    private val binding by viewBinding<FragmentDonationDetailBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
@@ -31,7 +32,7 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseFragment(), AuthSocialView {
+class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social), AuthSocialView {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -72,7 +73,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
     @ProvidePresenter
     fun providePresenter(): AuthSocialPresenter =
-        getDependency(AuthSocialPresenter::class.java, screenScope)
+        getDependency(AuthSocialPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -82,9 +83,11 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthSocialBinding {
+        return FragmentAuthSocialBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

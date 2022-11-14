@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -132,9 +131,9 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
                 nextFragment: Fragment?,
                 fragmentTransaction: FragmentTransaction
             ) {
-                val newScope = (currentFragment as? BaseFragment?)?.screenScope ?: screenScope
+                val newScope = (currentFragment as? ScopeFragment?)?.screenScope ?: screenScope
                 nextFragment?.putExtra {
-                    putString(BaseFragment.ARG_SCREEN_SCOPE, newScope)
+                    putString(ScopeFragment.ARG_SCREEN_SCOPE, newScope)
                 }
 
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {

@@ -99,9 +99,14 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
@@ -167,6 +172,8 @@ dependencies {
 
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging_version"
     implementation "com.google.firebase:firebase-core:$firebase_core_version"
+
+    implementation "com.github.kirich1409:viewbindingpropertydelegate:1.5.6"
 }
 
 apply plugin: "com.google.gms.google-services"

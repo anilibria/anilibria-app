@@ -14,6 +14,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.databinding.FragmentWebviewBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.presentation.page.PagePresenter
@@ -39,7 +40,8 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 13.01.18.
  */
-class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListener {
+class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webview), PageView,
+    ExtendedWebView.JsLifeCycleListener {
 
     companion object {
         private const val ARG_PATH: String = "page_path"
@@ -77,7 +79,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @ProvidePresenter
     fun providePagePresenter(): PagePresenter =
-        getDependency(PagePresenter::class.java, screenScope)
+        getDependency(PagePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -88,7 +90,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_webview
+    override fun onCreateBinding(view: View): FragmentWebviewBinding {
+        return FragmentWebviewBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

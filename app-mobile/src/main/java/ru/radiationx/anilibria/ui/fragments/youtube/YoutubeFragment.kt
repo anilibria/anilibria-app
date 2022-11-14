@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
@@ -18,7 +19,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.shared_app.di.injectDependencies
 
-class YoutubeFragment : BaseFragment(), YoutubeView {
+class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    YoutubeView {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
@@ -43,16 +45,18 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
     @ProvidePresenter
     fun providePresenter(): YoutubePresenter =
-        getDependency(YoutubePresenter::class.java, screenScope)
+        getDependency(YoutubePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

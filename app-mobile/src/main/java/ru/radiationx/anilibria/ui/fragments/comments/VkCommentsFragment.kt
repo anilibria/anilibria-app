@@ -11,6 +11,7 @@ import android.view.View
 import android.webkit.*
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.android.synthetic.main.fragment_vk_comments.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,6 +20,7 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.databinding.FragmentVkCommentsBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
@@ -29,7 +31,7 @@ import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
@@ -45,7 +47,7 @@ import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 
-class VkCommentsFragment : BaseFragment(), VkCommentsView {
+class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments), VkCommentsView {
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -67,9 +69,9 @@ class VkCommentsFragment : BaseFragment(), VkCommentsView {
 
     @ProvidePresenter
     fun providePresenter(): VkCommentsPresenter =
-        getDependency(VkCommentsPresenter::class.java, screenScope)
+        getDependency(VkCommentsPresenter::class.java)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_vk_comments
+    private val binding by viewBinding<FragmentVkCommentsBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodePresenter
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -23,7 +24,9 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 30.12.17.
  */
-class Auth2FaCodeFragment : BaseFragment(), Auth2FaCodeView {
+class Auth2FaCodeFragment :
+    BaseFragment<FragmentAuth2faCodeBinding>(R.layout.fragment_auth_2fa_code),
+    Auth2FaCodeView {
 
     companion object {
         private const val ARG_LOGIN = "arg_login"
@@ -46,9 +49,11 @@ class Auth2FaCodeFragment : BaseFragment(), Auth2FaCodeView {
 
     @ProvidePresenter
     fun provideAuthPresenter(): Auth2FaCodePresenter =
-        getDependency(Auth2FaCodePresenter::class.java, screenScope)
+        getDependency(Auth2FaCodePresenter::class.java)
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_2fa_code
+    override fun onCreateBinding(view: View): FragmentAuth2faCodeBinding {
+        return FragmentAuth2faCodeBinding.bind(view)
+    }
 
     override val statusBarVisible: Boolean = true
 

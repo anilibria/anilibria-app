@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
 import ru.radiationx.anilibria.presentation.schedule.ScheduleView
@@ -18,7 +19,8 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
 
-class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
+class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    ScheduleView, SharedProvider {
 
     companion object {
         private const val ARG_DAY = "arg day"
@@ -42,7 +44,7 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
 
     @ProvidePresenter
     fun providePresenter(): SchedulePresenter =
-        getDependency(SchedulePresenter::class.java, screenScope)
+        getDependency(SchedulePresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -52,9 +54,11 @@ class ScheduleFragment : BaseFragment(), ScheduleView, SharedProvider {
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

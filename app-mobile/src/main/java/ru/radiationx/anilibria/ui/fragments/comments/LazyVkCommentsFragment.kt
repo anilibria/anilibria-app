@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -9,14 +8,14 @@ import androidx.fragment.app.commit
 import kotlinx.android.synthetic.main.fragment_lazy.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.common.ScopeProvider
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.DI
 
 class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
 
     override val screenScope: String by lazy {
-        arguments?.getString(BaseFragment.ARG_SCREEN_SCOPE, null) ?: DI.DEFAULT_SCOPE
+        arguments?.getString(ScopeFragment.ARG_SCREEN_SCOPE, null) ?: DI.DEFAULT_SCOPE
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +46,7 @@ class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
             val newBundle = (this.arguments?.clone() as Bundle?)
             it.arguments = newBundle
             it.putExtra {
-                putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
             }
         }
         childFragmentManager.commit {

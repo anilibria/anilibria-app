@@ -7,20 +7,22 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
+import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.android.synthetic.main.fragment_teams.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.teams.TeamsPresenter
 import ru.radiationx.anilibria.presentation.teams.TeamsState
 import ru.radiationx.anilibria.presentation.teams.TeamsView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.shared.ktx.android.putExtra
 
-class TeamsFragment : BaseFragment(), TeamsView {
+class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
 
     companion object {
         private const val ARG_QUERY = "arg_query"
@@ -36,13 +38,13 @@ class TeamsFragment : BaseFragment(), TeamsView {
     lateinit var presenter: TeamsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java, screenScope)
+    fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java)
 
     private val contentAdapter = TeamsAdapter {
         presenter.onHeaderActionClick()
     }
 
-    override fun getBaseLayout(): Int = R.layout.fragment_teams
+    private val binding by viewBinding<FragmentTeamsBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

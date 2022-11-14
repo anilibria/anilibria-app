@@ -18,9 +18,11 @@ import kotlinx.coroutines.launch
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentPagedBinding
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
@@ -40,7 +42,8 @@ import javax.inject.Inject
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
+open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragment_paged),
+    ReleaseView, SharedReceiver {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -79,7 +82,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter =
-        getDependency(ReleasePresenter::class.java, screenScope)
+        getDependency(ReleasePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -87,7 +90,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         transitionNameLocal = name
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_paged
+    override fun onCreateBinding(view: View): FragmentPagedBinding {
+        return FragmentPagedBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -265,7 +270,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
                 it.arguments = newBundle
                 it.putExtra {
-                    putString(ARG_SCREEN_SCOPE, screenScope)
+                    putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
                 }
             }
         }

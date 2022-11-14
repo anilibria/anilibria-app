@@ -3,10 +3,12 @@ package ru.radiationx.anilibria.ui.fragments.other
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.other.OtherPresenter
 import ru.radiationx.anilibria.presentation.other.OtherView
@@ -18,7 +20,7 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.shared_app.di.injectDependencies
 
@@ -26,7 +28,7 @@ import ru.radiationx.shared_app.di.injectDependencies
 /**
  * Created by radiationx on 16.12.17.
  */
-class OtherFragment : BaseFragment(), OtherView {
+class OtherFragment : ScopeFragment(R.layout.fragment_list), OtherView {
 
     private val adapter = OtherAdapter()
 
@@ -35,9 +37,9 @@ class OtherFragment : BaseFragment(), OtherView {
 
     @ProvidePresenter
     fun provideOtherPresenter(): OtherPresenter =
-        getDependency(OtherPresenter::class.java, screenScope)
+        getDependency(OtherPresenter::class.java)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_list
+    private val binding by viewBinding<FragmentListBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
@@ -35,7 +36,7 @@ import ru.radiationx.shared_app.di.injectDependencies
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
+class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SharedProvider, FavoritesView,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
@@ -65,7 +66,7 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
 
     @ProvidePresenter
     fun provideFavoritesPresenter(): FavoritesPresenter =
-        getDependency(FavoritesPresenter::class.java, screenScope)
+        getDependency(FavoritesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -75,9 +76,11 @@ class FavoritesFragment : BaseFragment(), SharedProvider, FavoritesView,
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

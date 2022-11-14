@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
@@ -33,7 +34,8 @@ import ru.radiationx.shared_app.di.injectDependencies
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
+class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SharedProvider, FeedView,
+    FastSearchView {
 
     private val adapter = FeedAdapter(
         loadMoreListener = {
@@ -89,10 +91,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java, screenScope)
+        getDependency(FastSearchPresenter::class.java)
 
     @ProvidePresenter
-    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java, screenScope)
+    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -102,9 +104,11 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

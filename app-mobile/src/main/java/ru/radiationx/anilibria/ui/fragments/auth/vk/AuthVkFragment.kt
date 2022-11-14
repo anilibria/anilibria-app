@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
 import ru.radiationx.anilibria.presentation.auth.vk.AuthVkPresenter
 import ru.radiationx.anilibria.presentation.auth.vk.AuthVkView
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
@@ -21,7 +22,8 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
 
-class AuthVkFragment : BaseFragment(), AuthVkView {
+class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social),
+    AuthVkView {
     companion object {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
@@ -46,11 +48,13 @@ class AuthVkFragment : BaseFragment(), AuthVkView {
 
     @ProvidePresenter
     fun providePresenter(): AuthVkPresenter =
-        getDependency(AuthVkPresenter::class.java, screenScope)
-
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+        getDependency(AuthVkPresenter::class.java)
 
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthSocialBinding {
+        return FragmentAuthSocialBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

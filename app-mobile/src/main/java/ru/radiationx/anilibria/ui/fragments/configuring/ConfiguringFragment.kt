@@ -5,29 +5,30 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
 import androidx.transition.TransitionSet
+import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.android.synthetic.main.fragment_configuring.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringPresenter
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared_app.di.injectDependencies
 
-class ConfiguringFragment : BaseFragment(), ConfiguringView {
+class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring), ConfiguringView {
 
     @InjectPresenter
     lateinit var presenter: ConfiguringPresenter
 
     @ProvidePresenter
-    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(ConfiguringPresenter::class.java, screenScope)
+    fun provideAuthPresenter(): ConfiguringPresenter =
+        getDependency(ConfiguringPresenter::class.java)
 
-    override fun getBaseLayout(): Int = R.layout.fragment_configuring
-
-    override val statusBarVisible: Boolean = false
+    private val binding by viewBinding<FragmentConfiguringBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)

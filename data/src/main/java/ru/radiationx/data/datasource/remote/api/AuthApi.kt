@@ -127,9 +127,9 @@ class AuthApi @Inject constructor(
             .let { loadUser() }
     }
 
-    suspend fun signOut(): String {
+    suspend fun signOut() {
         val args = mapOf<String, String>()
-        return client.post("${apiConfig.baseUrl}/public/logout.php", args)
+        client.post("${apiConfig.baseUrl}/public/logout.php", args)
     }
 
 }

@@ -48,13 +48,9 @@ class DetailsViewModel(
         loadRelease()
 
         authRepository
-            .observeUser()
-            .map { it.authState }
-            .distinctUntilChanged()
+            .observeAuthState()
             .drop(1)
-            .onEach {
-                loadRelease()
-            }
+            .onEach { loadRelease() }
             .launchIn(viewModelScope)
 
         (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {

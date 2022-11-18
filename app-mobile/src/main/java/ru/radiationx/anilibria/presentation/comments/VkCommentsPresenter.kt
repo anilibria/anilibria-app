@@ -17,10 +17,10 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
-import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class VkCommentsPresenter @Inject constructor(
-    private val userHolder: UserHolder,
+    private val authRepository: AuthRepository,
     private val pageRepository: PageRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val authHolder: AuthHolder,
@@ -64,10 +64,8 @@ class VkCommentsPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        userHolder
-            .observeUser()
-            .map { it.authState }
-            .distinctUntilChanged()
+        authRepository
+            .observeAuthState()
             .onEach { viewState.pageReloadAction() }
             .launchIn(presenterScope)
 

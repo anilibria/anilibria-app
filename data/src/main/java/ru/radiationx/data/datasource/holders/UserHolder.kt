@@ -7,9 +7,9 @@ import ru.radiationx.data.entity.domain.other.ProfileItem
  * Created by radiationx on 11.01.18.
  */
 interface UserHolder {
-    fun getUser(): ProfileItem
+    fun getUser(): ProfileItem?
 
-    fun observeUser(): Flow<ProfileItem>
+    fun observeUser(): Flow<ProfileItem?>
 
     fun saveUser(user: ProfileItem)
 

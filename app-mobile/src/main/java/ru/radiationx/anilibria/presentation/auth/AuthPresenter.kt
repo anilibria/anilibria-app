@@ -87,8 +87,9 @@ class AuthPresenter @Inject constructor(
             viewState.setRefreshing(true)
             runCatching {
                 authRepository.signIn(currentLogin, currentPassword, "")
+                authRepository.getAuthState()
             }.onSuccess {
-                decideWhatToDo(it.authState)
+                decideWhatToDo(it)
             }.onFailure {
                 if (isEmpty2FaCode(it)) {
                     router.navigateTo(Screens.Auth2FaCode(currentLogin, currentPassword))
@@ -119,7 +120,7 @@ class AuthPresenter @Inject constructor(
 
     fun skip() {
         authMainAnalytics.skipClick()
-        authRepository.updateUser(AuthState.AUTH_SKIPPED)
+        authRepository.setAuthSkipped(true)
         router.finishChain()
     }
 

@@ -6,8 +6,8 @@ import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
-import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -48,8 +48,9 @@ class Auth2FaCodePresenter @Inject constructor(
             viewState.setRefreshing(true)
             runCatching {
                 authRepository.signIn(currentLogin, currentPassword, currentCode2fa)
+                authRepository.getAuthState()
             }.onSuccess {
-                decideWhatToDo(it.authState)
+                decideWhatToDo(it)
             }.onFailure {
                 authMainAnalytics.error(it)
                 errorHandler.handle(it)

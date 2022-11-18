@@ -7,7 +7,6 @@ data class ProfileScreenState(
 )
 
 data class ProfileItemState(
-    val id: Int,
     val hasAuth: Boolean,
     val title: String,
     val subtitle: String?,

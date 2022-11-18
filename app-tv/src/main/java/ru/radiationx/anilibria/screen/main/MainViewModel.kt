@@ -31,9 +31,9 @@ class MainViewModel(
         super.onCreate()
 
         authRepository
-            .observeUser()
+            .observeAuthState()
             .onEach {
-                updateAvailableRow(FAVORITE_ROW_ID, it.authState == AuthState.AUTH)
+                updateAvailableRow(FAVORITE_ROW_ID, it == AuthState.AUTH)
             }
             .launchIn(viewModelScope)
     }

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -62,8 +61,7 @@ class ReleasePresenter @Inject constructor(
 
     private fun subscribeAuth() {
         authRepository
-            .observeUser()
-            .distinctUntilChanged()
+            .observeAuthState()
             .drop(1)
             .onEach { loadRelease() }
             .launchIn(presenterScope)

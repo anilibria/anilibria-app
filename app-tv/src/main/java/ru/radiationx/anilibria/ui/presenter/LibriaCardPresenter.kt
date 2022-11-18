@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.presenter
 import android.view.ViewGroup
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
-import kotlinx.android.extensions.LayoutContainer
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.shared_app.imageloader.showImageUrl
@@ -28,8 +27,8 @@ class LibriaCardPresenter : Presenter() {
 }
 
 class LibriaCardViewHolder(
-    override val containerView: ImageCardView
-) : Presenter.ViewHolder(containerView), LayoutContainer {
+    private val containerView: ImageCardView
+) : Presenter.ViewHolder(containerView) {
 
     private val cardHeight by lazy {
         containerView.context.resources.getDimension(R.dimen.card_height).toInt()

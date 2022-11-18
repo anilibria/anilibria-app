@@ -1,6 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 
 android {
@@ -12,9 +11,6 @@ android {
         targetSdkVersion app_target_sdk_version
         versionCode 3
         versionName "1.0.0_RC5"
-    }
-    androidExtensions {
-        experimental = true
     }
 
     buildTypes {

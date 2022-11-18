@@ -88,7 +88,6 @@ class AuthRepository @Inject constructor(
             .signIn(login, password, code2fa)
             .toDomain(apiConfig)
             .also { userHolder.saveUser(it) }
-
     suspend fun signOut(): String = authApi
         .signOut()
         .also {

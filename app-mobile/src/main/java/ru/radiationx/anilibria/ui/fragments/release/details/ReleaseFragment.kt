@@ -11,16 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_paged.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentPagedBinding
 import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
 import ru.radiationx.anilibria.presentation.release.details.ReleaseView
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
@@ -40,7 +40,8 @@ import javax.inject.Inject
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
+open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragment_paged),
+    ReleaseView, SharedReceiver {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -79,7 +80,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleasePresenter =
-        getDependency(ReleasePresenter::class.java, screenScope)
+        getDependency(ReleasePresenter::class.java)
 
     override var transitionNameLocal = ""
 
@@ -87,7 +88,9 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         transitionNameLocal = name
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_paged
+    override fun onCreateBinding(view: View): FragmentPagedBinding {
+        return FragmentPagedBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -102,18 +105,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarImage.transitionName = transitionNameLocal
+            baseBinding.toolbarImage.transitionName = transitionNameLocal
         }
         postponeEnterTransition()
-        ToolbarHelper.setTransparent(toolbar, appbarLayout)
+        ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(
-            toolbarLayout,
+            baseBinding.toolbarLayout,
             AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
         )
-        ToolbarHelper.fixInsets(toolbar)
-        ToolbarHelper.marqueeTitle(toolbar)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
+        ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener {
                 presenter.onBackPressed()
@@ -137,25 +140,25 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                     false
                 }
         }
-        toolbarInsetShadow.visible()
-        toolbarImage.visible()
+        baseBinding.toolbarInsetShadow.visible()
+        baseBinding.toolbarImage.visible()
 
 
 
-        toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
+        baseBinding.toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
-        val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
+        val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
-                toolbarInsetShadow.gone(scrim)
+                baseBinding.toolbarInsetShadow.gone(scrim)
                 if (scrim) {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.clearColorFilter()
                         it.overflowIcon?.clearColorFilter()
                         it.title = currentTitle
                     }
                 } else {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
@@ -164,16 +167,17 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             }
         })
 
-        viewPagerPaged.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        binding.viewPagerPaged.addOnPageChangeListener(object :
+            ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    appbarLayout.setExpanded(false)
+                    baseBinding.appbarLayout.setExpanded(false)
                     presenter.onCommentsSwipe()
                 }
             }
         })
 
-        viewPagerPaged.adapter = pagerAdapter
+        binding.viewPagerPaged.adapter = pagerAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -183,8 +187,8 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewPagerPaged.currentItem > 0) {
-            viewPagerPaged.currentItem = viewPagerPaged.currentItem - 1
+        if (binding.viewPagerPaged.currentItem > 0) {
+            binding.viewPagerPaged.currentItem = binding.viewPagerPaged.currentItem - 1
             return true
         }
         presenter.onBackPressed()
@@ -192,18 +196,18 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBarPaged.visible(refreshing)
+        binding.progressBarPaged.visible(refreshing)
     }
 
     override fun showState(state: ReleasePagerState) {
         if (state.poster == null) {
             startPostponedEnterTransition()
         } else {
-            toolbarImage.showImageUrl(state.poster) {
-                onStart { toolbarImageProgress?.visible() }
+            baseBinding.toolbarImage.showImageUrl(state.poster) {
+                onStart { baseBinding.toolbarImageProgress.visible() }
                 onSuccess { updateToolbarColors(it) }
                 onComplete {
-                    toolbarImageProgress?.gone()
+                    baseBinding.toolbarImageProgress.gone()
                     startPostponedEnterTransition()
                 }
             }
@@ -238,11 +242,11 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             val isDark = ToolbarHelper.isDarkImage(loadedImage)
             currentColor = if (isDark) Color.WHITE else Color.BLACK
 
-            toolbar.navigationIcon?.setColorFilter(
+            baseBinding.toolbar.navigationIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
-            toolbar.overflowIcon?.setColorFilter(
+            baseBinding.toolbar.overflowIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
@@ -265,7 +269,7 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
                 val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
                 it.arguments = newBundle
                 it.putExtra {
-                    putString(ARG_SCREEN_SCOPE, screenScope)
+                    putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
                 }
             }
         }

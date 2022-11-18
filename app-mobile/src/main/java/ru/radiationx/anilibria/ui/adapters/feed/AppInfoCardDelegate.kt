@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_app_info_card.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemAppInfoCardBinding
 import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -26,15 +26,17 @@ class AppInfoCardDelegate(
         holder.bind(item.warning)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (FeedAppWarning) -> Unit,
         private val closeClickListener: (FeedAppWarning) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemAppInfoCardBinding>()
 
         fun bind(warning: FeedAppWarning) {
-            containerView.setOnClickListener { clickListener.invoke(warning) }
-            btClose.setOnClickListener { closeClickListener.invoke(warning) }
-            tvContent.text = warning.title
+            binding.root.setOnClickListener { clickListener.invoke(warning) }
+            binding.btClose.setOnClickListener { closeClickListener.invoke(warning) }
+            binding.tvContent.text = warning.title
         }
     }
 }

@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_auth.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuthBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.presentation.auth.AuthPresenter
@@ -26,7 +25,7 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthFragment : BaseFragment(), AuthView {
+class AuthFragment : BaseFragment<FragmentAuthBinding>(R.layout.fragment_auth), AuthView {
 
     private val socialAuthAdapter = SocialAuthAdapter {
         onSocialClick(it)
@@ -47,34 +46,36 @@ class AuthFragment : BaseFragment(), AuthView {
 
     @ProvidePresenter
     fun provideAuthPresenter(): AuthPresenter =
-        getDependency(AuthPresenter::class.java, screenScope)
-
-    override fun getLayoutResource(): Int = R.layout.fragment_auth
+        getDependency(AuthPresenter::class.java)
 
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthBinding {
+        return FragmentAuthBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(lifecycleTimeCounter)
-        appbarLayout.gone()
+        baseBinding.appbarLayout.gone()
 
-        authSocialList.apply {
+        binding.authSocialList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = socialAuthAdapter
             disableItemChangeAnimation()
         }
 
-        authSubmit.setOnClickListener { presenter.signIn() }
-        authSkip.setOnClickListener { presenter.skip() }
-        authRegistration.setOnClickListener { presenter.registrationClick() }
+        binding.authSubmit.setOnClickListener { presenter.signIn() }
+        binding.authSkip.setOnClickListener { presenter.skip() }
+        binding.authRegistration.setOnClickListener { presenter.registrationClick() }
 
-        authLogin.addTextChangeListener { presenter.setLogin(it) }
-        authPassword.addTextChangeListener { presenter.setPassword(it) }
+        binding.authLogin.addTextChangeListener { presenter.setLogin(it) }
+        binding.authPassword.addTextChangeListener { presenter.setPassword(it) }
     }
 
     override fun setSignButtonEnabled(isEnabled: Boolean) {
-        authSubmit.isEnabled = isEnabled
+        binding.authSubmit.isEnabled = isEnabled
     }
 
     override fun showRegistrationDialog() {
@@ -95,13 +96,13 @@ class AuthFragment : BaseFragment(), AuthView {
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        authSwitcher.displayedChild = if (refreshing) 1 else 0
+        binding.authSwitcher.displayedChild = if (refreshing) 1 else 0
     }
 
     override fun showSocial(items: List<SocialAuthItemState>) {
-        authSocialTop.visible(items.isNotEmpty())
-        authSocialContent.visible(items.isNotEmpty())
-        authSocialBottom.visible(items.isNotEmpty())
+        binding.authSocialTop.visible(items.isNotEmpty())
+        binding.authSocialContent.visible(items.isNotEmpty())
+        binding.authSocialBottom.visible(items.isNotEmpty())
         socialAuthAdapter.bindItems(items)
     }
 

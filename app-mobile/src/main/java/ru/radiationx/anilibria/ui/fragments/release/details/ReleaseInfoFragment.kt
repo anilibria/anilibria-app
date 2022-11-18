@@ -10,11 +10,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.dialog_file_download.view.*
-import kotlinx.android.synthetic.main.fragment_list.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
+import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
@@ -27,7 +28,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
@@ -42,7 +43,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 import javax.inject.Inject
 
-class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
+class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoView {
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -72,7 +73,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
 
     @ProvidePresenter
     fun provideReleasePresenter(): ReleaseInfoPresenter =
-        getDependency(ReleaseInfoPresenter::class.java, screenScope)
+        getDependency(ReleaseInfoPresenter::class.java)
+
+    private val binding by viewBinding<FragmentListBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -83,11 +86,9 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
         }
     }
 
-    override fun getBaseLayout(): Int = R.layout.fragment_list
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.apply {
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = releaseInfoAdapter
             setHasFixedSize(true)
@@ -158,30 +159,34 @@ class ReleaseInfoFragment : BaseFragment(), ReleaseInfoView {
     }
 
     override fun showFileDonateDialog(url: String) {
-        val dialogView = LayoutInflater.from(requireView().context)
-            .inflate(R.layout.dialog_file_download, null, false)
-            .apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            }
+        val dialogBinding = DialogFileDownloadBinding.inflate(
+            LayoutInflater.from(requireView().context),
+            null,
+            false
+        )
 
-        dialogView.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
+        dialogBinding.root.apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        dialogBinding.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
+            .setView(dialogBinding.root)
             .show()
 
-        dialogView.dialogFilePatreonBtn.setOnClickListener {
+        dialogBinding.dialogFilePatreonBtn.setOnClickListener {
             presenter.onDialogPatreonClick()
             dialog.dismiss()
         }
-        dialogView.dialogFileDonateBtn.setOnClickListener {
+        dialogBinding.dialogFileDonateBtn.setOnClickListener {
             presenter.onDialogDonateClick()
             dialog.dismiss()
         }
-        dialogView.dialogFileDownloadBtn.setOnClickListener {
+        dialogBinding.dialogFileDownloadBtn.setOnClickListener {
             showDownloadDialog(url)
             dialog.dismiss()
         }

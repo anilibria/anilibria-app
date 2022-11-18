@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_webview.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.databinding.FragmentWebviewBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.presentation.page.PagePresenter
@@ -39,7 +38,8 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 13.01.18.
  */
-class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListener {
+class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webview), PageView,
+    ExtendedWebView.JsLifeCycleListener {
 
     companion object {
         private const val ARG_PATH: String = "page_path"
@@ -77,7 +77,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
 
     @ProvidePresenter
     fun providePagePresenter(): PagePresenter =
-        getDependency(PagePresenter::class.java, screenScope)
+        getDependency(PagePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -88,7 +88,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_webview
+    override fun onCreateBinding(view: View): FragmentWebviewBinding {
+        return FragmentWebviewBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,10 +98,10 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
         //ToolbarHelper.setTransparent(toolbar, appbarLayout)
         //ToolbarHelper.setScrollFlag(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED)
-        ToolbarHelper.fixInsets(toolbar)
-        ToolbarHelper.marqueeTitle(toolbar)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
+        ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = when (presenter.pagePath) {
                 PageApi.PAGE_PATH_TEAM -> "Команда проекта"
                 PageApi.PAGE_PATH_DONATE -> "Поддержать"
@@ -109,9 +111,9 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        webView.setJsLifeCycleListener(this)
+        binding.webView.setJsLifeCycleListener(this)
 
-        webView.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 systemUtils.externalLink(url.orEmpty())
@@ -159,7 +161,7 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         }
 
         val template = DI.get(Templates::class.java).staticPageTemplate
-        webView.easyLoadData(
+        binding.webView.easyLoadData(
             apiConfig.siteUrl,
             template.generateWithTheme(appThemeController.getTheme())
         )
@@ -167,24 +169,24 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
         appThemeController
             .observeTheme()
             .onEach {
-                webView?.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
+                binding.webView.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onResume() {
         super.onResume()
-        webView?.onResume()
+        binding.webView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        webView?.onPause()
+        binding.webView.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        webView?.let {
+        binding.webView.let {
             outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
         }
     }
@@ -194,8 +196,8 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     }
 
     override fun onPageComplete(actions: ArrayList<String>) {
-        webView?.syncWithJs {
-            webView?.scrollTo(0, webViewScrollPos)
+        binding.webView.syncWithJs {
+            binding.webView.scrollTo(0, webViewScrollPos)
         }
     }
 
@@ -205,12 +207,12 @@ class PageFragment : BaseFragment(), PageView, ExtendedWebView.JsLifeCycleListen
     }
 
     override fun setRefreshing(refreshing: Boolean) {
-        progressBarWv.visible(refreshing)
+        binding.progressBarWv.visible(refreshing)
     }
 
     override fun showPage(page: PageLibria) {
         //toolbar.title = page.title
-        webView?.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
+        binding.webView.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
     }
 
 }

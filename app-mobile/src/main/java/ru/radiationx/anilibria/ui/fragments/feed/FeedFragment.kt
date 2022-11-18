@@ -11,11 +11,10 @@ import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedPresenter
@@ -33,7 +32,9 @@ import ru.radiationx.shared_app.di.injectDependencies
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
+class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider, FeedView,
+    FastSearchView {
 
     private val adapter = FeedAdapter(
         loadMoreListener = {
@@ -89,10 +90,10 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java, screenScope)
+        getDependency(FastSearchPresenter::class.java)
 
     @ProvidePresenter
-    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java, screenScope)
+    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -102,9 +103,11 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         return sharedView
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -113,15 +116,15 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = SearchView(coordinator_layout.context)
-        refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
-        recyclerView.apply {
+        searchView = SearchView(baseBinding.coordinatorLayout.context)
+        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             title = "Лента"
             /*menu.add("Поиск")
@@ -136,14 +139,14 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
         }
 
         FeedToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width =
@@ -217,8 +220,8 @@ class FeedFragment : BaseFragment(), SharedProvider, FeedView, FastSearchView {
 
     /* ReleaseView */
     override fun showState(state: FeedScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
     }
 

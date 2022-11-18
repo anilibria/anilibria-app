@@ -5,9 +5,9 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_feed_schedule.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFeedScheduleBinding
 import ru.radiationx.anilibria.extension.dpToPx
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
@@ -31,9 +31,11 @@ class FeedScheduleDelegate(
         holder.bind(item)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ScheduleItemState, View, Int) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFeedScheduleBinding>()
 
         init {
             val gradientDrawable = GradientDrawable(
@@ -45,23 +47,23 @@ class FeedScheduleDelegate(
                 )
             ).also {
                 it.cornerRadius = 0f
-                it.gradientRadius = item_complete.dpToPx(20).toFloat()
+                it.gradientRadius = binding.itemComplete.dpToPx(20).toFloat()
                 it.gradientType = GradientDrawable.RADIAL_GRADIENT
             }
-            item_complete.background = gradientDrawable
+            binding.itemComplete.background = gradientDrawable
         }
 
         fun bind(item: FeedScheduleListItem) {
             val state = item.state
-            item_complete.visible(state.isCompleted)
+            binding.itemComplete.visible(state.isCompleted)
             ViewCompat.setTransitionName(
-                item_image,
+                binding.itemImage,
                 "${item.javaClass.simpleName}_${state.releaseId}"
             )
-            item_image.showImageUrl(state.posterUrl)
+            binding.itemImage.showImageUrl(state.posterUrl)
 
-            containerView.setOnClickListener {
-                clickListener.invoke(state, item_image, adapterPosition)
+            binding.root.setOnClickListener {
+                clickListener.invoke(state, binding.itemImage, adapterPosition)
             }
         }
     }

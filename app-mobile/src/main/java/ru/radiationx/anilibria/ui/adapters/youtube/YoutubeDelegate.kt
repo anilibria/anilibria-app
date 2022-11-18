@@ -3,8 +3,9 @@ package ru.radiationx.anilibria.ui.adapters.youtube
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_feed_youtube.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFeedYoutubeBinding
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.BaseItemListener
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -29,20 +30,25 @@ class YoutubeDelegate(
     override fun bindData(item: YoutubeListItem, holder: ViewHolder) = holder.bind(item)
 
     class ViewHolder(
-        private val view: View,
+        itemView: View,
         private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFeedYoutubeBinding>()
 
         fun bind(item: YoutubeListItem) {
-            view.run {
-                item_title.text = item.state.title
+            binding.run {
+                itemTitle.text = item.state.title
 
-                item_views_count.text = item.state.views
-                item_comments_count.text = item.state.comments
+                itemViewsCount.text = item.state.views
+                itemCommentsCount.text = item.state.comments
 
-                item_image.showImageUrl(item.state.image)
-                ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${item.state.id}")
-                setOnClickListener {
+                itemImage.showImageUrl(item.state.image)
+                ViewCompat.setTransitionName(
+                    itemImage,
+                    "${item.javaClass.simpleName}_${item.state.id}"
+                )
+                root.setOnClickListener {
                     itemListener.onItemClick(item.state, layoutPosition)
                 }
             }

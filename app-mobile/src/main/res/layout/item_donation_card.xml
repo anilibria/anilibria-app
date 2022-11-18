@@ -9,6 +9,8 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
-    <include layout="@layout/view_donation_info" />
+    <include
+        android:id="@+id/donationInfo"
+        layout="@layout/view_donation_info" />
 
 </com.google.android.material.card.MaterialCardView>

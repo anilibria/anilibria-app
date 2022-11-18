@@ -1,20 +1,22 @@
 package ru.radiationx.anilibria.screen.config
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
-import kotlinx.android.synthetic.main.fragment_config.*
-import ru.radiationx.anilibria.common.MotionLayoutListener
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.MotionLayoutListener
+import ru.radiationx.anilibria.databinding.FragmentConfigBinding
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.screen.ScopedFragment
 import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.shared_app.screen.ScopedFragment
 
 class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
+
+    private val binding by viewBinding<FragmentConfigBinding>()
 
     private val viewModel: ConfiguringViewModel by viewModel()
 
@@ -42,21 +44,21 @@ class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        configActionRepeat.setOnClickListener { viewModel.repeatCheck() }
-        configActionSkip.setOnClickListener { viewModel.skipCheck() }
-        configActionNext.setOnClickListener { viewModel.nextCheck() }
+        binding.configActionRepeat.setOnClickListener { viewModel.repeatCheck() }
+        binding.configActionSkip.setOnClickListener { viewModel.skipCheck() }
+        binding.configActionNext.setOnClickListener { viewModel.nextCheck() }
 
-        mainConstraint.post {
-            mainConstraint?.transitionToEnd()
-            mainConstraint.setTransitionListener(startTransitionListener)
+        binding.mainConstraint.post {
+            binding.mainConstraint.transitionToEnd()
+            binding.mainConstraint.setTransitionListener(startTransitionListener)
         }
         subscribeTo(viewModel.screenStateData, ::updateScreen)
         subscribeTo(viewModel.completeEvent) { startCompleteTransition() }
     }
 
     private fun updateScreen(screenState: ConfigScreenState) {
-        configErrorText.text = screenState.status
-        configActionNext.setText(
+        binding.configErrorText.text = screenState.status
+        binding.configActionNext.setText(
             if (screenState.hasNext) {
                 R.string.config_action_next
             } else {
@@ -64,20 +66,20 @@ class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
             }
         )
 
-        TransitionManager.beginDelayedTransition(mainConstraint)
-        configProgressBar.isVisible = !screenState.needRefresh
-        configErrorGroup.isVisible = screenState.needRefresh
-        configActionNext.isVisible = screenState.needRefresh
-        configActionRepeat.requestFocus()
-        configActionRepeat.post {
-            configActionRepeat?.requestFocus()
+        TransitionManager.beginDelayedTransition(binding.mainConstraint)
+        binding.configProgressBar.isVisible = !screenState.needRefresh
+        binding.configErrorGroup.isVisible = screenState.needRefresh
+        binding.configActionNext.isVisible = screenState.needRefresh
+        binding.configActionRepeat.requestFocus()
+        binding.configActionRepeat.post {
+            binding.configActionRepeat.requestFocus()
         }
     }
 
     private fun startCompleteTransition() {
-        mainConstraint.post {
-            mainConstraint?.transitionToState(R.id.logo_end)
-            mainConstraint?.setTransitionListener(completeTransitionListener)
+        binding.mainConstraint.post {
+            binding.mainConstraint.transitionToState(R.id.logo_end)
+            binding.mainConstraint.setTransitionListener(completeTransitionListener)
         }
     }
 }

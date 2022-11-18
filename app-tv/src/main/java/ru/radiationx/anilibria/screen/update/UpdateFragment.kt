@@ -8,9 +8,10 @@ import androidx.core.view.isVisible
 import androidx.leanback.app.ProgressBarManager
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import kotlinx.android.synthetic.main.fragment_update.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
 import ru.radiationx.anilibria.di.DownloadModule
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
@@ -19,6 +20,8 @@ import ru.radiationx.shared_app.screen.ScopedFragment
 import javax.inject.Inject
 
 class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
+
+    private val binding by viewBinding<FragmentUpdateBinding>()
 
     private val progressBarManager by lazy { ProgressBarManager() }
 
@@ -40,7 +43,7 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         backgroundManager.clearGradient()
-        progressBarManager.setRootView(updateRoot)
+        progressBarManager.setRootView(binding.updateRoot)
 
         subscribeTo(viewModel.updateData) {
             val string = StringBuilder().apply {
@@ -52,23 +55,23 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
                 appendSection("Исправлено", it.fixed)
                 appendSection("Изменено", it.changed)
             }
-            updateDescription.text = Html.fromHtml(string.toString())
+            binding.updateDescription.text = Html.fromHtml(string.toString())
         }
 
         subscribeTo(viewModel.downloadActionTitle) {
-            updateButton.text = it
+            binding.updateButton.text = it
         }
 
         subscribeTo(viewModel.downloadProgressShowState) {
             TransitionManager.beginDelayedTransition(view as ViewGroup)
-            progressBar.isVisible = it
-            progressText.isVisible = it
+            binding.progressBar.isVisible = it
+            binding.progressText.isVisible = it
         }
 
         subscribeTo(viewModel.downloadProgressData) {
-            progressBar.isIndeterminate = it == 0
-            progressBar.progress = it
-            progressText.text = "$it%"
+            binding.progressBar.isIndeterminate = it == 0
+            binding.progressBar.progress = it
+            binding.progressText.text = "$it%"
         }
 
         subscribeTo(viewModel.progressState) {
@@ -76,13 +79,13 @@ class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
                 progressBarManager.show()
             } else {
                 progressBarManager.hide()
-                updateButton.requestFocus()
-                TransitionManager.beginDelayedTransition(updateRoot, Fade())
+                binding.updateButton.requestFocus()
+                TransitionManager.beginDelayedTransition(binding.updateRoot, Fade())
             }
-            updateContainer.isVisible = !it
+            binding.updateContainer.isVisible = !it
         }
 
-        updateButton.setOnClickListener {
+        binding.updateButton.setOnClickListener {
             viewModel.onActionClick()
         }
     }

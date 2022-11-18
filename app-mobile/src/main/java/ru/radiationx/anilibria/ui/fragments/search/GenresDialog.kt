@@ -14,8 +14,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.dialog_genres.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.data.entity.domain.release.GenreItem
@@ -25,25 +25,27 @@ import ru.radiationx.shared.ktx.android.visible
 
 
 class GenresDialog(
-        private val context: Context,
-        private val listener: ClickListener
+    private val context: Context,
+    private val listener: ClickListener
 ) {
+
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
-    private var rootView: View = LayoutInflater.from(context).inflate(R.layout.dialog_genres, null, false)
 
-    private val filterComplete = rootView.filterComplete
+    private val binding = DialogGenresBinding.inflate(LayoutInflater.from(context), null, false)
 
-    private val sortingGroup = rootView.sortingRadioGroup
-    private val sortingPopular = rootView.sortingPopular
-    private val sortingNew = rootView.sortingNew
+    private val filterComplete = binding.filterComplete
 
-    private val genresChipGroup = rootView.genresChips
+    private val sortingGroup = binding.sortingRadioGroup
+    private val sortingPopular = binding.sortingPopular
+    private val sortingNew = binding.sortingNew
+
+    private val genresChipGroup = binding.genresChips
     private val genresChips = mutableListOf<Chip>()
 
-    private val yearsChipGroup = rootView.yearsChips
+    private val yearsChipGroup = binding.yearsChips
     private val yearsChips = mutableListOf<Chip>()
 
-    private val seasonsChipGroup = rootView.seasonsChips
+    private val seasonsChipGroup = binding.seasonsChips
     private val seasonsChips = mutableListOf<Chip>()
 
     private val genreItems = mutableListOf<GenreItem>()
@@ -62,32 +64,35 @@ class GenresDialog(
     private var actionButtonCount: TextView
 
 
-    private val genresChipListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-        if (isChecked) {
-            checkedGenres.add(genreItems.first { it.value.hashCode() == buttonView.id }.value)
-        } else {
-            checkedGenres.remove(genreItems.first { it.value.hashCode() == buttonView.id }.value)
+    private val genresChipListener =
+        CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                checkedGenres.add(genreItems.first { it.value.hashCode() == buttonView.id }.value)
+            } else {
+                checkedGenres.remove(genreItems.first { it.value.hashCode() == buttonView.id }.value)
+            }
+            listener.onCheckedGenres(checkedGenres.toList())
         }
-        listener.onCheckedGenres(checkedGenres.toList())
-    }
 
-    private val yearsChipListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-        if (isChecked) {
-            checkedYears.add(yearItems.first { it.value.hashCode() == buttonView.id }.value)
-        } else {
-            checkedYears.remove(yearItems.first { it.value.hashCode() == buttonView.id }.value)
+    private val yearsChipListener =
+        CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                checkedYears.add(yearItems.first { it.value.hashCode() == buttonView.id }.value)
+            } else {
+                checkedYears.remove(yearItems.first { it.value.hashCode() == buttonView.id }.value)
+            }
+            listener.onCheckedYears(checkedYears.toList())
         }
-        listener.onCheckedYears(checkedYears.toList())
-    }
 
-    private val seasonsChipListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-        if (isChecked) {
-            checkedSeasons.add(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
-        } else {
-            checkedSeasons.remove(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+    private val seasonsChipListener =
+        CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                checkedSeasons.add(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+            } else {
+                checkedSeasons.remove(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+            }
+            listener.onCheckedSeasons(checkedSeasons.toList())
         }
-        listener.onCheckedSeasons(checkedSeasons.toList())
-    }
 
     private val sortingListener = RadioGroup.OnCheckedChangeListener { _, _ ->
         currentSorting = when {
@@ -104,26 +109,30 @@ class GenresDialog(
     }
 
     init {
-        dialog.setContentView(rootView)
-        val parentView = rootView.parent as FrameLayout
+        dialog.setContentView(binding.root)
+        val parentView = binding.root.parent as FrameLayout
         val coordinatorLayout = parentView.parent as CoordinatorLayout
-        val bottomSheetView = coordinatorLayout.findViewById<ViewGroup>(com.google.android.material.R.id.design_bottom_sheet)
+        val bottomSheetView =
+            coordinatorLayout.findViewById<ViewGroup>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView.apply {
             setPadding(
-                    paddingLeft,
-                    paddingTop,
-                    paddingRight,
-                    (resources.displayMetrics.density * 40).toInt()
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                (resources.displayMetrics.density * 40).toInt()
             )
         }
 
-        actionButton = LayoutInflater.from(context).inflate(R.layout.picker_bottom_action_button, coordinatorLayout, false)
+        actionButton = LayoutInflater.from(context)
+            .inflate(R.layout.picker_bottom_action_button, coordinatorLayout, false)
         actionButtonText = actionButton.findViewById(R.id.pickerActionText)
         actionButtonCount = actionButton.findViewById(R.id.pickerActionCounter)
 
-        coordinatorLayout.addView(actionButton, (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
-            it.gravity = Gravity.BOTTOM
-        })
+        coordinatorLayout.addView(
+            actionButton,
+            (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
+                it.gravity = Gravity.BOTTOM
+            })
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionButton.z = parentView.z
         }
@@ -286,7 +295,8 @@ class GenresDialog(
     }
 
     private fun getBehavior(): BottomSheetBehavior<View>? {
-        val bottomSheetInternal = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val bottomSheetInternal =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
         return BottomSheetBehavior.from(bottomSheetInternal!!)
     }
 

@@ -3,11 +3,11 @@ package ru.radiationx.anilibria.ui.widgets
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.view_screenholder.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewScreenholderBinding
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import timber.log.Timber
 
@@ -17,8 +17,9 @@ class ScreenHolderView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ConstraintLayout(context, attrs, defStyle) {
 
+    private val binding by viewBinding<ViewScreenholderBinding>(attachToRoot = true)
+
     init {
-        View.inflate(context, R.layout.view_screenholder, this)
         initAttributes(context, attrs)
     }
 
@@ -42,35 +43,35 @@ class ScreenHolderView @JvmOverloads constructor(
     }
 
     fun setIcon(icon: Drawable?) {
-        ivIcon.isVisible = icon != null
-        ivIcon.setImageDrawable(icon)
+        binding.ivIcon.isVisible = icon != null
+        binding.ivIcon.setImageDrawable(icon)
     }
 
     fun setTitle(text: CharSequence?) {
-        tvTitle.isVisible = text != null
-        tvTitle.text = text
+        binding.tvTitle.isVisible = text != null
+        binding.tvTitle.text = text
     }
 
     fun setSubtitle(text: CharSequence?) {
-        tvSubtitle.isVisible = text != null
-        tvSubtitle.text = text
+        binding.tvSubtitle.isVisible = text != null
+        binding.tvSubtitle.text = text
     }
 
     fun setPrimaryButtonText(text: CharSequence?) {
-        btPrimary.isVisible = text != null
-        btPrimary.text = text
+        binding.btPrimary.isVisible = text != null
+        binding.btPrimary.text = text
     }
 
     fun setSecondaryButtonText(text: CharSequence?) {
-        btSecondary.isVisible = text != null
-        btSecondary.text = text
+        binding.btSecondary.isVisible = text != null
+        binding.btSecondary.text = text
     }
 
     fun setPrimaryButtonClickListener(onClick: () -> Unit) {
-        btPrimary.setOnClickListener { onClick.invoke() }
+        binding.btPrimary.setOnClickListener { onClick.invoke() }
     }
 
     fun setSecondaryClickListener(onClick: () -> Unit) {
-        btSecondary.setOnClickListener { onClick.invoke() }
+        binding.btSecondary.setOnClickListener { onClick.invoke() }
     }
 }

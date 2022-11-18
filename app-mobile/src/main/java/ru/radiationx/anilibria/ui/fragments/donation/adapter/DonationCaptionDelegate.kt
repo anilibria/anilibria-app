@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.donation.adapter
 import android.text.Html
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_donation_caption.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemDonationCaptionBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
@@ -23,19 +23,21 @@ class DonationCaptionDelegate(
         holder.bind(item.data)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val linkClickListener: (String) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemDonationCaptionBinding>()
 
         init {
-            tvText.movementMethod = LinkMovementMethod {
+            binding.tvText.movementMethod = LinkMovementMethod {
                 linkClickListener.invoke(it)
                 true
             }
         }
 
         fun bind(data: DonationContentCaption) {
-            tvText.text = data.text.let { Html.fromHtml(it) }
+            binding.tvText.text = data.text.let { Html.fromHtml(it) }
         }
     }
 }

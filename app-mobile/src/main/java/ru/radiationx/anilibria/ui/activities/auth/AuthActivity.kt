@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_container.*
-import kotlinx.android.synthetic.main.activity_main.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -23,7 +23,7 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthActivity : BaseActivity() {
+class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
@@ -33,6 +33,8 @@ class AuthActivity : BaseActivity() {
                 putExtra(ARG_INIT_SCREEN, rootScreen)
             }
     }
+
+    private val binding by viewBinding<ActivityMainBinding>()
 
     @Inject
     lateinit var router: Router
@@ -49,22 +51,22 @@ class AuthActivity : BaseActivity() {
         injectDependencies()
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
 
-        bottomShadow.gone()
-        tabsRecycler.gone()
+        binding.bottomShadow.gone()
+        binding.tabsRecycler.gone()
 
         dimensionHelper = DimensionHelper(
-            measure_view,
-            measure_root_content,
+            binding.measureView,
+            binding.measureRootContent,
             object : DimensionHelper.DimensionsListener {
                 override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    root_container.post {
-                        root_container.setPadding(
-                            root_container.paddingLeft,
-                            root_container.paddingTop,
-                            root_container.paddingRight,
+                    val rootContainer = binding.layoutActivityContainer.rootContainer
+                    rootContainer.post {
+                        rootContainer.setPadding(
+                            rootContainer.paddingLeft,
+                            rootContainer.paddingTop,
+                            rootContainer.paddingRight,
                             dimensions.keyboardHeight
                         )
                     }

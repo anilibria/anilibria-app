@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 import android.text.Html
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_blocked.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemReleaseBlockedBinding
 import ru.radiationx.anilibria.presentation.release.details.ReleaseBlockedInfoState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
@@ -25,11 +25,13 @@ class ReleaseBlockedDelegate :
         holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemReleaseBlockedBinding>()
 
         fun bind(state: ReleaseBlockedInfoState) {
-            item_title.text = Html.fromHtml(state.title)
+            binding.itemTitle.text = Html.fromHtml(state.title)
         }
     }
 }

@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.adapters.search
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_fast_search.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFastSearchBinding
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionLocalListItem
@@ -31,20 +31,22 @@ class SuggestionLocalDelegate(
         holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (SuggestionLocalItemState) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFastSearchBinding>()
 
         init {
-            item_image.scaleType = ImageView.ScaleType.CENTER
+            binding.itemImage.scaleType = ImageView.ScaleType.CENTER
         }
 
         fun bind(item: SuggestionLocalItemState) {
-            item_image.setCompatDrawable(item.icRes)
-            item_image.setTintColorAttr(R.attr.colorOnSurface)
-            item_image.background = null
-            item_title.text = item.title
-            containerView.setOnClickListener {
+            binding.itemImage.setCompatDrawable(item.icRes)
+            binding.itemImage.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemImage.background = null
+            binding.itemTitle.text = item.title
+            binding.root.setOnClickListener {
                 clickListener.invoke(item)
             }
         }

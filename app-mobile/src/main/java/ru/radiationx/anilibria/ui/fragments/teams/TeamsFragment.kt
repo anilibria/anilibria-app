@@ -7,20 +7,21 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
-import kotlinx.android.synthetic.main.fragment_teams.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.teams.TeamsPresenter
 import ru.radiationx.anilibria.presentation.teams.TeamsState
 import ru.radiationx.anilibria.presentation.teams.TeamsView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.shared.ktx.android.putExtra
 
-class TeamsFragment : BaseFragment(), TeamsView {
+class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
 
     companion object {
         private const val ARG_QUERY = "arg_query"
@@ -36,13 +37,13 @@ class TeamsFragment : BaseFragment(), TeamsView {
     lateinit var presenter: TeamsPresenter
 
     @ProvidePresenter
-    fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java, screenScope)
+    fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java)
 
     private val contentAdapter = TeamsAdapter {
         presenter.onHeaderActionClick()
     }
 
-    override fun getBaseLayout(): Int = R.layout.fragment_teams
+    private val binding by viewBinding<FragmentTeamsBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,20 +54,20 @@ class TeamsFragment : BaseFragment(), TeamsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        teamsToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
+        binding.teamsToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
 
-        rvTeams.apply {
+        binding.rvTeams.apply {
             adapter = contentAdapter
             layoutManager = LinearLayoutManager(context)
             disableItemChangeAnimation()
         }
 
-        btSearchClear.setOnClickListener { etSearch.text?.clear() }
-        etSearch.doOnTextChanged { text, _, _, _ ->
+        binding.btSearchClear.setOnClickListener { binding.etSearch.text?.clear() }
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
             presenter.setQueryText(text?.toString().orEmpty())
-            btSearchClear.isVisible = text?.isNotEmpty() == true
+            binding.btSearchClear.isVisible = text?.isNotEmpty() == true
         }
-        etSearch.setText(argQuery)
+        binding.etSearch.setText(argQuery)
     }
 
     override fun onBackPressed(): Boolean {
@@ -76,7 +77,7 @@ class TeamsFragment : BaseFragment(), TeamsView {
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
-        teamsToolbar.updatePadding(top = dimensions.statusBar)
+        binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
     }
 
     override fun showData(data: TeamsState) {
@@ -84,7 +85,7 @@ class TeamsFragment : BaseFragment(), TeamsView {
     }
 
     override fun setLoading(isLoading: Boolean) {
-        pbLoading.isVisible = isLoading
+        binding.pbLoading.isVisible = isLoading
     }
 
 }

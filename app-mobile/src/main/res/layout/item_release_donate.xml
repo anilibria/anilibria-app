@@ -7,5 +7,7 @@
     android:focusable="true"
     android:foreground="?selectableItemBackground">
 
-    <include layout="@layout/view_donation_info" />
+    <include
+        android:id="@+id/donationInfo"
+        layout="@layout/view_donation_info" />
 </LinearLayout>

@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import kotlinx.android.synthetic.main.fragment_list.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingState
@@ -35,7 +34,9 @@ import ru.radiationx.shared_app.di.injectDependencies
 /**
  * Created by radiationx on 18.02.18.
  */
-class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAdapter.ItemListener {
+class HistoryFragment : BaseFragment<FragmentListBinding>(R.layout.fragment_list), HistoryView,
+    SharedProvider,
+    ReleasesAdapter.ItemListener {
 
     override var sharedViewLocal: View? = null
 
@@ -72,11 +73,13 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
 
     @ProvidePresenter
     fun provideHistoryPresenter(): HistoryPresenter =
-        getDependency(HistoryPresenter::class.java, screenScope)
+        getDependency(HistoryPresenter::class.java)
 
     override val statusBarVisible: Boolean = true
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list
+    override fun onCreateBinding(view: View): FragmentListBinding {
+        return FragmentListBinding.bind(view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -86,16 +89,16 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchView = SearchMenuItem(coordinator_layout.context)
-        ToolbarHelper.fixInsets(toolbar)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = "История"
             setNavigationOnClickListener { presenter.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        toolbar.menu.apply {
+        baseBinding.toolbar.menu.apply {
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
@@ -107,20 +110,20 @@ class HistoryFragment : BaseFragment(), HistoryView, SharedProvider, ReleasesAda
         }
 
         FeedToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = this@HistoryFragment.adapter
             disableItemChangeAnimation()
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width = CoordinatorLayout.LayoutParams.MATCH_PARENT

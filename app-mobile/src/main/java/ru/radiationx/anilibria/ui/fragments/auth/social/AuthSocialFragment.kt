@@ -6,11 +6,10 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.fragment_auth_social.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
@@ -31,7 +30,8 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseFragment(), AuthSocialView {
+class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social),
+    AuthSocialView {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -72,7 +72,7 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
 
     @ProvidePresenter
     fun providePresenter(): AuthSocialPresenter =
-        getDependency(AuthSocialPresenter::class.java, screenScope)
+        getDependency(AuthSocialPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -82,30 +82,32 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthSocialBinding {
+        return FragmentAuthSocialBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
-        appbarLayout.gone()
+        baseBinding.appbarLayout.gone()
 
-        webView.apply {
+        binding.webView.apply {
             settings.apply {
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
             webViewClient = compositeWebViewClient
         }
 
-        errorView.setPrimaryButtonClickListener {
-            webView.reload()
+        binding.errorView.setPrimaryButtonClickListener {
+            binding.webView.reload()
         }
 
-        cookieView.setPrimaryButtonClickListener {
+        binding.cookieView.setPrimaryButtonClickListener {
             presenter.onContinueClick()
         }
-        cookieView.setSecondaryClickListener {
+        binding.cookieView.setSecondaryClickListener {
             presenter.onClearDataClick()
         }
     }
@@ -115,23 +117,23 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     }
 
     override fun onDestroyView() {
-        webView.webViewClient = WebViewClient()
-        webView.stopLoading()
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.stopLoading()
         super.onDestroyView()
     }
 
     override fun loadPage(data: SocialAuth) {
         authPatternWebViewClient.resultPattern = data.resultPattern
-        webView.loadUrl(data.socialUrl)
+        binding.webView.loadUrl(data.socialUrl)
     }
 
     override fun showState(state: AuthSocialScreenState) {
         val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
-        progressBarWv.isVisible = anyLoading
-        webView.isVisible =
+        binding.progressBarWv.isVisible = anyLoading
+        binding.webView.isVisible =
             state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
-        errorView.isVisible = state.pageState is WebPageViewState.Error
-        cookieView.isVisible = state.showClearCookies
+        binding.errorView.isVisible = state.pageState is WebPageViewState.Error
+        binding.cookieView.isVisible = state.showClearCookies
     }
 
     override fun showError() {

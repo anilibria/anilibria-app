@@ -3,16 +3,15 @@ package ru.radiationx.anilibria.screen.main
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.data.entity.domain.youtube.YoutubeItem
+import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.repository.YoutubeRepository
-import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class MainYouTubeViewModel(
     private val youtubeRepository: YoutubeRepository,
     private val converter: CardsDataConverter,
-    private val systemUtils: SystemUtils
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Обновления на YouTube"
@@ -31,7 +30,6 @@ class MainYouTubeViewModel(
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        val youtubeItem = card.rawData as YoutubeItem
-        systemUtils.externalLink(youtubeItem.link)
+        cardRouter.navigate(card)
     }
 }

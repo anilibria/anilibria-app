@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
@@ -18,7 +17,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.shared_app.di.injectDependencies
 
-class YoutubeFragment : BaseFragment(), YoutubeView {
+class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    YoutubeView {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
@@ -43,35 +43,37 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
 
     @ProvidePresenter
     fun providePresenter(): YoutubePresenter =
-        getDependency(YoutubePresenter::class.java, screenScope)
+        getDependency(YoutubePresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_youtube)
         }
 
-        refreshLayout.setOnRefreshListener { presenter.refresh() }
+        binding.refreshLayout.setOnRefreshListener { presenter.refresh() }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = youtubeAdapter
-            layoutManager = LinearLayoutManager(recyclerView.context)
+            layoutManager = LinearLayoutManager(context)
             disableItemChangeAnimation()
         }
 
         ToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
@@ -83,8 +85,8 @@ class YoutubeFragment : BaseFragment(), YoutubeView {
     }
 
     override fun showState(state: YoutubeScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
         youtubeAdapter.bindState(state)
     }
 

@@ -2,11 +2,11 @@ package ru.radiationx.anilibria.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.view_card_loading.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewCardLoadingBinding
 
 class CardLoadingView @JvmOverloads constructor(
     context: Context,
@@ -14,16 +14,17 @@ class CardLoadingView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private val binding by viewBinding<ViewCardLoadingBinding>(attachToRoot = true)
+
     init {
-        View.inflate(context, R.layout.view_card_loading, this)
         setBackgroundResource(R.color.dark_colorPrimary)
         isFocusable = true
         isFocusableInTouchMode = true
     }
 
     fun setState(state: State) {
-        loadingProgressBar.isVisible = state == State.LOADING
-        loadingRefresh.isVisible = state == State.ERROR
+        binding.loadingProgressBar.isVisible = state == State.LOADING
+        binding.loadingRefresh.isVisible = state == State.ERROR
     }
 
     enum class State {

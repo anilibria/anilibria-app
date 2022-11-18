@@ -2,10 +2,10 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_head_episodes.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemReleaseHeadEpisodesBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.presentation.release.details.EpisodesTabState
@@ -28,9 +28,11 @@ class ReleaseEpisodesHeadDelegate(
         holder.bind(item)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val itemListener: (String) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemReleaseHeadEpisodesBinding>()
 
         private var currentItem: ReleaseEpisodesHeadListItem? = null
 
@@ -47,46 +49,46 @@ class ReleaseEpisodesHeadDelegate(
         }
 
         init {
-            tabLayout.addOnTabSelectedListener(tabListener)
+            binding.tabLayout.addOnTabSelectedListener(tabListener)
         }
 
         fun bind(item: ReleaseEpisodesHeadListItem) {
             currentItem = item
-            tabLayout.removeOnTabSelectedListener(tabListener)
+            binding.tabLayout.removeOnTabSelectedListener(tabListener)
             updateSelectedColors(item.tabs, item.selectedTag)
             updateTabsItems(item.tabs)
             updateSelectedTab(item.selectedTag)
-            tabLayout.addOnTabSelectedListener(tabListener)
+            binding.tabLayout.addOnTabSelectedListener(tabListener)
         }
 
         private fun updateSelectedColors(tabs: List<EpisodesTabState>, selectedTag: String?) {
             val selectedState = tabs.find { it.tag == selectedTag }
             val selectedColor = selectedState?.textColor
-                ?.let { tabLayout.getCompatColor(it) }
-                ?: tabLayout.context.getColorFromAttr(R.attr.colorAccent)
-            tabLayout.setTabTextColors(
-                tabLayout.context.getColorFromAttr(R.attr.textSecond),
+                ?.let { binding.tabLayout.getCompatColor(it) }
+                ?: binding.tabLayout.context.getColorFromAttr(R.attr.colorAccent)
+            binding.tabLayout.setTabTextColors(
+                binding.tabLayout.context.getColorFromAttr(R.attr.textSecond),
                 selectedColor
             )
-            tabLayout.setSelectedTabIndicatorColor(selectedColor)
+            binding.tabLayout.setSelectedTabIndicatorColor(selectedColor)
         }
 
         private fun updateSelectedTab(selectedTag: String?) {
-            (0 until tabLayout.tabCount)
-                .mapNotNull { tabLayout.getTabAt(it) }
+            (0 until binding.tabLayout.tabCount)
+                .mapNotNull { binding.tabLayout.getTabAt(it) }
                 .firstOrNull { it.tag == selectedTag }
-                .also { tabLayout.selectTab(it) }
+                .also { binding.tabLayout.selectTab(it) }
         }
 
         private fun updateTabsItems(tabStates: List<EpisodesTabState>) {
-            if (tabStates.size != tabLayout.tabCount) {
-                tabLayout.removeAllTabs()
+            if (tabStates.size != binding.tabLayout.tabCount) {
+                binding.tabLayout.removeAllTabs()
                 repeat(tabStates.size) {
-                    tabLayout.addTab(tabLayout.newTab())
+                    binding.tabLayout.addTab(binding.tabLayout.newTab())
                 }
             }
             tabStates.forEachIndexed { index, tabState ->
-                val tab = tabLayout.getTabAt(index)
+                val tab = binding.tabLayout.getTabAt(index)
                 tab?.tag = tabState.tag
                 tab?.text = tabState.title
             }

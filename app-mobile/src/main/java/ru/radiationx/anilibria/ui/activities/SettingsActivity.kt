@@ -13,13 +13,12 @@ import ru.radiationx.shared_app.di.injectDependencies
  * Created by radiationx on 25.12.16.
  */
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         this.injectDependencies()
         setTheme(R.style.PreferencesDayNightAppTheme)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
 
         val actionBar = supportActionBar
         if (actionBar != null) {

@@ -1,6 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 
 android {
@@ -12,9 +11,6 @@ android {
         targetSdkVersion app_target_sdk_version
         versionCode 3
         versionName "1.0.0_RC5"
-    }
-    androidExtensions {
-        experimental = true
     }
 
     buildTypes {
@@ -38,6 +34,10 @@ android {
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -76,4 +76,6 @@ dependencies {
 
     implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
     implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"
+
+    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
 }

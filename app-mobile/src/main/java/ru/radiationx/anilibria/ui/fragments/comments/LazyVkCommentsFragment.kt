@@ -1,23 +1,18 @@
 package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import kotlinx.android.synthetic.main.fragment_lazy.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.ui.common.ScopeProvider
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.databinding.FragmentLazyBinding
+import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.DI
 
-class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
+class LazyVkCommentsFragment : ScopeFragment(R.layout.fragment_lazy) {
 
-    override val screenScope: String by lazy {
-        arguments?.getString(BaseFragment.ARG_SCREEN_SCOPE, null) ?: DI.DEFAULT_SCOPE
-    }
+    private val binding by viewBinding<FragmentLazyBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,6 +26,10 @@ class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
         addFragmentIfReady()
     }
 
+    override fun onBackPressed(): Boolean {
+        return false
+    }
+
     private fun addFragmentIfReady() {
         val isReady = isVisible && isResumed
         if (!isReady) {
@@ -39,7 +38,7 @@ class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
         val isAlreadyContains = childFragmentManager.findFragmentById(R.id.lazyContainer) != null
 
         if (isAlreadyContains) {
-            lazyProgress.isVisible = false
+            binding.lazyProgress.isVisible = false
             return
         }
 
@@ -47,13 +46,13 @@ class LazyVkCommentsFragment : Fragment(R.layout.fragment_lazy), ScopeProvider {
             val newBundle = (this.arguments?.clone() as Bundle?)
             it.arguments = newBundle
             it.putExtra {
-                putString(BaseFragment.ARG_SCREEN_SCOPE, screenScope)
+                putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
             }
         }
         childFragmentManager.commit {
             replace(R.id.lazyContainer, fragment)
         }
-        lazyProgress.isVisible = false
+        binding.lazyProgress.isVisible = false
     }
 
 }

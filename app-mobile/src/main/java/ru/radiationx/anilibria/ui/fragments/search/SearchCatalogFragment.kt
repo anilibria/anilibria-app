@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import kotlinx.android.synthetic.main.fragment_list_refresh.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.search.*
@@ -31,7 +30,9 @@ import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
 
 
-class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView, SharedProvider,
+class SearchCatalogFragment :
+    BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SearchCatalogView,
+    FastSearchView, SharedProvider,
     ReleasesAdapter.ItemListener {
 
     companion object {
@@ -76,14 +77,14 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
 
     @ProvidePresenter
     fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java, screenScope)
+        getDependency(FastSearchPresenter::class.java)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
     @ProvidePresenter
     fun providePresenter(): SearchPresenter =
-        getDependency(SearchPresenter::class.java, screenScope)
+        getDependency(SearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -106,13 +107,15 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         }
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_list_refresh
-
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = SearchMenuItem(coordinator_layout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
         genresDialog = context?.let {
             GenresDialog(it, object : GenresDialog.ClickListener {
                 override fun onAccept() {
@@ -145,29 +148,29 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
             })
         } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
-        refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
 
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
 
         ToolbarShadowController(
-            recyclerView,
-            appbarLayout
+            binding.recyclerView,
+            baseBinding.appbarLayout
         ) {
             updateToolbarShadow(it)
         }
 
         //ToolbarHelper.fixInsets(toolbar)
-        with(toolbar) {
+        with(baseBinding.toolbar) {
             title = "Поиск"
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
-        toolbar.menu.apply {
+        baseBinding.toolbar.menu.apply {
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
@@ -186,7 +189,7 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
         }
 
 
-        coordinator_layout.addView(searchView)
+        baseBinding.coordinatorLayout.addView(searchView)
         searchView?.layoutParams =
             (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
                 width =
@@ -284,12 +287,12 @@ class SearchCatalogFragment : BaseFragment(), SearchCatalogView, FastSearchView,
             else -> "Ваще рандом"
         }
         subtitle += ", Фильтров: $filters"
-        toolbar.subtitle = subtitle
+        baseBinding.toolbar.subtitle = subtitle
     }
 
     override fun showState(state: SearchScreenState) {
-        progressBarList.isVisible = state.data.emptyLoading
-        refreshLayout.isRefreshing = state.data.refreshLoading
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
         adapter.bindState(state)
     }
 

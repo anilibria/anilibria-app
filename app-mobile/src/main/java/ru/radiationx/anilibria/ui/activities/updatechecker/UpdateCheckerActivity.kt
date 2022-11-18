@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_updater.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
 import ru.radiationx.anilibria.presentation.checker.CheckerView
@@ -31,7 +32,7 @@ import javax.inject.Inject
  * Created by radiationx on 24.07.17.
  */
 
-class UpdateCheckerActivity : BaseActivity(), CheckerView {
+class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerView {
 
     companion object {
         private const val ARG_FORCE = "force"
@@ -44,6 +45,8 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
                 action = Intent.ACTION_VIEW
             }
     }
+
+    private val binding by viewBinding<ActivityUpdaterBinding>()
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(presenter::submitUseTime)
@@ -64,7 +67,6 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_updater)
         lifecycle.addObserver(useTimeCounter)
 
         intent?.let {
@@ -75,33 +77,35 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
         presenter.checkUpdate()
 
-        toolbar.setNavigationOnClickListener { finish() }
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
-        currentInfo.text = generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+        binding.currentInfo.text =
+            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
     }
 
     override fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
-            updateInfo.text = generateCurrentInfo(update.name, update.date)
+            binding.updateInfo.text = generateCurrentInfo(update.name, update.date)
             addSection("Важно", update.important)
             addSection("Добавлено", update.added)
             addSection("Исправлено", update.fixed)
             addSection("Изменено", update.changed)
 
-            updateInfo.visible()
-            updateButton.visible()
-            divider.visible()
+            binding.updateInfo.visible()
+            binding.updateButton.visible()
+            binding.divider.visible()
         } else {
-            updateInfo.text = "Обновлений нет, но вы можете загрузить текущую версию еще раз"
-            updateInfo.visible()
-            updateContent.gone()
-            divider.gone()
+            binding.updateInfo.text =
+                "Обновлений нет, но вы можете загрузить текущую версию еще раз"
+            binding.updateInfo.visible()
+            binding.updateContent.gone()
+            binding.divider.gone()
         }
-        updateButton.visible()
-        updateButton.setOnClickListener {
+        binding.updateButton.visible()
+        binding.updateButton.setOnClickListener {
             presenter.onDownloadClick()
             openDownloadDialog(update)
         }
@@ -127,11 +131,11 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {
-        progressBar.visible(isRefreshing)
-        updateInfo.gone(isRefreshing)
-        updateContent.gone(isRefreshing)
-        updateButton.gone(isRefreshing)
-        divider.gone(isRefreshing)
+        binding.progressBar.visible(isRefreshing)
+        binding.updateInfo.gone(isRefreshing)
+        binding.updateContent.gone(isRefreshing)
+        binding.updateButton.gone(isRefreshing)
+        binding.divider.gone(isRefreshing)
     }
 
     private fun addSection(title: String, array: List<String>) {
@@ -164,7 +168,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         sectionText.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionText)
 
-        updateContent.addView(
+        binding.updateContent.addView(
             root,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

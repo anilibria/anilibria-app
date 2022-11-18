@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.donation.adapter
 import android.content.res.ColorStateList
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_donation_button.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemDonationButtonBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
@@ -27,21 +27,24 @@ class DonationButtonDelegate(
         holder.bind(item.data)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (DonationContentButton) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemDonationButtonBinding>()
 
         fun bind(data: DonationContentButton) {
-            btAction.text = data.text
-            btAction.setOnClickListener { clickListener.invoke(data) }
+            binding.btAction.text = data.text
+            binding.btAction.setOnClickListener { clickListener.invoke(data) }
 
             val textColor = data.brand?.asDataColorRes()
-                ?.let { btAction.getCompatColor(it) }
-                ?: btAction.context.getColorFromAttr(R.attr.colorAccent)
+                ?.let { binding.btAction.getCompatColor(it) }
+                ?: binding.btAction.context.getColorFromAttr(R.attr.colorAccent)
 
-            btAction.icon = data.icon?.asDataIconRes()?.let { btAction.getCompatDrawable(it) }
-            btAction.setTextColor(textColor)
-            btAction.iconTint = ColorStateList.valueOf(textColor)
+            binding.btAction.icon =
+                data.icon?.asDataIconRes()?.let { binding.btAction.getCompatDrawable(it) }
+            binding.btAction.setTextColor(textColor)
+            binding.btAction.iconTint = ColorStateList.valueOf(textColor)
         }
     }
 }

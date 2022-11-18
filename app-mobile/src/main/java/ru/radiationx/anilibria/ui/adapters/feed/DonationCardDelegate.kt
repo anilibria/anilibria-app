@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemDonationCardBinding
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.ui.adapters.DonationCardListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -15,7 +16,10 @@ class DonationCardDelegate(
 ) : AppAdapterDelegate<DonationCardListItem, ListItem, DonationInfoViewHolder>(
     R.layout.item_donation_card,
     { it is DonationCardListItem },
-    { DonationInfoViewHolder(it, clickListener, closeClickListener) }
+    {
+        val binding = ItemDonationCardBinding.bind(it)
+        DonationInfoViewHolder(it, binding.donationInfo, clickListener, closeClickListener)
+    }
 ) {
 
     override fun bindData(item: DonationCardListItem, holder: DonationInfoViewHolder) =

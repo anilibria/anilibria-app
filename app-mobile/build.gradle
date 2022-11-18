@@ -3,7 +3,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 
 
@@ -24,10 +23,6 @@ android {
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    androidExtensions {
-        experimental = true
     }
 
     // Поиграться в случае "Unable to load publicsuffixes.gz resource from the classpath."
@@ -99,9 +94,14 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
@@ -167,6 +167,8 @@ dependencies {
 
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging_version"
     implementation "com.google.firebase:firebase-core:$firebase_core_version"
+
+    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
 }
 
 apply plugin: "com.google.gms.google-services"

@@ -1,17 +1,18 @@
 package ru.radiationx.anilibria.screen.watching
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -37,15 +38,10 @@ class WatchingFavoritesViewModel(
     override fun onColdCreate() {
         super.onColdCreate()
         authRepository
-            .observeUser()
-            .map { it.authState }
-            .distinctUntilChanged()
+            .observeAuthState()
             .drop(1)
-            .onEach {
-                if (it == AuthState.AUTH) {
-                    onRefreshClick()
-                }
-            }
+            .filter { it == AuthState.AUTH }
+            .onEach { onRefreshClick() }
             .launchIn(viewModelScope)
     }
 

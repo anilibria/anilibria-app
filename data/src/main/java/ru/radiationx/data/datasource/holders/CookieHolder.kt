@@ -1,5 +1,6 @@
 package ru.radiationx.data.datasource.holders
 
+import kotlinx.coroutines.flow.Flow
 import okhttp3.Cookie
 
 /**
@@ -14,6 +15,7 @@ interface CookieHolder {
         )
     }
 
+    fun observeCookies(): Flow<Map<String, Cookie>>
     fun getCookies(): Map<String, Cookie>
     fun putCookie(url: String, cookie: Cookie)
     fun putCookie(url: String, name: String, value: String)

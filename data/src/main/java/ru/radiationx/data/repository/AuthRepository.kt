@@ -1,16 +1,20 @@
 package ru.radiationx.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import okhttp3.Cookie
 import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.AuthApi
+import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.system.HttpException
 import timber.log.Timber
@@ -24,35 +28,32 @@ class AuthRepository @Inject constructor(
     private val userHolder: UserHolder,
     private val authHolder: AuthHolder,
     private val socialAuthHolder: SocialAuthHolder,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
+    private val cookieHolder: CookieHolder
 ) {
 
-    /*private val socialAuthInfo = listOf(SocialAuth(
-            "vk",
-            "ВКонтакте",
-            "https://oauth.vk.com/authorize?client_id=5315207&redirect_uri=https://www.anilibria.tv/public/vk.php",
-            "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/public\\/vk\\.php([?&]code)",
-            "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/pages\\/vk\\.php"
-    ))*/
+    fun observeUser(): Flow<ProfileItem?> =
+        combine(observeAuthState(), userHolder.observeUser()) { authState, profileItem ->
+            profileItem?.takeIf { authState == AuthState.AUTH }
+        }.distinctUntilChanged()
 
-    fun observeUser(): Flow<ProfileItem> = userHolder.observeUser()
-
-    fun getUser() = userHolder.getUser()
-
-    fun getAuthState(): AuthState = userHolder.getUser().authState
-
-    fun updateUser(authState: AuthState) {
-        val user = userHolder.getUser().copy(
-            authState = authState
-        )
-        userHolder.saveUser(user)
+    fun getUser(): ProfileItem? = userHolder.getUser()?.takeIf {
+        getAuthState() == AuthState.AUTH
     }
 
-    private fun updateUser(newUser: ProfileItem) {
-        val user = newUser.copy(
-            authState = AuthState.AUTH
-        )
-        userHolder.saveUser(user)
+    fun observeAuthState(): Flow<AuthState> = combine(
+        cookieHolder.observeCookies(),
+        authHolder.observeAuthSkipped()
+    ) { cookies, skipped ->
+        computeAuthState(cookies, skipped)
+    }.distinctUntilChanged()
+
+    fun getAuthState(): AuthState {
+        return computeAuthState(cookieHolder.getCookies(), authHolder.getAuthSkipped())
+    }
+
+    fun setAuthSkipped(value: Boolean) {
+        authHolder.setAuthSkipped(value)
     }
 
     // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.
@@ -81,18 +82,23 @@ class AuthRepository @Inject constructor(
     suspend fun signInOtp(code: String): ProfileItem = authApi
         .signInOtp(code, authHolder.getDeviceId())
         .toDomain(apiConfig)
-        .also { userHolder.saveUser(it) }
+        .also { updateUser(it) }
 
     suspend fun signIn(login: String, password: String, code2fa: String): ProfileItem =
         authApi
             .signIn(login, password, code2fa)
             .toDomain(apiConfig)
-            .also { userHolder.saveUser(it) }
-    suspend fun signOut(): String = authApi
-        .signOut()
-        .also {
-            userHolder.delete()
+            .also { updateUser(it) }
+
+    suspend fun signOut() {
+        runCatching {
+            authApi.signOut()
+        }.onFailure {
+            Timber.e(it)
         }
+        cookieHolder.removeCookie(CookieHolder.PHPSESSID)
+        userHolder.delete()
+    }
 
     fun observeSocialAuth(): Flow<List<SocialAuth>> = socialAuthHolder.observe()
 
@@ -107,6 +113,19 @@ class AuthRepository @Inject constructor(
     suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem = authApi
         .signInSocial(resultUrl, item)
         .toDomain(apiConfig)
-        .also { userHolder.saveUser(it) }
+        .also { updateUser(it) }
+
+    private fun updateUser(newUser: ProfileItem) {
+        userHolder.saveUser(newUser)
+    }
+
+    private fun computeAuthState(cookies: Map<String, Cookie>, skipped: Boolean): AuthState {
+        val cookie = cookies[CookieHolder.PHPSESSID]
+        return when {
+            cookie != null -> AuthState.AUTH
+            skipped -> AuthState.AUTH_SKIPPED
+            else -> AuthState.NO_AUTH
+        }
+    }
 
 }

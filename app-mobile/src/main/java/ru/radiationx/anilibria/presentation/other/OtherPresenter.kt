@@ -56,7 +56,7 @@ class OtherPresenter @Inject constructor(
 
     private val stateController = StateController(ProfileScreenState())
 
-    private var currentProfileItem: ProfileItem = authRepository.getUser()
+    private var currentProfileItem: ProfileItem? = authRepository.getUser()
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
 
@@ -110,7 +110,7 @@ class OtherPresenter @Inject constructor(
     }
 
     fun onProfileClick() {
-        if (currentProfileItem.authState == AuthState.AUTH) {
+        if (authRepository.getAuthState() == AuthState.AUTH) {
             otherAnalytics.profileClick()
             return
         }
@@ -212,7 +212,7 @@ class OtherPresenter @Inject constructor(
         val systemMenu = allSystemMenu.toMutableList()
         val linkMenu = allLinkMenu.toMutableList()
 
-        if (currentProfileItem.authState != AuthState.AUTH) {
+        if (authRepository.getAuthState() != AuthState.AUTH) {
             profileMenu.removeAll { it.id == MENU_OTP_CODE }
         }
 

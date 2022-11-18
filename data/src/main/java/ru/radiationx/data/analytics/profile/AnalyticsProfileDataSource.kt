@@ -9,6 +9,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.*
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.data.repository.AuthRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -16,12 +17,12 @@ class AnalyticsProfileDataSource(
     private val preferencesHolder: PreferencesHolder,
     private val analyticsThemeProvider: AnalyticsThemeProvider,
     private val apiConfig: ApiConfig,
-    private val userHolder: UserHolder,
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val downloadsHolder: DownloadsHolder,
     private val migrationDataSource: MigrationDataSource,
-    private val releaseUpdateHolder: ReleaseUpdateHolder
+    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    private val authRepository: AuthRepository
 ) {
 
     fun getApiAddressTag(): Flow<String> = single {
@@ -61,7 +62,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getAuthState(): Flow<String> = single {
-        userHolder.getUser().authState.toAnalyticsAuthState().value
+        authRepository.getAuthState().toAnalyticsAuthState().value
     }
 
     fun getHistoryItemsCount(): Flow<Int> = single {

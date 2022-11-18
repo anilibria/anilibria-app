@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria.screen.auth.main
 
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
+import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -29,7 +28,7 @@ class AuthViewModel(
     }
 
     fun onSkipClick() {
-        authRepository.updateUser(AuthState.AUTH_SKIPPED)
+        authRepository.setAuthSkipped(true)
         guidedRouter.finishGuidedChain()
     }
 }

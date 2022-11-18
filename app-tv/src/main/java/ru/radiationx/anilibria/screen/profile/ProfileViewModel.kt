@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.profile
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -20,16 +20,14 @@ class ProfileViewModel(
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
 
-    val profileData = MutableLiveData<ProfileItem>()
+    val profileData = MutableStateFlow<ProfileItem?>(null)
 
     override fun onCreate() {
         super.onCreate()
 
         authRepository
             .observeUser()
-            .onEach {
-                profileData.value = it
-            }
+            .onEach { profileData.value = it }
             .launchIn(viewModelScope)
     }
 

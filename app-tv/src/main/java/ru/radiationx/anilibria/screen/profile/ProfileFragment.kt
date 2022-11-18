@@ -5,12 +5,13 @@ import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.leanback.app.BrowseSupportFragment
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentProfileBinding
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import ru.radiationx.shared_app.screen.ScopedFragment
@@ -40,18 +41,18 @@ class ProfileFragment : ScopedFragment(R.layout.fragment_profile),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        subscribeTo(viewModel.profileData) {
-            if (!it.avatarUrl.isNullOrEmpty()) {
-                binding.profileAvatar.showImageUrl(it.avatarUrl)
+        viewModel.profileData.onEach {
+            if (!it?.avatarUrl.isNullOrEmpty()) {
+                binding.profileAvatar.showImageUrl(it?.avatarUrl)
             }
-            binding.profileNick.text = it.nick
+            binding.profileNick.text = it?.nick
 
-            val auth = it.authState == AuthState.AUTH
-            binding.profileAvatar.isVisible = auth
-            binding.profileNick.isVisible = auth
-            binding.profileSignIn.isGone = auth
-            binding.profileSignOut.isVisible = auth
-        }
+            val hasAuth = it != null
+            binding.profileAvatar.isVisible = hasAuth
+            binding.profileNick.isVisible = hasAuth
+            binding.profileSignIn.isGone = hasAuth
+            binding.profileSignOut.isVisible = hasAuth
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         binding.profileSignIn.setOnClickListener { viewModel.onSignInClick() }
         binding.profileSignOut.setOnClickListener { viewModel.onSignOutClick() }

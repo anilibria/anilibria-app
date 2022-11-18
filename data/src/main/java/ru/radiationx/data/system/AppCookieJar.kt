@@ -1,6 +1,5 @@
 package ru.radiationx.data.system
 
-import android.util.Log
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -9,8 +8,8 @@ import ru.radiationx.data.datasource.holders.UserHolder
 import javax.inject.Inject
 
 class AppCookieJar @Inject constructor(
-        private val cookieHolder: CookieHolder,
-        private val userHolder: UserHolder
+    private val cookieHolder: CookieHolder,
+    private val userHolder: UserHolder
 ) : CookieJar {
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {

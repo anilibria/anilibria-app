@@ -2,6 +2,9 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import android.net.Uri
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import ru.radiationx.data.datasource.holders.CookieHolder
@@ -15,31 +18,16 @@ class CookiesStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : CookieHolder {
 
-    private val clientCookies by lazy {
-        val result = mutableMapOf<String, Cookie>()
-        cookieNames.forEachIndexed { _, s ->
-            sharedPreferences
-                .getString("cookie_$s", null)
-                ?.let { parseCookie(it) }
-                ?.let { cookie -> result.put(s, cookie) }
-        }
-        result
+    private val cookiesState by lazy {
+        MutableStateFlow(loadCookies())
     }
 
-    private fun parseCookie(cookieFields: String): Cookie? {
-        val fields = cookieFields.split("\\|:\\|".toRegex())
-        val httpUrl = fields[0].toHttpUrlOrNull()
-            ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
-        val cookieString = fields[1]
-        return Cookie.parse(httpUrl, cookieString)
-    }
-
-    private fun convertCookie(url: String, cookie: Cookie): String {
-        return "$url|:|$cookie"
+    override fun observeCookies(): Flow<Map<String, Cookie>> {
+        return cookiesState.asStateFlow()
     }
 
     override fun getCookies(): Map<String, Cookie> {
-        return clientCookies
+        return cookiesState.value
     }
 
     override fun putCookie(url: String, name: String, value: String) {
@@ -60,10 +48,7 @@ class CookiesStorage @Inject constructor(
             .putString("cookie_${cookie.name}", convertCookie(url, cookie))
             .apply()
 
-        if (!clientCookies.containsKey(cookie.name)) {
-            clientCookies.remove(cookie.name)
-        }
-        clientCookies[cookie.name] = cookie
+        updateCookies()
     }
 
     override fun removeCookie(name: String) {
@@ -72,6 +57,33 @@ class CookiesStorage @Inject constructor(
             .remove("cookie_$name")
             .apply()
 
-        clientCookies.remove(name)
+        updateCookies()
+    }
+
+    private fun updateCookies() {
+        cookiesState.value = loadCookies()
+    }
+
+    private fun loadCookies(): Map<String, Cookie> {
+        val result = mutableMapOf<String, Cookie>()
+        cookieNames.forEachIndexed { _, s ->
+            sharedPreferences
+                .getString("cookie_$s", null)
+                ?.let { parseCookie(it) }
+                ?.let { cookie -> result[s] = cookie }
+        }
+        return result
+    }
+
+    private fun parseCookie(cookieFields: String): Cookie? {
+        val fields = cookieFields.split("\\|:\\|".toRegex())
+        val httpUrl = fields[0].toHttpUrlOrNull()
+            ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
+        val cookieString = fields[1]
+        return Cookie.parse(httpUrl, cookieString)
+    }
+
+    private fun convertCookie(url: String, cookie: Cookie): String {
+        return "$url|:|$cookie"
     }
 }

@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
@@ -53,22 +52,18 @@ fun ScheduleItem.toState() = ScheduleItemState(
     isCompleted = completed
 )
 
-fun ProfileItem.toState(): ProfileItemState {
-    val hasAuth = authState == AuthState.AUTH
-    val title = if (hasAuth) {
-        nick
-    } else {
-        "Гость"
-    }
-    val subtitle = if (hasAuth) {
+fun ProfileItem?.toState(): ProfileItemState {
+    val title = this?.nick ?: "Гость"
+    val subtitle = if (this != null) {
         null
     } else {
         "Авторизоваться"
     }
-    val avatar = avatarUrl?.takeIf { it.isNotEmpty() } ?: "file:///android_asset/res/alib_new_or_b.png"
+    val avatar = this?.avatarUrl
+        ?.takeIf { it.isNotEmpty() }
+        ?: "file:///android_asset/res/alib_new_or_b.png"
     return ProfileItemState(
-        id = id,
-        hasAuth = hasAuth,
+        hasAuth = this != null,
         title = title,
         subtitle = subtitle,
         avatar = avatar

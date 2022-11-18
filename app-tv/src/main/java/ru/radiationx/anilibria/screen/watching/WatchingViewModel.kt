@@ -48,9 +48,9 @@ class WatchingViewModel(
             .launchIn(viewModelScope)
 
         authRepository
-            .observeUser()
+            .observeAuthState()
             .onEach {
-                updateAvailableRow(FAVORITES_ROW_ID, it.authState == AuthState.AUTH)
+                updateAvailableRow(FAVORITES_ROW_ID, it == AuthState.AUTH)
             }
             .launchIn(viewModelScope)
     }

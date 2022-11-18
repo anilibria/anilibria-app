@@ -39,6 +39,10 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -76,4 +80,6 @@ dependencies {
 
     implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
     implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"
+
+    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
 }

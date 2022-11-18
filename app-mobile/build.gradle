@@ -173,7 +173,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging_version"
     implementation "com.google.firebase:firebase-core:$firebase_core_version"
 
-    implementation "com.github.kirich1409:viewbindingpropertydelegate:1.5.6"
+    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
 }
 
 apply plugin: "com.google.gms.google-services"

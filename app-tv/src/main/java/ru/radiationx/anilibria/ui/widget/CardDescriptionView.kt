@@ -2,11 +2,9 @@ package ru.radiationx.anilibria.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.widget.LinearLayoutCompat
-import kotlinx.android.synthetic.main.view_card_description.view.*
-import ru.radiationx.anilibria.R
+import by.kirich1409.viewbindingdelegate.viewBinding
+import ru.radiationx.anilibria.databinding.ViewCardDescriptionBinding
 
 class CardDescriptionView @JvmOverloads constructor(
     context: Context,
@@ -14,18 +12,21 @@ class CardDescriptionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayoutCompat(context, attrs, defStyleAttr) {
 
+    private val binding by viewBinding<ViewCardDescriptionBinding>(attachToRoot = true)
+
     init {
-        View.inflate(context, R.layout.view_card_description, this)
         orientation = VERTICAL
     }
 
     fun setTitle(title: CharSequence) {
-        cardDescriptionTitle.text = title
+        binding.cardDescriptionTitle.text = title
     }
 
     fun setSubtitle(subtitle: CharSequence) {
-        cardDescriptionSubtitle.text = subtitle
+        binding.cardDescriptionSubtitle.text = subtitle
     }
 
-    fun isFilled(): Boolean = cardDescriptionTitle.text.isNotEmpty() || cardDescriptionSubtitle.text.isNotEmpty()
+    fun isFilled(): Boolean {
+        return binding.cardDescriptionTitle.text.isNotEmpty() || binding.cardDescriptionSubtitle.text.isNotEmpty()
+    }
 }

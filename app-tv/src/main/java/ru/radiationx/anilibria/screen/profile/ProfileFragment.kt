@@ -5,9 +5,10 @@ import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.leanback.app.BrowseSupportFragment
-import kotlinx.android.synthetic.main.fragment_profile.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.databinding.FragmentProfileBinding
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.viewModelFromParent
@@ -15,7 +16,10 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
 import ru.radiationx.shared_app.screen.ScopedFragment
 import javax.inject.Inject
 
-class ProfileFragment : ScopedFragment(R.layout.fragment_profile), BrowseSupportFragment.MainFragmentAdapterProvider {
+class ProfileFragment : ScopedFragment(R.layout.fragment_profile),
+    BrowseSupportFragment.MainFragmentAdapterProvider {
+
+    private val binding by viewBinding<FragmentProfileBinding>()
 
     @Inject
     lateinit var backgroundManager: GradientBackgroundManager
@@ -38,19 +42,19 @@ class ProfileFragment : ScopedFragment(R.layout.fragment_profile), BrowseSupport
 
         subscribeTo(viewModel.profileData) {
             if (!it.avatarUrl.isNullOrEmpty()) {
-                profileAvatar.showImageUrl(it.avatarUrl)
+                binding.profileAvatar.showImageUrl(it.avatarUrl)
             }
-            profileNick.text = it.nick
+            binding.profileNick.text = it.nick
 
             val auth = it.authState == AuthState.AUTH
-            profileAvatar.isVisible = auth
-            profileNick.isVisible = auth
-            profileSignIn.isGone = auth
-            profileSignOut.isVisible = auth
+            binding.profileAvatar.isVisible = auth
+            binding.profileNick.isVisible = auth
+            binding.profileSignIn.isGone = auth
+            binding.profileSignOut.isVisible = auth
         }
 
-        profileSignIn.setOnClickListener { viewModel.onSignInClick() }
-        profileSignOut.setOnClickListener { viewModel.onSignOutClick() }
+        binding.profileSignIn.setOnClickListener { viewModel.onSignInClick() }
+        binding.profileSignOut.setOnClickListener { viewModel.onSignOutClick() }
 
 
         mainFragmentAdapter.fragmentHost.notifyViewCreated(selfMainFragmentAdapter)

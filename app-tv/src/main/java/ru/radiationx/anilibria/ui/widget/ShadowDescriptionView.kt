@@ -2,10 +2,10 @@ package ru.radiationx.anilibria.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.FrameLayout
-import kotlinx.android.synthetic.main.view_shadow_description.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewShadowDescriptionBinding
 
 class ShadowDescriptionView @JvmOverloads constructor(
     context: Context,
@@ -13,17 +13,18 @@ class ShadowDescriptionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private val binding by viewBinding<ViewShadowDescriptionBinding>(attachToRoot = true)
+
     init {
-        View.inflate(context, R.layout.view_shadow_description, this)
         setBackgroundResource(R.drawable.bg_grid_description_shadow)
     }
 
     fun setDescription(title: CharSequence, subtitle: CharSequence) {
-        cardDescriptionView.apply {
+        binding.cardDescriptionView.apply {
             setTitle(title)
             setSubtitle(subtitle)
         }
     }
 
-    fun getCardDescriptionView(): CardDescriptionView = cardDescriptionView
+    fun getCardDescriptionView(): CardDescriptionView = binding.cardDescriptionView
 }

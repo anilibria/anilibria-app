@@ -20,6 +20,7 @@ buildscript {
         cicerone_version = '5.0.0'
         toothpick_version = '3.1.0'
         coil_version = '2.2.2'
+        viewbindingdelegate_version = '1.5.6'
 
         androidx_appcompat_version = '1.5.1'
         androidx_core_version = '1.9.0'

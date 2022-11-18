@@ -3,15 +3,12 @@ package ru.radiationx.anilibria.ui.widget
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import kotlinx.android.synthetic.main.view_titleview.view.*
-import kotlinx.android.synthetic.main.view_search_controls.view.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewSearchControlsBinding
 
 class SearchTitleView @JvmOverloads constructor(
     context: Context,
@@ -19,53 +16,60 @@ class SearchTitleView @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.browseTitleViewStyle
 ) : BrowseTitleView(context, attrs, defStyleAttr) {
 
+    private lateinit var binding: ViewSearchControlsBinding
+
+
     var year: String?
-        get() = searchTitleYear.getWonderText()
-        set(value) = searchTitleYear.setWonderText(value)
+        get() = binding.searchTitleYear.getWonderText()
+        set(value) = binding.searchTitleYear.setWonderText(value)
 
     var season: String?
-        get() = searchTitleSeason.getWonderText()
-        set(value) = searchTitleSeason.setWonderText(value)
+        get() = binding.searchTitleSeason.getWonderText()
+        set(value) = binding.searchTitleSeason.setWonderText(value)
 
     var genre: String?
-        get() = searchTitleGenre.getWonderText()
-        set(value) = searchTitleGenre.setWonderText(value)
+        get() = binding.searchTitleGenre.getWonderText()
+        set(value) = binding.searchTitleGenre.setWonderText(value)
 
     var sort: String?
-        get() = searchTitleSort.getWonderText()
-        set(value) = searchTitleSort.setWonderText(value)
+        get() = binding.searchTitleSort.getWonderText()
+        set(value) = binding.searchTitleSort.setWonderText(value)
 
     var onlyCompleted: String?
-        get() = searchTitleComplete.getWonderText()
-        set(value) = searchTitleComplete.setWonderText(value)
+        get() = binding.searchTitleComplete.getWonderText()
+        set(value) = binding.searchTitleComplete.setWonderText(value)
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_search_controls, title_controls)
-        title_controls.isVisible = true
+        binding =
+            ViewSearchControlsBinding.inflate(LayoutInflater.from(context), getControls(), true)
+        getControls().isVisible = true
     }
 
     fun setYearClickListener(listener: OnClickListener?) {
-        searchTitleYear.setOnClickListener(listener)
+        binding.searchTitleYear.setOnClickListener(listener)
     }
 
     fun setSeasonClickListener(listener: OnClickListener?) {
-        searchTitleSeason.setOnClickListener(listener)
+        binding.searchTitleSeason.setOnClickListener(listener)
     }
 
     fun setGenreClickListener(listener: OnClickListener?) {
-        searchTitleGenre.setOnClickListener(listener)
+        binding.searchTitleGenre.setOnClickListener(listener)
     }
 
     fun setSortClickListener(listener: OnClickListener?) {
-        searchTitleSort.setOnClickListener(listener)
+        binding.searchTitleSort.setOnClickListener(listener)
     }
 
     fun setOnlyCompletedClickListener(listener: OnClickListener?) {
-        searchTitleComplete.setOnClickListener(listener)
+        binding.searchTitleComplete.setOnClickListener(listener)
     }
 
-    override fun onRequestFocusInDescendants(direction: Int, previouslyFocusedRect: Rect?): Boolean {
-        if (findFocus() == null && direction == View.FOCUS_UP && title_controls.requestFocus()) {
+    override fun onRequestFocusInDescendants(
+        direction: Int,
+        previouslyFocusedRect: Rect?
+    ): Boolean {
+        if (findFocus() == null && direction == View.FOCUS_UP && getControls().requestFocus()) {
             return true
         }
         return super.onRequestFocusInDescendants(direction, previouslyFocusedRect)

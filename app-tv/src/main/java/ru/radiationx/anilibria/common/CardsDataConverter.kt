@@ -14,14 +14,16 @@ class CardsDataConverter(
     fun toCard(releaseItem: Release) = releaseItem.run {
         LibriaCard(
             title.orEmpty(),
-            "${seasons.firstOrNull()} год • ${genres.firstOrNull()
-                ?.capitalize()} • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${Date(torrentUpdate * 1000L).relativeDate(context)
-                .decapitalize()}",
+            "${seasons.firstOrNull()} год • ${
+                genres.firstOrNull()
+                    ?.capitalize()
+            } • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${
+                Date(torrentUpdate * 1000L).relativeDate(context)
+                    .decapitalize()
+            }",
             poster.orEmpty(),
-            LibriaCard.Type.RELEASE
-        ).apply {
-            rawData = releaseItem
-        }
+            LibriaCard.Type.Release(releaseItem.id)
+        )
     }
 
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
@@ -29,10 +31,8 @@ class CardsDataConverter(
             title.orEmpty(),
             "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
             image.orEmpty(),
-            LibriaCard.Type.YOUTUBE
-        ).apply {
-            rawData = youtubeItem
-        }
+            LibriaCard.Type.Youtube(youtubeItem.link)
+        )
     }
 
     fun toCard(feedItem: FeedItem): LibriaCard = feedItem.run {

@@ -69,7 +69,7 @@ class SuggestionsResultViewModel(
                     it.names.getOrNull(0).orEmpty(),
                     it.names.getOrNull(1).orEmpty(),
                     it.poster.orEmpty(),
-                    LibriaCard.Type.RELEASE
+                    LibriaCard.Type.Release(it.id)
                 )
             }
         }

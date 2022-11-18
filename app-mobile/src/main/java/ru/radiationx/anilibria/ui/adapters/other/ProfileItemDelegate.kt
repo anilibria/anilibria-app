@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.adapters.other
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_other_profile.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemOtherProfileBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -26,30 +26,32 @@ class ProfileItemDelegate(
     override fun bindData(item: ProfileListItem, holder: ViewHolder) = holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ProfileItemState) -> Unit,
         private val logoutClickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemOtherProfileBinding>()
 
         private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
 
         fun bind(state: ProfileItemState) {
             dimensionsProvider.get().also {
-                containerView.setPadding(
-                    containerView.paddingLeft,
+                binding.root.setPadding(
+                    binding.root.paddingLeft,
                     it.statusBar,
-                    containerView.paddingRight,
-                    containerView.paddingBottom
+                    binding.root.paddingRight,
+                    binding.root.paddingBottom
                 )
             }
-            profileNick.text = state.title
-            profileDesc.text = state.subtitle
-            profileLogout.isVisible = state.hasAuth
-            profileDesc.isVisible = state.subtitle != null
-            profileAvatar.showImageUrl(state.avatar)
+            binding.profileNick.text = state.title
+            binding.profileDesc.text = state.subtitle
+            binding.profileLogout.isVisible = state.hasAuth
+            binding.profileDesc.isVisible = state.subtitle != null
+            binding.profileAvatar.showImageUrl(state.avatar)
 
-            containerView.setOnClickListener { clickListener(state) }
-            profileLogout.setOnClickListener { logoutClickListener() }
+            binding.root.setOnClickListener { clickListener(state) }
+            binding.profileLogout.setOnClickListener { logoutClickListener() }
         }
     }
 }

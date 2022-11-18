@@ -10,19 +10,18 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.activity_container.*
-import kotlinx.android.synthetic.main.activity_main.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
@@ -60,7 +59,7 @@ import javax.inject.Inject
 import kotlin.math.max
 
 
-class MainActivity : BaseActivity(), MainView, CheckerView {
+class MainActivity : BaseActivity(R.layout.activity_main), MainView, CheckerView {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -79,6 +78,8 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     @Inject
     lateinit var dimensionsProvider: DimensionsProvider
+
+    private val binding by viewBinding<ActivityMainBinding>()
 
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
@@ -128,31 +129,31 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_main)
 
         dimensionHelper = DimensionHelper(
-            measure_view,
-            measure_root_content,
+            binding.measureView,
+            binding.measureRootContent,
             object : DimensionHelper.DimensionsListener {
                 override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    root_container.post {
-                        root_container.setPadding(
-                            root_container.paddingLeft,
-                            root_container.paddingTop,
-                            root_container.paddingRight,
-                            max(dimensions.keyboardHeight - tabsRecycler.height, 0)
+                    val rootContainer = binding.layoutActivityContainer.rootContainer
+                    rootContainer.post {
+                        rootContainer.setPadding(
+                            rootContainer.paddingLeft,
+                            rootContainer.paddingTop,
+                            rootContainer.paddingRight,
+                            max(dimensions.keyboardHeight - binding.tabsRecycler.height, 0)
                         )
                     }
                     dimensionsProvider.update(dimensions)
                 }
             })
 
-        ViewCompat.setOnApplyWindowInsetsListener(tabsRecycler) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.tabsRecycler) { v, insets ->
             val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navigationBarInsets.bottom)
             insets
         }
-        tabsRecycler.apply {
+        binding.tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
             disableItemChangeAnimation()
@@ -241,7 +242,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun showConfiguring() {
-        configuring_container.visible()
+        binding.configuringContainer.visible()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.configuring_container, ConfiguringFragment())
@@ -249,7 +250,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
     }
 
     override fun hideConfiguring() {
-        configuring_container.gone()
+        binding.configuringContainer.gone()
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
                 .beginTransaction()
@@ -328,7 +329,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private fun updateBottomTabs() {
         tabsAdapter.bindItems(tabs)
-        (tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
+        (binding.tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
     }
 
     override fun updateTabs() {

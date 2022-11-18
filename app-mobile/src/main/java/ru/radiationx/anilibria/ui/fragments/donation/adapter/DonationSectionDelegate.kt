@@ -4,9 +4,9 @@ import android.text.Html
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_donation_section.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemDonationSectionBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
@@ -24,22 +24,24 @@ class DonationSectionDelegate(
         holder.bind(item.data)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val linkClickListener: (String) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemDonationSectionBinding>()
 
         init {
-            tvSubtitle.movementMethod = LinkMovementMethod {
+            binding.tvSubtitle.movementMethod = LinkMovementMethod {
                 linkClickListener.invoke(it)
                 true
             }
         }
 
         fun bind(divider: DonationContentSection) {
-            tvTitle.text = divider.title
-            tvSubtitle.text = divider.subtitle?.let { Html.fromHtml(it) }
-            tvTitle.isVisible = divider.title != null
-            tvSubtitle.isVisible = divider.subtitle != null
+            binding.tvTitle.text = divider.title
+            binding.tvSubtitle.text = divider.subtitle?.let { Html.fromHtml(it) }
+            binding.tvTitle.isVisible = divider.title != null
+            binding.tvSubtitle.isVisible = divider.subtitle != null
         }
     }
 }

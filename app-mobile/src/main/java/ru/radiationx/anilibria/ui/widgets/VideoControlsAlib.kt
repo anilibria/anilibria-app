@@ -7,6 +7,7 @@ import android.os.Handler
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.MotionEvent
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator
 import com.devbrackets.android.exomedia.listener.VideoControlsSeekListener
@@ -14,13 +15,16 @@ import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
-import kotlinx.android.synthetic.main.view_video_control.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewVideoControlBinding
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import ru.radiationx.data.analytics.features.PlayerAnalytics
@@ -29,7 +33,6 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
 import java.lang.Math.pow
-import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -49,6 +52,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     private var playerSkips: PlayerSkips? = null
     private val skippedList = mutableSetOf<PlayerSkips.Skip>()
 
+    private lateinit var binding: ViewVideoControlBinding
+
     init {
         setSeekListener(object : VideoControlsSeekListener {
 
@@ -67,13 +72,13 @@ class VideoControlsAlib @JvmOverloads constructor(
         this.playerAnalytics = playerAnalytics
     }
 
-    fun setOpeningListener(listener: AlibControlsListener) {
+    fun setOpeningListener(listener: AlibControlsListener?) {
         alibControlsListener = listener
     }
 
     fun fitSystemWindows(fit: Boolean) {
         this.fitsSystemWindows = false
-        videoControlsRoot.fitsSystemWindows = fit
+        binding.videoControlsRoot.fitsSystemWindows = fit
     }
 
     fun setPictureInPictureEnabled(enabled: Boolean) {
@@ -119,27 +124,29 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun retrieveViews() {
         super.retrieveViews()
-        textContainer = appbarLayout
+        val viewRoot = findViewById<CoordinatorLayout>(R.id.videoControlsRoot)
+        binding = ViewVideoControlBinding.bind(viewRoot)
+        textContainer = binding.appbarLayout
 
-        btSkipsCancel.setOnClickListener {
+        binding.btSkipsCancel.setOnClickListener {
             cancelSkip()
         }
-        btSkipsSkip.setOnClickListener {
+        binding.btSkipsSkip.setOnClickListener {
             getCurrentSkip()?.also {
                 videoView?.seekTo(it.end)
             }
         }
 
-        appbarLayout.apply {
+        binding.appbarLayout.apply {
             background = context.getCompatDrawable(R.drawable.bg_video_toolbar)
         }
 
-        toolbar.apply {
+        binding.toolbar.apply {
             navigationIcon = context.getCompatDrawable(R.drawable.ic_toolbar_arrow_back)
             setNavigationOnClickListener {
                 alibControlsListener?.onBackClick()
             }
-            pictureInPictureMenuItem = toolbar.menu.add("Картинка в картинке")
+            pictureInPictureMenuItem = menu.add("Картинка в картинке")
                 .setIcon(context.getCompatDrawable(R.drawable.ic_picture_in_picture_alt_toolbar))
                 .setOnMenuItemClickListener {
                     alibControlsListener?.onPIPClick()
@@ -148,8 +155,8 @@ class VideoControlsAlib @JvmOverloads constructor(
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
-        controlsContainer = timeControlsContainer
-        gesturesControllerView.setEventsListener(object : VideoGestureEventsListener {
+        controlsContainer = binding.timeControlsContainer
+        binding.gesturesControllerView.setEventsListener(object : VideoGestureEventsListener {
             private var localSeekDelta = 0L
             private var swipeSeekStarted = false
             private var tapSeekStarted = false
@@ -159,7 +166,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private val tapSeekRunnable = Runnable {
                 playerAnalytics?.rewindDoubleTap(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
-                gestureSeekValue.gone()
+                binding.gestureSeekValue.gone()
                 tapJob?.cancel()
                 tapSeekStarted = false
                 localSeekDelta = 0
@@ -170,8 +177,8 @@ class VideoControlsAlib @JvmOverloads constructor(
             private fun handleEndSwipeSeek() {
                 playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
-                gestureSeekValue.gone()
-                gesturesControllerView.background = null
+                binding.gestureSeekValue.gone()
+                binding.gesturesControllerView.background = null
                 swipeSeekStarted = false
                 localSeekDelta = 0
             }
@@ -186,14 +193,14 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             private fun handleTapSeek(event: MotionEvent?) {
                 val xPos = (event?.x ?: 0f).toInt()
-                val seconds = if (xPos > gesturesControllerView.width / 2) 10L else -10L
+                val seconds = if (xPos > binding.gesturesControllerView.width / 2) 10L else -10L
                 val seekMillis = TimeUnit.SECONDS.toMillis(seconds)
 
                 localSeekDelta += seekMillis
 
                 val textValue =
                     "${if (localSeekDelta > 0) "+" else "-"}${Date(localSeekDelta.absoluteValue).asTimeSecString()}"
-                gestureSeekValue.text = textValue
+                binding.gestureSeekValue.text = textValue
             }
 
             private fun handleEndTapSeek() {
@@ -222,7 +229,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             override fun onDoubleTap(event: MotionEvent?) {
                 event ?: return
                 if (!tapSeekStarted) {
-                    gestureSeekValue.visible()
+                    binding.gestureSeekValue.visible()
                     tapSeekStarted = true
                     handleStartTapSeek()
                 }
@@ -233,13 +240,13 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {
                 if (!swipeSeekStarted) {
-                    gestureSeekValue.visible()
+                    binding.gestureSeekValue.visible()
                     swipeSeekStarted = true
                 }
 
                 val duration = videoView?.duration ?: 0
                 val currentPosition = videoView?.currentPosition ?: 0
-                val percent: Int = ((delta / gesturesControllerView.width) * 100).toInt()
+                val percent: Int = ((delta / binding.gesturesControllerView.width) * 100).toInt()
                 val seconds =
                     (pow(percent.toDouble(), 2.0) / 25).toLong() * if (percent < 0) -1 else 1
                 val seekMillis = TimeUnit.SECONDS.toMillis(seconds)
@@ -248,7 +255,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 val textValue =
                     "${if (seekMillis > 0) "+" else "-"}${Date(seekMillis.absoluteValue).asTimeSecString()}"
 
-                gestureSeekValue.text = textValue
+                binding.gestureSeekValue.text = textValue
                 localSeekDelta = seekMillis
             }
 
@@ -300,19 +307,19 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun registerListeners() {
         super.registerListeners()
-        controlMinusOpening.setOnClickListener { alibControlsListener?.onMinusClick() }
-        controlPlusOpening.setOnClickListener { alibControlsListener?.onPlusClick() }
-        controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
-        controlsSettings.setOnClickListener { alibControlsListener?.onSettingsClick() }
+        binding.controlMinusOpening.setOnClickListener { alibControlsListener?.onMinusClick() }
+        binding.controlPlusOpening.setOnClickListener { alibControlsListener?.onPlusClick() }
+        binding.controlsFullscreen.setOnClickListener { alibControlsListener?.onFullScreenClick() }
+        binding.controlsSettings.setOnClickListener { alibControlsListener?.onSettingsClick() }
     }
 
     override fun setTitle(title: CharSequence?) {
-        toolbar.title = title
+        binding.toolbar.title = title
         updateTextContainerVisibility()
     }
 
     override fun setSubTitle(subTitle: CharSequence?) {
-        toolbar.subtitle = subTitle
+        binding.toolbar.subtitle = subTitle
         updateTextContainerVisibility()
     }
 
@@ -349,9 +356,9 @@ class VideoControlsAlib @JvmOverloads constructor(
                     VideoControls.CONTROL_VISIBILITY_ANIMATION_LENGTH
                 )
             )
-            controlButtonsWrapper.startAnimation(
+            binding.controlButtonsWrapper.startAnimation(
                 CenterViewHideShowAnimation(
-                    controlButtonsWrapper,
+                    binding.controlButtonsWrapper,
                     toVisible,
                     225
                 )
@@ -363,7 +370,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
             colorAnimation.duration = 335 // milliseconds
             colorAnimation.addUpdateListener { animator ->
-                videoControlsRoot.setBackgroundColor(
+                binding.videoControlsRoot.setBackgroundColor(
                     animator.animatedValue as Int
                 )
             }
@@ -384,7 +391,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
         if (initialLoad) {
             controlsContainer.gone()
-            controlButtonsWrapper.gone()
+            binding.controlButtonsWrapper.gone()
         } else {
             playPauseButton.isEnabled = false
             previousButton.isEnabled = false
@@ -402,7 +409,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         isLoading = false
         loadingProgressBar.gone()
         controlsContainer.visible()
-        controlButtonsWrapper.visible()
+        binding.controlButtonsWrapper.visible()
 
         playPauseButton.isEnabled = true
         previousButton.isEnabled = enabledViews.get(
@@ -418,8 +425,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     override fun updateProgress(position: Long, duration: Long, bufferPercent: Int) {
         super.updateProgress(position, duration, bufferPercent)
         val skip = getCurrentSkip()
-        btSkipsSkip.isVisible = skip != null
-        btSkipsCancel.isVisible = skip != null
+        binding.btSkipsSkip.isVisible = skip != null
+        binding.btSkipsCancel.isVisible = skip != null
     }
 
     fun setFullScreenMode(isFullscreen: Boolean) {
@@ -428,7 +435,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         } else {
             R.drawable.ic_arrow_expand
         }
-        controlsFullscreen.apply {
+        binding.controlsFullscreen.apply {
             setImageDrawable(context.getCompatDrawable(icRes))
         }
     }

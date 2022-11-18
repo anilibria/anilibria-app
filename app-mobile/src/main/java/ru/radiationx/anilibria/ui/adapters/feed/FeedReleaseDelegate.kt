@@ -4,9 +4,9 @@ import android.text.Html
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_feed_release.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFeedReleaseBinding
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -32,26 +32,31 @@ class FeedReleaseDelegate(
     override fun bindData(item: FeedListItem, holder: ViewHolder) = holder.bind(item)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ReleaseItemState, View) -> Unit,
         private val longClickListener: (ReleaseItemState, View) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFeedReleaseBinding>()
 
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.release)
 
-            item_title.text = state.title
-            item_desc.text = Html.fromHtml(state.description)
-            ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${state.id}")
-            item_new_indicator.visible(state.isNew)
-            item_image.showImageUrl(state.posterUrl)
+            binding.itemTitle.text = state.title
+            binding.itemDesc.text = Html.fromHtml(state.description)
+            ViewCompat.setTransitionName(
+                binding.itemImage,
+                "${item.javaClass.simpleName}_${state.id}"
+            )
+            binding.itemNewIndicator.visible(state.isNew)
+            binding.itemImage.showImageUrl(state.posterUrl)
 
 
-            containerView.setOnClickListener {
-                clickListener.invoke(state, item_image)
+            binding.root.setOnClickListener {
+                clickListener.invoke(state, binding.itemImage)
             }
-            containerView.setOnLongClickListener {
-                longClickListener.invoke(state, item_image)
+            binding.root.setOnLongClickListener {
+                longClickListener.invoke(state, binding.itemImage)
                 return@setOnLongClickListener false
             }
         }

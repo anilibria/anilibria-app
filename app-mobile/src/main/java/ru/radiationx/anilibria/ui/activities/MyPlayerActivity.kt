@@ -21,9 +21,11 @@ import android.util.Rational
 import android.view.Surface
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.OnCompletionListener
 import com.devbrackets.android.exomedia.listener.OnPreparedListener
@@ -33,11 +35,10 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
-import kotlinx.android.synthetic.main.activity_myplayer.*
-import kotlinx.android.synthetic.main.view_video_control.*
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
+import ru.radiationx.anilibria.databinding.ActivityMyplayerBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
@@ -75,7 +76,7 @@ fun Int.toPrefQuality() = when (this) {
     else -> PreferencesHolder.QUALITY_NO
 }
 
-class MyPlayerActivity : BaseActivity() {
+class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     companion object {
         const val ARG_RELEASE = "release"
@@ -136,6 +137,8 @@ class MyPlayerActivity : BaseActivity() {
     @Inject
     lateinit var errorReporter: AnalyticsErrorReporter
 
+    private val binding by viewBinding<ActivityMyplayerBinding>()
+
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(playerAnalytics::useTime)
     }
@@ -195,16 +198,15 @@ class MyPlayerActivity : BaseActivity() {
         goFullscreen()
         currentPlaySpeed = loadPlaySpeed()
         currentPipControl = loadPIPControl()
-        setContentView(R.layout.activity_myplayer)
 
-        player.setScaleType(currentScale)
-        player.playbackSpeed = currentPlaySpeed
-        player.setOnPreparedListener(playerListener)
-        player.setOnCompletionListener(playerListener)
-        player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
+        binding.player.setScaleType(currentScale)
+        binding.player.playbackSpeed = currentPlaySpeed
+        binding.player.setOnPreparedListener(playerListener)
+        binding.player.setOnCompletionListener(playerListener)
+        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
-        player.setAnalyticsListener(object : AnalyticsListener {
+        binding.player.setAnalyticsListener(object : AnalyticsListener {
 
             private var wasFirstFrame = false
             private var lastLoadedUri: Uri? = null
@@ -295,7 +297,7 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.apply {
             setAnalytics(playerAnalytics)
             updatePIPControl()
-            player.setControls(this as VideoControlsCore)
+            binding.player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
             let {
@@ -398,7 +400,7 @@ class MyPlayerActivity : BaseActivity() {
         if (!inMultiWindow) {
             saveScale(currentOrientation, currentScale)
         }
-        player?.setScaleType(currentScale)
+        binding.player.setScaleType(currentScale)
     }
 
     private fun updateQuality(newQuality: Int) {
@@ -412,7 +414,7 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun updatePlaySpeed(newPlaySpeed: Float) {
         currentPlaySpeed = newPlaySpeed
-        player.playbackSpeed = currentPlaySpeed
+        binding.player.playbackSpeed = currentPlaySpeed
         savePlaySpeed()
     }
 
@@ -436,7 +438,7 @@ class MyPlayerActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
-        player.pause()
+        binding.player.pause()
     }
 
     private fun getInMultiWindow(): Boolean {
@@ -473,14 +475,14 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
-    private fun saveEpisodeAtNoZero(position: Long = player.currentPosition) {
+    private fun saveEpisodeAtNoZero(position: Long = binding.player.currentPosition) {
         if (position == 0L) {
             return
         }
         saveEpisode(position)
     }
 
-    private fun saveEpisode(position: Long = player.currentPosition) {
+    private fun saveEpisode(position: Long = binding.player.currentPosition) {
         if (position < 0) {
             return
         }
@@ -501,15 +503,27 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
+        binding.player.setOnPreparedListener(null)
+        binding.player.setOnCompletionListener(null)
+        binding.player.setOnVideoSizedChangedListener(null)
+        binding.player.setAnalyticsListener(null)
+
+        videoControls?.apply {
+            setOpeningListener(null)
+            setVisibilityListener(null)
+            setButtonListener(null)
+        }
+
         getAverageStatisticsValues().forEach { statsEntry ->
             statsEntry.value.forEach { qualityEntry ->
                 playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
             }
         }
         saveEpisodeAtNoZero()
-        player.stopPlayback()
-        super.onDestroy()
+        binding.player.stopPlayback()
         exitFullscreen()
+        videoControls = null
     }
 
     private fun getNextEpisode(): Episode? {
@@ -539,7 +553,7 @@ class MyPlayerActivity : BaseActivity() {
                         .setTitle("Перемотать")
                         .setItems(titles) { _, which ->
                             if (which == 1) {
-                                player.seekTo(episode.access.seek)
+                                binding.player.seekTo(episode.access.seek)
                             }
                         }
                         .show()
@@ -550,14 +564,20 @@ class MyPlayerActivity : BaseActivity() {
             }
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
-                player.seekTo(episode.access.seek)
+                binding.player.seekTo(episode.access.seek)
             }
         }
         playFlag = PLAY_FLAG_FORCE_CONTINUE
     }
 
     private fun hardPlayEpisode(episode: Episode) {
-        toolbar.subtitle = "${episode.title} [${dialogController.getQualityTitle(currentQuality)}]"
+        videoControls?.setSubTitle(
+            "${episode.title} [${
+                dialogController.getQualityTitle(
+                    currentQuality
+                )
+            }]"
+        )
         currentEpisodeId = getEpisodeId(episode)
         val videoPath = when (currentQuality) {
             VAL_QUALITY_SD -> episode.urlSd
@@ -571,7 +591,7 @@ class MyPlayerActivity : BaseActivity() {
             it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.lastOrNull()?.id)
         }
         videoPath?.also {
-            player.setVideoPath(it)
+            binding.player.setVideoPath(it)
         }
     }
 
@@ -630,6 +650,7 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean, newConfig: Configuration
     ) {
@@ -657,7 +678,7 @@ class MyPlayerActivity : BaseActivity() {
             //videoControls?.setControlsEnabled(true)
 
             updateByConfig(newConfig)
-            player.showControls()
+            binding.player.showControls()
             videoControls?.visible()
 
             //player.showControls()
@@ -684,7 +705,7 @@ class MyPlayerActivity : BaseActivity() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
         if (checkPipMode()) {
-            player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
+            binding.player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
@@ -697,7 +718,7 @@ class MyPlayerActivity : BaseActivity() {
     private fun updatePictureInPictureParams() {
         if (checkPipMode()) {
             val params = pictureInPictureParams ?: return
-            val playState = player?.isPlaying ?: return
+            val playState = binding.player?.isPlaying ?: return
             val actions = mutableListOf<RemoteAction>()
             val maxActions = maxNumPictureInPictureActions
 
@@ -1117,11 +1138,10 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun getSeekPercent(): Float {
-        if (player == null) return 0f
-        if (player.duration <= 0) {
+        if (binding.player.duration <= 0) {
             return 0f
         }
-        return player.currentPosition / player.duration.toFloat()
+        return binding.player.currentPosition / binding.player.duration.toFloat()
     }
 
 
@@ -1142,13 +1162,13 @@ class MyPlayerActivity : BaseActivity() {
 
         private val delta = TimeUnit.SECONDS.toMillis(90)
         override fun onMinusClick() {
-            val newPosition = player.currentPosition - delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
+            val newPosition = binding.player.currentPosition - delta
+            binding.player.seekTo(newPosition.coerceIn(0, binding.player.duration))
         }
 
         override fun onPlusClick() {
-            val newPosition = player.currentPosition + delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
+            val newPosition = binding.player.currentPosition + delta
+            binding.player.seekTo(newPosition.coerceIn(0, binding.player.duration))
         }
 
         override fun onFullScreenClick() {
@@ -1174,15 +1194,15 @@ class MyPlayerActivity : BaseActivity() {
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
         override fun onPrepared() {
             val episode = getEpisode()
-            if (episode.access.seek >= player.duration) {
-                player.stopPlayback()
+            if (episode.access.seek >= binding.player.duration) {
+                binding.player.stopPlayback()
                 if (getNextEpisode() == null) {
                     showSeasonFinishDialog()
                 } else {
                     showEpisodeFinishDialog()
                 }
             } else {
-                player.start()
+                binding.player.start()
             }
         }
 
@@ -1195,12 +1215,12 @@ class MyPlayerActivity : BaseActivity() {
 
     private val controlsListener = object : VideoControlsButtonListener {
         override fun onPlayPauseClicked(): Boolean {
-            if (player.isPlaying) {
+            if (binding.player.isPlaying) {
                 playerAnalytics.pauseClick()
-                player.pause()
+                binding.player.pause()
             } else {
                 playerAnalytics.playClick()
-                player.start()
+                binding.player.start()
             }
             return true
         }
@@ -1233,7 +1253,7 @@ class MyPlayerActivity : BaseActivity() {
     private inner class FullScreenListener : View.OnSystemUiVisibilityChangeListener {
         override fun onSystemUiVisibilityChange(visibility: Int) {
             if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
-                player.showControls()
+                binding.player.showControls()
             }
         }
     }

@@ -11,10 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.dialog_file_download.view.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
@@ -159,30 +159,34 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
     }
 
     override fun showFileDonateDialog(url: String) {
-        val dialogView = LayoutInflater.from(requireView().context)
-            .inflate(R.layout.dialog_file_download, null, false)
-            .apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            }
+        val dialogBinding = DialogFileDownloadBinding.inflate(
+            LayoutInflater.from(requireView().context),
+            null,
+            false
+        )
 
-        dialogView.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
+        dialogBinding.root.apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        dialogBinding.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
+            .setView(dialogBinding.root)
             .show()
 
-        dialogView.dialogFilePatreonBtn.setOnClickListener {
+        dialogBinding.dialogFilePatreonBtn.setOnClickListener {
             presenter.onDialogPatreonClick()
             dialog.dismiss()
         }
-        dialogView.dialogFileDonateBtn.setOnClickListener {
+        dialogBinding.dialogFileDonateBtn.setOnClickListener {
             presenter.onDialogDonateClick()
             dialog.dismiss()
         }
-        dialogView.dialogFileDownloadBtn.setOnClickListener {
+        dialogBinding.dialogFileDownloadBtn.setOnClickListener {
             showDownloadDialog(url)
             dialog.dismiss()
         }

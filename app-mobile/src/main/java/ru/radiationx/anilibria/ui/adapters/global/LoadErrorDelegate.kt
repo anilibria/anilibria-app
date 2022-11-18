@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.global
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_load_error.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemLoadErrorBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -23,12 +23,14 @@ class LoadErrorDelegate(
     override fun bindData(item: LoadErrorListItem, holder: ViewHolder) = holder.bind()
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val listener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemLoadErrorBinding>()
 
         fun bind() {
-            itemLoadErrorBtn.setOnClickListener {
+            binding.itemLoadErrorBtn.setOnClickListener {
                 listener.invoke()
             }
         }

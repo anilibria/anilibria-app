@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_remind.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemReleaseRemindBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -23,18 +23,20 @@ class ReleaseRemindDelegate(
     override fun bindData(item: ReleaseRemindListItem, holder: ViewHolder) = holder.bind(item.text)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val itemListener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemReleaseRemindBinding>()
 
         init {
-            remindClose.setOnClickListener {
+            binding.remindClose.setOnClickListener {
                 itemListener.invoke()
             }
         }
 
         fun bind(item: String) {
-            item_title.text = item
+            binding.itemTitle.text = item
         }
     }
 

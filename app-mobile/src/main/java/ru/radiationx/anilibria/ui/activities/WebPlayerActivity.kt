@@ -5,9 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.*
-import kotlinx.android.synthetic.main.activity_moon.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppTheme
+import ru.radiationx.anilibria.databinding.ActivityMoonBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
@@ -21,7 +22,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 
-class WebPlayerActivity : BaseActivity() {
+class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     companion object {
         const val ARG_URL = "iframe_url"
@@ -34,6 +35,8 @@ class WebPlayerActivity : BaseActivity() {
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(webPlayerAnalytics::useTime)
     }
+
+    private val binding by viewBinding<ActivityMoonBinding>()
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -62,14 +65,13 @@ class WebPlayerActivity : BaseActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-        setContentView(R.layout.activity_moon)
         supportActionBar?.hide()
 
-        webView.settings.apply {
+        binding.webView.settings.apply {
             cacheMode = WebSettings.LOAD_NO_CACHE
             javaScriptEnabled = true
         }
-        webView.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
             @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 val matcher =
@@ -128,6 +130,6 @@ class WebPlayerActivity : BaseActivity() {
         val template = DI.get(Templates::class.java).videoPageTemplate
         template.setVariableOpt("iframe_url", argUrl)
 
-        webView.easyLoadData(releaseUrl, template.generateWithTheme(AppTheme.DARK))
+        binding.webView.easyLoadData(releaseUrl, template.generateWithTheme(AppTheme.DARK))
     }
 }

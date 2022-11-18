@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.global
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_load_more.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemLoadMoreBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -25,13 +25,15 @@ class LoadMoreDelegate(
     override fun bindData(item: LoadMoreListItem, holder: ViewHolder) = holder.bind(item.needNotify)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val listener: (() -> Unit)?
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemLoadMoreBinding>()
 
         init {
-            itemLoadMoreBtn.gone()
-            itemLoadMoreContainer.visible()
+            binding.itemLoadMoreBtn.gone()
+            binding.itemLoadMoreContainer.visible()
         }
 
         fun bind(needNotify: Boolean) {

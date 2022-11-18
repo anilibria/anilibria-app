@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_placeholder.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemPlaceholderBinding
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 import ru.radiationx.shared.ktx.android.setTintColorAttr
@@ -19,13 +19,15 @@ class PlaceholderDelegate :
     override fun bindData(item: PlaceholderListItem, holder: ViewHolder) =
         holder.bind(item.icRes, item.titleRes, item.descRes)
 
-    class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemPlaceholderBinding>()
+
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
-            item_placeholder_icon.setCompatDrawable(icRes)
-            item_placeholder_icon.setTintColorAttr(R.attr.colorOnSurface)
-            item_placeholder_title.setText(titleRes)
-            item_placeholder_desc.setText(descRes)
+            binding.itemPlaceholderIcon.setCompatDrawable(icRes)
+            binding.itemPlaceholderIcon.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemPlaceholderTitle.setText(titleRes)
+            binding.itemPlaceholderDesc.setText(descRes)
         }
     }
 }

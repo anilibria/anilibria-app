@@ -63,7 +63,7 @@ class SchedulePresenter @Inject constructor(
                 }
                 handleFirstData()
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun handleFirstData() {
@@ -96,7 +96,7 @@ class SchedulePresenter @Inject constructor(
     }
 
     fun refresh() {
-        presenterScope.launch {
+        viewModelScope.launch {
             updateState {
                 it.copy(refreshing = true)
             }

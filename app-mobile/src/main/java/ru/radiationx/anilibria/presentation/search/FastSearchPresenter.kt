@@ -48,14 +48,14 @@ class FastSearchPresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         queryRelay
             .debounce(350L)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.length >= 3) {
-                    stateController.updateState {
+                    stateController.update {
                         it.copy(loading = true)
                     }
                 } else {
@@ -71,7 +71,7 @@ class FastSearchPresenter @Inject constructor(
             .onEach {
                 showItems(it, currentQuery)
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     fun onClose() {
@@ -102,7 +102,7 @@ class FastSearchPresenter @Inject constructor(
             emptyList()
         }
 
-        stateController.updateState {
+        stateController.update {
             it.copy(
                 loading = false,
                 localItems = localItems,
@@ -112,7 +112,7 @@ class FastSearchPresenter @Inject constructor(
     }
 
     fun onQueryChange(query: String) {
-        presenterScope.launch {
+        viewModelScope.launch {
             currentQuery = query
             queryRelay.emit(currentQuery)
         }

@@ -66,7 +66,7 @@ class SearchPresenter @Inject constructor(
     private var beforeOpenDialogSorting = ""
     private var beforeComplete = false
 
-    private val loadingController = DataLoadingController(presenterScope) {
+    private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
@@ -93,7 +93,7 @@ class SearchPresenter @Inject constructor(
     }
 
     private fun loadGenres() {
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 searchRepository.getGenres()
             }.onFailure {
@@ -108,11 +108,11 @@ class SearchPresenter @Inject constructor(
             .onEach {
                 viewState.showGenres(it)
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun loadYears() {
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 searchRepository.getYears()
             }.onFailure {
@@ -127,7 +127,7 @@ class SearchPresenter @Inject constructor(
             .onEach {
                 viewState.showYears(it)
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun observeSearchRemind() {
@@ -135,11 +135,11 @@ class SearchPresenter @Inject constructor(
             .observeSearchRemind()
             .onEach { remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
-                stateController.updateState {
+                stateController.update {
                     it.copy(remindText = newRemindText)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun observeLoadingState() {
@@ -153,18 +153,18 @@ class SearchPresenter @Inject constructor(
             }
         }
             .onEach { loadingState ->
-                stateController.updateState {
+                stateController.update {
                     it.copy(data = loadingState)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun observeScreenState() {
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun submitPageAnalytics(page: Int) {

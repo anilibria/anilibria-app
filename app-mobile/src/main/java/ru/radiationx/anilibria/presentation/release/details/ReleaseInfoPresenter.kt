@@ -69,7 +69,7 @@ class ReleaseInfoPresenter @Inject constructor(
     )
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
-        stateController.updateState {
+        stateController.update {
             it.copy(
                 modifiers = block.invoke(it.modifiers)
             )
@@ -82,12 +82,12 @@ class ReleaseInfoPresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         donationRepository
             .observerDonationInfo()
             .onEach { info ->
-                stateController.updateState { state ->
+                stateController.update { state ->
                     val newCardState = info.cardRelease?.let {
                         DonationCardItemState(
                             tag = "donate",
@@ -99,7 +99,7 @@ class ReleaseInfoPresenter @Inject constructor(
                     state.copy(donationCardState = newCardState)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         appPreferences
             .observeEpisodesIsReverse()
@@ -108,16 +108,16 @@ class ReleaseInfoPresenter @Inject constructor(
                     it.copy(episodesReversed = episodesReversed)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         appPreferences
             .observeReleaseRemind()
             .onEach { remindEnabled ->
-                stateController.updateState {
+                stateController.update {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
             updateLocalRelease(it)
@@ -137,14 +137,14 @@ class ReleaseInfoPresenter @Inject constructor(
         releaseInteractor
             .observeFull(releaseId, releaseIdCode)
             .onEach { updateLocalRelease(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun updateLocalRelease(release: Release) {
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
-        stateController.updateState {
+        stateController.update {
             it.copy(data = release.toState())
         }
     }
@@ -362,7 +362,7 @@ class ReleaseInfoPresenter @Inject constructor(
             releaseAnalytics.favoriteAdd(releaseId.id)
         }
 
-        presenterScope.launch {
+        viewModelScope.launch {
             updateModifiers {
                 it.copy(favoriteRefreshing = true)
             }
@@ -452,7 +452,7 @@ class ReleaseInfoPresenter @Inject constructor(
             systemUtils.systemDownloader(url, fileName)
             return
         }
-        presenterScope.launch {
+        viewModelScope.launch {
             val result =
                 mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             if (result.isSuccess()) {

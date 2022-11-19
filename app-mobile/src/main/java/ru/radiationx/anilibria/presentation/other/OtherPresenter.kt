@@ -71,7 +71,7 @@ class OtherPresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         profileMenu.add(
             OtherMenuItem(
@@ -87,7 +87,7 @@ class OtherPresenter @Inject constructor(
 
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 menuRepository.getMenu()
             }.onFailure {
@@ -100,7 +100,7 @@ class OtherPresenter @Inject constructor(
 
     override fun attachView(view: OtherView?) {
         super.attachView(view)
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 authRepository.loadUser()
             }.onFailure {
@@ -183,7 +183,7 @@ class OtherPresenter @Inject constructor(
                 currentProfileItem = it
                 updateMenuItems()
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         menuRepository
             .observeMenu()
@@ -202,7 +202,7 @@ class OtherPresenter @Inject constructor(
                 linksMap.putAll(linkItems.associateBy { it.hashCode() })
                 updateMenuItems()
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun updateMenuItems() {
@@ -223,7 +223,7 @@ class OtherPresenter @Inject constructor(
             .map { itemsGroup ->
                 itemsGroup.map { it.toState() }
             }
-        stateController.updateState {
+        stateController.update {
             it.copy(
                 profile = profileState,
                 profileMenuItems = profileMenuState,

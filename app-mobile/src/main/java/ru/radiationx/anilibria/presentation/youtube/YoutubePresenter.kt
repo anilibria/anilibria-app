@@ -31,7 +31,7 @@ class YoutubePresenter @Inject constructor(
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics
 ) : BasePresenter<YoutubeView>(router) {
 
-    private val loadingController = DataLoadingController(presenterScope) {
+    private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
@@ -48,16 +48,16 @@ class YoutubePresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         loadingController
             .observeState()
             .onEach { loadingState ->
-                stateController.updateState {
+                stateController.update {
                     it.copy(data = loadingState)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
         loadingController.refresh()
     }
 

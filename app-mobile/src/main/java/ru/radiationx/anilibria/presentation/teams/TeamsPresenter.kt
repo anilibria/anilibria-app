@@ -28,7 +28,7 @@ class TeamsPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 repository.requestUpdate()
             }.onFailure {
@@ -42,7 +42,7 @@ class TeamsPresenter(
                 viewState.setLoading(false)
                 currentDataRelay.value = it
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         currentDataRelay
             .filterNotNull()
@@ -55,7 +55,7 @@ class TeamsPresenter(
             .onEach {
                 viewState.showData(it)
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     fun setQueryText(text: String) {

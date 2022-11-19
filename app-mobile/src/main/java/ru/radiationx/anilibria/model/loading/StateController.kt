@@ -15,7 +15,7 @@ class StateController<T : Any>(defaultState: T) {
             stateRelay.value = value
         }
 
-    fun updateState(block: (T) -> T) {
+    fun update(block: (T) -> T) {
         stateRelay.update(block)
     }
 

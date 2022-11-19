@@ -16,12 +16,12 @@ import ru.terrakok.cicerone.Router
 @Deprecated("use viewmodel", level = DeprecationLevel.ERROR)
 open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPresenter<ViewT>() {
 
-    val presenterScope by lazy {
+    val viewModelScope by lazy {
         CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     }
 
     override fun onDestroy() {
-        presenterScope.cancel()
+        viewModelScope.cancel()
     }
 
     fun onBackPressed() {

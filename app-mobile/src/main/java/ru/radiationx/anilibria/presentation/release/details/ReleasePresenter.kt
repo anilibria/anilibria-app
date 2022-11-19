@@ -56,7 +56,7 @@ class ReleasePresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun subscribeAuth() {
@@ -64,11 +64,11 @@ class ReleasePresenter @Inject constructor(
             .observeAuthState()
             .drop(1)
             .onEach { loadRelease() }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun loadRelease() {
-        presenterScope.launch {
+        viewModelScope.launch {
             viewState.setRefreshing(true)
             runCatching {
                 releaseInteractor.loadRelease(releaseId, releaseIdCode)
@@ -88,7 +88,7 @@ class ReleasePresenter @Inject constructor(
                 updateLocalRelease(release)
                 historyRepository.putRelease(release as Release)
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun updateLocalRelease(release: Release) {
@@ -96,7 +96,7 @@ class ReleasePresenter @Inject constructor(
         releaseId = release.id
         releaseIdCode = release.code
 
-        stateController.updateState {
+        stateController.update {
             it.copy(
                 poster = currentData?.poster,
                 title = currentData?.let {

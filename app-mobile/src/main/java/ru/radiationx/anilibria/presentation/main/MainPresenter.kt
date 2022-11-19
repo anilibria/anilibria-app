@@ -58,7 +58,7 @@ class MainPresenter @Inject constructor(
                     }
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         if (apiConfig.needConfig) {
             viewState.showConfiguring()
@@ -78,10 +78,10 @@ class MainPresenter @Inject constructor(
         authRepository
             .observeAuthState()
             .onEach { viewState.updateTabs() }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
         viewState.onMainLogicCompleted()
 
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 authRepository.loadUser()
             }.onFailure {

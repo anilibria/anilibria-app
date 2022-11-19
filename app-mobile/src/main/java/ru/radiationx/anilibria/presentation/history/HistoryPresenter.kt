@@ -47,7 +47,7 @@ class HistoryPresenter @Inject constructor(
         stateController
             .observeState()
             .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
         observeReleases()
     }
 
@@ -58,13 +58,13 @@ class HistoryPresenter @Inject constructor(
                 currentReleases.clear()
                 currentReleases.addAll(releases)
 
-                stateController.updateState {
+                stateController.update {
                     it.copy(items = currentReleases.map { it.toState(updates) })
                 }
 
                 updateSearchState()
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     private fun updateSearchState() {
@@ -77,7 +77,7 @@ class HistoryPresenter @Inject constructor(
         } else {
             emptyList()
         }
-        stateController.updateState {
+        stateController.update {
             it.copy(searchItems = searchItes.map { it.toState(updates) })
         }
     }

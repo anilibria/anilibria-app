@@ -2,17 +2,17 @@ package ru.radiationx.anilibria.presentation.feed
 
 import android.Manifest
 import android.os.Build
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
 import ru.radiationx.anilibria.model.*
 import ru.radiationx.anilibria.model.loading.*
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.feed.*
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -36,13 +36,13 @@ import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.*
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import toothpick.InjectConstructor
 import java.util.*
-import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
-@InjectViewState
-class FeedPresenter @Inject constructor(
+@InjectConstructor
+class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val scheduleRepository: ScheduleRepository,
@@ -65,7 +65,7 @@ class FeedPresenter @Inject constructor(
     private val updaterAnalytics: UpdaterAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val donationCardAnalytics: DonationCardAnalytics
-) : BasePresenter<FeedView>(router) {
+) : ViewModel() {
 
     companion object {
         private const val DONATION_NEW_TAG = "donation_new"
@@ -83,12 +83,13 @@ class FeedPresenter @Inject constructor(
         FeedAppWarningType.WARNING
     )
 
-    private val loadingController = DataLoadingController(presenterScope) {
+    private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
 
-    private val stateController = StateController(FeedScreenState())
+    private val _state = MutableStateFlow(FeedScreenState())
+    val state = _state.asStateFlow()
 
     private val warningsController = AppWarningsController()
 
@@ -96,8 +97,7 @@ class FeedPresenter @Inject constructor(
 
     private var lastLoadedPage: Int? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    init {
 
         checkerRepository
             .observeUpdate()
@@ -109,7 +109,7 @@ class FeedPresenter @Inject constructor(
                     warningsController.remove(appUpdateWarning.tag)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionsController
@@ -121,14 +121,14 @@ class FeedPresenter @Inject constructor(
                         warningsController.remove(appNotificationsWarning.tag)
                     }
                 }
-                .launchIn(presenterScope)
+                .launchIn(viewModelScope)
         }
 
         warningsController.warnings.onEach { warnings ->
-            stateController.updateState {
+            _state.update {
                 it.copy(warnings = warnings.values.toList())
             }
-        }.launchIn(presenterScope)
+        }.launchIn(viewModelScope)
 
         appPreferences
             .observeNewDonationRemind()
@@ -150,16 +150,11 @@ class FeedPresenter @Inject constructor(
                 } else {
                     null
                 }
-                stateController.updateState {
+                _state.update {
                     it.copy(donationCardItemState = newDonationState)
                 }
             }
-            .launchIn(presenterScope)
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         combine(
             loadingController.observeState(),
@@ -171,11 +166,11 @@ class FeedPresenter @Inject constructor(
             }
         }
             .onEach { loadingState ->
-                stateController.updateState {
+                _state.update {
                     it.copy(data = loadingState)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         loadingController.refresh()
     }
@@ -228,7 +223,7 @@ class FeedPresenter @Inject constructor(
         if (randomJob?.isActive == true) {
             return
         }
-        randomJob = presenterScope.launch {
+        randomJob = viewModelScope.launch {
             runCatching {
                 releaseInteractor.getRandomRelease()
             }.onSuccess {
@@ -311,7 +306,7 @@ class FeedPresenter @Inject constructor(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return
         }
-        presenterScope.launch {
+        viewModelScope.launch {
             permissionsDialogFlow.request(Manifest.permission.POST_NOTIFICATIONS)
         }
     }

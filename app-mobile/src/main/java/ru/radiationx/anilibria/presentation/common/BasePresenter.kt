@@ -13,6 +13,7 @@ import ru.terrakok.cicerone.Router
  */
 
 
+@Deprecated("use viewmodel", level = DeprecationLevel.ERROR)
 open class BasePresenter<ViewT : MvpView>(private val router: Router) : MvpPresenter<ViewT>() {
 
     val presenterScope by lazy {

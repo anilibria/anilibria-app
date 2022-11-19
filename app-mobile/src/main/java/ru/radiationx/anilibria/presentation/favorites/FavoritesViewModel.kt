@@ -1,13 +1,16 @@
 package ru.radiationx.anilibria.presentation.favorites
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.*
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -20,13 +23,13 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
 /**
  * Created by radiationx on 13.01.18.
  */
-@InjectViewState
-class FavoritesPresenter @Inject constructor(
+@InjectConstructor
+class FavoritesViewModel(
     private val favoriteRepository: FavoriteRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -35,24 +38,20 @@ class FavoritesPresenter @Inject constructor(
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val shortcutHelper: ShortcutHelper,
     private val systemUtils: SystemUtils
-) : BasePresenter<FavoritesView>(router) {
+) : ViewModel() {
 
-    private val loadingController = DataLoadingController(presenterScope) {
+    private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
 
-    private val stateController = StateController(FavoritesScreenState())
+    private val _state = MutableStateFlow(FavoritesScreenState())
+    val state = _state.asStateFlow()
 
     private var lastLoadedPage: Int? = null
     private val queryState = MutableStateFlow("")
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+    init {
 
         val updatesMapFlow = releaseUpdateHolder.observeEpisodes().map { updates ->
             updates.associateBy { it.id }
@@ -66,11 +65,11 @@ class FavoritesPresenter @Inject constructor(
             currentItems.filterByQuery(query).map { it.toState(updates) }
         }
             .onEach { searchItems ->
-                stateController.updateState {
+                _state.update {
                     it.copy(searchItems = searchItems)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         combine(
             loadingController.observeState(),
@@ -81,11 +80,11 @@ class FavoritesPresenter @Inject constructor(
             }
         }
             .onEach { loadingState ->
-                stateController.updateState {
+                _state.update {
                     it.copy(data = loadingState)
                 }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
         refreshReleases()
     }
@@ -100,8 +99,8 @@ class FavoritesPresenter @Inject constructor(
 
     fun deleteFav(id: ReleaseId) {
         favoritesAnalytics.deleteFav()
-        presenterScope.launch {
-            stateController.updateState {
+        viewModelScope.launch {
+            _state.update {
                 it.copy(deletingItemIds = it.deletingItemIds + id)
             }
             runCatching {
@@ -117,7 +116,7 @@ class FavoritesPresenter @Inject constructor(
             }.onFailure {
                 errorHandler.handle(it)
             }
-            stateController.updateState {
+            _state.update {
                 it.copy(deletingItemIds = it.deletingItemIds - id)
             }
         }

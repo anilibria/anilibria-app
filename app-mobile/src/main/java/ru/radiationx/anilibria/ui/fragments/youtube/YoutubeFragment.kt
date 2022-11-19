@@ -3,27 +3,27 @@ package ru.radiationx.anilibria.ui.fragments.youtube
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.presentation.youtube.YoutubePresenter
-import ru.radiationx.anilibria.presentation.youtube.YoutubeView
+import ru.radiationx.anilibria.presentation.youtube.YoutubeViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 
-class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    YoutubeView {
+class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
-            loadMoreListener = { presenter.loadMore() },
-            loadRetryListener = { presenter.loadMore() },
+            loadMoreListener = { viewModel.loadMore() },
+            loadRetryListener = { viewModel.loadMore() },
             listener = adapterListener,
             emptyPlaceHolder = PlaceholderListItem(
                 R.drawable.ic_youtube,
@@ -38,12 +38,7 @@ class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragme
         )
     }
 
-    @InjectPresenter
-    lateinit var presenter: YoutubePresenter
-
-    @ProvidePresenter
-    fun providePresenter(): YoutubePresenter =
-        getDependency(YoutubePresenter::class.java)
+    private val viewModel by viewModel<YoutubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
@@ -63,7 +58,7 @@ class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragme
             title = getString(R.string.fragment_title_youtube)
         }
 
-        binding.refreshLayout.setOnRefreshListener { presenter.refresh() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refresh() }
 
         binding.recyclerView.apply {
             adapter = youtubeAdapter
@@ -77,23 +72,22 @@ class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragme
         ) {
             updateToolbarShadow(it)
         }
+
+        viewModel.state.onEach {state->
+            binding.progressBarList.isVisible = state.data.emptyLoading
+            binding.refreshLayout.isRefreshing = state.data.refreshLoading
+            youtubeAdapter.bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
-    }
-
-    override fun showState(state: YoutubeScreenState) {
-        binding.progressBarList.isVisible = state.data.emptyLoading
-        binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        youtubeAdapter.bindState(state)
+        return false
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {
 
         override fun onItemClick(item: YoutubeItemState, position: Int) {
-            presenter.onItemClick(item)
+            viewModel.onItemClick(item)
         }
 
         override fun onItemLongClick(item: YoutubeItemState): Boolean {

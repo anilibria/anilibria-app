@@ -1,13 +1,12 @@
 package ru.radiationx.anilibria.presentation.schedule
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleDayState
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleScreenState
@@ -16,33 +15,33 @@ import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.repository.ScheduleRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
 import ru.terrakok.cicerone.Router
+import toothpick.InjectConstructor
 import java.util.*
-import javax.inject.Inject
 
-@InjectViewState
-class SchedulePresenter @Inject constructor(
+@InjectConstructor
+class ScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val scheduleAnalytics: ScheduleAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
-) : BasePresenter<ScheduleView>(router) {
+) : ViewModel() {
 
     private var firstData = true
     var argDay: Int = -1
 
-    private var currentState = ScheduleScreenState()
+    private val _state = MutableStateFlow(ScheduleScreenState())
+    val state = _state.asStateFlow()
+
+    private val _scrollEvent = EventFlow<ScheduleDayState>()
+    val scrollEvent = _scrollEvent.observe()
+
     private val currentDays = mutableListOf<ScheduleDay>()
 
-    private fun updateState(block: (ScheduleScreenState) -> ScheduleScreenState) {
-        currentState = block.invoke(currentState)
-        viewState.showState(currentState)
-    }
-
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    init {
         scheduleRepository
             .observeSchedule()
             .onEach { scheduleDays ->
@@ -58,7 +57,7 @@ class SchedulePresenter @Inject constructor(
                     ScheduleDayState(dayName, items)
                 }
 
-                updateState {
+                _state.update {
                     it.copy(dayItems = dayStates)
                 }
                 handleFirstData()
@@ -66,19 +65,8 @@ class SchedulePresenter @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun handleFirstData() {
-        if (firstData) {
-            firstData = false
-            val currentDay = if (argDay != -1) {
-                argDay
-            } else {
-                Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-            }
-            currentDays
-                .indexOfFirst { it.day == currentDay }
-                .let { currentState.dayItems.getOrNull(it) }
-                ?.also { viewState.scrollToDay(it) }
-        }
+    fun onBackPressed() {
+        router.exit()
     }
 
     fun onHorizontalScroll(position: Int) {
@@ -97,17 +85,28 @@ class SchedulePresenter @Inject constructor(
 
     fun refresh() {
         viewModelScope.launch {
-            updateState {
-                it.copy(refreshing = true)
-            }
+            _state.update { it.copy(refreshing = true) }
             runCatching {
                 scheduleRepository.loadSchedule()
             }.onFailure {
                 errorHandler.handle(it)
             }
-            updateState {
-                it.copy(refreshing = false)
+            _state.update { it.copy(refreshing = false) }
+        }
+    }
+
+    private fun handleFirstData() {
+        if (firstData) {
+            firstData = false
+            val currentDay = if (argDay != -1) {
+                argDay
+            } else {
+                Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
             }
+            currentDays
+                .indexOfFirst { it.day == currentDay }
+                .let { _state.value.dayItems.getOrNull(it) }
+                ?.also { _scrollEvent.set(it) }
         }
     }
 }

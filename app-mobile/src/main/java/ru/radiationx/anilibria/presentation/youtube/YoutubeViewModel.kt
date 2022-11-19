@@ -1,15 +1,13 @@
 package ru.radiationx.anilibria.presentation.youtube
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import moxy.InjectViewState
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeScreenState
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -19,41 +17,35 @@ import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class YoutubePresenter @Inject constructor(
+@InjectConstructor
+class YoutubeViewModel(
     private val youtubeRepository: YoutubeRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val youtubeAnalytics: YoutubeAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics
-) : BasePresenter<YoutubeView>(router) {
+) : ViewModel() {
 
     private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
 
-    private val stateController = StateController(YoutubeScreenState())
+    private val _state = MutableStateFlow(YoutubeScreenState())
+    val state = _state.asStateFlow()
 
     private var currentRawItems = mutableListOf<YoutubeItem>()
 
     private var lastLoadedPage: Int? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(viewModelScope)
-
+    init {
         loadingController
             .observeState()
             .onEach { loadingState ->
-                stateController.update {
+                _state.update {
                     it.copy(data = loadingState)
                 }
             }

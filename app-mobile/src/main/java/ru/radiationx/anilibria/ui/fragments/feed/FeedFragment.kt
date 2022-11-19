@@ -14,16 +14,12 @@ import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedViewModel
-import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
-import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
-import ru.radiationx.anilibria.presentation.search.FastSearchView
+import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -36,8 +32,7 @@ import ru.radiationx.shared_app.di.viewModel
 /* Created by radiationx on 05.11.17. */
 
 class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    SharedProvider,
-    FastSearchView {
+    SharedProvider {
 
     private val adapter = FeedAdapter(
         loadMoreListener = {
@@ -80,20 +75,15 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
     )
 
     private val searchAdapter = FastSearchAdapter(
-        clickListener = { searchPresenter.onItemClick(it) },
-        localClickListener = { searchPresenter.onLocalItemClick(it) }
+        clickListener = { searchViewModel.onItemClick(it) },
+        localClickListener = { searchViewModel.onLocalItemClick(it) }
     )
 
     private val viewModel by viewModel<FeedViewModel>()
 
+    private val searchViewModel by viewModel<FastSearchViewModel>()
+
     private var searchView: SearchView? = null
-
-    @InjectPresenter
-    lateinit var searchPresenter: FastSearchPresenter
-
-    @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -162,7 +152,7 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
-                        searchPresenter.onClose()
+                        searchViewModel.onClose()
                     } else {
                         viewModel.onFastSearchOpen()
                     }
@@ -174,7 +164,7 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
                 }
 
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchPresenter.onQueryChange(newText.toString())
+                    searchViewModel.onQueryChange(newText.toString())
                     return false
                 }
             })
@@ -184,8 +174,14 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
 
         }
 
-        viewModel.state.onEach {
-            showState(it)
+        viewModel.state.onEach { state ->
+            binding.progressBarList.isVisible = state.data.emptyLoading
+            binding.refreshLayout.isRefreshing = state.data.refreshLoading
+            adapter.bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        searchViewModel.state.onEach { state ->
+            searchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
@@ -215,17 +211,6 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
     override fun onDestroyView() {
         adapter.saveState(null)
         super.onDestroyView()
-    }
-
-    override fun showState(state: FastSearchScreenState) {
-        searchAdapter.bindItems(state)
-    }
-
-    /* ReleaseView */
-    private fun showState(state: FeedScreenState) {
-        binding.progressBarList.isVisible = state.data.emptyLoading
-        binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        adapter.bindState(state)
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {

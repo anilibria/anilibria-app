@@ -1,16 +1,14 @@
 package ru.radiationx.anilibria.presentation.other
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.asDataIconRes
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileScreenState
@@ -23,13 +21,14 @@ import ru.radiationx.data.entity.domain.other.OtherMenuItem
 import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class OtherPresenter @Inject constructor(
+@InjectConstructor
+class OtherViewModel(
     private val router: Router,
     private val systemMessenger: SystemMessenger,
     private val authRepository: AuthRepository,
@@ -44,7 +43,7 @@ class OtherPresenter @Inject constructor(
     private val pageAnalytics: PageAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics
-) : BasePresenter<OtherView>(router) {
+) : ViewModel() {
 
     companion object {
         const val MENU_HISTORY = 0
@@ -54,7 +53,11 @@ class OtherPresenter @Inject constructor(
         const val MENU_OTP_CODE = 4
     }
 
-    private val stateController = StateController(ProfileScreenState())
+    private val _state = MutableStateFlow(ProfileScreenState())
+    val state = _state.asStateFlow()
+
+    private val _otpEvent = EventFlow<Unit>()
+    val otpEvent = _otpEvent.observe()
 
     private var currentProfileItem: ProfileItem? = authRepository.getUser()
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
@@ -65,14 +68,7 @@ class OtherPresenter @Inject constructor(
     private val allSystemMenu = mutableListOf<OtherMenuItem>()
     private val allLinkMenu = mutableListOf<OtherMenuItem>()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(viewModelScope)
-
+    init {
         profileMenu.add(
             OtherMenuItem(
                 MENU_OTP_CODE,
@@ -98,8 +94,7 @@ class OtherPresenter @Inject constructor(
         updateMenuItems()
     }
 
-    override fun attachView(view: OtherView?) {
-        super.attachView(view)
+    fun refresh() {
         viewModelScope.launch {
             runCatching {
                 authRepository.loadUser()
@@ -157,7 +152,7 @@ class OtherPresenter @Inject constructor(
                 settingsAnalytics.open(AnalyticsConstants.screen_other)
                 otherAnalytics.authDeviceClick()
                 authDeviceAnalytics.open(AnalyticsConstants.screen_other)
-                viewState.showOtpCode()
+                _otpEvent.set(Unit)
             }
             else -> {
                 linksMap[item.id]?.also { linkItem ->
@@ -223,7 +218,7 @@ class OtherPresenter @Inject constructor(
             .map { itemsGroup ->
                 itemsGroup.map { it.toState() }
             }
-        stateController.update {
+        _state.update {
             it.copy(
                 profile = profileState,
                 profileMenuItems = profileMenuState,

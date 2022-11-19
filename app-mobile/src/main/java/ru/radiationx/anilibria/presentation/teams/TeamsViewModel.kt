@@ -1,8 +1,9 @@
 package ru.radiationx.anilibria.presentation.teams
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.domain.team.Team
@@ -14,20 +15,22 @@ import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class TeamsPresenter(
-    router: Router,
+class TeamsViewModel(
+    private val router: Router,
     private val repository: TeamsRepository,
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val analytics: TeamsAnalytics
-) : BasePresenter<TeamsView>(router) {
+) : ViewModel() {
 
     private val currentDataRelay = MutableStateFlow<Teams?>(null)
 
     private val queryRelay = MutableStateFlow(Query())
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _state = MutableStateFlow(TeamsScreenState())
+    val state = _state.asStateFlow()
+
+    init {
         viewModelScope.launch {
             runCatching {
                 repository.requestUpdate()
@@ -37,10 +40,12 @@ class TeamsPresenter(
         }
         repository
             .observeTeams()
-            .onStart { viewState.setLoading(true) }
-            .onEach {
-                viewState.setLoading(false)
-                currentDataRelay.value = it
+            .onStart {
+                _state.update { it.copy(loading = true) }
+            }
+            .onEach { data ->
+                _state.update { it.copy(loading = false) }
+                currentDataRelay.value = data
             }
             .launchIn(viewModelScope)
 
@@ -52,10 +57,14 @@ class TeamsPresenter(
                     teamStates.filterBy(query)
                 }
             }
-            .onEach {
-                viewState.showData(it)
+            .onEach { data ->
+                _state.update { it.copy(data = data) }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun onBackPressed() {
+        router.exit()
     }
 
     fun setQueryText(text: String) {
@@ -114,3 +123,8 @@ class TeamsPresenter(
         val text: String = ""
     )
 }
+
+data class TeamsScreenState(
+    val data: TeamsState? = null,
+    val loading: Boolean = false
+)

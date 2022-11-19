@@ -1,15 +1,14 @@
 package ru.radiationx.anilibria.presentation.search
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
@@ -18,44 +17,38 @@ import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import toothpick.InjectConstructor
 import java.net.URLEncoder
-import javax.inject.Inject
 
-@InjectViewState
-class FastSearchPresenter @Inject constructor(
+@InjectConstructor
+class FastSearchViewModel(
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val systemUtils: SystemUtils,
     private val catalogAnalytics: CatalogAnalytics,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
-) : BasePresenter<FastSearchView>(router) {
+) : ViewModel() {
 
     companion object {
         private const val ITEM_ID_SEARCH = -100
         private const val ITEM_ID_GOOGLE = -200
     }
 
-    private val stateController = StateController(FastSearchScreenState())
+    private val _state = MutableStateFlow(FastSearchScreenState())
+    val state = _state.asStateFlow()
 
     private var currentQuery = ""
     private var queryRelay = MutableSharedFlow<String>()
     private var currentSuggestions = mutableListOf<SuggestionItem>()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(viewModelScope)
-
+    init {
         queryRelay
             .debounce(350L)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.length >= 3) {
-                    stateController.update {
+                    _state.update {
                         it.copy(loading = true)
                     }
                 } else {
@@ -102,7 +95,7 @@ class FastSearchPresenter @Inject constructor(
             emptyList()
         }
 
-        stateController.update {
+        _state.update {
             it.copy(
                 loading = false,
                 localItems = localItems,

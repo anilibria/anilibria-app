@@ -6,17 +6,16 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.*
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.FragmentWebviewBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.presentation.page.PagePresenter
-import ru.radiationx.anilibria.presentation.page.PageView
+import ru.radiationx.anilibria.presentation.page.PageViewModel
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
@@ -24,7 +23,6 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -33,12 +31,13 @@ import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webview), PageView,
+class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webview),
     ExtendedWebView.JsLifeCycleListener {
 
     companion object {
@@ -56,6 +55,8 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         LifecycleTimeCounter(pageAnalytics::useTime)
     }
 
+    private val viewModel by viewModel<PageViewModel>()
+
     private var pageTitle: String? = null
 
     @Inject
@@ -72,18 +73,11 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
 
     private var webViewScrollPos = 0
 
-    @InjectPresenter
-    lateinit var presenter: PagePresenter
-
-    @ProvidePresenter
-    fun providePagePresenter(): PagePresenter =
-        getDependency(PagePresenter::class.java)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.pagePath = it.getString(ARG_PATH, null)
+            viewModel.pagePath = it.getString(ARG_PATH, null)
             pageTitle = it.getString(ARG_TITLE, null)
         }
     }
@@ -102,12 +96,12 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
-            title = when (presenter.pagePath) {
+            title = when (viewModel.pagePath) {
                 PageApi.PAGE_PATH_TEAM -> "Команда проекта"
                 PageApi.PAGE_PATH_DONATE -> "Поддержать"
                 else -> pageTitle ?: "Статическая страница"
             }
-            setNavigationOnClickListener { presenter.onBackPressed() }
+            setNavigationOnClickListener { viewModel.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
@@ -172,6 +166,14 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
                 binding.webView.evalJs("changeStyleType(\"${it.getWebStyleType()}\")")
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.onEach { state ->
+            binding.progressBarWv.visible(state.loading)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
+            binding.webView.evalJs("ViewModel.setText('content','${data.content.toBase64()}');")
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onResume() {
@@ -202,17 +204,6 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
     }
 
     override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
+        return false
     }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        binding.progressBarWv.visible(refreshing)
-    }
-
-    override fun showPage(page: PageLibria) {
-        //toolbar.title = page.title
-        binding.webView.evalJs("ViewModel.setText('content','${page.content.toBase64()}');")
-    }
-
 }

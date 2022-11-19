@@ -6,17 +6,22 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.presentation.search.*
+import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
+import ru.radiationx.anilibria.presentation.search.SearchCatalogView
+import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -28,11 +33,12 @@ import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 
 
 class SearchCatalogFragment :
     BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SearchCatalogView,
-    FastSearchView, SharedProvider,
+    SharedProvider,
     ReleasesAdapter.ItemListener {
 
     companion object {
@@ -67,17 +73,13 @@ class SearchCatalogFragment :
     )
 
     private val fastSearchAdapter = FastSearchAdapter(
-        clickListener = { searchPresenter.onItemClick(it) },
-        localClickListener = { searchPresenter.onLocalItemClick(it) }
+        clickListener = { searchViewModel.onItemClick(it) },
+        localClickListener = { searchViewModel.onLocalItemClick(it) }
     )
+
+    private val searchViewModel by viewModel<FastSearchViewModel>()
+
     private var searchView: SearchMenuItem? = null
-
-    @InjectPresenter
-    lateinit var searchPresenter: FastSearchPresenter
-
-    @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java)
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -203,7 +205,7 @@ class SearchCatalogFragment :
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
-                        searchPresenter.onClose()
+                        searchViewModel.onClose()
                     } else {
                         presenter.onFastSearchOpen()
                     }
@@ -216,13 +218,17 @@ class SearchCatalogFragment :
                 }
 
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchPresenter.onQueryChange(newText.toString())
+                    searchViewModel.onQueryChange(newText.toString())
                     return false
                 }
             })
 
             setAdapter(fastSearchAdapter)
         }
+
+        searchViewModel.state.onEach { state ->
+            fastSearchAdapter.bindItems(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -237,10 +243,6 @@ class SearchCatalogFragment :
     override fun onBackPressed(): Boolean {
         presenter.onBackPressed()
         return true
-    }
-
-    override fun showState(state: FastSearchScreenState) {
-        fastSearchAdapter.bindItems(state)
     }
 
     override fun showDialog() {

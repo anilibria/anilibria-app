@@ -1,46 +1,61 @@
 package ru.radiationx.anilibria.presentation.page
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.PageAnalytics
+import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.repository.PageRepository
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
 /**
  * Created by radiationx on 13.01.18.
  */
-@InjectViewState
-class PagePresenter @Inject constructor(
+@InjectConstructor
+class PageViewModel(
     private val pageRepository: PageRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val pageAnalytics: PageAnalytics
-) : BasePresenter<PageView>(router) {
+) : ViewModel() {
 
     var pagePath: String? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _state = MutableStateFlow(PageScreenState())
+    val state = _state.asStateFlow()
+
+    init {
         pagePath?.also {
             loadPage(it)
         }
     }
 
+    fun onBackPressed() {
+        router.exit()
+    }
+
     private fun loadPage(pagePath: String) {
         viewModelScope.launch {
-            viewState.setRefreshing(true)
+            _state.update { it.copy(loading = true) }
             runCatching {
                 pageRepository.getPage(pagePath)
-            }.onSuccess {
-                viewState.showPage(it)
+            }.onSuccess { data ->
+                _state.update { it.copy(data = data) }
             }.onFailure {
                 pageAnalytics.error(it)
                 errorHandler.handle(it)
             }
-            viewState.setRefreshing(false)
+            _state.update { it.copy(loading = false) }
         }
     }
 }
+
+data class PageScreenState(
+    val loading: Boolean = false,
+    val data: PageLibria? = null
+)

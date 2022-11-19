@@ -5,23 +5,23 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.teams.TeamsPresenter
-import ru.radiationx.anilibria.presentation.teams.TeamsState
-import ru.radiationx.anilibria.presentation.teams.TeamsView
+import ru.radiationx.anilibria.presentation.teams.TeamsViewModel
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared_app.di.viewModel
 
-class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
+class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
 
     companion object {
         private const val ARG_QUERY = "arg_query"
@@ -33,17 +33,13 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
 
     private val argQuery by lazy { requireArguments().getString(ARG_QUERY) }
 
-    @InjectPresenter
-    lateinit var presenter: TeamsPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): TeamsPresenter = getDependency(TeamsPresenter::class.java)
-
     private val contentAdapter = TeamsAdapter {
-        presenter.onHeaderActionClick()
+        viewModel.onHeaderActionClick()
     }
 
     private val binding by viewBinding<FragmentTeamsBinding>()
+
+    private val viewModel by viewModel<TeamsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +50,7 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.teamsToolbar.setNavigationOnClickListener { presenter.onBackPressed() }
+        binding.teamsToolbar.setNavigationOnClickListener { viewModel.onBackPressed() }
 
         binding.rvTeams.apply {
             adapter = contentAdapter
@@ -64,28 +60,24 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams), TeamsView {
 
         binding.btSearchClear.setOnClickListener { binding.etSearch.text?.clear() }
         binding.etSearch.doOnTextChanged { text, _, _, _ ->
-            presenter.setQueryText(text?.toString().orEmpty())
+            viewModel.setQueryText(text?.toString().orEmpty())
             binding.btSearchClear.isVisible = text?.isNotEmpty() == true
         }
         binding.etSearch.setText(argQuery)
+
+        viewModel.state.onEach { state ->
+            state.data?.also { contentAdapter.bindState(it) }
+            binding.pbLoading.isVisible = state.loading
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
+        return false
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
         super.updateDimens(dimensions)
         binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
-    }
-
-    override fun showData(data: TeamsState) {
-        contentAdapter.bindState(data)
-    }
-
-    override fun setLoading(isLoading: Boolean) {
-        binding.pbLoading.isVisible = isLoading
     }
 
 }

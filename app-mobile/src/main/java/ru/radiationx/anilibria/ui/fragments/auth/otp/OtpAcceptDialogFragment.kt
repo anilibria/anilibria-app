@@ -4,31 +4,27 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptPresenter
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptView
+import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.getDependency
+import ru.radiationx.shared_app.di.viewModel
 
-class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp), OtpAcceptView {
+class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
 
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
     private val binding by viewBinding<FragmentOtpBinding>()
 
-    @InjectPresenter
-    lateinit var presenter: OtpAcceptPresenter
-
-    @ProvidePresenter
-    fun provideAuthPresenter(): OtpAcceptPresenter = getDependency(OtpAcceptPresenter::class.java)
+    private val viewModel by viewModel<OtpAcceptViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,31 +34,27 @@ class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp), OtpA
         }
         binding.btAction.setOnClickListener {
             val code = binding.otpInputField.text?.toString().orEmpty()
-            presenter.onAcceptClick(code)
+            viewModel.onAcceptClick(code)
         }
+
+        viewModel.state.onEach { state ->
+            binding.otpInputLayout.also { TransitionManager.beginDelayedTransition(it) }
+
+            binding.otpInputLayout.isInvisible = state.progress || state.success
+            binding.otpProgress.isInvisible = !state.progress || state.success
+            binding.otpSuccess.isInvisible = !state.success
+
+            binding.otpInputLayout.isErrorEnabled = state.error != null
+            binding.otpInputLayout.error = state.error
+
+            if (binding.otpInputLayout.isVisible) {
+                binding.otpInputLayout.requestFocus()
+            }
+            binding.btAction.isEnabled = !state.progress && !state.success
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.closeEvent.onEach {
+            dismiss()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
-
-    override fun close() {
-        dismiss()
-    }
-
-    override fun setState(success: Boolean, progress: Boolean, error: String?) {
-        binding.otpInputLayout.also { TransitionManager.beginDelayedTransition(it) }
-
-        binding.otpInputLayout.isInvisible = progress || success
-        binding.otpProgress.isInvisible = !progress || success
-        binding.otpSuccess.isInvisible = !success
-
-        binding.otpInputLayout.isErrorEnabled = error != null
-        binding.otpInputLayout.error = error
-
-        if (binding.otpInputLayout.isVisible) {
-            binding.otpInputLayout.requestFocus()
-        }
-        binding.btAction.isEnabled = !progress && !success
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-    }
-
 }

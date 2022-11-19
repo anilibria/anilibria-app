@@ -1,25 +1,25 @@
 package ru.radiationx.anilibria.presentation.auth.vk
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.presentation.auth.social.WebAuthSoFastDetector
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.vk.AuthVkScreenState
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class AuthVkPresenter @Inject constructor(
+@InjectConstructor
+class AuthVkViewModel(
     private val authHolder: AuthHolder,
     private val router: Router
-) : BasePresenter<AuthVkView>(router) {
+) : ViewModel() {
 
-    private var resultPattern =
+    private val resultPattern =
         "(\\?act=widget|anilibria\\.tv\\/public\\/vk\\.php\\?code=|vk\\.com\\/widget_comments\\.php)"
 
     var argUrl: String = ""
@@ -27,25 +27,16 @@ class AuthVkPresenter @Inject constructor(
     private val detector = WebAuthSoFastDetector()
     private var currentSuccessUrl: String? = null
 
-    private val stateController = StateController(
-        AuthVkScreenState(
-            pageState = WebPageViewState.Loading
-        )
-    )
+    private val _state = MutableStateFlow(AuthVkScreenState())
+    val state = _state.asStateFlow()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+    init {
         resetPage()
     }
 
     private fun resetPage() {
         detector.loadUrl(argUrl)
-        viewState.loadPage(argUrl, resultPattern)
+        _state.update { it.copy(data = AuthVkData(argUrl, resultPattern)) }
     }
 
     fun onClearDataClick() {
@@ -53,39 +44,36 @@ class AuthVkPresenter @Inject constructor(
         detector.reset()
         detector.clearCookies()
         resetPage()
-        stateController.updateState {
-            it.copy(showClearCookies = false)
-        }
+        _state.update { it.copy(showClearCookies = false) }
     }
 
     fun onContinueClick() {
-        stateController.updateState {
-            it.copy(showClearCookies = false)
-        }
+        _state.update { it.copy(showClearCookies = false) }
         currentSuccessUrl?.also { successSignVk(it) }
     }
 
     fun onSuccessAuthResult(result: String) {
         if (detector.isSoFast()) {
             currentSuccessUrl = result
-            stateController.updateState {
-                it.copy(showClearCookies = true)
-            }
+            _state.update { it.copy(showClearCookies = true) }
         } else {
             successSignVk(result)
         }
     }
 
     fun onPageStateChanged(pageState: WebPageViewState) {
-        stateController.updateState {
-            it.copy(pageState = pageState)
-        }
+        _state.update { it.copy(pageState = pageState) }
     }
 
     private fun successSignVk(resultUrl: String) {
-        presenterScope.launch {
+        viewModelScope.launch {
             authHolder.changeVkAuth(true)
             router.exit()
         }
     }
 }
+
+data class AuthVkData(
+    val url: String,
+    val pattern: String
+)

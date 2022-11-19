@@ -15,8 +15,12 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.BuildConfig
@@ -27,7 +31,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
+import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
 import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
@@ -49,6 +53,7 @@ import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
 import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -59,7 +64,7 @@ import javax.inject.Inject
 import kotlin.math.max
 
 
-class MainActivity : BaseActivity(R.layout.activity_main), MainView, CheckerView {
+class MainActivity : BaseActivity(R.layout.activity_main), MainView {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -102,12 +107,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView, CheckerView
     @ProvidePresenter
     fun provideMainPresenter(): MainPresenter = getDependency(MainPresenter::class.java)
 
-
-    @InjectPresenter
-    lateinit var checkerPresenter: CheckerPresenter
-
-    @ProvidePresenter
-    fun provideCheckerPresenter(): CheckerPresenter = getDependency(CheckerPresenter::class.java)
+    private val checkerViewModel by viewModel<CheckerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -170,13 +170,14 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView, CheckerView
                 }
             }
         }
-        checkerPresenter.forceLoad = true
+        checkerViewModel.forceLoad = true
+        checkerViewModel.state.mapNotNull { it.data }.onEach {
+            showUpdateData(it)
+        }.launchIn(lifecycleScope)
     }
 
 
-    override fun setRefreshing(refreshing: Boolean) {}
-
-    override fun showUpdateData(update: UpdateData) {
+    private fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
@@ -238,7 +239,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView, CheckerView
 
     override fun onMainLogicCompleted() {
         handleIntent(intent)
-        checkerPresenter.checkUpdate()
+        checkerViewModel.checkUpdate()
     }
 
     override fun showConfiguring() {

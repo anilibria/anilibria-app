@@ -8,7 +8,8 @@ data class DonationYooMoneyState(
     val amountType: AmountType = AmountType.PRESET,
     val customAmount: Int? = null,
     val selectedPaymentTypeId: String? = null,
-    val acceptEnabled: Boolean = false
+    val acceptEnabled: Boolean = false,
+    val sending: Boolean = false
 ) {
     enum class AmountType {
         PRESET, CUSTOM

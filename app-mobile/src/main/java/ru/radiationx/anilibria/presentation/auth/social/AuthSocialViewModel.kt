@@ -1,61 +1,51 @@
 package ru.radiationx.anilibria.presentation.auth.social
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
-import ru.radiationx.anilibria.model.loading.StateController
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialScreenState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
-import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class AuthSocialPresenter @Inject constructor(
+@InjectConstructor
+class AuthSocialViewModel(
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val authSocialAnalytics: AuthSocialAnalytics
-) : BasePresenter<AuthSocialView>(router) {
+) : ViewModel() {
 
     var argKey: String = ""
-
-    private var currentData: SocialAuth? = null
 
     private val detector = WebAuthSoFastDetector()
     private var currentSuccessUrl: String? = null
 
-    private val stateController = StateController(
-        AuthSocialScreenState(
-            pageState = WebPageViewState.Loading
-        )
-    )
+    private val _state = MutableStateFlow(AuthSocialScreenState())
+    val state = _state.asStateFlow()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _errorEvent = EventFlow<Unit>()
+    val errorEvent = _errorEvent.observe()
 
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
-
-        resetPage()
+    init {
+        loadData()
     }
 
-    private fun resetPage() {
-        presenterScope.launch {
+    private fun loadData() {
+        viewModelScope.launch {
             runCatching {
                 authRepository.getSocialAuth(argKey)
-            }.onSuccess {
-                currentData = it
-                detector.loadUrl(it.socialUrl)
-                viewState.loadPage(it)
+            }.onSuccess { data ->
+                detector.loadUrl(data.socialUrl)
+                _state.update { it.copy(data = data) }
             }.onFailure {
                 authSocialAnalytics.error(it)
                 errorHandler.handle(it)
@@ -67,16 +57,12 @@ class AuthSocialPresenter @Inject constructor(
         currentSuccessUrl = null
         detector.reset()
         detector.clearCookies()
-        resetPage()
-        stateController.updateState {
-            it.copy(showClearCookies = false)
-        }
+        loadData()
+        _state.update { it.copy(showClearCookies = false) }
     }
 
     fun onContinueClick() {
-        stateController.updateState {
-            it.copy(showClearCookies = false)
-        }
+        _state.update { it.copy(showClearCookies = false) }
         currentSuccessUrl?.also { signSocial(it) }
     }
 
@@ -87,9 +73,7 @@ class AuthSocialPresenter @Inject constructor(
     fun onSuccessAuthResult(result: String) {
         if (detector.isSoFast()) {
             currentSuccessUrl = result
-            stateController.updateState {
-                it.copy(showClearCookies = true)
-            }
+            _state.update { it.copy(showClearCookies = true) }
         } else {
             signSocial(result)
         }
@@ -104,35 +88,29 @@ class AuthSocialPresenter @Inject constructor(
     }
 
     fun onPageStateChanged(pageState: WebPageViewState) {
-        stateController.updateState {
-            it.copy(pageState = pageState)
-        }
+        _state.update { it.copy(pageState = pageState) }
     }
 
     private fun signSocial(resultUrl: String) {
-        val model = currentData ?: return
+        val data = _state.value.data ?: return
 
-        presenterScope.launch {
-            stateController.updateState {
-                it.copy(isAuthProgress = true)
-            }
+        viewModelScope.launch {
+            _state.update { it.copy(isAuthProgress = true) }
             runCatching {
-                authRepository.signInSocial(resultUrl, model)
+                authRepository.signInSocial(resultUrl, data)
             }.onSuccess {
                 authSocialAnalytics.success()
                 router.finishChain()
             }.onFailure {
                 authSocialAnalytics.error(it)
                 if (it is SocialAuthException) {
-                    viewState.showError()
+                    _errorEvent.set(Unit)
                 } else {
                     errorHandler.handle(it)
                     router.exit()
                 }
             }
-            stateController.updateState {
-                it.copy(isAuthProgress = true)
-            }
+            _state.update { it.copy(isAuthProgress = true) }
         }
     }
 

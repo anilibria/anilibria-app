@@ -6,12 +6,14 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
+import ru.radiationx.anilibria.presentation.auth.social.AuthSocialViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
@@ -19,19 +21,18 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 import javax.inject.Inject
 
 
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social),
-    AuthSocialView {
+class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -43,11 +44,17 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         }
     }
 
-    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(presenter::onSuccessAuthResult) }
+    private val authPatternWebViewClient by lazy {
+        AuthPatternWebViewClient(viewModel::onSuccessAuthResult)
+    }
 
-    private val analyticsWebViewClient by lazy { AnalyticsWebViewClient(presenter::sendAnalyticsPageError) }
+    private val analyticsWebViewClient by lazy {
+        AnalyticsWebViewClient(viewModel::sendAnalyticsPageError)
+    }
 
-    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(presenter::onPageStateChanged) }
+    private val webPageWebViewClient by lazy {
+        WebPageStateWebViewClient(viewModel::onPageStateChanged)
+    }
 
     private val compositeWebViewClient by lazy {
         compositeWebViewClientOf(
@@ -58,8 +65,10 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
     }
 
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
+
+    private val viewModel by viewModel<AuthSocialViewModel>()
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -67,18 +76,11 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
     @Inject
     lateinit var systemUtils: SystemUtils
 
-    @InjectPresenter
-    lateinit var presenter: AuthSocialPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter =
-        getDependency(AuthSocialPresenter::class.java)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.argKey = it.getString(ARG_KEY, presenter.argKey)
+            viewModel.argKey = it.getString(ARG_KEY, viewModel.argKey)
         }
     }
 
@@ -105,11 +107,29 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         }
 
         binding.cookieView.setPrimaryButtonClickListener {
-            presenter.onContinueClick()
+            viewModel.onContinueClick()
         }
         binding.cookieView.setSecondaryClickListener {
-            presenter.onClearDataClick()
+            viewModel.onClearDataClick()
         }
+
+        viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
+            authPatternWebViewClient.resultPattern = data.resultPattern
+            binding.webView.loadUrl(data.socialUrl)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.onEach { state ->
+            val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
+            binding.progressBarWv.isVisible = anyLoading
+            binding.webView.isVisible =
+                state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
+            binding.errorView.isVisible = state.pageState is WebPageViewState.Error
+            binding.cookieView.isVisible = state.showClearCookies
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.errorEvent.onEach {
+            showError()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
@@ -122,21 +142,7 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         super.onDestroyView()
     }
 
-    override fun loadPage(data: SocialAuth) {
-        authPatternWebViewClient.resultPattern = data.resultPattern
-        binding.webView.loadUrl(data.socialUrl)
-    }
-
-    override fun showState(state: AuthSocialScreenState) {
-        val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
-        binding.progressBarWv.isVisible = anyLoading
-        binding.webView.isVisible =
-            state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
-        binding.errorView.isVisible = state.pageState is WebPageViewState.Error
-        binding.cookieView.isVisible = state.showClearCookies
-    }
-
-    override fun showError() {
+    private fun showError() {
         AlertDialog.Builder(requireContext())
             .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
             .setPositiveButton("Перейти") { _, _ ->
@@ -145,7 +151,7 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
             .setNegativeButton("Отмена", null)
             .show()
             .setOnDismissListener {
-                presenter.onUserUnderstandWhatToDo()
+                viewModel.onUserUnderstandWhatToDo()
             }
     }
 }

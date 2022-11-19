@@ -1,13 +1,12 @@
 package ru.radiationx.anilibria.presentation.auth
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -17,15 +16,13 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-/**
- * Created by radiationx on 30.12.17.
- */
-@InjectViewState
-class AuthPresenter @Inject constructor(
+@InjectConstructor
+class AuthViewModel(
     private val router: Router,
     private val systemMessenger: SystemMessenger,
     private val authRepository: AuthRepository,
@@ -34,30 +31,39 @@ class AuthPresenter @Inject constructor(
     private val authSocialAnalytics: AuthSocialAnalytics,
     private val apiConfig: ApiConfig,
     private val systemUtils: SystemUtils
-) : BasePresenter<AuthView>(router) {
+) : ViewModel() {
 
-    private var currentLogin = ""
-    private var currentPassword = ""
+    private val inputDataState = MutableStateFlow(AuthInputData())
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _state = MutableStateFlow(AuthScreenState())
+    val state = _state.asStateFlow()
 
-        presenterScope.launch {
+    private val _registrationEvent = EventFlow<Unit>()
+    val registrationEvent = _registrationEvent.observe()
+
+    init {
+        inputDataState
+            .map { it.login.isNotEmpty() && it.password.isNotEmpty() }
+            .onEach { enabled ->
+                _state.update { it.copy(actionEnabled = enabled) }
+            }
+            .launchIn(viewModelScope)
+
+        authRepository
+            .observeSocialAuth()
+            .onEach { socialAuth ->
+                val items = socialAuth.map { it.toState() }
+                _state.update { it.copy(socialItems = items) }
+            }
+            .launchIn(viewModelScope)
+
+        viewModelScope.launch {
             runCatching {
                 authRepository.loadSocialAuth()
             }.onFailure {
                 errorHandler.handle(it)
             }
         }
-
-        authRepository
-            .observeSocialAuth()
-            .onEach {
-                viewState.showSocial(it.map { it.toState() })
-            }
-            .launchIn(presenterScope)
-
-        updateButtonState()
     }
 
     fun onSocialClick(item: SocialAuthItemState) {
@@ -67,44 +73,38 @@ class AuthPresenter @Inject constructor(
     }
 
     fun setLogin(login: String) {
-        currentLogin = login
-        updateButtonState()
+        inputDataState.update { it.copy(login = login) }
     }
 
     fun setPassword(password: String) {
-        currentPassword = password
-        updateButtonState()
-    }
-
-    private fun updateButtonState() {
-        val enabled = currentLogin.isNotEmpty() && currentPassword.isNotEmpty()
-        viewState.setSignButtonEnabled(enabled)
+        inputDataState.update { it.copy(password = password) }
     }
 
     fun signIn() {
         authMainAnalytics.loginClick()
-        presenterScope.launch {
-            viewState.setRefreshing(true)
+        viewModelScope.launch {
+            _state.update { it.copy(sending = true) }
+            val inputData = inputDataState.value
             runCatching {
-                authRepository.signIn(currentLogin, currentPassword, "")
+                authRepository.signIn(inputData.login, inputData.password, "")
                 authRepository.getAuthState()
             }.onSuccess {
                 decideWhatToDo(it)
             }.onFailure {
-                if (isEmpty2FaCode(it)) {
-                    router.navigateTo(Screens.Auth2FaCode(currentLogin, currentPassword))
+                if (isEmpty2FaCode(inputData, it)) {
+                    router.navigateTo(Screens.Auth2FaCode(inputData.login, inputData.password))
                 } else {
                     authMainAnalytics.error(it)
                     errorHandler.handle(it)
                 }
             }
-            viewState.setRefreshing(false)
+            _state.update { it.copy(sending = false) }
         }
     }
 
-    private fun isEmpty2FaCode(error: Throwable): Boolean {
-        return currentLogin.isNotEmpty()
-                && currentPassword.isNotEmpty()
+    private fun isEmpty2FaCode(inputData: AuthInputData, error: Throwable): Boolean {
+        return inputData.login.isNotEmpty()
+                && inputData.password.isNotEmpty()
                 && error is EmptyFieldException
     }
 
@@ -126,7 +126,7 @@ class AuthPresenter @Inject constructor(
 
     fun registrationClick() {
         authMainAnalytics.regClick()
-        viewState.showRegistrationDialog()
+        _registrationEvent.set(Unit)
     }
 
     fun registrationToSiteClick() {
@@ -139,3 +139,14 @@ class AuthPresenter @Inject constructor(
     }
 
 }
+
+data class AuthInputData(
+    val login: String = "",
+    val password: String = ""
+)
+
+data class AuthScreenState(
+    val actionEnabled: Boolean = false,
+    val sending: Boolean = false,
+    val socialItems: List<SocialAuthItemState> = emptyList()
+)

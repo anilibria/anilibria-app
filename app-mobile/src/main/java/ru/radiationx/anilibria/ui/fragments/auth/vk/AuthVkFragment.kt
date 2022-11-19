@@ -5,12 +5,14 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
-import ru.radiationx.anilibria.presentation.auth.vk.AuthVkPresenter
-import ru.radiationx.anilibria.presentation.auth.vk.AuthVkView
+import ru.radiationx.anilibria.presentation.auth.vk.AuthVkViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
@@ -19,9 +21,9 @@ import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 
-class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social),
-    AuthVkView {
+class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
     companion object {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
@@ -30,9 +32,9 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         }
     }
 
-    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(presenter::onSuccessAuthResult) }
+    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(viewModel::onSuccessAuthResult) }
 
-    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(presenter::onPageStateChanged) }
+    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(viewModel::onPageStateChanged) }
 
     private val compositeWebViewClient by lazy {
         compositeWebViewClientOf(
@@ -41,12 +43,7 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         )
     }
 
-    @InjectPresenter
-    lateinit var presenter: AuthVkPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): AuthVkPresenter =
-        getDependency(AuthVkPresenter::class.java)
+    private val viewModel by viewModel<AuthVkViewModel>()
 
     override val statusBarVisible: Boolean = true
 
@@ -58,7 +55,7 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            presenter.argUrl = it.getString(ARG_URL, presenter.argUrl)
+            viewModel.argUrl = it.getString(ARG_URL, viewModel.argUrl)
         }
     }
 
@@ -72,16 +69,29 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         }
 
         binding.cookieView.setPrimaryButtonClickListener {
-            presenter.onContinueClick()
+            viewModel.onContinueClick()
         }
         binding.cookieView.setSecondaryClickListener {
-            presenter.onClearDataClick()
+            viewModel.onClearDataClick()
         }
 
         binding.webView.settings.apply {
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
         binding.webView.webViewClient = compositeWebViewClient
+
+        viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
+            authPatternWebViewClient.resultPattern = data.pattern
+            binding.webView.loadUrl(data.url)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.onEach { state ->
+            binding.progressBarWv.isVisible = state.pageState == WebPageViewState.Loading
+            binding.webView.isVisible =
+                state.pageState == WebPageViewState.Success && !state.showClearCookies
+            binding.errorView.isVisible = state.pageState is WebPageViewState.Error
+            binding.cookieView.isVisible = state.showClearCookies
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
@@ -92,18 +102,5 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         binding.webView.webViewClient = WebViewClient()
         binding.webView.stopLoading()
         super.onDestroyView()
-    }
-
-    override fun loadPage(url: String, resultPattern: String) {
-        authPatternWebViewClient.resultPattern = resultPattern
-        binding.webView.loadUrl(url)
-    }
-
-    override fun showState(state: AuthVkScreenState) {
-        binding.progressBarWv.isVisible = state.pageState == WebPageViewState.Loading
-        binding.webView.isVisible =
-            state.pageState == WebPageViewState.Success && !state.showClearCookies
-        binding.errorView.isVisible = state.pageState is WebPageViewState.Error
-        binding.cookieView.isVisible = state.showClearCookies
     }
 }

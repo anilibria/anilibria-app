@@ -1,14 +1,13 @@
 package ru.radiationx.anilibria.presentation.comments
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsScreenState
@@ -22,12 +21,13 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.PageRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class VkCommentsPresenter @Inject constructor(
+@InjectConstructor
+class VkCommentsViewModel(
     private val authRepository: AuthRepository,
     private val pageRepository: PageRepository,
     private val releaseInteractor: ReleaseInteractor,
@@ -36,7 +36,7 @@ class VkCommentsPresenter @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val authVkAnalytics: AuthVkAnalytics,
     private val commentsAnalytics: CommentsAnalytics
-) : BasePresenter<VkCommentsView>(router) {
+) : ViewModel() {
 
     var releaseId: ReleaseId? = null
     var releaseCode: ReleaseCode? = null
@@ -51,43 +51,35 @@ class VkCommentsPresenter @Inject constructor(
     private var hasVkBlockedError = false
     private var vkBlockedErrorClosed = false
 
-    private val loadingController = DataLoadingController(presenterScope) {
+    private val loadingController = DataLoadingController(viewModelScope) {
         getDataSource().let { ScreenStateAction.Data(it, false) }
     }
 
-    private val stateController = StateController(
-        VkCommentsScreenState(
-            pageState = WebPageViewState.Loading
-        )
-    )
+    private val _state = MutableStateFlow(VkCommentsScreenState())
+    val state = _state.asStateFlow()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _reloadEvent = EventFlow<Unit>()
+    val reloadEvent = _reloadEvent.observe()
 
+    init {
         authRepository
             .observeAuthState()
-            .onEach { viewState.pageReloadAction() }
-            .launchIn(presenterScope)
+            .onEach { _reloadEvent.set(Unit) }
+            .launchIn(viewModelScope)
 
-        authHolder.observeVkAuthChange()
-            .onEach { viewState.pageReloadAction() }
-            .launchIn(presenterScope)
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(presenterScope)
+        authHolder
+            .observeVkAuthChange()
+            .onEach { _reloadEvent.set(Unit) }
+            .launchIn(viewModelScope)
 
         loadingController
             .observeState()
             .onEach { loadingData ->
-                stateController.updateState {
-                    it.copy(data = loadingData)
-                }
+                _state.update { it.copy(data = loadingData) }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
 
-        presenterScope.launch {
+        viewModelScope.launch {
             runCatching {
                 pageRepository
                     .checkVkBlocked()
@@ -102,12 +94,13 @@ class VkCommentsPresenter @Inject constructor(
         loadingController.refresh()
     }
 
+
     fun refresh() {
         loadingController.refresh()
     }
 
     fun pageReload() {
-        viewState.pageReloadAction()
+        _reloadEvent.set(Unit)
     }
 
     fun setVisibleToUser(isVisible: Boolean) {
@@ -144,26 +137,20 @@ class VkCommentsPresenter @Inject constructor(
     }
 
     fun onNewPageState(pageState: WebPageViewState) {
-        stateController.updateState {
-            it.copy(pageState = pageState)
-        }
+        _state.update { it.copy(pageState = pageState) }
     }
 
     private fun updateJsErrorState() {
-        stateController.updateState {
-            it.copy(jsErrorVisible = hasJsError && !jsErrorClosed)
-        }
+        _state.update { it.copy(jsErrorVisible = hasJsError && !jsErrorClosed) }
     }
 
     private fun updateVkBlockedState() {
-        stateController.updateState {
-            it.copy(vkBlockedVisible = hasVkBlockedError && !vkBlockedErrorClosed)
-        }
+        _state.update { it.copy(vkBlockedVisible = hasVkBlockedError && !vkBlockedErrorClosed) }
     }
 
     private fun tryExecutePendingAuthRequest() {
         authRequestJob?.cancel()
-        authRequestJob = presenterScope.launch {
+        authRequestJob = viewModelScope.launch {
             val url = pendingAuthRequest
             if (isVisibleToUser && url != null) {
                 pendingAuthRequest = null

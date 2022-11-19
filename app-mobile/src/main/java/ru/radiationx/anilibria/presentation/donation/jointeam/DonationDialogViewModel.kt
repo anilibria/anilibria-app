@@ -1,8 +1,7 @@
 package ru.radiationx.anilibria.presentation.donation.jointeam
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.presentation.common.BasePresenter
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.mapNotNull
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationDialog
@@ -12,30 +11,22 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class DonationDialogPresenter(
+class DonationDialogViewModel(
     router: Router,
     private val donationRepository: DonationRepository,
     private val analytics: DonationDialogAnalytics,
     private val systemUtils: SystemUtils
-) : BasePresenter<DonationJoinTeamView>(router) {
+) : ViewModel() {
 
     private var currentData: DonationDialog? = null
 
     var argTag: String? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        donationRepository
-            .observerDonationInfo()
-            .onEach {
-                val donationDialog = it.contentDialogs.find { it.tag == argTag }
-                if (donationDialog != null) {
-                    currentData = donationDialog
-                    viewState.showData(donationDialog)
-                }
-            }
-            .launchIn(presenterScope)
-    }
+    val state = donationRepository
+        .observerDonationInfo()
+        .mapNotNull { data ->
+            data.contentDialogs.find { it.tag == argTag }
+        }
 
     fun onLinkClick(url: String) {
         analytics.linkClick(argTag.toString(), url)

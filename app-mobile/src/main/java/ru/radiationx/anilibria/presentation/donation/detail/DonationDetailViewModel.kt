@@ -1,9 +1,8 @@
 package ru.radiationx.anilibria.presentation.donation.detail
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
@@ -11,39 +10,44 @@ import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class DonationDetailPresenter(
-    router: Router,
+class DonationDetailViewModel(
+    private val router: Router,
     private val donationRepository: DonationRepository,
     private val detailAnalytics: DonationDetailAnalytics,
     private val yooMoneyAnalytics: DonationYooMoneyAnalytics,
     private val dialogAnalytics: DonationDialogAnalytics,
     private val systemUtils: SystemUtils
-) : BasePresenter<DonationDetailView>(router) {
+) : ViewModel() {
 
     private var currentData: DonationInfo? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        presenterScope.launch {
+    val state = donationRepository.observerDonationInfo()
+
+    private val _yoomoneyEvent = EventFlow<Unit>()
+    val yoomoneyEvent = _yoomoneyEvent.observe()
+
+    private val _dialogEvent = EventFlow<String>()
+    val dialogEvent = _dialogEvent.observe()
+
+    init {
+        viewModelScope.launch {
             runCatching {
                 donationRepository.requestUpdate()
             }.onFailure {
                 Timber.e(it)
             }
         }
-        donationRepository
-            .observerDonationInfo()
-            .onEach {
-                currentData = it
-                viewState.showData(it)
-            }
-            .launchIn(presenterScope)
+    }
+
+    fun onBackPressed() {
+        router.exit()
     }
 
     fun onLinkClick(url: String) {
@@ -65,11 +69,11 @@ class DonationDetailPresenter(
         when {
             yoomoneyDialog != null -> {
                 yooMoneyAnalytics.open(AnalyticsConstants.screen_donation_detail)
-                viewState.openYooMoney()
+                _yoomoneyEvent.set(Unit)
             }
             dialog != null -> {
                 dialogAnalytics.open(AnalyticsConstants.screen_donation_detail, dialog.tag)
-                viewState.openContentDialog(dialog.tag)
+                _dialogEvent.set(dialog.tag)
             }
             buttonLink != null -> {
                 systemUtils.externalLink(buttonLink)

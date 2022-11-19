@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.presentation.donation.yoomoney
 
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
@@ -11,57 +11,63 @@ import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
-class DonationYooMoneyPresenter(
-    router: Router,
+class DonationYooMoneyViewModel(
     private val donationRepository: DonationRepository,
     private val errorHandler: ErrorHandler,
     private val analytics: DonationYooMoneyAnalytics,
     private val systemUtils: SystemUtils
-) : BasePresenter<DonationYooMoneyView>(router) {
+) : ViewModel() {
 
-    private var currentState = DonationYooMoneyState()
+    private val _state = MutableStateFlow(DonationYooMoneyState())
+    val state = _state.asStateFlow()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _closeEvent = EventFlow<Unit>()
+    val closeEvent = _closeEvent.observe()
+
+    init {
         donationRepository
             .observerDonationInfo()
-            .onEach {
-                val yooMoneyInfo = it.yooMoneyDialog
-                val newState = currentState.copy(
-                    data = yooMoneyInfo,
-                    amountType = DonationYooMoneyState.AmountType.PRESET,
-                    selectedAmount = yooMoneyInfo?.amounts?.defaultValue,
-                    selectedPaymentTypeId = yooMoneyInfo?.paymentTypes?.selectedId
-                )
-                tryUpdateState(newState)
+            .onEach { data ->
+                val yooMoneyInfo = data.yooMoneyDialog
+                tryUpdateState {
+                    it.copy(
+                        data = yooMoneyInfo,
+                        amountType = DonationYooMoneyState.AmountType.PRESET,
+                        selectedAmount = yooMoneyInfo?.amounts?.defaultValue,
+                        selectedPaymentTypeId = yooMoneyInfo?.paymentTypes?.selectedId
+                    )
+                }
             }
-            .launchIn(presenterScope)
+            .launchIn(viewModelScope)
     }
 
     fun setSelectedAmount(value: Int?) {
-        val newState = currentState.copy(
-            selectedAmount = value,
-            amountType = DonationYooMoneyState.AmountType.PRESET
-        )
-        tryUpdateState(newState)
+        tryUpdateState {
+            it.copy(
+                selectedAmount = value,
+                amountType = DonationYooMoneyState.AmountType.PRESET
+            )
+        }
     }
 
     fun setCustomAmount(value: Int?) {
-        val newState = currentState.copy(
-            customAmount = value,
-            amountType = DonationYooMoneyState.AmountType.CUSTOM
-        )
-        tryUpdateState(newState)
+        tryUpdateState {
+            it.copy(
+                customAmount = value,
+                amountType = DonationYooMoneyState.AmountType.CUSTOM
+            )
+        }
     }
 
     fun setPaymentType(typeId: String?) {
-        val newState = currentState.copy(selectedPaymentTypeId = typeId)
-        tryUpdateState(newState)
+        tryUpdateState {
+            it.copy(selectedPaymentTypeId = typeId)
+        }
     }
 
     fun submitHelpClickAnalytics() {
@@ -69,25 +75,25 @@ class DonationYooMoneyPresenter(
     }
 
     fun onAcceptClick() {
-        val amount = currentState.getAmount()
-        val paymentTypeId = currentState.selectedPaymentTypeId ?: return
-        val form = currentState.data?.form ?: return
+        val amount = _state.value.getAmount()
+        val paymentTypeId = _state.value.selectedPaymentTypeId ?: return
+        val form = _state.value.data?.form ?: return
         analytics.acceptClick(
             amount,
-            currentState.amountType.toAnalytics(),
+            _state.value.amountType.toAnalytics(),
             paymentTypeId.toAnalyticsPaymentType()
         )
-        presenterScope.launch {
-            viewState.setRefreshing(true)
+        viewModelScope.launch {
+            _state.update { it.copy(sending = true) }
             runCatching {
                 donationRepository.createYooMoneyPayLink(amount, paymentTypeId, form)
             }.onSuccess {
                 systemUtils.externalLink(it)
-                viewState.close()
+                _closeEvent.set(Unit)
             }.onFailure {
                 errorHandler.handle(it)
             }
-            viewState.setRefreshing(false)
+            _state.update { it.copy(sending = false) }
         }
     }
 
@@ -103,11 +109,10 @@ class DonationYooMoneyPresenter(
         DonationYooMoneyState.AmountType.CUSTOM -> customAmount ?: 0
     }
 
-    private fun tryUpdateState(newState: DonationYooMoneyState) {
-        val withValidationState = newState.withValidation()
-        if (currentState != withValidationState) {
-            currentState = withValidationState
-            viewState.showData(currentState)
+    private fun tryUpdateState(block: (DonationYooMoneyState) -> DonationYooMoneyState) {
+        _state.update {
+            val newState = block.invoke(_state.value)
+            newState.withValidation()
         }
     }
 

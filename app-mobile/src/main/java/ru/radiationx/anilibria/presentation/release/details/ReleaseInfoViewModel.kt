@@ -426,7 +426,7 @@ class ReleaseInfoViewModel @Inject constructor(
                 val genre = data.genres.getOrNull(index) ?: return
                 releaseAnalytics.genreClick(data.id.id)
                 catalogAnalytics.open(AnalyticsConstants.screen_release)
-                router.navigateTo(Screens.ReleasesSearch(genre))
+                router.navigateTo(Screens.Catalog(genre))
             }
             ReleaseInfoState.TAG_VOICE -> {
                 val voice = data.voices.getOrNull(index) ?: return

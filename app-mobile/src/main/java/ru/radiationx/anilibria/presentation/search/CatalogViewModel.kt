@@ -1,15 +1,17 @@
 package ru.radiationx.anilibria.presentation.search
 
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.*
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.PageLoadParams
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -21,16 +23,20 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @InjectViewState
-class SearchPresenter @Inject constructor(
+class CatalogViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -42,8 +48,7 @@ class SearchPresenter @Inject constructor(
     private val appPreferences: PreferencesHolder,
     private val shortcutHelper: ShortcutHelper,
     private val systemUtils: SystemUtils
-) : BasePresenter<SearchCatalogView>(router) {
-
+) : ViewModel() {
 
     private var lastLoadedPage: Int? = null
     private val filterUseTimeCounter = TimeCounter()
@@ -51,48 +56,37 @@ class SearchPresenter @Inject constructor(
     private val remindText =
         "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
-    private val staticSeasons = listOf("зима", "весна", "лето", "осень")
-        .map { SeasonItem(it.capitalize(), it) }
-
-    private val currentGenres = mutableListOf<String>()
-    private val currentYears = mutableListOf<String>()
-    private val currentSeasons = mutableListOf<String>()
-    private var currentSorting = "1"
-    private var currentComplete = false
-
-    private val beforeOpenDialogGenres = mutableListOf<String>()
-    private val beforeOpenDialogYears = mutableListOf<String>()
-    private val beforeOpenDialogSeasons = mutableListOf<String>()
-    private var beforeOpenDialogSorting = ""
-    private var beforeComplete = false
-
     private val loadingController = DataLoadingController(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
-    private val stateController = StateController(SearchScreenState())
 
-    private fun findRelease(id: ReleaseId): Release? {
-        return loadingController.currentState.data?.find { it.id == id }
-    }
+    var argGenre: String? = null
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        observeScreenState()
-        loadGenres()
-        loadYears()
-        observeGenres()
-        observeYears()
+    private val _filterState = MutableStateFlow(
+        CatalogFilterState(
+            form = SearchForm(
+                genres = argGenre?.let { setOf(GenreItem(it, it)) }.orEmpty(),
+            )
+        )
+    )
+    val filterState = _filterState.asStateFlow()
+
+    private val _state = MutableStateFlow(SearchScreenState())
+    val state = _state.asStateFlow()
+
+    val showFilterAction = EventFlow<CatalogFilterState>()
+
+    init {
+        initGenres()
+        initYears()
+        initSeasons()
         observeSearchRemind()
-        updateInfo()
-        viewState.showSeasons(staticSeasons)
-        onChangeSorting(currentSorting)
-        onChangeComplete(currentComplete)
         observeLoadingState()
         loadingController.refresh()
     }
 
-    private fun loadGenres() {
+    private fun initGenres() {
         viewModelScope.launch {
             runCatching {
                 searchRepository.getGenres()
@@ -100,18 +94,15 @@ class SearchPresenter @Inject constructor(
                 errorHandler.handle(it)
             }
         }
-    }
-
-    private fun observeGenres() {
         searchRepository
             .observeGenres()
-            .onEach {
-                viewState.showGenres(it)
+            .onEach { genres ->
+                _filterState.update { it.copy(genres = genres) }
             }
             .launchIn(viewModelScope)
     }
 
-    private fun loadYears() {
+    private fun initYears() {
         viewModelScope.launch {
             runCatching {
                 searchRepository.getYears()
@@ -119,15 +110,24 @@ class SearchPresenter @Inject constructor(
                 errorHandler.handle(it)
             }
         }
-    }
-
-    private fun observeYears() {
         searchRepository
             .observeYears()
-            .onEach {
-                viewState.showYears(it)
+            .onEach { years ->
+                _filterState.update { it.copy(years = years) }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun initSeasons() {
+        viewModelScope.launch {
+            runCatching {
+                searchRepository.getSeasons()
+            }.onSuccess { seasons ->
+                _filterState.update { it.copy(seasons = seasons) }
+            }.onFailure {
+                errorHandler.handle(it)
+            }
+        }
     }
 
     private fun observeSearchRemind() {
@@ -135,7 +135,7 @@ class SearchPresenter @Inject constructor(
             .observeSearchRemind()
             .onEach { remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
-                stateController.update {
+                _state.update {
                     it.copy(remindText = newRemindText)
                 }
             }
@@ -153,17 +153,10 @@ class SearchPresenter @Inject constructor(
             }
         }
             .onEach { loadingState ->
-                stateController.update {
+                _state.update {
                     it.copy(data = loadingState)
                 }
             }
-            .launchIn(viewModelScope)
-    }
-
-    private fun observeScreenState() {
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
             .launchIn(viewModelScope)
     }
 
@@ -175,28 +168,16 @@ class SearchPresenter @Inject constructor(
     }
 
     private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
-        val genresQuery = currentGenres.joinToString(",")
-        val yearsQuery = currentYears.joinToString(",")
-        val seasonsQuery = currentSeasons.joinToString(",")
-        val completeStr = if (currentComplete) "2" else "1"
         return runCatching {
-            searchRepository
-                .searchReleases(
-                    genresQuery,
-                    yearsQuery,
-                    seasonsQuery,
-                    currentSorting,
-                    completeStr,
-                    params.page
-                )
-                .let { paginated ->
-                    val newItems = if (params.isFirstPage) {
-                        paginated.data
-                    } else {
-                        loadingController.currentState.data.orEmpty() + paginated.data
-                    }
-                    ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
+            val form = filterState.value.form
+            searchRepository.searchReleases(form, params.page).let { paginated ->
+                val newItems = if (params.isFirstPage) {
+                    paginated.data
+                } else {
+                    loadingController.currentState.data.orEmpty() + paginated.data
                 }
+                ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
+            }
         }.onFailure {
             if (params.isFirstPage) {
                 errorHandler.handle(it)
@@ -216,73 +197,20 @@ class SearchPresenter @Inject constructor(
         filterUseTimeCounter.start()
         catalogAnalytics.filterClick()
         catalogFilterAnalytics.open(AnalyticsConstants.screen_catalog)
-        beforeOpenDialogGenres.clear()
-        beforeOpenDialogYears.clear()
-        beforeOpenDialogSeasons.clear()
-        beforeOpenDialogGenres.addAll(currentGenres)
-        beforeOpenDialogYears.addAll(currentYears)
-        beforeOpenDialogSeasons.addAll(currentSeasons)
-        beforeOpenDialogSorting = currentSorting
-        beforeComplete = currentComplete
-        viewState.showDialog()
+        showFilterAction.set(filterState.value)
     }
 
-    fun onAcceptDialog() {
+    fun onAcceptDialog(state: CatalogFilterState) {
         catalogFilterAnalytics.applyClick()
-        if (
-            beforeOpenDialogGenres != currentGenres
-            || beforeOpenDialogYears != currentYears
-            || beforeOpenDialogSeasons != currentSeasons
-            || beforeOpenDialogSorting != currentSorting
-            || beforeComplete != currentComplete
-        ) {
+        if (filterState.value != state) {
+            _filterState.value = state
             refreshReleases()
         }
+        _filterState.value = state
     }
 
     fun onCloseDialog() {
         catalogFilterAnalytics.useTime(filterUseTimeCounter.elapsed())
-        onAcceptDialog()
-    }
-
-    fun onChangeGenres(newGenres: List<String>) {
-        currentGenres.clear()
-        currentGenres.addAll(newGenres)
-        viewState.selectGenres(currentGenres)
-        updateInfo()
-    }
-
-    fun onChangeYears(newYears: List<String>) {
-        currentYears.clear()
-        currentYears.addAll(newYears)
-        viewState.selectYears(currentYears)
-        updateInfo()
-    }
-
-    fun onChangeSeasons(newSeasons: List<String>) {
-        currentSeasons.clear()
-        currentSeasons.addAll(newSeasons)
-        viewState.selectSeasons(currentSeasons)
-        updateInfo()
-    }
-
-    fun onChangeSorting(newSorting: String) {
-        currentSorting = newSorting
-        viewState.setSorting(currentSorting)
-        updateInfo()
-    }
-
-    fun onChangeComplete(complete: Boolean) {
-        currentComplete = complete
-        viewState.setComplete(currentComplete)
-        updateInfo()
-    }
-
-    private fun updateInfo() {
-        viewState.updateInfo(
-            currentSorting,
-            currentGenres.size + currentYears.size + currentSeasons.size
-        )
     }
 
     fun onFastSearchClick() {
@@ -321,4 +249,15 @@ class SearchPresenter @Inject constructor(
         shortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_catalog, releaseItem.id.id)
     }
+
+    private fun findRelease(id: ReleaseId): Release? {
+        return loadingController.currentState.data?.find { it.id == id }
+    }
 }
+
+data class CatalogFilterState(
+    val genres: List<GenreItem> = emptyList(),
+    val years: List<YearItem> = emptyList(),
+    val seasons: List<SeasonItem> = emptyList(),
+    val form: SearchForm = SearchForm()
+)

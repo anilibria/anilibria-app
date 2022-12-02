@@ -13,53 +13,44 @@ import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.presentation.search.CatalogFilterState
+import ru.radiationx.anilibria.presentation.search.CatalogViewModel
 import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
-import ru.radiationx.anilibria.presentation.search.SearchCatalogView
-import ru.radiationx.anilibria.presentation.search.SearchPresenter
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.data.entity.domain.release.GenreItem
-import ru.radiationx.data.entity.domain.release.SeasonItem
-import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.di.viewModel
 
 
 class SearchCatalogFragment :
-    BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh), SearchCatalogView,
+    BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
     companion object {
-        private const val ARG_GENRE: String = "genre"
-        private const val ARG_YEAR: String = "year"
+        private const val ARG_GENRE = "arg_genre"
 
-        fun newInstance(
-            genres: String? = null,
-            years: String? = null
-        ) = SearchCatalogFragment().putExtra {
-            putString(ARG_GENRE, genres)
-            putString(ARG_YEAR, years)
+        fun newInstance(genre: String? = null) = SearchCatalogFragment().putExtra {
+            putString(ARG_GENRE, genre)
         }
     }
 
-    private lateinit var genresDialog: GenresDialog
+    private lateinit var genresDialog: CatalogFilterDialog
     private val adapter = SearchAdapter(
-        loadMoreListener = { presenter.loadMore() },
-        loadRetryListener = { presenter.loadMore() },
+        loadMoreListener = { viewModel.loadMore() },
+        loadRetryListener = { viewModel.loadMore() },
         listener = this,
-        remindCloseListener = { presenter.onRemindClose() },
+        remindCloseListener = { viewModel.onRemindClose() },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
@@ -79,14 +70,9 @@ class SearchCatalogFragment :
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
 
+    private val viewModel by viewModel<CatalogViewModel>()
+
     private var searchView: SearchMenuItem? = null
-
-    @InjectPresenter
-    lateinit var presenter: SearchPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): SearchPresenter =
-        getDependency(SearchPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -100,12 +86,7 @@ class SearchCatalogFragment :
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            bundle.getString(ARG_GENRE, null)?.also {
-                presenter.onChangeGenres(listOf(it))
-            }
-            bundle.getString(ARG_YEAR, null)?.also {
-                presenter.onChangeYears(listOf(it))
-            }
+            viewModel.argGenre = bundle.getString(ARG_GENRE, null)
         }
     }
 
@@ -118,39 +99,18 @@ class SearchCatalogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
-        genresDialog = context?.let {
-            GenresDialog(it, object : GenresDialog.ClickListener {
-                override fun onAccept() {
-                    presenter.onAcceptDialog()
+        genresDialog =
+            CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
+                override fun onAccept(state: CatalogFilterState) {
+                    viewModel.onAcceptDialog(state)
                 }
 
                 override fun onClose() {
-                    presenter.onCloseDialog()
-                }
-
-                override fun onCheckedGenres(items: List<String>) {
-                    presenter.onChangeGenres(items)
-                }
-
-                override fun onCheckedYears(items: List<String>) {
-                    presenter.onChangeYears(items)
-                }
-
-                override fun onCheckedSeasons(items: List<String>) {
-                    presenter.onChangeSeasons(items)
-                }
-
-                override fun onChangeSorting(sorting: String) {
-                    presenter.onChangeSorting(sorting)
-                }
-
-                override fun onChangeComplete(complete: Boolean) {
-                    presenter.onChangeComplete(complete)
+                    viewModel.onCloseDialog()
                 }
             })
-        } ?: throw RuntimeException("Burn in hell google! Wtf, why nullable?! Fags...")
 
-        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
 
         binding.recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
@@ -176,7 +136,7 @@ class SearchCatalogFragment :
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
-                    presenter.onFastSearchClick()
+                    viewModel.onFastSearchClick()
                     searchView?.requestFocus(it)
                     false
                 }
@@ -184,7 +144,7 @@ class SearchCatalogFragment :
             add("Фильтры")
                 .setIcon(R.drawable.ic_filter_toolbar)
                 .setOnMenuItemClickListener {
-                    presenter.showDialog()
+                    viewModel.showDialog()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -207,7 +167,7 @@ class SearchCatalogFragment :
                     if (!hasFocus) {
                         searchViewModel.onClose()
                     } else {
-                        presenter.onFastSearchOpen()
+                        viewModel.onFastSearchOpen()
                     }
                 }
 
@@ -229,6 +189,29 @@ class SearchCatalogFragment :
         searchViewModel.state.onEach { state ->
             fastSearchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.onEach { state ->
+            binding.progressBarList.isVisible = state.data.emptyLoading
+            binding.refreshLayout.isRefreshing = state.data.refreshLoading
+            adapter.bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.filterState.onEach { state ->
+            val filtersCount = state.form.let {
+                it.genres.size + it.years.size + it.seasons.size
+            }
+            var subtitle = ""
+            subtitle += when (state.form.sort) {
+                SearchForm.Sort.DATE -> "По новизне"
+                SearchForm.Sort.RATING -> "По популярности"
+            }
+            subtitle += ", Фильтров: $filtersCount"
+            baseBinding.toolbar.subtitle = subtitle
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showFilterAction.observe().onEach { state ->
+            genresDialog.showDialog(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -241,61 +224,7 @@ class SearchCatalogFragment :
     }
 
     override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
-    }
-
-    override fun showDialog() {
-        genresDialog.showDialog()
-    }
-
-    override fun showGenres(genres: List<GenreItem>) {
-        genresDialog.setItems(genres)
-    }
-
-    override fun showYears(years: List<YearItem>) {
-        genresDialog.setYears(years)
-    }
-
-    override fun showSeasons(seasons: List<SeasonItem>) {
-        genresDialog.setSeasons(seasons)
-    }
-
-    override fun selectGenres(genres: List<String>) {
-        genresDialog.setCheckedGenres(genres)
-    }
-
-    override fun selectYears(years: List<String>) {
-        genresDialog.setCheckedYears(years)
-    }
-
-    override fun selectSeasons(seasons: List<String>) {
-        genresDialog.setCheckedSeasons(seasons)
-    }
-
-    override fun setSorting(sorting: String) {
-        genresDialog.setSorting(sorting)
-    }
-
-    override fun setComplete(complete: Boolean) {
-        genresDialog.setComplete(complete)
-    }
-
-    override fun updateInfo(sort: String, filters: Int) {
-        var subtitle = ""
-        subtitle += when (sort) {
-            "1" -> "По новизне"
-            "2" -> "По популярности"
-            else -> "Ваще рандом"
-        }
-        subtitle += ", Фильтров: $filters"
-        baseBinding.toolbar.subtitle = subtitle
-    }
-
-    override fun showState(state: SearchScreenState) {
-        binding.progressBarList.isVisible = state.data.emptyLoading
-        binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        adapter.bindState(state)
+        return false
     }
 
     override fun onItemClick(position: Int, view: View) {
@@ -303,7 +232,7 @@ class SearchCatalogFragment :
     }
 
     override fun onItemClick(item: ReleaseItemState, position: Int) {
-        presenter.onItemClick(item)
+        viewModel.onItemClick(item)
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
@@ -313,11 +242,11 @@ class SearchCatalogFragment :
                 .setItems(titles) { _, which ->
                     when (which) {
                         0 -> {
-                            presenter.onCopyClick(item)
+                            viewModel.onCopyClick(item)
                             Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> presenter.onShareClick(item)
-                        2 -> presenter.onShortcutClick(item)
+                        1 -> viewModel.onShareClick(item)
+                        2 -> viewModel.onShortcutClick(item)
                     }
                 }
                 .show()

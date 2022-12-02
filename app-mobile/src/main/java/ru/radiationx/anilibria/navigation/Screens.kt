@@ -97,11 +97,10 @@ object Screens {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }
 
-    class ReleasesSearch(
+    class Catalog(
         val genres: String? = null,
-        val years: String? = null
     ) : BaseAppScreen() {
-        override fun getFragment() = SearchCatalogFragment.newInstance(genres, years)
+        override fun getFragment() = SearchCatalogFragment.newInstance(genres)
     }
 
     class MainFeed : BaseAppScreen() {

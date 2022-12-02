@@ -103,7 +103,7 @@ class MainPresenter @Inject constructor(
 
     fun submitScreenAnalytics(screen: Screen) {
         when (screen) {
-            is Screens.ReleasesSearch -> catalogAnalytics.open(AnalyticsConstants.screen_main)
+            is Screens.Catalog -> catalogAnalytics.open(AnalyticsConstants.screen_main)
             is Screens.Favorites -> favoritesAnalytics.open(AnalyticsConstants.screen_main)
             is Screens.MainFeed -> feedAnalytics.open(AnalyticsConstants.screen_main)
             is Screens.MainYouTube -> youtubeVideosAnalytics.open(AnalyticsConstants.screen_main)

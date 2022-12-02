@@ -11,20 +11,18 @@ import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.data.entity.domain.release.GenreItem
-import ru.radiationx.data.entity.domain.release.SeasonItem
-import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.anilibria.presentation.search.CatalogFilterState
+import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.android.visible
 
 
-class GenresDialog(
+class CatalogFilterDialog(
     private val context: Context,
     private val listener: ClickListener
 ) {
@@ -48,64 +46,58 @@ class GenresDialog(
     private val seasonsChipGroup = binding.seasonsChips
     private val seasonsChips = mutableListOf<Chip>()
 
-    private val genreItems = mutableListOf<GenreItem>()
-    private val yearItems = mutableListOf<YearItem>()
-    private val seasonItems = mutableListOf<SeasonItem>()
-
-    private val checkedGenres = mutableSetOf<String>()
-    private val checkedYears = mutableSetOf<String>()
-    private val checkedSeasons = mutableSetOf<String>()
-
-    private var currentSorting = ""
-    private var currentComplete = false
+    private var updating = false
+    private var currentState = CatalogFilterState()
 
     private var actionButton: View
     private var actionButtonText: TextView
     private var actionButtonCount: TextView
 
-
     private val genresChipListener =
         CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                checkedGenres.add(genreItems.first { it.value.hashCode() == buttonView.id }.value)
-            } else {
-                checkedGenres.remove(genreItems.first { it.value.hashCode() == buttonView.id }.value)
+            if (updating) return@OnCheckedChangeListener
+            val item = currentState.genres.first { it.value.hashCode() == buttonView.id }
+
+            updateForm {
+                it.copy(genres = it.genres.modify(item, isChecked))
             }
-            listener.onCheckedGenres(checkedGenres.toList())
         }
 
     private val yearsChipListener =
         CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                checkedYears.add(yearItems.first { it.value.hashCode() == buttonView.id }.value)
-            } else {
-                checkedYears.remove(yearItems.first { it.value.hashCode() == buttonView.id }.value)
+            if (updating) return@OnCheckedChangeListener
+            val item = currentState.years.first { it.value.hashCode() == buttonView.id }
+
+            updateForm {
+                it.copy(years = it.years.modify(item, isChecked))
             }
-            listener.onCheckedYears(checkedYears.toList())
         }
 
     private val seasonsChipListener =
         CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                checkedSeasons.add(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
-            } else {
-                checkedSeasons.remove(seasonItems.first { it.value.hashCode() == buttonView.id }.value)
+            if (updating) return@OnCheckedChangeListener
+            val item = currentState.seasons.first { it.value.hashCode() == buttonView.id }
+
+            updateForm {
+                it.copy(seasons = it.seasons.modify(item, isChecked))
             }
-            listener.onCheckedSeasons(checkedSeasons.toList())
         }
 
     private val sortingListener = RadioGroup.OnCheckedChangeListener { _, _ ->
-        currentSorting = when {
-            sortingPopular.isChecked -> "2"
-            sortingNew.isChecked -> "1"
-            else -> ""
+        if (updating) return@OnCheckedChangeListener
+        val newSort = when {
+            sortingPopular.isChecked -> SearchForm.Sort.RATING
+            sortingNew.isChecked -> SearchForm.Sort.DATE
+            else -> null
         }
-        listener.onChangeSorting(currentSorting)
+        if (newSort != null) {
+            updateForm { it.copy(sort = newSort) }
+        }
     }
 
     private val completeListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
-        currentComplete = isChecked
-        listener.onChangeComplete(currentComplete)
+        if (updating) return@OnCheckedChangeListener
+        updateForm { it.copy(onlyCompleted = isChecked) }
     }
 
     init {
@@ -142,48 +134,70 @@ class GenresDialog(
 
         actionButton.setOnClickListener {
             dialog.dismiss()
-            listener.onAccept()
+            listener.onAccept(currentState)
         }
 
         dialog.setOnDismissListener {
             listener.onClose()
         }
+        setState(currentState, true)
     }
 
-    fun setItems(newItems: List<GenreItem>) {
-        genreItems.clear()
-        genreItems.addAll(newItems)
-
-        updateGenreViews()
-        updateChecked()
+    fun showDialog(state: CatalogFilterState) {
+        setState(state)
+        dialog.fillNavigationBarColor()
+        dialog.show()
     }
 
-    fun setYears(newItems: List<YearItem>) {
-        yearItems.clear()
-        yearItems.addAll(newItems)
+    private fun setState(state: CatalogFilterState, force: Boolean = false) {
+        updating = true
+        val lastState = currentState
+        val form = state.form
+        val lastForm = lastState.form
+        currentState = state
 
-        updateYearViews()
-        updateChecked()
-    }
+        if (force || state.genres != lastState.genres) {
+            updateGenreViews()
+        }
+        if (force || state.years != lastState.years) {
+            updateYearViews()
+        }
+        if (force || state.seasons != lastState.seasons) {
+            updateSeasonViews()
+        }
 
-    fun setSeasons(newItems: List<SeasonItem>) {
-        seasonItems.clear()
-        seasonItems.addAll(newItems)
+        if (force || form.genres != lastForm.genres) {
+            updateCheckedGenres()
+        }
+        if (force || form.years != lastForm.years) {
+            updateCheckedYears()
+        }
+        if (force || form.seasons != lastForm.seasons) {
+            updateCheckedSeasons()
+        }
 
-        updateSeasonViews()
-        updateChecked()
+        if (force || form.sort != lastForm.sort) {
+            updateSorting()
+        }
+
+        if (force || form.onlyCompleted != lastForm.onlyCompleted) {
+            updateComplete()
+        }
+
+        updateCounter()
+        updating = true
     }
 
     private fun updateGenreViews() {
         genresChipGroup.removeAllViews()
         genresChips.clear()
-        genreItems.forEach { genre ->
+        currentState.genres.forEach { genre ->
             val chip = Chip(genresChipGroup.context).also {
                 it.id = genre.value.hashCode()
                 it.text = genre.title
                 it.isCheckable = true
                 it.isClickable = true
-                it.isChecked = checkedGenres.contains(genre.value)
+                it.isChecked = currentState.form.genres.contains(genre)
                 it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
                 it.setChipBackgroundColorResource(R.color.bg_chip)
                 it.setOnCheckedChangeListener(genresChipListener)
@@ -196,13 +210,13 @@ class GenresDialog(
     private fun updateYearViews() {
         yearsChipGroup.removeAllViews()
         yearsChips.clear()
-        yearItems.forEach { year ->
+        currentState.years.forEach { year ->
             val chip = Chip(yearsChipGroup.context).also {
                 it.id = year.value.hashCode()
                 it.text = year.title
                 it.isCheckable = true
                 it.isClickable = true
-                it.isChecked = checkedGenres.contains(year.value)
+                it.isChecked = currentState.form.years.contains(year)
                 it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
                 it.setChipBackgroundColorResource(R.color.bg_chip)
                 it.setOnCheckedChangeListener(yearsChipListener)
@@ -215,13 +229,13 @@ class GenresDialog(
     private fun updateSeasonViews() {
         seasonsChipGroup.removeAllViews()
         seasonsChips.clear()
-        seasonItems.forEach { season ->
+        currentState.seasons.forEach { season ->
             val chip = Chip(seasonsChipGroup.context).also {
                 it.id = season.value.hashCode()
                 it.text = season.title
                 it.isCheckable = true
                 it.isClickable = true
-                it.isChecked = checkedGenres.contains(season.value)
+                it.isChecked = currentState.form.seasons.contains(season)
                 it.setTextColor(it.context.getColorFromAttr(R.attr.textDefault))
                 it.setChipBackgroundColorResource(R.color.bg_chip)
                 it.setOnCheckedChangeListener(seasonsChipListener)
@@ -231,82 +245,67 @@ class GenresDialog(
         }
     }
 
-    private fun updateChecked() {
+    private fun updateCheckedGenres() {
         genresChips.forEach { chip ->
-            chip.isChecked = checkedGenres.any { it.hashCode() == chip.id }
+            chip.isChecked = currentState.form.genres.any { it.value.hashCode() == chip.id }
         }
+    }
+
+    private fun updateCheckedYears() {
         yearsChips.forEach { chip ->
-            chip.isChecked = checkedYears.any { it.hashCode() == chip.id }
+            chip.isChecked = currentState.form.years.any { it.value.hashCode() == chip.id }
         }
+    }
+
+    private fun updateCheckedSeasons() {
         seasonsChips.forEach { chip ->
-            chip.isChecked = checkedSeasons.any { it.hashCode() == chip.id }
+            chip.isChecked = currentState.form.seasons.any { it.value.hashCode() == chip.id }
         }
-        val allCount = checkedGenres.size + checkedYears.size + checkedSeasons.size
+    }
+
+    private fun updateCounter() {
+        val allCount = currentState.form.let {
+            it.genres.size + it.years.size + it.seasons.size
+        }
         actionButtonCount.text = "$allCount"
         actionButtonCount.visible(allCount > 0)
     }
 
-    fun setCheckedGenres(items: List<String>) {
-        checkedGenres.clear()
-        checkedGenres.addAll(items)
-        updateChecked()
-    }
-
-    fun setCheckedYears(items: List<String>) {
-        checkedYears.clear()
-        checkedYears.addAll(items)
-        updateChecked()
-    }
-
-    fun setCheckedSeasons(items: List<String>) {
-        checkedSeasons.clear()
-        checkedSeasons.addAll(items)
-        updateChecked()
-    }
-
-    fun setSorting(sorting: String) {
-        currentSorting = sorting
+    private fun updateSorting() {
         sortingGroup.setOnCheckedChangeListener(null)
-        when (currentSorting) {
-            "2" -> sortingPopular.isChecked = true
-            "1" -> sortingNew.isChecked = true
+        when (currentState.form.sort) {
+            SearchForm.Sort.RATING -> sortingPopular.isChecked = true
+            SearchForm.Sort.DATE -> sortingNew.isChecked = true
         }
         sortingGroup.setOnCheckedChangeListener(sortingListener)
     }
 
-    fun setComplete(complete: Boolean) {
-        currentComplete = complete
+    private fun updateComplete() {
         filterComplete.setOnCheckedChangeListener(null)
-        filterComplete.isChecked = currentComplete
+        filterComplete.isChecked = currentState.form.onlyCompleted
         filterComplete.setOnCheckedChangeListener(completeListener)
     }
 
-    fun showDialog() {
-        updateGenreViews()
-        dialog.fillNavigationBarColor()
-        dialog.show()
-        //expandDialog()
+    private fun updateState(block: (CatalogFilterState) -> CatalogFilterState) {
+        setState(block.invoke(currentState))
     }
 
-    private fun expandDialog() {
-        getBehavior()?.also {
-            it.state = BottomSheetBehavior.STATE_EXPANDED
+    private fun updateForm(block: (SearchForm) -> SearchForm) {
+        updateState { state ->
+            state.copy(form = block.invoke(state.form))
         }
     }
 
-    private fun getBehavior(): BottomSheetBehavior<View>? {
-        val bottomSheetInternal =
-            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        return BottomSheetBehavior.from(bottomSheetInternal!!)
+    private fun <T> Set<T>.modify(item: T, checked: Boolean): Set<T> {
+        return if (checked) {
+            plus(item)
+        } else {
+            minus(item)
+        }
     }
 
     interface ClickListener {
-        fun onAccept()
+        fun onAccept(state: CatalogFilterState)
         fun onClose()
-        fun onCheckedGenres(items: List<String>)
-        fun onCheckedYears(items: List<String>)
-        fun onCheckedSeasons(items: List<String>)
-        fun onChangeSorting(sorting: String)
-        fun onChangeComplete(complete: Boolean)
     }
 }

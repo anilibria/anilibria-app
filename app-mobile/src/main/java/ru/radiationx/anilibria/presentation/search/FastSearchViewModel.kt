@@ -128,7 +128,7 @@ class FastSearchViewModel(
             ITEM_ID_SEARCH -> {
                 catalogAnalytics.open(AnalyticsConstants.screen_fast_search)
                 fastSearchAnalytics.catalogClick()
-                router.navigateTo(Screens.ReleasesSearch())
+                router.navigateTo(Screens.Catalog())
             }
         }
     }

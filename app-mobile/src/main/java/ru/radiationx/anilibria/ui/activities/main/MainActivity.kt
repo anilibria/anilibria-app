@@ -32,7 +32,6 @@ import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
-import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.presentation.main.MainPresenter
 import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -91,7 +90,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
     private val allTabs = arrayOf(
         Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
         Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
-        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
+        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.Catalog()),
         Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
         Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
     )

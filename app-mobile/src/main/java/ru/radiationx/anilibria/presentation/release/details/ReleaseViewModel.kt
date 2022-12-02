@@ -1,12 +1,10 @@
 package ru.radiationx.anilibria.presentation.release.details
 
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import ru.radiationx.anilibria.model.loading.StateController
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -18,12 +16,13 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /* Created by radiationx on 18.11.17. */
 @InjectViewState
-class ReleasePresenter @Inject constructor(
+class ReleaseViewModel @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,
@@ -31,18 +30,21 @@ class ReleasePresenter @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val commentsAnalytics: CommentsAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
-) : BasePresenter<ReleaseView>(router) {
+) : ViewModel() {
 
     private var currentData: Release? = null
     var releaseId: ReleaseId? = null
     var releaseIdCode: ReleaseCode? = null
     var argReleaseItem: Release? = null
 
-    private val stateController = StateController(ReleasePagerState())
+    private val _state = MutableStateFlow(ReleasePagerState())
+    val state = _state.asStateFlow()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    val shareAction = EventFlow<String>()
+    val copyAction = EventFlow<String>()
+    val shortcutAction = EventFlow<Release>()
 
+    init {
         argReleaseItem?.also {
             updateLocalRelease(it)
         }
@@ -52,11 +54,10 @@ class ReleasePresenter @Inject constructor(
         observeRelease()
         loadRelease()
         subscribeAuth()
+    }
 
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(viewModelScope)
+    fun onBackPressed() {
+        router.exit()
     }
 
     private fun subscribeAuth() {
@@ -69,7 +70,7 @@ class ReleasePresenter @Inject constructor(
 
     private fun loadRelease() {
         viewModelScope.launch {
-            viewState.setRefreshing(true)
+            _state.update { it.copy(loading = true) }
             runCatching {
                 releaseInteractor.loadRelease(releaseId, releaseIdCode)
             }.onSuccess {
@@ -77,7 +78,7 @@ class ReleasePresenter @Inject constructor(
             }.onFailure {
                 errorHandler.handle(it)
             }
-            viewState.setRefreshing(false)
+            _state.update { it.copy(loading = false) }
         }
     }
 
@@ -96,7 +97,7 @@ class ReleasePresenter @Inject constructor(
         releaseId = release.id
         releaseIdCode = release.code
 
-        stateController.update {
+        _state.update {
             it.copy(
                 poster = currentData?.poster,
                 title = currentData?.let {
@@ -111,7 +112,7 @@ class ReleasePresenter @Inject constructor(
             releaseAnalytics.share(AnalyticsConstants.screen_release, it.id.id)
         }
         currentData?.link?.let {
-            viewState.shareRelease(it)
+            shareAction.set(it)
         }
     }
 
@@ -120,14 +121,14 @@ class ReleasePresenter @Inject constructor(
             releaseAnalytics.copyLink(AnalyticsConstants.screen_release, it.id.id)
         }
         currentData?.link?.let {
-            viewState.copyLink(it)
+            copyAction.set(it)
         }
     }
 
     fun onShortcutAddClick() {
         currentData?.let {
             releaseAnalytics.shortcut(AnalyticsConstants.screen_release, it.id.id)
-            viewState.addShortCut(it)
+            shortcutAction.set(it)
         }
     }
 

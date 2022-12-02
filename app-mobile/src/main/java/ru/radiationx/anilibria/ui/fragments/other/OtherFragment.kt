@@ -21,7 +21,7 @@ import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 
 
 /**
@@ -33,7 +33,7 @@ class OtherFragment : ScopeFragment(R.layout.fragment_list) {
 
     private val binding by viewBinding<FragmentListBinding>()
 
-    private val viewModel by viewModel<OtherViewModel>()
+    private val viewModel by quillViewModel<OtherViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

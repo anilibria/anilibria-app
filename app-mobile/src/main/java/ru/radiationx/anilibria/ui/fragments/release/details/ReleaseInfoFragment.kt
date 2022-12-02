@@ -36,8 +36,8 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
-import ru.radiationx.quill.inject
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
@@ -64,9 +64,9 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
         )
     }
 
-    private val systemUtils by inject<SystemUtils>()
+    private val systemUtils by quillInject<SystemUtils>()
 
-    private val viewModel by viewModel<ReleaseInfoViewModel>()
+    private val viewModel by quillViewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
 

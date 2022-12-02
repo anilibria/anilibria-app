@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -42,7 +42,7 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         )
     }
 
-    private val viewModel by viewModel<AuthVkViewModel>()
+    private val viewModel by quillViewModel<AuthVkViewModel>()
 
     override val statusBarVisible: Boolean = true
 

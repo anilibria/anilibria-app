@@ -1,7 +1,6 @@
 package ru.radiationx.quill
 
-import android.app.Application
-import android.app.Service
+import android.content.Context
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -14,6 +13,7 @@ import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
 import java.util.*
+import javax.inject.Provider
 import kotlin.reflect.KClass
 
 
@@ -51,47 +51,97 @@ class QuillScope(
         Quill.closeScope(this)
     }
 
-    fun <T> get(clazz: Class<T>): T {
-        return tpScope.getInstance(clazz)
+    fun <T> get(clazz: Class<T>, qualifierName: String? = null): T {
+        return qualifierName
+            ?.let { tpScope.getInstance(clazz, it) }
+            ?: tpScope.getInstance(clazz)
     }
 
     fun installTpModules(vararg modules: Module) {
         tpScope.installModules(*modules)
     }
 
-    fun installModule(module: QuillModule) {
-        tpScope.installModules(module.tpModule)
-    }
-
-    fun installModule(block: QuillModule.() -> Unit) {
-        val module = QuillModule().apply(block)
-        installModule(module)
+    fun installModules(vararg modules: QuillModule) {
+        tpScope.installModules(*modules.map { it.tpModule }.toTypedArray())
     }
 }
 
-class QuillModule {
+open class QuillModule {
 
     val tpModule = Module()
-
-    fun <T> single(clazz: Class<T>) {
-        tpModule.bind(clazz).singleton()
-    }
-
-    fun <P, C : P> single(clazzParent: Class<P>, clazzChild: Class<C>) {
-        tpModule.bind(clazzParent).to(clazzChild).singleton()
-    }
-
-    fun <T : Any> instance(value: T) {
-        val clazz = value::class.java as Class<T>
-        tpModule.bind(clazz).toInstance(value)
-    }
 
     fun <T> instance(clazz: Class<T>, value: T) {
         tpModule.bind(clazz).toInstance(value)
     }
 
     fun <T> instance(clazz: Class<T>, block: () -> T) {
-        instance(clazz, block.invoke())
+        tpModule.bind(clazz)
+            .toProviderInstance { block.invoke() }
+            .providesSingleton()
+    }
+
+    fun <T> single(clazz: Class<T>) {
+        tpModule.bind(clazz).singleton()
+    }
+
+    fun <P, C : P> singleImpl(clazzParent: Class<P>, clazzChild: Class<C>) {
+        tpModule.bind(clazzParent).to(clazzChild).singleton()
+    }
+
+    fun <P, C : P, A : Annotation> singleImplWithName(
+        clazzParent: Class<P>,
+        clazzChild: Class<C>,
+        annotationClazz: Class<A>
+    ) {
+        tpModule.bind(clazzParent).withName(annotationClazz).to(clazzChild).singleton()
+    }
+
+    fun <T, P : Provider<T>> singleProvider(
+        clazz: Class<T>,
+        providerClazz: Class<out Provider<T>>
+    ) {
+        tpModule.bind(clazz)
+            .toProvider(providerClazz)
+            .providesSingleton()
+    }
+
+    fun <T, P : Provider<T>, A : Annotation> singleProviderWithName(
+        clazz: Class<T>,
+        providerClazz: Class<out Provider<T>>,
+        annotationClazz: Class<A>
+    ) {
+        tpModule.bind(clazz)
+            .withName(annotationClazz)
+            .toProvider(providerClazz)
+            .providesSingleton()
+    }
+
+    inline fun <reified T> single() {
+        single(T::class.java)
+    }
+
+    inline fun <reified P, reified C : P> singleImpl() {
+        singleImpl(P::class.java, C::class.java)
+    }
+
+    inline fun <reified P, reified C : P, reified A : Annotation> singleImplWithName() {
+        singleImplWithName(P::class.java, C::class.java, A::class.java)
+    }
+
+    inline fun <reified T> instance(value: T) {
+        instance(T::class.java, value)
+    }
+
+    inline fun <reified T> instance(noinline block: () -> T) {
+        instance(T::class.java, block)
+    }
+
+    inline fun <reified T, reified P : Provider<T>> singleProvider() {
+        singleProvider(T::class.java, P::class.java)
+    }
+
+    inline fun <reified T, reified P : Provider<T>, reified A : Annotation> singleProviderWithName() {
+        singleProviderWithName(T::class.java, P::class.java, A::class.java)
     }
 }
 
@@ -115,42 +165,39 @@ class QuillScopeViewModel(
 fun Fragment.getParentQuillScope(): QuillScope {
     return parentFragment?.getQuillScope()
         ?: activity?.getQuillScope()
+        ?: context?.getQuillScope()
         ?: Quill.getRootScope()
 }
 
-fun Fragment.getQuillScopeVM(): QuillScopeViewModel {
-    val fragment = this
-    return ViewModelProviders.of(this, viewModelFactory {
-        addInitializer(QuillScopeViewModel::class) {
-            val parentScope = fragment.getParentQuillScope()
-            QuillScopeViewModel(fragment.toString(), parentScope)
-        }
-    }).get()
+fun FragmentActivity.getParentQuillScope(): QuillScope {
+    return Quill.getRootScope()
 }
 
-fun FragmentActivity.getQuillScopeVM(): QuillScopeViewModel {
-    val activity = this
-    return ViewModelProviders.of(this, viewModelFactory {
-        addInitializer(QuillScopeViewModel::class) {
-            QuillScopeViewModel(activity.toString(), Quill.getRootScope())
-        }
-    }).get()
+private fun createQuillViewModelFactory(
+    tag: String,
+    scope: QuillScope,
+): ViewModelProvider.Factory = viewModelFactory {
+    addInitializer(QuillScopeViewModel::class) {
+        QuillScopeViewModel(tag, scope)
+    }
 }
 
-fun Fragment.installQuillModule(block: QuillModule.() -> Unit) {
-    getQuillScope().installModule(block)
+private fun Fragment.getQuillScopeVM(): QuillScopeViewModel {
+    val factory = createQuillViewModelFactory(toString(), getParentQuillScope())
+    return ViewModelProviders.of(this, factory).get()
 }
 
-fun Fragment.installTpModules(vararg module: Module) {
-    getQuillScope().installTpModules(*module)
+private fun FragmentActivity.getQuillScopeVM(): QuillScopeViewModel {
+    val factory = createQuillViewModelFactory(toString(), getParentQuillScope())
+    return ViewModelProviders.of(this, factory).get()
 }
 
-fun FragmentActivity.installQuillModule(block: QuillModule.() -> Unit) {
-    getQuillScope().installModule(block)
+fun Fragment.installQuillModules(vararg module: QuillModule) {
+    getQuillScope().installModules(*module)
 }
 
-fun FragmentActivity.installTpModules(vararg module: Module) {
-    getQuillScope().installTpModules(*module)
+fun FragmentActivity.installQuillModules(vararg module: QuillModule) {
+    getQuillScope().installModules(*module)
 }
 
 fun Fragment.getQuillScope(): QuillScope {
@@ -159,6 +206,10 @@ fun Fragment.getQuillScope(): QuillScope {
 
 fun FragmentActivity.getQuillScope(): QuillScope {
     return getQuillScopeVM().scope
+}
+
+fun Context.getQuillScope(): QuillScope {
+    return Quill.getRootScope()
 }
 
 interface QuillExtra
@@ -172,52 +223,49 @@ fun <T : ViewModel> createViewModelFactory(
         scope.apply {
             if (extraProvider != null) {
                 val extra = extraProvider.invoke()
-                installModule {
-                    instance(extra)
+                val module = QuillModule().apply {
+                    instance(QuillExtra::class.java, extra)
                 }
+                installModules(module)
             }
         }.get(clazz.java)
     }
 }
 
-inline fun <reified T : ViewModel> Fragment.viewModel(
+inline fun <reified T : ViewModel> Fragment.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
 ): Lazy<T> = lazy {
     val factory = createViewModelFactory(T::class, getQuillScope(), extraProvider)
     ViewModelProviders.of(this, factory).get()
 }
 
-inline fun <reified T> Fragment.inject(qualifierName: String? = null): Lazy<T> = lazy {
-    getQuillScope().get(T::class.java)
-}
-
-inline fun <reified T> Fragment.get(qualifierName: String? = null): T =
-    getQuillScope().get(T::class.java)
-
-inline fun <reified T : ViewModel> FragmentActivity.viewModel(
+inline fun <reified T : ViewModel> FragmentActivity.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
 ): Lazy<T> = lazy {
     val factory = createViewModelFactory(T::class, getQuillScope(), extraProvider)
     ViewModelProviders.of(this, factory).get()
 }
 
-inline fun <reified T> FragmentActivity.inject(qualifierName: String? = null): Lazy<T> = lazy {
-    getQuillScope().get(T::class.java)
+inline fun <reified T> Fragment.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
+    quillGet(qualifierName)
 }
 
-inline fun <reified T> FragmentActivity.get(qualifierName: String? = null): T =
-    getQuillScope().get(T::class.java)
-
-inline fun <reified T> Application.inject(qualifierName: String? = null): Lazy<T> = lazy {
-    Quill.getRootScope().get(T::class.java)
+inline fun <reified T> Fragment.quillGet(qualifierName: String? = null): T {
+    return getQuillScope().get(T::class.java, qualifierName)
 }
 
-inline fun <reified T> Application.get(qualifierName: String? = null): T =
-    Quill.getRootScope().get(T::class.java)
-
-inline fun <reified T> Service.inject(qualifierName: String? = null): Lazy<T> = lazy {
-    Quill.getRootScope().get(T::class.java)
+inline fun <reified T> FragmentActivity.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
+    quillGet()
 }
 
-inline fun <reified T> Service.get(qualifierName: String? = null): T =
-    Quill.getRootScope().get(T::class.java)
+inline fun <reified T> FragmentActivity.quillGet(qualifierName: String? = null): T {
+    return getQuillScope().get(T::class.java, qualifierName)
+}
+
+inline fun <reified T> Context.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
+    quillGet()
+}
+
+inline fun <reified T> Context.quillGet(qualifierName: String? = null): T {
+    return Quill.getRootScope().get(T::class.java, qualifierName)
+}

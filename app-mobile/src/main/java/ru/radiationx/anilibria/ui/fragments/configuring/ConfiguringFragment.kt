@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringViewModel
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 
@@ -22,7 +22,7 @@ class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring) {
 
     private val binding by viewBinding<FragmentConfiguringBinding>()
 
-    private val viewModel by viewModel<ConfiguringViewModel>()
+    private val viewModel by quillViewModel<ConfiguringViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

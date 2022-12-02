@@ -21,7 +21,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.quill.inject
+import ru.radiationx.quill.quillInject
 
 /**
  * Created by radiationx on 25.12.16.
@@ -29,17 +29,17 @@ import ru.radiationx.quill.inject
 
 class SettingsFragment : BaseSettingFragment() {
 
-    private val appPreferences by inject<PreferencesHolder>()
+    private val appPreferences by quillInject<PreferencesHolder>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val apiConfig by quillInject<ApiConfig>()
 
-    private val authRepository by inject<AuthRepository>()
+    private val authRepository by quillInject<AuthRepository>()
 
-    private val errorHandler by inject<IErrorHandler>()
+    private val errorHandler by quillInject<IErrorHandler>()
 
-    private val settingsAnalytics by inject<SettingsAnalytics>()
+    private val settingsAnalytics by quillInject<SettingsAnalytics>()
 
-    private val updaterAnalytics by inject<UpdaterAnalytics>()
+    private val updaterAnalytics by quillInject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

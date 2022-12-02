@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.quill.inject
+import ru.radiationx.quill.quillInject
 
 abstract class ScopeFragment(
     @LayoutRes contentLayoutId: Int
 ) : Fragment(contentLayoutId), BackButtonListener {
 
-    private val dimensionsProvider by inject<DimensionsProvider>()
+    private val dimensionsProvider by quillInject<DimensionsProvider>()
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

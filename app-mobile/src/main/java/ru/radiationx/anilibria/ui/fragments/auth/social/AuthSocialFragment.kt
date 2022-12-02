@@ -21,8 +21,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.quill.inject
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
@@ -67,11 +67,11 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by viewModel<AuthSocialViewModel>()
+    private val viewModel by quillViewModel<AuthSocialViewModel>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val apiConfig by quillInject<ApiConfig>()
 
-    private val systemUtils by inject<SystemUtils>()
+    private val systemUtils by quillInject<SystemUtils>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

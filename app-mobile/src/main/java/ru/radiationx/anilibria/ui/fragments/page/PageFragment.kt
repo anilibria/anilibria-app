@@ -23,9 +23,9 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.quill.get
-import ru.radiationx.quill.inject
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillGet
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -54,17 +54,17 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         LifecycleTimeCounter(pageAnalytics::useTime)
     }
 
-    private val viewModel by viewModel<PageViewModel>()
+    private val viewModel by quillViewModel<PageViewModel>()
 
     private var pageTitle: String? = null
 
-    private val appThemeController by inject<AppThemeController>()
+    private val appThemeController by quillInject<AppThemeController>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val apiConfig by quillInject<ApiConfig>()
 
-    private val systemUtils by inject<SystemUtils>()
+    private val systemUtils by quillInject<SystemUtils>()
 
-    private val pageAnalytics by inject<PageAnalytics>()
+    private val pageAnalytics by quillInject<PageAnalytics>()
 
     private var webViewScrollPos = 0
 
@@ -148,7 +148,7 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
-        val template = get<Templates>().staticPageTemplate
+        val template = quillGet<Templates>().staticPageTemplate
         binding.webView.easyLoadData(
             apiConfig.siteUrl,
             template.generateWithTheme(appThemeController.getTheme())

@@ -23,7 +23,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.quill.Quill
-import ru.radiationx.quill.get
+import ru.radiationx.quill.quillGet
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import timber.log.Timber
 import toothpick.Toothpick
@@ -52,7 +52,7 @@ class App : Application() {
             initInMainProcess()
 
             val timeToInit = timeCounter.elapsed()
-            val appAnalytics = get<AppAnalytics>()
+            val appAnalytics = quillGet<AppAnalytics>()
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
 
@@ -95,7 +95,7 @@ class App : Application() {
             Timber.e(ex)
         }
 
-        val preferencesHolder = get<PreferencesHolder>()
+        val preferencesHolder = quillGet<PreferencesHolder>()
 
         preferencesHolder
             .observeNotificationsAll()
@@ -136,11 +136,11 @@ class App : Application() {
 
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
-        Quill.getRootScope().installTpModules(AppModule(this), DataModule())
+        Quill.getRootScope().installModules(AppModule(this), DataModule())
     }
 
     private fun appVersionCheck() {
-        val migrationDataSource = get<MigrationDataSource>()
+        val migrationDataSource = quillGet<MigrationDataSource>()
         migrationDataSource.update()
     }
 

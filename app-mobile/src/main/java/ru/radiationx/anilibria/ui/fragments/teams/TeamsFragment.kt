@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.presentation.teams.TeamsViewModel
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
 class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
@@ -39,7 +39,7 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
 
     private val binding by viewBinding<FragmentTeamsBinding>()
 
-    private val viewModel by viewModel<TeamsViewModel>()
+    private val viewModel by quillViewModel<TeamsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

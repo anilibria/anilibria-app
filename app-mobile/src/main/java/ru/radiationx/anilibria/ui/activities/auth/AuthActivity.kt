@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.quill.inject
+import ru.radiationx.quill.quillInject
 import ru.radiationx.shared.ktx.android.gone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -35,11 +35,11 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val binding by viewBinding<ActivityMainBinding>()
 
-    private val router by inject<Router>()
+    private val router by quillInject<Router>()
 
-    private val navigationHolder by inject<NavigatorHolder>()
+    private val navigationHolder by quillInject<NavigatorHolder>()
 
-    private val dimensionsProvider by inject<DimensionsProvider>()
+    private val dimensionsProvider by quillInject<DimensionsProvider>()
 
     private var dimensionHelper: DimensionHelper? = null
 

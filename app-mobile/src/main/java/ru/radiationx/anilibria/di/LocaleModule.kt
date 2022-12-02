@@ -1,12 +1,14 @@
 package ru.radiationx.anilibria.di
 
 import ru.radiationx.data.system.LocaleHolder
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
 import java.util.*
 
-class LocaleModule(locale: Locale) : Module() {
+class LocaleModule(locale: Locale) : QuillModule() {
 
     init {
-        bind(LocaleHolder::class.java).toInstance(LocaleHolder(locale))
+        instance {
+            LocaleHolder(locale)
+        }
     }
 }

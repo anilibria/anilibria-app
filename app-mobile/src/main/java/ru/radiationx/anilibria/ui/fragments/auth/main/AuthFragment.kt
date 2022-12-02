@@ -14,8 +14,8 @@ import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.presentation.auth.AuthViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.quill.inject
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -35,11 +35,11 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>(R.layout.fragment_auth) {
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by viewModel<AuthViewModel>()
+    private val viewModel by quillViewModel<AuthViewModel>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val apiConfig by quillInject<ApiConfig>()
 
-    private val systemUtils by inject<SystemUtils>()
+    private val systemUtils by quillInject<SystemUtils>()
 
     override val statusBarVisible: Boolean = true
 

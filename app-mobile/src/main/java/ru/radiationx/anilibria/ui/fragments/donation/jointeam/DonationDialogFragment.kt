@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.donation.jointeam.DonationDialogViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
 class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_content) {
@@ -35,7 +35,7 @@ class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_cont
 
     private val binding by viewBinding<DialogDonationContentBinding>()
 
-    private val viewModel by viewModel<DonationDialogViewModel>()
+    private val viewModel by quillViewModel<DonationDialogViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

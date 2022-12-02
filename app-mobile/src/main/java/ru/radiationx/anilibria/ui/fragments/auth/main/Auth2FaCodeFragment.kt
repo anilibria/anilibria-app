@@ -11,8 +11,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.quill.inject
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
@@ -34,9 +34,9 @@ class Auth2FaCodeFragment :
         }
     }
 
-    private val viewModel by viewModel<Auth2FaCodeViewModel>()
+    private val viewModel by quillViewModel<Auth2FaCodeViewModel>()
 
-    private val systemUtils by inject<SystemUtils>()
+    private val systemUtils by quillInject<SystemUtils>()
 
     override fun onCreateBinding(view: View): FragmentAuth2faCodeBinding {
         return FragmentAuth2faCodeBinding.bind(view)

@@ -20,7 +20,7 @@ import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 
@@ -28,7 +28,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
 
     private val binding by viewBinding<DialogDonationYoomoneyBinding>()
 
-    private val viewModel by viewModel<DonationYooMoneyViewModel>()
+    private val viewModel by quillViewModel<DonationYooMoneyViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

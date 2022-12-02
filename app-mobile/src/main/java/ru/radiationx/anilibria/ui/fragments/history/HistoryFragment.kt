@@ -29,7 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 
 /**
  * Created by radiationx on 18.02.18.
@@ -68,7 +68,7 @@ class HistoryFragment : BaseFragment<FragmentListBinding>(R.layout.fragment_list
         addDelegate(ReleaseItemDelegate(this@HistoryFragment))
     }
 
-    private val viewModel by viewModel<HistoryViewModel>()
+    private val viewModel by quillViewModel<HistoryViewModel>()
 
     override val statusBarVisible: Boolean = true
 

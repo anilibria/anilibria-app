@@ -2,11 +2,11 @@ package ru.radiationx.anilibria.di
 
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.quill.Quill
+import ru.radiationx.quill.QuillModule
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
-import toothpick.config.Module
 
-class RouterModule(ciceroneTag: String = ROOT) : Module() {
+class RouterModule(ciceroneTag: String = ROOT) : QuillModule() {
 
     companion object {
         private const val ROOT = "root"
@@ -14,7 +14,7 @@ class RouterModule(ciceroneTag: String = ROOT) : Module() {
 
     init {
         val cicerone = Quill.getRootScope().get(CiceroneHolder::class.java).getCicerone(ciceroneTag)
-        bind(Router::class.java).toInstance(cicerone.router)
-        bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+        instance<Router>(cicerone.router)
+        instance<NavigatorHolder>(cicerone.navigatorHolder)
     }
 }

@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.quill.viewModel
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
 class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
@@ -37,7 +37,7 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
         }
     )
 
-    private val viewModel by viewModel<ScheduleViewModel>()
+    private val viewModel by quillViewModel<ScheduleViewModel>()
 
     override var sharedViewLocal: View? = null
 

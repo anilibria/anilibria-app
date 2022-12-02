@@ -24,7 +24,7 @@ import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
-import ru.radiationx.quill.get
+import ru.radiationx.quill.quillGet
 import ru.radiationx.shared.ktx.android.asMutableFlag
 import timber.log.Timber
 
@@ -72,9 +72,9 @@ class NotificationService : FirebaseMessagingService() {
 
         if (data.type == CUSTOM_TYPE_CONFIG) {
             try {
-                val apiConfig = get<ApiConfig>()
-                val apiConfigStorage = get<ApiConfigStorage>()
-                val moshi = get<Moshi>()
+                val apiConfig = quillGet<ApiConfig>()
+                val apiConfigStorage = quillGet<ApiConfigStorage>()
+                val moshi = quillGet<Moshi>()
 
                 GlobalScope.launch {
                     apiConfig.updateNeedConfig(true)

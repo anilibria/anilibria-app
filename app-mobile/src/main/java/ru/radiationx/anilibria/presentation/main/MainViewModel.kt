@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.presentation.main
 
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
@@ -14,16 +13,21 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
 import timber.log.Timber
 import javax.inject.Inject
 
-/**
- * Created by radiationx on 17.12.17.
- */
+
+data class MainScreenState(
+    val selectedTab: String? = null,
+    val needConfig: Boolean = false,
+    val mainLogicCompleted: Boolean = false
+)
+
 @InjectViewState
-class MainPresenter @Inject constructor(
+class MainViewModel @Inject constructor(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
@@ -35,33 +39,33 @@ class MainPresenter @Inject constructor(
     private val feedAnalytics: FeedAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
     private val otherAnalytics: OtherAnalytics
-) : BasePresenter<MainView>(router) {
+) : ViewModel() {
 
-    var defaultScreen = Screens.MainFeed().screenKey!!
+    private val defaultScreen = Screens.MainFeed().screenKey!!
 
     private var firstLaunch = true
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    private val _state = MutableStateFlow(MainScreenState())
+    val state = _state.asStateFlow()
+
+    val updateTabsAction = EventFlow<Unit>()
+
+    init {
         analyticsProfile.update()
 
         apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
-            .onEach {
-                if (it) {
-                    viewState.showConfiguring()
-                } else {
-                    viewState.hideConfiguring()
-                    if (firstLaunch) {
-                        initMain()
-                    }
+            .onEach { needConfig ->
+                _state.update { it.copy(needConfig = needConfig) }
+                if (!needConfig && firstLaunch) {
+                    initMain()
                 }
             }
             .launchIn(viewModelScope)
 
         if (apiConfig.needConfig) {
-            viewState.showConfiguring()
+            _state.update { it.copy(needConfig = true) }
         } else {
             initMain()
         }
@@ -77,9 +81,9 @@ class MainPresenter @Inject constructor(
         selectTab(defaultScreen)
         authRepository
             .observeAuthState()
-            .onEach { viewState.updateTabs() }
+            .onEach { updateTabsAction.set(Unit) }
             .launchIn(viewModelScope)
-        viewState.onMainLogicCompleted()
+        _state.update { it.copy(mainLogicCompleted = true) }
 
         viewModelScope.launch {
             runCatching {
@@ -95,10 +99,14 @@ class MainPresenter @Inject constructor(
         }
     }
 
+    fun onBackPressed() {
+        router.exit()
+    }
+
     fun getAuthState() = authRepository.getAuthState()
 
     fun selectTab(screenKey: String) {
-        viewState.highlightTab(screenKey)
+        _state.update { it.copy(selectedTab = screenKey) }
     }
 
     fun submitScreenAnalytics(screen: Screen) {

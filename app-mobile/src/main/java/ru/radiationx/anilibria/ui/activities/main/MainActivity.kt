@@ -18,12 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-import ru.radiationx.anilibria.BuildConfig
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
@@ -32,8 +27,7 @@ import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
-import ru.radiationx.anilibria.presentation.main.MainPresenter
-import ru.radiationx.anilibria.presentation.main.MainView
+import ru.radiationx.anilibria.presentation.main.MainViewModel
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
@@ -41,6 +35,7 @@ import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.common.AuthState
@@ -50,7 +45,6 @@ import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.getDependency
 import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
@@ -63,13 +57,16 @@ import javax.inject.Inject
 import kotlin.math.max
 
 
-class MainActivity : BaseActivity(R.layout.activity_main), MainView {
+class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
 
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
+
+    @Inject
+    lateinit var sharedBuildConfig: SharedBuildConfig
 
     @Inject
     lateinit var screenMessenger: SystemMessenger
@@ -100,11 +97,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
 
     private var dimensionHelper: DimensionHelper? = null
 
-    @InjectPresenter
-    lateinit var presenter: MainPresenter
-
-    @ProvidePresenter
-    fun provideMainPresenter(): MainPresenter = getDependency(MainPresenter::class.java)
+    private val viewModel by viewModel<MainViewModel>()
 
     private val checkerViewModel by viewModel<CheckerViewModel>()
 
@@ -118,9 +111,9 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
-        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(
-                locale.country
-            )
+        if (
+            Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)
+            && !LocaleHolder.checkAvail(locale.country)
         ) {
             startActivity(Screens.BlockedCountry().getActivityIntent(this))
             finish()
@@ -165,7 +158,6 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
             it.getStringArrayList(TABS_STACK)?.let {
                 if (it.isNotEmpty()) {
                     tabsStack.addAll(it)
-                    presenter.defaultScreen = it.last()
                 }
             }
         }
@@ -173,11 +165,31 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         checkerViewModel.state.mapNotNull { it.data }.onEach {
             showUpdateData(it)
         }.launchIn(lifecycleScope)
+
+        viewModel.state.mapNotNull { it.selectedTab }.distinctUntilChanged().onEach {
+            highlightTab(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.state.map { it.needConfig }.distinctUntilChanged().onEach {
+            if (it) {
+                showConfiguring()
+            } else {
+                hideConfiguring()
+            }
+        }.launchIn(lifecycleScope)
+
+        viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
+            onMainLogicCompleted()
+        }.launchIn(lifecycleScope)
+
+        viewModel.updateTabsAction.observe().onEach {
+            updateTabs()
+        }.launchIn(lifecycleScope)
     }
 
 
     private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionCode = sharedBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
             val channelId = "anilibria_channel_updates"
@@ -236,12 +248,12 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         navigationHolder.setNavigator(navigatorNew)
     }
 
-    override fun onMainLogicCompleted() {
+    private fun onMainLogicCompleted() {
         handleIntent(intent)
         checkerViewModel.checkUpdate()
     }
 
-    override fun showConfiguring() {
+    private fun showConfiguring() {
         binding.configuringContainer.visible()
         supportFragmentManager
             .beginTransaction()
@@ -249,7 +261,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
             .commitNow()
     }
 
-    override fun hideConfiguring() {
+    private fun hideConfiguring() {
         binding.configuringContainer.gone()
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
@@ -282,7 +294,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         if (check) {
             return
         } else {
-            presenter.onBackPressed()
+            viewModel.onBackPressed()
         }
     }
 
@@ -332,9 +344,9 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         (binding.tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
     }
 
-    override fun updateTabs() {
+    private fun updateTabs() {
         tabs.clear()
-        if (presenter.getAuthState() == AuthState.AUTH) {
+        if (viewModel.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
         } else {
             tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
@@ -342,10 +354,10 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
         updateBottomTabs()
     }
 
-    override fun highlightTab(screenKey: String) {
+    private fun highlightTab(screenKey: String) {
         tabsAdapter.setSelected(screenKey)
         val screen = tabs.first { it.screen.screenKey == screenKey }.screen
-        presenter.submitScreenAnalytics(screen)
+        viewModel.submitScreenAnalytics(screen)
         router.replaceScreen(screen)
     }
 
@@ -360,7 +372,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
 
     private val tabsListener = object : BottomTabsAdapter.Listener {
         override fun onTabClick(tab: Tab) {
-            presenter.selectTab(tab.screen.screenKey)
+            viewModel.selectTab(tab.screen.screenKey)
         }
     }
 
@@ -379,7 +391,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), MainView {
                 removeFromStack(tabsStack.last())
                 ta.commitNow()
                 if (tabsStack.isNotEmpty()) {
-                    presenter.selectTab(tabsStack.last())
+                    viewModel.selectTab(tabsStack.last())
                 } else {
                     activityBack()
                 }

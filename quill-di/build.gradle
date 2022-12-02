@@ -1,0 +1,36 @@
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+
+android {
+    compileSdkVersion app_compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion app_min_sdk_version
+        targetSdkVersion app_target_sdk_version
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+    namespace "ru.radiationx.quill"
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+
+    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
+    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
+    implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
+    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
+}

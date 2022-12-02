@@ -57,7 +57,8 @@
 
         </activity>
 
-        <provider android:name=".contentprovider.suggestions.SuggestionsContentProvider"
+        <provider
+            android:name=".contentprovider.suggestions.SuggestionsContentProvider"
             android:authorities="ru.radiationx.anilibria.contentprovider.suggestions"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />

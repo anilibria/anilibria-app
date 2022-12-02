@@ -10,9 +10,9 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class SearchController {
 
-    val yearsEvent = MutableSharedFlow<List<YearItem>>()
-    val seasonsEvent = MutableSharedFlow<List<SeasonItem>>()
-    val genresEvent = MutableSharedFlow<List<GenreItem>>()
+    val yearsEvent = MutableSharedFlow<Set<YearItem>>()
+    val seasonsEvent = MutableSharedFlow<Set<SeasonItem>>()
+    val genresEvent = MutableSharedFlow<Set<GenreItem>>()
     val sortEvent = MutableSharedFlow<SearchForm.Sort>()
     val completedEvent = MutableSharedFlow<Boolean>()
 

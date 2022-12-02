@@ -1,19 +1,12 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
-import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.anilibria.screen.player.putIds
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import java.lang.IllegalStateException
 
 class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
@@ -24,7 +17,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         private const val CHUNK_ENABLED = false
     }
 
-    private val viewModel by viewModel<PlayerEpisodesViewModel>()
+    private val viewModel by quillViewModel<PlayerEpisodesViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
@@ -70,7 +63,10 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
                 .build()
         }
 
-    private fun createEpisodesActions(offset: Int, episodes: List<Pair<String, String?>>): List<GuidedAction> =
+    private fun createEpisodesActions(
+        offset: Int,
+        episodes: List<Pair<String, String?>>
+    ): List<GuidedAction> =
         episodes.mapIndexed { index: Int, data: Pair<String, String?> ->
             GuidedAction.Builder(requireContext())
                 .id((offset + index).toLong())

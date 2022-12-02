@@ -1,10 +1,7 @@
 package dev.rx.tvtest.cust
 
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.leanback.widget.HorizontalGridView
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.ListRowView
@@ -17,10 +14,15 @@ class CustomListRowViewHolder(
     presenter: ListRowPresenter
 ) : ListRowPresenter.ViewHolder(rootView, gridView, presenter) {
 
-    private val cardDescriptionView = CardDescriptionView(rootView.context, defStyleAttr = R.attr.rowHorizontalDescriptionStyle)
+    private val cardDescriptionView =
+        CardDescriptionView(rootView.context, defStyleAttr = R.attr.rowHorizontalDescriptionStyle)
 
     init {
-        rootView.addView(cardDescriptionView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        rootView.addView(
+            cardDescriptionView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     fun setDescription(title: CharSequence, subtitle: CharSequence) {

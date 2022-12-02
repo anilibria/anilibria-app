@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
-class UpdateSourceGuidedFragment : ScopedGuidedStepFragment() {
+class UpdateSourceGuidedFragment : FakeGuidedStepFragment() {
 
-    private val viewModel by viewModel<UpdateSourceViewModel>()
+    private val viewModel by quillViewModel<UpdateSourceViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 

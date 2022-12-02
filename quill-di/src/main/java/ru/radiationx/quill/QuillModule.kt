@@ -5,6 +5,11 @@ import toothpick.config.Module
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
+
+fun quillModule(block: QuillModule.() -> Unit): QuillModule {
+    return QuillModule().apply(block)
+}
+
 open class QuillModule {
 
     val tpModule = Module()

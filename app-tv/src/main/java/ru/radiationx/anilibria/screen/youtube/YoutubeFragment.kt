@@ -5,23 +5,21 @@ import android.view.View
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.OnItemViewSelectedListener
 import androidx.leanback.widget.VerticalGridPresenter
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.GridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 class YoutubeFragment : GridFragment() {
 
     private val gridAdapter by lazy { ArrayObjectAdapter(CardPresenterSelector()) }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by quillInject<GradientBackgroundManager>()
 
-    private val viewModel by viewModel<YouTubeViewModel>()
+    private val viewModel by quillViewModel<YouTubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,23 +30,24 @@ class YoutubeFragment : GridFragment() {
         }
 
         backgroundManager.clearGradient()
-        onItemViewSelectedListener = OnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
-            backgroundManager.applyCard(item)
-            when (item) {
-                is LibriaCard -> {
-                    setDescription(item.title, item.description)
-                }
-                is LinkCard -> {
-                    setDescription(item.title, "")
-                }
-                is LoadingCard -> {
-                    setDescription(item.title, item.description)
-                }
-                else -> {
-                    setDescription("", "")
+        onItemViewSelectedListener =
+            OnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+                backgroundManager.applyCard(item)
+                when (item) {
+                    is LibriaCard -> {
+                        setDescription(item.title, item.description)
+                    }
+                    is LinkCard -> {
+                        setDescription(item.title, "")
+                    }
+                    is LoadingCard -> {
+                        setDescription(item.title, item.description)
+                    }
+                    else -> {
+                        setDescription("", "")
+                    }
                 }
             }
-        }
 
 
         this.adapter = gridAdapter

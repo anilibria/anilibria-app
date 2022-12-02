@@ -8,7 +8,7 @@ import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.quill.Quill
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -52,8 +52,7 @@ class App : Application() {
 
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
-        val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
-        scope.installModules(AppModule(this), DataModule())
+        Quill.getRootScope().installModules(AppModule(this), DataModule())
     }
 
 

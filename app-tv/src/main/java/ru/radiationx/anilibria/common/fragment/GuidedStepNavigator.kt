@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.common.fragment
 
-import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.leanback.app.GuidedStepSupportFragment
-import ru.radiationx.shared_app.di.ScopeProvider
-import ru.radiationx.shared_app.di.putScopeArgument
-import ru.radiationx.shared_app.navigation.ScopedAppNavigator
+import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
 import java.util.*
 import kotlin.math.max
@@ -14,18 +13,31 @@ import kotlin.math.max
 class GuidedStepNavigator(
     private val activity: FragmentActivity,
     private val containerId: Int,
-    private val fragmentManager: FragmentManager = activity.supportFragmentManager,
-    private val scopeProvider: ScopeProvider
-) : ScopedAppNavigator(activity, containerId, fragmentManager, scopeProvider) {
+    private val fragmentManager: FragmentManager = activity.supportFragmentManager
+) : SupportAppNavigator(activity, fragmentManager, containerId) {
 
     private val guidedStack = LinkedList<String>()
 
     private val activityFragmentManager = activity.supportFragmentManager
 
     private val backStack: List<FragmentManager.BackStackEntry>
-        get() = (0 until fragmentManager.backStackEntryCount).map { fragmentManager.getBackStackEntryAt(it) }
+        get() = (0 until fragmentManager.backStackEntryCount).map {
+            fragmentManager.getBackStackEntryAt(
+                it
+            )
+        }
 
     fun backStackById(id: Int): FragmentManager.BackStackEntry? = backStack.find { it.id == id }
+
+    override fun setupFragmentTransaction(
+        command: Command?,
+        currentFragment: Fragment?,
+        nextFragment: Fragment?,
+        fragmentTransaction: FragmentTransaction
+    ) {
+        super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
+        fragmentTransaction.setReorderingAllowed(true)
+    }
 
     override fun applyCommands(commands: Array<out Command>) {
         val onlyGuidedCommands = commands.all { (it as? Forward)?.screen is GuidedAppScreen }
@@ -50,16 +62,19 @@ class GuidedStepNavigator(
     protected fun guidedForward(command: Forward) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
-            val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
-
-            fragment.putScopeArgument(getActualScopeProvider().screenScopeTag)
+            val fragment =
+                screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
             activityFragmentManager
                 .beginTransaction()
                 .also {
                     GuidedStepFragmentHelper.prepare(activity.supportFragmentManager, it, fragment)
                 }
-                .replace(android.R.id.content, fragment, GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT)
+                .replace(
+                    android.R.id.content,
+                    fragment,
+                    GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT
+                )
                 .addToBackStack(screen.screenKey)
                 .commit()
 
@@ -72,11 +87,11 @@ class GuidedStepNavigator(
     protected fun guidedReplace(command: Replace) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
-            val fragment = screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
+            val fragment =
+                screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
-            fragment.putScopeArgument(getActualScopeProvider().screenScopeTag)
-
-            val currentFragment = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
+            val currentFragment =
+                GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
             if (guidedStack.isNotEmpty() && currentFragment != null) {
                 fragmentManager.popBackStackImmediate()
                 guidedStack.removeLast()
@@ -87,7 +102,11 @@ class GuidedStepNavigator(
                 .also {
                     GuidedStepFragmentHelper.prepare(activity.supportFragmentManager, it, fragment)
                 }
-                .replace(android.R.id.content, fragment, GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT)
+                .replace(
+                    android.R.id.content,
+                    fragment,
+                    GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT
+                )
                 .addToBackStack(screen.screenKey)
                 .commit()
 
@@ -120,10 +139,4 @@ class GuidedStepNavigator(
         }
     }
 
-    private fun getActualScopeProvider(): ScopeProvider {
-        // todo Работает не стабильно, т.к. может использоваться старый Scope, который к моменту создания экрана уже будет уничтожен
-        /*val fragment = fragmentManager.findFragmentById(containerId) as? ScopeProvider?
-        return fragment ?: scopeProvider*/
-        return scopeProvider
-    }
 }

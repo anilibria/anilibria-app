@@ -43,7 +43,7 @@ class SearchSeasonViewModel(
         viewModelScope.launch {
             val newSeasons = currentSeasons.filterIndexed { index, item ->
                 checkedValues.contains(item.value)
-            }
+            }.toSet()
             searchController.seasonsEvent.emit(newSeasons)
             guidedRouter.close()
         }

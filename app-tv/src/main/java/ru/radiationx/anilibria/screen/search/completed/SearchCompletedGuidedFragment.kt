@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
-class SearchCompletedGuidedFragment : ScopedGuidedStepFragment() {
+class SearchCompletedGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val ARG_COMPLETED = "arg completed"
@@ -19,7 +19,7 @@ class SearchCompletedGuidedFragment : ScopedGuidedStepFragment() {
         }
     }
 
-    private val viewModel by viewModel<SearchCompletedViewModel>()
+    private val viewModel by quillViewModel<SearchCompletedViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 

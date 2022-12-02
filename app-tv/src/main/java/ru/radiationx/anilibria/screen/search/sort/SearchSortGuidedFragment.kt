@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
-class SearchSortGuidedFragment : ScopedGuidedStepFragment() {
+class SearchSortGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val ARG_SORT = "arg sort"
@@ -20,7 +20,7 @@ class SearchSortGuidedFragment : ScopedGuidedStepFragment() {
         }
     }
 
-    private val viewModel by viewModel<SearchSortViewModel>()
+    private val viewModel by quillViewModel<SearchSortViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
@@ -28,7 +28,8 @@ class SearchSortGuidedFragment : ScopedGuidedStepFragment() {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         arguments?.apply {
-            viewModel.argSort = getString(ARG_SORT)?.let { SearchForm.Sort.valueOf(it) } ?: viewModel.argSort
+            viewModel.argSort =
+                getString(ARG_SORT)?.let { SearchForm.Sort.valueOf(it) } ?: viewModel.argSort
         }
     }
 

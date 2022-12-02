@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
-import androidx.lifecycle.viewmodel.viewModelFactory
 import toothpick.Toothpick
 import java.util.*
 import kotlin.reflect.KClass
@@ -73,18 +71,32 @@ fun Context.getQuillScope(): QuillScope {
     return Quill.getRootScope()
 }
 
+fun <T : ViewModel> Fragment.getQuillViewModel(
+    clazz: KClass<T>,
+    extraProvider: (() -> QuillExtra)? = null
+): T {
+    val factory = createViewModelFactory(clazz, getQuillScope(), extraProvider)
+    return ViewModelProviders.of(this, factory)[clazz.java]
+}
+
+fun <T : ViewModel> FragmentActivity.getQuillViewModel(
+    clazz: KClass<T>,
+    extraProvider: (() -> QuillExtra)? = null
+): T {
+    val factory = createViewModelFactory(clazz, getQuillScope(), extraProvider)
+    return ViewModelProviders.of(this, factory)[clazz.java]
+}
+
 inline fun <reified T : ViewModel> Fragment.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
 ): Lazy<T> = lazy {
-    val factory = createViewModelFactory(T::class, getQuillScope(), extraProvider)
-    ViewModelProviders.of(this, factory).get()
+    getQuillViewModel(T::class, extraProvider)
 }
 
 inline fun <reified T : ViewModel> FragmentActivity.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
 ): Lazy<T> = lazy {
-    val factory = createViewModelFactory(T::class, getQuillScope(), extraProvider)
-    ViewModelProviders.of(this, factory).get()
+    getQuillViewModel(T::class, extraProvider)
 }
 
 inline fun <reified T : Any> Fragment.quillInject(

@@ -2,53 +2,45 @@ package ru.radiationx.anilibria.screen.launcher
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
 import ru.radiationx.anilibria.di.*
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.installQuillModules
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import ru.radiationx.shared_app.screen.ScopedFragmentActivity
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
-import toothpick.ktp.binding.module
-import javax.inject.Inject
 
-class MainActivity : ScopedFragmentActivity() {
+class MainActivity : FragmentActivity() {
 
-    private val viewModel: AppLauncherViewModel by viewModel()
+    private val viewModel: AppLauncherViewModel by quillViewModel()
 
     private val navigator by lazy {
         GuidedStepNavigator(
             this,
-            R.id.fragmentContainer,
-            scopeProvider = this
+            R.id.fragmentContainer
         )
     }
 
-    @Inject
-    lateinit var router: Router
+    private val router by quillInject<Router>()
 
-    @Inject
-    lateinit var guidedRouter: GuidedRouter
+    private val guidedRouter by quillInject<GuidedRouter>()
 
-    @Inject
-    lateinit var navigatorHolder: NavigatorHolder
+    private val navigatorHolder by quillInject<NavigatorHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-        dependencyInjector.installModules(
+        installQuillModules(
             ActivityModule(this),
             NavigationModule(),
             PlayerModule(),
             UpdateModule(),
             SearchModule(),
-            module {
-                bind(GradientBackgroundManager::class.java).toInstance(GradientBackgroundManager(this@MainActivity))
-            }
         )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragments)

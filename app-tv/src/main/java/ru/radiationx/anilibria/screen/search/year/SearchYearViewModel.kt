@@ -56,7 +56,7 @@ class SearchYearViewModel(
         viewModelScope.launch {
             val newYears = currentYears.filterIndexed { index, item ->
                 checkedValues.contains(item.value)
-            }
+            }.toSet()
             searchController.yearsEvent.emit(newYears)
             guidedRouter.close()
         }

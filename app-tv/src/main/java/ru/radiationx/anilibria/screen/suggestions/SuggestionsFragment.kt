@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.app.SearchSupportFragment
@@ -10,19 +9,19 @@ import androidx.lifecycle.ViewModel
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedSearchFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
+import ru.radiationx.quill.installQuillModules
+import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.quillModule
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import toothpick.ktp.binding.module
-import javax.inject.Inject
 
-class SuggestionsFragment : ScopedSearchFragment(), SearchSupportFragment.SearchResultProvider {
+class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.SearchResultProvider {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
@@ -30,16 +29,15 @@ class SuggestionsFragment : ScopedSearchFragment(), SearchSupportFragment.Search
     private val progressManager by lazy { ExternalProgressManager() }
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    private val rowsViewModel by viewModel<SuggestionsRowsViewModel>()
-    private val resultViewModel by viewModel<SuggestionsResultViewModel>()
-    private val recommendsViewModel by viewModel<SuggestionsRecommendsViewModel>()
+    private val rowsViewModel by quillViewModel<SuggestionsRowsViewModel>()
+    private val resultViewModel by quillViewModel<SuggestionsResultViewModel>()
+    private val recommendsViewModel by quillViewModel<SuggestionsRecommendsViewModel>()
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by quillInject<GradientBackgroundManager>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        dependencyInjector.installModules(module {
-            bind(SuggestionsController::class.java).singleton()
+        installQuillModules(quillModule {
+            single<SuggestionsController>()
         })
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(rowsViewModel)
@@ -103,12 +101,24 @@ class SuggestionsFragment : ScopedSearchFragment(), SearchSupportFragment.Search
         else -> null
     }
 
-    private fun createRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: ViewModel): Row = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as SuggestionsResultViewModel)
+    private fun createRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: ViewModel
+    ): Row = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
+            rowId,
+            rowsAdapter,
+            viewModel as SuggestionsResultViewModel
+        )
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
-    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: SuggestionsResultViewModel): Row {
+    private fun createHeaderRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: SuggestionsResultViewModel
+    ): Row {
         val cardsPresenter = CardPresenterSelector()
         val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
         val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)

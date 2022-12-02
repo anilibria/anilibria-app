@@ -70,9 +70,9 @@ class DetailRecommendsViewModel(
                 result.map { converter.toCard(it) }
             }
 
-    private fun getGenres(count: Int): List<GenreItem> {
-        val release = releaseInteractor.getFull(releaseId) ?: return emptyList()
-        return release.genres.take(count).map { GenreItem(it, it) }
+    private fun getGenres(count: Int): Set<GenreItem> {
+        val release = releaseInteractor.getFull(releaseId) ?: return emptySet()
+        return release.genres.take(count).map { GenreItem(it, it) }.toSet()
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.search
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
@@ -51,6 +50,7 @@ abstract class BaseSearchValuesViewModel : LifecycleViewModel() {
     }
 
     protected fun updateChecked() {
-        checkedIndicesData.value = currentValues.mapIndexed { index, item -> Pair(index, checkedValues.contains(item)) }
+        checkedIndicesData.value =
+            currentValues.mapIndexed { index, item -> Pair(index, checkedValues.contains(item)) }
     }
 }

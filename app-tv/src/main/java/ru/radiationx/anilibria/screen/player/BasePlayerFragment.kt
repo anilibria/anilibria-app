@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
@@ -25,9 +26,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dev.rx.tvtest.cust.CustomListRowPresenter
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedVideoFragment
 
-open class BasePlayerFragment : ScopedVideoFragment() {
+open class BasePlayerFragment : VideoSupportFragment() {
 
 
     protected var playerGlue: VideoPlayerGlue? = null

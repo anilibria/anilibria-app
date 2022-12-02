@@ -3,13 +3,13 @@ package ru.radiationx.anilibria.screen
 import android.os.Bundle
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
+import ru.radiationx.quill.quillInject
 import ru.terrakok.cicerone.Router
 import java.util.*
-import javax.inject.Inject
 
-class DialogExampleFragment : ScopedGuidedStepFragment() {
+class DialogExampleFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val ACTION_ID_POSITIVE = 1
@@ -18,11 +18,9 @@ class DialogExampleFragment : ScopedGuidedStepFragment() {
         private const val ACTION_ID_SD = ACTION_ID_HD + 1
     }
 
-    @Inject
-    lateinit var guidedRouter: GuidedRouter
+    private val guidedRouter by quillInject<GuidedRouter>()
 
-    @Inject
-    lateinit var router: Router
+    private val router by quillInject<Router>()
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(
         "Авторизация",

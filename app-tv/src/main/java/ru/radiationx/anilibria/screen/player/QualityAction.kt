@@ -5,7 +5,8 @@ import androidx.leanback.widget.PlaybackControlsRow
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 
-class QualityAction(context: Context) : PlaybackControlsRow.MultiAction(R.id.player_action_quality) {
+class QualityAction(context: Context) :
+    PlaybackControlsRow.MultiAction(R.id.player_action_quality) {
 
     companion object {
         const val INDEX_SD = 0

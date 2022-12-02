@@ -7,13 +7,13 @@ import androidx.core.text.isDigitsOnly
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
 import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
+import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
-class AuthCredentialsGuidedFragment : ScopedGuidedStepFragment() {
+class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val LOGIN_FIELD_ACTION_ID = 1L
@@ -22,7 +22,7 @@ class AuthCredentialsGuidedFragment : ScopedGuidedStepFragment() {
         private const val LOGIN_ACTION_ID = 4L
     }
 
-    private val viewModel by viewModel<AuthCredentialsViewModel>()
+    private val viewModel by quillViewModel<AuthCredentialsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +64,10 @@ class AuthCredentialsGuidedFragment : ScopedGuidedStepFragment() {
         null
     )
 
-    override fun onCreateButtonActionsStylist(): GuidedActionsStylist = GuidedProgressActionsStylist().apply {
-        setAsButtonActions()
-    }
+    override fun onCreateButtonActionsStylist(): GuidedActionsStylist =
+        GuidedProgressActionsStylist().apply {
+            setAsButtonActions()
+        }
 
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
         actions.add(
@@ -101,7 +102,10 @@ class AuthCredentialsGuidedFragment : ScopedGuidedStepFragment() {
         )
     }
 
-    override fun onCreateButtonActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
+    override fun onCreateButtonActions(
+        actions: MutableList<GuidedAction>,
+        savedInstanceState: Bundle?
+    ) {
         actions.add(
             GuidedProgressAction.Builder(requireContext())
                 .id(LOGIN_ACTION_ID)

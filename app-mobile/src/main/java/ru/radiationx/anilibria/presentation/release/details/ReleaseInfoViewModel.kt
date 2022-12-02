@@ -2,16 +2,15 @@ package ru.radiationx.anilibria.presentation.release.details
 
 import android.Manifest
 import android.os.Build
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.anilibria.model.loading.StateController
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.BasePresenter
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
@@ -30,13 +29,14 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 @InjectViewState
-class ReleaseInfoPresenter @Inject constructor(
+class ReleaseInfoViewModel @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
@@ -55,7 +55,7 @@ class ReleaseInfoPresenter @Inject constructor(
     private val playerAnalytics: PlayerAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics
-) : BasePresenter<ReleaseInfoView>(router) {
+) : ViewModel() {
 
     private val remindText =
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
@@ -64,30 +64,35 @@ class ReleaseInfoPresenter @Inject constructor(
     var releaseId: ReleaseId? = null
     var releaseIdCode: ReleaseCode? = null
 
-    private val stateController = StateController(
-        ReleaseDetailScreenState()
-    )
+    private val _state = MutableStateFlow(ReleaseDetailScreenState())
+    val state = _state.asStateFlow()
+
+
+    val loadTorrentAction = EventFlow<TorrentItem>()
+    val playEpisodesAction = EventFlow<Release>()
+    val playContinueAction = EventFlow<ActionContinue>()
+    val playWebAction = EventFlow<ActionPlayWeb>()
+    val playEpisodeAction = EventFlow<ActionPlayEpisode>()
+    val loadEpisodeAction = EventFlow<ActionLoadEpisode>()
+    val showUnauthAction = EventFlow<Unit>()
+    val showDownloadAction = EventFlow<String>()
+    val showFileDonateAction = EventFlow<String>()
+    val showEpisodesMenuAction = EventFlow<Unit>()
+    val showContextEpisodeAction = EventFlow<Episode>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
-        stateController.update {
+        _state.update {
             it.copy(
                 modifiers = block.invoke(it.modifiers)
             )
         }
     }
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-
-        stateController
-            .observeState()
-            .onEach { viewState.showState(it) }
-            .launchIn(viewModelScope)
-
+    init {
         donationRepository
             .observerDonationInfo()
             .onEach { info ->
-                stateController.update { state ->
+                _state.update { state ->
                     val newCardState = info.cardRelease?.let {
                         DonationCardItemState(
                             tag = "donate",
@@ -113,7 +118,7 @@ class ReleaseInfoPresenter @Inject constructor(
         appPreferences
             .observeReleaseRemind()
             .onEach { remindEnabled ->
-                stateController.update {
+                _state.update {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
                 }
             }
@@ -144,7 +149,7 @@ class ReleaseInfoPresenter @Inject constructor(
         currentData = release
         releaseId = release.id
         releaseIdCode = release.code
-        stateController.update {
+        _state.update {
             it.copy(data = release.toState())
         }
     }
@@ -185,7 +190,7 @@ class ReleaseInfoPresenter @Inject constructor(
         val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
-        viewState.loadTorrent(torrentItem)
+        loadTorrentAction.set(torrentItem)
     }
 
     fun onCommentsClick() {
@@ -195,22 +200,22 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickWatchWeb(place: EpisodeControlPlace) {
-        currentData?.let { release ->
+        currentData?.also { release ->
             releaseAnalytics.webPlayerClick(release.id.id)
             release.moonwalkLink?.let {
-                viewState.playWeb(it, release.code.code)
+                playWebAction.set(ActionPlayWeb(it, release.code.code))
             }
         }
     }
 
     fun onPlayAllClick(place: EpisodeControlPlace) {
-        currentData?.let {
+        currentData?.also {
             place.handle({
                 releaseAnalytics.episodesTopStartClick(it.id.id)
             }, {
                 releaseAnalytics.episodesStartClick(it.id.id)
             })
-            viewState.playEpisodes(it)
+            playEpisodesAction.set(it)
         }
     }
 
@@ -222,7 +227,7 @@ class ReleaseInfoPresenter @Inject constructor(
                 releaseAnalytics.episodesContinueClick(release.id.id)
             })
             release.episodes.asReversed().maxByOrNull { it.access.lastAccess }?.let { episode ->
-                viewState.playContinue(release, episode)
+                playContinueAction.set(ActionContinue(release, episode))
             }
         }
     }
@@ -232,7 +237,9 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
     fun onClickEpisodesMenu(place: EpisodeControlPlace) {
-        currentData?.also { viewState.showEpisodesMenuDialog() }
+        currentData?.also {
+            showEpisodesMenuAction.set(Unit)
+        }
     }
 
     private fun onRutubeEpisodeClick(
@@ -240,7 +247,7 @@ class ReleaseInfoPresenter @Inject constructor(
         episode: RutubeEpisode
     ) {
         releaseAnalytics.episodeRutubeClick(release.id.id)
-        viewState.playWeb(episode.url, release.code.code.orEmpty())
+        playWebAction.set(ActionPlayWeb(episode.url, release.code.code))
     }
 
     private fun onExternalEpisodeClick(
@@ -260,7 +267,7 @@ class ReleaseInfoPresenter @Inject constructor(
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
         releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
-        viewState.downloadEpisode(episode, quality)
+        loadEpisodeAction.set(ActionLoadEpisode(episode, quality))
     }
 
     private fun onOnlineEpisodeClick(
@@ -272,7 +279,7 @@ class ReleaseInfoPresenter @Inject constructor(
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
-        viewState.playEpisode(release, episode, playFlag, quality)
+        playEpisodeAction.set(ActionPlayEpisode(release, episode, playFlag, quality))
     }
 
     fun onEpisodeClick(
@@ -303,7 +310,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
         val episodeItem = getEpisodeItem(episode) ?: return
-        viewState.showLongPressEpisodeDialog(episodeItem)
+        showContextEpisodeAction.set(episodeItem)
     }
 
     private fun getEpisodeItem(episode: ReleaseEpisodeItemState): Episode? {
@@ -350,7 +357,7 @@ class ReleaseInfoPresenter @Inject constructor(
 
     fun onClickFav() {
         if (authRepository.getAuthState() != AuthState.AUTH) {
-            viewState.showFavoriteDialog()
+            showUnauthAction.set(Unit)
             return
         }
         val releaseId = currentData?.id ?: return
@@ -401,7 +408,7 @@ class ReleaseInfoPresenter @Inject constructor(
             it.copy(descriptionExpanded = !it.descriptionExpanded)
         }
         currentData?.also {
-            if (stateController.currentState.modifiers.descriptionExpanded) {
+            if (_state.value.modifiers.descriptionExpanded) {
                 releaseAnalytics.descriptionExpand(it.id.id)
             }
         }
@@ -433,9 +440,9 @@ class ReleaseInfoPresenter @Inject constructor(
     fun onDownloadLinkSelected(url: String) {
         currentData?.also {
             if (it.showDonateDialog) {
-                viewState.showFileDonateDialog(url)
+                showFileDonateAction.set(url)
             } else {
-                viewState.showDownloadDialog(url)
+                showDownloadAction.set(url)
             }
         }
     }
@@ -506,3 +513,26 @@ class ReleaseInfoPresenter @Inject constructor(
     }
 
 }
+
+
+data class ActionContinue(
+    val release: Release,
+    val startWith: Episode
+)
+
+data class ActionPlayWeb(
+    val link: String,
+    val code: String
+)
+
+data class ActionPlayEpisode(
+    val release: Release,
+    val episode: Episode,
+    val playFlag: Int?,
+    val quality: Int?
+)
+
+data class ActionLoadEpisode(
+    val episode: SourceEpisode,
+    val quality: Int?
+)

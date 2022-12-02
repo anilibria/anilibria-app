@@ -9,18 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoPresenter
-import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoView
+import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoViewModel
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
@@ -29,7 +29,6 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlD
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -39,11 +38,12 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 import javax.inject.Inject
 
-class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoView {
+class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -55,12 +55,12 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
             headListener = headListener,
             episodeListener = episodeListener,
             episodeControlListener = episodeControlListener,
-            donationListener = { presenter.onClickDonate() },
+            donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
-            torrentClickListener = presenter::onTorrentClick,
-            commentsClickListener = presenter::onCommentsClick,
-            episodesTabListener = presenter::onEpisodeTabClick,
-            remindCloseListener = presenter::onRemindCloseClick,
+            torrentClickListener = viewModel::onTorrentClick,
+            commentsClickListener = viewModel::onCommentsClick,
+            episodesTabListener = viewModel::onEpisodeTabClick,
+            remindCloseListener = viewModel::onRemindCloseClick,
             torrentInfoListener = { showTorrentInfoDialog() }
         )
     }
@@ -68,12 +68,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
     @Inject
     lateinit var systemUtils: SystemUtils
 
-    @InjectPresenter
-    lateinit var presenter: ReleaseInfoPresenter
-
-    @ProvidePresenter
-    fun provideReleasePresenter(): ReleaseInfoPresenter =
-        getDependency(ReleaseInfoPresenter::class.java)
+    private val viewModel by viewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
 
@@ -81,8 +76,8 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
-            presenter.releaseId = bundle.getParcelable(ARG_ID)
-            presenter.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
+            viewModel.releaseId = bundle.getParcelable(ARG_ID)
+            viewModel.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
         }
     }
 
@@ -94,45 +89,80 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
             setHasFixedSize(true)
             disableItemChangeAnimation()
         }
+
+        viewModel.state.onEach {
+            showState(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.loadTorrentAction.observe().onEach {
+            loadTorrent(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.playEpisodesAction.observe().onEach {
+            playEpisodes(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.playContinueAction.observe().onEach {
+            playContinue(it.release, it.startWith)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.playWebAction.observe().onEach {
+            playWeb(it.link, it.code)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.playEpisodeAction.observe().onEach {
+            playEpisode(it.release, it.episode, it.playFlag, it.quality)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.loadEpisodeAction.observe().onEach {
+            downloadEpisode(it.episode, it.quality)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showUnauthAction.observe().onEach {
+            showFavoriteDialog()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showDownloadAction.observe().onEach {
+            showDownloadDialog(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showFileDonateAction.observe().onEach {
+            showFileDonateDialog(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showEpisodesMenuAction.observe().onEach {
+            showEpisodesMenuDialog()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showContextEpisodeAction.observe().onEach {
+            showLongPressEpisodeDialog(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(ARG_ID, presenter.releaseId)
-        outState.putParcelable(ARG_ID_CODE, presenter.releaseIdCode)
+        outState.putParcelable(ARG_ID, viewModel.releaseId)
+        outState.putParcelable(ARG_ID_CODE, viewModel.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
+        return false
     }
 
-    override fun showState(state: ReleaseDetailScreenState) {
+    private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
     }
 
-    override fun loadTorrent(torrent: TorrentItem) {
+    private fun loadTorrent(torrent: TorrentItem) {
         torrent.url?.also { systemUtils.externalLink(it) }
     }
 
-    override fun showTorrentDialog(torrents: List<TorrentItem>) {
-        val context = context ?: return
-        val titles =
-            torrents.map { "Серия ${it.series} [${it.quality}][${Utils.readableFileSize(it.size)}]" }
-                .toTypedArray()
-        AlertDialog.Builder(context)
-            .setItems(titles) { dialog, which ->
-                loadTorrent(torrents[which])
-            }
-            .show()
+    private fun playEpisodes(release: Release) {
+        playEpisode(release, release.episodes.last(), null, null)
     }
 
-    override fun playEpisodes(release: Release) {
-        playEpisode(release, release.episodes.last())
-    }
-
-    override fun playContinue(release: Release, startWith: Episode) {
-        playEpisode(release, startWith, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+    private fun playContinue(release: Release, startWith: Episode) {
+        playEpisode(release, startWith, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE, null)
     }
 
     private fun <T> getUrlByQuality(qualityInfo: QualityInfo<T>, quality: Int): String {
@@ -144,21 +174,21 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }.orEmpty()
     }
 
-    override fun showDownloadDialog(url: String) {
+    private fun showDownloadDialog(url: String) {
         val context = context ?: return
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
         AlertDialog.Builder(context)
             .setItems(titles) { _, which ->
-                presenter.submitDownloadEpisodeUrlAnalytics()
+                viewModel.submitDownloadEpisodeUrlAnalytics()
                 when (which) {
                     0 -> systemUtils.externalLink(url)
-                    1 -> presenter.downloadFile(url)
+                    1 -> viewModel.downloadFile(url)
                 }
             }
             .show()
     }
 
-    override fun showFileDonateDialog(url: String) {
+    private fun showFileDonateDialog(url: String) {
         val dialogBinding = DialogFileDownloadBinding.inflate(
             LayoutInflater.from(requireView().context),
             null,
@@ -179,11 +209,11 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
             .show()
 
         dialogBinding.dialogFilePatreonBtn.setOnClickListener {
-            presenter.onDialogPatreonClick()
+            viewModel.onDialogPatreonClick()
             dialog.dismiss()
         }
         dialogBinding.dialogFileDonateBtn.setOnClickListener {
-            presenter.onDialogDonateClick()
+            viewModel.onDialogDonateClick()
             dialog.dismiss()
         }
         dialogBinding.dialogFileDownloadBtn.setOnClickListener {
@@ -192,7 +222,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }
     }
 
-    override fun showEpisodesMenuDialog() {
+    private fun showEpisodesMenuDialog() {
         val context = context ?: return
         val items = arrayOf(
             "Сбросить историю просмотров",
@@ -201,14 +231,14 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         AlertDialog.Builder(context)
             .setItems(items) { _, which ->
                 when (which) {
-                    0 -> presenter.onResetEpisodesHistoryClick()
-                    1 -> presenter.onCheckAllEpisodesHistoryClick()
+                    0 -> viewModel.onResetEpisodesHistoryClick()
+                    1 -> viewModel.onCheckAllEpisodesHistoryClick()
                 }
             }
             .show()
     }
 
-    override fun showLongPressEpisodeDialog(episode: Episode) {
+    private fun showLongPressEpisodeDialog(episode: Episode) {
         val context = context ?: return
         val items = arrayOf(
             "Отметить как непросмотренная"
@@ -216,24 +246,24 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         AlertDialog.Builder(context)
             .setItems(items) { _, which ->
                 when (which) {
-                    0 -> presenter.markEpisodeUnviewed(episode)
+                    0 -> viewModel.markEpisodeUnviewed(episode)
                 }
             }
             .show()
     }
 
-    override fun downloadEpisode(episode: SourceEpisode, quality: Int?) {
+    private fun downloadEpisode(episode: SourceEpisode, quality: Int?) {
         val qualityInfo = QualityInfo(episode, episode.urlSd, episode.urlHd, episode.urlFullHd)
         if (quality == null) {
             selectQuality(qualityInfo, { selected ->
-                presenter.onDownloadLinkSelected(getUrlByQuality(qualityInfo, selected))
+                viewModel.onDownloadLinkSelected(getUrlByQuality(qualityInfo, selected))
             }, true)
         } else {
-            presenter.onDownloadLinkSelected(getUrlByQuality(qualityInfo, quality))
+            viewModel.onDownloadLinkSelected(getUrlByQuality(qualityInfo, quality))
         }
     }
 
-    override fun playEpisode(
+    private fun playEpisode(
         release: Release,
         episode: Episode,
         playFlag: Int?,
@@ -276,7 +306,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         if (forceDialog) {
             showSelectPlayerDialog(onSelect)
         } else {
-            val savedPlayerType = presenter.getPlayerType()
+            val savedPlayerType = viewModel.getPlayerType()
             when (savedPlayerType) {
                 PreferencesHolder.PLAYER_TYPE_NO -> {
                     showSelectPlayerDialog(onSelect)
@@ -309,7 +339,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
                 }
                 if (playerType != -1) {
                     if (savePlayerType) {
-                        presenter.setPlayerType(playerType)
+                        viewModel.setPlayerType(playerType)
                     }
                     onSelect.invoke(playerType)
                 }
@@ -323,7 +353,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         quality: Int,
         playFlag: Int? = null
     ) {
-        presenter.submitPlayerOpenAnalytics(
+        viewModel.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
         )
@@ -338,11 +368,11 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
     }
 
     private fun playExternal(release: Release, episode: Episode, quality: Int) {
-        presenter.submitPlayerOpenAnalytics(
+        viewModel.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
         )
-        presenter.markEpisodeViewed(episode)
+        viewModel.markEpisodeViewed(episode)
         val url = when (quality) {
             MyPlayerActivity.VAL_QUALITY_SD -> episode.urlSd
             MyPlayerActivity.VAL_QUALITY_HD -> episode.urlHd
@@ -360,8 +390,8 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }
     }
 
-    override fun playWeb(link: String, code: String) {
-        presenter.onWebPlayerClick()
+    private fun playWeb(link: String, code: String) {
+        viewModel.onWebPlayerClick()
         startActivity(Intent(context, WebPlayerActivity::class.java).apply {
             putExtra(WebPlayerActivity.ARG_URL, link)
             putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)
@@ -373,7 +403,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         onSelect: (quality: Int) -> Unit,
         forceDialog: Boolean = false
     ) {
-        val savedQuality = presenter.getQuality()
+        val savedQuality = viewModel.getQuality()
 
         var correctQuality = savedQuality
         if (correctQuality == PreferencesHolder.QUALITY_FULL_HD && !qualityInfo.hasFullHd) {
@@ -428,7 +458,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
                 val quality = qualities[p1]
                 if (quality != -1) {
                     if (saveQuality) {
-                        presenter.setQuality(
+                        viewModel.setQuality(
                             when (quality) {
                                 MyPlayerActivity.VAL_QUALITY_SD -> PreferencesHolder.QUALITY_SD
                                 MyPlayerActivity.VAL_QUALITY_HD -> PreferencesHolder.QUALITY_HD
@@ -443,11 +473,11 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
             .show()
     }
 
-    override fun showFavoriteDialog() {
+    private fun showFavoriteDialog() {
         val context = context ?: return
         AlertDialog.Builder(context)
             .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-            .setPositiveButton("Да") { _, _ -> presenter.openAuth() }
+            .setPositiveButton("Да") { _, _ -> viewModel.openAuth() }
             .setNegativeButton("Нет", null)
             .show()
     }
@@ -459,30 +489,30 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
     private val headListener = object : ReleaseHeadDelegate.Listener {
 
         override fun onClickSomeLink(url: String) {
-            presenter.onClickLink(url)
+            viewModel.onClickLink(url)
         }
 
         override fun onClickGenre(tag: String, index: Int) {
-            presenter.openSearch(tag, index)
+            viewModel.openSearch(tag, index)
         }
 
         override fun onClickFav() {
-            presenter.onClickFav()
+            viewModel.onClickFav()
         }
 
         override fun onScheduleClick(day: Int) {
-            presenter.onScheduleClick(day)
+            viewModel.onScheduleClick(day)
         }
 
         override fun onExpandClick() {
-            presenter.onDescriptionExpandClick()
+            viewModel.onDescriptionExpandClick()
         }
     }
 
     private val episodeListener = object : ReleaseEpisodeDelegate.Listener {
 
         override fun onClickSd(episode: ReleaseEpisodeItemState) {
-            presenter.onEpisodeClick(
+            viewModel.onEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
                 MyPlayerActivity.VAL_QUALITY_SD
@@ -490,7 +520,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }
 
         override fun onClickHd(episode: ReleaseEpisodeItemState) {
-            presenter.onEpisodeClick(
+            viewModel.onEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
                 MyPlayerActivity.VAL_QUALITY_HD
@@ -498,7 +528,7 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }
 
         override fun onClickFullHd(episode: ReleaseEpisodeItemState) {
-            presenter.onEpisodeClick(
+            viewModel.onEpisodeClick(
                 episode,
                 MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE,
                 MyPlayerActivity.VAL_QUALITY_FULL_HD
@@ -506,30 +536,30 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list), ReleaseInfoVi
         }
 
         override fun onClickEpisode(episode: ReleaseEpisodeItemState) {
-            presenter.onEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
+            viewModel.onEpisodeClick(episode, MyPlayerActivity.PLAY_FLAG_FORCE_CONTINUE)
         }
 
         override fun onLongClickEpisode(episode: ReleaseEpisodeItemState) {
-            presenter.onLongClickEpisode(episode)
+            viewModel.onLongClickEpisode(episode)
         }
     }
 
     private val episodeControlListener = object : ReleaseEpisodeControlDelegate.Listener {
 
         override fun onClickWatchWeb(place: EpisodeControlPlace) {
-            presenter.onClickWatchWeb(place)
+            viewModel.onClickWatchWeb(place)
         }
 
         override fun onClickWatchAll(place: EpisodeControlPlace) {
-            presenter.onPlayAllClick(place)
+            viewModel.onPlayAllClick(place)
         }
 
         override fun onClickContinue(place: EpisodeControlPlace) {
-            presenter.onClickContinue(place)
+            viewModel.onClickContinue(place)
         }
 
         override fun onClickEpisodesMenu(place: EpisodeControlPlace) {
-            presenter.onClickEpisodesMenu(place)
+            viewModel.onClickEpisodesMenu(place)
         }
     }
 

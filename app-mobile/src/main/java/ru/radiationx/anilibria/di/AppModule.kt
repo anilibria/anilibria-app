@@ -48,8 +48,12 @@ class AppModule(application: Application) : QuillModule() {
 
 
     init {
-        instance(application)
-        instance<Context>(application)
+        instance {
+            application
+        }
+        instance<Context> {
+            application
+        }
 
         singleImpl<SharedBuildConfig, AppBuildConfig>()
         singleImpl<CheckerReserveSources, MobileCheckerSources>()
@@ -59,8 +63,12 @@ class AppModule(application: Application) : QuillModule() {
 
         single<ShortcutHelper>()
 
-        instance(MintPermissions.controller)
-        instance(MintPermissionsFlow.dialogFlow)
+        instance {
+            MintPermissions.controller
+        }
+        instance {
+            MintPermissionsFlow.dialogFlow
+        }
 
 
         single<Templates>()
@@ -68,12 +76,17 @@ class AppModule(application: Application) : QuillModule() {
         singleImpl<AppThemeController, AppThemeControllerImpl>()
         singleImpl<AnalyticsThemeProvider, AnalyticsThemeProviderImpl>()
 
-        val ciceroneHolder = CiceroneHolder()
-        instance(ciceroneHolder)
-
-        val cicerone = ciceroneHolder.getCicerone("root")
-        instance<Router>(cicerone.router)
-        instance<NavigatorHolder>(cicerone.navigatorHolder)
+        val ciceroneHolder by lazy { CiceroneHolder() }
+        val cicerone by lazy { ciceroneHolder.getCicerone("root") }
+        instance {
+            ciceroneHolder
+        }
+        instance<Router> {
+            cicerone.router
+        }
+        instance<NavigatorHolder> {
+            cicerone.navigatorHolder
+        }
 
 
         single<DimensionsProvider>()

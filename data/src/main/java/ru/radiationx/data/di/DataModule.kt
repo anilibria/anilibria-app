@@ -39,7 +39,7 @@ class DataModule : QuillModule() {
 
 
         singleProvider<SharedPreferences, PreferencesProvider>()
-        singleProviderWithName<SharedPreferences, DataPreferencesProvider, DataPreferences>()
+        singleProvider<SharedPreferences, DataPreferencesProvider>(DataPreferences::class)
 
         singleImpl<MigrationDataSource, MigrationDataSourceImpl>()
 
@@ -74,8 +74,8 @@ class DataModule : QuillModule() {
         single<MainClientWrapper>()
         single<ApiClientWrapper>()
 
-        singleImplWithName<IClient, MainNetworkClient, MainClient>()
-        singleImplWithName<IClient, ApiNetworkClient, ApiClient>()
+        singleImpl<IClient, MainNetworkClient>(MainClient::class)
+        singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 
         singleImpl<IApiUtils, ApiUtils>()
 

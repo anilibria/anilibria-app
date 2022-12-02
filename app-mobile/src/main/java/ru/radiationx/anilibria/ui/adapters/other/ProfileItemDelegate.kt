@@ -33,7 +33,7 @@ class ProfileItemDelegate(
 
         private val binding by viewBinding<ItemOtherProfileBinding>()
 
-        private val dimensionsProvider = Quill.getRootScope().get(DimensionsProvider::class.java)
+        private val dimensionsProvider = Quill.getRootScope().get(DimensionsProvider::class)
 
         fun bind(state: ProfileItemState) {
             dimensionsProvider.get().also {

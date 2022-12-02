@@ -5,6 +5,6 @@ import ru.radiationx.quill.Quill
 internal object LibriaImageLoaderRoot {
 
     fun getImpl(): LibriaImageLoader {
-        return Quill.getRootScope().get(LibriaImageLoader::class.java)
+        return Quill.getRootScope().get(LibriaImageLoader::class)
     }
 }

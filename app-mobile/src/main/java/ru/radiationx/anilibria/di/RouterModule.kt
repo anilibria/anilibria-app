@@ -6,15 +6,17 @@ import ru.radiationx.quill.QuillModule
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 
-class RouterModule(ciceroneTag: String = ROOT) : QuillModule() {
-
-    companion object {
-        private const val ROOT = "root"
-    }
+class RouterModule(ciceroneTag: String) : QuillModule() {
 
     init {
-        val cicerone = Quill.getRootScope().get(CiceroneHolder::class.java).getCicerone(ciceroneTag)
-        instance<Router>(cicerone.router)
-        instance<NavigatorHolder>(cicerone.navigatorHolder)
+        val cicerone by lazy {
+            Quill.getRootScope().get(CiceroneHolder::class).getCicerone(ciceroneTag)
+        }
+        instance<Router> {
+            cicerone.router
+        }
+        instance<NavigatorHolder> {
+            cicerone.navigatorHolder
+        }
     }
 }

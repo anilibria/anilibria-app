@@ -11,6 +11,7 @@ import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.viewModelFactory
 import toothpick.Scope
 import toothpick.Toothpick
+import toothpick.config.Binding
 import toothpick.config.Module
 import java.util.*
 import javax.inject.Provider
@@ -51,14 +52,10 @@ class QuillScope(
         Quill.closeScope(this)
     }
 
-    fun <T> get(clazz: Class<T>, qualifierName: String? = null): T {
-        return qualifierName
-            ?.let { tpScope.getInstance(clazz, it) }
-            ?: tpScope.getInstance(clazz)
-    }
-
-    fun installTpModules(vararg modules: Module) {
-        tpScope.installModules(*modules)
+    fun <T : Any> get(clazz: KClass<T>, qualifier: KClass<out Annotation>? = null): T {
+        return qualifier
+            ?.let { tpScope.getInstance(clazz.java, it.java.canonicalName) }
+            ?: tpScope.getInstance(clazz.java)
     }
 
     fun installModules(vararg modules: QuillModule) {
@@ -70,78 +67,73 @@ open class QuillModule {
 
     val tpModule = Module()
 
-    fun <T> instance(clazz: Class<T>, value: T) {
-        tpModule.bind(clazz).toInstance(value)
-    }
-
-    fun <T> instance(clazz: Class<T>, block: () -> T) {
-        tpModule.bind(clazz)
+    fun <T : Any> instance(
+        clazz: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+        block: () -> T
+    ) {
+        tpModule.bind(clazz.java)
+            .applyQualifier(qualifier)
             .toProviderInstance { block.invoke() }
             .providesSingleton()
     }
 
-    fun <T> single(clazz: Class<T>) {
-        tpModule.bind(clazz).singleton()
-    }
-
-    fun <P, C : P> singleImpl(clazzParent: Class<P>, clazzChild: Class<C>) {
-        tpModule.bind(clazzParent).to(clazzChild).singleton()
-    }
-
-    fun <P, C : P, A : Annotation> singleImplWithName(
-        clazzParent: Class<P>,
-        clazzChild: Class<C>,
-        annotationClazz: Class<A>
+    fun <T : Any> single(
+        clazz: KClass<T>,
+        qualifier: KClass<out Annotation>? = null
     ) {
-        tpModule.bind(clazzParent).withName(annotationClazz).to(clazzChild).singleton()
+        tpModule.bind(clazz.java).applyQualifier(qualifier).singleton()
     }
 
-    fun <T, P : Provider<T>> singleProvider(
-        clazz: Class<T>,
-        providerClazz: Class<out Provider<T>>
+    fun <P : Any, C : P> singleImpl(
+        clazzParent: KClass<P>,
+        clazzChild: KClass<C>,
+        qualifier: KClass<out Annotation>? = null
     ) {
-        tpModule.bind(clazz)
-            .toProvider(providerClazz)
+        tpModule.bind(clazzParent.java)
+            .applyQualifier(qualifier)
+            .to(clazzChild.java)
+            .singleton()
+    }
+
+    fun <T : Any, P : Provider<T>> singleProvider(
+        clazz: KClass<T>,
+        providerClazz: KClass<out Provider<T>>,
+        qualifier: KClass<out Annotation>? = null
+    ) {
+        tpModule.bind(clazz.java)
+            .applyQualifier(qualifier)
+            .toProvider(providerClazz.java)
             .providesSingleton()
     }
 
-    fun <T, P : Provider<T>, A : Annotation> singleProviderWithName(
-        clazz: Class<T>,
-        providerClazz: Class<out Provider<T>>,
-        annotationClazz: Class<A>
+    inline fun <reified T : Any> single() {
+        single(T::class)
+    }
+
+    inline fun <reified P : Any, reified C : P> singleImpl(
+        qualifier: KClass<out Annotation>? = null
     ) {
-        tpModule.bind(clazz)
-            .withName(annotationClazz)
-            .toProvider(providerClazz)
-            .providesSingleton()
+        singleImpl(P::class, C::class, qualifier)
     }
 
-    inline fun <reified T> single() {
-        single(T::class.java)
+    inline fun <reified T : Any> instance(
+        qualifier: KClass<out Annotation>? = null,
+        noinline block: () -> T
+    ) {
+        instance(T::class, qualifier, block)
     }
 
-    inline fun <reified P, reified C : P> singleImpl() {
-        singleImpl(P::class.java, C::class.java)
+    inline fun <reified T : Any, reified P : Provider<T>> singleProvider(
+        qualifier: KClass<out Annotation>? = null
+    ) {
+        singleProvider(T::class, P::class, qualifier)
     }
 
-    inline fun <reified P, reified C : P, reified A : Annotation> singleImplWithName() {
-        singleImplWithName(P::class.java, C::class.java, A::class.java)
-    }
-
-    inline fun <reified T> instance(value: T) {
-        instance(T::class.java, value)
-    }
-
-    inline fun <reified T> instance(noinline block: () -> T) {
-        instance(T::class.java, block)
-    }
-
-    inline fun <reified T, reified P : Provider<T>> singleProvider() {
-        singleProvider(T::class.java, P::class.java)
-    }
-
-    inline fun <reified T, reified P : Provider<T>, reified A : Annotation> singleProviderWithName() {
-        singleProviderWithName(T::class.java, P::class.java, A::class.java)
+    private fun <T> Binding<T>.CanBeNamed.applyQualifier(
+        qualifier: KClass<out Annotation>?
+    ): Binding<T>.CanBeBound {
+        return qualifier?.let { withName(qualifier.java) } ?: this
     }
 }
 
@@ -222,13 +214,14 @@ fun <T : ViewModel> createViewModelFactory(
     addInitializer(clazz) {
         scope.apply {
             if (extraProvider != null) {
-                val extra = extraProvider.invoke()
                 val module = QuillModule().apply {
-                    instance(QuillExtra::class.java, extra)
+                    instance {
+                        extraProvider.invoke()
+                    }
                 }
                 installModules(module)
             }
-        }.get(clazz.java)
+        }.get(clazz)
     }
 }
 
@@ -246,26 +239,38 @@ inline fun <reified T : ViewModel> FragmentActivity.quillViewModel(
     ViewModelProviders.of(this, factory).get()
 }
 
-inline fun <reified T> Fragment.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
-    quillGet(qualifierName)
+inline fun <reified T : Any> Fragment.quillInject(
+    qualifier: KClass<out Annotation>? = null
+): Lazy<T> = lazy {
+    quillGet(qualifier)
 }
 
-inline fun <reified T> Fragment.quillGet(qualifierName: String? = null): T {
-    return getQuillScope().get(T::class.java, qualifierName)
+inline fun <reified T : Any> Fragment.quillGet(
+    qualifier: KClass<out Annotation>? = null
+): T {
+    return getQuillScope().get(T::class, qualifier)
 }
 
-inline fun <reified T> FragmentActivity.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
-    quillGet()
+inline fun <reified T : Any> FragmentActivity.quillInject(
+    qualifier: KClass<out Annotation>? = null
+): Lazy<T> = lazy {
+    quillGet(qualifier)
 }
 
-inline fun <reified T> FragmentActivity.quillGet(qualifierName: String? = null): T {
-    return getQuillScope().get(T::class.java, qualifierName)
+inline fun <reified T : Any> FragmentActivity.quillGet(
+    qualifier: KClass<out Annotation>? = null
+): T {
+    return getQuillScope().get(T::class, qualifier)
 }
 
-inline fun <reified T> Context.quillInject(qualifierName: String? = null): Lazy<T> = lazy {
-    quillGet()
+inline fun <reified T : Any> Context.quillInject(
+    qualifier: KClass<out Annotation>? = null
+): Lazy<T> = lazy {
+    quillGet(qualifier)
 }
 
-inline fun <reified T> Context.quillGet(qualifierName: String? = null): T {
-    return Quill.getRootScope().get(T::class.java, qualifierName)
+inline fun <reified T : Any> Context.quillGet(
+    qualifier: KClass<out Annotation>? = null
+): T {
+    return Quill.getRootScope().get(T::class, qualifier)
 }

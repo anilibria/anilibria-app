@@ -276,7 +276,7 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
         private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
             val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
             return if (needIntercept) {
-                val networkClient = quillGet<IClient>(MainClient::class.java.name)
+                val networkClient = quillGet<IClient>(MainClient::class)
                 val cssSrc = try {
                     runBlocking { networkClient.get(url.orEmpty(), emptyMap()) }
                 } catch (ex: Throwable) {

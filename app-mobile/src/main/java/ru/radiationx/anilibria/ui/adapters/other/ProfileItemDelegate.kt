@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.quill.Quill
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ProfileItemDelegate(
@@ -33,7 +33,7 @@ class ProfileItemDelegate(
 
         private val binding by viewBinding<ItemOtherProfileBinding>()
 
-        private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
+        private val dimensionsProvider = Quill.getRootScope().get(DimensionsProvider::class.java)
 
         fun bind(state: ProfileItemState) {
             dimensionsProvider.get().also {

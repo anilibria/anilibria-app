@@ -13,8 +13,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
 import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.viewModel
 
 class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
 

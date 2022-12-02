@@ -25,8 +25,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.quill.viewModel
 
 
 /* Created by radiationx on 05.11.17. */
@@ -100,7 +99,6 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 

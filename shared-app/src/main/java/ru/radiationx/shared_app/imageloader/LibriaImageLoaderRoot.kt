@@ -1,10 +1,10 @@
 package ru.radiationx.shared_app.imageloader
 
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.quill.Quill
 
 internal object LibriaImageLoaderRoot {
 
     fun getImpl(): LibriaImageLoader {
-        return DI.get(LibriaImageLoader::class.java)
+        return Quill.getRootScope().get(LibriaImageLoader::class.java)
     }
 }

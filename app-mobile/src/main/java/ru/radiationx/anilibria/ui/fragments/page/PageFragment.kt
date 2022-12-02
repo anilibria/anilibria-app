@@ -23,16 +23,15 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
@@ -59,22 +58,17 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
 
     private var pageTitle: String? = null
 
-    @Inject
-    lateinit var appThemeController: AppThemeController
+    private val appThemeController by inject<AppThemeController>()
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
+    private val apiConfig by inject<ApiConfig>()
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
-    @Inject
-    lateinit var pageAnalytics: PageAnalytics
+    private val pageAnalytics by inject<PageAnalytics>()
 
     private var webViewScrollPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             viewModel.pagePath = it.getString(ARG_PATH, null)
@@ -154,7 +148,7 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
             webViewScrollPos = it.getInt(WEB_VIEW_SCROLL_Y, 0)
         }
 
-        val template = DI.get(Templates::class.java).staticPageTemplate
+        val template = get<Templates>().staticPageTemplate
         binding.webView.easyLoadData(
             apiConfig.siteUrl,
             template.generateWithTheme(appThemeController.getTheme())

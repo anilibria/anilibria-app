@@ -14,10 +14,9 @@ import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringViewModel
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 
 class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring) {
 
@@ -26,7 +25,6 @@ class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring) {
     private val viewModel by viewModel<ConfiguringViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
         binding.configRefresh.setOnClickListener { viewModel.continueCheck() }
         binding.configSkip.setOnClickListener { viewModel.skipCheck() }

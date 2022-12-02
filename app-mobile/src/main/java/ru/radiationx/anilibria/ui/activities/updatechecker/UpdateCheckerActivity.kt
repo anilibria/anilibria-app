@@ -19,12 +19,11 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 24.07.17.
@@ -52,14 +51,11 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     private val viewModel by viewModel<CheckerViewModel>()
 
-    @Inject
-    lateinit var apiUtils: IApiUtils
+    private val apiUtils by inject<IApiUtils>()
 
-    @Inject
-    lateinit var updaterAnalytics: UpdaterAnalytics
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
 

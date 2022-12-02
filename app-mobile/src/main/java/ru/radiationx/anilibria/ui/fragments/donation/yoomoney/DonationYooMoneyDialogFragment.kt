@@ -20,9 +20,9 @@ import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
 import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
-import ru.radiationx.shared_app.di.viewModel
 
 class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donation_yoomoney) {
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
-import ru.radiationx.shared_app.di.injectDependencies
 
 
 /**
@@ -16,7 +15,6 @@ import ru.radiationx.shared_app.di.injectDependencies
 class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        this.injectDependencies()
         setTheme(R.style.PreferencesDayNightAppTheme)
         super.onCreate(savedInstanceState)
 

@@ -18,8 +18,8 @@ import ru.radiationx.anilibria.presentation.teams.TeamsViewModel
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.viewModel
 
 class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
 

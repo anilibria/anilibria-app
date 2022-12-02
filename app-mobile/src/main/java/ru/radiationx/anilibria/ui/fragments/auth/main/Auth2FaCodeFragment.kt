@@ -11,14 +11,12 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
@@ -38,11 +36,7 @@ class Auth2FaCodeFragment :
 
     private val viewModel by viewModel<Auth2FaCodeViewModel>()
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
-
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreateBinding(view: View): FragmentAuth2faCodeBinding {
         return FragmentAuth2faCodeBinding.bind(view)
@@ -51,7 +45,6 @@ class Auth2FaCodeFragment :
     override val statusBarVisible: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             viewModel.currentLogin = it.getString(ARG_LOGIN, viewModel.currentLogin)
@@ -77,7 +70,7 @@ class Auth2FaCodeFragment :
         binding.authSubmit.setOnClickListener { viewModel.signIn() }
         binding.auth2facode.addTextChangeListener { viewModel.setCode2fa(it) }
 
-        viewModel.state.onEach { state->
+        viewModel.state.onEach { state ->
             binding.authSubmit.isEnabled = state.actionEnabled
             binding.authSwitcher.displayedChild = if (state.sending) 1 else 0
         }.launchIn(viewLifecycleOwner.lifecycleScope)

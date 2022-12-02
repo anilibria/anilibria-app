@@ -21,12 +21,11 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 
 /**
@@ -70,14 +69,11 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
 
     private val viewModel by viewModel<AuthSocialViewModel>()
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
+    private val apiConfig by inject<ApiConfig>()
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             viewModel.argKey = it.getString(ARG_KEY, viewModel.argKey)

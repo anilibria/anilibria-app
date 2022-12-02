@@ -29,6 +29,7 @@ dependencies {
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
+    implementation project(":quill-di")
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation("io.coil-kt:coil:2.2.2")
 

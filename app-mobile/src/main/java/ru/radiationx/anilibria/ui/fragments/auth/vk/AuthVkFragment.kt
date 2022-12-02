@@ -18,10 +18,9 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 
 class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
     companion object {
@@ -52,7 +51,6 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.let {
             viewModel.argUrl = it.getString(ARG_URL, viewModel.argUrl)

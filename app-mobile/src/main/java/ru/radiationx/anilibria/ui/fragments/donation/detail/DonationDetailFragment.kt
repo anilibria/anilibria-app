@@ -19,7 +19,7 @@ import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdap
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.quill.viewModel
 import kotlin.math.roundToInt
 
 class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail) {

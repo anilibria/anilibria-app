@@ -33,17 +33,15 @@ import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 import timber.log.Timber
-import toothpick.Toothpick
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
-import javax.inject.Inject
 
 
 class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
@@ -61,14 +59,11 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
 
     private val viewModel by viewModel<VkCommentsViewModel>()
 
-    @Inject
-    lateinit var appThemeController: AppThemeController
+    private val appThemeController by inject<AppThemeController>()
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             viewModel.releaseId = bundle.getParcelable(ARG_ID)
@@ -180,7 +175,7 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
         }
         currentVkCommentsState = comments
 
-        val template = DI.get(Templates::class.java).vkCommentsTemplate
+        val template = get<Templates>().vkCommentsTemplate
         binding.webView.easyLoadData(
             comments.url,
             template.generateWithTheme(appThemeController.getTheme())
@@ -281,11 +276,9 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
         private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
             val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
             return if (needIntercept) {
-                val client = Toothpick.openScopes(DI.DEFAULT_SCOPE, screenScope)
-                    .getInstance(IClient::class.java, MainClient::class.java.name)
-
+                val networkClient = get<IClient>(MainClient::class.java.name)
                 val cssSrc = try {
-                    runBlocking { client.get(url.orEmpty(), emptyMap()) }
+                    runBlocking { networkClient.get(url.orEmpty(), emptyMap()) }
                 } catch (ex: Throwable) {
                     Timber.e(ex)
                     return WebResourceResponse(
@@ -298,7 +291,7 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
                 }
                 var newCss = cssSrc
 
-                val commentsCss = DI.get(VkCommentsCss::class.java)
+                val commentsCss = get<VkCommentsCss>()
                 val fixCss = if (appThemeController.getTheme().isDark()) {
                     commentsCss.dark
                 } else {

@@ -41,19 +41,18 @@ import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.installTpModules
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import javax.inject.Inject
 import kotlin.math.max
 
 
@@ -65,20 +64,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    @Inject
-    lateinit var sharedBuildConfig: SharedBuildConfig
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
-    @Inject
-    lateinit var screenMessenger: SystemMessenger
+    private val screenMessenger by inject<SystemMessenger>()
 
-    @Inject
-    lateinit var router: Router
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var navigationHolder: NavigatorHolder
+    private val navigationHolder by inject<NavigatorHolder>()
 
-    @Inject
-    lateinit var dimensionsProvider: DimensionsProvider
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     private val binding by viewBinding<ActivityMainBinding>()
 
@@ -107,7 +101,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         } else {
             resources.configuration.locale
         }
-        injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
+        installTpModules(LocaleModule(locale))
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 

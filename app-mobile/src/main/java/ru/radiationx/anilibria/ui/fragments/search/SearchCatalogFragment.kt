@@ -27,9 +27,8 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 
 
 class SearchCatalogFragment :
@@ -83,7 +82,6 @@ class SearchCatalogFragment :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             viewModel.argGenre = bundle.getString(ARG_GENRE, null)

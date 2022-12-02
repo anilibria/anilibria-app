@@ -14,9 +14,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 
 class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider {
@@ -55,7 +54,6 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.apply {
             viewModel.argDay = getInt(ARG_DAY, viewModel.argDay)

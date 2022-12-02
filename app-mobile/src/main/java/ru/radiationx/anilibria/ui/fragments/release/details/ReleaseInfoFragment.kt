@@ -36,12 +36,11 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
-import javax.inject.Inject
 
 class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
 
@@ -65,15 +64,13 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
         )
     }
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
     private val viewModel by viewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             viewModel.releaseId = bundle.getParcelable(ARG_ID)

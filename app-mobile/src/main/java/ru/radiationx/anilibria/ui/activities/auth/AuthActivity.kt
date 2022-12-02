@@ -12,12 +12,11 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import javax.inject.Inject
 
 
 /**
@@ -36,19 +35,15 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val binding by viewBinding<ActivityMainBinding>()
 
-    @Inject
-    lateinit var router: Router
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var navigationHolder: NavigatorHolder
+    private val navigationHolder by inject<NavigatorHolder>()
 
-    @Inject
-    lateinit var dimensionsProvider: DimensionsProvider
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     private var dimensionHelper: DimensionHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 

@@ -29,8 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.quill.viewModel
 
 /**
  * Created by radiationx on 18.02.18.
@@ -75,11 +74,6 @@ class HistoryFragment : BaseFragment<FragmentListBinding>(R.layout.fragment_list
 
     override fun onCreateBinding(view: View): FragmentListBinding {
         return FragmentListBinding.bind(view)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
-        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

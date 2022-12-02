@@ -28,8 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.quill.viewModel
 
 
 /**
@@ -78,7 +77,6 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 

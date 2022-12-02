@@ -21,8 +21,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 25.12.16.
@@ -30,26 +29,19 @@ import javax.inject.Inject
 
 class SettingsFragment : BaseSettingFragment() {
 
-    @Inject
-    lateinit var appPreferences: PreferencesHolder
+    private val appPreferences by inject<PreferencesHolder>()
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
+    private val apiConfig by inject<ApiConfig>()
 
-    @Inject
-    lateinit var authRepository: AuthRepository
+    private val authRepository by inject<AuthRepository>()
 
-    @Inject
-    lateinit var errorHandler: IErrorHandler
+    private val errorHandler by inject<IErrorHandler>()
 
-    @Inject
-    lateinit var settingsAnalytics: SettingsAnalytics
+    private val settingsAnalytics by inject<SettingsAnalytics>()
 
-    @Inject
-    lateinit var updaterAnalytics: UpdaterAnalytics
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 

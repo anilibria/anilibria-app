@@ -8,7 +8,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentLazyBinding
 import ru.radiationx.anilibria.ui.fragments.ScopeFragment
-import ru.radiationx.shared.ktx.android.putExtra
 
 class LazyVkCommentsFragment : ScopeFragment(R.layout.fragment_lazy) {
 
@@ -45,9 +44,6 @@ class LazyVkCommentsFragment : ScopeFragment(R.layout.fragment_lazy) {
         val fragment = VkCommentsFragment().also {
             val newBundle = (this.arguments?.clone() as Bundle?)
             it.arguments = newBundle
-            it.putExtra {
-                putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
-            }
         }
         childFragmentManager.commit {
             replace(R.id.lazyContainer, fragment)

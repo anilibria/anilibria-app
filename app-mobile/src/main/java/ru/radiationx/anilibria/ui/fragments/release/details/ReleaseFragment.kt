@@ -19,24 +19,21 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
 import ru.radiationx.anilibria.presentation.release.details.ReleaseViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.shared_app.di.viewModel
 import ru.radiationx.shared_app.imageloader.showImageUrl
-import javax.inject.Inject
 
 
 /* Created by radiationx on 16.11.17. */
@@ -66,14 +63,9 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     private var currentTitle: String? = null
     private var toolbarHelperJob: Job? = null
 
-    @Inject
-    lateinit var commentsAnalytics: CommentsAnalytics
+    private val shortcutHelper by inject<ShortcutHelper>()
 
-    @Inject
-    lateinit var shortcutHelper: ShortcutHelper
-
-    @Inject
-    lateinit var systemUtils: SystemUtils
+    private val systemUtils by inject<SystemUtils>()
 
     private val viewModel by viewModel<ReleaseViewModel>()
 
@@ -88,7 +80,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
         arguments?.also { bundle ->
             viewModel.releaseId = bundle.getParcelable(ARG_ID)
@@ -265,9 +256,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             fragments.forEach {
                 val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
                 it.arguments = newBundle
-                it.putExtra {
-                    putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
-                }
             }
         }
 

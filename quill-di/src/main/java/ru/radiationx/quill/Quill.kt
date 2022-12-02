@@ -1,5 +1,7 @@
 package ru.radiationx.quill
 
+import android.app.Application
+import android.app.Service
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -51,6 +53,10 @@ class QuillScope(
 
     fun <T> get(clazz: Class<T>): T {
         return tpScope.getInstance(clazz)
+    }
+
+    fun installTpModules(vararg modules: Module) {
+        tpScope.installModules(*modules)
     }
 
     fun installModule(module: QuillModule) {
@@ -135,8 +141,16 @@ fun Fragment.installQuillModule(block: QuillModule.() -> Unit) {
     getQuillScope().installModule(block)
 }
 
+fun Fragment.installTpModules(vararg module: Module) {
+    getQuillScope().installTpModules(*module)
+}
+
 fun FragmentActivity.installQuillModule(block: QuillModule.() -> Unit) {
     getQuillScope().installModule(block)
+}
+
+fun FragmentActivity.installTpModules(vararg module: Module) {
+    getQuillScope().installTpModules(*module)
 }
 
 fun Fragment.getQuillScope(): QuillScope {
@@ -173,11 +187,12 @@ inline fun <reified T : ViewModel> Fragment.viewModel(
     ViewModelProviders.of(this, factory).get()
 }
 
-inline fun <reified T> Fragment.inject(): Lazy<T> = lazy {
+inline fun <reified T> Fragment.inject(qualifierName: String? = null): Lazy<T> = lazy {
     getQuillScope().get(T::class.java)
 }
 
-inline fun <reified T> Fragment.get(): T = getQuillScope().get(T::class.java)
+inline fun <reified T> Fragment.get(qualifierName: String? = null): T =
+    getQuillScope().get(T::class.java)
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
@@ -186,8 +201,23 @@ inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     ViewModelProviders.of(this, factory).get()
 }
 
-inline fun <reified T> FragmentActivity.inject(): Lazy<T> = lazy {
+inline fun <reified T> FragmentActivity.inject(qualifierName: String? = null): Lazy<T> = lazy {
     getQuillScope().get(T::class.java)
 }
 
-inline fun <reified T> FragmentActivity.get(): T = getQuillScope().get(T::class.java)
+inline fun <reified T> FragmentActivity.get(qualifierName: String? = null): T =
+    getQuillScope().get(T::class.java)
+
+inline fun <reified T> Application.inject(qualifierName: String? = null): Lazy<T> = lazy {
+    Quill.getRootScope().get(T::class.java)
+}
+
+inline fun <reified T> Application.get(qualifierName: String? = null): T =
+    Quill.getRootScope().get(T::class.java)
+
+inline fun <reified T> Service.inject(qualifierName: String? = null): Lazy<T> = lazy {
+    Quill.getRootScope().get(T::class.java)
+}
+
+inline fun <reified T> Service.get(qualifierName: String? = null): T =
+    Quill.getRootScope().get(T::class.java)

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
@@ -32,11 +31,11 @@ import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import toothpick.InjectConstructor
 import java.util.regex.Pattern
-import javax.inject.Inject
 
-@InjectViewState
-class ReleaseInfoViewModel @Inject constructor(
+@InjectConstructor
+class ReleaseInfoViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,

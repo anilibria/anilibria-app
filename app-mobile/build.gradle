@@ -123,10 +123,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
-    implementation "com.github.moxy-community:moxy:$moxy_version"
-    implementation "com.github.moxy-community:moxy-androidx:$moxy_version"
-    kapt "com.github.moxy-community:moxy-compiler:$moxy_version"
-
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

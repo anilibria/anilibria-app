@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialogFragment
 
-open class AlertDialogFragment(@LayoutRes layoutRes: Int) :
-    CustomMvpAppCompatDialogFragment(layoutRes) {
+open class AlertDialogFragment(@LayoutRes layoutRes: Int) : AppCompatDialogFragment(layoutRes) {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext()).show()

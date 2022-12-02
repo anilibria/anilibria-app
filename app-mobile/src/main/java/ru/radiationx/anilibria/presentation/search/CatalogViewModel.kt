@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
@@ -33,10 +32,10 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class CatalogViewModel @Inject constructor(
+@InjectConstructor
+class CatalogViewModel(
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,

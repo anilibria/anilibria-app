@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import moxy.MvpAppCompatFragment
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -16,7 +16,7 @@ import ru.radiationx.shared_app.di.DI
 
 abstract class ScopeFragment(
     @LayoutRes contentLayoutId: Int
-) : MvpAppCompatFragment(contentLayoutId), ScopeProvider, BackButtonListener {
+) : Fragment(contentLayoutId), ScopeProvider, BackButtonListener {
 
     companion object {
         const val ARG_SCREEN_SCOPE = "arg_screen_scope"

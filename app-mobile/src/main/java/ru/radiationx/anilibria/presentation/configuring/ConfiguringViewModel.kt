@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.presentation.configuring
 
 import androidx.lifecycle.ViewModel
-import moxy.InjectViewState
 import ru.radiationx.data.interactors.ConfiguringInteractor
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-@InjectViewState
-class ConfiguringViewModel @Inject constructor(
+@InjectConstructor
+class ConfiguringViewModel(
     private val configuringInteractor: ConfiguringInteractor
 ) : ViewModel() {
 

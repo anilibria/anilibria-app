@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleasePagerState
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -18,11 +17,10 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-/* Created by radiationx on 18.11.17. */
-@InjectViewState
-class ReleaseViewModel @Inject constructor(
+@InjectConstructor
+class ReleaseViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,

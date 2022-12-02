@@ -41,7 +41,6 @@ buildscript {
         firebase_messaging_version = '23.1.0'
 
         mobmetrica_version = '5.2.0'
-        moxy_version = '2.2.2'
         mintpermissions_version = '1.1.1'
         exomedia_version = '4.3.0'
         minitemplator_version = '1.4.1'

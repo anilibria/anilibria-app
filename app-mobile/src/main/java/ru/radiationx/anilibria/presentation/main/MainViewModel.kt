@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
@@ -17,7 +16,7 @@ import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
 import timber.log.Timber
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
 
 data class MainScreenState(
@@ -26,8 +25,8 @@ data class MainScreenState(
     val mainLogicCompleted: Boolean = false
 )
 
-@InjectViewState
-class MainViewModel @Inject constructor(
+@InjectConstructor
+class MainViewModel(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,

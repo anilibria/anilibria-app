@@ -10,29 +10,28 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.repository.PageRepository
+import ru.radiationx.quill.QuillExtra
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
-/**
- * Created by radiationx on 13.01.18.
- */
+data class PageExtra(
+    val path: String
+) : QuillExtra
+
 @InjectConstructor
 class PageViewModel(
+    private val argExtra: PageExtra,
     private val pageRepository: PageRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val pageAnalytics: PageAnalytics
 ) : ViewModel() {
 
-    var pagePath: String? = null
-
     private val _state = MutableStateFlow(PageScreenState())
     val state = _state.asStateFlow()
 
     init {
-        pagePath?.also {
-            loadPage(it)
-        }
+        loadPage(argExtra.path)
     }
 
     fun onBackPressed() {

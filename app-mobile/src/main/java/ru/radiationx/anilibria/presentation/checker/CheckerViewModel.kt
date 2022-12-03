@@ -15,14 +15,17 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
-/**
- * Created by radiationx on 28.01.18.
- */
+data class CheckerExtra(
+    val forceLoad: Boolean
+) : QuillExtra
+
 @InjectConstructor
 class CheckerViewModel(
+    private val argExtra: CheckerExtra,
     private val checkerRepository: CheckerRepository,
     private val errorHandler: IErrorHandler,
     private val updaterAnalytics: UpdaterAnalytics,
@@ -30,8 +33,6 @@ class CheckerViewModel(
     private val systemUtils: SystemUtils,
     private val mintPermissionsDialogFlow: MintPermissionsDialogFlow
 ) : ViewModel() {
-
-    var forceLoad = false
 
     private val _state = MutableStateFlow(CheckerScreenState())
     val state = _state.asStateFlow()
@@ -44,7 +45,7 @@ class CheckerViewModel(
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
             runCatching {
-                checkerRepository.checkUpdate(sharedBuildConfig.versionCode, forceLoad)
+                checkerRepository.checkUpdate(sharedBuildConfig.versionCode, argExtra.forceLoad)
             }.onSuccess { data ->
                 _state.update { it.copy(data = data) }
             }.onFailure {

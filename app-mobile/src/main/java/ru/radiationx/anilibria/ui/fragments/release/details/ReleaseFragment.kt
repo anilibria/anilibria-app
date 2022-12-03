@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
+import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.presentation.release.details.ReleaseViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
@@ -29,6 +30,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
@@ -67,7 +69,13 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
 
     private val systemUtils by quillInject<SystemUtils>()
 
-    private val viewModel by quillViewModel<ReleaseViewModel>()
+    private val viewModel by quillViewModel<ReleaseViewModel> {
+        ReleaseExtra(
+            id = getExtra(ARG_ID),
+            code = getExtra(ARG_ID_CODE),
+            release = getExtra(ARG_ITEM)
+        )
+    }
 
     override var transitionNameLocal = ""
 
@@ -77,15 +85,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
 
     override fun onCreateBinding(view: View): FragmentPagedBinding {
         return FragmentPagedBinding.bind(view)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            viewModel.releaseId = bundle.getParcelable(ARG_ID)
-            viewModel.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
-            viewModel.argReleaseItem = bundle.getParcelable(ARG_ITEM) as? Release?
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -181,12 +180,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
         viewModel.shortcutAction.observe().onEach {
             shortcutHelper.addShortcut(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(ARG_ID, viewModel.releaseId)
-        outState.putParcelable(ARG_ID_CODE, viewModel.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {

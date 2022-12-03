@@ -84,8 +84,8 @@ object Screens {
         override fun getFragment() = HistoryFragment()
     }
 
-    class Schedule(val day: Int = -1) : BaseAppScreen() {
-        override fun getFragment(): androidx.fragment.app.Fragment =
+    class Schedule(val day: Int? = null) : BaseAppScreen() {
+        override fun getFragment(): Fragment =
             ScheduleFragment.newInstance(day)
     }
 

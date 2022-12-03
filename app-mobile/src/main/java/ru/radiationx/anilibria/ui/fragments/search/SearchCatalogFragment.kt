@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.presentation.search.CatalogExtra
 import ru.radiationx.anilibria.presentation.search.CatalogFilterState
 import ru.radiationx.anilibria.presentation.search.CatalogViewModel
 import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
@@ -28,6 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
 
 
@@ -69,7 +71,9 @@ class SearchCatalogFragment :
 
     private val searchViewModel by quillViewModel<FastSearchViewModel>()
 
-    private val viewModel by quillViewModel<CatalogViewModel>()
+    private val viewModel by quillViewModel<CatalogViewModel> {
+        CatalogExtra(genre = getExtra(ARG_GENRE))
+    }
 
     private var searchView: SearchMenuItem? = null
 
@@ -79,13 +83,6 @@ class SearchCatalogFragment :
         val sharedView = sharedViewLocal
         sharedViewLocal = null
         return sharedView
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            viewModel.argGenre = bundle.getString(ARG_GENRE, null)
-        }
     }
 
     override val statusBarVisible: Boolean = true

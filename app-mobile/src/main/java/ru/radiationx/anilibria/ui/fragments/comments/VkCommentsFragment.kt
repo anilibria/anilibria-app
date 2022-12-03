@@ -25,6 +25,7 @@ import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.model.loading.hasAnyLoading
 import ru.radiationx.anilibria.presentation.comments.VkCommentsViewModel
+import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -36,6 +37,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.quillGet
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.common.SystemUtils
@@ -57,19 +59,17 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
 
     private val binding by viewBinding<FragmentVkCommentsBinding>()
 
-    private val viewModel by quillViewModel<VkCommentsViewModel>()
+    private val viewModel by quillViewModel<VkCommentsViewModel>{
+        ReleaseExtra(
+            id = getExtra(ARG_ID),
+            code = getExtra(ARG_ID_CODE),
+            release = null
+        )
+    }
 
     private val appThemeController by quillInject<AppThemeController>()
 
     private val systemUtils by quillInject<SystemUtils>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            viewModel.releaseId = bundle.getParcelable(ARG_ID)
-            viewModel.releaseCode = bundle.getParcelable(ARG_ID_CODE)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

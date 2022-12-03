@@ -15,14 +15,20 @@ import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.repository.ScheduleRepository
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.*
 
+data class ScheduleExtra(
+    val day: Int?
+) : QuillExtra
+
 @InjectConstructor
 class ScheduleViewModel(
+    private val argExtra: ScheduleExtra,
     private val scheduleRepository: ScheduleRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -31,7 +37,6 @@ class ScheduleViewModel(
 ) : ViewModel() {
 
     private var firstData = true
-    var argDay: Int = -1
 
     private val _state = MutableStateFlow(ScheduleScreenState())
     val state = _state.asStateFlow()
@@ -98,11 +103,7 @@ class ScheduleViewModel(
     private fun handleFirstData() {
         if (firstData) {
             firstData = false
-            val currentDay = if (argDay != -1) {
-                argDay
-            } else {
-                Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-            }
+            val currentDay = argExtra.day ?: Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
             currentDays
                 .indexOfFirst { it.day == currentDay }
                 .let { _state.value.dayItems.getOrNull(it) }

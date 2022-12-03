@@ -29,13 +29,19 @@ import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
+data class CatalogExtra(
+    val genre: String?
+) : QuillExtra
+
 @InjectConstructor
 class CatalogViewModel(
+    private val argExtra: CatalogExtra,
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -60,12 +66,11 @@ class CatalogViewModel(
         getDataSource(it)
     }
 
-    var argGenre: String? = null
 
     private val _filterState = MutableStateFlow(
         CatalogFilterState(
             form = SearchForm(
-                genres = argGenre?.let { setOf(GenreItem(it, it)) }.orEmpty(),
+                genres = argExtra.genre?.let { setOf(GenreItem(it, it)) }.orEmpty(),
             )
         )
     )

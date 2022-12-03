@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.presentation.checker.CheckerExtra
 import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
@@ -21,6 +22,7 @@ import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
@@ -37,7 +39,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
         fun newIntent(context: Context, force: Boolean, analyticsFrom: String) =
             Intent(context, UpdateCheckerActivity::class.java).apply {
-                putExtra(ARG_FORCE, true)
+                putExtra(ARG_FORCE, force)
                 putExtra(ARG_ANALYTICS_FROM, analyticsFrom)
                 action = Intent.ACTION_VIEW
             }
@@ -49,7 +51,9 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by quillViewModel<CheckerViewModel>()
+    private val viewModel by quillViewModel<CheckerViewModel>(){
+        CheckerExtra(forceLoad = getExtraNotNull(ARG_FORCE))
+    }
 
     private val apiUtils by quillInject<IApiUtils>()
 
@@ -60,7 +64,6 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         lifecycle.addObserver(useTimeCounter)
 
         intent?.let {
-            viewModel.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
             it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
                 updaterAnalytics.open(it)
             }

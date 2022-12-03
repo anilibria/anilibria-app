@@ -9,12 +9,14 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.presentation.schedule.ScheduleExtra
 import ru.radiationx.anilibria.presentation.schedule.ScheduleViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
 
 class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
@@ -22,8 +24,8 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
 
     companion object {
         private const val ARG_DAY = "arg day"
-        fun newInstance(day: Int = -1) = ScheduleFragment().putExtra {
-            putInt(ARG_DAY, day)
+        fun newInstance(day: Int?) = ScheduleFragment().putExtra {
+            putSerializable(ARG_DAY, day)
         }
     }
 
@@ -37,7 +39,9 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
         }
     )
 
-    private val viewModel by quillViewModel<ScheduleViewModel>()
+    private val viewModel by quillViewModel<ScheduleViewModel> {
+        ScheduleExtra(day = getExtra(ARG_DAY))
+    }
 
     override var sharedViewLocal: View? = null
 
@@ -51,13 +55,6 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
 
     override fun onCreateBinding(view: View): FragmentListRefreshBinding {
         return FragmentListRefreshBinding.bind(view)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            viewModel.argDay = getInt(ARG_DAY, viewModel.argDay)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

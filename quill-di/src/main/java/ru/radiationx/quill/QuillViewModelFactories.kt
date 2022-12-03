@@ -1,11 +1,7 @@
 package ru.radiationx.quill
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlin.reflect.KClass
 
@@ -20,9 +16,7 @@ fun <T : ViewModel> createViewModelFactory(
         scope.apply {
             if (extraProvider != null) {
                 val module = QuillModule().apply {
-                    instance {
-                        extraProvider.invoke()
-                    }
+                    instanceAsIs(extraProvider.invoke())
                 }
                 installModules(module)
             }

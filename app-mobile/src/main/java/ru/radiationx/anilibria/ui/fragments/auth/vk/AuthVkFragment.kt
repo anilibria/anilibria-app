@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
+import ru.radiationx.anilibria.presentation.auth.vk.AuthVkExtra
 import ru.radiationx.anilibria.presentation.auth.vk.AuthVkViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -19,6 +20,7 @@ import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -42,19 +44,14 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
         )
     }
 
-    private val viewModel by quillViewModel<AuthVkViewModel>()
+    private val viewModel by quillViewModel<AuthVkViewModel>{
+        AuthVkExtra(url = getExtraNotNull(ARG_URL))
+    }
 
     override val statusBarVisible: Boolean = true
 
     override fun onCreateBinding(view: View): FragmentAuthSocialBinding {
         return FragmentAuthSocialBinding.bind(view)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.argUrl = it.getString(ARG_URL, viewModel.argUrl)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

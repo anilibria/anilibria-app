@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.FragmentWebviewBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
+import ru.radiationx.anilibria.presentation.page.PageExtra
 import ru.radiationx.anilibria.presentation.page.PageViewModel
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
@@ -26,10 +27,7 @@ import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.quill.quillGet
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
-import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.toBase64
-import ru.radiationx.shared.ktx.android.toException
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared.ktx.android.*
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -54,7 +52,11 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         LifecycleTimeCounter(pageAnalytics::useTime)
     }
 
-    private val viewModel by quillViewModel<PageViewModel>()
+    private val argPath by extraNotNull<String>(ARG_PATH)
+
+    private val viewModel by quillViewModel<PageViewModel> {
+        PageExtra(path = argPath)
+    }
 
     private var pageTitle: String? = null
 
@@ -71,7 +73,6 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            viewModel.pagePath = it.getString(ARG_PATH, null)
             pageTitle = it.getString(ARG_TITLE, null)
         }
     }
@@ -90,7 +91,7 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
-            title = when (viewModel.pagePath) {
+            title = when (argPath) {
                 PageApi.PAGE_PATH_TEAM -> "Команда проекта"
                 PageApi.PAGE_PATH_DONATE -> "Поддержать"
                 else -> pageTitle ?: "Статическая страница"

@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
 import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
+import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoViewModel
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
@@ -38,6 +39,7 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
@@ -66,17 +68,15 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
 
     private val systemUtils by quillInject<SystemUtils>()
 
-    private val viewModel by quillViewModel<ReleaseInfoViewModel>()
+    private val viewModel by quillViewModel<ReleaseInfoViewModel> {
+        ReleaseExtra(
+            id = getExtra(ARG_ID),
+            code = getExtra(ARG_ID_CODE),
+            release = null
+        )
+    }
 
     private val binding by viewBinding<FragmentListBinding>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            viewModel.releaseId = bundle.getParcelable(ARG_ID)
-            viewModel.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -134,12 +134,6 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
         viewModel.showContextEpisodeAction.observe().onEach {
             showLongPressEpisodeDialog(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(ARG_ID, viewModel.releaseId)
-        outState.putParcelable(ARG_ID_CODE, viewModel.releaseIdCode)
     }
 
     override fun onBackPressed(): Boolean {

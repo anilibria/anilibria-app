@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
+import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeExtra
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseFragment
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
@@ -34,7 +36,12 @@ class Auth2FaCodeFragment :
         }
     }
 
-    private val viewModel by quillViewModel<Auth2FaCodeViewModel>()
+    private val viewModel by quillViewModel<Auth2FaCodeViewModel> {
+        Auth2FaCodeExtra(
+            login = getExtraNotNull(ARG_LOGIN),
+            password = getExtraNotNull(ARG_PASSWORD)
+        )
+    }
 
     private val systemUtils by quillInject<SystemUtils>()
 
@@ -43,14 +50,6 @@ class Auth2FaCodeFragment :
     }
 
     override val statusBarVisible: Boolean = true
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.currentLogin = it.getString(ARG_LOGIN, viewModel.currentLogin)
-            viewModel.currentPassword = it.getString(ARG_PASSWORD, viewModel.currentPassword)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -12,19 +12,23 @@ import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialScreenState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
+data class AuthSocialExtra(
+    val key: String
+) : QuillExtra
+
 @InjectConstructor
 class AuthSocialViewModel(
+    private val argExtra: AuthSocialExtra,
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val authSocialAnalytics: AuthSocialAnalytics
 ) : ViewModel() {
-
-    var argKey: String = ""
 
     private val detector = WebAuthSoFastDetector()
     private var currentSuccessUrl: String? = null
@@ -42,7 +46,7 @@ class AuthSocialViewModel(
     private fun loadData() {
         viewModelScope.launch {
             runCatching {
-                authRepository.getSocialAuth(argKey)
+                authRepository.getSocialAuth(argExtra.key)
             }.onSuccess { data ->
                 detector.loadUrl(data.socialUrl)
                 _state.update { it.copy(data = data) }

@@ -26,6 +26,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.anilibria.presentation.checker.CheckerExtra
 import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
 import ru.radiationx.anilibria.presentation.main.MainViewModel
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -93,7 +94,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val viewModel by quillViewModel<MainViewModel>()
 
-    private val checkerViewModel by quillViewModel<CheckerViewModel>()
+    private val checkerViewModel by quillViewModel<CheckerViewModel> {
+        CheckerExtra(forceLoad = true)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -155,7 +158,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 }
             }
         }
-        checkerViewModel.forceLoad = true
         checkerViewModel.state.mapNotNull { it.data }.onEach {
             showUpdateData(it)
         }.launchIn(lifecycleScope)

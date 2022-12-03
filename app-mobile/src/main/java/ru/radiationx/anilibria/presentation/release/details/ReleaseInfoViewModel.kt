@@ -22,8 +22,6 @@ import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.*
-import ru.radiationx.data.entity.domain.types.ReleaseCode
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -36,6 +34,7 @@ import java.util.regex.Pattern
 
 @InjectConstructor
 class ReleaseInfoViewModel(
+    private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
@@ -60,8 +59,6 @@ class ReleaseInfoViewModel(
         "Если серии всё ещё нет в плеере, воспользуйтесь торрентом или веб-плеером"
 
     private var currentData: Release? = null
-    var releaseId: ReleaseId? = null
-    var releaseIdCode: ReleaseCode? = null
 
     private val _state = MutableStateFlow(ReleaseDetailScreenState())
     val state = _state.asStateFlow()
@@ -123,7 +120,7 @@ class ReleaseInfoViewModel(
             }
             .launchIn(viewModelScope)
 
-        releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
+        releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
             updateLocalRelease(it)
         }
         observeRelease()
@@ -139,15 +136,13 @@ class ReleaseInfoViewModel(
 
     private fun observeRelease() {
         releaseInteractor
-            .observeFull(releaseId, releaseIdCode)
+            .observeFull(argExtra.id, argExtra.code)
             .onEach { updateLocalRelease(it) }
             .launchIn(viewModelScope)
     }
 
     private fun updateLocalRelease(release: Release) {
         currentData = release
-        releaseId = release.id
-        releaseIdCode = release.code
         _state.update {
             it.copy(data = release.toState())
         }

@@ -10,19 +10,23 @@ import ru.radiationx.anilibria.presentation.auth.social.WebAuthSoFastDetector
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.vk.AuthVkScreenState
 import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.quill.QuillExtra
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
+data class AuthVkExtra(
+    val url: String
+) : QuillExtra
+
 @InjectConstructor
 class AuthVkViewModel(
+    private val argExtra: AuthVkExtra,
     private val authHolder: AuthHolder,
     private val router: Router
 ) : ViewModel() {
 
     private val resultPattern =
         "(\\?act=widget|anilibria\\.tv\\/public\\/vk\\.php\\?code=|vk\\.com\\/widget_comments\\.php)"
-
-    var argUrl: String = ""
 
     private val detector = WebAuthSoFastDetector()
     private var currentSuccessUrl: String? = null
@@ -35,8 +39,8 @@ class AuthVkViewModel(
     }
 
     private fun resetPage() {
-        detector.loadUrl(argUrl)
-        _state.update { it.copy(data = AuthVkData(argUrl, resultPattern)) }
+        detector.loadUrl(argExtra.url)
+        _state.update { it.copy(data = AuthVkData(argExtra.url, resultPattern)) }
     }
 
     fun onClearDataClick() {

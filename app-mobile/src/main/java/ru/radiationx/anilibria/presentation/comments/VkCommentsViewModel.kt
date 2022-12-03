@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsScreenState
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsState
@@ -16,8 +17,6 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
-import ru.radiationx.data.entity.domain.types.ReleaseCode
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.PageRepository
@@ -28,6 +27,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class VkCommentsViewModel(
+    private val argExtra: ReleaseExtra,
     private val authRepository: AuthRepository,
     private val pageRepository: PageRepository,
     private val releaseInteractor: ReleaseInteractor,
@@ -37,9 +37,6 @@ class VkCommentsViewModel(
     private val authVkAnalytics: AuthVkAnalytics,
     private val commentsAnalytics: CommentsAnalytics
 ) : ViewModel() {
-
-    var releaseId: ReleaseId? = null
-    var releaseCode: ReleaseCode? = null
 
     private var isVisibleToUser = false
     private var pendingAuthRequest: String? = null
@@ -162,7 +159,7 @@ class VkCommentsViewModel(
 
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(pageRepository.getComments()) }
-        val releaseSource = releaseInteractor.observeFull(releaseId, releaseCode)
+        val releaseSource = releaseInteractor.observeFull(argExtra.id, argExtra.code)
         return try {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(

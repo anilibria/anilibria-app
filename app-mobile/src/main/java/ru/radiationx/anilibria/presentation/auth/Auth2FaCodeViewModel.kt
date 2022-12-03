@@ -10,11 +10,18 @@ import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.quill.QuillExtra
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
+data class Auth2FaCodeExtra(
+    val login: String,
+    val password: String
+) : QuillExtra
+
 @InjectConstructor
 class Auth2FaCodeViewModel(
+    private val argExtra: Auth2FaCodeExtra,
     private val router: Router,
     private val systemMessenger: SystemMessenger,
     private val authRepository: AuthRepository,
@@ -22,8 +29,6 @@ class Auth2FaCodeViewModel(
     private val authMainAnalytics: AuthMainAnalytics
 ) : ViewModel() {
 
-    var currentLogin = ""
-    var currentPassword = ""
     private val codeState = MutableStateFlow("")
 
     private val _state = MutableStateFlow(Auth2FaCodeScreenState())
@@ -43,7 +48,7 @@ class Auth2FaCodeViewModel(
         viewModelScope.launch {
             _state.update { it.copy(sending = true) }
             runCatching {
-                authRepository.signIn(currentLogin, currentPassword, codeState.value)
+                authRepository.signIn(argExtra.login, argExtra.password, codeState.value)
                 authRepository.getAuthState()
             }.onSuccess {
                 decideWhatToDo(it)

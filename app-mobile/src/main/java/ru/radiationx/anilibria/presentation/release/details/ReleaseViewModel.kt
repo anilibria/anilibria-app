@@ -15,12 +15,20 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
+data class ReleaseExtra(
+    val id: ReleaseId?,
+    val code: ReleaseCode?,
+    val release: Release?
+) : QuillExtra
+
 @InjectConstructor
 class ReleaseViewModel(
+    private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository,
@@ -31,9 +39,6 @@ class ReleaseViewModel(
 ) : ViewModel() {
 
     private var currentData: Release? = null
-    var releaseId: ReleaseId? = null
-    var releaseIdCode: ReleaseCode? = null
-    var argReleaseItem: Release? = null
 
     private val _state = MutableStateFlow(ReleasePagerState())
     val state = _state.asStateFlow()
@@ -43,10 +48,10 @@ class ReleaseViewModel(
     val shortcutAction = EventFlow<Release>()
 
     init {
-        argReleaseItem?.also {
+        argExtra.release?.also {
             updateLocalRelease(it)
         }
-        releaseInteractor.getItem(releaseId, releaseIdCode)?.also {
+        releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
             updateLocalRelease(it)
         }
         observeRelease()
@@ -70,7 +75,7 @@ class ReleaseViewModel(
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
             runCatching {
-                releaseInteractor.loadRelease(releaseId, releaseIdCode)
+                releaseInteractor.loadRelease(argExtra.id, argExtra.code)
             }.onSuccess {
                 historyRepository.putRelease(it as Release)
             }.onFailure {
@@ -82,7 +87,7 @@ class ReleaseViewModel(
 
     private fun observeRelease() {
         releaseInteractor
-            .observeFull(releaseId, releaseIdCode)
+            .observeFull(argExtra.id, argExtra.code)
             .onEach { release ->
                 updateLocalRelease(release)
                 historyRepository.putRelease(release as Release)
@@ -92,8 +97,6 @@ class ReleaseViewModel(
 
     private fun updateLocalRelease(release: Release) {
         currentData = release
-        releaseId = release.id
-        releaseIdCode = release.code
 
         _state.update {
             it.copy(

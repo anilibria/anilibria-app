@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
+import ru.radiationx.anilibria.presentation.auth.social.AuthSocialExtra
 import ru.radiationx.anilibria.presentation.auth.social.AuthSocialViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -23,6 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
@@ -67,18 +69,13 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by quillViewModel<AuthSocialViewModel>()
+    private val viewModel by quillViewModel<AuthSocialViewModel> {
+        AuthSocialExtra(key = getExtraNotNull(ARG_KEY))
+    }
 
     private val apiConfig by quillInject<ApiConfig>()
 
     private val systemUtils by quillInject<SystemUtils>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.argKey = it.getString(ARG_KEY, viewModel.argKey)
-        }
-    }
 
     override val statusBarVisible: Boolean = true
 

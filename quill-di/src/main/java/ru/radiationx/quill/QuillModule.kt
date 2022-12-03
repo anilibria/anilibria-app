@@ -1,5 +1,6 @@
 package ru.radiationx.quill
 
+import android.util.Log
 import toothpick.config.Binding
 import toothpick.config.Module
 import javax.inject.Provider
@@ -23,6 +24,17 @@ open class QuillModule {
             .applyQualifier(qualifier)
             .toProviderInstance { block.invoke() }
             .providesSingleton()
+    }
+
+    fun <T : Any> instance(
+        clazz: KClass<T>,
+        value: T,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        Log.w("kekeke", "instance $clazz -> $value -> $qualifier")
+        tpModule.bind(clazz.java)
+            .applyQualifier(qualifier)
+            .toInstance(value)
     }
 
     fun <T : Any> single(
@@ -69,6 +81,21 @@ open class QuillModule {
         noinline block: () -> T
     ) {
         instance(T::class, qualifier, block)
+    }
+
+    inline fun <reified T : Any> instance(
+        value: T,
+        qualifier: KClass<out Annotation>? = null
+    ) {
+        instance(T::class, value, qualifier)
+    }
+
+    inline fun <reified T : Any> instanceAsIs(
+        value: T,
+        qualifier: KClass<out Annotation>? = null
+    ) {
+        val clazz = value::class as KClass<T>
+        instance(clazz, value, qualifier)
     }
 
     inline fun <reified T : Any, reified P : Provider<T>> singleProvider(

@@ -10,7 +10,7 @@ import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.quillParentViewModel
 
@@ -19,7 +19,7 @@ class WatchingFragment : RowsSupportFragment() {
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val watchingViewModel by quillParentViewModel<WatchingViewModel>()
 

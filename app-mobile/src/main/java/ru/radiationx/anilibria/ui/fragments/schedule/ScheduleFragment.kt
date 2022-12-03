@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -37,7 +37,7 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
         }
     )
 
-    private val viewModel by quillViewModel<ScheduleViewModel> {
+    private val viewModel by viewModel<ScheduleViewModel> {
         ScheduleExtra(day = getExtra(ARG_DAY))
     }
 

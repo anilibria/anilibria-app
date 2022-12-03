@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdap
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import kotlin.math.roundToInt
 
 class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation_detail) {
@@ -30,7 +30,7 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
 
     private val binding by viewBinding<FragmentDonationDetailBinding>()
 
-    private val viewModel by quillViewModel<DonationDetailViewModel>()
+    private val viewModel by viewModel<DonationDetailViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

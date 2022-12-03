@@ -33,9 +33,9 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.quill.quillGet
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -58,7 +58,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
 
     private val binding by viewBinding<FragmentVkCommentsBinding>()
 
-    private val viewModel by quillViewModel<VkCommentsViewModel>{
+    private val viewModel by viewModel<VkCommentsViewModel>{
         ReleaseExtra(
             id = getExtra(ARG_ID),
             code = getExtra(ARG_ID_CODE),
@@ -66,9 +66,9 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         )
     }
 
-    private val appThemeController by quillInject<AppThemeController>()
+    private val appThemeController by inject<AppThemeController>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -174,7 +174,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         }
         currentVkCommentsState = comments
 
-        val template = quillGet<Templates>().vkCommentsTemplate
+        val template = get<Templates>().vkCommentsTemplate
         binding.webView.easyLoadData(
             comments.url,
             template.generateWithTheme(appThemeController.getTheme())
@@ -271,7 +271,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
             val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
             return if (needIntercept) {
-                val networkClient = quillGet<IClient>(MainClient::class)
+                val networkClient = get<IClient>(MainClient::class)
                 val cssSrc = try {
                     runBlocking { networkClient.get(url.orEmpty(), emptyMap()) }
                 } catch (ex: Throwable) {
@@ -286,7 +286,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
                 }
                 var newCss = cssSrc
 
-                val commentsCss = quillGet<VkCommentsCss>()
+                val commentsCss = get<VkCommentsCss>()
                 val fixCss = if (appThemeController.getTheme().isDark()) {
                     commentsCss.dark
                 } else {

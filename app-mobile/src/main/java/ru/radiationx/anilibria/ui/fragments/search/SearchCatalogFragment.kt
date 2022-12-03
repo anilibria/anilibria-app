@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -65,9 +65,9 @@ class SearchCatalogFragment :
         localClickListener = { searchViewModel.onLocalItemClick(it) }
     )
 
-    private val searchViewModel by quillViewModel<FastSearchViewModel>()
+    private val searchViewModel by viewModel<FastSearchViewModel>()
 
-    private val viewModel by quillViewModel<CatalogViewModel> {
+    private val viewModel by viewModel<CatalogViewModel> {
         CatalogExtra(genre = getExtra(ARG_GENRE))
     }
 

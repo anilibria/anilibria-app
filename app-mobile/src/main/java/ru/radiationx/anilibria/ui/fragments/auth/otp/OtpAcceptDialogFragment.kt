@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
@@ -23,7 +23,7 @@ class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
 
     private val binding by viewBinding<FragmentOtpBinding>()
 
-    private val viewModel by quillViewModel<OtpAcceptViewModel>()
+    private val viewModel by viewModel<OtpAcceptViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

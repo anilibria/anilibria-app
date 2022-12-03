@@ -18,9 +18,9 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
-import ru.radiationx.quill.installQuillModules
-import ru.radiationx.quill.quillGet
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
@@ -41,13 +41,13 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
         }
     }
 
-    private val screenMessagesObserver by quillInject<ScreenMessagesObserver>()
+    private val screenMessagesObserver by inject<ScreenMessagesObserver>()
 
-    private val linkHandler by quillInject<ILinkHandler>()
+    private val linkHandler by inject<ILinkHandler>()
 
-    private val router by quillInject<Router>()
+    private val router by inject<Router>()
 
-    private val navigatorHolder by quillInject<NavigatorHolder>()
+    private val navigatorHolder by inject<NavigatorHolder>()
 
     private val localScreen: BaseAppScreen by lazy {
         arguments?.let {
@@ -58,7 +58,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installQuillModules(RouterModule(localScreen.screenKey), MessengerModule())
+        installModules(RouterModule(localScreen.screenKey), MessengerModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(screenMessagesObserver)
         navigationQueue.add(Runnable {
@@ -163,7 +163,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
             }
 
             override fun activityBack() {
-                quillGet<Router>().exit()
+                get<Router>().exit()
             }
         }
     }

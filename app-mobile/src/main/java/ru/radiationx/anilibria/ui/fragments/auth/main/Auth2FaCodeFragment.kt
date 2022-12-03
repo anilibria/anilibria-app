@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
@@ -34,14 +34,14 @@ class Auth2FaCodeFragment :
         }
     }
 
-    private val viewModel by quillViewModel<Auth2FaCodeViewModel> {
+    private val viewModel by viewModel<Auth2FaCodeViewModel> {
         Auth2FaCodeExtra(
             login = getExtraNotNull(ARG_LOGIN),
             password = getExtraNotNull(ARG_PASSWORD)
         )
     }
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreateBinding(view: View): FragmentAuth2faCodeBinding {
         return FragmentAuth2faCodeBinding.bind(view)

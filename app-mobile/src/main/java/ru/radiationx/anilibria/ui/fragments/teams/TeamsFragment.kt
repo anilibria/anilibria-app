@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
 class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
@@ -38,7 +38,7 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
 
     private val binding by viewBinding<FragmentTeamsBinding>()
 
-    private val viewModel by quillViewModel<TeamsViewModel>()
+    private val viewModel by viewModel<TeamsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

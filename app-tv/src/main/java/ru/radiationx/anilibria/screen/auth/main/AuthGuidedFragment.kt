@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 
 class AuthGuidedFragment : FakeGuidedStepFragment() {
 
@@ -15,7 +15,7 @@ class AuthGuidedFragment : FakeGuidedStepFragment() {
         private const val SKIP_ACTION_ID = 4L
     }
 
-    private val viewModel by quillViewModel<AuthViewModel>()
+    private val viewModel by viewModel<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,7 +6,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogTorrentsInfoBinding
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
-import ru.radiationx.quill.quillGet
+import ru.radiationx.quill.get
 import ru.radiationx.shared_app.common.SystemUtils
 
 class TorrentInfoDialogFragment : AlertDialogFragment(R.layout.dialog_torrents_info) {
@@ -16,7 +16,7 @@ class TorrentInfoDialogFragment : AlertDialogFragment(R.layout.dialog_torrents_i
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btSearch.setOnClickListener {
-            quillGet<SystemUtils>()
+            get<SystemUtils>()
                 .externalLink("https://play.google.com/store/search?q=torrent&c=apps")
         }
         binding.btCancel.setOnClickListener {

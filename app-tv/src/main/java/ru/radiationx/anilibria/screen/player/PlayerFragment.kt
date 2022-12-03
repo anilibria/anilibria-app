@@ -5,7 +5,7 @@ import android.view.View
 import com.google.android.exoplayer2.PlaybackParameters
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -25,7 +25,7 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-    private val viewModel by quillViewModel<PlayerViewModel>()
+    private val viewModel by viewModel<PlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

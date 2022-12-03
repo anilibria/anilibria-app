@@ -57,7 +57,7 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
@@ -118,17 +118,17 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
 
-    private val releaseInteractor by quillInject<ReleaseInteractor>()
+    private val releaseInteractor by inject<ReleaseInteractor>()
 
-    private val appThemeController by quillInject<AppThemeController>()
+    private val appThemeController by inject<AppThemeController>()
 
-    private val defaultPreferences by quillInject<SharedPreferences>()
+    private val defaultPreferences by inject<SharedPreferences>()
 
-    private val appPreferences by quillInject<PreferencesHolder>()
+    private val appPreferences by inject<PreferencesHolder>()
 
-    private val playerAnalytics by quillInject<PlayerAnalytics>()
+    private val playerAnalytics by inject<PlayerAnalytics>()
 
-    private val errorReporter by quillInject<AnalyticsErrorReporter>()
+    private val errorReporter by inject<AnalyticsErrorReporter>()
 
     private val binding by viewBinding<ActivityMyplayerBinding>()
 

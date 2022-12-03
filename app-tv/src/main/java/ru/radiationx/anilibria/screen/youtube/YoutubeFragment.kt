@@ -9,17 +9,17 @@ import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.GridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class YoutubeFragment : GridFragment() {
 
     private val gridAdapter by lazy { ArrayObjectAdapter(CardPresenterSelector()) }
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val viewModel by quillViewModel<YouTubeViewModel>()
+    private val viewModel by viewModel<YouTubeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

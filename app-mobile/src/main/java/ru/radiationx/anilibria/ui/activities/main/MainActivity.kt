@@ -41,9 +41,9 @@ import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.quill.installQuillModules
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
@@ -64,15 +64,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    private val sharedBuildConfig by quillInject<SharedBuildConfig>()
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
-    private val screenMessenger by quillInject<SystemMessenger>()
+    private val screenMessenger by inject<SystemMessenger>()
 
-    private val router by quillInject<Router>()
+    private val router by inject<Router>()
 
-    private val navigationHolder by quillInject<NavigatorHolder>()
+    private val navigationHolder by inject<NavigatorHolder>()
 
-    private val dimensionsProvider by quillInject<DimensionsProvider>()
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     private val binding by viewBinding<ActivityMainBinding>()
 
@@ -91,9 +91,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private var dimensionHelper: DimensionHelper? = null
 
-    private val viewModel by quillViewModel<MainViewModel>()
+    private val viewModel by viewModel<MainViewModel>()
 
-    private val checkerViewModel by quillViewModel<CheckerViewModel> {
+    private val checkerViewModel by viewModel<CheckerViewModel> {
         CheckerExtra(forceLoad = true)
     }
 
@@ -103,7 +103,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         } else {
             resources.configuration.locale
         }
-        installQuillModules(LocaleModule(locale))
+        installModules(LocaleModule(locale))
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 

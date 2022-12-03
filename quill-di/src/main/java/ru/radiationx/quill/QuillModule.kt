@@ -12,7 +12,7 @@ fun quillModule(block: QuillModule.() -> Unit): QuillModule {
 
 open class QuillModule {
 
-    val tpModule = Module()
+    internal val tpModule = Module()
 
     fun <T : Any> instance(
         clazz: KClass<T>,

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentProfileBinding
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 import ru.radiationx.shared_app.di.quillParentViewModel
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
@@ -22,7 +22,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
     private val binding by viewBinding<FragmentProfileBinding>()
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val viewModel by quillParentViewModel<ProfileViewModel>()
 

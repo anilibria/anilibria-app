@@ -1,22 +1,22 @@
 package ru.radiationx.quill
 
 import toothpick.Scope
+import toothpick.Toothpick
 import kotlin.reflect.KClass
 
 class QuillScope(
-    val tpScope: Scope
+    internal val tpScope: Scope
 ) {
 
     val name = tpScope.name
 
     fun openSubScope(): QuillScope {
         val tpSubScope = tpScope.openSubScope(Quill.generateScopeName())
-
         return QuillScope(tpSubScope)
     }
 
     fun close() {
-        Quill.closeScope(this)
+        Toothpick.closeScope(tpScope.name)
     }
 
     fun <T : Any> get(clazz: KClass<T>, qualifier: KClass<out Annotation>? = null): T {

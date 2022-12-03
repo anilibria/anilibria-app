@@ -13,8 +13,8 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -34,11 +34,11 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by quillViewModel<AuthViewModel>()
+    private val viewModel by viewModel<AuthViewModel>()
 
-    private val apiConfig by quillInject<ApiConfig>()
+    private val apiConfig by inject<ApiConfig>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
     override val statusBarVisible: Boolean = true
 

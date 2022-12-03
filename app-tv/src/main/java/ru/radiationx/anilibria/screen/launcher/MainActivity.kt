@@ -9,16 +9,16 @@ import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
 import ru.radiationx.anilibria.di.*
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.installQuillModules
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 
 class MainActivity : FragmentActivity() {
 
-    private val viewModel: AppLauncherViewModel by quillViewModel()
+    private val viewModel: AppLauncherViewModel by viewModel()
 
     private val navigator by lazy {
         GuidedStepNavigator(
@@ -27,15 +27,15 @@ class MainActivity : FragmentActivity() {
         )
     }
 
-    private val router by quillInject<Router>()
+    private val router by inject<Router>()
 
-    private val guidedRouter by quillInject<GuidedRouter>()
+    private val guidedRouter by inject<GuidedRouter>()
 
-    private val navigatorHolder by quillInject<NavigatorHolder>()
+    private val navigatorHolder by inject<NavigatorHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-        installQuillModules(
+        installModules(
             ActivityModule(this),
             NavigationModule(),
             PlayerModule(),

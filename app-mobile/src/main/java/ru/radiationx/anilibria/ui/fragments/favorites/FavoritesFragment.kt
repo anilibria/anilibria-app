@@ -27,7 +27,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 
 
 /**
@@ -57,7 +57,7 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
         addDelegate(ReleaseItemDelegate(this@FavoritesFragment))
     }
 
-    private val viewModel by quillViewModel<FavoritesViewModel>()
+    private val viewModel by viewModel<FavoritesViewModel>()
 
     private var searchView: SearchMenuItem? = null
 

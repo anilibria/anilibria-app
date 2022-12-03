@@ -14,9 +14,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
 import ru.radiationx.anilibria.di.DownloadModule
-import ru.radiationx.quill.installQuillModules
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
 
@@ -26,14 +26,14 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
 
     private val progressBarManager by lazy { ProgressBarManager() }
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val downloadController by quillInject<DownloadControllerImpl>()
+    private val downloadController by inject<DownloadControllerImpl>()
 
-    private val viewModel by quillViewModel<UpdateViewModel>()
+    private val viewModel by viewModel<UpdateViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installQuillModules(DownloadModule())
+        installModules(DownloadModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         lifecycle.addObserver(downloadController)

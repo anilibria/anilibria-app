@@ -10,7 +10,7 @@ import androidx.leanback.widget.GuidedActionsStylist
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
 import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
@@ -22,7 +22,7 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
         private const val LOGIN_ACTION_ID = 4L
     }
 
-    private val viewModel by quillViewModel<AuthCredentialsViewModel>()
+    private val viewModel by viewModel<AuthCredentialsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

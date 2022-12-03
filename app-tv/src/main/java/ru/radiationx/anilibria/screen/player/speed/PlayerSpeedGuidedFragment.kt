@@ -5,12 +5,12 @@ import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class PlayerSpeedGuidedFragment : BasePlayerGuidedFragment() {
 
-    private val viewModel by quillViewModel<PlayerSpeedViewModel>()
+    private val viewModel by viewModel<PlayerSpeedViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 

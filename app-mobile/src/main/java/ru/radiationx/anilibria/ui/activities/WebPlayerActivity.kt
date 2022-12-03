@@ -13,8 +13,8 @@ import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.quill.quillGet
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
@@ -37,11 +37,11 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     private val binding by viewBinding<ActivityMoonBinding>()
 
-    private val apiConfig by quillInject<ApiConfig>()
+    private val apiConfig by inject<ApiConfig>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
-    private val webPlayerAnalytics by quillInject<WebPlayerAnalytics>()
+    private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,7 +122,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     private fun loadUrl() {
         val releaseUrl = "${apiConfig.widgetsSiteUrl}/release/$argReleaseCode.html\""
 
-        val template = quillGet<Templates>().videoPageTemplate
+        val template = get<Templates>().videoPageTemplate
         template.setVariableOpt("iframe_url", argUrl)
 
         binding.webView.easyLoadData(releaseUrl, template.generateWithTheme(AppTheme.DARK))

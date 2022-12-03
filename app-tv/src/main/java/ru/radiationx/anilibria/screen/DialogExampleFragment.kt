@@ -5,7 +5,7 @@ import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 import ru.terrakok.cicerone.Router
 import java.util.*
 
@@ -18,9 +18,9 @@ class DialogExampleFragment : FakeGuidedStepFragment() {
         private const val ACTION_ID_SD = ACTION_ID_HD + 1
     }
 
-    private val guidedRouter by quillInject<GuidedRouter>()
+    private val guidedRouter by inject<GuidedRouter>()
 
-    private val router by quillInject<Router>()
+    private val router by inject<Router>()
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(
         "Авторизация",

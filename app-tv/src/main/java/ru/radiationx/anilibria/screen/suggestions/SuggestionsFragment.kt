@@ -15,10 +15,10 @@ import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
-import ru.radiationx.quill.installQuillModules
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.inject
 import ru.radiationx.quill.quillModule
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.SearchResultProvider {
@@ -29,14 +29,14 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
     private val progressManager by lazy { ExternalProgressManager() }
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    private val rowsViewModel by quillViewModel<SuggestionsRowsViewModel>()
-    private val resultViewModel by quillViewModel<SuggestionsResultViewModel>()
-    private val recommendsViewModel by quillViewModel<SuggestionsRecommendsViewModel>()
+    private val rowsViewModel by viewModel<SuggestionsRowsViewModel>()
+    private val resultViewModel by viewModel<SuggestionsResultViewModel>()
+    private val recommendsViewModel by viewModel<SuggestionsRecommendsViewModel>()
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installQuillModules(quillModule {
+        installModules(quillModule {
             single<SuggestionsController>()
         })
         super.onCreate(savedInstanceState)

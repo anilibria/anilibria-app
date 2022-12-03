@@ -24,7 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 
 
 /* Created by radiationx on 05.11.17. */
@@ -77,9 +77,9 @@ class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fr
         localClickListener = { searchViewModel.onLocalItemClick(it) }
     )
 
-    private val viewModel by quillViewModel<FeedViewModel>()
+    private val viewModel by viewModel<FeedViewModel>()
 
-    private val searchViewModel by quillViewModel<FastSearchViewModel>()
+    private val searchViewModel by viewModel<FastSearchViewModel>()
 
     private var searchView: SearchView? = null
 

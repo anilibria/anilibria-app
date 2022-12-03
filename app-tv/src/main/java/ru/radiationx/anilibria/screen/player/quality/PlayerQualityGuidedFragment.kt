@@ -6,12 +6,12 @@ import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
-    private val viewModel by quillViewModel<PlayerQualityViewModel>()
+    private val viewModel by viewModel<PlayerQualityViewModel>()
 
     private val sdAction by lazy {
         GuidedAction.Builder(requireContext())

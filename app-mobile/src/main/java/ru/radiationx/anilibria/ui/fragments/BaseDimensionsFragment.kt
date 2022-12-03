@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 
 abstract class BaseDimensionsFragment(
     @LayoutRes contentLayoutId: Int
 ) : Fragment(contentLayoutId) {
 
-    private val dimensionsProvider by quillInject<DimensionsProvider>()
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

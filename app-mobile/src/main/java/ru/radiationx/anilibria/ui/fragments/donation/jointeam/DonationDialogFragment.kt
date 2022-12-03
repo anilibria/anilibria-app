@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.databinding.DialogDonationContentBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -37,7 +37,7 @@ class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_cont
 
     private val binding by viewBinding<DialogDonationContentBinding>()
 
-    private val viewModel by quillViewModel<DonationDialogViewModel> {
+    private val viewModel by viewModel<DonationDialogViewModel> {
         DonationDialogExtra(tag = getExtraNotNull(ARG_TAG))
     }
 

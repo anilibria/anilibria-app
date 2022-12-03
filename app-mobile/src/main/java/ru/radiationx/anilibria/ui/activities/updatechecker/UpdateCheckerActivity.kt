@@ -18,8 +18,8 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
@@ -49,13 +49,13 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by quillViewModel<CheckerViewModel>(){
+    private val viewModel by viewModel<CheckerViewModel>(){
         CheckerExtra(forceLoad = getExtraNotNull(ARG_FORCE))
     }
 
-    private val apiUtils by quillInject<IApiUtils>()
+    private val apiUtils by inject<IApiUtils>()
 
-    private val updaterAnalytics by quillInject<UpdaterAnalytics>()
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

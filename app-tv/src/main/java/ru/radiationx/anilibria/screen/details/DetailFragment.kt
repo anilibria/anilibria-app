@@ -16,8 +16,8 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -31,7 +31,7 @@ class DetailFragment : RowsSupportFragment() {
         }
     }
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val releaseId by lazy {
         requireNotNull(requireArguments().getParcelable<ReleaseId>(ARG_ID)) {
@@ -55,10 +55,10 @@ class DetailFragment : RowsSupportFragment() {
     }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val detailsViewModel by quillViewModel<DetailsViewModel>()
-    private val headerViewModel by quillViewModel<DetailHeaderViewModel>()
-    private val relatedViewModel by quillViewModel<DetailRelatedViewModel>()
-    private val recommendsViewModel by quillViewModel<DetailRecommendsViewModel>()
+    private val detailsViewModel by viewModel<DetailsViewModel>()
+    private val headerViewModel by viewModel<DetailHeaderViewModel>()
+    private val relatedViewModel by viewModel<DetailRelatedViewModel>()
+    private val recommendsViewModel by viewModel<DetailRecommendsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -11,14 +11,14 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.MotionLayoutListener
 import ru.radiationx.anilibria.databinding.FragmentConfigBinding
 import ru.radiationx.data.entity.common.ConfigScreenState
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class ConfigFragment : Fragment(R.layout.fragment_config) {
 
     private val binding by viewBinding<FragmentConfigBinding>()
 
-    private val viewModel: ConfiguringViewModel by quillViewModel()
+    private val viewModel: ConfiguringViewModel by viewModel()
 
     private val startTransitionListener = object : MotionLayoutListener() {
         override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {

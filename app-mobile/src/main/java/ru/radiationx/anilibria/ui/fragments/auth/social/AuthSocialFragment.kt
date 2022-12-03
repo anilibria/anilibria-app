@@ -20,8 +20,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
@@ -67,13 +67,13 @@ class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layo
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by quillViewModel<AuthSocialViewModel> {
+    private val viewModel by viewModel<AuthSocialViewModel> {
         AuthSocialExtra(key = getExtraNotNull(ARG_KEY))
     }
 
-    private val apiConfig by quillInject<ApiConfig>()
+    private val apiConfig by inject<ApiConfig>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
     override val statusBarVisible: Boolean = true
 

@@ -11,8 +11,8 @@ import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class ScheduleFragment : BrowseSupportFragment() {
@@ -20,9 +20,9 @@ class ScheduleFragment : BrowseSupportFragment() {
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val viewModel by quillViewModel<ScheduleViewModel>()
+    private val viewModel by viewModel<ScheduleViewModel>()
 
-    private val backgroundManager by quillInject<GradientBackgroundManager>()
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

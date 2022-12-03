@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 
 class YoutubeFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
 
@@ -36,7 +36,7 @@ class YoutubeFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout
         )
     }
 
-    private val viewModel by quillViewModel<YoutubeViewModel>()
+    private val viewModel by viewModel<YoutubeViewModel>()
 
     override val statusBarVisible: Boolean = true
 

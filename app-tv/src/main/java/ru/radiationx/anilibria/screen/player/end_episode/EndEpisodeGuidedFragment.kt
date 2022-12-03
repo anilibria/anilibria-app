@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 
 class EndEpisodeGuidedFragment : BasePlayerGuidedFragment() {
 
@@ -13,7 +13,7 @@ class EndEpisodeGuidedFragment : BasePlayerGuidedFragment() {
         private const val NEXT_ACTION_ID = 1L
     }
 
-    private val viewModel by quillViewModel<EndEpisodeViewModel>()
+    private val viewModel by viewModel<EndEpisodeViewModel>()
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 

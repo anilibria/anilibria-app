@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.common.fragment
 import android.os.Bundle
 import androidx.fragment.app.FragmentTransaction
 import androidx.leanback.app.GuidedStepSupportFragment
-import ru.radiationx.quill.quillGet
+import ru.radiationx.quill.get
 import ru.radiationx.shared.ktx.android.attachBackPressed
 
 open class FakeGuidedStepFragment : GuidedStepSupportFragment() {
@@ -12,7 +12,7 @@ open class FakeGuidedStepFragment : GuidedStepSupportFragment() {
         super.onCreate(savedInstanceState)
         attachBackPressed {
             if (isEnabled) {
-                quillGet<GuidedRouter>().exit()
+                get<GuidedRouter>().exit()
                 isEnabled = false
             }
         }

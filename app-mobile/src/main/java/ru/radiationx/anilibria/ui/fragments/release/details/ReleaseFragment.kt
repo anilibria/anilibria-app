@@ -27,8 +27,8 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.quillInject
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
@@ -64,11 +64,11 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     private var currentTitle: String? = null
     private var toolbarHelperJob: Job? = null
 
-    private val shortcutHelper by quillInject<ShortcutHelper>()
+    private val shortcutHelper by inject<ShortcutHelper>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
-    private val viewModel by quillViewModel<ReleaseViewModel> {
+    private val viewModel by viewModel<ReleaseViewModel> {
         ReleaseExtra(
             id = getExtra(ARG_ID),
             code = getExtra(ARG_ID_CODE),

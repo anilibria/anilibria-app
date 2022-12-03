@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.quill.quillInject
+import ru.radiationx.quill.inject
 import ru.radiationx.shared_app.common.SystemUtils
 
 /**
@@ -12,9 +12,9 @@ import ru.radiationx.shared_app.common.SystemUtils
  */
 class IntentActivity : BaseActivity() {
 
-    private val linkHandler by quillInject<ILinkHandler>()
+    private val linkHandler by inject<ILinkHandler>()
 
-    private val systemUtils by quillInject<SystemUtils>()
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

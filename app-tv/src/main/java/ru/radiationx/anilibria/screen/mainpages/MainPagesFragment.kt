@@ -19,7 +19,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widget.BrowseTitleView
-import ru.radiationx.quill.quillViewModel
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class MainPagesFragment : BrowseSupportFragment() {
@@ -29,7 +29,7 @@ class MainPagesFragment : BrowseSupportFragment() {
     private var lastSelectedPosition = -1
     private val fragmentFactory by lazy { MainPagesFragmentFactory() }
 
-    private val viewModel by quillViewModel<MainPagesViewModel>()
+    private val viewModel by viewModel<MainPagesViewModel>()
 
     private var mOnAlertClickedListener: View.OnClickListener? = null
     private var mOnOtherClickedListener: View.OnClickListener? = null

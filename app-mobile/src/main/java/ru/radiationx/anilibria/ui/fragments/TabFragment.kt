@@ -93,9 +93,18 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
-        return (fragment != null
-                && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed())
+
+        val handledByChild = (fragment as? BackButtonListener?)?.onBackPressed() ?: false
+        if (handledByChild) {
+            return true
+        }
+
+        if (childFragmentManager.backStackEntryCount >= 1) {
+            router.exit()
+            return true
+        }
+
+        return false
     }
 
     override fun handle(url: String): Boolean {

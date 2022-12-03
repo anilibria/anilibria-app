@@ -29,7 +29,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -44,7 +44,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 
-class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
+class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -134,10 +134,6 @@ class ReleaseInfoFragment : ScopeFragment(R.layout.fragment_list) {
         viewModel.showContextEpisodeAction.observe().onEach {
             showLongPressEpisodeDialog(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     private fun showState(state: ReleaseDetailScreenState) {

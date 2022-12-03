@@ -19,7 +19,7 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.quill.quillViewModel
 
@@ -27,7 +27,7 @@ import ru.radiationx.quill.quillViewModel
 /**
  * Created by radiationx on 16.12.17.
  */
-class OtherFragment : ScopeFragment(R.layout.fragment_list) {
+class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private val adapter = OtherAdapter()
 
@@ -56,10 +56,6 @@ class OtherFragment : ScopeFragment(R.layout.fragment_list) {
         viewModel.otpEvent.onEach {
             OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     inner class OtherAdapter : ListItemAdapter() {

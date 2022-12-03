@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.schedule.ScheduleExtra
 import ru.radiationx.anilibria.presentation.schedule.ScheduleViewModel
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
@@ -19,7 +19,7 @@ import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
 
-class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider {
 
     companion object {
@@ -105,9 +105,5 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
     override fun onDestroyView() {
         scheduleAdapter.saveState(null)
         super.onDestroyView()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 }

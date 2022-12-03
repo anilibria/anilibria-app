@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.databinding.FragmentAuthBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.presentation.auth.AuthViewModel
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
@@ -25,7 +25,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthFragment : BaseFragment<FragmentAuthBinding>(R.layout.fragment_auth) {
+class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_auth) {
 
     private val socialAuthAdapter = SocialAuthAdapter {
         onSocialClick(it)
@@ -80,10 +80,6 @@ class AuthFragment : BaseFragment<FragmentAuthBinding>(R.layout.fragment_auth) {
         viewModel.registrationEvent.onEach {
             showRegistrationDialog()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     private fun onSocialClick(item: SocialAuthItemState) {

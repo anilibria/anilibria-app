@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.presentation.configuring.ConfiguringViewModel
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 
-class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring) {
+class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring) {
 
     private val binding by viewBinding<FragmentConfiguringBinding>()
 
@@ -52,9 +52,5 @@ class ConfiguringFragment : ScopeFragment(R.layout.fragment_configuring) {
         binding.configSkip.visible(needRefresh)
         binding.configNext.visible(needRefresh)
         binding.configProgress.gone(needRefresh)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 }

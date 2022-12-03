@@ -7,9 +7,9 @@ import androidx.fragment.app.commit
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentLazyBinding
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 
-class LazyVkCommentsFragment : ScopeFragment(R.layout.fragment_lazy) {
+class LazyVkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_lazy) {
 
     private val binding by viewBinding<FragmentLazyBinding>()
 
@@ -23,10 +23,6 @@ class LazyVkCommentsFragment : ScopeFragment(R.layout.fragment_lazy) {
     override fun onResume() {
         super.onResume()
         addFragmentIfReady()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     private fun addFragmentIfReady() {

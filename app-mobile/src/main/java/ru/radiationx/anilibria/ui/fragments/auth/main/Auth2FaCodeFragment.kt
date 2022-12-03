@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeExtra
 import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeViewModel
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
@@ -24,7 +24,7 @@ import ru.radiationx.shared_app.common.SystemUtils
  * Created by radiationx on 30.12.17.
  */
 class Auth2FaCodeFragment :
-    BaseFragment<FragmentAuth2faCodeBinding>(R.layout.fragment_auth_2fa_code) {
+    BaseToolbarFragment<FragmentAuth2faCodeBinding>(R.layout.fragment_auth_2fa_code) {
 
     companion object {
         private const val ARG_LOGIN = "arg_login"
@@ -73,9 +73,5 @@ class Auth2FaCodeFragment :
             binding.authSubmit.isEnabled = state.actionEnabled
             binding.authSwitcher.displayedChild = if (state.sending) 1 else 0
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 }

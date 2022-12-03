@@ -15,13 +15,13 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.teams.TeamsViewModel
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
-class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
+class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
 
     companion object {
         private const val ARG_QUERY = "arg_query"
@@ -69,10 +69,6 @@ class TeamsFragment : ScopeFragment(R.layout.fragment_teams) {
             state.data?.also { contentAdapter.bindState(it) }
             binding.pbLoading.isVisible = state.loading
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {

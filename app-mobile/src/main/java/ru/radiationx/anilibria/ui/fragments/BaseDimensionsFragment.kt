@@ -8,14 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.quill.quillInject
 
-abstract class ScopeFragment(
+abstract class BaseDimensionsFragment(
     @LayoutRes contentLayoutId: Int
-) : Fragment(contentLayoutId), BackButtonListener {
+) : Fragment(contentLayoutId) {
 
     private val dimensionsProvider by quillInject<DimensionsProvider>()
 

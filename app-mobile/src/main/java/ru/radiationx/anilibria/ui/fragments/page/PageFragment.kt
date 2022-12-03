@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.presentation.page.PageExtra
 import ru.radiationx.anilibria.presentation.page.PageViewModel
 import ru.radiationx.anilibria.ui.common.Templates
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.analytics.features.PageAnalytics
@@ -34,7 +34,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 /**
  * Created by radiationx on 13.01.18.
  */
-class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webview),
+class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragment_webview),
     ExtendedWebView.JsLifeCycleListener {
 
     companion object {
@@ -196,9 +196,5 @@ class PageFragment : BaseFragment<FragmentWebviewBinding>(R.layout.fragment_webv
         binding.webView.syncWithJs {
             binding.webView.scrollTo(0, webViewScrollPos)
         }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 }

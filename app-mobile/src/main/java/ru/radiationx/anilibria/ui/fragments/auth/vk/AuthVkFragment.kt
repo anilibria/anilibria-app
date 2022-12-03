@@ -17,14 +17,14 @@ import ru.radiationx.anilibria.presentation.auth.vk.AuthVkViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 
-class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
+class AuthVkFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
     companion object {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
@@ -87,10 +87,6 @@ class AuthVkFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment
             binding.errorView.isVisible = state.pageState is WebPageViewState.Error
             binding.cookieView.isVisible = state.showClearCookies
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onDestroyView() {

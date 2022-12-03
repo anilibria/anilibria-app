@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentDonationDetailBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.presentation.donation.detail.DonationDetailViewModel
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.quill.quillViewModel
 import kotlin.math.roundToInt
 
-class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail) {
+class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation_detail) {
 
     private val contentAdapter = DonationContentAdapter(
         buttonClickListener = { viewModel.onButtonClick(it) },
@@ -71,9 +71,4 @@ class DonationDetailFragment : ScopeFragment(R.layout.fragment_donation_detail) 
             binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
         }
     }
-
-    override fun onBackPressed(): Boolean {
-        return false
-    }
-
 }

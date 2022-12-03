@@ -18,9 +18,9 @@ import ru.radiationx.shared.ktx.android.visible
 
 /* Created by radiationx on 18.11.17. */
 
-abstract class BaseFragment<T : ViewBinding>(
+abstract class BaseToolbarFragment<T : ViewBinding>(
     @LayoutRes private val contentLayoutId: Int
-) : ScopeFragment(R.layout.fragment_main_base) {
+) : BaseDimensionsFragment(R.layout.fragment_main_base) {
 
     companion object {
         private const val CONTAINER_ID = R.id.fragment_content

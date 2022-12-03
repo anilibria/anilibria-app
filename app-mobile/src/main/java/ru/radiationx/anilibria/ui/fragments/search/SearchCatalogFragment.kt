@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.presentation.search.CatalogFilterState
 import ru.radiationx.anilibria.presentation.search.CatalogViewModel
 import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -34,7 +34,7 @@ import ru.radiationx.shared.ktx.android.putExtra
 
 
 class SearchCatalogFragment :
-    BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
@@ -216,10 +216,6 @@ class SearchCatalogFragment :
                 topMargin = dimensions.statusBar
             }
         searchView?.requestLayout()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onItemClick(position: Int, view: View) {

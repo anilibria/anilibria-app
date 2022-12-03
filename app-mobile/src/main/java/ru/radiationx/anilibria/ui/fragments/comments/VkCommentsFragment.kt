@@ -30,7 +30,7 @@ import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
@@ -46,7 +46,7 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
 
-class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
+class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments) {
 
     companion object {
         const val ARG_ID: String = "release_id"
@@ -181,10 +181,6 @@ class VkCommentsFragment : ScopeFragment(R.layout.fragment_vk_comments) {
             template.generateWithTheme(appThemeController.getTheme())
         )
         binding.webView.evalJs("ViewModel.setText('content','${comments.script.toBase64()}');")
-    }
-
-    override fun onBackPressed(): Boolean {
-        return true
     }
 
     private val jsLifeCycleListener = object : ExtendedWebView.JsLifeCycleListener {

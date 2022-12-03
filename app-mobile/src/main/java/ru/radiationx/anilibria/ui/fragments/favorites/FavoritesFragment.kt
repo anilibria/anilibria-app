@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -34,7 +34,7 @@ import ru.radiationx.quill.quillViewModel
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
@@ -157,10 +157,6 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
                 topMargin = dimensions.statusBar
             }
         searchView?.requestLayout()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onDestroyView() {

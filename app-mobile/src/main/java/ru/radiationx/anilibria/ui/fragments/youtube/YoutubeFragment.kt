@@ -13,11 +13,11 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.presentation.youtube.YoutubeViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.quill.quillViewModel
 
-class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
+class YoutubeFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
@@ -72,10 +72,6 @@ class YoutubeFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragme
             binding.refreshLayout.isRefreshing = state.data.refreshLoading
             youtubeAdapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {

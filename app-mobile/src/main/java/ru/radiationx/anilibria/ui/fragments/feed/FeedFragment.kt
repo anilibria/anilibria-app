@@ -21,7 +21,7 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.presentation.feed.FeedViewModel
 import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
@@ -30,7 +30,7 @@ import ru.radiationx.quill.quillViewModel
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider {
 
     private val adapter = FeedAdapter(
@@ -190,10 +190,6 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
                 topMargin = dimensions.statusBar
             }
         searchView?.requestLayout()
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

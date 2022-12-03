@@ -19,7 +19,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
 import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.presentation.release.details.ReleaseViewModel
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
@@ -39,8 +40,8 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragment_paged),
-    SharedReceiver {
+open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.fragment_paged),
+    SharedReceiver, BackButtonListener {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -187,8 +188,7 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             binding.viewPagerPaged.currentItem = binding.viewPagerPaged.currentItem - 1
             return true
         }
-        viewModel.onBackPressed()
-        return true
+        return false
     }
 
     private fun showState(state: ReleasePagerState) {

@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.presentation.auth.social.AuthSocialViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -33,7 +33,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
+class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -123,10 +123,6 @@ class AuthSocialFragment : BaseFragment<FragmentAuthSocialBinding>(R.layout.frag
         viewModel.errorEvent.onEach {
             showError()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onDestroyView() {

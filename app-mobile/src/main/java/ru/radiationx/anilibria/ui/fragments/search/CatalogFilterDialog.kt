@@ -185,7 +185,7 @@ class CatalogFilterDialog(
         }
 
         updateCounter()
-        updating = true
+        updating = false
     }
 
     private fun updateGenreViews() {

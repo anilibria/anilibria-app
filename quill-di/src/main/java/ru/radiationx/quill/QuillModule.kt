@@ -1,6 +1,5 @@
 package ru.radiationx.quill
 
-import android.util.Log
 import toothpick.config.Binding
 import toothpick.config.Module
 import javax.inject.Provider
@@ -31,7 +30,6 @@ open class QuillModule {
         value: T,
         qualifier: KClass<out Annotation>? = null,
     ) {
-        Log.w("kekeke", "instance $clazz -> $value -> $qualifier")
         tpModule.bind(clazz.java)
             .applyQualifier(qualifier)
             .toInstance(value)

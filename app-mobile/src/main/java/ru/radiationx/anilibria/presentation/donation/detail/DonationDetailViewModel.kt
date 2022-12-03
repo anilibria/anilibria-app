@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.presentation.donation.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
@@ -37,6 +39,10 @@ class DonationDetailViewModel(
     val dialogEvent = _dialogEvent.observe()
 
     init {
+        state.onEach {
+            currentData = it
+        }.launchIn(viewModelScope)
+
         viewModelScope.launch {
             runCatching {
                 donationRepository.requestUpdate()

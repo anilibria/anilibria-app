@@ -3,8 +3,10 @@ package ru.radiationx.anilibria.ui.fragments.donation.jointeam
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationContentBinding
@@ -58,6 +60,6 @@ class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_cont
             contentAdapter.bindState(data.content)
             binding.btCancel.text = data.cancelText
             binding.btCancel.isVisible = data.cancelText != null
-        }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeControlBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodesControlState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodesControlState
 
 /**
  * Created by radiationx on 13.01.18.

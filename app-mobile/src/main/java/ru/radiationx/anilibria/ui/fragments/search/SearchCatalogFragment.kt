@@ -17,10 +17,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.presentation.search.CatalogExtra
-import ru.radiationx.anilibria.presentation.search.CatalogFilterState
-import ru.radiationx.anilibria.presentation.search.CatalogViewModel
-import ru.radiationx.anilibria.presentation.search.FastSearchViewModel
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider

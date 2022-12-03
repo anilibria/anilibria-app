@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
-import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeExtra
-import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.quill.quillInject
 import ru.radiationx.quill.quillViewModel

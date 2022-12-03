@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialExtra
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialViewModel
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf

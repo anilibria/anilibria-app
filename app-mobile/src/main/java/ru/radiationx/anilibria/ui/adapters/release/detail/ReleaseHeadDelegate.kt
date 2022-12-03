@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseHeadNewBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailModifiersState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseFavoriteState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseDetailModifiersState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFavoriteState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable

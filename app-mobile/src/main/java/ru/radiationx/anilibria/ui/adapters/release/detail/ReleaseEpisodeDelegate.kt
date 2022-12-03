@@ -10,11 +10,11 @@ import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
 import ru.radiationx.shared.ktx.android.relativeDate
 
 /**

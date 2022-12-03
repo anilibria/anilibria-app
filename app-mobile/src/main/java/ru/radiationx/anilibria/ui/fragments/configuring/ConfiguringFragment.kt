@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
-import ru.radiationx.anilibria.presentation.configuring.ConfiguringViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.quill.quillViewModel

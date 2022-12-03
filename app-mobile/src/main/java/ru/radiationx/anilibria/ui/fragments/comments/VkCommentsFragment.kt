@@ -24,13 +24,12 @@ import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.model.loading.hasAnyLoading
-import ru.radiationx.anilibria.presentation.comments.VkCommentsViewModel
-import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient

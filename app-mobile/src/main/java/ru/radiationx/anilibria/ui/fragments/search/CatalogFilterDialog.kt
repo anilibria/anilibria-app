@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.presentation.search.CatalogFilterState
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.android.visible
 

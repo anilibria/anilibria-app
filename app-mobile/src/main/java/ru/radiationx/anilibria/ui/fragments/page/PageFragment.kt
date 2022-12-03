@@ -15,8 +15,6 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.FragmentWebviewBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.presentation.page.PageExtra
-import ru.radiationx.anilibria.presentation.page.PageViewModel
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView

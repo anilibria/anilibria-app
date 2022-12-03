@@ -26,10 +26,9 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.checker.CheckerExtra
-import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
-import ru.radiationx.anilibria.presentation.main.MainViewModel
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
+import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment

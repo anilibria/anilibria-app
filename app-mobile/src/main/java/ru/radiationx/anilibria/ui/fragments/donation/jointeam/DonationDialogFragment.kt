@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationContentBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.donation.jointeam.DonationDialogExtra
-import ru.radiationx.anilibria.presentation.donation.jointeam.DonationDialogViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.quill.quillViewModel

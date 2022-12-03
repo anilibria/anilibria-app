@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.quill.quillViewModel
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter

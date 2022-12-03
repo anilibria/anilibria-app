@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.teams.adapter
 
-import ru.radiationx.anilibria.presentation.teams.TeamsState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.anilibria.ui.fragments.teams.TeamsState
 
 class TeamsAdapter(
     actionClickListener: () -> Unit

@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationYoomoneyBinding
-import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
-import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyViewModel
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.quill.quillViewModel

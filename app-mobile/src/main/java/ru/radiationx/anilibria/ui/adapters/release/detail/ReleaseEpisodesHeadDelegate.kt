@@ -8,10 +8,10 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseHeadEpisodesBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.presentation.release.details.EpisodesTabState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.EpisodesTabState
 
 /**
  * Created by radiationx on 21.01.18.

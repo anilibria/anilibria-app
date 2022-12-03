@@ -18,10 +18,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
-import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoViewModel
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.toPrefQuality

@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuthBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
-import ru.radiationx.anilibria.presentation.auth.AuthViewModel
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.quillInject

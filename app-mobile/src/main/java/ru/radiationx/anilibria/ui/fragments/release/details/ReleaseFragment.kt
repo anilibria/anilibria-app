@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleaseExtra
-import ru.radiationx.anilibria.presentation.release.details.ReleaseViewModel
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver

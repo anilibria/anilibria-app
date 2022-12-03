@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemTeamUserBinding
-import ru.radiationx.anilibria.presentation.teams.TeamUserState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.teams.TeamUserState
 
 class TeamUserDelegate :
     AppAdapterDelegate<TeamUserListItem, ListItem, TeamUserDelegate.ViewHolder>(

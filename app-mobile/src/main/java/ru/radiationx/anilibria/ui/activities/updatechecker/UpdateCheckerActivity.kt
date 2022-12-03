@@ -14,8 +14,6 @@ import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.presentation.checker.CheckerExtra
-import ru.radiationx.anilibria.presentation.checker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils

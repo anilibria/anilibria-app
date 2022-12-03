@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
+@Deprecated("just use stateflow", level = DeprecationLevel.ERROR)
 class StateController<T : Any>(defaultState: T) {
 
     private val stateRelay = MutableStateFlow(defaultState)
@@ -14,7 +15,7 @@ class StateController<T : Any>(defaultState: T) {
             stateRelay.value = value
         }
 
-    fun updateState(block: (T) -> T) {
+    fun update(block: (T) -> T) {
         stateRelay.update(block)
     }
 

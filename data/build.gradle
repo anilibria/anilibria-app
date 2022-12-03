@@ -32,6 +32,7 @@ android {
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation project(":shared-android-ktx")
+    implementation project(":quill-di")
 
     api "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     api "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
@@ -50,9 +51,6 @@ dependencies {
     api "com.squareup.moshi:moshi-adapters:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

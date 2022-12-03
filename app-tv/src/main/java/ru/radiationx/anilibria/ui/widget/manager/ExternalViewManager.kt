@@ -1,11 +1,8 @@
 package ru.radiationx.anilibria.ui.widget.manager
 
 import android.os.Handler
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ProgressBar
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 

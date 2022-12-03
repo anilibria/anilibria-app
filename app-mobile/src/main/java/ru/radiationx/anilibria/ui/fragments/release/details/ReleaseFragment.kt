@@ -12,36 +12,34 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
-import ru.radiationx.anilibria.presentation.release.details.ReleaseView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.anilibria.ui.fragments.ScopeFragment
+import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.imageloader.showImageUrl
-import javax.inject.Inject
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragment_paged),
-    ReleaseView, SharedReceiver {
+open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.fragment_paged),
+    SharedReceiver, BackButtonListener {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -66,21 +64,17 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
     private var currentTitle: String? = null
     private var toolbarHelperJob: Job? = null
 
-    @Inject
-    lateinit var commentsAnalytics: CommentsAnalytics
+    private val shortcutHelper by inject<ShortcutHelper>()
 
-    @Inject
-    lateinit var shortcutHelper: ShortcutHelper
+    private val systemUtils by inject<SystemUtils>()
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
-
-    @InjectPresenter
-    lateinit var presenter: ReleasePresenter
-
-    @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter =
-        getDependency(ReleasePresenter::class.java)
+    private val viewModel by viewModel<ReleaseViewModel> {
+        ReleaseExtra(
+            id = getExtra(ARG_ID),
+            code = getExtra(ARG_ID_CODE),
+            release = getExtra(ARG_ITEM)
+        )
+    }
 
     override var transitionNameLocal = ""
 
@@ -90,16 +84,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
 
     override fun onCreateBinding(view: View): FragmentPagedBinding {
         return FragmentPagedBinding.bind(view)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
-        super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            presenter.releaseId = bundle.getParcelable(ARG_ID)
-            presenter.releaseIdCode = bundle.getParcelable(ARG_ID_CODE)
-            presenter.argReleaseItem = bundle.getParcelable(ARG_ITEM) as? Release?
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,24 +103,24 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
         baseBinding.toolbar.apply {
             currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener {
-                presenter.onBackPressed()
+                viewModel.onBackPressed()
             }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             menu.add("Копировать ссылку")
                 .setOnMenuItemClickListener {
-                    presenter.onCopyLinkClick()
+                    viewModel.onCopyLinkClick()
                     false
                 }
 
             menu.add("Поделиться")
                 .setOnMenuItemClickListener {
-                    presenter.onShareClick()
+                    viewModel.onShareClick()
                     false
                 }
 
             menu.add("Добавить на главный экран")
                 .setOnMenuItemClickListener {
-                    presenter.onShortcutAddClick()
+                    viewModel.onShortcutAddClick()
                     false
                 }
         }
@@ -172,18 +156,29 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
                     baseBinding.appbarLayout.setExpanded(false)
-                    presenter.onCommentsSwipe()
+                    viewModel.onCommentsSwipe()
                 }
             }
         })
 
         binding.viewPagerPaged.adapter = pagerAdapter
-    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(ARG_ID, presenter.releaseId)
-        outState.putParcelable(ARG_ID_CODE, presenter.releaseIdCode)
+        viewModel.state.onEach {
+            showState(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.shareAction.observe().onEach {
+            systemUtils.shareText(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.copyAction.observe().onEach {
+            systemUtils.copyToClipBoard(it)
+            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.shortcutAction.observe().onEach {
+            shortcutHelper.addShortcut(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
@@ -191,15 +186,10 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             binding.viewPagerPaged.currentItem = binding.viewPagerPaged.currentItem - 1
             return true
         }
-        presenter.onBackPressed()
-        return true
+        return false
     }
 
-    override fun setRefreshing(refreshing: Boolean) {
-        binding.progressBarPaged.visible(refreshing)
-    }
-
-    override fun showState(state: ReleasePagerState) {
+    private fun showState(state: ReleasePagerState) {
         if (state.poster == null) {
             startPostponedEnterTransition()
         } else {
@@ -216,19 +206,8 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
         if (state.title != null) {
             currentTitle = state.title
         }
-    }
 
-    override fun shareRelease(text: String) {
-        systemUtils.shareText(text)
-    }
-
-    override fun copyLink(url: String) {
-        systemUtils.copyToClipBoard(url)
-        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun addShortCut(release: Release) {
-        shortcutHelper.addShortcut(release)
+        binding.progressBarPaged.visible(state.loading)
     }
 
     override fun onDestroyView() {
@@ -268,9 +247,6 @@ open class ReleaseFragment : BaseFragment<FragmentPagedBinding>(R.layout.fragmen
             fragments.forEach {
                 val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
                 it.arguments = newBundle
-                it.putExtra {
-                    putString(ScopeFragment.ARG_SCREEN_SCOPE, screenScope)
-                }
             }
         }
 

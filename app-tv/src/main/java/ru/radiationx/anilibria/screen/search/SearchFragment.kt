@@ -13,9 +13,9 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.SearchTitleView
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 class SearchFragment : BaseVerticalGridFragment() {
 
@@ -24,13 +24,16 @@ class SearchFragment : BaseVerticalGridFragment() {
 
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val cardsViewModel by viewModel<SearchViewModel>()
     private val formViewModel by viewModel<SearchFormViewModel>()
 
-    override fun onInflateTitleView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): View {
+    override fun onInflateTitleView(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        savedInstanceState: Bundle?
+    ): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
     }
 

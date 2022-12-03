@@ -4,13 +4,11 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.SearchRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -41,8 +39,11 @@ class WatchingRecommendsViewModel(
                     genresMap[it] = currentCount + 1
                 }
             }
-            genresMap.toList().sortedByDescending { it.second }.take(3)
+            genresMap.toList()
+                .sortedByDescending { it.second }
+                .take(3)
                 .map { GenreItem(it.first, it.first) }
+                .toSet()
         }
         .let { genres ->
             val form = SearchForm(

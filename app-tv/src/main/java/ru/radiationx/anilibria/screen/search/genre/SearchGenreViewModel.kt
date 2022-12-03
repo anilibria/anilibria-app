@@ -55,7 +55,7 @@ class SearchGenreViewModel(
         viewModelScope.launch {
             val newGenres = currentGenres.filterIndexed { index, item ->
                 checkedValues.contains(item.value)
-            }
+            }.toSet()
             searchController.genresEvent.emit(newGenres)
             guidedRouter.close()
         }

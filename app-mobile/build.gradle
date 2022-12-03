@@ -111,10 +111,12 @@ dependencies {
     implementation project(":data")
     implementation project(":shared-android-ktx")
     implementation project(":shared-app")
+    implementation project(":quill-di")
 
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.cardview:cardview:$androidx_cardview_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
     implementation "androidx.preference:preference:$androidx_preference_version"
 
     implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
@@ -122,10 +124,6 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-
-    implementation "com.github.moxy-community:moxy:$moxy_version"
-    implementation "com.github.moxy-community:moxy-androidx:$moxy_version"
-    kapt "com.github.moxy-community:moxy-compiler:$moxy_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
 
@@ -154,9 +152,6 @@ dependencies {
 /*
     implementation "org.michaelbel:bottomsheet:1.2.3"*/
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

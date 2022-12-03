@@ -17,19 +17,19 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.transition.TransitionHelper
 import androidx.leanback.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentGridBinding
-import ru.radiationx.shared_app.screen.ScopedFragment
 import kotlin.math.max
 
 /**
  * A fragment for rendering items in a vertical grids.
  */
-open class GridFragment : ScopedFragment(R.layout.fragment_grid),
+open class GridFragment : Fragment(R.layout.fragment_grid),
     BrowseSupportFragment.MainFragmentAdapterProvider {
 
     private val binding by viewBinding<FragmentGridBinding>()

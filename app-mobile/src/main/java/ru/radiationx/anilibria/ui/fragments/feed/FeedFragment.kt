@@ -6,65 +6,61 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.presentation.feed.FeedPresenter
-import ru.radiationx.anilibria.presentation.feed.FeedView
-import ru.radiationx.anilibria.presentation.search.FastSearchPresenter
-import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
-import ru.radiationx.anilibria.presentation.search.FastSearchView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
+import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.quill.viewModel
 
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    SharedProvider, FeedView,
-    FastSearchView {
+class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider {
 
     private val adapter = FeedAdapter(
         loadMoreListener = {
-            presenter.loadMore()
+            viewModel.loadMore()
         }, loadRetryListener = {
-            presenter.loadMore()
+            viewModel.loadMore()
         }, warningClickListener = {
-            presenter.appWarningClick(it)
+            viewModel.appWarningClick(it)
         }, warningClickCloseListener = {
-            presenter.appWarningCloseClick(it)
+            viewModel.appWarningCloseClick(it)
         }, donationListener = {
-            presenter.onDonationClick(it)
+            viewModel.onDonationClick(it)
         }, donationCloseListener = {
-            presenter.onDonationCloseClick(it)
+            viewModel.onDonationCloseClick(it)
         }, schedulesClickListener = {
-            presenter.onSchedulesClick()
+            viewModel.onSchedulesClick()
         }, scheduleScrollListener = { position ->
-            presenter.onScheduleScroll(position)
+            viewModel.onScheduleScroll(position)
         }, randomClickListener = {
-            presenter.onRandomClick()
+            viewModel.onRandomClick()
         }, releaseClickListener = { releaseItem, view ->
             this.sharedViewLocal = view
-            presenter.onItemClick(releaseItem)
+            viewModel.onItemClick(releaseItem)
         }, releaseLongClickListener = { releaseItem, view ->
             releaseOnLongClick(releaseItem)
         }, youtubeClickListener = { youtubeItem, view ->
-            presenter.onYoutubeClick(youtubeItem)
+            viewModel.onYoutubeClick(youtubeItem)
         }, scheduleClickListener = { feedScheduleItem, view, position ->
             this.sharedViewLocal = view
-            presenter.onScheduleItemClick(feedScheduleItem, position)
+            viewModel.onScheduleItemClick(feedScheduleItem, position)
         }, emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_newspaper,
             R.string.placeholder_title_nodata_base,
@@ -77,23 +73,15 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
     )
 
     private val searchAdapter = FastSearchAdapter(
-        clickListener = { searchPresenter.onItemClick(it) },
-        localClickListener = { searchPresenter.onLocalItemClick(it) }
+        clickListener = { searchViewModel.onItemClick(it) },
+        localClickListener = { searchViewModel.onLocalItemClick(it) }
     )
+
+    private val viewModel by viewModel<FeedViewModel>()
+
+    private val searchViewModel by viewModel<FastSearchViewModel>()
+
     private var searchView: SearchView? = null
-
-    @InjectPresenter
-    lateinit var searchPresenter: FastSearchPresenter
-
-    @InjectPresenter
-    lateinit var presenter: FeedPresenter
-
-    @ProvidePresenter
-    fun provideSearchPresenter(): FastSearchPresenter =
-        getDependency(FastSearchPresenter::class.java)
-
-    @ProvidePresenter
-    fun provideFeedPresenter() = getDependency(FeedPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -110,14 +98,13 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = SearchView(baseBinding.coordinatorLayout.context)
-        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
@@ -162,9 +149,9 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (!hasFocus) {
-                        searchPresenter.onClose()
+                        searchViewModel.onClose()
                     } else {
-                        presenter.onFastSearchOpen()
+                        viewModel.onFastSearchOpen()
                     }
                 }
             })
@@ -174,7 +161,7 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
                 }
 
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchPresenter.onQueryChange(newText.toString())
+                    searchViewModel.onQueryChange(newText.toString())
                     return false
                 }
             })
@@ -183,6 +170,16 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
 
 
         }
+
+        viewModel.state.onEach { state ->
+            binding.progressBarList.isVisible = state.data.emptyLoading
+            binding.refreshLayout.isRefreshing = state.data.refreshLoading
+            adapter.bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        searchViewModel.state.onEach { state ->
+            searchAdapter.bindItems(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -192,11 +189,6 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
                 topMargin = dimensions.statusBar
             }
         searchView?.requestLayout()
-    }
-
-    override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -214,28 +206,17 @@ class FeedFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_
         super.onDestroyView()
     }
 
-    override fun showState(state: FastSearchScreenState) {
-        searchAdapter.bindItems(state)
-    }
-
-    /* ReleaseView */
-    override fun showState(state: FeedScreenState) {
-        binding.progressBarList.isVisible = state.data.emptyLoading
-        binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        adapter.bindState(state)
-    }
-
     private fun releaseOnLongClick(item: ReleaseItemState) {
         val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
         AlertDialog.Builder(requireContext())
             .setItems(titles) { dialog, which ->
                 when (which) {
                     0 -> {
-                        presenter.onCopyClick(item)
+                        viewModel.onCopyClick(item)
                         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
-                    1 -> presenter.onShareClick(item)
-                    2 -> presenter.onShortcutClick(item)
+                    1 -> viewModel.onShareClick(item)
+                    2 -> viewModel.onShortcutClick(item)
                 }
             }
             .show()

@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseTorrentBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleaseTorrentItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
 import ru.radiationx.shared.ktx.android.relativeDate
 
 /**

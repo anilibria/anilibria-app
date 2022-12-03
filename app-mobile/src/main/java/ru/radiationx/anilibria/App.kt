@@ -22,8 +22,9 @@ import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.quill.Quill
+import ru.radiationx.quill.get
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
-import ru.radiationx.shared_app.di.DI
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -51,7 +52,7 @@ class App : Application() {
             initInMainProcess()
 
             val timeToInit = timeCounter.elapsed()
-            val appAnalytics = DI.get(AppAnalytics::class.java)
+            val appAnalytics = get<AppAnalytics>()
             appAnalytics.timeToCreate(timeToCreate)
             appAnalytics.timeToInit(timeToInit)
 
@@ -94,7 +95,7 @@ class App : Application() {
             Timber.e(ex)
         }
 
-        val preferencesHolder = DI.get(PreferencesHolder::class.java)
+        val preferencesHolder = get<PreferencesHolder>()
 
         preferencesHolder
             .observeNotificationsAll()
@@ -135,12 +136,11 @@ class App : Application() {
 
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
-        val scope = Toothpick.openScope(DI.DEFAULT_SCOPE)
-        scope.installModules(AppModule(this), DataModule())
+        Quill.getRootScope().installModules(AppModule(this), DataModule())
     }
 
     private fun appVersionCheck() {
-        val migrationDataSource = DI.get(MigrationDataSource::class.java)
+        val migrationDataSource = get<MigrationDataSource>()
         migrationDataSource.update()
     }
 

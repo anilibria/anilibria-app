@@ -33,6 +33,7 @@ buildscript {
         androidx_cardview_version = '1.0.0'
         androidx_preference_version = '1.2.0'
         androidx_multidex_version = '2.0.1'
+        androidx_swiperefresh_version = '1.1.0'
 
         material_version = '1.7.0'
         flexbox_version = '1.1.0'
@@ -41,7 +42,6 @@ buildscript {
         firebase_messaging_version = '23.1.0'
 
         mobmetrica_version = '5.2.0'
-        moxy_version = '2.2.2'
         mintpermissions_version = '1.1.1'
         exomedia_version = '4.3.0'
         minitemplator_version = '1.4.1'

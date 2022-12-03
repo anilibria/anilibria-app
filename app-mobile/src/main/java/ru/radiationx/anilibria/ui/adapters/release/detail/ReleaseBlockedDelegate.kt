@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseBlockedBinding
-import ru.radiationx.anilibria.presentation.release.details.ReleaseBlockedInfoState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseBlockedInfoState
 
 /**
  * Created by radiationx on 21.01.18.

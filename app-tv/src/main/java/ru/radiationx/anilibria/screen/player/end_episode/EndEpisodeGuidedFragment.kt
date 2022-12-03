@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.quill.viewModel
 
 class EndEpisodeGuidedFragment : BasePlayerGuidedFragment() {
 

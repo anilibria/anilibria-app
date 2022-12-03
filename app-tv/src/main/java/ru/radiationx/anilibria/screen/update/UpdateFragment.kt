@@ -5,6 +5,7 @@ import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.leanback.app.ProgressBarManager
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
@@ -13,28 +14,26 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
 import ru.radiationx.anilibria.di.DownloadModule
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
-import ru.radiationx.shared_app.di.viewModel
-import ru.radiationx.shared_app.screen.ScopedFragment
-import javax.inject.Inject
 
-class UpdateFragment : ScopedFragment(R.layout.fragment_update) {
+class UpdateFragment : Fragment(R.layout.fragment_update) {
 
     private val binding by viewBinding<FragmentUpdateBinding>()
 
     private val progressBarManager by lazy { ProgressBarManager() }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    @Inject
-    lateinit var downloadController: DownloadControllerImpl
+    private val downloadController by inject<DownloadControllerImpl>()
 
     private val viewModel by viewModel<UpdateViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        dependencyInjector.installModules(DownloadModule())
+        installModules(DownloadModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         lifecycle.addObserver(downloadController)

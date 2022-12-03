@@ -4,9 +4,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseTorrentItemState
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate

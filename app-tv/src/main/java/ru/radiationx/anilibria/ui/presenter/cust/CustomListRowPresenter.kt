@@ -1,14 +1,11 @@
 package dev.rx.tvtest.cust
 
 import android.content.Context
-import android.transition.AutoTransition
-import android.transition.TransitionManager
-import android.transition.TransitionSet
-import android.util.Log
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.leanback.widget.*
+import androidx.leanback.widget.FocusHighlight
+import androidx.leanback.widget.ListRowPresenter
+import androidx.leanback.widget.ListRowView
+import androidx.leanback.widget.RowPresenter
 
 open class CustomListRowPresenter @JvmOverloads constructor(
     focusZoomFactor: Int = FocusHighlight.ZOOM_FACTOR_MEDIUM,

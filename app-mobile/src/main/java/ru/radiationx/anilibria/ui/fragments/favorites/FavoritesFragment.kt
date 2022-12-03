@@ -7,40 +7,39 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.presentation.favorites.FavoritesPresenter
-import ru.radiationx.anilibria.presentation.favorites.FavoritesView
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.DimensionHelper
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.quill.viewModel
 
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    SharedProvider, FavoritesView,
+class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider,
     ReleasesAdapter.ItemListener {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
-        loadMoreListener = { presenter.loadMore() },
-        loadRetryListener = { presenter.loadMore() },
+        loadMoreListener = { viewModel.loadMore() },
+        loadRetryListener = { viewModel.loadMore() },
         listener = this,
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_fav_border,
@@ -58,14 +57,9 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
         addDelegate(ReleaseItemDelegate(this@FavoritesFragment))
     }
 
+    private val viewModel by viewModel<FavoritesViewModel>()
+
     private var searchView: SearchMenuItem? = null
-
-    @InjectPresenter
-    lateinit var presenter: FavoritesPresenter
-
-    @ProvidePresenter
-    fun provideFavoritesPresenter(): FavoritesPresenter =
-        getDependency(FavoritesPresenter::class.java)
 
     override var sharedViewLocal: View? = null
 
@@ -82,7 +76,6 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 
@@ -99,7 +92,7 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
         }
 
-        binding.refreshLayout.setOnRefreshListener { presenter.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
 
         binding.recyclerView.apply {
             adapter = this@FavoritesFragment.adapter
@@ -119,7 +112,7 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     searchView?.requestFocus(it)
-                    presenter.onSearchClick()
+                    viewModel.onSearchClick()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -143,13 +136,17 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
                 }
 
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    presenter.localSearch(newText.toString())
+                    viewModel.localSearch(newText.toString())
                     return false
                 }
             })
 
             setAdapter(searchAdapter)
         }
+
+        viewModel.state.onEach {
+            showState(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -161,22 +158,9 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
         searchView?.requestLayout()
     }
 
-    override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
-    }
-
     override fun onDestroyView() {
         searchView?.clearFocus()
         super.onDestroyView()
-    }
-
-    override fun showState(state: FavoritesScreenState) {
-        binding.progressBarList.isVisible = state.data.emptyLoading
-        binding.refreshLayout.isRefreshing =
-            state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
-        adapter.bindState(state.data)
-        searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 
     override fun onItemClick(position: Int, view: View) {
@@ -184,7 +168,7 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
     }
 
     override fun onItemClick(item: ReleaseItemState, position: Int) {
-        presenter.onItemClick(item)
+        viewModel.onItemClick(item)
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
@@ -195,16 +179,24 @@ class FavoritesFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.frag
                 .setItems(titles) { dialog, which ->
                     when (which) {
                         0 -> {
-                            presenter.onCopyClick(item)
+                            viewModel.onCopyClick(item)
                             Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                         }
-                        1 -> presenter.onShareClick(item)
-                        2 -> presenter.onShortcutClick(item)
-                        3 -> presenter.deleteFav(item.id)
+                        1 -> viewModel.onShareClick(item)
+                        2 -> viewModel.onShortcutClick(item)
+                        3 -> viewModel.deleteFav(item.id)
                     }
                 }
                 .show()
         }
         return false
+    }
+
+    private fun showState(state: FavoritesScreenState) {
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing =
+            state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
+        adapter.bindState(state.data)
+        searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 }

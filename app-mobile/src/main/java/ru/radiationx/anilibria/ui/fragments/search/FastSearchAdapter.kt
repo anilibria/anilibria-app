@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
-import ru.radiationx.anilibria.presentation.search.FastSearchScreenState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionLocalListItem

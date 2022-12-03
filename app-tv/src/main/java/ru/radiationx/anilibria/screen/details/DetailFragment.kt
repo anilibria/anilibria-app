@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.details
 import android.os.Bundle
 import android.view.View
 import androidx.core.graphics.ColorUtils
+import androidx.leanback.app.RowsSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
@@ -11,17 +12,16 @@ import androidx.lifecycle.ViewModel
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
-class DetailFragment : ScopedRowsFragment() {
+class DetailFragment : RowsSupportFragment() {
 
     companion object {
         private const val ARG_ID = "id"
@@ -31,8 +31,7 @@ class DetailFragment : ScopedRowsFragment() {
         }
     }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val releaseId by lazy {
         requireNotNull(requireArguments().getParcelable<ReleaseId>(ARG_ID)) {
@@ -76,7 +75,8 @@ class DetailFragment : ScopedRowsFragment() {
         adapter = rowsAdapter
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
-            val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id) as? BaseCardsViewModel
+            val viewMode: BaseCardsViewModel? =
+                getViewModel((row as ListRow).id) as? BaseCardsViewModel
             when (item) {
                 is LinkCard -> viewMode?.onLinkCardClick()
                 is LoadingCard -> viewMode?.onLoadingCardClick()
@@ -129,12 +129,24 @@ class DetailFragment : ScopedRowsFragment() {
         }
     }
 
-    private fun createRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: ViewModel): Row = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as DetailHeaderViewModel)
+    private fun createRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: ViewModel
+    ): Row = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
+            rowId,
+            rowsAdapter,
+            viewModel as DetailHeaderViewModel
+        )
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
-    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: DetailHeaderViewModel): Row {
+    private fun createHeaderRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: DetailHeaderViewModel
+    ): Row {
         val row = LibriaDetailsRow(rowId)
         subscribeTo(viewModel.releaseData) {
             val position = rowsAdapter.indexOf(row)

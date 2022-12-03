@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesGuidedFragment.Companion.ARG_VALUES
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
-abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
+abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         const val ARG_VALUES = "arg values"
@@ -36,7 +36,8 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressManager.rootView = view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup
+        progressManager.rootView =
+            view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup
 
         subscribeTo(viewModel.progressState) {
             if (it) {
@@ -71,7 +72,10 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
         }
     }
 
-    override fun onCreateButtonActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
+    override fun onCreateButtonActions(
+        actions: MutableList<GuidedAction>,
+        savedInstanceState: Bundle?
+    ) {
         actions.add(
             GuidedAction.Builder(requireContext())
                 .id(GuidedAction.ACTION_ID_OK)

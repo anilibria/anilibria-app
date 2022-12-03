@@ -2,47 +2,44 @@ package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.schedule.SchedulePresenter
-import ru.radiationx.anilibria.presentation.schedule.ScheduleView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.injectDependencies
 
-class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    ScheduleView, SharedProvider {
+class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider {
 
     companion object {
         private const val ARG_DAY = "arg day"
-        fun newInstance(day: Int = -1) = ScheduleFragment().putExtra {
-            putInt(ARG_DAY, day)
+        fun newInstance(day: Int?) = ScheduleFragment().putExtra {
+            putSerializable(ARG_DAY, day)
         }
     }
 
     private val scheduleAdapter = ScheduleAdapter(
         scheduleClickListener = { item, view, position ->
             this.sharedViewLocal = view
-            presenter.onItemClick(item, position)
+            viewModel.onItemClick(item, position)
         },
         scrollListener = { position ->
-            presenter.onHorizontalScroll(position)
+            viewModel.onHorizontalScroll(position)
         }
     )
 
-    @InjectPresenter
-    lateinit var presenter: SchedulePresenter
-
-    @ProvidePresenter
-    fun providePresenter(): SchedulePresenter =
-        getDependency(SchedulePresenter::class.java)
+    private val viewModel by viewModel<ScheduleViewModel> {
+        ScheduleExtra(day = getExtra(ARG_DAY))
+    }
 
     override var sharedViewLocal: View? = null
 
@@ -58,25 +55,17 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
         return FragmentListRefreshBinding.bind(view)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.argDay = getInt(ARG_DAY, presenter.argDay)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         baseBinding.toolbar.apply {
             ToolbarHelper.fixInsets(this)
             title = getString(R.string.fragment_title_schedule)
-            setNavigationOnClickListener { presenter.onBackPressed() }
+            setNavigationOnClickListener { viewModel.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
         }
 
-        binding.refreshLayout.setOnRefreshListener { presenter.refresh() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refresh() }
 
         binding.recyclerView.apply {
             adapter = scheduleAdapter
@@ -86,6 +75,18 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
 
         ToolbarShadowController(binding.recyclerView, baseBinding.appbarLayout) {
             updateToolbarShadow(it)
+        }
+
+        viewModel.state.onEach { state ->
+            binding.refreshLayout.isRefreshing = state.refreshing
+            scheduleAdapter.bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.scrollEvent.onEach { day ->
+            val position = scheduleAdapter.getPositionByDay(day)
+            (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
+                it.scrollToPositionWithOffset(position, 0)
+            }
         }
     }
 
@@ -102,22 +103,5 @@ class ScheduleFragment : BaseFragment<FragmentListRefreshBinding>(R.layout.fragm
     override fun onDestroyView() {
         scheduleAdapter.saveState(null)
         super.onDestroyView()
-    }
-
-    override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return true
-    }
-
-    override fun showState(state: ScheduleScreenState) {
-        binding.refreshLayout.isRefreshing = state.refreshing
-        scheduleAdapter.bindState(state)
-    }
-
-    override fun scrollToDay(day: ScheduleDayState) {
-        val position = scheduleAdapter.getPositionByDay(day)
-        (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
-            it.scrollToPositionWithOffset(position, 0)
-        }
     }
 }

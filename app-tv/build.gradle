@@ -49,6 +49,7 @@ dependencies {
     implementation project(":data")
     implementation project(":shared-android-ktx")
     implementation project(":shared-app")
+    implementation project(":quill-di")
 
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "androidx.leanback:leanback:$androidx_leanback_version"
@@ -56,17 +57,10 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
 
-    implementation "com.github.moxy-community:moxy:$moxy_version"
-    implementation "com.github.moxy-community:moxy-androidx:$moxy_version"
-    kapt "com.github.moxy-community:moxy-compiler:$moxy_version"
-
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
 
     implementation "com.google.android:flexbox:$flexbox_version"
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

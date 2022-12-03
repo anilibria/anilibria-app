@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.ui.adapters
 
 import ru.radiationx.anilibria.model.*
-import ru.radiationx.anilibria.presentation.release.details.*
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.feed.FeedAppWarning
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
+import ru.radiationx.anilibria.ui.fragments.release.details.*
 
 open class ListItem(private val idData: Any?) {
 

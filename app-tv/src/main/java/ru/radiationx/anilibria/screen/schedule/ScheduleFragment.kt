@@ -2,29 +2,27 @@ package ru.radiationx.anilibria.screen.schedule
 
 import android.os.Bundle
 import android.view.View
+import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRow
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
-class ScheduleFragment : ScopedBrowseFragment() {
+class ScheduleFragment : BrowseSupportFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
     private val viewModel by viewModel<ScheduleViewModel>()
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

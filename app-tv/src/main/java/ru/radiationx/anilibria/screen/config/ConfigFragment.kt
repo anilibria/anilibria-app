@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.MotionLayoutListener
 import ru.radiationx.anilibria.databinding.FragmentConfigBinding
 import ru.radiationx.data.entity.common.ConfigScreenState
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import ru.radiationx.shared_app.screen.ScopedFragment
 
-class ConfigFragment : ScopedFragment(R.layout.fragment_config) {
+class ConfigFragment : Fragment(R.layout.fragment_config) {
 
     private val binding by viewBinding<FragmentConfigBinding>()
 

@@ -4,27 +4,25 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.text.isDigitsOnly
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentAuth2faCodeBinding
-import ru.radiationx.anilibria.presentation.auth.Auth2FaCodePresenter
-import ru.radiationx.anilibria.presentation.auth.Auth2FaCodeView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
 class Auth2FaCodeFragment :
-    BaseFragment<FragmentAuth2faCodeBinding>(R.layout.fragment_auth_2fa_code),
-    Auth2FaCodeView {
+    BaseToolbarFragment<FragmentAuth2faCodeBinding>(R.layout.fragment_auth_2fa_code) {
 
     companion object {
         private const val ARG_LOGIN = "arg_login"
@@ -36,33 +34,20 @@ class Auth2FaCodeFragment :
         }
     }
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
+    private val viewModel by viewModel<Auth2FaCodeViewModel> {
+        Auth2FaCodeExtra(
+            login = getExtraNotNull(ARG_LOGIN),
+            password = getExtraNotNull(ARG_PASSWORD)
+        )
+    }
 
-    @Inject
-    lateinit var systemUtils: SystemUtils
-
-    @InjectPresenter
-    lateinit var presenter: Auth2FaCodePresenter
-
-    @ProvidePresenter
-    fun provideAuthPresenter(): Auth2FaCodePresenter =
-        getDependency(Auth2FaCodePresenter::class.java)
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreateBinding(view: View): FragmentAuth2faCodeBinding {
         return FragmentAuth2faCodeBinding.bind(view)
     }
 
     override val statusBarVisible: Boolean = true
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            presenter.currentLogin = it.getString(ARG_LOGIN, presenter.currentLogin)
-            presenter.currentPassword = it.getString(ARG_PASSWORD, presenter.currentPassword)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,19 +64,12 @@ class Auth2FaCodeFragment :
                     .show()
             }
         }
-        binding.authSubmit.setOnClickListener { presenter.signIn() }
-        binding.auth2facode.addTextChangeListener { presenter.setCode2fa(it) }
-    }
+        binding.authSubmit.setOnClickListener { viewModel.signIn() }
+        binding.auth2facode.addTextChangeListener { viewModel.setCode2fa(it) }
 
-    override fun setSignButtonEnabled(isEnabled: Boolean) {
-        binding.authSubmit.isEnabled = isEnabled
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        binding.authSwitcher.displayedChild = if (refreshing) 1 else 0
+        viewModel.state.onEach { state ->
+            binding.authSubmit.isEnabled = state.actionEnabled
+            binding.authSwitcher.displayedChild = if (state.sending) 1 else 0
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

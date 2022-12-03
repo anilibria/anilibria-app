@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.quill.Quill
 
 // todo tr-274 check working
 class SuggestionsContentProvider : ContentProvider() {
@@ -35,7 +35,7 @@ class SuggestionsContentProvider : ContentProvider() {
 
     private val uriMatcher by lazy { buildUriMatcher() }
 
-    private val searchRepository by lazy { DI.get(SearchRepository::class.java) }
+    private val searchRepository by lazy { Quill.getRootScope().get(SearchRepository::class) }
 
     override fun onCreate(): Boolean {
         return true

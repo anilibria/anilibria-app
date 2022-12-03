@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.screen.details
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -68,7 +71,7 @@ class DetailsViewModel(
     }
 
     private fun loadRelease() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             runCatching {
                 releaseInteractor.loadRelease(releaseId)
             }.onSuccess {

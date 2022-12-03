@@ -4,14 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import java.lang.IllegalStateException
 
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 

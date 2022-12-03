@@ -9,30 +9,27 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import by.kirich1409.viewbindingdelegate.viewBinding
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
-import ru.radiationx.anilibria.presentation.checker.CheckerView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 24.07.17.
  */
 
-class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerView {
+class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     companion object {
         private const val ARG_FORCE = "force"
@@ -40,7 +37,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerVi
 
         fun newIntent(context: Context, force: Boolean, analyticsFrom: String) =
             Intent(context, UpdateCheckerActivity::class.java).apply {
-                putExtra(ARG_FORCE, true)
+                putExtra(ARG_FORCE, force)
                 putExtra(ARG_ANALYTICS_FROM, analyticsFrom)
                 action = Intent.ACTION_VIEW
             }
@@ -49,42 +46,41 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerVi
     private val binding by viewBinding<ActivityUpdaterBinding>()
 
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    @Inject
-    lateinit var apiUtils: IApiUtils
+    private val viewModel by viewModel<CheckerViewModel>(){
+        CheckerExtra(forceLoad = getExtraNotNull(ARG_FORCE))
+    }
 
-    @Inject
-    lateinit var updaterAnalytics: UpdaterAnalytics
+    private val apiUtils by inject<IApiUtils>()
 
-    @InjectPresenter
-    lateinit var presenter: CheckerPresenter
-
-    @ProvidePresenter
-    fun provideCheckerPresenter() = getDependency(CheckerPresenter::class.java)
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
 
         intent?.let {
-            presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
             it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
                 updaterAnalytics.open(it)
             }
         }
-        presenter.checkUpdate()
+        viewModel.checkUpdate()
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
         binding.currentInfo.text =
             generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+
+        viewModel.state.onEach { state ->
+            state.data?.also { showUpdateData(it) }
+            setRefreshing(state.loading)
+        }
     }
 
-    override fun showUpdateData(update: UpdateData) {
+    private fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
@@ -106,7 +102,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerVi
         }
         binding.updateButton.visible()
         binding.updateButton.setOnClickListener {
-            presenter.onDownloadClick()
+            viewModel.onDownloadClick()
             openDownloadDialog(update)
         }
     }
@@ -117,7 +113,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerVi
         }
         if (update.links.size == 1) {
             val link = update.links.last()
-            presenter.onSourceDownloadClick(link)
+            viewModel.onSourceDownloadClick(link)
             return
         }
         val titles = update.links.map { it.name }.toTypedArray()
@@ -125,12 +121,12 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater), CheckerVi
             .setTitle("Источник")
             .setItems(titles) { _, which ->
                 val link = update.links[which]
-                presenter.onSourceDownloadClick(link)
+                viewModel.onSourceDownloadClick(link)
             }
             .show()
     }
 
-    override fun setRefreshing(isRefreshing: Boolean) {
+    private fun setRefreshing(isRefreshing: Boolean) {
         binding.progressBar.visible(isRefreshing)
         binding.updateInfo.gone(isRefreshing)
         binding.updateContent.gone(isRefreshing)

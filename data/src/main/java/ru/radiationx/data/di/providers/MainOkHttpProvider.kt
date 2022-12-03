@@ -32,8 +32,8 @@ class MainOkHttpProvider @Inject constructor(
         }
         .apply {
             if (sharedBuildConfig.debug) {
-                addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                addInterceptor(ChuckerInterceptor.Builder(context).build())
+                addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
             }
         }
         .build()

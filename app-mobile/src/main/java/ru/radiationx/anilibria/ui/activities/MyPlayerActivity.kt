@@ -57,15 +57,14 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.injectDependencies
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
@@ -119,23 +118,17 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
 
-    @Inject
-    lateinit var releaseInteractor: ReleaseInteractor
+    private val releaseInteractor by inject<ReleaseInteractor>()
 
-    @Inject
-    lateinit var appThemeController: AppThemeController
+    private val appThemeController by inject<AppThemeController>()
 
-    @Inject
-    lateinit var defaultPreferences: SharedPreferences
+    private val defaultPreferences by inject<SharedPreferences>()
 
-    @Inject
-    lateinit var appPreferences: PreferencesHolder
+    private val appPreferences by inject<PreferencesHolder>()
 
-    @Inject
-    lateinit var playerAnalytics: PlayerAnalytics
+    private val playerAnalytics by inject<PlayerAnalytics>()
 
-    @Inject
-    lateinit var errorReporter: AnalyticsErrorReporter
+    private val errorReporter by inject<AnalyticsErrorReporter>()
 
     private val binding by viewBinding<ActivityMyplayerBinding>()
 
@@ -188,7 +181,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()

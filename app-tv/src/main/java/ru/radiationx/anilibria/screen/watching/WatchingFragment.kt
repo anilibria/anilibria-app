@@ -2,33 +2,31 @@ package ru.radiationx.anilibria.screen.watching
 
 import android.os.Bundle
 import android.view.View
+import androidx.leanback.app.RowsSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ListRow
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModelFromParent
-import javax.inject.Inject
+import ru.radiationx.shared_app.di.quillParentViewModel
 
-class WatchingFragment : ScopedRowsFragment() {
+class WatchingFragment : RowsSupportFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val watchingViewModel by viewModelFromParent<WatchingViewModel>()
+    private val watchingViewModel by quillParentViewModel<WatchingViewModel>()
 
-    private val historyViewModel by viewModelFromParent<WatchingHistoryViewModel>()
-    private val continueViewModel by viewModelFromParent<WatchingContinueViewModel>()
-    private val favoritesViewModel by viewModelFromParent<WatchingFavoritesViewModel>()
-    private val recommendsViewModel by viewModelFromParent<WatchingRecommendsViewModel>()
+    private val historyViewModel by quillParentViewModel<WatchingHistoryViewModel>()
+    private val continueViewModel by quillParentViewModel<WatchingContinueViewModel>()
+    private val favoritesViewModel by quillParentViewModel<WatchingFavoritesViewModel>()
+    private val recommendsViewModel by quillParentViewModel<WatchingRecommendsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +79,8 @@ class WatchingFragment : ScopedRowsFragment() {
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(watchingViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->
-                val row = rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                val row =
+                    rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
                 rowMap[rowId] = row
                 row
             }

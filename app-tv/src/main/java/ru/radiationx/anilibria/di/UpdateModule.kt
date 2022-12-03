@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.di
 
 import ru.radiationx.anilibria.screen.update.UpdateController
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
 
-class UpdateModule : Module() {
+class UpdateModule : QuillModule() {
 
     init {
-        bind(UpdateController::class.java).singleton()
+        single<UpdateController>()
     }
 }

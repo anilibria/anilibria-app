@@ -1,17 +1,14 @@
 package ru.radiationx.anilibria.screen.mainpages
 
-import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.commitNow
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRowPresenter
@@ -19,21 +16,18 @@ import androidx.leanback.widget.PageRow
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedBrowseFragment
 import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widget.BrowseTitleView
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.viewModel
 
-class MainPagesFragment : ScopedBrowseFragment() {
+class MainPagesFragment : BrowseSupportFragment() {
 
     private val menuPresenter by lazy { ListRowPresenter() }
     private val menuAdapter by lazy { ArrayObjectAdapter(menuPresenter) }
     private var lastSelectedPosition = -1
-    private val fragmentFactory by lazy { MainPagesFragmentFactory(this) }
+    private val fragmentFactory by lazy { MainPagesFragmentFactory() }
 
     private val viewModel by viewModel<MainPagesViewModel>()
 
@@ -68,9 +62,11 @@ class MainPagesFragment : ScopedBrowseFragment() {
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
 
-                TransitionManager.beginDelayedTransition(titleView as ViewGroup, Fade(Fade.IN).apply {
-                    interpolator = FastOutSlowInInterpolator()
-                })
+                TransitionManager.beginDelayedTransition(
+                    titleView as ViewGroup,
+                    Fade(Fade.IN).apply {
+                        interpolator = FastOutSlowInInterpolator()
+                    })
                 badgeDrawable = if (withHeaders) {
                     requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
                 } else {
@@ -93,7 +89,11 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         if (savedInstanceState == null) {
             childFragmentManager.findFragmentById(androidx.leanback.R.id.scale_frame)?.also {
@@ -151,8 +151,12 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     override fun setTitleView(titleView: View?) {
         super.setTitleView(titleView)
-        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
-        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(mOnOtherClickedListener)
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(
+            mOnAlertClickedListener
+        )
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(
+            mOnOtherClickedListener
+        )
     }
 
     protected fun setAlert(alertText: CharSequence?) {
@@ -161,7 +165,9 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     protected fun setAlertClickListener(listener: View.OnClickListener?) {
         mOnAlertClickedListener = listener
-        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(mOnAlertClickedListener)
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(
+            mOnAlertClickedListener
+        )
     }
 
     protected fun setOther(otherText: CharSequence?) {
@@ -170,6 +176,8 @@ class MainPagesFragment : ScopedBrowseFragment() {
 
     protected fun setOtherClickListener(listener: View.OnClickListener?) {
         mOnOtherClickedListener = listener
-        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(mOnOtherClickedListener)
+        (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(
+            mOnOtherClickedListener
+        )
     }
 }

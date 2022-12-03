@@ -5,9 +5,9 @@ import android.view.View
 import com.google.android.exoplayer2.PlaybackParameters
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
 class PlayerFragment : BasePlayerFragment() {
 

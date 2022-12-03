@@ -8,33 +8,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationYoomoneyBinding
-import ru.radiationx.anilibria.presentation.donation.infra.DonationYooMoneyState
-import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyPresenter
-import ru.radiationx.anilibria.presentation.donation.yoomoney.DonationYooMoneyView
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
-import ru.radiationx.shared_app.di.getDependency
 
-class DonationYooMoneyDialogFragment :
-    AlertDialogFragment(R.layout.dialog_donation_yoomoney), DonationYooMoneyView {
-
-    @InjectPresenter
-    lateinit var presenter: DonationYooMoneyPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): DonationYooMoneyPresenter =
-        getDependency(DonationYooMoneyPresenter::class.java)
+class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donation_yoomoney) {
 
     private val binding by viewBinding<DialogDonationYoomoneyBinding>()
+
+    private val viewModel by viewModel<DonationYooMoneyViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,18 +34,18 @@ class DonationYooMoneyDialogFragment :
             val intValue = checkedId
                 ?.let { binding.yooMoneyAmounts.findViewById<MaterialButton>(it) }
                 ?.getTextIntValue()
-            presenter.setSelectedAmount(intValue)
+            viewModel.setSelectedAmount(intValue)
         }
         binding.yooMoneyAmountField.setOnFocusChangeListener { _, isFocused ->
             if (isFocused) {
                 val intValue = binding.yooMoneyAmountField.getTextIntValue()
-                presenter.setCustomAmount(intValue)
+                viewModel.setCustomAmount(intValue)
             }
         }
 
         binding.yooMoneyAmountField.addTextChangeListener {
             val intValue = binding.yooMoneyAmountField.getTextIntValue()
-            presenter.setCustomAmount(intValue)
+            viewModel.setCustomAmount(intValue)
         }
 
         binding.yooMoneyTypes.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -65,30 +57,33 @@ class DonationYooMoneyDialogFragment :
                     else -> null
                 }
                 if (paymentTypeId != null) {
-                    presenter.setPaymentType(paymentTypeId)
+                    viewModel.setPaymentType(paymentTypeId)
                 }
             }
         }
 
         binding.yooMoneyAccept.setOnClickListener {
-            presenter.onAcceptClick()
+            viewModel.onAcceptClick()
         }
 
         binding.yooMoneyCancel.setOnClickListener {
             dismiss()
         }
-    }
 
-    override fun close() {
-        dismiss()
-    }
+        viewModel.state.onEach { state ->
+            state.data?.also { bindData(it) }
+            bindState(state)
 
-    override fun showData(state: DonationYooMoneyState) {
-        state.data?.also { bindData(it) }
-        bindState(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.closeEvent.onEach {
+            dismiss()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun bindState(state: DonationYooMoneyState) {
+        binding.yooMoneyProgress.isVisible = state.sending
+        binding.yooMoneyAccept.isVisible = !state.sending
         when (state.amountType) {
             DonationYooMoneyState.AmountType.PRESET -> {
                 if (state.selectedAmount != null) {
@@ -125,7 +120,7 @@ class DonationYooMoneyDialogFragment :
         if (data.help != null) {
             binding.yooMoneyHelp.text = data.help
             binding.yooMoneyTitle.setOnClickListener {
-                presenter.submitHelpClickAnalytics()
+                viewModel.submitHelpClickAnalytics()
                 binding.yooMoneyHelp.isVisible = !binding.yooMoneyHelp.isVisible
             }
         } else {
@@ -211,11 +206,6 @@ class DonationYooMoneyDialogFragment :
                 it.text = amount.toString()
             }
         }
-    }
-
-    override fun setRefreshing(refreshing: Boolean) {
-        binding.yooMoneyProgress.isVisible = refreshing
-        binding.yooMoneyAccept.isVisible = !refreshing
     }
 
     private fun TextView.getTextIntValue(): Int? = text?.toString()?.toIntOrNull()

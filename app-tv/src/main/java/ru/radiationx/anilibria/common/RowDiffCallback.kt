@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.common
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.leanback.widget.DiffCallback
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.Row

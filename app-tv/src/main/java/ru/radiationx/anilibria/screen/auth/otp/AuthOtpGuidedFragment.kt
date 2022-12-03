@@ -1,18 +1,17 @@
 package ru.radiationx.anilibria.screen.auth.otp
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.leanback.widget.GuidanceStylist
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
 import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
 
-class AuthOtpGuidedFragment : ScopedGuidedStepFragment() {
+class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val COMPLETE_ACTION_ID = 1L
@@ -84,12 +83,13 @@ class AuthOtpGuidedFragment : ScopedGuidedStepFragment() {
         }
     }
 
-    override fun onCreateGuidance(savedInstanceState: Bundle?): GuidanceStylist.Guidance = GuidanceStylist.Guidance(
-        "Запрашивается код",
-        "Запрашивается код",
-        "Авторизация",
-        null
-    )
+    override fun onCreateGuidance(savedInstanceState: Bundle?): GuidanceStylist.Guidance =
+        GuidanceStylist.Guidance(
+            "Запрашивается код",
+            "Запрашивается код",
+            "Авторизация",
+            null
+        )
 
     override fun onCreateActionsStylist(): GuidedActionsStylist = GuidedProgressActionsStylist()
 
@@ -106,6 +106,7 @@ class AuthOtpGuidedFragment : ScopedGuidedStepFragment() {
         super.onCreateActions(actions, savedInstanceState)
         actions.add(completeAction)
     }
+
     private fun GuidedProgressAction.updateProgress(progress: Boolean) {
         updateAction {
             showProgress = progress

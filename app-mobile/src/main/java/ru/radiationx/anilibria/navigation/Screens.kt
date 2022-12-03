@@ -84,8 +84,8 @@ object Screens {
         override fun getFragment() = HistoryFragment()
     }
 
-    class Schedule(val day: Int = -1) : BaseAppScreen() {
-        override fun getFragment(): androidx.fragment.app.Fragment =
+    class Schedule(val day: Int? = null) : BaseAppScreen() {
+        override fun getFragment(): Fragment =
             ScheduleFragment.newInstance(day)
     }
 
@@ -97,11 +97,10 @@ object Screens {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }
 
-    class ReleasesSearch(
+    class Catalog(
         val genres: String? = null,
-        val years: String? = null
     ) : BaseAppScreen() {
-        override fun getFragment() = SearchCatalogFragment.newInstance(genres, years)
+        override fun getFragment() = SearchCatalogFragment.newInstance(genres)
     }
 
     class MainFeed : BaseAppScreen() {

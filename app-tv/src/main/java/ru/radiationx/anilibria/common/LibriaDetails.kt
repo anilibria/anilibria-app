@@ -24,4 +24,8 @@ data class DetailsState(
     val updateProgress: Boolean = false
 )
 
-class LibriaDetailsRow(id: Long, var details: LibriaDetails? = null, var state: DetailsState? = null) : Row(id, null)
+class LibriaDetailsRow(
+    id: Long,
+    var details: LibriaDetails? = null,
+    var state: DetailsState? = null
+) : Row(id, null)

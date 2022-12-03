@@ -9,7 +9,6 @@ import ru.radiationx.anilibria.databinding.ActivityCountryBlockedBinding
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class CountryBlockedActivity : BaseActivity(R.layout.activity_country_blocked) {
@@ -17,7 +16,6 @@ class CountryBlockedActivity : BaseActivity(R.layout.activity_country_blocked) {
     private val binding by viewBinding<ActivityCountryBlockedBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

@@ -7,7 +7,8 @@ open class GuidedProgressAction : GuidedAction() {
 
     var showProgress = false
 
-    abstract class BuilderBase<B : BuilderBase<B>>(context: Context) : GuidedAction.BuilderBase<B>(context) {
+    abstract class BuilderBase<B : BuilderBase<B>>(context: Context) :
+        GuidedAction.BuilderBase<B>(context) {
 
         private var showProgress = false
 

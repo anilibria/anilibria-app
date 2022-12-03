@@ -13,25 +13,23 @@ import androidx.transition.*
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
-import ru.radiationx.anilibria.ui.common.ScopeProvider
 import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared_app.di.DI
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Forward
-import javax.inject.Inject
 
-class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler {
+class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     companion object {
         private const val TRANSITION_MOVE_TIME: Long = 375
@@ -43,17 +41,13 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         }
     }
 
-    @Inject
-    lateinit var screenMessagesObserver: ScreenMessagesObserver
+    private val screenMessagesObserver by inject<ScreenMessagesObserver>()
 
-    @Inject
-    lateinit var linkHandler: ILinkHandler
+    private val linkHandler by inject<ILinkHandler>()
 
-    @Inject
-    lateinit var router: Router
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var navigatorHolder: NavigatorHolder
+    private val navigatorHolder by inject<NavigatorHolder>()
 
     private val localScreen: BaseAppScreen by lazy {
         arguments?.let {
@@ -61,12 +55,10 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         } ?: throw NullPointerException("localScreen is null")
     }
 
-    override val screenScope: String by lazy { localScreen.screenKey }
-
     private val navigationQueue = mutableListOf<Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(arrayOf(RouterModule(screenScope), MessengerModule()), DI.DEFAULT_SCOPE, screenScope)
+        installModules(RouterModule(localScreen.screenKey), MessengerModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(screenMessagesObserver)
         navigationQueue.add(Runnable {
@@ -74,7 +66,11 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
         })
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_tab_root, container, false)
     }
 
@@ -97,9 +93,18 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
 
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
-        return (fragment != null
-                && fragment is BackButtonListener
-                && (fragment as BackButtonListener).onBackPressed())
+
+        val handledByChild = (fragment as? BackButtonListener?)?.onBackPressed() ?: false
+        if (handledByChild) {
+            return true
+        }
+
+        if (childFragmentManager.backStackEntryCount >= 1) {
+            router.exit()
+            return true
+        }
+
+        return false
     }
 
     override fun handle(url: String): Boolean {
@@ -131,11 +136,6 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
                 nextFragment: Fragment?,
                 fragmentTransaction: FragmentTransaction
             ) {
-                val newScope = (currentFragment as? ScopeFragment?)?.screenScope ?: screenScope
-                nextFragment?.putExtra {
-                    putString(ScopeFragment.ARG_SCREEN_SCOPE, newScope)
-                }
-
                 if (command is Forward && currentFragment is SharedProvider && nextFragment is SharedReceiver) {
                     if (currentFragment.sharedViewLocal == null) {
                         currentFragment.exitTransition = Fade().apply {
@@ -163,7 +163,7 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
             }
 
             override fun activityBack() {
-                getDependency(Router::class.java).exit()
+                get<Router>().exit()
             }
         }
     }
@@ -189,7 +189,10 @@ class TabFragment : Fragment(), ScopeProvider, BackButtonListener, IntentHandler
             currentFragment.exitTransition = enterFade
 
             val enterTransitionSet = TransitionSet()
-            enterTransitionSet.addTransition(TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move))
+            enterTransitionSet.addTransition(
+                TransitionInflater.from(requireContext())
+                    .inflateTransition(android.R.transition.move)
+            )
             enterTransitionSet.setPathMotion(ArcMotion())
             enterTransitionSet.interpolator = FastOutSlowInInterpolator()
             enterTransitionSet.duration = TRANSITION_MOVE_TIME

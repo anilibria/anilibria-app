@@ -61,9 +61,6 @@ dependencies {
 
     implementation "com.google.android:flexbox:$flexbox_version"
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

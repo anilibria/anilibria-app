@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import toothpick.Toothpick
 import java.util.*
@@ -13,7 +13,9 @@ import kotlin.reflect.KClass
 
 object Quill {
 
-    private val scope by lazy { QuillScope(Toothpick.openRootScope()) }
+    private val scope by lazy(LazyThreadSafetyMode.NONE) {
+        QuillScope(Toothpick.openRootScope())
+    }
 
     fun getRootScope(): QuillScope {
         return scope
@@ -43,12 +45,12 @@ fun FragmentActivity.getParentQuillScope(): QuillScope {
 
 private fun Fragment.getQuillScopeVM(): QuillScopeViewModel {
     val factory = createQuillViewModelFactory(toString(), getParentQuillScope())
-    return ViewModelProviders.of(this, factory).get()
+    return ViewModelProvider(this, factory).get()
 }
 
 private fun FragmentActivity.getQuillScopeVM(): QuillScopeViewModel {
     val factory = createQuillViewModelFactory(toString(), getParentQuillScope())
-    return ViewModelProviders.of(this, factory).get()
+    return ViewModelProvider(this, factory).get()
 }
 
 fun Fragment.installQuillModules(vararg module: QuillModule) {
@@ -76,7 +78,7 @@ fun <T : ViewModel> Fragment.getQuillViewModel(
     extraProvider: (() -> QuillExtra)? = null
 ): T {
     val factory = createViewModelFactory(clazz, getQuillScope(), extraProvider)
-    return ViewModelProviders.of(this, factory)[clazz.java]
+    return ViewModelProvider(this, factory)[clazz.java]
 }
 
 fun <T : ViewModel> FragmentActivity.getQuillViewModel(
@@ -84,24 +86,24 @@ fun <T : ViewModel> FragmentActivity.getQuillViewModel(
     extraProvider: (() -> QuillExtra)? = null
 ): T {
     val factory = createViewModelFactory(clazz, getQuillScope(), extraProvider)
-    return ViewModelProviders.of(this, factory)[clazz.java]
+    return ViewModelProvider(this, factory)[clazz.java]
 }
 
 inline fun <reified T : ViewModel> Fragment.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
-): Lazy<T> = lazy {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     getQuillViewModel(T::class, extraProvider)
 }
 
 inline fun <reified T : ViewModel> FragmentActivity.quillViewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
-): Lazy<T> = lazy {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     getQuillViewModel(T::class, extraProvider)
 }
 
 inline fun <reified T : Any> Fragment.quillInject(
     qualifier: KClass<out Annotation>? = null
-): Lazy<T> = lazy {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     quillGet(qualifier)
 }
 
@@ -113,7 +115,7 @@ inline fun <reified T : Any> Fragment.quillGet(
 
 inline fun <reified T : Any> FragmentActivity.quillInject(
     qualifier: KClass<out Annotation>? = null
-): Lazy<T> = lazy {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     quillGet(qualifier)
 }
 
@@ -125,7 +127,7 @@ inline fun <reified T : Any> FragmentActivity.quillGet(
 
 inline fun <reified T : Any> Context.quillInject(
     qualifier: KClass<out Annotation>? = null
-): Lazy<T> = lazy {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     quillGet(qualifier)
 }
 

@@ -33,10 +33,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation("io.coil-kt:coil:2.2.2")
 
-
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

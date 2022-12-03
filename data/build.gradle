@@ -51,9 +51,6 @@ dependencies {
     api "com.squareup.moshi:moshi-adapters:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:$toothpick_version"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:$toothpick_version"
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

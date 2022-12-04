@@ -33,6 +33,7 @@ class ReleaseViewModel(
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
+    private val commentsNotifier: ReleaseCommentsNotifier,
     private val commentsAnalytics: CommentsAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
 ) : ViewModel() {
@@ -45,6 +46,7 @@ class ReleaseViewModel(
     val shareAction = EventFlow<String>()
     val copyAction = EventFlow<String>()
     val shortcutAction = EventFlow<Release>()
+    val openCommentsAction = commentsNotifier.observe()
 
     init {
         argExtra.release?.also {

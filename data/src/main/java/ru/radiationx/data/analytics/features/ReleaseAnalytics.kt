@@ -111,7 +111,7 @@ class ReleaseAnalytics(
 
     fun episodeRutubeClick(releaseId: Int) {
         sender.send(
-            AnalyticsConstants.release_episode_external,
+            AnalyticsConstants.release_episode_rutube,
             releaseId.toIdParam()
         )
     }

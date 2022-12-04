@@ -28,6 +28,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.gone
@@ -44,6 +45,9 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
         private const val ARG_ITEM: String = "release_item"
+
+        private const val PAGE_INFO = 0
+        private const val PAGE_COMMENTS = 1
 
         fun newInstance(
             id: ReleaseId? = null,
@@ -79,6 +83,11 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
     override fun setTransitionName(name: String) {
         transitionNameLocal = name
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        installModules(ReleaseModule())
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateBinding(view: View): FragmentPagedBinding {
@@ -153,7 +162,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         binding.viewPagerPaged.addOnPageChangeListener(object :
             ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                if (position == 1) {
+                if (position == PAGE_COMMENTS) {
                     baseBinding.appbarLayout.setExpanded(false)
                     viewModel.onCommentsSwipe()
                 }
@@ -178,11 +187,15 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         viewModel.shortcutAction.observe().onEach {
             shortcutHelper.addShortcut(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.openCommentsAction.onEach {
+            binding.viewPagerPaged.currentItem = PAGE_COMMENTS
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
-        if (binding.viewPagerPaged.currentItem > 0) {
-            binding.viewPagerPaged.currentItem = binding.viewPagerPaged.currentItem - 1
+        if (binding.viewPagerPaged.currentItem != PAGE_INFO) {
+            binding.viewPagerPaged.currentItem = PAGE_INFO
             return true
         }
         return false

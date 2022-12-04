@@ -21,7 +21,7 @@
     <string name="auth_signin">Войти</string>
     <string name="auth_skip">Пропустить</string>
     <string name="comments_header">Комментарии</string>
-    <string name="comments_notify_text">Сделайте свайп влево, чтобы открыть комментарии</string>
+    <string name="comments_notify_text">Нажмите или сделайте свайп направо чтобы открыть комментарии</string>
     <string name="loading">Загрузка</string>
     <string name="item_loading_error">Произошла ошибка</string>
 

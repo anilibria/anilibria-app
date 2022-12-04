@@ -45,6 +45,7 @@ class ReleaseInfoViewModel(
     private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
     private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
+    private val commentsNotifier: ReleaseCommentsNotifier,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -202,6 +203,7 @@ class ReleaseInfoViewModel(
         currentData?.also {
             releaseAnalytics.commentsClick(it.id.id)
         }
+        commentsNotifier.requireOpen()
     }
 
     fun onClickWatchWeb(place: EpisodeControlPlace) {

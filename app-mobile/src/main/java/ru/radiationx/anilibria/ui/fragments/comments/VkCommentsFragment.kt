@@ -29,14 +29,12 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
-import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseExtra
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.common.SystemUtils
@@ -48,8 +46,6 @@ import java.nio.charset.StandardCharsets
 class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments) {
 
     companion object {
-        const val ARG_ID: String = "release_id"
-        const val ARG_ID_CODE: String = "release_id_code"
         const val WEB_VIEW_SCROLL_Y = "wvsy"
     }
 
@@ -58,13 +54,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
 
     private val binding by viewBinding<FragmentVkCommentsBinding>()
 
-    private val viewModel by viewModel<VkCommentsViewModel>{
-        ReleaseExtra(
-            id = getExtra(ARG_ID),
-            code = getExtra(ARG_ID_CODE),
-            release = null
-        )
-    }
+    private val viewModel by viewModel<VkCommentsViewModel>()
 
     private val appThemeController by inject<AppThemeController>()
 

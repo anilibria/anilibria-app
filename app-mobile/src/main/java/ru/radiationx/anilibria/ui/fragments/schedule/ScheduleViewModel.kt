@@ -83,7 +83,7 @@ class ScheduleViewModel(
             ?.releaseItem ?: return
         scheduleAnalytics.releaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, item = releaseItem))
     }
 
     fun refresh() {

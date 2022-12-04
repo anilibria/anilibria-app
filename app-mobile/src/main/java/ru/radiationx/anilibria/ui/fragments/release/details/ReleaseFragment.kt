@@ -44,7 +44,6 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
         private const val ARG_ITEM: String = "release_item"
-        const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
 
         fun newInstance(
             id: ReleaseId? = null,
@@ -242,13 +241,6 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
             ReleaseInfoFragment(),
             LazyVkCommentsFragment()
         )
-
-        init {
-            fragments.forEach {
-                val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
-                it.arguments = newBundle
-            }
-        }
 
         override fun getItem(position: Int): Fragment = fragments[position]
 

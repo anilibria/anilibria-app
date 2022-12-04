@@ -10,7 +10,6 @@ import coil.load
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import coil.transition.CrossfadeTransition
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -35,7 +34,6 @@ class CoilLibriaImageLoaderImpl(
     private val loaderMutex = Mutex()
 
     private fun getImageLoader(): ImageLoader {
-        val time = SystemClock.elapsedRealtime()
         val result = runBlocking {
             loaderMutex.withLock {
                 val actualOkHttpClient = apiClientWrapper.get()
@@ -68,9 +66,6 @@ class CoilLibriaImageLoaderImpl(
         imageView.load(url, getImageLoader()) {
             diskCacheKey(url.toCacheKey())
             memoryCacheKey(url.toCacheKey())
-            transitionFactory { target, result ->
-                CrossfadeTransition(target, result)
-            }
             listener(
                 onStart = {
                     config.onStart?.invoke()

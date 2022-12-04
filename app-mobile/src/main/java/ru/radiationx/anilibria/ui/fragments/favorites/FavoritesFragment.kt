@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,7 +34,8 @@ import ru.radiationx.quill.viewModel
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class FavoritesFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
@@ -83,6 +85,10 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
         super.onViewCreated(view, savedInstanceState)
 
         //ToolbarHelper.fixInsets(toolbar)
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
 
         searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
 

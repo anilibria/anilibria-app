@@ -120,6 +120,9 @@ class ReleaseInfoViewModel(
             }
             .launchIn(viewModelScope)
 
+        argExtra.release?.also {
+            updateLocalRelease(it)
+        }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
             updateLocalRelease(it)
         }
@@ -135,9 +138,17 @@ class ReleaseInfoViewModel(
     fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
 
     private fun observeRelease() {
+        updateModifiers {
+            it.copy(favoriteRefreshing = true)
+        }
         releaseInteractor
             .observeFull(argExtra.id, argExtra.code)
-            .onEach { updateLocalRelease(it) }
+            .onEach { release ->
+                updateModifiers {
+                    it.copy(favoriteRefreshing = false)
+                }
+                updateLocalRelease(release)
+            }
             .launchIn(viewModelScope)
     }
 

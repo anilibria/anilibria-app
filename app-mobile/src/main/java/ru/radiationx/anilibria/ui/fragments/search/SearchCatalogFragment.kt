@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -89,6 +90,12 @@ class SearchCatalogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
+
         searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {

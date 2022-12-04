@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.flow.launchIn
@@ -57,6 +58,11 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
 
         baseBinding.toolbar.apply {
             ToolbarHelper.fixInsets(this)

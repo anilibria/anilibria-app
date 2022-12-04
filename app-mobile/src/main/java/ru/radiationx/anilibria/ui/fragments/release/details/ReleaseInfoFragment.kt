@@ -35,17 +35,11 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 
 class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
-
-    companion object {
-        const val ARG_ID: String = "release_id"
-        const val ARG_ID_CODE: String = "release_id_code"
-    }
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
         ReleaseInfoAdapter(
@@ -64,13 +58,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private val systemUtils by inject<SystemUtils>()
 
-    private val viewModel by viewModel<ReleaseInfoViewModel> {
-        ReleaseExtra(
-            id = getExtra(ARG_ID),
-            code = getExtra(ARG_ID_CODE),
-            release = null
-        )
-    }
+    private val viewModel by viewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
 

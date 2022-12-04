@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
@@ -77,7 +79,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         viewModel.state.onEach { state ->
             state.data?.also { showUpdateData(it) }
             setRefreshing(state.loading)
-        }
+        }.launchIn(lifecycleScope)
     }
 
     private fun showUpdateData(update: UpdateData) {

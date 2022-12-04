@@ -19,7 +19,7 @@ android {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
         versionCode 61
-        versionName "2.8.0_RC1"
+        versionName "2.8.0_RC2"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

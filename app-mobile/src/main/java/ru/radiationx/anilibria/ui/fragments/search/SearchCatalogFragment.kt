@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
@@ -205,7 +205,7 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {

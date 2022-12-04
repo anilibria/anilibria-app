@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 import kotlin.math.roundToInt
 
@@ -63,7 +63,7 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         binding.donationToolbar.updatePadding(top = dimensions.statusBar)
         binding.donationToolbar.doOnNextLayout {

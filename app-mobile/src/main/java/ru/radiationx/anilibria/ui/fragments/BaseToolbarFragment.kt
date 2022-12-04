@@ -13,7 +13,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentMainBaseBinding
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.shared.ktx.android.visible
 
 /* Created by radiationx on 18.11.17. */
@@ -59,20 +59,19 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
         setStatusBarVisibility(statusBarVisible)
     }
 
-    override fun interceptDimens(dimensions: DimensionHelper.Dimensions) {
-        val correctedDimens = dimensions.copy()
-        baseBinding.baseStatusBar.apply {
-            layoutParams = layoutParams.apply {
-                height = correctedDimens.statusBar
-            }
+    override fun interceptDimens(dimensions: Dimensions) {
+        baseBinding.baseStatusBar.updateLayoutParams {
+            height = dimensions.statusBar
         }
-        if (statusBarVisible) {
-            correctedDimens.statusBar = 0
+        val correctedDimens = if (statusBarVisible) {
+            dimensions.copy(statusBar = 0)
+        } else {
+            dimensions
         }
         super.interceptDimens(correctedDimens)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         baseBinding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
             topMargin = dimensions.statusBar

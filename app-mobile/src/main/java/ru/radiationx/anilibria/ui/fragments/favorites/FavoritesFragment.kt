@@ -26,7 +26,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 
 
@@ -149,7 +149,7 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {

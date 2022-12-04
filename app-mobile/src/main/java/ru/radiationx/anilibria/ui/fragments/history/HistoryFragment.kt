@@ -26,7 +26,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
 
@@ -140,7 +140,7 @@ class HistoryFragment : BaseToolbarFragment<FragmentListBinding>(R.layout.fragme
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {

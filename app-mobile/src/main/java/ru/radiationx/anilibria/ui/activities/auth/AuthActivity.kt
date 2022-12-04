@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.WindowCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
@@ -10,8 +11,8 @@ import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
-import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.gone
 import ru.terrakok.cicerone.NavigatorHolder
@@ -41,33 +42,15 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val dimensionsProvider by inject<DimensionsProvider>()
 
-    private var dimensionHelper: DimensionHelper? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
 
         binding.bottomShadow.gone()
         binding.tabsRecycler.gone()
 
-        dimensionHelper = DimensionHelper(
-            binding.measureView,
-            binding.measureRootContent,
-            object : DimensionHelper.DimensionsListener {
-                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    val rootContainer = binding.layoutActivityContainer.rootContainer
-                    rootContainer.post {
-                        rootContainer.setPadding(
-                            rootContainer.paddingLeft,
-                            rootContainer.paddingTop,
-                            rootContainer.paddingRight,
-                            dimensions.keyboardHeight
-                        )
-                    }
-                    dimensionsProvider.update(dimensions)
-                }
-            })
+        binding.initInsets(dimensionsProvider)
 
         if (savedInstanceState == null) {
             val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
@@ -84,11 +67,6 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
     override fun onPause() {
         super.onPause()
         navigationHolder.removeNavigator()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dimensionHelper?.destroy()
     }
 
     override fun onBackPressed() {

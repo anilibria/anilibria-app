@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 
 
@@ -182,7 +182,7 @@ class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fr
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {

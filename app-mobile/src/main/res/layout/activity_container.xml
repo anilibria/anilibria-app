@@ -9,11 +9,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:background="@drawable/bg_google_pay_gradient_light"
-            android:visibility="visible" />
     </FrameLayout>
 </FrameLayout>

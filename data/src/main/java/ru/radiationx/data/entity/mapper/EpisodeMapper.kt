@@ -47,7 +47,7 @@ fun PlayerSkipsResponse.toDomain(): PlayerSkips = PlayerSkips(
 
 private fun List<Int>.toSkipDomain(): PlayerSkips.Skip? {
     val start = getOrNull(0)?.secToMillis() ?: return null
-    val end = getOrNull(0)?.secToMillis() ?: return null
+    val end = getOrNull(1)?.secToMillis() ?: return null
     return PlayerSkips.Skip(
         start = start,
         end = end

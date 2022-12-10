@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.OnCompletionListener
@@ -35,6 +36,8 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
@@ -300,6 +303,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
         handleIntent(intent)
         updateUiFlags()
+
+        releaseInteractor.observeFull(releaseData.id, releaseData.code).onEach {
+            releaseData = it
+        }.launchIn(lifecycleScope)
     }
 
     override fun onNewIntent(intent: Intent?) {

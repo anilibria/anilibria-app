@@ -42,7 +42,6 @@ import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMyplayerBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
@@ -61,6 +60,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
@@ -432,7 +432,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onPause() {
         super.onPause()
-        saveEpisode()
+        saveEpisodeAtNoZero()
     }
 
     override fun onStop() {
@@ -563,7 +563,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
-                binding.player.seekTo(episode.access.seek)
             }
         }
         playFlag = PLAY_FLAG_FORCE_CONTINUE
@@ -1191,17 +1190,25 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     }
 
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
+
+        private fun startAndSeek(episode: Episode) {
+            if (playFlag == PLAY_FLAG_FORCE_CONTINUE) {
+                binding.player.seekTo(episode.access.seek)
+            }
+            binding.player.start()
+        }
+
         override fun onPrepared() {
             val episode = getEpisode()
             if (episode.access.seek >= binding.player.duration) {
-                binding.player.stopPlayback()
+                binding.player.pause()
                 if (getNextEpisode() == null) {
                     showSeasonFinishDialog()
                 } else {
                     showEpisodeFinishDialog()
                 }
             } else {
-                binding.player.start()
+                startAndSeek(episode)
             }
         }
 

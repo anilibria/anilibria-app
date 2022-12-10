@@ -39,7 +39,7 @@ import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMyplayerBinding
-import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter

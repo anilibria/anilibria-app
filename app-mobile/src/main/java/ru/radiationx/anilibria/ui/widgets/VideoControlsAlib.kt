@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewVideoControlBinding
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.entity.domain.release.PlayerSkips

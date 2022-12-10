@@ -6,8 +6,8 @@ import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LinkCard
-import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 
 class LinkCardPresenter : Presenter() {
 

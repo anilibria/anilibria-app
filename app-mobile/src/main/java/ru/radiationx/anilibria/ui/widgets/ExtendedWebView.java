@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ViewParent;
@@ -21,7 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import ru.radiationx.anilibria.extension.ContextKt;
+import ru.radiationx.shared.ktx.android.ContextKt;
 import timber.log.Timber;
 
 /**

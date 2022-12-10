@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.*
@@ -21,7 +20,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -30,7 +29,6 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
-import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
@@ -52,7 +50,6 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import kotlin.math.max
 
 
 class MainActivity : BaseActivity(R.layout.activity_main) {

@@ -8,7 +8,7 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants

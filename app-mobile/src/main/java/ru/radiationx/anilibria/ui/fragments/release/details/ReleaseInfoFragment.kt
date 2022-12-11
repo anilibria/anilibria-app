@@ -129,7 +129,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun playEpisodes(release: Release) {
-        playEpisode(release, release.episodes.last(), null, null)
+        release.episodes.lastOrNull()?.also { episode ->
+            playEpisode(release, episode, null, null)
+        }
     }
 
     private fun playContinue(release: Release, startWith: Episode) {

@@ -141,13 +141,13 @@ class ReleaseInfoViewModel(
 
     private fun observeRelease() {
         updateModifiers {
-            it.copy(favoriteRefreshing = true)
+            it.copy(detailLoading = true)
         }
         releaseInteractor
             .observeFull(argExtra.id, argExtra.code)
             .onEach { release ->
                 updateModifiers {
-                    it.copy(favoriteRefreshing = false)
+                    it.copy(detailLoading = false)
                 }
                 updateLocalRelease(release)
             }

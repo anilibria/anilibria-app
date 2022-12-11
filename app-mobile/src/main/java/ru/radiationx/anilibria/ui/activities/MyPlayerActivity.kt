@@ -17,6 +17,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -1192,7 +1193,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
 
         private fun startAndSeek(episode: Episode) {
-            if (playFlag == PLAY_FLAG_FORCE_CONTINUE) {
+            if (playFlag == PLAY_FLAG_FORCE_CONTINUE && episode.access.seek > 0) {
                 binding.player.seekTo(episode.access.seek)
             }
             binding.player.start()

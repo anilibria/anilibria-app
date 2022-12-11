@@ -38,7 +38,6 @@ class ScreenMessagesObserver @Inject constructor(
             .map { messagesBuffer.toList() }
             .onEach { messagesBuffer.clear() }
             .flatMapConcat { it.asFlow() }
-            .distinctUntilChanged()
             .onEach { message ->
                 showMessage(message)
             }

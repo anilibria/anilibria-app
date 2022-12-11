@@ -9,6 +9,7 @@ import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
@@ -32,7 +33,7 @@ class TeamsViewModel(
 
     init {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 repository.requestUpdate()
             }.onFailure {
                 Timber.e(it)

@@ -17,6 +17,7 @@ import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -29,7 +30,7 @@ class ShortcutHelper(
 
     fun addShortcut(data: Release) {
         GlobalScope.launch {
-            runCatching {
+            coRunCatching {
                 val loadedImage = context.loadImageBitmap(data.poster)
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val desiredSize = Resources.getSystem().displayMetrics.density * 48

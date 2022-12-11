@@ -11,6 +11,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
@@ -84,7 +85,7 @@ class DonationYooMoneyViewModel(
         )
         viewModelScope.launch {
             _state.update { it.copy(sending = true) }
-            runCatching {
+            coRunCatching {
                 donationRepository.createYooMoneyPayLink(amount, paymentTypeId, form)
             }.onSuccess {
                 systemUtils.externalLink(it)

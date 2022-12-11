@@ -11,6 +11,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -47,7 +48,7 @@ class Auth2FaCodeViewModel(
     fun signIn() {
         viewModelScope.launch {
             _state.update { it.copy(sending = true) }
-            runCatching {
+            coRunCatching {
                 authRepository.signIn(argExtra.login, argExtra.password, codeState.value)
                 authRepository.getAuthState()
             }.onSuccess {

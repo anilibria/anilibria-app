@@ -11,6 +11,7 @@ import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.repository.PageRepository
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -41,7 +42,7 @@ class PageViewModel(
     private fun loadPage(pagePath: String) {
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
-            runCatching {
+            coRunCatching {
                 pageRepository.getPage(pagePath)
             }.onSuccess { data ->
                 _state.update { it.copy(data = data) }

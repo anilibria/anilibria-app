@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -28,7 +29,7 @@ class MainPagesViewModel(
         super.onCreate()
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 checkerRepository.checkUpdate(buildConfig.versionCode, true)
             }.onSuccess {
                 hasUpdatesData.value = it.code > buildConfig.versionCode

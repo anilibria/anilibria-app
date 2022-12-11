@@ -15,6 +15,7 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -57,7 +58,7 @@ class FastSearchViewModel(
             }
             .filter { it.length >= 3 }
             .mapLatest { query ->
-                runCatching {
+                coRunCatching {
                     searchRepository.fastSearch(query)
                 }.getOrNull() ?: emptyList()
             }

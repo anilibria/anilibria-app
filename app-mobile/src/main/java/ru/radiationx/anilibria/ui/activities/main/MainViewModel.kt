@@ -13,6 +13,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.Screen
 import timber.log.Timber
@@ -85,12 +86,12 @@ class MainViewModel(
         _state.update { it.copy(mainLogicCompleted = true) }
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.loadUser()
             }.onFailure {
                 Timber.e(it)
             }
-            runCatching {
+            coRunCatching {
                 donationRepository.requestUpdate()
             }.onFailure {
                 Timber.e(it)

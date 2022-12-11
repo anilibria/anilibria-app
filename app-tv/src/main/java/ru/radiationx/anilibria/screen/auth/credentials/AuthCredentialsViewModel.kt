@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -24,7 +25,7 @@ class AuthCredentialsViewModel(
         viewModelScope.launch {
             progressState.value = true
             error.value = ""
-            runCatching {
+            coRunCatching {
                 authRepository.signIn(login, password, code)
             }.onSuccess {
                 guidedRouter.finishGuidedChain()

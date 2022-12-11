@@ -27,6 +27,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -380,7 +381,7 @@ class ReleaseInfoViewModel(
             updateModifiers {
                 it.copy(favoriteRefreshing = true)
             }
-            runCatching {
+            coRunCatching {
                 if (favInfo.isAdded) {
                     favoriteRepository.deleteFavorite(releaseId)
                 } else {

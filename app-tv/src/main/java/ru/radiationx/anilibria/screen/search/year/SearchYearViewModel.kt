@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -42,7 +43,7 @@ class SearchYearViewModel(
         super.onCreate()
         viewModelScope.launch {
             progressState.value = true
-            runCatching {
+            coRunCatching {
                 searchRepository.getYears()
             }.onFailure {
                 Timber.e(it)

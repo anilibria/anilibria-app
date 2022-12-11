@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import ru.radiationx.shared.ktx.coRunCatching
 
 class DataLoadingController<T>(
     private val scope: CoroutineScope,
@@ -67,7 +68,7 @@ class DataLoadingController<T>(
 
         dataJob?.cancel()
         dataJob = scope.launch {
-            runCatching {
+            coRunCatching {
                 dataSource.invoke(params)
             }.onSuccess {
                 updateStateByAction(it)

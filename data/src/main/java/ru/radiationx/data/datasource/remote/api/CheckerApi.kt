@@ -8,8 +8,8 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.fetchResponse
-import ru.radiationx.data.entity.response.updater.UpdateDataResponse
 import ru.radiationx.data.entity.response.updater.UpdateDataRootResponse
+import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 /**
@@ -34,7 +34,7 @@ class CheckerApi @Inject constructor(
                 .fetchApiResponse(moshi)
         } catch (ex: Throwable) {
             reserveSources.sources.forEach { url ->
-                runCatching {
+                coRunCatching {
                     getReserve(url)
                 }.onSuccess {
                     return it

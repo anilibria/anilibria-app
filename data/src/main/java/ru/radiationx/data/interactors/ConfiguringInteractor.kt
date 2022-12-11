@@ -10,6 +10,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.system.WrongHostException
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeoutException
@@ -116,7 +117,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            runCatching {
+            coRunCatching {
                 zipLastCheck()
             }.onSuccess {
                 analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), it, null)
@@ -169,7 +170,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            runCatching {
+            coRunCatching {
                 configurationRepository.getConfiguration()
             }.onSuccess {
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
@@ -205,7 +206,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            runCatching {
+            coRunCatching {
                 mergeAvailCheck(addresses)
             }.onSuccess { activeAddress ->
                 isFullSuccess = true
@@ -252,7 +253,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            runCatching {
+            coRunCatching {
                 flowOf(proxies.toTypedArray())
                     .onEach {
                         if (it.isEmpty()) {

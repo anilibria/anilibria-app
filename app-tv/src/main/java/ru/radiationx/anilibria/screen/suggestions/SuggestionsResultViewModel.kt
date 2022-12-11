@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -38,7 +39,7 @@ class SuggestionsResultViewModel(
             .filter { it.length >= 3 }
             .onEach { progressState.value = true }
             .mapLatest { query ->
-                runCatching {
+                coRunCatching {
                     searchRepository.fastSearch(query)
                 }.getOrNull() ?: emptyList()
             }

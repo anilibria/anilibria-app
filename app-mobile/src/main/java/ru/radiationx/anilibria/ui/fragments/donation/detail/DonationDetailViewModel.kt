@@ -13,6 +13,7 @@ import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
@@ -44,7 +45,7 @@ class DonationDetailViewModel(
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 donationRepository.requestUpdate()
             }.onFailure {
                 Timber.e(it)

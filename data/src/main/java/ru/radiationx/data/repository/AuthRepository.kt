@@ -17,6 +17,7 @@ import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.system.HttpException
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -91,7 +92,7 @@ class AuthRepository @Inject constructor(
             .also { updateUser(it) }
 
     suspend fun signOut() {
-        runCatching {
+        coRunCatching {
             authApi.signOut()
         }.onFailure {
             Timber.e(it)

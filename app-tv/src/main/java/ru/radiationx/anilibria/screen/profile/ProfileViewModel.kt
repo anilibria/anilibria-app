@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -37,7 +38,7 @@ class ProfileViewModel(
 
     fun onSignOutClick() {
         GlobalScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.signOut()
             }.onFailure {
                 Timber.e(it)

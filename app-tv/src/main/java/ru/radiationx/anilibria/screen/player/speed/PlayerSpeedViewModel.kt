@@ -17,8 +17,8 @@ class PlayerSpeedViewModel(
     val speedData = MutableLiveData<List<String>>()
     val selectedIndex = MutableLiveData<Int>()
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onColdCreate() {
+        super.onColdCreate()
         speedData.value = speedList.map {
             if (it == 1.0f) {
                 "Обычная"

@@ -1,5 +1,8 @@
 package ru.radiationx.anilibria.screen.player.end_episode
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -20,12 +23,16 @@ class EndEpisodeViewModel(
     private val currentEpisode
         get() = currentEpisodes.firstOrNull { it.id == argExtra.episodeId }
 
-    override fun onCreate() {
-        super.onCreate()
-        releaseInteractor.getFull(argExtra.releaseId)?.also {
-            currentEpisodes.clear()
-            currentEpisodes.addAll(it.episodes.reversed())
-        }
+    override fun onColdCreate() {
+        super.onColdCreate()
+
+        releaseInteractor
+            .observeFull(argExtra.releaseId)
+            .onEach {
+                currentEpisodes.clear()
+                currentEpisodes.addAll(it.episodes.reversed())
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onReplayClick() {

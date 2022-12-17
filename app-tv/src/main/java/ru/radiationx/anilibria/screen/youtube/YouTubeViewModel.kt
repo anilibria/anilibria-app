@@ -14,6 +14,13 @@ class YouTubeViewModel(
     private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onResume() {
+        super.onResume()
+        onRefreshClick()
+    }
+
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = youtubeRepository
         .getYoutubeList(requestPage)
         .let { youtubeItems ->

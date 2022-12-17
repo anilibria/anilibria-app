@@ -25,13 +25,12 @@ class DetailRelatedViewModel(
 
     override val defaultTitle: String = "Связанные релизы"
 
-    override fun onCreate() {
-        super.onCreate()
-
+    override fun onColdResume() {
+        super.onColdResume()
         cardsData.value = listOf(loadingCard)
-
         releaseInteractor
             .observeFull(releaseId)
+            .map { it.description.orEmpty() }
             .distinctUntilChanged()
             .onEach {
                 onRefreshClick()

@@ -25,9 +25,8 @@ class UpdateSourceViewModel(
 
     val sourcesData = MutableLiveData<List<UpdateData.UpdateLink>>()
 
-    override fun onCreate() {
-        super.onCreate()
-
+    override fun onColdCreate() {
+        super.onColdCreate()
         checkerRepository
             .observeUpdate()
             .onEach {

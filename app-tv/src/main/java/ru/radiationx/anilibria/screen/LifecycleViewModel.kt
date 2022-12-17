@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 
 open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
-    private var created = false
-
+    private var coldCreated = false
+    private var coldStarted = false
+    private var coldResumed = false
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
@@ -17,8 +18,8 @@ open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
     @CallSuper
     protected open fun onCreate() {
-        if (!created) {
-            created = true
+        if (!coldCreated) {
+            coldCreated = true
             onColdCreate()
         }
     }
@@ -28,17 +29,32 @@ open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
         onStart()
+        if (!coldStarted) {
+            coldStarted = true
+            onColdStart()
+        }
     }
 
     protected open fun onStart() {
     }
 
+    protected open fun onColdStart() {
+
+    }
+
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         onResume()
+        if (!coldResumed) {
+            coldResumed = true
+            onColdResume()
+        }
     }
 
     protected open fun onResume() {
+    }
+
+    protected open fun onColdResume() {
     }
 
     override fun onPause(owner: LifecycleOwner) {

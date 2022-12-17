@@ -20,6 +20,13 @@ class WatchingContinueViewModel(
 
     override val defaultTitle: String = "Продолжить просмотр"
 
+    override val loadOnCreate: Boolean = false
+
+    override fun onResume() {
+        super.onResume()
+        onRefreshClick()
+    }
+
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
         .let {

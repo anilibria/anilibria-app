@@ -75,7 +75,10 @@ class UpdateViewModel(
             }
             progressState.value = false
         }
+    }
 
+    override fun onColdCreate() {
+        super.onColdCreate()
         updateController
             .downloadAction
             .onEach {

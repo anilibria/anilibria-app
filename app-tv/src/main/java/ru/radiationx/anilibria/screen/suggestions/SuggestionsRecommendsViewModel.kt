@@ -21,8 +21,8 @@ class SuggestionsRecommendsViewModel(
 
     override val loadOnCreate: Boolean = false
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    override fun onColdResume() {
+        super.onColdResume()
         onRefreshClick()
     }
 

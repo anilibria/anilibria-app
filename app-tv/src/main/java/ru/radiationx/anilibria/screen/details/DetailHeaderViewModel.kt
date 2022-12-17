@@ -49,20 +49,18 @@ class DetailHeaderViewModel(
 
     override fun onCreate() {
         super.onCreate()
-
-        (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
-            currentRelease = it
-            update(it)
-            updateProgress()
-        }
         updateProgress()
+    }
 
+    override fun onColdCreate() {
+        super.onColdCreate()
+        releaseInteractor.getItem(releaseId)?.also {
+            updateRelease(it)
+        }
         releaseInteractor
             .observeFull(releaseId)
             .onEach {
-                currentRelease = it
-                update(it)
-                updateProgress()
+                updateRelease(it)
             }
             .launchIn(viewModelScope)
     }
@@ -142,14 +140,16 @@ class DetailHeaderViewModel(
 
     }
 
+    private fun updateRelease(release: Release) {
+        currentRelease = release
+        releaseData.value = converter.toDetail(release)
+        updateProgress()
+    }
+
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
             currentRelease == null || favoriteDisposable?.isActive ?: false
         )
-    }
-
-    private fun update(releaseItem: Release) {
-        releaseData.value = converter.toDetail(releaseItem)
     }
 }

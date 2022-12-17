@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.main
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseRowsViewModel
@@ -32,6 +33,7 @@ class MainViewModel(
 
         authRepository
             .observeAuthState()
+            .distinctUntilChanged()
             .onEach {
                 updateAvailableRow(FAVORITE_ROW_ID, it == AuthState.AUTH)
             }

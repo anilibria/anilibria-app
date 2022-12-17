@@ -22,8 +22,8 @@ class ScheduleViewModel(
 
     val scheduleRows = MutableLiveData<List<Pair<String, List<LibriaCard>>>>()
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onColdResume() {
+        super.onColdResume()
 
         scheduleRepository
             .observeSchedule()

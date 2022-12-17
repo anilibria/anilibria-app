@@ -24,14 +24,17 @@ class ScheduleFragment : BrowseSupportFragment() {
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        headersState = HEADERS_DISABLED
+        isHeadersTransitionOnBackEnabled = false
+        title = "Расписание"
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
-
-        headersState = HEADERS_DISABLED
-        isHeadersTransitionOnBackEnabled = false
-        title = "Расписание"
 
         setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
             backgroundManager.applyCard(item)

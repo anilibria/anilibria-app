@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.screen.player.end_episode
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -33,28 +31,24 @@ class EndEpisodeViewModel(
     fun onReplayClick() {
         val episode = currentEpisode ?: return
 
-        viewModelScope.launch {
-            releaseInteractor.putEpisode(
-                episode.access.copy(
-                    seek = 0,
-                    lastAccess = System.currentTimeMillis(),
-                    isViewed = true
-                )
+        guidedRouter.close()
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                seek = 0,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
             )
-            playerController.selectEpisodeRelay.emit(episode.id)
-            guidedRouter.close()
-        }
+        )
+        playerController.selectEpisodeRelay.emit(episode.id)
     }
 
     fun onNextClick() {
         val episode = currentEpisode ?: return
-        viewModelScope.launch {
-            val currentIndex = currentEpisodes.indexOfFirst { it.id == episode.id }
+        guidedRouter.close()
 
-            currentEpisodes.getOrNull(currentIndex + 1)?.also { nextEpisode ->
-                playerController.selectEpisodeRelay.emit(nextEpisode.id)
-            }
-            guidedRouter.close()
+        val currentIndex = currentEpisodes.indexOfFirst { it.id == episode.id }
+        currentEpisodes.getOrNull(currentIndex + 1)?.also { nextEpisode ->
+            playerController.selectEpisodeRelay.emit(nextEpisode.id)
         }
     }
 }

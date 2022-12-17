@@ -56,11 +56,11 @@ class SearchGenreViewModel(
 
     override fun applyValues() {
         viewModelScope.launch {
+            guidedRouter.close()
             val newGenres = currentGenres.filterIndexed { index, item ->
                 checkedValues.contains(item.value)
             }.toSet()
             searchController.genresEvent.emit(newGenres)
-            guidedRouter.close()
         }
     }
 }

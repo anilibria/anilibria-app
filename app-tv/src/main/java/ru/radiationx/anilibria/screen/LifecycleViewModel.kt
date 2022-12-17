@@ -1,16 +1,20 @@
 package ru.radiationx.anilibria.screen
 
 import androidx.annotation.CallSuper
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 
-open class LifecycleViewModel : ViewModel(), LifecycleObserver {
+open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
     private var created = false
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        onCreate()
+    }
+
     @CallSuper
     protected open fun onCreate() {
         if (!created) {
@@ -21,23 +25,43 @@ open class LifecycleViewModel : ViewModel(), LifecycleObserver {
 
     protected open fun onColdCreate() {}
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        onStart()
+    }
+
     protected open fun onStart() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        onResume()
+    }
+
     protected open fun onResume() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        onPause()
+    }
+
     protected open fun onPause() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        onStop()
+    }
+
     protected open fun onStop() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        onDestroy()
+    }
+
     protected open fun onDestroy() {
     }
 }

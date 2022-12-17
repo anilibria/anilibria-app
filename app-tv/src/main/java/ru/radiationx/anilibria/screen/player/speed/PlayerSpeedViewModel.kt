@@ -30,7 +30,7 @@ class PlayerSpeedViewModel(
     }
 
     fun applySpeed(index: Int) {
-        releaseInteractor.setPlaySpeed(speedList[index])
         guidedRouter.close()
+        releaseInteractor.setPlaySpeed(speedList[index])
     }
 }

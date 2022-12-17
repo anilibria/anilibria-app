@@ -41,6 +41,7 @@ class PlayerQualityViewModel(
     }
 
     fun applyQuality(quality: Long) {
+        guidedRouter.close()
         val value = when (quality) {
             SD_ACTION_ID -> PreferencesHolder.QUALITY_SD
             HD_ACTION_ID -> PreferencesHolder.QUALITY_HD
@@ -48,7 +49,6 @@ class PlayerQualityViewModel(
             else -> PreferencesHolder.QUALITY_SD
         }
         releaseInteractor.setQuality(value)
-        guidedRouter.close()
     }
 
     private fun updateAvailable() {

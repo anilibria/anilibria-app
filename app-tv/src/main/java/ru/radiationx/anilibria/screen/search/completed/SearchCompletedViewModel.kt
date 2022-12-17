@@ -31,6 +31,7 @@ class SearchCompletedViewModel(
 
     fun applySort(index: Int) {
         viewModelScope.launch {
+            guidedRouter.close()
             val sort = when (index) {
                 0 -> false
                 1 -> true
@@ -39,7 +40,6 @@ class SearchCompletedViewModel(
             sort?.also {
                 searchController.completedEvent.emit(it)
             }
-            guidedRouter.close()
         }
     }
 }

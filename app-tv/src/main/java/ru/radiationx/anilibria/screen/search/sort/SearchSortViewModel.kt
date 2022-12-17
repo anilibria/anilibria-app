@@ -35,6 +35,7 @@ class SearchSortViewModel(
 
     fun applySort(index: Int) {
         viewModelScope.launch {
+            guidedRouter.close()
             val sort = when (index) {
                 0 -> SearchForm.Sort.RATING
                 1 -> SearchForm.Sort.DATE
@@ -43,7 +44,6 @@ class SearchSortViewModel(
             sort?.also {
                 searchController.sortEvent.emit(it)
             }
-            guidedRouter.close()
         }
     }
 }

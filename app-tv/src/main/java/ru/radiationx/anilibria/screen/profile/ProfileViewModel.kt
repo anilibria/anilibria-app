@@ -23,9 +23,7 @@ class ProfileViewModel(
 
     val profileData = MutableStateFlow<ProfileItem?>(null)
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         authRepository
             .observeUser()
             .onEach { profileData.value = it }

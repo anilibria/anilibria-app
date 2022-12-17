@@ -1,11 +1,9 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -30,8 +28,7 @@ class PlayerEpisodesViewModel(
 
     private val currentEpisodes = mutableListOf<Episode>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         releaseInteractor
             .observeFull(argExtra.releaseId)
             .onEach {
@@ -45,7 +42,7 @@ class PlayerEpisodesViewModel(
         playerController.selectEpisodeRelay.emit(currentEpisodes[index].id)
     }
 
-    private fun updateEpisodes(release: Release){
+    private fun updateEpisodes(release: Release) {
         currentEpisodes.clear()
         currentEpisodes.addAll(release.episodes.reversed())
         episodesData.value = currentEpisodes.map {

@@ -24,8 +24,7 @@ class SearchYearViewModel(
 
     private val currentYears = mutableListOf<YearItem>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         searchRepository
             .observeYears()
             .onEach {
@@ -39,10 +38,8 @@ class SearchYearViewModel(
                 updateSelected()
             }
             .launchIn(viewModelScope)
-    }
 
-    override fun onCreate() {
-        super.onCreate()
+
         viewModelScope.launch {
             progressState.value = true
             coRunCatching {
@@ -52,7 +49,6 @@ class SearchYearViewModel(
             }
             progressState.value = false
         }
-
     }
 
     override fun applyValues() {

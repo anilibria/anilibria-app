@@ -25,8 +25,7 @@ class WatchingFavoritesViewModel(
 
     override val loadOnCreate: Boolean = false
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         authRepository
             .observeAuthState()
             .drop(1)

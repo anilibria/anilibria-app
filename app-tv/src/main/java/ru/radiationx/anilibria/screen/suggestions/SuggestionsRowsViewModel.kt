@@ -23,9 +23,7 @@ class SuggestionsRowsViewModel(
 
     override val availableRows: MutableSet<Long> = mutableSetOf(RECOMMENDS_ROW_ID)
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         suggestionsController
             .resultEvent
             .onEach {

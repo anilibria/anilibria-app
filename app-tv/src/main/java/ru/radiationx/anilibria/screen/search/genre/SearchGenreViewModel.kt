@@ -24,8 +24,7 @@ class SearchGenreViewModel(
 
     private val currentGenres = mutableListOf<GenreItem>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         searchRepository
             .observeGenres()
             .onEach {
@@ -39,10 +38,7 @@ class SearchGenreViewModel(
                 updateSelected()
             }
             .launchIn(viewModelScope)
-    }
 
-    override fun onCreate() {
-        super.onCreate()
         viewModelScope.launch {
             progressState.value = true
             coRunCatching {

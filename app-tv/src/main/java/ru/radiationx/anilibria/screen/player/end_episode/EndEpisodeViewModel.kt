@@ -23,9 +23,7 @@ class EndEpisodeViewModel(
     private val currentEpisode
         get() = currentEpisodes.firstOrNull { it.id == argExtra.episodeId }
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         releaseInteractor
             .observeFull(argExtra.releaseId)
             .onEach {

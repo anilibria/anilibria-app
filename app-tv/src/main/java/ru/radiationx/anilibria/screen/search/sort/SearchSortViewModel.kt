@@ -22,8 +22,7 @@ class SearchSortViewModel(
     val titlesData = MutableLiveData<List<String>>()
     val selectedIndex = MutableLiveData<Int>()
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         titlesData.value = titles
         selectedIndex.value = when (argExtra.sort) {
             SearchForm.Sort.RATING -> 0

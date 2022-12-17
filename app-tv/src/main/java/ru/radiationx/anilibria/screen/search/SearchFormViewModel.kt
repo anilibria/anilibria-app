@@ -25,27 +25,29 @@ class SearchFormViewModel(
 
     private var searchForm = SearchForm()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         updateDataByForm()
 
         searchController.yearsEvent.onEach {
             searchForm = searchForm.copy(years = it)
             updateDataByForm()
         }.launchIn(viewModelScope)
+
         searchController.seasonsEvent.onEach {
             searchForm = searchForm.copy(seasons = it)
             updateDataByForm()
         }.launchIn(viewModelScope)
+
         searchController.genresEvent.onEach {
             searchForm = searchForm.copy(genres = it)
             updateDataByForm()
         }.launchIn(viewModelScope)
+
         searchController.sortEvent.onEach {
             searchForm = searchForm.copy(sort = it)
             updateDataByForm()
         }.launchIn(viewModelScope)
+
         searchController.completedEvent.onEach {
             searchForm = searchForm.copy(onlyCompleted = it)
             updateDataByForm()

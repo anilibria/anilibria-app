@@ -20,8 +20,6 @@ class WatchingContinueViewModel(
 
     override val defaultTitle: String = "Продолжить просмотр"
 
-    override val loadOnCreate: Boolean = false
-
     override fun onResume() {
         super.onResume()
         onRefreshClick()

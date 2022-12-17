@@ -31,9 +31,7 @@ class SearchViewModel(
 
     override val progressOnRefresh: Boolean = false
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         searchController.applyFormEvent.onEach {
             searchForm = it
             onRefreshClick()

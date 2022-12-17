@@ -31,10 +31,6 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     override fun onColdCreate() {
         super.onColdCreate()
         rowTitle.value = defaultTitle
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         if (loadOnCreate) {
             onRefreshClick()
         }
@@ -45,17 +41,15 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     }
 
     open fun onLinkCardBind() {
-        currentPage++
-        loadPage(currentPage)
+        loadPage(currentPage + 1)
     }
 
     open fun onRefreshClick() {
-        currentPage = firstPage
-        loadPage()
+        loadPage(firstPage)
     }
 
     open fun onLoadingCardClick() {
-        loadPage()
+        loadPage(currentPage)
     }
 
     open fun onLibriaCardClick(card: LibriaCard) {}
@@ -74,7 +68,10 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
         isError = true
     )
 
-    private fun loadPage(requestPage: Int = currentPage) {
+    private fun loadPage(requestPage: Int) {
+        if (requestJob?.isActive == true) {
+            return
+        }
         requestJob?.cancel()
         requestJob = viewModelScope.launch {
             if (requestPage != firstPage || progressOnRefresh) {
@@ -83,7 +80,8 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
             coRunCatching {
                 getLoader(requestPage)
             }.onSuccess { newCards ->
-                if (currentPage <= 1) {
+                currentPage = requestPage
+                if (requestPage <= 1) {
                     currentCards.clear()
                 }
                 currentCards.addAll(newCards)

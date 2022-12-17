@@ -20,14 +20,12 @@ class SuggestionsResultViewModel(
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
-    private var queryRelay = MutableSharedFlow<String>()
+    private val queryRelay = MutableSharedFlow<String>()
 
     val progressState = MutableLiveData<Boolean>()
     val resultData = MutableLiveData<List<LibriaCard>>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         queryRelay
             .debounce(350L)
             .distinctUntilChanged()

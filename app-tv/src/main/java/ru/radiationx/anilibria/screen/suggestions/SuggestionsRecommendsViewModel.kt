@@ -19,13 +19,6 @@ class SuggestionsRecommendsViewModel(
 
     override val defaultTitle: String = "Рекомендации"
 
-    override val loadOnCreate: Boolean = false
-
-    override fun onColdResume() {
-        super.onColdResume()
-        onRefreshClick()
-    }
-
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = searchRepository
         .searchReleases(SearchForm(sort = SearchForm.Sort.RATING), requestPage)
         .also { releaseInteractor.updateItemsCache(it.data) }

@@ -20,13 +20,11 @@ class EndSeasonViewModel(
     private val router: Router
 ) : LifecycleViewModel() {
 
-
     private val currentEpisodes = mutableListOf<Episode>()
     private val currentEpisode
         get() = currentEpisodes.firstOrNull { it.id == argExtra.episodeId }
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         viewModelScope.launch {
             releaseInteractor.getFull(argExtra.releaseId)?.also {
                 currentEpisodes.clear()

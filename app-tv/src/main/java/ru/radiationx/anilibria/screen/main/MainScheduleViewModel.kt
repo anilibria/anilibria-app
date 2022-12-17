@@ -23,8 +23,6 @@ class MainScheduleViewModel(
     override val loadMoreCard: LinkCard =
         LinkCard("Открыть полное расписание")
 
-    override val loadOnCreate: Boolean = false
-
     override fun onResume() {
         super.onResume()
         onRefreshClick()

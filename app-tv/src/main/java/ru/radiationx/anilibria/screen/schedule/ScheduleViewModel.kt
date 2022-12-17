@@ -22,9 +22,7 @@ class ScheduleViewModel(
 
     val scheduleRows = MutableLiveData<List<Pair<String, List<LibriaCard>>>>()
 
-    override fun onColdResume() {
-        super.onColdResume()
-
+    init {
         scheduleRepository
             .observeSchedule()
             .map { days ->

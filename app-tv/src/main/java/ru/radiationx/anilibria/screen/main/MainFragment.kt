@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.leanback.app.RowsSupportFragment
 import androidx.leanback.widget.*
@@ -42,12 +41,10 @@ class MainFragment : RowsSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("kekeke", "main oncreaate")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("kekeke", "main onviewcreated")
 
         viewLifecycleOwner.lifecycle.addObserver(mainViewModel)
         viewLifecycleOwner.lifecycle.addObserver(feedViewModel)

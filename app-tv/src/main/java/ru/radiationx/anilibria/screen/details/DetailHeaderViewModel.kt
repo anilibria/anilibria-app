@@ -47,13 +47,8 @@ class DetailHeaderViewModel(
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         updateProgress()
-    }
-
-    override fun onColdCreate() {
-        super.onColdCreate()
         releaseInteractor.getItem(releaseId)?.also {
             updateRelease(it)
         }

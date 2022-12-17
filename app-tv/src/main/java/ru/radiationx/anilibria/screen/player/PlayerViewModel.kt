@@ -32,9 +32,7 @@ class PlayerViewModel(
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         qualityState.value = releaseInteractor.getQuality()
         speedState.value = releaseInteractor.getPlaySpeed()
 

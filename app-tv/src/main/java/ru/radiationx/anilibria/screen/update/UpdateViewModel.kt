@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
+import ru.radiationx.anilibria.common.LeanbackDialogContentConsumer
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -54,10 +56,6 @@ class UpdateViewModel(
         progressState.value = true
         downloadProgressShowState.value = false
         downloadProgressData.value = 0
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         updateState()
 
         viewModelScope.launch {
@@ -75,10 +73,6 @@ class UpdateViewModel(
             }
             progressState.value = false
         }
-    }
-
-    override fun onColdCreate() {
-        super.onColdCreate()
         updateController
             .downloadAction
             .onEach {
@@ -117,7 +111,12 @@ class UpdateViewModel(
         viewModelScope.launch {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 val result =
-                    mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    mintPermissionsDialogFlow.request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        MintPermissionsFlow.defaultDialogConfig.copy(
+                            contentConsumer = LeanbackDialogContentConsumer()
+                        )
+                    )
                 if (!result.isSuccess()) {
                     return@launch
                 }

@@ -22,9 +22,7 @@ class SearchSeasonViewModel(
 
     private val currentSeasons = mutableListOf<SeasonItem>()
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         viewModelScope.launch {
             coRunCatching {
                 searchRepository.getSeasons()

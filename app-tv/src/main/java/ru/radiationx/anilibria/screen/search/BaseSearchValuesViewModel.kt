@@ -15,8 +15,7 @@ abstract class BaseSearchValuesViewModel(
     protected val currentValues = mutableListOf<String>()
     protected val checkedValues = mutableSetOf<String>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         checkedValues.addAll(argExtra.values)
         updateChecked()
         updateSelected()

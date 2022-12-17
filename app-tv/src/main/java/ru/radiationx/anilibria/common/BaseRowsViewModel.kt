@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
@@ -27,7 +26,6 @@ abstract class BaseRowsViewModel : LifecycleViewModel() {
     }
 
     protected fun updateRows() {
-        Log.d("kekeke", "updateRows")
         rowListData.value = getRows()
     }
 

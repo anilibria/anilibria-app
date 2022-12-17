@@ -43,13 +43,9 @@ class DetailsViewModel(
     override val availableRows: MutableSet<Long> =
         mutableSetOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         loadRelease()
-    }
 
-    override fun onColdResume() {
-        super.onColdResume()
         authRepository
             .observeAuthState()
             .drop(1)

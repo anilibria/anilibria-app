@@ -31,6 +31,14 @@ class SearchFragment : BaseVerticalGridFragment() {
     private val cardsViewModel by viewModel<SearchViewModel>()
     private val formViewModel by viewModel<SearchFormViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        title = "Каталог"
+        gridPresenter = VerticalGridPresenter().apply {
+            numberOfColumns = 6
+        }
+    }
+
     override fun onInflateTitleView(
         inflater: LayoutInflater,
         parent: ViewGroup,
@@ -44,11 +52,6 @@ class SearchFragment : BaseVerticalGridFragment() {
 
         viewLifecycleOwner.lifecycle.addObserver(cardsViewModel)
         viewLifecycleOwner.lifecycle.addObserver(formViewModel)
-
-        title = "Каталог"
-        gridPresenter = VerticalGridPresenter().apply {
-            numberOfColumns = 6
-        }
 
         setOnSearchClickedListener {
             cardsViewModel.onSearchClick()

@@ -21,8 +21,7 @@ class SearchCompletedViewModel(
     val titlesData = MutableLiveData<List<String>>()
     val selectedIndex = MutableLiveData<Int>()
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         titlesData.value = titles
         selectedIndex.value = if (argExtra.isCompleted) 1 else 0
     }

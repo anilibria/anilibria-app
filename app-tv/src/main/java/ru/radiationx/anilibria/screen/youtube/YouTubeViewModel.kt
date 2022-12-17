@@ -14,8 +14,6 @@ class YouTubeViewModel(
     private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    override val loadOnCreate: Boolean = false
-
     override fun onResume() {
         super.onResume()
         onRefreshClick()

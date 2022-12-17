@@ -22,8 +22,6 @@ class WatchingRecommendsViewModel(
 
     override val defaultTitle: String = "Рекомендации"
 
-    override val loadOnCreate: Boolean = false
-
     override fun onResume() {
         super.onResume()
         onRefreshClick()

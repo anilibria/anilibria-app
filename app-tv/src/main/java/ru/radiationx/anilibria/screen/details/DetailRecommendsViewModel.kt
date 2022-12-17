@@ -31,8 +31,7 @@ class DetailRecommendsViewModel(
 
     override val defaultTitle: String = "Рекомендации"
 
-    override fun onColdResume() {
-        super.onColdResume()
+    init {
         cardsData.value = listOf(loadingCard)
         releaseInteractor
             .observeFull(releaseId)

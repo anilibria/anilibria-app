@@ -28,9 +28,7 @@ class PlayerQualityViewModel(
     val availableData = MutableLiveData<List<Long>>()
     val selectedData = MutableLiveData<Long>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         combine(
             releaseInteractor.observeFull(argExtra.releaseId),
             releaseInteractor.observeQuality()

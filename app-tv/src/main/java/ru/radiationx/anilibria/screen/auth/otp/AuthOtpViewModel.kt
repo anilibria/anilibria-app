@@ -29,10 +29,6 @@ class AuthOtpViewModel(
 
     init {
         state.value = State()
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         loadOtpInfo()
     }
 

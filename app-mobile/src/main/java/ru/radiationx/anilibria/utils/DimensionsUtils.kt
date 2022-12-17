@@ -20,12 +20,22 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
             statusBar = systemBarInsets.top,
             navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
         )
-        layoutActivityContainer.root.updatePadding(bottom = containerInsetsBottom)
+        layoutActivityContainer.root.updatePadding(
+            left = systemBarInsets.left,
+            right = systemBarInsets.right,
+            bottom = containerInsetsBottom
+        )
         configuringContainer.updatePadding(
+            left = systemBarInsets.left,
             top = systemBarInsets.top,
+            right = systemBarInsets.right,
             bottom = systemBarInsets.bottom
         )
-        tabsRecycler.updatePadding(bottom = systemBarInsets.bottom)
+        tabsRecycler.updatePadding(
+            left = systemBarInsets.left,
+            right = systemBarInsets.right,
+            bottom = systemBarInsets.bottom
+        )
         provider.update(dimensions)
         insets
     }

@@ -181,7 +181,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
         viewModel.copyAction.observe().onEach {
             systemUtils.copyToClipBoard(it)
-            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.shortcutAction.observe().onEach {

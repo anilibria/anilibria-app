@@ -178,23 +178,22 @@ class FavoritesFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        context?.let {
-            val titles =
-                arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
-            AlertDialog.Builder(it)
-                .setItems(titles) { dialog, which ->
-                    when (which) {
-                        0 -> {
-                            viewModel.onCopyClick(item)
-                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                        }
-                        1 -> viewModel.onShareClick(item)
-                        2 -> viewModel.onShortcutClick(item)
-                        3 -> viewModel.deleteFav(item.id)
+        val titles =
+            arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
+        AlertDialog.Builder(requireContext())
+            .setItems(titles) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        viewModel.onCopyClick(item)
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
+                            .show()
                     }
+                    1 -> viewModel.onShareClick(item)
+                    2 -> viewModel.onShortcutClick(item)
+                    3 -> viewModel.deleteFav(item.id)
                 }
-                .show()
-        }
+            }
+            .show()
         return false
     }
 

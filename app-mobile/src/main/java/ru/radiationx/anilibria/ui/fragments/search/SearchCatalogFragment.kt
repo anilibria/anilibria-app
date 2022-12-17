@@ -230,21 +230,20 @@ class SearchCatalogFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        context?.let {
-            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-            AlertDialog.Builder(it)
-                .setItems(titles) { _, which ->
-                    when (which) {
-                        0 -> {
-                            viewModel.onCopyClick(item)
-                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                        }
-                        1 -> viewModel.onShareClick(item)
-                        2 -> viewModel.onShortcutClick(item)
+        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
+        AlertDialog.Builder(requireContext())
+            .setItems(titles) { _, which ->
+                when (which) {
+                    0 -> {
+                        viewModel.onCopyClick(item)
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
+                            .show()
                     }
+                    1 -> viewModel.onShareClick(item)
+                    2 -> viewModel.onShortcutClick(item)
                 }
-                .show()
-        }
+            }
+            .show()
         return false
     }
 

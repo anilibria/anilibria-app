@@ -217,7 +217,7 @@ class FeedFragment :
                 when (which) {
                     0 -> {
                         viewModel.onCopyClick(item)
-                        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)

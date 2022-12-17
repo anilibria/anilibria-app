@@ -7,7 +7,11 @@ data class LibriaCard(
     val description: String,
     val image: String,
     val type: Type
-) {
+) : CardItem {
+
+    override fun getId(): Int {
+        return type.hashCode()
+    }
 
     sealed class Type {
         data class Release(val releaseId: ReleaseId) : Type()

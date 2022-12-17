@@ -7,6 +7,7 @@ import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -23,7 +24,7 @@ class SearchSeasonViewModel(
         super.onCreate()
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 searchRepository.getSeasons()
             }.onSuccess {
                 currentSeasons.clear()

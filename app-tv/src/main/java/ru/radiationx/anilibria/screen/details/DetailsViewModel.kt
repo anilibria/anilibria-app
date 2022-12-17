@@ -12,6 +12,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -72,7 +73,7 @@ class DetailsViewModel(
 
     private fun loadRelease() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 releaseInteractor.loadRelease(releaseId)
             }.onSuccess {
                 historyRepository.putRelease(it)

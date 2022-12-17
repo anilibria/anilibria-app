@@ -14,7 +14,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity

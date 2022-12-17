@@ -18,17 +18,16 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewVideoControlBinding
-import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.ui.widgets.gestures.VideoGestureEventsListener
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.entity.domain.release.PlayerSkips
+import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
@@ -172,7 +171,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 localSeekDelta = 0
             }
 
-            private val tapRelay = MutableSharedFlow<MotionEvent>()
+            private val tapRelay = EventFlow<MotionEvent>()
 
             private fun handleEndSwipeSeek() {
                 playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
@@ -186,6 +185,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private fun handleStartTapSeek() {
                 tapJob?.cancel()
                 tapJob = tapRelay
+                    .observe()
                     .onEach { handleTapSeek(it) }
                     .flowOn(Dispatchers.Main.immediate)
                     .launchIn(GlobalScope)
@@ -205,7 +205,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             private fun handleEndTapSeek() {
                 tapSeekHandler.removeCallbacks(tapSeekRunnable)
-                tapSeekHandler.postDelayed(tapSeekRunnable, 350)
+                tapSeekHandler.postDelayed(tapSeekRunnable, 500)
             }
 
             private fun applyPlayerSeek() {
@@ -220,9 +220,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                 event ?: return
                 videoView?.showControls()
                 if (tapSeekStarted) {
-                    GlobalScope.launch {
-                        tapRelay.emit(event)
-                    }
+                    tapRelay.set(event)
                 }
             }
 
@@ -233,8 +231,8 @@ class VideoControlsAlib @JvmOverloads constructor(
                     tapSeekStarted = true
                     handleStartTapSeek()
                 }
-                GlobalScope.launch {
-                    tapRelay.emit(event)
+                if (tapSeekStarted) {
+                    tapRelay.set(event)
                 }
             }
 

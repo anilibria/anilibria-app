@@ -16,6 +16,7 @@ import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
@@ -44,7 +45,7 @@ class CheckerViewModel(
     fun checkUpdate() {
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
-            runCatching {
+            coRunCatching {
                 checkerRepository.checkUpdate(sharedBuildConfig.versionCode, argExtra.forceLoad)
             }.onSuccess { data ->
                 _state.update { it.copy(data = data) }

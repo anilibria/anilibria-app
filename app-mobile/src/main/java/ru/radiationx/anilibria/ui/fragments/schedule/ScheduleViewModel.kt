@@ -16,6 +16,7 @@ import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.*
@@ -83,13 +84,13 @@ class ScheduleViewModel(
             ?.releaseItem ?: return
         scheduleAnalytics.releaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, item = releaseItem))
     }
 
     fun refresh() {
         viewModelScope.launch {
             _state.update { it.copy(refreshing = true) }
-            runCatching {
+            coRunCatching {
                 scheduleRepository.loadSchedule()
             }.onFailure {
                 errorHandler.handle(it)

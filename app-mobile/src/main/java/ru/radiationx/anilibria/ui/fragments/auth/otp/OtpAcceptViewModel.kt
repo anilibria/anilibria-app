@@ -12,6 +12,7 @@ import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -43,7 +44,7 @@ class OtpAcceptViewModel(
         viewModelScope.launch {
             _state.update { it.copy(progress = true) }
 
-            runCatching {
+            coRunCatching {
                 authRepository.acceptOtp(code)
             }.onSuccess {
                 onSuccess()

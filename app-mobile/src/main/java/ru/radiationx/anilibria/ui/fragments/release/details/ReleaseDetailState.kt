@@ -24,7 +24,8 @@ data class ReleaseDetailModifiersState(
     val selectedEpisodesTabTag: String? = null,
     val favoriteRefreshing: Boolean = false,
     val episodesReversed: Boolean = false,
-    val descriptionExpanded: Boolean = false
+    val descriptionExpanded: Boolean = false,
+    val detailLoading: Boolean = true
 )
 
 data class ReleaseDetailState(
@@ -46,8 +47,8 @@ data class ReleaseInfoState(
     val isOngoing: Boolean,
     val announce: String?,
     val favorite: ReleaseFavoriteState
-){
-    companion object{
+) {
+    companion object {
         const val TAG_GENRE = "genre"
         const val TAG_VOICE = "voice"
     }

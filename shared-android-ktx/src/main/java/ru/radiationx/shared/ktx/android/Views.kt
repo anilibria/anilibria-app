@@ -17,8 +17,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatDrawable
 
 @Deprecated("Use androidx pls")
 fun <T : View> T.visible() {

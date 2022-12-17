@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFeedScheduleBinding
-import ru.radiationx.anilibria.extension.dpToPx
+import ru.radiationx.shared.ktx.android.dpToPx
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem

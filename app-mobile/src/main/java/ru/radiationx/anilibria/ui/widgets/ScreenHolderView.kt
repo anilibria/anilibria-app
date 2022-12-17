@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewScreenholderBinding
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import timber.log.Timber
 
 class ScreenHolderView @JvmOverloads constructor(

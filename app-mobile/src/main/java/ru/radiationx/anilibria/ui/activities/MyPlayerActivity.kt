@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.OnCompletionListener
@@ -35,11 +36,12 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMyplayerBinding
-import ru.radiationx.anilibria.extension.getColorFromAttr
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
@@ -58,6 +60,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
@@ -182,6 +185,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntentData(intent)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
         createPIPParams()
@@ -300,11 +304,63 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
         handleIntent(intent)
         updateUiFlags()
+
+        releaseInteractor.observeFull(releaseData.id, releaseData.code).onEach {
+            releaseData = it
+        }.launchIn(lifecycleScope)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.also { handleIntent(it) }
+    }
+
+    override fun onUserLeaveHint() {
+        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
+            enterPipMode()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveEpisodeAtNoZero()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.player.pause()
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        newConfig.also { config ->
+            updateByConfig(config)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.player.setOnPreparedListener(null)
+        binding.player.setOnCompletionListener(null)
+        binding.player.setOnVideoSizedChangedListener(null)
+        binding.player.setAnalyticsListener(null)
+
+        videoControls?.apply {
+            setOpeningListener(null)
+            setVisibilityListener(null)
+            setButtonListener(null)
+        }
+
+        getAverageStatisticsValues().forEach { statsEntry ->
+            statsEntry.value.forEach { qualityEntry ->
+                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
+            }
+        }
+        saveEpisodeAtNoZero()
+        binding.player.stopPlayback()
+        exitFullscreen()
+        videoControls = null
     }
 
     private fun checkPipMode(): Boolean {
@@ -329,7 +385,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
-    private fun handleIntent(intent: Intent) {
+    private fun handleIntentData(intent: Intent) {
         val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
         }
@@ -343,7 +399,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         this.currentEpisodeId = episodeId
         this.currentQuality = quality
         this.playFlag = playFlag
+    }
 
+    private fun handleIntent(intent: Intent) {
+        handleIntentData(intent)
         updateAndPlayRelease()
     }
 
@@ -417,22 +476,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         savePIPControl()
     }
 
-    override fun onUserLeaveHint() {
-        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
-            enterPipMode()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveEpisode()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        binding.player.pause()
-    }
-
     private fun getInMultiWindow(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             isInMultiWindowMode
@@ -446,13 +489,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             isInPictureInPictureMode
         } else {
             false
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        newConfig.also { config ->
-            updateByConfig(config)
         }
     }
 
@@ -485,37 +521,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 isViewed = true
             )
         )
-    }
-
-
-    private val random = Random()
-
-    private fun rand(from: Int, to: Int): Int {
-        return random.nextInt(to - from) + from
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.player.setOnPreparedListener(null)
-        binding.player.setOnCompletionListener(null)
-        binding.player.setOnVideoSizedChangedListener(null)
-        binding.player.setAnalyticsListener(null)
-
-        videoControls?.apply {
-            setOpeningListener(null)
-            setVisibilityListener(null)
-            setButtonListener(null)
-        }
-
-        getAverageStatisticsValues().forEach { statsEntry ->
-            statsEntry.value.forEach { qualityEntry ->
-                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
-            }
-        }
-        saveEpisodeAtNoZero()
-        binding.player.stopPlayback()
-        exitFullscreen()
-        videoControls = null
     }
 
     private fun getNextEpisode(): Episode? {
@@ -556,7 +561,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
-                binding.player.seekTo(episode.access.seek)
             }
         }
         playFlag = PLAY_FLAG_FORCE_CONTINUE
@@ -1184,17 +1188,25 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     }
 
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
+
+        private fun startAndSeek(episode: Episode) {
+            if (playFlag == PLAY_FLAG_FORCE_CONTINUE && episode.access.seek > 0) {
+                binding.player.seekTo(episode.access.seek)
+            }
+            binding.player.start()
+        }
+
         override fun onPrepared() {
             val episode = getEpisode()
             if (episode.access.seek >= binding.player.duration) {
-                binding.player.stopPlayback()
+                binding.player.pause()
                 if (getNextEpisode() == null) {
                     showSeasonFinishDialog()
                 } else {
                     showEpisodeFinishDialog()
                 }
             } else {
-                binding.player.start()
+                startAndSeek(episode)
             }
         }
 

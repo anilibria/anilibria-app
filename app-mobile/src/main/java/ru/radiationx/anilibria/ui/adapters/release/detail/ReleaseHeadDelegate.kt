@@ -87,7 +87,7 @@ class ReleaseHeadDelegate(
             binding.fullAnnounce.isVisible = state.announce != null
             binding.fullAnnounce.text = state.announce?.let { Html.fromHtml(it) }
 
-            bindFavorite(state.favorite, modifiers.favoriteRefreshing)
+            bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
         }
 
         private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {

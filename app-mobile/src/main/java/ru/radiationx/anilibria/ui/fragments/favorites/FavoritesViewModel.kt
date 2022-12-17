@@ -20,6 +20,7 @@ import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.FavoriteRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -102,7 +103,7 @@ class FavoritesViewModel(
             _state.update {
                 it.copy(deletingItemIds = it.deletingItemIds + id)
             }
-            runCatching {
+            coRunCatching {
                 favoriteRepository.deleteFavorite(id)
             }.onSuccess { deletedItem ->
                 loadingController.currentState.data?.also { dataState ->

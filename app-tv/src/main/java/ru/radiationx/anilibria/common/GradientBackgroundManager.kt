@@ -20,8 +20,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatColor
 import ru.radiationx.shared.ktx.android.asSoftware
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -120,7 +121,7 @@ class GradientBackgroundManager(
 
         imageApplierJob?.cancel()
         imageApplierJob = activity.lifecycleScope.launch {
-            runCatching {
+            coRunCatching {
                 val bitmap = withContext(Dispatchers.IO) {
                     activity.loadImageBitmap(url)
                 }

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.extension
+package ru.radiationx.shared.ktx.android
 
 import android.content.Context
 import android.graphics.Color

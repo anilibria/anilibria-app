@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeBinding
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

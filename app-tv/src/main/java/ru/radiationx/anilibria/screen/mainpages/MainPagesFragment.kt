@@ -16,8 +16,8 @@ import androidx.leanback.widget.PageRow
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.widget.BrowseTitleView
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo

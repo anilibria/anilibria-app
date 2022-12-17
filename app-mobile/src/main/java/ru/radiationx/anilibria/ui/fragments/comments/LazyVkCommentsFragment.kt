@@ -37,10 +37,7 @@ class LazyVkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_lazy) {
             return
         }
 
-        val fragment = VkCommentsFragment().also {
-            val newBundle = (this.arguments?.clone() as Bundle?)
-            it.arguments = newBundle
-        }
+        val fragment = VkCommentsFragment()
         childFragmentManager.commit {
             replace(R.id.lazyContainer, fragment)
         }

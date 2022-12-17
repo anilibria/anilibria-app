@@ -226,7 +226,7 @@ class FeedViewModel(
             return
         }
         randomJob = viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 releaseInteractor.getRandomRelease()
             }.onSuccess {
                 releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code.code)

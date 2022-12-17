@@ -30,6 +30,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -91,7 +92,7 @@ class CatalogViewModel(
 
     private fun initGenres() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 searchRepository.getGenres()
             }.onFailure {
                 errorHandler.handle(it)
@@ -107,7 +108,7 @@ class CatalogViewModel(
 
     private fun initYears() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 searchRepository.getYears()
             }.onFailure {
                 errorHandler.handle(it)
@@ -123,7 +124,7 @@ class CatalogViewModel(
 
     private fun initSeasons() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 searchRepository.getSeasons()
             }.onSuccess { seasons ->
                 _filterState.update { it.copy(seasons = seasons) }
@@ -171,7 +172,7 @@ class CatalogViewModel(
     }
 
     private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
-        return runCatching {
+        return coRunCatching {
             val form = filterState.value.form
             searchRepository.searchReleases(form, params.page).let { paginated ->
                 val newItems = if (params.isFirstPage) {

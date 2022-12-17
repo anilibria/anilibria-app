@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,13 +24,14 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 
 
 /* Created by radiationx on 05.11.17. */
 
-class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class FeedFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider {
 
     private val adapter = FeedAdapter(
@@ -97,12 +99,14 @@ class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fr
         return FragmentListRefreshBinding.bind(view)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
+
         searchView = SearchView(baseBinding.coordinatorLayout.context)
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
@@ -182,7 +186,7 @@ class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fr
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
@@ -213,7 +217,7 @@ class FeedFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fr
                 when (which) {
                     0 -> {
                         viewModel.onCopyClick(item)
-                        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)

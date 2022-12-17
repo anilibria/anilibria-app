@@ -17,6 +17,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -58,7 +59,7 @@ class AuthViewModel(
             .launchIn(viewModelScope)
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.loadSocialAuth()
             }.onFailure {
                 errorHandler.handle(it)
@@ -85,7 +86,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _state.update { it.copy(sending = true) }
             val inputData = inputDataState.value
-            runCatching {
+            coRunCatching {
                 authRepository.signIn(inputData.login, inputData.password, "")
                 authRepository.getAuthState()
             }.onSuccess {

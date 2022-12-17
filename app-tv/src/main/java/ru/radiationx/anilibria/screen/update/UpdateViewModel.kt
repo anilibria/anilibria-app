@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.screen.UpdateSourceScreen
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadItem
@@ -61,7 +62,7 @@ class UpdateViewModel(
 
         viewModelScope.launch {
             progressState.value = true
-            runCatching {
+            coRunCatching {
                 checkerRepository
                     .checkUpdate(buildConfig.versionCode, false)
             }.onSuccess {

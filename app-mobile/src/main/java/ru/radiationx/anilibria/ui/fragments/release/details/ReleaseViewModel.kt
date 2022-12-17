@@ -16,6 +16,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -33,6 +34,7 @@ class ReleaseViewModel(
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
+    private val commentsNotifier: ReleaseCommentsNotifier,
     private val commentsAnalytics: CommentsAnalytics,
     private val releaseAnalytics: ReleaseAnalytics
 ) : ViewModel() {
@@ -45,6 +47,7 @@ class ReleaseViewModel(
     val shareAction = EventFlow<String>()
     val copyAction = EventFlow<String>()
     val shortcutAction = EventFlow<Release>()
+    val openCommentsAction = commentsNotifier.observe()
 
     init {
         argExtra.release?.also {
@@ -73,7 +76,7 @@ class ReleaseViewModel(
     private fun loadRelease() {
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
-            runCatching {
+            coRunCatching {
                 releaseInteractor.loadRelease(argExtra.id, argExtra.code)
             }.onSuccess {
                 historyRepository.putRelease(it as Release)

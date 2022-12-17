@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.screen.player
 import android.content.Context
 import androidx.leanback.widget.PlaybackControlsRow
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 
 class QualityAction(context: Context) :
     PlaybackControlsRow.MultiAction(R.id.player_action_quality) {

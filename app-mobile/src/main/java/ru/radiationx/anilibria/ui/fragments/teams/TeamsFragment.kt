@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -70,7 +70,7 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
     }

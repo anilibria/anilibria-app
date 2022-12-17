@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
@@ -89,6 +90,12 @@ class SearchCatalogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
+
         searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
@@ -205,7 +212,7 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
@@ -223,21 +230,20 @@ class SearchCatalogFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        context?.let {
-            val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-            AlertDialog.Builder(it)
-                .setItems(titles) { _, which ->
-                    when (which) {
-                        0 -> {
-                            viewModel.onCopyClick(item)
-                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                        }
-                        1 -> viewModel.onShareClick(item)
-                        2 -> viewModel.onShortcutClick(item)
+        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
+        AlertDialog.Builder(requireContext())
+            .setItems(titles) { _, which ->
+                when (which) {
+                    0 -> {
+                        viewModel.onCopyClick(item)
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
+                            .show()
                     }
+                    1 -> viewModel.onShareClick(item)
+                    2 -> viewModel.onShortcutClick(item)
                 }
-                .show()
-        }
+            }
+            .show()
         return false
     }
 

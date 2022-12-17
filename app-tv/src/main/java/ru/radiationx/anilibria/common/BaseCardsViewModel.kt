@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
@@ -76,7 +77,7 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
 
         requestJob?.cancel()
         requestJob = viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 getLoader(requestPage)
             }.onSuccess { newCards ->
                 if (currentPage <= 1) {

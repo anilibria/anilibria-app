@@ -35,17 +35,11 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
 
 class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
-
-    companion object {
-        const val ARG_ID: String = "release_id"
-        const val ARG_ID_CODE: String = "release_id_code"
-    }
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
         ReleaseInfoAdapter(
@@ -64,13 +58,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private val systemUtils by inject<SystemUtils>()
 
-    private val viewModel by viewModel<ReleaseInfoViewModel> {
-        ReleaseExtra(
-            id = getExtra(ARG_ID),
-            code = getExtra(ARG_ID_CODE),
-            release = null
-        )
-    }
+    private val viewModel by viewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
 
@@ -141,7 +129,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun playEpisodes(release: Release) {
-        playEpisode(release, release.episodes.last(), null, null)
+        release.episodes.lastOrNull()?.also { episode ->
+            playEpisode(release, episode, null, null)
+        }
     }
 
     private fun playContinue(release: Release, startWith: Episode) {
@@ -158,9 +148,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun showDownloadDialog(url: String) {
-        val context = context ?: return
         val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setItems(titles) { _, which ->
                 viewModel.submitDownloadEpisodeUrlAnalytics()
                 when (which) {
@@ -206,12 +195,11 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun showEpisodesMenuDialog() {
-        val context = context ?: return
         val items = arrayOf(
             "Сбросить историю просмотров",
             "Отметить все как просмотренные"
         )
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setItems(items) { _, which ->
                 when (which) {
                     0 -> viewModel.onResetEpisodesHistoryClick()
@@ -222,11 +210,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun showLongPressEpisodeDialog(episode: Episode) {
-        val context = context ?: return
         val items = arrayOf(
             "Отметить как непросмотренная"
         )
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setItems(items) { _, which ->
                 when (which) {
                     0 -> viewModel.markEpisodeUnviewed(episode)
@@ -312,8 +299,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         savePlayerType: Boolean = true
     ) {
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
-        val context = context ?: return
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setItems(titles) { dialog, which ->
                 val playerType = when (which) {
                     0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
@@ -340,7 +326,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
         )
-        startActivity(Intent(context, MyPlayerActivity::class.java).apply {
+        startActivity(Intent(requireContext(), MyPlayerActivity::class.java).apply {
             putExtra(MyPlayerActivity.ARG_RELEASE, release)
             putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
             putExtra(MyPlayerActivity.ARG_QUALITY, quality)
@@ -369,13 +355,13 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         try {
             startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
-            Toast.makeText(context, "Ничего не найдено", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Ничего не найдено", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun playWeb(link: String, code: String) {
         viewModel.onWebPlayerClick()
-        startActivity(Intent(context, WebPlayerActivity::class.java).apply {
+        startActivity(Intent(requireContext(), WebPlayerActivity::class.java).apply {
             putExtra(WebPlayerActivity.ARG_URL, link)
             putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)
         })
@@ -417,8 +403,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         onSelect: (quality: Int) -> Unit,
         saveQuality: Boolean = true
     ) {
-        val context = context ?: return
-
         val qualities = mutableListOf<Int>()
         if (qualityInfo.hasSd) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
         if (qualityInfo.hasHd) qualities.add(MyPlayerActivity.VAL_QUALITY_HD)
@@ -435,7 +419,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             }
             .toTypedArray()
 
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setTitle("Качество")
             .setItems(titles) { _, p1 ->
                 val quality = qualities[p1]
@@ -457,8 +441,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun showFavoriteDialog() {
-        val context = context ?: return
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(requireContext())
             .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
             .setPositiveButton("Да") { _, _ -> viewModel.openAuth() }
             .setNegativeButton("Нет", null)

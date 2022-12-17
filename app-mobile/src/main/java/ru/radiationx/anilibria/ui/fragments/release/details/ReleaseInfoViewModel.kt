@@ -27,6 +27,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
@@ -45,6 +46,7 @@ class ReleaseInfoViewModel(
     private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
     private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
+    private val commentsNotifier: ReleaseCommentsNotifier,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val scheduleAnalytics: ScheduleAnalytics,
@@ -120,6 +122,9 @@ class ReleaseInfoViewModel(
             }
             .launchIn(viewModelScope)
 
+        argExtra.release?.also {
+            updateLocalRelease(it)
+        }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
             updateLocalRelease(it)
         }
@@ -135,9 +140,17 @@ class ReleaseInfoViewModel(
     fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
 
     private fun observeRelease() {
+        updateModifiers {
+            it.copy(detailLoading = true)
+        }
         releaseInteractor
             .observeFull(argExtra.id, argExtra.code)
-            .onEach { updateLocalRelease(it) }
+            .onEach { release ->
+                updateModifiers {
+                    it.copy(detailLoading = false)
+                }
+                updateLocalRelease(release)
+            }
             .launchIn(viewModelScope)
     }
 
@@ -191,6 +204,7 @@ class ReleaseInfoViewModel(
         currentData?.also {
             releaseAnalytics.commentsClick(it.id.id)
         }
+        commentsNotifier.requireOpen()
     }
 
     fun onClickWatchWeb(place: EpisodeControlPlace) {
@@ -367,7 +381,7 @@ class ReleaseInfoViewModel(
             updateModifiers {
                 it.copy(favoriteRefreshing = true)
             }
-            runCatching {
+            coRunCatching {
                 if (favInfo.isAdded) {
                     favoriteRepository.deleteFavorite(releaseId)
                 } else {

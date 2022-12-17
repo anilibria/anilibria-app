@@ -11,6 +11,7 @@ import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
 import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -53,7 +54,7 @@ class AuthOtpViewModel(
     private fun signIn() {
         signInJob?.cancel()
         signInJob = viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.signInOtp(otpInfoData.value!!.code)
             }.onSuccess {
                 guidedRouter.finishGuidedChain()
@@ -66,7 +67,7 @@ class AuthOtpViewModel(
     private fun loadOtpInfo() {
         signInJob?.cancel()
         signInJob = viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.getOtpInfo()
             }.onSuccess {
                 otpInfoData.value = it

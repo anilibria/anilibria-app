@@ -10,10 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,7 +20,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -32,8 +29,8 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
-import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -41,8 +38,8 @@ import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
@@ -53,7 +50,6 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import kotlin.math.max
 
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
@@ -89,8 +85,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val tabsStack = mutableListOf<String>()
 
-    private var dimensionHelper: DimensionHelper? = null
-
     private val viewModel by viewModel<MainViewModel>()
 
     private val checkerViewModel by viewModel<CheckerViewModel> {
@@ -98,13 +92,14 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             resources.configuration.locales[0]
         } else {
             resources.configuration.locale
         }
         installModules(LocaleModule(locale))
-        setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
 
         if (
@@ -116,31 +111,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             return
         }
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        binding.initInsets(dimensionsProvider)
 
-        dimensionHelper = DimensionHelper(
-            binding.measureView,
-            binding.measureRootContent,
-            object : DimensionHelper.DimensionsListener {
-                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    val rootContainer = binding.layoutActivityContainer.rootContainer
-                    rootContainer.post {
-                        rootContainer.setPadding(
-                            rootContainer.paddingLeft,
-                            rootContainer.paddingTop,
-                            rootContainer.paddingRight,
-                            max(dimensions.keyboardHeight - binding.tabsRecycler.height, 0)
-                        )
-                    }
-                    dimensionsProvider.update(dimensions)
-                }
-            })
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.tabsRecycler) { v, insets ->
-            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            v.updatePadding(bottom = navigationBarInsets.bottom)
-            insets
-        }
         binding.tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
@@ -274,11 +246,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dimensionHelper?.destroy()
     }
 
     override fun onBackPressed() {

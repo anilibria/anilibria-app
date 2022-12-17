@@ -20,6 +20,7 @@ import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
@@ -82,7 +83,7 @@ class OtherViewModel(
         allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
 
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 menuRepository.getMenu()
             }.onFailure {
                 Timber.e(it)
@@ -94,7 +95,7 @@ class OtherViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.loadUser()
             }.onFailure {
                 Timber.e(it)
@@ -115,7 +116,7 @@ class OtherViewModel(
     fun signOut() {
         otherAnalytics.logoutClick()
         GlobalScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.signOut()
             }.onSuccess {
                 systemMessenger.showMessage("Данные авторизации удалены")

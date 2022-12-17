@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.quill.inject
 
@@ -30,12 +30,12 @@ abstract class BaseDimensionsFragment(
     }
 
     @CallSuper
-    protected open fun interceptDimens(dimensions: DimensionHelper.Dimensions) {
+    protected open fun interceptDimens(dimensions: Dimensions) {
         updateDimens(dimensions)
     }
 
     @CallSuper
-    protected open fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    protected open fun updateDimens(dimensions: Dimensions) {
         // do nothing
     }
 }

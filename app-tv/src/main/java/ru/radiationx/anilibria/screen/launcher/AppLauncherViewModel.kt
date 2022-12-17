@@ -12,6 +12,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -67,7 +68,7 @@ class AppLauncherViewModel(
         }
         appReadyAction.value = Unit
         GlobalScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.loadUser()
             }.onFailure {
                 Timber.e(it)

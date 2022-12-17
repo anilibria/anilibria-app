@@ -2,7 +2,6 @@ package ru.radiationx.shared_app.imageloader
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.widget.ImageView
 
 class ImageLoaderScope {
@@ -21,6 +20,10 @@ class ImageLoaderScope {
         config = config.copy(onError = listener)
     }
 
+    fun onCancel(listener: () -> Unit) {
+        config = config.copy(onCancel = listener)
+    }
+
     fun onComplete(listener: () -> Unit) {
         config = config.copy(onComplete = listener)
     }
@@ -32,6 +35,7 @@ data class ImageLoaderScopeConfig(
     val onStart: (() -> Unit)? = null,
     val onSuccess: ((Bitmap) -> Unit)? = null,
     val onError: ((Throwable) -> Unit)? = null,
+    val onCancel: (() -> Unit)? = null,
     val onComplete: (() -> Unit)? = null,
 )
 

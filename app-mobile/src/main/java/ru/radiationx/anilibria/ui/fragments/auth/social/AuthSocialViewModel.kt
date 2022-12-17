@@ -13,6 +13,7 @@ import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
@@ -44,7 +45,7 @@ class AuthSocialViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            runCatching {
+            coRunCatching {
                 authRepository.getSocialAuth(argExtra.key)
             }.onSuccess { data ->
                 detector.loadUrl(data.socialUrl)
@@ -99,7 +100,7 @@ class AuthSocialViewModel(
 
         viewModelScope.launch {
             _state.update { it.copy(isAuthProgress = true) }
-            runCatching {
+            coRunCatching {
                 authRepository.signInSocial(resultUrl, data)
             }.onSuccess {
                 authSocialAnalytics.success()

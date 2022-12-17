@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,14 +27,15 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.DimensionHelper
+import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 
 
 /**
  * Created by radiationx on 13.01.18.
  */
-class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+class FavoritesFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
@@ -83,6 +85,10 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
         super.onViewCreated(view, savedInstanceState)
 
         //ToolbarHelper.fixInsets(toolbar)
+        postponeEnterTransition()
+        binding.recyclerView.doOnLayout {
+            startPostponedEnterTransition()
+        }
 
         searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
 
@@ -149,7 +155,7 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateDimens(dimensions: DimensionHelper.Dimensions) {
+    override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
@@ -172,23 +178,22 @@ class FavoritesFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layo
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        context?.let {
-            val titles =
-                arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
-            AlertDialog.Builder(it)
-                .setItems(titles) { dialog, which ->
-                    when (which) {
-                        0 -> {
-                            viewModel.onCopyClick(item)
-                            Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-                        }
-                        1 -> viewModel.onShareClick(item)
-                        2 -> viewModel.onShortcutClick(item)
-                        3 -> viewModel.deleteFav(item.id)
+        val titles =
+            arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
+        AlertDialog.Builder(requireContext())
+            .setItems(titles) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        viewModel.onCopyClick(item)
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
+                            .show()
                     }
+                    1 -> viewModel.onShareClick(item)
+                    2 -> viewModel.onShortcutClick(item)
+                    3 -> viewModel.deleteFav(item.id)
                 }
-                .show()
-        }
+            }
+            .show()
         return false
     }
 

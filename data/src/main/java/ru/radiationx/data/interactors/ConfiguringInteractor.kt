@@ -1,5 +1,6 @@
 package ru.radiationx.data.interactors
 
+import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.analytics.TimeCounter
@@ -10,7 +11,6 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.system.WrongHostException
-import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeoutException
@@ -117,7 +117,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            coRunCatching {
+            runCatching {
                 zipLastCheck()
             }.onSuccess {
                 analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), it, null)
@@ -170,7 +170,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            coRunCatching {
+            runCatching {
                 configurationRepository.getConfiguration()
             }.onSuccess {
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
@@ -206,7 +206,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            coRunCatching {
+            runCatching {
                 mergeAvailCheck(addresses)
             }.onSuccess { activeAddress ->
                 isFullSuccess = true
@@ -253,7 +253,7 @@ class ConfiguringInteractor @Inject constructor(
                     needRefresh = false
                 )
             }
-            coRunCatching {
+            runCatching {
                 flowOf(proxies.toTypedArray())
                     .onEach {
                         if (it.isEmpty()) {

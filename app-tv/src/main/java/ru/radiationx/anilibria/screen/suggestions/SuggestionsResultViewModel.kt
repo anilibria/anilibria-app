@@ -61,18 +61,16 @@ class SuggestionsResultViewModel(
     }
 
     private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
-        viewModelScope.launch {
-            val result = SuggestionsController.SearchResult(items, query, validQuery)
-            suggestionsController.resultEvent.emit(result)
-            progressState.value = false
-            resultData.value = items.map {
-                LibriaCard(
-                    it.names.getOrNull(0).orEmpty(),
-                    it.names.getOrNull(1).orEmpty(),
-                    it.poster.orEmpty(),
-                    LibriaCard.Type.Release(it.id)
-                )
-            }
+        val result = SuggestionsController.SearchResult(items, query, validQuery)
+        suggestionsController.resultEvent.emit(result)
+        progressState.value = false
+        resultData.value = items.map {
+            LibriaCard(
+                it.names.getOrNull(0).orEmpty(),
+                it.names.getOrNull(1).orEmpty(),
+                it.poster.orEmpty(),
+                LibriaCard.Type.Release(it.id)
+            )
         }
     }
 }

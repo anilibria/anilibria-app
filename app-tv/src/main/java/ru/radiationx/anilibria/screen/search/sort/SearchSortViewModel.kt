@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.screen.search.sort
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -34,16 +32,14 @@ class SearchSortViewModel(
     }
 
     fun applySort(index: Int) {
-        viewModelScope.launch {
-            guidedRouter.close()
-            val sort = when (index) {
-                0 -> SearchForm.Sort.RATING
-                1 -> SearchForm.Sort.DATE
-                else -> null
-            }
-            sort?.also {
-                searchController.sortEvent.emit(it)
-            }
+        guidedRouter.close()
+        val sort = when (index) {
+            0 -> SearchForm.Sort.RATING
+            1 -> SearchForm.Sort.DATE
+            else -> null
+        }
+        sort?.also {
+            searchController.sortEvent.emit(it)
         }
     }
 }

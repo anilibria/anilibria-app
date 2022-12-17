@@ -56,12 +56,10 @@ class SearchYearViewModel(
     }
 
     override fun applyValues() {
-        viewModelScope.launch {
-            guidedRouter.close()
-            val newYears = currentYears.filterIndexed { index, item ->
-                checkedValues.contains(item.value)
-            }.toSet()
-            searchController.yearsEvent.emit(newYears)
-        }
+        guidedRouter.close()
+        val newYears = currentYears.filterIndexed { index, item ->
+            checkedValues.contains(item.value)
+        }.toSet()
+        searchController.yearsEvent.emit(newYears)
     }
 }

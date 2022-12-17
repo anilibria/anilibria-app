@@ -96,14 +96,12 @@ class UpdateViewModel(
     }
 
     private fun downloadClick() {
-        viewModelScope.launch {
-            val data = updateData.value ?: return@launch
-            if (data.links.size > 1) {
-                guidedRouter.open(UpdateSourceScreen())
-            } else {
-                val link = data.links.firstOrNull() ?: return@launch
-                updateController.downloadAction.emit(link)
-            }
+        val data = updateData.value ?: return
+        if (data.links.size > 1) {
+            guidedRouter.open(UpdateSourceScreen())
+        } else {
+            val link = data.links.firstOrNull() ?: return
+            updateController.downloadAction.emit(link)
         }
     }
 

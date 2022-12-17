@@ -17,7 +17,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -186,6 +185,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntentData(intent)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
         createPIPParams()
@@ -315,6 +315,54 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         intent?.also { handleIntent(it) }
     }
 
+    override fun onUserLeaveHint() {
+        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
+            enterPipMode()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveEpisodeAtNoZero()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.player.pause()
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        newConfig.also { config ->
+            updateByConfig(config)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.player.setOnPreparedListener(null)
+        binding.player.setOnCompletionListener(null)
+        binding.player.setOnVideoSizedChangedListener(null)
+        binding.player.setAnalyticsListener(null)
+
+        videoControls?.apply {
+            setOpeningListener(null)
+            setVisibilityListener(null)
+            setButtonListener(null)
+        }
+
+        getAverageStatisticsValues().forEach { statsEntry ->
+            statsEntry.value.forEach { qualityEntry ->
+                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
+            }
+        }
+        saveEpisodeAtNoZero()
+        binding.player.stopPlayback()
+        exitFullscreen()
+        videoControls = null
+    }
+
     private fun checkPipMode(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
@@ -337,7 +385,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
-    private fun handleIntent(intent: Intent) {
+    private fun handleIntentData(intent: Intent) {
         val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
         }
@@ -351,7 +399,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         this.currentEpisodeId = episodeId
         this.currentQuality = quality
         this.playFlag = playFlag
+    }
 
+    private fun handleIntent(intent: Intent) {
+        handleIntentData(intent)
         updateAndPlayRelease()
     }
 
@@ -425,22 +476,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         savePIPControl()
     }
 
-    override fun onUserLeaveHint() {
-        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
-            enterPipMode()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveEpisodeAtNoZero()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        binding.player.pause()
-    }
-
     private fun getInMultiWindow(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             isInMultiWindowMode
@@ -454,13 +489,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             isInPictureInPictureMode
         } else {
             false
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        newConfig.also { config ->
-            updateByConfig(config)
         }
     }
 
@@ -493,37 +521,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 isViewed = true
             )
         )
-    }
-
-
-    private val random = Random()
-
-    private fun rand(from: Int, to: Int): Int {
-        return random.nextInt(to - from) + from
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.player.setOnPreparedListener(null)
-        binding.player.setOnCompletionListener(null)
-        binding.player.setOnVideoSizedChangedListener(null)
-        binding.player.setAnalyticsListener(null)
-
-        videoControls?.apply {
-            setOpeningListener(null)
-            setVisibilityListener(null)
-            setButtonListener(null)
-        }
-
-        getAverageStatisticsValues().forEach { statsEntry ->
-            statsEntry.value.forEach { qualityEntry ->
-                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
-            }
-        }
-        saveEpisodeAtNoZero()
-        binding.player.stopPlayback()
-        exitFullscreen()
-        videoControls = null
     }
 
     private fun getNextEpisode(): Episode? {

@@ -62,7 +62,7 @@ class App : Application() {
         val mypid = android.os.Process.myPid()
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val processes = manager.runningAppProcesses
-        return processes.firstOrNull { it.pid == mypid }?.processName
+        return processes?.firstOrNull { it.pid == mypid }?.processName
     }
 
 }

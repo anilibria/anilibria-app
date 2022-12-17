@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseRowsViewModel
@@ -17,7 +17,7 @@ class SuggestionsRowsViewModel(
         const val RECOMMENDS_ROW_ID = 2L
     }
 
-    val emptyResultState = MutableLiveData<Boolean>()
+    val emptyResultState = MutableStateFlow(false)
 
     override val rowIds: List<Long> = listOf(RESULT_ROW_ID, RECOMMENDS_ROW_ID)
 

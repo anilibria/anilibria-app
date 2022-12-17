@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.screen.search.sort
 
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -19,8 +19,8 @@ class SearchSortViewModel(
         "По новизне"
     )
 
-    val titlesData = MutableLiveData<List<String>>()
-    val selectedIndex = MutableLiveData<Int>()
+    val titlesData = MutableStateFlow<List<String>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
     init {
         titlesData.value = titles

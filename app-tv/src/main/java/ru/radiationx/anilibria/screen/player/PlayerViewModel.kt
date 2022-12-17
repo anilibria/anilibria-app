@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.player
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -11,6 +11,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.shared.ktx.EventFlow
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -21,10 +22,10 @@ class PlayerViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    val videoData = MutableLiveData<Video>()
-    val qualityState = MutableLiveData<Int>()
-    val speedState = MutableLiveData<Float>()
-    val playAction = MutableLiveData<Boolean>()
+    val videoData = MutableStateFlow<Video?>(null)
+    val qualityState = MutableStateFlow<Int?>(null)
+    val speedState = MutableStateFlow<Float?>(null)
+    val playAction = EventFlow<Boolean>()
 
     private var currentEpisodes = mutableListOf<Episode>()
     private var currentRelease: Release? = null
@@ -146,7 +147,7 @@ class PlayerViewModel(
         if (currentComplete == complete) return
         currentComplete = complete
         if (complete) {
-            playAction.value = false
+            playAction.emit(false)
             val nextEpisode = getNextEpisode()
             if (nextEpisode == null) {
                 guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
@@ -154,7 +155,7 @@ class PlayerViewModel(
                 guidedRouter.open(PlayerEndEpisodeGuidedScreen(release.id, episode.id))
             }
         } else {
-            playAction.value = true
+            playAction.emit(true)
         }
     }
 

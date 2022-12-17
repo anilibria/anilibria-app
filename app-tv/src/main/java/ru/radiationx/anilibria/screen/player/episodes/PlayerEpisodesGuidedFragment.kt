@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.player.episodes
 import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.quill.viewModel
@@ -34,7 +35,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) { selectedIndex ->
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) { selectedIndex ->
             if (actions.any { it.hasSubActions() }) {
                 val chunkActionId = ((selectedIndex / CHUNK_SIZE) + CHUNK_ID_OFFSET).toLong()
                 val chunkPosition = findActionPositionById(chunkActionId)

@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
@@ -23,8 +23,8 @@ class PlayerEpisodesViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    val episodesData = MutableLiveData<List<Pair<String, String?>>>()
-    val selectedIndex = MutableLiveData<Int>()
+    val episodesData = MutableStateFlow<List<Pair<String, String?>>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
     private val currentEpisodes = mutableListOf<Episode>()
 

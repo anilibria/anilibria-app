@@ -5,6 +5,7 @@ import android.view.View
 import androidx.leanback.widget.GuidanceStylist
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
 import ru.radiationx.anilibria.screen.auth.GuidedProgressActionsStylist
@@ -50,7 +51,7 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
-        subscribeTo(viewModel.otpInfoData) {
+        subscribeTo(viewModel.otpInfoData.filterNotNull()) {
             guidanceStylist.apply {
                 titleView.text = "Код: ${it.code}"
                 descriptionView.text = it.description

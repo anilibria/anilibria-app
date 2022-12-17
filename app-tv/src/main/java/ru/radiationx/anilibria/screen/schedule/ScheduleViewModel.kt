@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.schedule
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -20,7 +20,7 @@ class ScheduleViewModel(
     private val cardRouter: LibriaCardRouter
 ) : LifecycleViewModel() {
 
-    val scheduleRows = MutableLiveData<List<Pair<String, List<LibriaCard>>>>()
+    val scheduleRows = MutableStateFlow<List<Pair<String, List<LibriaCard>>>>(emptyList())
 
     init {
         scheduleRepository

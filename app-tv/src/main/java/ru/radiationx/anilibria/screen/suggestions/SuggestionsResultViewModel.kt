@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -22,8 +21,8 @@ class SuggestionsResultViewModel(
     private var currentQuery = ""
     private val queryRelay = MutableSharedFlow<String>()
 
-    val progressState = MutableLiveData<Boolean>()
-    val resultData = MutableLiveData<List<LibriaCard>>()
+    val progressState = MutableStateFlow<Boolean>(false)
+    val resultData = MutableStateFlow<List<LibriaCard>>(emptyList())
 
     init {
         queryRelay

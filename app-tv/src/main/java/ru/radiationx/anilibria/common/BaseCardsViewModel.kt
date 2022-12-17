@@ -2,16 +2,19 @@ package ru.radiationx.anilibria.common
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
-    val cardsData = MutableLiveData<List<CardItem>>()
-    val rowTitle = MutableLiveData<String>()
+    val cardsData = MutableStateFlow<List<CardItem>>(emptyList())
+    val rowTitle = MutableStateFlow<String>("")
 
     protected open val firstPage = 1
     protected open val perPage = 20
@@ -78,7 +81,9 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                 cardsData.value = currentCards + loadingCard
             }
             coRunCatching {
-                getLoader(requestPage)
+                withContext(Dispatchers.IO) {
+                    getLoader(requestPage)
+                }
             }.onSuccess { newCards ->
                 currentPage = requestPage
                 if (requestPage <= 1) {

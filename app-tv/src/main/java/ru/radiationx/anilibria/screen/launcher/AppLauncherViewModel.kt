@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.launcher
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,7 +26,7 @@ class AppLauncherViewModel(
 
     private var firstLaunch = true
 
-    val appReadyAction = MutableLiveData<Unit>()
+    val appReadyState = MutableStateFlow<Unit?>(null)
 
     fun openRelease(id: ReleaseId) {
         router.navigateTo(DetailsScreen(id))
@@ -66,7 +66,7 @@ class AppLauncherViewModel(
         if (authRepository.getAuthState() == AuthState.NO_AUTH) {
             router.navigateTo(AuthGuidedScreen())
         }
-        appReadyAction.value = Unit
+        appReadyState.value = Unit
         GlobalScope.launch {
             coRunCatching {
                 authRepository.loadUser()

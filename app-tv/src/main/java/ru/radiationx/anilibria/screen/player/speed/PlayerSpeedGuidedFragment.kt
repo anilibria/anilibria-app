@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.player.speed
 import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.quill.viewModel
@@ -32,7 +33,7 @@ class PlayerSpeedGuidedFragment : BasePlayerGuidedFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) {
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) {
             selectedActionPosition = it
         }
     }

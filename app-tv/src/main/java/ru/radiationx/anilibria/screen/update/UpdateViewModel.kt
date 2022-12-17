@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,11 +39,11 @@ class UpdateViewModel(
     private val context: Context
 ) : LifecycleViewModel() {
 
-    val updateData = MutableLiveData<UpdateData>()
-    val progressState = MutableLiveData<Boolean>()
-    val downloadProgressShowState = MutableLiveData<Boolean>()
-    val downloadProgressData = MutableLiveData<Int>()
-    val downloadActionTitle = MutableLiveData<String>()
+    val updateData = MutableStateFlow<UpdateData?>(null)
+    val progressState = MutableStateFlow(false)
+    val downloadProgressShowState = MutableStateFlow(false)
+    val downloadProgressData = MutableStateFlow(0)
+    val downloadActionTitle = MutableStateFlow<String?>(null)
 
     private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesGuidedFragment.Companion.ARG_VALUES
@@ -69,7 +70,7 @@ abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) {
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) {
             selectedActionPosition = it
         }
     }

@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.MotionLayoutListener
 import ru.radiationx.anilibria.databinding.FragmentConfigBinding
@@ -50,7 +51,7 @@ class ConfigFragment : Fragment(R.layout.fragment_config) {
             binding.mainConstraint.transitionToEnd()
             binding.mainConstraint.setTransitionListener(startTransitionListener)
         }
-        subscribeTo(viewModel.screenStateData, ::updateScreen)
+        subscribeTo(viewModel.screenStateData.filterNotNull(), ::updateScreen)
         subscribeTo(viewModel.completeEvent) { startCompleteTransition() }
     }
 

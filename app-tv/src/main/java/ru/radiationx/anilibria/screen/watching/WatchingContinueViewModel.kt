@@ -48,7 +48,7 @@ class WatchingContinueViewModel(
         .let {
             it.sortedByDescending { it.second?.lastAccess }.map {
                 converter.toCard(it.first)
-                    .copy(description = "Вы остановились на ${it.second?.id} серии")
+                    .copy(description = "Вы остановились на ${it.second?.id?.id} серии")
             }
         }
 

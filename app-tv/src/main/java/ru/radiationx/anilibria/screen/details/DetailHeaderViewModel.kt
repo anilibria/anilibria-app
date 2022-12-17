@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.details
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,8 +39,8 @@ class DetailHeaderViewModel(
 
     private val releaseId = argExtra.id
 
-    val releaseData = MutableLiveData<LibriaDetails>()
-    val progressState = MutableLiveData<DetailsState>()
+    val releaseData = MutableStateFlow<LibriaDetails?>(null)
+    val progressState = MutableStateFlow<DetailsState>(DetailsState())
 
     private var currentRelease: Release? = null
 

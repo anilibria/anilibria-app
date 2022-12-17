@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.search
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
@@ -25,7 +25,7 @@ class SearchViewModel(
 
     private var searchForm = SearchForm()
 
-    val progressState = MutableLiveData<Boolean>()
+    val progressState = MutableStateFlow<Boolean>(false)
 
     override val loadOnCreate: Boolean = false
 

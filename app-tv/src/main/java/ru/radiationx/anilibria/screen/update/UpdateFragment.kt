@@ -10,6 +10,7 @@ import androidx.leanback.app.ProgressBarManager
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
@@ -46,7 +47,7 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
         backgroundManager.clearGradient()
         progressBarManager.setRootView(binding.updateRoot)
 
-        subscribeTo(viewModel.updateData) {
+        subscribeTo(viewModel.updateData.filterNotNull()) {
             val string = StringBuilder().apply {
                 appendParam("Версия", it.name.orEmpty())
                 appendParam("Дата", it.date.orEmpty())

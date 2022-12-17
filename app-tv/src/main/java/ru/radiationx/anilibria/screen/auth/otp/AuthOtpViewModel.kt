@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.screen.auth.otp
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -21,14 +21,13 @@ class AuthOtpViewModel(
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
 
-    val otpInfoData = MutableLiveData<OtpInfo>()
-    val state = MutableLiveData<State>()
+    val otpInfoData = MutableStateFlow<OtpInfo?>(null)
+    val state = MutableStateFlow<State>(State())
 
     private var timerJob: Job? = null
     private var signInJob: Job? = null
 
     init {
-        state.value = State()
         loadOtpInfo()
     }
 
@@ -48,10 +47,11 @@ class AuthOtpViewModel(
     }
 
     private fun signIn() {
+        val code = otpInfoData.value?.code ?: return
         signInJob?.cancel()
         signInJob = viewModelScope.launch {
             coRunCatching {
-                authRepository.signInOtp(otpInfoData.value!!.code)
+                authRepository.signInOtp(code)
             }.onSuccess {
                 guidedRouter.finishGuidedChain()
             }.onFailure {

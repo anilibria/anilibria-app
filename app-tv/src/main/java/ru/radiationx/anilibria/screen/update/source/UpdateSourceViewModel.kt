@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.update.source
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ class UpdateSourceViewModel(
     private val updateController: UpdateController
 ) : LifecycleViewModel() {
 
-    val sourcesData = MutableLiveData<List<UpdateData.UpdateLink>>()
+    val sourcesData = MutableStateFlow<List<UpdateData.UpdateLink>>(emptyList())
 
     init {
         checkerRepository

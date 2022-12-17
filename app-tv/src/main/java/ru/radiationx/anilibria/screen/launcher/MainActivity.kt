@@ -46,7 +46,7 @@ class MainActivity : FragmentActivity() {
         setContentView(R.layout.activity_fragments)
         lifecycle.addObserver(viewModel)
 
-        subscribeTo(viewModel.appReadyAction) {
+        subscribeTo(viewModel.appReadyState) {
             handleIntent(intent)
         }
 

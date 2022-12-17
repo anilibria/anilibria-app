@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.player.quality
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
@@ -25,8 +25,8 @@ class PlayerQualityViewModel(
         const val FULL_HD_ACTION_ID = PreferencesHolder.QUALITY_FULL_HD.toLong()
     }
 
-    val availableData = MutableLiveData<List<Long>>()
-    val selectedData = MutableLiveData<Long>()
+    val availableData = MutableStateFlow<List<Long>>(emptyList())
+    val selectedData = MutableStateFlow<Long?>(null)
 
     init {
         combine(

@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.player
 import android.os.Bundle
 import android.view.View
 import com.google.android.exoplayer2.PlaybackParameters
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.viewModel
@@ -48,7 +49,7 @@ class PlayerFragment : BasePlayerFragment() {
             override fun onEpisodesClick() = viewModel.onEpisodesClick(getPosition())
         }
 
-        subscribeTo(viewModel.videoData) {
+        subscribeTo(viewModel.videoData.filterNotNull()) {
             playerGlue?.apply {
                 title = it.title
                 subtitle = it.subtitle
@@ -57,7 +58,7 @@ class PlayerFragment : BasePlayerFragment() {
             }
         }
 
-        subscribeTo(viewModel.playAction) {
+        subscribeTo(viewModel.playAction.filterNotNull()) {
             if (it) {
                 playerGlue?.play()
             } else {
@@ -65,11 +66,11 @@ class PlayerFragment : BasePlayerFragment() {
             }
         }
 
-        subscribeTo(viewModel.speedState) {
+        subscribeTo(viewModel.speedState.filterNotNull()) {
             player?.setPlaybackParameters(PlaybackParameters(it))
         }
 
-        subscribeTo(viewModel.qualityState) {
+        subscribeTo(viewModel.qualityState.filterNotNull()) {
             playerGlue?.setQuality(it)
         }
     }

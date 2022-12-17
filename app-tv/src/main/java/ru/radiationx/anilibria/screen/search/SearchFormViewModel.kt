@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.search
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
@@ -17,11 +17,11 @@ class SearchFormViewModel(
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
 
-    val yearData = MutableLiveData<String>()
-    val seasonData = MutableLiveData<String>()
-    val genreData = MutableLiveData<String>()
-    val sortData = MutableLiveData<String>()
-    val onlyCompletedData = MutableLiveData<String>()
+    val yearData = MutableStateFlow<String?>(null)
+    val seasonData = MutableStateFlow<String?>(null)
+    val genreData = MutableStateFlow<String?>(null)
+    val sortData = MutableStateFlow<String?>(null)
+    val onlyCompletedData = MutableStateFlow<String?>(null)
 
     private var searchForm = SearchForm()
 

@@ -1,16 +1,16 @@
 package ru.radiationx.anilibria.screen.search
 
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
 abstract class BaseSearchValuesViewModel(
     private val argExtra: SearchValuesExtra
 ) : LifecycleViewModel() {
 
-    val progressState = MutableLiveData<Boolean>()
-    val valuesData = MutableLiveData<List<String>>()
-    val checkedIndicesData = MutableLiveData<List<Pair<Int, Boolean>>>()
-    val selectedIndex = MutableLiveData<Int>()
+    val progressState = MutableStateFlow<Boolean>(false)
+    val valuesData = MutableStateFlow<List<String>>(emptyList())
+    val checkedIndicesData = MutableStateFlow<List<Pair<Int, Boolean>>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
     protected val currentValues = mutableListOf<String>()
     protected val checkedValues = mutableSetOf<String>()

@@ -18,6 +18,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailsViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
     private val authRepository: AuthRepository
@@ -39,7 +40,7 @@ class DetailsViewModel(
         }
     }
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
     override val rowIds: List<Long> = listOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
 

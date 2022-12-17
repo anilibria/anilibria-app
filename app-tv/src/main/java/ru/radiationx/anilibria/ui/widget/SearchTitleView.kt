@@ -16,8 +16,7 @@ class SearchTitleView @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.browseTitleViewStyle
 ) : BrowseTitleView(context, attrs, defStyleAttr) {
 
-    private lateinit var binding: ViewSearchControlsBinding
-
+    private var binding: ViewSearchControlsBinding
 
     var year: String?
         get() = binding.searchTitleYear.getWonderText()

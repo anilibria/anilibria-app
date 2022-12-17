@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerQualityViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -23,9 +23,6 @@ class PlayerQualityViewModel(
         const val HD_ACTION_ID = PreferencesHolder.QUALITY_HD.toLong()
         const val FULL_HD_ACTION_ID = PreferencesHolder.QUALITY_FULL_HD.toLong()
     }
-
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
 
     val availableData = MutableLiveData<List<Long>>()
     val selectedData = MutableLiveData<Long>()
@@ -56,7 +53,9 @@ class PlayerQualityViewModel(
 
     private fun updateAvailable() {
         val available = mutableListOf(SD_ACTION_ID, HD_ACTION_ID, FULL_HD_ACTION_ID)
-        releaseInteractor.getFull(argReleaseId)?.episodes?.firstOrNull { it.id == argEpisodeId }
+        releaseInteractor.getFull(argExtra.releaseId)
+            ?.episodes
+            ?.firstOrNull { it.id == argExtra.episodeId }
             ?.also {
                 if (it.urlFullHd.isNullOrEmpty()) {
                     available.remove(FULL_HD_ACTION_ID)

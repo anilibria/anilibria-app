@@ -11,20 +11,20 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailRecommendsViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
     override val loadOnCreate: Boolean = false
 

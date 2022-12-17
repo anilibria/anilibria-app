@@ -10,20 +10,16 @@ import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
-
-    var argReleaseId: ReleaseId? = null
-    var argEpisodeId: EpisodeId? = null
 
     val videoData = MutableLiveData<Video>()
     val qualityState = MutableLiveData<Int>()
@@ -70,12 +66,12 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
 
         releaseInteractor
-            .observeFull(argReleaseId)
+            .observeFull(argExtra.releaseId)
             .onEach { release ->
                 currentRelease = release
                 currentEpisodes.clear()
                 currentEpisodes.addAll(release.episodes.reversed())
-                val episodeId = currentEpisode?.id ?: argEpisodeId
+                val episodeId = currentEpisode?.id ?: argExtra.episodeId
                 val episode = currentEpisodes.firstOrNull { it.id == episodeId }
                     ?: currentEpisodes.firstOrNull()
                 episode?.also { playEpisode(it) }

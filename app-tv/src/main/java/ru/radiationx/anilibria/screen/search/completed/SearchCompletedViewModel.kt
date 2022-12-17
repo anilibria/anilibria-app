@@ -10,6 +10,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchCompletedViewModel(
+    private val argExtra: SearchCompletedExtra,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -19,15 +20,13 @@ class SearchCompletedViewModel(
         "Только завершенные"
     )
 
-    var argCompleted: Boolean = false
-
     val titlesData = MutableLiveData<List<String>>()
     val selectedIndex = MutableLiveData<Int>()
 
     override fun onCreate() {
         super.onCreate()
         titlesData.value = titles
-        selectedIndex.value = if (argCompleted) 1 else 0
+        selectedIndex.value = if (argExtra.isCompleted) 1 else 0
     }
 
     fun applySort(index: Int) {

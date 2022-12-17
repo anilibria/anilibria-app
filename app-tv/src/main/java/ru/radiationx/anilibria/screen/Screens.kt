@@ -82,25 +82,25 @@ class SearchScreen : SupportAppScreen() {
     }
 }
 
-class SearchYearGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+class SearchYearGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return SearchYearGuidedFragment().putValues(values)
     }
 }
 
-class SearchSeasonGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+class SearchSeasonGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return SearchSeasonGuidedFragment().putValues(values)
     }
 }
 
-class SearchGenreGuidedScreen(private val values: List<String>? = null) : GuidedAppScreen() {
+class SearchGenreGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return SearchGenreGuidedFragment().putValues(values)
     }
 }
 
-class SearchSortGuidedScreen(private val sort: SearchForm.Sort? = null) : GuidedAppScreen() {
+class SearchSortGuidedScreen(private val sort: SearchForm.Sort) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return SearchSortGuidedFragment.newInstance(sort)
     }

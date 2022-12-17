@@ -54,15 +54,15 @@ class SearchFormViewModel(
     }
 
     fun onYearClick() {
-        guidedRouter.open(SearchYearGuidedScreen(searchForm.years?.map { it.value }))
+        guidedRouter.open(SearchYearGuidedScreen(searchForm.years.map { it.value }))
     }
 
     fun onSeasonClick() {
-        guidedRouter.open(SearchSeasonGuidedScreen(searchForm.seasons?.map { it.value }))
+        guidedRouter.open(SearchSeasonGuidedScreen(searchForm.seasons.map { it.value }))
     }
 
     fun onGenreClick() {
-        guidedRouter.open(SearchGenreGuidedScreen(searchForm.genres?.map { it.value }))
+        guidedRouter.open(SearchGenreGuidedScreen(searchForm.genres.map { it.value }))
     }
 
     fun onSortClick() {

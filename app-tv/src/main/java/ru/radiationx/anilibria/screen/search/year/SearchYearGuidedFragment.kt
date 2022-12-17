@@ -6,5 +6,7 @@ import ru.radiationx.quill.viewModel
 
 class SearchYearGuidedFragment : BaseSearchValuesGuidedFragment() {
 
-    override val viewModel: BaseSearchValuesViewModel by viewModel<SearchYearViewModel>()
+    override val viewModel: BaseSearchValuesViewModel by viewModel<SearchYearViewModel> {
+        argExtra
+    }
 }

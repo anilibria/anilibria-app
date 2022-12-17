@@ -17,15 +17,13 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         private const val CHUNK_ENABLED = false
     }
 
-    private val viewModel by viewModel<PlayerEpisodesViewModel>()
+    private val viewModel by viewModel<PlayerEpisodesViewModel>() { argExtra }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        viewModel.argReleaseId = releaseId
-        viewModel.argEpisodeId = episodeId
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

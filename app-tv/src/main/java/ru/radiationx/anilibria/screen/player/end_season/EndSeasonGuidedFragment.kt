@@ -14,15 +14,13 @@ class EndSeasonGuidedFragment : BasePlayerGuidedFragment() {
         private const val CLOSE_ACTION_ID = 2L
     }
 
-    private val viewModel by viewModel<EndSeasonViewModel>()
+    private val viewModel by viewModel<EndSeasonViewModel>() { argExtra }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        viewModel.argReleaseId = releaseId
-        viewModel.argEpisodeId = episodeId
     }
 
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {

@@ -11,6 +11,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchSortViewModel(
+    private val argExtra: SearchSortExtra,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -20,18 +21,15 @@ class SearchSortViewModel(
         "По новизне"
     )
 
-    var argSort: SearchForm.Sort? = null
-
     val titlesData = MutableLiveData<List<String>>()
     val selectedIndex = MutableLiveData<Int>()
 
     override fun onCreate() {
         super.onCreate()
         titlesData.value = titles
-        selectedIndex.value = when (argSort) {
+        selectedIndex.value = when (argExtra.sort) {
             SearchForm.Sort.RATING -> 0
             SearchForm.Sort.DATE -> 1
-            else -> -1
         }
     }
 

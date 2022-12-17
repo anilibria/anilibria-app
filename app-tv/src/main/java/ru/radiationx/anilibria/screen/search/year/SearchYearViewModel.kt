@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
+import ru.radiationx.anilibria.screen.search.SearchValuesExtra
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -15,10 +16,11 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchYearViewModel(
+    private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
-) : BaseSearchValuesViewModel() {
+) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentYears = mutableListOf<YearItem>()
 

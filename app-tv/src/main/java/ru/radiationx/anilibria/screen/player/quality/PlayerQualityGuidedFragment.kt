@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
-    private val viewModel by viewModel<PlayerQualityViewModel>()
+    private val viewModel by viewModel<PlayerQualityViewModel>() { argExtra }
 
     private val sdAction by lazy {
         GuidedAction.Builder(requireContext())
@@ -42,8 +42,6 @@ class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        viewModel.argReleaseId = releaseId
-        viewModel.argEpisodeId = episodeId
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

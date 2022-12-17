@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
@@ -28,6 +27,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailHeaderViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
@@ -37,7 +37,7 @@ class DetailHeaderViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
     val releaseData = MutableLiveData<LibriaDetails>()
     val progressState = MutableLiveData<DetailsState>()

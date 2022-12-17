@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.screen.search
 import androidx.lifecycle.MutableLiveData
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
-abstract class BaseSearchValuesViewModel : LifecycleViewModel() {
-
-    var argValues = listOf<String>()
+abstract class BaseSearchValuesViewModel(
+    private val argExtra: SearchValuesExtra
+) : LifecycleViewModel() {
 
     val progressState = MutableLiveData<Boolean>()
     val valuesData = MutableLiveData<List<String>>()
@@ -17,7 +17,7 @@ abstract class BaseSearchValuesViewModel : LifecycleViewModel() {
 
     override fun onColdCreate() {
         super.onColdCreate()
-        checkedValues.addAll(argValues)
+        checkedValues.addAll(argExtra.values)
         updateChecked()
         updateSelected()
     }

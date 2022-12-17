@@ -6,9 +6,8 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
@@ -16,13 +15,11 @@ import java.util.*
 
 @InjectConstructor
 class PlayerEpisodesViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
-
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
 
     val episodesData = MutableLiveData<List<Pair<String, String?>>>()
     val selectedIndex = MutableLiveData<Int>()
@@ -32,7 +29,7 @@ class PlayerEpisodesViewModel(
     override fun onCreate() {
         super.onCreate()
 
-        releaseInteractor.getFull(argReleaseId)?.also {
+        releaseInteractor.getFull(argExtra.releaseId)?.also {
             currentEpisodes.clear()
             currentEpisodes.addAll(it.episodes.reversed())
         }
@@ -44,7 +41,7 @@ class PlayerEpisodesViewModel(
             }
             Pair(it.title.orEmpty(), description)
         }
-        selectedIndex.value = currentEpisodes.indexOfLast { it.id == argEpisodeId }
+        selectedIndex.value = currentEpisodes.indexOfLast { it.id == argExtra.episodeId }
     }
 
     fun applyEpisode(index: Int) {

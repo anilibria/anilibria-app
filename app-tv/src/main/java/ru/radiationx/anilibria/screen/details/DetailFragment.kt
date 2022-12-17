@@ -16,10 +16,16 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
+
+data class DetailExtra(
+    val id: ReleaseId
+) : QuillExtra
 
 class DetailFragment : RowsSupportFragment() {
 
@@ -33,10 +39,8 @@ class DetailFragment : RowsSupportFragment() {
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val releaseId by lazy {
-        requireNotNull(requireArguments().getParcelable<ReleaseId>(ARG_ID)) {
-            "Release id can't be null"
-        }
+    private val argExtra by lazy {
+        DetailExtra(id = getExtraNotNull(ARG_ID))
     }
 
     private val rowsPresenter by lazy {
@@ -55,10 +59,13 @@ class DetailFragment : RowsSupportFragment() {
     }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val detailsViewModel by viewModel<DetailsViewModel>()
-    private val headerViewModel by viewModel<DetailHeaderViewModel>()
-    private val relatedViewModel by viewModel<DetailRelatedViewModel>()
-    private val recommendsViewModel by viewModel<DetailRecommendsViewModel>()
+    private val detailsViewModel by viewModel<DetailsViewModel> { argExtra }
+
+    private val headerViewModel by viewModel<DetailHeaderViewModel> { argExtra }
+
+    private val relatedViewModel by viewModel<DetailRelatedViewModel> { argExtra }
+
+    private val recommendsViewModel by viewModel<DetailRecommendsViewModel> { argExtra }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +73,6 @@ class DetailFragment : RowsSupportFragment() {
         lifecycle.addObserver(headerViewModel)
         lifecycle.addObserver(relatedViewModel)
         lifecycle.addObserver(recommendsViewModel)
-
-        detailsViewModel.releaseId = releaseId
-        headerViewModel.releaseId = releaseId
-        relatedViewModel.releaseId = releaseId
-        recommendsViewModel.releaseId = releaseId
 
         adapter = rowsAdapter
 

@@ -6,20 +6,20 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailRelatedViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val releaseRepository: ReleaseRepository,
     private val converter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
     override val loadOnCreate: Boolean = false
 

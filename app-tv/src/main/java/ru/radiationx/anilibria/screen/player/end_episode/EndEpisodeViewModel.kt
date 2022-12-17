@@ -5,29 +5,26 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class EndEpisodeViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
-
     private val currentEpisodes = mutableListOf<Episode>()
     private val currentEpisode
-        get() = currentEpisodes.firstOrNull { it.id == argEpisodeId }
+        get() = currentEpisodes.firstOrNull { it.id == argExtra.episodeId }
 
     override fun onCreate() {
         super.onCreate()
-        releaseInteractor.getFull(argReleaseId)?.also {
+        releaseInteractor.getFull(argExtra.releaseId)?.also {
             currentEpisodes.clear()
             currentEpisodes.addAll(it.episodes.reversed())
         }

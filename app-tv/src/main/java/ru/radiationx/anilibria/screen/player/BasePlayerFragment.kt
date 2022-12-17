@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.screen.player
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.leanback.app.VideoSupportFragment
@@ -11,7 +10,6 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
-import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -29,8 +27,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dev.rx.tvtest.cust.CustomListRowPresenter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 open class BasePlayerFragment : VideoSupportFragment() {
 
@@ -130,7 +126,6 @@ open class BasePlayerFragment : VideoSupportFragment() {
         val playerGlue = VideoPlayerGlue(requireContext(), playerAdapter).apply {
             host = VideoSupportFragmentGlueHost(this@BasePlayerFragment)
         }
-        Log.d("kekeke", "keks ${playerGlue.isControlsOverlayAutoHideEnabled}")
 
         this.player = player
         this.playerGlue = playerGlue

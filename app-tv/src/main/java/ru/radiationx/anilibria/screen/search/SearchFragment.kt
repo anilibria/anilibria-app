@@ -19,7 +19,9 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 
 class SearchFragment : BaseVerticalGridFragment() {
 
-    private val cardsPresenter = CardPresenterSelector()
+    private val cardsPresenter = CardPresenterSelector {
+        cardsViewModel.onLinkCardBind()
+    }
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
 
     private val emptyTextManager by lazy { ExternalTextManager() }

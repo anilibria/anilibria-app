@@ -67,6 +67,10 @@ class MainScheduleViewModel(
         router.navigateTo(ScheduleScreen())
     }
 
+    override fun onLinkCardBind() {
+        // do nothing
+    }
+
     override fun onLibriaCardClick(card: LibriaCard) {
         cardRouter.navigate(card)
     }

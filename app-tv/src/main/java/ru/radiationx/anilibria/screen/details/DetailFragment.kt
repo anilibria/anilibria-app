@@ -76,6 +76,7 @@ class DetailFragment : RowsSupportFragment() {
 
         adapter = rowsAdapter
 
+
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             val viewMode: BaseCardsViewModel? =
                 getViewModel((row as ListRow).id) as? BaseCardsViewModel

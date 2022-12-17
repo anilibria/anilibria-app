@@ -65,7 +65,7 @@ class ScheduleFragment : BrowseSupportFragment() {
         super.onViewCreated(view, savedInstanceState)
         subscribeTo(viewModel.scheduleRows) {
             val rows = it.mapIndexed { index, day ->
-                val cardsPresenter = CardPresenterSelector()
+                val cardsPresenter = CardPresenterSelector(null)
                 val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
                 cardsAdapter.setItems(day.second, CardDiffCallback)
                 ListRow(index.toLong(), HeaderItem(day.first), cardsAdapter)

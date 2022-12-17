@@ -9,7 +9,9 @@ import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 
-class LinkCardPresenter : Presenter() {
+class LinkCardPresenter(
+    private val bindListener: (() -> Unit)?
+) : Presenter() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
         val cardHeight = parent.context.resources.getDimension(R.dimen.card_height).toInt()
@@ -27,6 +29,9 @@ class LinkCardPresenter : Presenter() {
 
     override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
         item as LinkCard
+        viewHolder.view.post {
+            bindListener?.invoke()
+        }
     }
 
     override fun onUnbindViewHolder(viewHolder: ViewHolder) {

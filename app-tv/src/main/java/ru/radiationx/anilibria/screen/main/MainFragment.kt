@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.leanback.app.RowsSupportFragment
 import androidx.leanback.widget.*
@@ -73,6 +74,7 @@ class MainFragment : RowsSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(mainViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->

@@ -15,7 +15,11 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 
 class YoutubeFragment : GridFragment() {
 
-    private val gridAdapter by lazy { ArrayObjectAdapter(CardPresenterSelector()) }
+    private val gridAdapter by lazy {
+        ArrayObjectAdapter(CardPresenterSelector {
+            viewModel.onLinkCardBind()
+        })
+    }
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 

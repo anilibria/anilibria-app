@@ -41,6 +41,10 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     }
 
     open fun onLinkCardClick() {
+        onLinkCardBind()
+    }
+
+    open fun onLinkCardBind() {
         currentPage++
         loadPage(currentPage)
     }
@@ -71,12 +75,11 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     )
 
     private fun loadPage(requestPage: Int = currentPage) {
-        if (requestPage != firstPage || progressOnRefresh) {
-            cardsData.value = currentCards + loadingCard
-        }
-
         requestJob?.cancel()
         requestJob = viewModelScope.launch {
+            if (requestPage != firstPage || progressOnRefresh) {
+                cardsData.value = currentCards + loadingCard
+            }
             coRunCatching {
                 getLoader(requestPage)
             }.onSuccess { newCards ->

@@ -31,13 +31,10 @@ class SearchCompletedGuidedFragment : FakeGuidedStepFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.titlesData) {
             actions = it.mapIndexed { index: Int, title: String ->

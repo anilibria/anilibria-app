@@ -14,8 +14,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
 import ru.radiationx.anilibria.di.DownloadModule
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.common.download.DownloadControllerImpl
@@ -35,12 +35,14 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
     override fun onCreate(savedInstanceState: Bundle?) {
         installModules(DownloadModule())
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        lifecycle.addObserver(downloadController)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
+        viewLifecycleOwner.lifecycle.addObserver(downloadController)
+
         backgroundManager.clearGradient()
         progressBarManager.setRootView(binding.updateRoot)
 

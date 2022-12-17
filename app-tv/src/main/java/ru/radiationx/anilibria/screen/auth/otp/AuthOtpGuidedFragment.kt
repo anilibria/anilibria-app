@@ -45,13 +45,10 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
 
     private val viewModel by viewModel<AuthOtpViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.otpInfoData) {
             guidanceStylist.apply {

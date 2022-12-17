@@ -25,9 +25,10 @@ class YoutubeFragment : GridFragment() {
 
     private val viewModel by viewModel<YouTubeViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         gridPresenter = VerticalGridPresenter().apply {
             numberOfColumns = 2
@@ -55,10 +56,7 @@ class YoutubeFragment : GridFragment() {
 
 
         this.adapter = gridAdapter
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         subscribeTo(viewModel.cardsData) {
             gridAdapter.setItems(it, CardDiffCallback)
         }

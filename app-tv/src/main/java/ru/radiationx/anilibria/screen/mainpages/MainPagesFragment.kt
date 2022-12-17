@@ -16,6 +16,7 @@ import androidx.leanback.widget.PageRow
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.widget.BrowseTitleView
@@ -36,7 +37,6 @@ class MainPagesFragment : BrowseSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
         mainFragmentRegistry.registerFragment(PageRow::class.java, fragmentFactory)
         setupUi()
         showMenu()
@@ -108,6 +108,7 @@ class MainPagesFragment : BrowseSupportFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.hasUpdatesData) {
             val alert = if (it) "Обновление" else null

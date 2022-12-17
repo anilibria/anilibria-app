@@ -32,13 +32,28 @@ class MainFragment : RowsSupportFragment() {
     private val favoritesViewModel by quillParentViewModel<MainFavoritesViewModel>()
     private val youtubeViewModel by quillParentViewModel<MainYouTubeViewModel>()
 
+    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
+        MainViewModel.FEED_ROW_ID -> feedViewModel
+        MainViewModel.SCHEDULE_ROW_ID -> scheduleViewModel
+        MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
+        MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
+        else -> null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(mainViewModel)
-        lifecycle.addObserver(feedViewModel)
-        lifecycle.addObserver(scheduleViewModel)
-        lifecycle.addObserver(favoritesViewModel)
-        lifecycle.addObserver(youtubeViewModel)
+        Log.d("kekeke", "main oncreaate")
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("kekeke", "main onviewcreated")
+
+        viewLifecycleOwner.lifecycle.addObserver(mainViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(feedViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(scheduleViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(favoritesViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(youtubeViewModel)
 
         adapter = rowsAdapter
         onItemViewSelectedListener = ItemViewSelectedListener()
@@ -62,18 +77,6 @@ class MainFragment : RowsSupportFragment() {
                 }
             }
         }
-    }
-
-    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
-        MainViewModel.FEED_ROW_ID -> feedViewModel
-        MainViewModel.SCHEDULE_ROW_ID -> scheduleViewModel
-        MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
-        MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
-        else -> null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(mainViewModel.rowListData) { rowList ->

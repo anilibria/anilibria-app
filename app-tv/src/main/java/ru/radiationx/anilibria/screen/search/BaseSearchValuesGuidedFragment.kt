@@ -33,13 +33,10 @@ abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         progressManager.rootView =
             view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup

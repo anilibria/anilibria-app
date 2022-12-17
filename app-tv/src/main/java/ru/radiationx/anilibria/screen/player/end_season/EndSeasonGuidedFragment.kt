@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.player.end_season
 
 import android.os.Bundle
+import android.view.View
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
@@ -18,9 +19,9 @@ class EndSeasonGuidedFragment : BasePlayerGuidedFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
     }
 
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {

@@ -37,13 +37,11 @@ class ConfigFragment : Fragment(R.layout.fragment_config) {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
+
         binding.configActionRepeat.setOnClickListener { viewModel.repeatCheck() }
         binding.configActionSkip.setOnClickListener { viewModel.skipCheck() }
         binding.configActionNext.setOnClickListener { viewModel.nextCheck() }

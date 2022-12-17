@@ -40,9 +40,14 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
             single<SuggestionsController>()
         })
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(rowsViewModel)
-        lifecycle.addObserver(resultViewModel)
-        lifecycle.addObserver(recommendsViewModel)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(rowsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(resultViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
 
         backgroundManager.clearGradient()
 
@@ -62,10 +67,6 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
                 }
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         progressManager.rootView = view as ViewGroup
         progressManager.initialDelay = 0L

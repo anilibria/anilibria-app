@@ -39,11 +39,11 @@ class SearchFragment : BaseVerticalGridFragment() {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        lifecycle.addObserver(cardsViewModel)
-        lifecycle.addObserver(formViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(cardsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(formViewModel)
 
         title = "Каталог"
         gridPresenter = VerticalGridPresenter().apply {
@@ -89,10 +89,6 @@ class SearchFragment : BaseVerticalGridFragment() {
 
         prepareEntranceTransition()
         adapter = cardsAdapter
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         emptyTextManager.rootView = view as ViewGroup
         emptyTextManager.initialDelay = 0L

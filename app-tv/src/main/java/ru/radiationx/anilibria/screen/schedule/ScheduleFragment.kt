@@ -24,9 +24,10 @@ class ScheduleFragment : BrowseSupportFragment() {
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         headersState = HEADERS_DISABLED
         isHeadersTransitionOnBackEnabled = false
@@ -59,10 +60,7 @@ class ScheduleFragment : BrowseSupportFragment() {
         }
 
         adapter = rowsAdapter
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         subscribeTo(viewModel.scheduleRows) {
             val rows = it.mapIndexed { index, day ->
                 val cardsPresenter = CardPresenterSelector(null)

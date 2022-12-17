@@ -10,7 +10,7 @@ import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
-    val cardsData = MutableLiveData<List<Any>>()
+    val cardsData = MutableLiveData<List<CardItem>>()
     val rowTitle = MutableLiveData<String>()
 
     protected open val firstPage = 1

@@ -103,10 +103,12 @@ open class Client @Inject constructor(
 
     private fun getHttpUrl(url: String, method: String, args: Map<String, String>): HttpUrl {
         var httpUrl = url.toHttpUrlOrNull() ?: throw Exception("URL incorrect: '$url'")
+        if (method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->
                 args.forEach { builder.addQueryParameter(it.key, it.value) }
                 builder.build()
             }
+        }
         return httpUrl
     }
 

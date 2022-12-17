@@ -30,7 +30,7 @@ class MainPagesViewModel(
             coRunCatching {
                 checkerRepository.checkUpdate(buildConfig.versionCode, true)
             }.onSuccess {
-                hasUpdatesData.value = it.code >= buildConfig.versionCode
+                hasUpdatesData.value = it.code > buildConfig.versionCode
             }.onFailure {
                 Timber.e(it)
             }

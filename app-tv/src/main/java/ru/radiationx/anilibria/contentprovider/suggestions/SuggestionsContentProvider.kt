@@ -17,7 +17,6 @@ import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.quill.Quill
 
-// todo tr-274 check working
 class SuggestionsContentProvider : ContentProvider() {
 
     companion object {

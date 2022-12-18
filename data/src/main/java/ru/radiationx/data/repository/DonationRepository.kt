@@ -1,7 +1,10 @@
 package ru.radiationx.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.datasource.remote.api.DonationApi
 import ru.radiationx.data.entity.domain.donation.DonationInfo
@@ -15,17 +18,22 @@ class DonationRepository(
     private val donationHolder: DonationHolder,
 ) {
 
-    suspend fun requestUpdate() = donationApi
-        .getDonationDetail()
-        .also { donationHolder.save(it) }
+    suspend fun requestUpdate() = withContext(Dispatchers.IO) {
+        donationApi
+            .getDonationDetail()
+            .also { donationHolder.save(it) }
+    }
 
     fun observerDonationInfo(): Flow<DonationInfo> = donationHolder
         .observe()
         .map { it.toDomain() }
+        .flowOn(Dispatchers.IO)
 
     suspend fun createYooMoneyPayLink(
         amount: Int,
         type: String,
         form: YooMoneyDialog.YooMoneyForm
-    ): String = donationApi.createYooMoneyPayLink(amount, type, form)
+    ): String = withContext(Dispatchers.IO) {
+        donationApi.createYooMoneyPayLink(amount, type, form)
+    }
 }

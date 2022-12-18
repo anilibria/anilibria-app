@@ -1,5 +1,7 @@
 package ru.radiationx.data.repository
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
@@ -20,24 +22,30 @@ class PageRepository @Inject constructor(
 
     private var currentComments: VkComments? = null
 
-    suspend fun getPage(pagePath: String): PageLibria = pageApi
-        .getPage(pagePath)
+    suspend fun getPage(pagePath: String): PageLibria = withContext(Dispatchers.IO) {
+        pageApi
+            .getPage(pagePath)
+    }
 
     suspend fun getComments(): VkComments {
-        return currentComments ?: pageApi.getComments().toDomain().also {
-            currentComments = it
+        return withContext(Dispatchers.IO) {
+            currentComments ?: pageApi.getComments().toDomain().also {
+                currentComments = it
+            }
         }
     }
 
     suspend fun checkVkBlocked(): Boolean {
-        return try {
-            withTimeout(15_000) {
-                mainClient
-                    .get("https://vk.com/", emptyMap())
-                    .let { false }
+        return withContext(Dispatchers.IO) {
+            try {
+                withTimeout(15_000) {
+                    mainClient
+                        .get("https://vk.com/", emptyMap())
+                        .let { false }
+                }
+            } catch (ex: Throwable) {
+                ex !is UnknownHostException
             }
-        } catch (ex: Throwable) {
-            ex !is UnknownHostException
         }
     }
 

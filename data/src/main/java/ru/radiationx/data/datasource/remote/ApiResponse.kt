@@ -4,6 +4,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.entity.response.PaginatedResponse
 import java.lang.reflect.Type
 
@@ -21,43 +23,47 @@ data class ApiResponse<T>(
     }
 }
 
-fun <T> String.fetchResponse(moshi: Moshi, dataType: Type): T {
-    val adapter = moshi.adapter<T>(dataType)
-    val response = adapter.fromJson(this)
-    requireNotNull(response) {
-        "Can't parse response, result is null"
+suspend fun <T> String.fetchResponse(moshi: Moshi, dataType: Type): T {
+    return withContext(Dispatchers.Default) {
+        val adapter = moshi.adapter<T>(dataType)
+        val response = adapter.fromJson(this@fetchResponse)
+        requireNotNull(response) {
+            "Can't parse response, result is null"
+        }
+        response
     }
-    return response
 }
 
-inline fun <reified T> String.fetchResponse(moshi: Moshi): T {
+suspend inline fun <reified T> String.fetchResponse(moshi: Moshi): T {
     return fetchResponse(moshi, T::class.java)
 }
 
-fun <T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
-    val responseType = Types.newParameterizedType(ApiResponse::class.java, dataType)
-    val adapter = moshi.adapter<ApiResponse<T>>(responseType)
-    val apiResponse = adapter.fromJson(this)
-    requireNotNull(apiResponse) {
-        "Can't parse response, result is null"
+suspend fun <T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
+    return withContext(Dispatchers.Default) {
+        val responseType = Types.newParameterizedType(ApiResponse::class.java, dataType)
+        val adapter = moshi.adapter<ApiResponse<T>>(responseType)
+        val apiResponse = adapter.fromJson(this@fetchApiResponse)
+        requireNotNull(apiResponse) {
+            "Can't parse response, result is null"
+        }
+        apiResponse.fetch()
     }
-    return apiResponse.fetch()
 }
 
-inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
+suspend inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
     return fetchApiResponse(moshi, T::class.java)
 }
 
-inline fun <reified T> String.fetchListApiResponse(moshi: Moshi): List<T> {
+suspend inline fun <reified T> String.fetchListApiResponse(moshi: Moshi): List<T> {
     val dataType = Types.newParameterizedType(List::class.java, T::class.java)
     return fetchApiResponse(moshi, dataType)
 }
 
-inline fun <reified T> String.fetchPaginatedApiResponse(moshi: Moshi): PaginatedResponse<T> {
+suspend inline fun <reified T> String.fetchPaginatedApiResponse(moshi: Moshi): PaginatedResponse<T> {
     val dataType = Types.newParameterizedType(PaginatedResponse::class.java, T::class.java)
     return fetchApiResponse(moshi, dataType)
 }
 
-fun String.fetchEmptyApiResponse(moshi: Moshi) {
+suspend fun String.fetchEmptyApiResponse(moshi: Moshi) {
     fetchApiResponse<Any>(moshi, Any::class.java)
 }

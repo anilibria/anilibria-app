@@ -5,9 +5,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -16,8 +16,7 @@ import kotlin.coroutines.resumeWithException
 
 open class Client @Inject constructor(
     private val clientWrapper: ClientWrapper,
-    private val appCookieJar: AppCookieJar,
-    private val apiConfig: ApiConfig
+    private val sharedBuildConfig: SharedBuildConfig
 ) : IClient {
 
     companion object {
@@ -103,7 +102,7 @@ open class Client @Inject constructor(
 
     private fun getHttpUrl(url: String, method: String, args: Map<String, String>): HttpUrl {
         var httpUrl = url.toHttpUrlOrNull() ?: throw Exception("URL incorrect: '$url'")
-        if (method == METHOD_GET) {
+        if (sharedBuildConfig.debug || method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->
                 args.forEach { builder.addQueryParameter(it.key, it.value) }
                 builder.build()

@@ -7,8 +7,8 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 interface EpisodesCheckerHolder {
     fun observeEpisodes(): Flow<List<EpisodeAccess>>
     suspend fun getEpisodes(): List<EpisodeAccess>
-    fun putEpisode(episode: EpisodeAccess)
-    fun putAllEpisode(episodes: List<EpisodeAccess>)
-    fun getEpisodes(releaseId: ReleaseId): List<EpisodeAccess>
-    fun remove(releaseId: ReleaseId)
+    suspend fun putEpisode(episode: EpisodeAccess)
+    suspend fun putAllEpisode(episodes: List<EpisodeAccess>)
+    suspend fun getEpisodes(releaseId: ReleaseId): List<EpisodeAccess>
+    suspend fun remove(releaseId: ReleaseId)
 }

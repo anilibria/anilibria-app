@@ -2,11 +2,12 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import android.net.Uri
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.CookieHolder.Companion.cookieNames
 import javax.inject.Inject
@@ -18,19 +19,19 @@ class CookiesStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : CookieHolder {
 
-    private val cookiesState by lazy {
-        MutableStateFlow(loadCookies())
+    private val cookiesState = SuspendMutableStateFlow {
+        loadCookies()
     }
 
     override fun observeCookies(): Flow<Map<String, Cookie>> {
-        return cookiesState.asStateFlow()
+        return cookiesState
     }
 
-    override fun getCookies(): Map<String, Cookie> {
-        return cookiesState.value
+    override suspend fun getCookies(): Map<String, Cookie> {
+        return cookiesState.getValue()
     }
 
-    override fun putCookie(url: String, name: String, value: String) {
+    override suspend fun putCookie(url: String, name: String, value: String) {
         val domain = requireNotNull(Uri.parse(url).host) {
             "cookie domain is null"
         }
@@ -42,37 +43,41 @@ class CookiesStorage @Inject constructor(
         putCookie(url, cookie)
     }
 
-    override fun putCookie(url: String, cookie: Cookie) {
-        sharedPreferences
-            .edit()
-            .putString("cookie_${cookie.name}", convertCookie(url, cookie))
-            .apply()
-
-        updateCookies()
-    }
-
-    override fun removeCookie(name: String) {
-        sharedPreferences
-            .edit()
-            .remove("cookie_$name")
-            .apply()
-
-        updateCookies()
-    }
-
-    private fun updateCookies() {
-        cookiesState.value = loadCookies()
-    }
-
-    private fun loadCookies(): Map<String, Cookie> {
-        val result = mutableMapOf<String, Cookie>()
-        cookieNames.forEachIndexed { _, s ->
+    override suspend fun putCookie(url: String, cookie: Cookie) {
+        withContext(Dispatchers.IO) {
             sharedPreferences
-                .getString("cookie_$s", null)
-                ?.let { parseCookie(it) }
-                ?.let { cookie -> result[s] = cookie }
+                .edit()
+                .putString("cookie_${cookie.name}", convertCookie(url, cookie))
+                .apply()
         }
-        return result
+        updateCookies()
+    }
+
+    override suspend fun removeCookie(name: String) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences
+                .edit()
+                .remove("cookie_$name")
+                .apply()
+        }
+        updateCookies()
+    }
+
+    private suspend fun updateCookies() {
+        cookiesState.setValue(loadCookies())
+    }
+
+    private suspend fun loadCookies(): Map<String, Cookie> {
+        return withContext(Dispatchers.IO) {
+            val result = mutableMapOf<String, Cookie>()
+            cookieNames.forEachIndexed { _, s ->
+                sharedPreferences
+                    .getString("cookie_$s", null)
+                    ?.let { parseCookie(it) }
+                    ?.let { cookie -> result[s] = cookie }
+            }
+            result
+        }
     }
 
     private fun parseCookie(cookieFields: String): Cookie? {

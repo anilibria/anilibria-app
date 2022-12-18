@@ -7,7 +7,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 interface HistoryHolder {
     suspend fun getEpisodes(): List<Release>
     fun observeEpisodes(): Flow<List<Release>>
-    fun putRelease(release: Release)
-    fun putAllRelease(releases: List<Release>)
-    fun removerRelease(id: ReleaseId)
+    suspend fun putRelease(release: Release)
+    suspend fun putAllRelease(releases: List<Release>)
+    suspend fun removerRelease(id: ReleaseId)
 }

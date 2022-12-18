@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -173,13 +174,14 @@ class PlayerViewModel(
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(
-            episode.access.copy(
-                seek = position,
-                lastAccess = System.currentTimeMillis(),
-                isViewed = true
-            )
+        val newAccess = episode.access.copy(
+            seek = position,
+            lastAccess = System.currentTimeMillis(),
+            isViewed = true
         )
+        viewModelScope.launch {
+            releaseInteractor.putEpisode(newAccess)
+        }
     }
 
     private fun playEpisode(episode: Episode, force: Boolean = false) {

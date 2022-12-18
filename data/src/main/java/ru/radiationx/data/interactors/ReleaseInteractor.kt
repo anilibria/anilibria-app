@@ -105,14 +105,14 @@ class ReleaseInteractor @Inject constructor(
     }
 
     /* Common */
-    fun putEpisode(episode: EpisodeAccess) = episodesCheckerStorage.putEpisode(episode)
+    suspend fun putEpisode(episode: EpisodeAccess) = episodesCheckerStorage.putEpisode(episode)
 
-    fun putEpisodes(episodes: List<EpisodeAccess>) =
+    suspend fun putEpisodes(episodes: List<EpisodeAccess>) =
         episodesCheckerStorage.putAllEpisode(episodes)
 
-    fun getEpisodes(releaseId: ReleaseId) = episodesCheckerStorage.getEpisodes(releaseId)
+    suspend fun getEpisodes(releaseId: ReleaseId) = episodesCheckerStorage.getEpisodes(releaseId)
 
-    fun resetEpisodesHistory(releaseId: ReleaseId) {
+    suspend fun resetEpisodesHistory(releaseId: ReleaseId) {
         episodesCheckerStorage.remove(releaseId)
     }
 

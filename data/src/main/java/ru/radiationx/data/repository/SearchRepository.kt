@@ -1,6 +1,9 @@
 package ru.radiationx.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.GenresHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
@@ -30,18 +33,22 @@ class SearchRepository @Inject constructor(
 
     fun observeGenres(): Flow<List<GenreItem>> = genresHolder
         .observeGenres()
+        .flowOn(Dispatchers.IO)
 
     fun observeYears(): Flow<List<YearItem>> = yearsHolder
         .observeYears()
+        .flowOn(Dispatchers.IO)
 
-    suspend fun fastSearch(query: String): List<SuggestionItem> = searchApi
-        .fastSearch(query)
-        .map { it.toDomain(apiUtils, apiConfig) }
+    suspend fun fastSearch(query: String): List<SuggestionItem> = withContext(Dispatchers.IO) {
+        searchApi
+            .fastSearch(query)
+            .map { it.toDomain(apiUtils, apiConfig) }
+    }
 
     suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {
-        val yearsQuery = form.years?.joinToString(",") { it.value }.orEmpty()
-        val seasonsQuery = form.seasons?.joinToString(",") { it.value }.orEmpty()
-        val genresQuery = form.genres?.joinToString(",") { it.value }.orEmpty()
+        val yearsQuery = form.years.joinToString(",") { it.value }
+        val seasonsQuery = form.seasons.joinToString(",") { it.value }
+        val genresQuery = form.genres.joinToString(",") { it.value }
         val sortStr = when (form.sort) {
             SearchForm.Sort.RATING -> "2"
             SearchForm.Sort.DATE -> "1"
@@ -65,27 +72,35 @@ class SearchRepository @Inject constructor(
         sort: String,
         onlyCompleted: String,
         page: Int
-    ): Paginated<Release> = searchApi
-        .searchReleases(genre, year, season, sort, onlyCompleted, page)
-        .toDomain { it.toDomain(apiUtils, apiConfig) }
-        .also { updateMiddleware.handle(it.data) }
+    ): Paginated<Release> = withContext(Dispatchers.IO) {
+        searchApi
+            .searchReleases(genre, year, season, sort, onlyCompleted, page)
+            .toDomain { it.toDomain(apiUtils, apiConfig) }
+            .also { updateMiddleware.handle(it.data) }
+    }
 
-    suspend fun getGenres(): List<GenreItem> = searchApi
-        .getGenres()
-        .map { it.toGenreItem() }
-        .also {
-            genresHolder.saveGenres(it)
-        }
+    suspend fun getGenres(): List<GenreItem> = withContext(Dispatchers.IO) {
+        searchApi
+            .getGenres()
+            .map { it.toGenreItem() }
+            .also {
+                genresHolder.saveGenres(it)
+            }
+    }
 
-    suspend fun getYears(): List<YearItem> = searchApi
-        .getYears()
-        .map { it.toYearItem() }
-        .also {
-            yearsHolder.saveYears(it)
-        }
+    suspend fun getYears(): List<YearItem> = withContext(Dispatchers.IO) {
+        searchApi
+            .getYears()
+            .map { it.toYearItem() }
+            .also {
+                yearsHolder.saveYears(it)
+            }
+    }
 
     suspend fun getSeasons(): List<SeasonItem> {
-        return listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalize(), it) }
+        return withContext(Dispatchers.IO) {
+            listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalize(), it) }
+        }
     }
 
 }

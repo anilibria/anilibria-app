@@ -5,6 +5,6 @@ import ru.radiationx.data.entity.domain.other.LinkMenuItem
 
 interface MenuHolder {
     fun observe(): Flow<List<LinkMenuItem>>
-    fun save(items: List<LinkMenuItem>)
-    fun get(): List<LinkMenuItem>
+    suspend fun save(items: List<LinkMenuItem>)
+    suspend fun get(): List<LinkMenuItem>
 }

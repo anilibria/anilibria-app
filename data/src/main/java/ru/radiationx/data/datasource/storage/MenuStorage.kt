@@ -1,11 +1,13 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.MenuHolder
 import ru.radiationx.data.entity.domain.other.DataIcons
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
@@ -53,53 +55,57 @@ class MenuStorage @Inject constructor(
         )
     )
 
-    private val localMenuRelay by lazy {
-        MutableStateFlow(loadAll())
+    private val localMenuRelay = SuspendMutableStateFlow {
+        loadAll()
     }
 
     override fun observe(): Flow<List<LinkMenuItem>> = localMenuRelay
 
-    override fun save(items: List<LinkMenuItem>) {
-        localMenuRelay.value = items.toList()
+    override suspend fun save(items: List<LinkMenuItem>) {
+        localMenuRelay.setValue(items.toList())
         saveAll()
     }
 
-    override fun get(): List<LinkMenuItem> = localMenuRelay.value
+    override suspend fun get(): List<LinkMenuItem> = localMenuRelay.getValue()
 
-    private fun saveAll() {
-        val jsonMenu = JSONArray()
-        localMenuRelay.value.forEach {
-            jsonMenu.put(JSONObject().apply {
-                put("title", it.title)
-                put("absoluteLink", it.absoluteLink)
-                put("sitePagePath", it.sitePagePath)
-                put("icon", it.icon)
-            })
+    private suspend fun saveAll() {
+        withContext(Dispatchers.IO) {
+            val jsonMenu = JSONArray()
+            localMenuRelay.getValue().forEach {
+                jsonMenu.put(JSONObject().apply {
+                    put("title", it.title)
+                    put("absoluteLink", it.absoluteLink)
+                    put("sitePagePath", it.sitePagePath)
+                    put("icon", it.icon)
+                })
+            }
+            sharedPreferences
+                .edit()
+                .putString(LOCAL_MENU_KEY, jsonMenu.toString())
+                .apply()
         }
-        sharedPreferences
-            .edit()
-            .putString(LOCAL_MENU_KEY, jsonMenu.toString())
-            .apply()
     }
 
-    private fun loadAll(): List<LinkMenuItem> {
-        val result = defaultLocalMenu.toMutableList()
-        sharedPreferences.getString(LOCAL_MENU_KEY, null)?.also { savedMenu ->
-            val jsonMenu = JSONArray(savedMenu)
-            result.clear()
-            (0 until jsonMenu.length()).forEach { index ->
-                jsonMenu.getJSONObject(index).also {
-                    result.add(
-                        LinkMenuItem(
-                            it.getString("title"),
-                            it.nullString("absoluteLink"),
-                            it.nullString("sitePagePath"),
-                            it.nullString("icon")
+    private suspend fun loadAll(): List<LinkMenuItem> {
+        return withContext(Dispatchers.IO) {
+            val result = defaultLocalMenu.toMutableList()
+            sharedPreferences.getString(LOCAL_MENU_KEY, null)?.also { savedMenu ->
+                val jsonMenu = JSONArray(savedMenu)
+                result.clear()
+                (0 until jsonMenu.length()).forEach { index ->
+                    jsonMenu.getJSONObject(index).also {
+                        result.add(
+                            LinkMenuItem(
+                                it.getString("title"),
+                                it.nullString("absoluteLink"),
+                                it.nullString("sitePagePath"),
+                                it.nullString("icon")
+                            )
                         )
-                    )
+                    }
                 }
             }
+            result
         }
-        return result
     }
 }

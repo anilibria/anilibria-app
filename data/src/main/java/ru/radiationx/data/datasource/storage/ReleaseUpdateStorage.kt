@@ -3,10 +3,11 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.db.ReleaseUpdateDb
 import ru.radiationx.data.entity.domain.release.Release
@@ -33,20 +34,20 @@ class ReleaseUpdateStorage @Inject constructor(
         moshi.adapter<List<ReleaseUpdateDb>>(type)
     }
 
-    private val localReleasesRelay by lazy {
-        MutableStateFlow(loadAll())
+    private val localReleasesRelay = SuspendMutableStateFlow {
+        loadAll()
     }
 
     override fun observeEpisodes(): Flow<List<ReleaseUpdate>> = localReleasesRelay
 
     override suspend fun getReleases(): List<ReleaseUpdate> =
-        localReleasesRelay.value.toList()
+        localReleasesRelay.getValue().toList()
 
-    override fun getRelease(id: ReleaseId): ReleaseUpdate? {
-        return localReleasesRelay.value.firstOrNull { it.id == id }
+    override suspend fun getRelease(id: ReleaseId): ReleaseUpdate? {
+        return localReleasesRelay.getValue().firstOrNull { it.id == id }
     }
 
-    override fun viewRelease(release: Release) {
+    override suspend fun viewRelease(release: Release) {
         getRelease(release.id)?.also { updItem ->
             val newUpdItem = updItem.copy(
                 timestamp = release.torrentUpdate,
@@ -56,7 +57,7 @@ class ReleaseUpdateStorage @Inject constructor(
         }
     }
 
-    override fun putInitialRelease(releases: List<Release>) {
+    override suspend fun putInitialRelease(releases: List<Release>) {
         val putReleases = mutableListOf<ReleaseUpdate>()
         releases.forEach { release ->
             val updItem = getRelease(release.id)
@@ -72,7 +73,7 @@ class ReleaseUpdateStorage @Inject constructor(
         updAllRelease(putReleases)
     }
 
-    private fun updAllRelease(releases: List<ReleaseUpdate>) {
+    private suspend fun updAllRelease(releases: List<ReleaseUpdate>) {
         localReleasesRelay.update { updates ->
             val newIds = releases.map { it.id }
             updates
@@ -82,19 +83,25 @@ class ReleaseUpdateStorage @Inject constructor(
         saveAll()
     }
 
-    private fun saveAll() {
-        val jsonEpisodes = localReleasesRelay.value
-            .map { it.toDb() }
-            .let { dataAdapter.toJson(it) }
-        sharedPreferences
-            .edit()
-            .putString(LOCAL_HISTORY_KEY, jsonEpisodes)
-            .apply()
+    private suspend fun saveAll() {
+        withContext(Dispatchers.IO) {
+            val jsonEpisodes = localReleasesRelay.getValue()
+                .map { it.toDb() }
+                .let { dataAdapter.toJson(it) }
+            sharedPreferences
+                .edit()
+                .putString(LOCAL_HISTORY_KEY, jsonEpisodes)
+                .apply()
+        }
     }
 
-    private fun loadAll(): List<ReleaseUpdate> = sharedPreferences
-        .getString(LOCAL_HISTORY_KEY, null)
-        ?.let { dataAdapter.fromJson(it) }
-        ?.map { it.toDomain() }
-        .orEmpty()
+    private suspend fun loadAll(): List<ReleaseUpdate> {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(LOCAL_HISTORY_KEY, null)
+                ?.let { dataAdapter.fromJson(it) }
+                ?.map { it.toDomain() }
+                .orEmpty()
+        }
+    }
 }

@@ -78,8 +78,10 @@ class DetailHeaderViewModel(
     }
 
     fun onContinueClick() {
-        releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
-            router.navigateTo(PlayerScreen(releaseId, it.id))
+        viewModelScope.launch {
+            releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
+                router.navigateTo(PlayerScreen(releaseId, it.id))
+            }
         }
     }
 
@@ -89,9 +91,11 @@ class DetailHeaderViewModel(
         if (release.episodes.size == 1) {
             router.navigateTo(PlayerScreen(releaseId, null))
         } else {
-            val episodeId =
-                releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id
-            guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
+            viewModelScope.launch {
+                val episodeId =
+                    releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id
+                guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
+            }
         }
     }
 
@@ -101,13 +105,13 @@ class DetailHeaderViewModel(
 
     fun onFavoriteClick() {
         val release = currentRelease ?: return
-        if (authRepository.getAuthState() != AuthState.AUTH) {
-            guidedRouter.open(AuthGuidedScreen())
-            return
-        }
 
         favoriteDisposable?.cancel()
         favoriteDisposable = viewModelScope.launch {
+            if (authRepository.getAuthState() != AuthState.AUTH) {
+                guidedRouter.open(AuthGuidedScreen())
+                return@launch
+            }
             coRunCatching {
                 if (release.favoriteInfo.isAdded) {
                     favoriteRepository.deleteFavorite(releaseId)

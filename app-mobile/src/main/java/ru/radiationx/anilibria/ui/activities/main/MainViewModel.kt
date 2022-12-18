@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
@@ -73,10 +74,14 @@ class MainViewModel(
 
     private fun initMain() {
         firstLaunch = false
-        if (authRepository.getAuthState() == AuthState.NO_AUTH) {
-            authMainAnalytics.open(AnalyticsConstants.screen_main)
-            router.navigateTo(Screens.Auth())
+
+        runBlocking {
+            if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+                authMainAnalytics.open(AnalyticsConstants.screen_main)
+                router.navigateTo(Screens.Auth())
+            }
         }
+
 
         selectTab(defaultScreen)
         authRepository
@@ -103,7 +108,7 @@ class MainViewModel(
         router.exit()
     }
 
-    fun getAuthState() = authRepository.getAuthState()
+    fun getAuthState() = runBlocking { authRepository.getAuthState() }
 
     fun selectTab(screenKey: String) {
         _state.update { it.copy(selectedTab = screenKey) }

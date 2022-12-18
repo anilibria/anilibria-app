@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
@@ -514,13 +515,14 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(
-            getEpisode().access.copy(
-                seek = position,
-                lastAccess = System.currentTimeMillis(),
-                isViewed = true
-            )
+        val newAccess = getEpisode().access.copy(
+            seek = position,
+            lastAccess = System.currentTimeMillis(),
+            isViewed = true
         )
+        runBlocking {
+            releaseInteractor.putEpisode(newAccess)
+        }
     }
 
     private fun getNextEpisode(): Episode? {

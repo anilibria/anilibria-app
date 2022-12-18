@@ -162,22 +162,26 @@ class ReleaseInfoViewModel(
     }
 
     fun markEpisodeViewed(episode: Episode) {
-        releaseInteractor.putEpisode(
-            episode.access.copy(
-                isViewed = true,
-                lastAccess = System.currentTimeMillis()
+        viewModelScope.launch {
+            releaseInteractor.putEpisode(
+                episode.access.copy(
+                    isViewed = true,
+                    lastAccess = System.currentTimeMillis()
+                )
             )
-        )
+        }
     }
 
     fun markEpisodeUnviewed(episode: Episode) {
-        releaseAnalytics.historyResetEpisode()
-        releaseInteractor.putEpisode(
-            episode.access.copy(
-                isViewed = false,
-                lastAccess = 0
+        viewModelScope.launch {
+            releaseAnalytics.historyResetEpisode()
+            releaseInteractor.putEpisode(
+                episode.access.copy(
+                    isViewed = false,
+                    lastAccess = 0
+                )
             )
-        )
+        }
     }
 
     fun onEpisodeTabClick(tabTag: String) {
@@ -364,20 +368,19 @@ class ReleaseInfoViewModel(
     }
 
     fun onClickFav() {
-        if (authRepository.getAuthState() != AuthState.AUTH) {
-            showUnauthAction.set(Unit)
-            return
-        }
         val releaseId = currentData?.id ?: return
         val favInfo = currentData?.favoriteInfo ?: return
-
-        if (favInfo.isAdded) {
-            releaseAnalytics.favoriteRemove(releaseId.id)
-        } else {
-            releaseAnalytics.favoriteAdd(releaseId.id)
-        }
-
         viewModelScope.launch {
+            if (authRepository.getAuthState() != AuthState.AUTH) {
+                showUnauthAction.set(Unit)
+                return@launch
+            }
+
+            if (favInfo.isAdded) {
+                releaseAnalytics.favoriteRemove(releaseId.id)
+            } else {
+                releaseAnalytics.favoriteAdd(releaseId.id)
+            }
             updateModifiers {
                 it.copy(favoriteRefreshing = true)
             }
@@ -491,19 +494,23 @@ class ReleaseInfoViewModel(
     }
 
     fun onResetEpisodesHistoryClick() {
-        releaseAnalytics.historyReset()
-        currentData?.also {
-            releaseInteractor.resetEpisodesHistory(it.id)
+        viewModelScope.launch {
+            releaseAnalytics.historyReset()
+            currentData?.also {
+                releaseInteractor.resetEpisodesHistory(it.id)
+            }
         }
     }
 
     fun onCheckAllEpisodesHistoryClick() {
-        releaseAnalytics.historyViewAll()
-        currentData?.also {
-            val accesses = it.episodes.map {
-                it.access.copy(isViewed = true)
+        viewModelScope.launch {
+            releaseAnalytics.historyViewAll()
+            currentData?.also {
+                val accesses = it.episodes.map {
+                    it.access.copy(isViewed = true)
+                }
+                releaseInteractor.putEpisodes(accesses)
             }
-            releaseInteractor.putEpisodes(accesses)
         }
     }
 

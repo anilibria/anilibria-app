@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
@@ -101,8 +102,10 @@ class HistoryViewModel(
 
     fun onDeleteClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        historyAnalytics.releaseDeleteClick()
-        historyRepository.removeRelease(releaseItem.id)
+        viewModelScope.launch {
+            historyAnalytics.releaseDeleteClick()
+            historyRepository.removeRelease(releaseItem.id)
+        }
     }
 
     fun onCopyClick(item: ReleaseItemState) {

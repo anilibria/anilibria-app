@@ -14,7 +14,6 @@ import com.google.firebase.messaging.RemoteMessage
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
@@ -26,6 +25,8 @@ import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import ru.radiationx.quill.get
 import ru.radiationx.shared.ktx.android.asMutableFlag
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
 class NotificationService : FirebaseMessagingService() {
@@ -71,21 +72,21 @@ class NotificationService : FirebaseMessagingService() {
 
 
         if (data.type == CUSTOM_TYPE_CONFIG) {
-            try {
-                val apiConfig = get<ApiConfig>()
-                val apiConfigStorage = get<ApiConfigStorage>()
-                val moshi = get<Moshi>()
+            GlobalScope.launch {
+                coRunCatching {
+                    val apiConfig = get<ApiConfig>()
+                    val apiConfigStorage = get<ApiConfigStorage>()
+                    val moshi = get<Moshi>()
 
-                GlobalScope.launch {
                     apiConfig.updateNeedConfig(true)
-                }
 
-                val payload = data.payload.orEmpty()
-                val configResponse = payload.fetchResponse<ApiConfigResponse>(moshi)
-                apiConfigStorage.save(configResponse)
-                apiConfig.setConfig(configResponse.toDomain())
-            } catch (ex: Exception) {
-                Timber.e(ex)
+                    val payload = data.payload.orEmpty()
+                    val configResponse = payload.fetchResponse<ApiConfigResponse>(moshi)
+                    apiConfigStorage.save(configResponse)
+                    apiConfig.setConfig(configResponse.toDomain())
+                }.onFailure {
+                    Timber.e(it)
+                }
             }
         }
     }

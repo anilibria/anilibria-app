@@ -16,7 +16,6 @@ import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.shared.ktx.EventFlow
@@ -58,7 +57,6 @@ class OtherViewModel(
     private val _otpEvent = EventFlow<Unit>()
     val otpEvent = _otpEvent.observe()
 
-    private var currentProfileItem: ProfileItem? = authRepository.getUser()
     private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
 
@@ -104,13 +102,15 @@ class OtherViewModel(
     }
 
     fun onProfileClick() {
-        if (authRepository.getAuthState() == AuthState.AUTH) {
-            otherAnalytics.profileClick()
-            return
+        viewModelScope.launch {
+            if (authRepository.getAuthState() == AuthState.AUTH) {
+                otherAnalytics.profileClick()
+                return@launch
+            }
+            otherAnalytics.loginClick()
+            authMainAnalytics.open(AnalyticsConstants.screen_other)
+            router.navigateTo(Screens.Auth())
         }
-        otherAnalytics.loginClick()
-        authMainAnalytics.open(AnalyticsConstants.screen_other)
-        router.navigateTo(Screens.Auth())
     }
 
     fun signOut() {
@@ -174,7 +174,6 @@ class OtherViewModel(
         authRepository
             .observeUser()
             .onEach {
-                currentProfileItem = it
                 updateMenuItems()
             }
             .launchIn(viewModelScope)
@@ -200,29 +199,31 @@ class OtherViewModel(
     }
 
     private fun updateMenuItems() {
-        // Для фильтрации, если вдруг понадобится добавить
-        val profileMenu = profileMenu.toMutableList()
-        val mainMenu = allMainMenu.toMutableList()
-        val systemMenu = allSystemMenu.toMutableList()
-        val linkMenu = allLinkMenu.toMutableList()
+        viewModelScope.launch {
+            // Для фильтрации, если вдруг понадобится добавить
+            val profileMenu = profileMenu.toMutableList()
+            val mainMenu = allMainMenu.toMutableList()
+            val systemMenu = allSystemMenu.toMutableList()
+            val linkMenu = allLinkMenu.toMutableList()
 
-        if (authRepository.getAuthState() != AuthState.AUTH) {
-            profileMenu.removeAll { it.id == MENU_OTP_CODE }
-        }
-
-        val profileState = currentProfileItem.toState()
-        val profileMenuState = profileMenu.map { it.toState() }
-        val menuState = listOf(mainMenu, systemMenu, linkMenu)
-            .filter { it.isNotEmpty() }
-            .map { itemsGroup ->
-                itemsGroup.map { it.toState() }
+            if (authRepository.getAuthState() != AuthState.AUTH) {
+                profileMenu.removeAll { it.id == MENU_OTP_CODE }
             }
-        _state.update {
-            it.copy(
-                profile = profileState,
-                profileMenuItems = profileMenuState,
-                menuItems = menuState
-            )
+
+            val profileState = authRepository.getUser().toState()
+            val profileMenuState = profileMenu.map { it.toState() }
+            val menuState = listOf(mainMenu, systemMenu, linkMenu)
+                .filter { it.isNotEmpty() }
+                .map { itemsGroup ->
+                    itemsGroup.map { it.toState() }
+                }
+            _state.update {
+                it.copy(
+                    profile = profileState,
+                    profileMenuItems = profileMenuState,
+                    menuItems = menuState
+                )
+            }
         }
     }
 }

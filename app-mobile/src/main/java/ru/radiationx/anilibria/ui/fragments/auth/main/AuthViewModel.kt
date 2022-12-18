@@ -120,9 +120,11 @@ class AuthViewModel(
     }
 
     fun skip() {
-        authMainAnalytics.skipClick()
-        authRepository.setAuthSkipped(true)
-        router.finishChain()
+        viewModelScope.launch {
+            authMainAnalytics.skipClick()
+            authRepository.setAuthSkipped(true)
+            router.finishChain()
+        }
     }
 
     fun registrationClick() {

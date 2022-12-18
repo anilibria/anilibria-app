@@ -16,6 +16,11 @@ class WatchingHistoryViewModel(
 
     override val defaultTitle: String = "История"
 
+    override fun onResume() {
+        super.onResume()
+        onRefreshClick()
+    }
+
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = historyRepository
         .getReleases()
         .let { historyItems ->

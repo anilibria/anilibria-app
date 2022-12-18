@@ -16,10 +16,16 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
+
+data class DetailExtra(
+    val id: ReleaseId
+) : QuillExtra
 
 class DetailFragment : RowsSupportFragment() {
 
@@ -33,10 +39,8 @@ class DetailFragment : RowsSupportFragment() {
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val releaseId by lazy {
-        requireNotNull(requireArguments().getParcelable<ReleaseId>(ARG_ID)) {
-            "Release id can't be null"
-        }
+    private val argExtra by lazy {
+        DetailExtra(id = getExtraNotNull(ARG_ID))
     }
 
     private val rowsPresenter by lazy {
@@ -55,22 +59,28 @@ class DetailFragment : RowsSupportFragment() {
     }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val detailsViewModel by viewModel<DetailsViewModel>()
-    private val headerViewModel by viewModel<DetailHeaderViewModel>()
-    private val relatedViewModel by viewModel<DetailRelatedViewModel>()
-    private val recommendsViewModel by viewModel<DetailRecommendsViewModel>()
+    private val detailsViewModel by viewModel<DetailsViewModel> { argExtra }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(detailsViewModel)
-        lifecycle.addObserver(headerViewModel)
-        lifecycle.addObserver(relatedViewModel)
-        lifecycle.addObserver(recommendsViewModel)
+    private val headerViewModel by viewModel<DetailHeaderViewModel> { argExtra }
 
-        detailsViewModel.releaseId = releaseId
-        headerViewModel.releaseId = releaseId
-        relatedViewModel.releaseId = releaseId
-        recommendsViewModel.releaseId = releaseId
+    private val relatedViewModel by viewModel<DetailRelatedViewModel> { argExtra }
+
+    private val recommendsViewModel by viewModel<DetailRecommendsViewModel> { argExtra }
+
+    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> headerViewModel
+        DetailsViewModel.RELATED_ROW_ID -> relatedViewModel
+        DetailsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        else -> null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(detailsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(headerViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(relatedViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
 
         adapter = rowsAdapter
 
@@ -107,17 +117,7 @@ class DetailFragment : RowsSupportFragment() {
                 }
             }
         }
-    }
 
-    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> headerViewModel
-        DetailsViewModel.RELATED_ROW_ID -> relatedViewModel
-        DetailsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
-        else -> null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val rowMap = mutableMapOf<Long, Row>()
         subscribeTo(detailsViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->

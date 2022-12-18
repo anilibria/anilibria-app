@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
+import ru.radiationx.anilibria.screen.search.SearchValuesExtra
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -13,16 +14,15 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchSeasonViewModel(
+    private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
-) : BaseSearchValuesViewModel() {
+) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentSeasons = mutableListOf<SeasonItem>()
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         viewModelScope.launch {
             coRunCatching {
                 searchRepository.getSeasons()
@@ -41,12 +41,10 @@ class SearchSeasonViewModel(
     }
 
     override fun applyValues() {
-        viewModelScope.launch {
-            val newSeasons = currentSeasons.filterIndexed { index, item ->
-                checkedValues.contains(item.value)
-            }.toSet()
-            searchController.seasonsEvent.emit(newSeasons)
-            guidedRouter.close()
-        }
+        guidedRouter.close()
+        val newSeasons = currentSeasons.filterIndexed { index, item ->
+            checkedValues.contains(item.value)
+        }.toSet()
+        searchController.seasonsEvent.emit(newSeasons)
     }
 }

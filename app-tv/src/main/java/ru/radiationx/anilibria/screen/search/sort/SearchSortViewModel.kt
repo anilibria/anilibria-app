@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.screen.search.sort
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -11,6 +9,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchSortViewModel(
+    private val argExtra: SearchSortExtra,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -20,32 +19,26 @@ class SearchSortViewModel(
         "По новизне"
     )
 
-    var argSort: SearchForm.Sort? = null
+    val titlesData = MutableStateFlow<List<String>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
-    val titlesData = MutableLiveData<List<String>>()
-    val selectedIndex = MutableLiveData<Int>()
-
-    override fun onCreate() {
-        super.onCreate()
+    init {
         titlesData.value = titles
-        selectedIndex.value = when (argSort) {
+        selectedIndex.value = when (argExtra.sort) {
             SearchForm.Sort.RATING -> 0
             SearchForm.Sort.DATE -> 1
-            else -> -1
         }
     }
 
     fun applySort(index: Int) {
-        viewModelScope.launch {
-            val sort = when (index) {
-                0 -> SearchForm.Sort.RATING
-                1 -> SearchForm.Sort.DATE
-                else -> null
-            }
-            sort?.also {
-                searchController.sortEvent.emit(it)
-            }
-            guidedRouter.close()
+        guidedRouter.close()
+        val sort = when (index) {
+            0 -> SearchForm.Sort.RATING
+            1 -> SearchForm.Sort.DATE
+            else -> null
+        }
+        sort?.also {
+            searchController.sortEvent.emit(it)
         }
     }
 }

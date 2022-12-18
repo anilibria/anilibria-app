@@ -23,10 +23,8 @@ class MainScheduleViewModel(
     override val loadMoreCard: LinkCard =
         LinkCard("Открыть полное расписание")
 
-    override val loadOnCreate: Boolean = false
-
-    override fun onColdCreate() {
-        super.onColdCreate()
+    override fun onResume() {
+        super.onResume()
         onRefreshClick()
     }
 
@@ -65,6 +63,10 @@ class MainScheduleViewModel(
 
     override fun onLinkCardClick() {
         router.navigateTo(ScheduleScreen())
+    }
+
+    override fun onLinkCardBind() {
+        // do nothing
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {

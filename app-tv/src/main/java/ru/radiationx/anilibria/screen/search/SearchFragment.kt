@@ -19,7 +19,9 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 
 class SearchFragment : BaseVerticalGridFragment() {
 
-    private val cardsPresenter = CardPresenterSelector()
+    private val cardsPresenter = CardPresenterSelector {
+        cardsViewModel.onLinkCardBind()
+    }
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
 
     private val emptyTextManager by lazy { ExternalTextManager() }
@@ -29,6 +31,14 @@ class SearchFragment : BaseVerticalGridFragment() {
     private val cardsViewModel by viewModel<SearchViewModel>()
     private val formViewModel by viewModel<SearchFormViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        title = "Каталог"
+        gridPresenter = VerticalGridPresenter().apply {
+            numberOfColumns = 6
+        }
+    }
+
     override fun onInflateTitleView(
         inflater: LayoutInflater,
         parent: ViewGroup,
@@ -37,16 +47,11 @@ class SearchFragment : BaseVerticalGridFragment() {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        lifecycle.addObserver(cardsViewModel)
-        lifecycle.addObserver(formViewModel)
-
-        title = "Каталог"
-        gridPresenter = VerticalGridPresenter().apply {
-            numberOfColumns = 6
-        }
+        viewLifecycleOwner.lifecycle.addObserver(cardsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(formViewModel)
 
         setOnSearchClickedListener {
             cardsViewModel.onSearchClick()
@@ -87,10 +92,6 @@ class SearchFragment : BaseVerticalGridFragment() {
 
         prepareEntranceTransition()
         adapter = cardsAdapter
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         emptyTextManager.rootView = view as ViewGroup
         emptyTextManager.initialDelay = 0L

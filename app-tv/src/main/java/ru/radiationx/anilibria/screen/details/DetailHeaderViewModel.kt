@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.screen.details
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
@@ -28,6 +27,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailHeaderViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
@@ -37,32 +37,25 @@ class DetailHeaderViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
-    val releaseData = MutableLiveData<LibriaDetails>()
-    val progressState = MutableLiveData<DetailsState>()
+    val releaseData = MutableStateFlow<LibriaDetails?>(null)
+    val progressState = MutableStateFlow<DetailsState>(DetailsState())
 
     private var currentRelease: Release? = null
 
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
 
-    override fun onCreate() {
-        super.onCreate()
-
-        (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
-            currentRelease = it
-            update(it)
-            updateProgress()
-        }
+    init {
         updateProgress()
-
+        releaseInteractor.getItem(releaseId)?.also {
+            updateRelease(it)
+        }
         releaseInteractor
             .observeFull(releaseId)
             .onEach {
-                currentRelease = it
-                update(it)
-                updateProgress()
+                updateRelease(it)
             }
             .launchIn(viewModelScope)
     }
@@ -142,14 +135,16 @@ class DetailHeaderViewModel(
 
     }
 
+    private fun updateRelease(release: Release) {
+        currentRelease = release
+        releaseData.value = converter.toDetail(release)
+        updateProgress()
+    }
+
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
             currentRelease == null || favoriteDisposable?.isActive ?: false
         )
-    }
-
-    private fun update(releaseItem: Release) {
-        releaseData.value = converter.toDetail(releaseItem)
     }
 }

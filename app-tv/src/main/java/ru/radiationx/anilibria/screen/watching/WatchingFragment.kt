@@ -28,13 +28,22 @@ class WatchingFragment : RowsSupportFragment() {
     private val favoritesViewModel by quillParentViewModel<WatchingFavoritesViewModel>()
     private val recommendsViewModel by quillParentViewModel<WatchingRecommendsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(watchingViewModel)
-        lifecycle.addObserver(historyViewModel)
-        lifecycle.addObserver(continueViewModel)
-        lifecycle.addObserver(favoritesViewModel)
-        lifecycle.addObserver(recommendsViewModel)
+    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
+        WatchingViewModel.HISTORY_ROW_ID -> historyViewModel
+        WatchingViewModel.CONTINUE_ROW_ID -> continueViewModel
+        WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
+        WatchingViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        else -> null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(watchingViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(historyViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(continueViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(favoritesViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
             val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
             when (item) {
@@ -64,18 +73,7 @@ class WatchingFragment : RowsSupportFragment() {
             }
         }
         adapter = rowsAdapter
-    }
 
-    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
-        WatchingViewModel.HISTORY_ROW_ID -> historyViewModel
-        WatchingViewModel.CONTINUE_ROW_ID -> continueViewModel
-        WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
-        WatchingViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
-        else -> null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(watchingViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->

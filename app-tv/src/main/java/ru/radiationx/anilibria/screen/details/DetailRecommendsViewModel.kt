@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.details
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
@@ -11,32 +12,30 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailRecommendsViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    lateinit var releaseId: ReleaseId
+    private val releaseId = argExtra.id
 
     override val loadOnCreate: Boolean = false
 
     override val defaultTitle: String = "Рекомендации"
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         cardsData.value = listOf(loadingCard)
-
         releaseInteractor
             .observeFull(releaseId)
+            .map { it.genres }
             .distinctUntilChanged()
             .onEach {
                 onRefreshClick()
@@ -44,8 +43,8 @@ class DetailRecommendsViewModel(
             .launchIn(viewModelScope)
     }
 
-    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<Release> =
-        searchRepository
+    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<Release> {
+        return searchRepository
             .searchReleases(
                 SearchForm(
                     genres = getGenres(genresCount),
@@ -53,6 +52,7 @@ class DetailRecommendsViewModel(
                 ), requestPage
             )
             .let { result -> result.data.filter { it.id != releaseId } }
+    }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> =
         searchGenres(3, requestPage)
@@ -70,7 +70,7 @@ class DetailRecommendsViewModel(
                 result.map { converter.toCard(it) }
             }
 
-    private fun getGenres(count: Int): Set<GenreItem> {
+    private suspend fun getGenres(count: Int): Set<GenreItem> {
         val release = releaseInteractor.getFull(releaseId) ?: return emptySet()
         return release.genres.take(count).map { GenreItem(it, it) }.toSet()
     }

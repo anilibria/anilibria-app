@@ -16,10 +16,8 @@ class MainYouTubeViewModel(
 
     override val defaultTitle: String = "Обновления на YouTube"
 
-    override val loadOnCreate: Boolean = false
-
-    override fun onColdCreate() {
-        super.onColdCreate()
+    override fun onResume() {
+        super.onResume()
         onRefreshClick()
     }
 

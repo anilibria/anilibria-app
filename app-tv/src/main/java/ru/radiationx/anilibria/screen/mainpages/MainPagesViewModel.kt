@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.mainpages
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -23,11 +23,9 @@ class MainPagesViewModel(
     private val router: Router
 ) : LifecycleViewModel() {
 
-    val hasUpdatesData = MutableLiveData<Boolean>()
+    val hasUpdatesData = MutableStateFlow<Boolean>(false)
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         viewModelScope.launch {
             coRunCatching {
                 checkerRepository.checkUpdate(buildConfig.versionCode, true)

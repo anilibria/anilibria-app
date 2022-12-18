@@ -1,14 +1,15 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
@@ -16,26 +17,34 @@ import java.util.*
 
 @InjectConstructor
 class PlayerEpisodesViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
-
-    val episodesData = MutableLiveData<List<Pair<String, String?>>>()
-    val selectedIndex = MutableLiveData<Int>()
+    val episodesData = MutableStateFlow<List<Pair<String, String?>>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
     private val currentEpisodes = mutableListOf<Episode>()
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
+        releaseInteractor
+            .observeFull(argExtra.releaseId)
+            .onEach {
+                updateEpisodes(it)
+            }
+            .launchIn(viewModelScope)
+    }
 
-        releaseInteractor.getFull(argReleaseId)?.also {
-            currentEpisodes.clear()
-            currentEpisodes.addAll(it.episodes.reversed())
-        }
+    fun applyEpisode(index: Int) {
+        guidedRouter.close()
+        playerController.selectEpisodeRelay.emit(currentEpisodes[index].id)
+    }
+
+    private fun updateEpisodes(release: Release) {
+        currentEpisodes.clear()
+        currentEpisodes.addAll(release.episodes.reversed())
         episodesData.value = currentEpisodes.map {
             val description = if (it.access.isViewed && it.access.seek > 0) {
                 "Остановлена на ${Date(it.access.seek).asTimeSecString()}"
@@ -44,13 +53,6 @@ class PlayerEpisodesViewModel(
             }
             Pair(it.title.orEmpty(), description)
         }
-        selectedIndex.value = currentEpisodes.indexOfLast { it.id == argEpisodeId }
-    }
-
-    fun applyEpisode(index: Int) {
-        viewModelScope.launch {
-            playerController.selectEpisodeRelay.emit(currentEpisodes[index].id)
-            guidedRouter.close()
-        }
+        selectedIndex.value = currentEpisodes.indexOfLast { it.id == argExtra.episodeId }
     }
 }

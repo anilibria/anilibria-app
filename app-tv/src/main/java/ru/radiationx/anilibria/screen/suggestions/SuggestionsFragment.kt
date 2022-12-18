@@ -15,8 +15,8 @@ import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.quillModule
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
@@ -40,9 +40,14 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
             single<SuggestionsController>()
         })
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(rowsViewModel)
-        lifecycle.addObserver(resultViewModel)
-        lifecycle.addObserver(recommendsViewModel)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(rowsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(resultViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
 
         backgroundManager.clearGradient()
 
@@ -62,10 +67,6 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
                 }
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         progressManager.rootView = view as ViewGroup
         progressManager.initialDelay = 0L
@@ -119,7 +120,7 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         rowsAdapter: ArrayObjectAdapter,
         viewModel: SuggestionsResultViewModel
     ): Row {
-        val cardsPresenter = CardPresenterSelector()
+        val cardsPresenter = CardPresenterSelector(null)
         val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
         val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)
         subscribeTo(viewModel.resultData) {

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.player
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -45,12 +46,25 @@ open class BasePlayerFragment : VideoSupportFragment() {
     private val hlsMediaSourceFactory by lazy { HlsMediaSource.Factory(dataSourceFactory) }
     private val otherMediaSourceFactory by lazy { ProgressiveMediaSource.Factory(dataSourceFactory) }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()
+
+
+        fadeCompleteListener = object : OnFadeCompleteListener() {
+
+            override fun onFadeInComplete() {
+                super.onFadeInComplete()
+                // workaround for hiding controls when user click "enter"
+                isControlsOverlayAutoHideEnabled = false
+                isControlsOverlayAutoHideEnabled = true
+            }
+        }
     }
+
 
     override fun onPause() {
         super.onPause()

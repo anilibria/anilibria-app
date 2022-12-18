@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.common
 
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
 abstract class BaseRowsViewModel : LifecycleViewModel() {
 
-    val rowListData = MutableLiveData<List<Long>>()
+    val rowListData = MutableStateFlow<List<Long>>(emptyList())
 
     protected abstract val rowIds: List<Long>
 

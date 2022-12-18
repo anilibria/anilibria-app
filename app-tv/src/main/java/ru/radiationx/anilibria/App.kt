@@ -6,6 +6,10 @@ import android.content.Context
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
+import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
+import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.quill.Quill
@@ -47,7 +51,12 @@ class App : Application() {
     }
 
     private fun initInMainProcess() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
         initDependencies()
+        initMintPermissions()
+        initMintPermissionsFlow()
     }
 
     private fun initDependencies() {

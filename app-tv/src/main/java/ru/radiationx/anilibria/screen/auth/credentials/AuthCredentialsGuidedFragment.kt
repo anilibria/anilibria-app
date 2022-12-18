@@ -24,13 +24,10 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
 
     private val viewModel by viewModel<AuthCredentialsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
+
         subscribeTo(viewModel.progressState) {
             updateEnabled(LOGIN_FIELD_ACTION_ID, !it)
             updateEnabled(PASSWORD_FIELD_ACTION_ID, !it)

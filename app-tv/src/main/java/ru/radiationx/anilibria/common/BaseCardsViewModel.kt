@@ -2,16 +2,19 @@ package ru.radiationx.anilibria.common
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
-    val cardsData = MutableLiveData<List<Any>>()
-    val rowTitle = MutableLiveData<String>()
+    val cardsData = MutableStateFlow<List<CardItem>>(emptyList())
+    val rowTitle = MutableStateFlow<String>("")
 
     protected open val firstPage = 1
     protected open val perPage = 20
@@ -31,27 +34,25 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     override fun onColdCreate() {
         super.onColdCreate()
         rowTitle.value = defaultTitle
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         if (loadOnCreate) {
             onRefreshClick()
         }
     }
 
     open fun onLinkCardClick() {
-        currentPage++
-        loadPage(currentPage)
+        onLinkCardBind()
+    }
+
+    open fun onLinkCardBind() {
+        loadPage(currentPage + 1)
     }
 
     open fun onRefreshClick() {
-        currentPage = firstPage
-        loadPage()
+        loadPage(firstPage)
     }
 
     open fun onLoadingCardClick() {
-        loadPage()
+        loadPage(currentPage)
     }
 
     open fun onLibriaCardClick(card: LibriaCard) {}
@@ -70,17 +71,22 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
         isError = true
     )
 
-    private fun loadPage(requestPage: Int = currentPage) {
-        if (requestPage != firstPage || progressOnRefresh) {
-            cardsData.value = currentCards + loadingCard
+    private fun loadPage(requestPage: Int) {
+        if (requestJob?.isActive == true) {
+            return
         }
-
         requestJob?.cancel()
         requestJob = viewModelScope.launch {
+            if (requestPage != firstPage || progressOnRefresh) {
+                cardsData.value = currentCards + loadingCard
+            }
             coRunCatching {
-                getLoader(requestPage)
+                withContext(Dispatchers.IO) {
+                    getLoader(requestPage)
+                }
             }.onSuccess { newCards ->
-                if (currentPage <= 1) {
+                currentPage = requestPage
+                if (requestPage <= 1) {
                     currentCards.clear()
                 }
                 currentCards.addAll(newCards)

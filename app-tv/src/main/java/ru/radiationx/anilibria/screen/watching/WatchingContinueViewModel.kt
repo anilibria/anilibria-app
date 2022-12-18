@@ -20,6 +20,11 @@ class WatchingContinueViewModel(
 
     override val defaultTitle: String = "Продолжить просмотр"
 
+    override fun onResume() {
+        super.onResume()
+        onRefreshClick()
+    }
+
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
         .let {
@@ -43,7 +48,7 @@ class WatchingContinueViewModel(
         .let {
             it.sortedByDescending { it.second?.lastAccess }.map {
                 converter.toCard(it.first)
-                    .copy(description = "Вы остановились на ${it.second?.id} серии")
+                    .copy(description = "Вы остановились на ${it.second?.id?.id} серии")
             }
         }
 

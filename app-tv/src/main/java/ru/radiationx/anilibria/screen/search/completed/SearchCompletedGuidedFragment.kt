@@ -3,11 +3,18 @@ package ru.radiationx.anilibria.screen.search.completed
 import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
+
+data class SearchCompletedExtra(
+    val isCompleted: Boolean
+) : QuillExtra
 
 class SearchCompletedGuidedFragment : FakeGuidedStepFragment() {
 
@@ -19,20 +26,16 @@ class SearchCompletedGuidedFragment : FakeGuidedStepFragment() {
         }
     }
 
-    private val viewModel by viewModel<SearchCompletedViewModel>()
+    private val viewModel by viewModel<SearchCompletedViewModel> {
+        SearchCompletedExtra(getExtraNotNull(ARG_COMPLETED))
+    }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        arguments?.apply {
-            viewModel.argCompleted = getBoolean(ARG_COMPLETED, viewModel.argCompleted)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.titlesData) {
             actions = it.mapIndexed { index: Int, title: String ->
@@ -43,7 +46,7 @@ class SearchCompletedGuidedFragment : FakeGuidedStepFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) {
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) {
             selectedActionPosition = it
         }
     }

@@ -1,10 +1,7 @@
 package ru.radiationx.anilibria.screen.watching
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -28,21 +25,19 @@ class WatchingFavoritesViewModel(
 
     override val loadOnCreate: Boolean = false
 
-    override fun onCreate() {
-        super.onCreate()
-        if (authRepository.getAuthState() == AuthState.AUTH) {
-            onRefreshClick()
-        }
-    }
-
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         authRepository
             .observeAuthState()
             .drop(1)
             .filter { it == AuthState.AUTH }
+            .distinctUntilChanged()
             .onEach { onRefreshClick() }
             .launchIn(viewModelScope)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onRefreshClick()
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository

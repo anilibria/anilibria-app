@@ -1,19 +1,20 @@
 package ru.radiationx.anilibria.screen.player.quality
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerQualityViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -24,26 +25,20 @@ class PlayerQualityViewModel(
         const val FULL_HD_ACTION_ID = PreferencesHolder.QUALITY_FULL_HD.toLong()
     }
 
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
+    val availableData = MutableStateFlow<List<Long>>(emptyList())
+    val selectedData = MutableStateFlow<Long?>(null)
 
-    val availableData = MutableLiveData<List<Long>>()
-    val selectedData = MutableLiveData<Long>()
-
-    override fun onCreate() {
-        super.onCreate()
-
-        updateAvailable()
-
-        releaseInteractor
-            .observeQuality()
-            .onEach {
-                update(it)
-            }
-            .launchIn(viewModelScope)
+    init {
+        combine(
+            releaseInteractor.observeFull(argExtra.releaseId),
+            releaseInteractor.observeQuality()
+        ) { release, quality ->
+            updateAvailable(release, quality)
+        }.launchIn(viewModelScope)
     }
 
     fun applyQuality(quality: Long) {
+        guidedRouter.close()
         val value = when (quality) {
             SD_ACTION_ID -> PreferencesHolder.QUALITY_SD
             HD_ACTION_ID -> PreferencesHolder.QUALITY_HD
@@ -51,28 +46,26 @@ class PlayerQualityViewModel(
             else -> PreferencesHolder.QUALITY_SD
         }
         releaseInteractor.setQuality(value)
-        guidedRouter.close()
     }
 
-    private fun updateAvailable() {
-        val available = mutableListOf(SD_ACTION_ID, HD_ACTION_ID, FULL_HD_ACTION_ID)
-        releaseInteractor.getFull(argReleaseId)?.episodes?.firstOrNull { it.id == argEpisodeId }
-            ?.also {
-                if (it.urlFullHd.isNullOrEmpty()) {
-                    available.remove(FULL_HD_ACTION_ID)
-                }
-                if (it.urlHd.isNullOrEmpty()) {
-                    available.remove(HD_ACTION_ID)
-                }
-                if (it.urlSd.isNullOrEmpty()) {
-                    available.remove(SD_ACTION_ID)
-                }
+    private fun updateAvailable(release: Release, quality: Int) {
+        val episode = release.episodes.firstOrNull { it.id == argExtra.episodeId } ?: return
+        val available = buildList<Long> {
+            if (!episode.urlSd.isNullOrEmpty()) {
+                add(SD_ACTION_ID)
             }
+            if (!episode.urlHd.isNullOrEmpty()) {
+                add(HD_ACTION_ID)
+            }
+            if (!episode.urlFullHd.isNullOrEmpty()) {
+                add(FULL_HD_ACTION_ID)
+            }
+        }
         availableData.value = available
+        selectedData.value = computeQualityActionId(available, quality)
     }
 
-    private fun update(currentQuality: Int) {
-        val available = availableData.value!!
+    private fun computeQualityActionId(available: List<Long>, currentQuality: Int): Long {
         var selectedAction = when (currentQuality) {
             PreferencesHolder.QUALITY_SD -> SD_ACTION_ID
             PreferencesHolder.QUALITY_HD -> HD_ACTION_ID
@@ -90,6 +83,6 @@ class PlayerQualityViewModel(
             selectedAction = -1L
         }
 
-        selectedData.value = selectedAction
+        return selectedAction
     }
 }

@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
+import ru.radiationx.anilibria.screen.search.SearchValuesExtra
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -15,15 +16,15 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchGenreViewModel(
+    private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
-) : BaseSearchValuesViewModel() {
+) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentGenres = mutableListOf<GenreItem>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         searchRepository
             .observeGenres()
             .onEach {
@@ -37,10 +38,7 @@ class SearchGenreViewModel(
                 updateSelected()
             }
             .launchIn(viewModelScope)
-    }
 
-    override fun onCreate() {
-        super.onCreate()
         viewModelScope.launch {
             progressState.value = true
             coRunCatching {
@@ -53,12 +51,10 @@ class SearchGenreViewModel(
     }
 
     override fun applyValues() {
-        viewModelScope.launch {
-            val newGenres = currentGenres.filterIndexed { index, item ->
-                checkedValues.contains(item.value)
-            }.toSet()
-            searchController.genresEvent.emit(newGenres)
-            guidedRouter.close()
-        }
+        guidedRouter.close()
+        val newGenres = currentGenres.filterIndexed { index, item ->
+            checkedValues.contains(item.value)
+        }.toSet()
+        searchController.genresEvent.emit(newGenres)
     }
 }

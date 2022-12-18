@@ -3,9 +3,12 @@ package ru.radiationx.anilibria.screen.player
 import android.os.Bundle
 import android.view.View
 import com.google.android.exoplayer2.PlaybackParameters
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -25,19 +28,17 @@ class PlayerFragment : BasePlayerFragment() {
         }
     }
 
-    private val viewModel by viewModel<PlayerViewModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        arguments?.apply {
-            viewModel.argReleaseId = getParcelable(ARG_RELEASE_ID)
-            viewModel.argEpisodeId = getParcelable(ARG_EPISODE_ID)
-        }
+    private val viewModel by viewModel<PlayerViewModel> {
+        PlayerExtra(
+            releaseId = getExtraNotNull(ARG_RELEASE_ID),
+            episodeId = getExtra(ARG_EPISODE_ID)
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         playerGlue?.actionListener = object : VideoPlayerGlue.OnActionClickedListener {
 
@@ -48,7 +49,7 @@ class PlayerFragment : BasePlayerFragment() {
             override fun onEpisodesClick() = viewModel.onEpisodesClick(getPosition())
         }
 
-        subscribeTo(viewModel.videoData) {
+        subscribeTo(viewModel.videoData.filterNotNull()) {
             playerGlue?.apply {
                 title = it.title
                 subtitle = it.subtitle
@@ -57,7 +58,7 @@ class PlayerFragment : BasePlayerFragment() {
             }
         }
 
-        subscribeTo(viewModel.playAction) {
+        subscribeTo(viewModel.playAction.filterNotNull()) {
             if (it) {
                 playerGlue?.play()
             } else {
@@ -65,11 +66,11 @@ class PlayerFragment : BasePlayerFragment() {
             }
         }
 
-        subscribeTo(viewModel.speedState) {
+        subscribeTo(viewModel.speedState.filterNotNull()) {
             player?.setPlaybackParameters(PlaybackParameters(it))
         }
 
-        subscribeTo(viewModel.qualityState) {
+        subscribeTo(viewModel.qualityState.filterNotNull()) {
             playerGlue?.setQuality(it)
         }
     }

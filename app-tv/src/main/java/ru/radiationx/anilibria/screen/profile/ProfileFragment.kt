@@ -32,13 +32,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
         return selfMainFragmentAdapter
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         viewModel.profileData.onEach {
             if (!it?.avatarUrl.isNullOrEmpty()) {

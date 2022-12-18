@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,14 +19,12 @@ class SuggestionsResultViewModel(
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
-    private var queryRelay = MutableSharedFlow<String>()
+    private val queryRelay = MutableSharedFlow<String>()
 
-    val progressState = MutableLiveData<Boolean>()
-    val resultData = MutableLiveData<List<LibriaCard>>()
+    val progressState = MutableStateFlow<Boolean>(false)
+    val resultData = MutableStateFlow<List<LibriaCard>>(emptyList())
 
-    override fun onColdCreate() {
-        super.onColdCreate()
-
+    init {
         queryRelay
             .debounce(350L)
             .distinctUntilChanged()
@@ -61,18 +58,16 @@ class SuggestionsResultViewModel(
     }
 
     private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
-        viewModelScope.launch {
-            val result = SuggestionsController.SearchResult(items, query, validQuery)
-            suggestionsController.resultEvent.emit(result)
-            progressState.value = false
-            resultData.value = items.map {
-                LibriaCard(
-                    it.names.getOrNull(0).orEmpty(),
-                    it.names.getOrNull(1).orEmpty(),
-                    it.poster.orEmpty(),
-                    LibriaCard.Type.Release(it.id)
-                )
-            }
+        val result = SuggestionsController.SearchResult(items, query, validQuery)
+        suggestionsController.resultEvent.emit(result)
+        progressState.value = false
+        resultData.value = items.map {
+            LibriaCard(
+                it.names.getOrNull(0).orEmpty(),
+                it.names.getOrNull(1).orEmpty(),
+                it.poster.orEmpty(),
+                LibriaCard.Type.Release(it.id)
+            )
         }
     }
 }

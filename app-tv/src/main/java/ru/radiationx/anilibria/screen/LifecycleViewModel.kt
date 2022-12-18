@@ -1,43 +1,87 @@
 package ru.radiationx.anilibria.screen
 
+import android.util.Log
 import androidx.annotation.CallSuper
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 
-open class LifecycleViewModel : ViewModel(), LifecycleObserver {
+open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
-    private var created = false
+    private var coldCreated = false
+    private var coldStarted = false
+    private var coldResumed = false
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        onCreate()
+        //Log.d("kekeke", "${this::class.simpleName} onCreate")
+    }
+
     @CallSuper
     protected open fun onCreate() {
-        if (!created) {
-            created = true
+        if (!coldCreated) {
+            coldCreated = true
             onColdCreate()
         }
     }
 
     protected open fun onColdCreate() {}
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        //Log.d("kekeke", "${this::class.simpleName} onStart")
+        onStart()
+        if (!coldStarted) {
+            coldStarted = true
+            onColdStart()
+        }
+    }
+
     protected open fun onStart() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    protected open fun onColdStart() {
+
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+       // Log.d("kekeke", "${this::class.simpleName} onResume")
+        onResume()
+        if (!coldResumed) {
+            coldResumed = true
+            onColdResume()
+        }
+    }
+
     protected open fun onResume() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    protected open fun onColdResume() {
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        onPause()
+    }
+
     protected open fun onPause() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        onStop()
+    }
+
     protected open fun onStop() {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        onDestroy()
+    }
+
     protected open fun onDestroy() {
     }
 }

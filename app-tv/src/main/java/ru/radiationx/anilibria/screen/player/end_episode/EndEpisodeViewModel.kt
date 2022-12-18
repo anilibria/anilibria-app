@@ -1,63 +1,59 @@
 package ru.radiationx.anilibria.screen.player.end_episode
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
+import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class EndEpisodeViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    lateinit var argReleaseId: ReleaseId
-    var argEpisodeId: EpisodeId? = null
-
     private val currentEpisodes = mutableListOf<Episode>()
     private val currentEpisode
-        get() = currentEpisodes.firstOrNull { it.id == argEpisodeId }
+        get() = currentEpisodes.firstOrNull { it.id == argExtra.episodeId }
 
-    override fun onCreate() {
-        super.onCreate()
-        releaseInteractor.getFull(argReleaseId)?.also {
-            currentEpisodes.clear()
-            currentEpisodes.addAll(it.episodes.reversed())
-        }
+    init {
+        releaseInteractor
+            .observeFull(argExtra.releaseId)
+            .onEach {
+                currentEpisodes.clear()
+                currentEpisodes.addAll(it.episodes.reversed())
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onReplayClick() {
         val episode = currentEpisode ?: return
 
-        viewModelScope.launch {
-            releaseInteractor.putEpisode(
-                episode.access.copy(
-                    seek = 0,
-                    lastAccess = System.currentTimeMillis(),
-                    isViewed = true
-                )
+        guidedRouter.close()
+        releaseInteractor.putEpisode(
+            episode.access.copy(
+                seek = 0,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
             )
-            playerController.selectEpisodeRelay.emit(episode.id)
-            guidedRouter.close()
-        }
+        )
+        playerController.selectEpisodeRelay.emit(episode.id)
     }
 
     fun onNextClick() {
         val episode = currentEpisode ?: return
-        viewModelScope.launch {
-            val currentIndex = currentEpisodes.indexOfFirst { it.id == episode.id }
+        guidedRouter.close()
 
-            currentEpisodes.getOrNull(currentIndex + 1)?.also { nextEpisode ->
-                playerController.selectEpisodeRelay.emit(nextEpisode.id)
-            }
-            guidedRouter.close()
+        val currentIndex = currentEpisodes.indexOfFirst { it.id == episode.id }
+        currentEpisodes.getOrNull(currentIndex + 1)?.also { nextEpisode ->
+            playerController.selectEpisodeRelay.emit(nextEpisode.id)
         }
     }
 }

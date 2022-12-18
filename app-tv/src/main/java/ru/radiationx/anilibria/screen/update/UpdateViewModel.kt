@@ -5,14 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
+import ru.radiationx.anilibria.common.LeanbackDialogContentConsumer
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
@@ -37,11 +39,11 @@ class UpdateViewModel(
     private val context: Context
 ) : LifecycleViewModel() {
 
-    val updateData = MutableLiveData<UpdateData>()
-    val progressState = MutableLiveData<Boolean>()
-    val downloadProgressShowState = MutableLiveData<Boolean>()
-    val downloadProgressData = MutableLiveData<Int>()
-    val downloadActionTitle = MutableLiveData<String>()
+    val updateData = MutableStateFlow<UpdateData?>(null)
+    val progressState = MutableStateFlow(false)
+    val downloadProgressShowState = MutableStateFlow(false)
+    val downloadProgressData = MutableStateFlow(0)
+    val downloadActionTitle = MutableStateFlow<String?>(null)
 
     private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null
@@ -54,10 +56,6 @@ class UpdateViewModel(
         progressState.value = true
         downloadProgressShowState.value = false
         downloadProgressData.value = 0
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         updateState()
 
         viewModelScope.launch {
@@ -75,7 +73,6 @@ class UpdateViewModel(
             }
             progressState.value = false
         }
-
         updateController
             .downloadAction
             .onEach {
@@ -96,14 +93,12 @@ class UpdateViewModel(
     }
 
     private fun downloadClick() {
-        viewModelScope.launch {
-            val data = updateData.value ?: return@launch
-            if (data.links.size > 1) {
-                guidedRouter.open(UpdateSourceScreen())
-            } else {
-                val link = data.links.firstOrNull() ?: return@launch
-                updateController.downloadAction.emit(link)
-            }
+        val data = updateData.value ?: return
+        if (data.links.size > 1) {
+            guidedRouter.open(UpdateSourceScreen())
+        } else {
+            val link = data.links.firstOrNull() ?: return
+            updateController.downloadAction.emit(link)
         }
     }
 
@@ -116,7 +111,12 @@ class UpdateViewModel(
         viewModelScope.launch {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 val result =
-                    mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    mintPermissionsDialogFlow.request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        MintPermissionsFlow.defaultDialogConfig.copy(
+                            contentConsumer = LeanbackDialogContentConsumer()
+                        )
+                    )
                 if (!result.isSuccess()) {
                     return@launch
                 }

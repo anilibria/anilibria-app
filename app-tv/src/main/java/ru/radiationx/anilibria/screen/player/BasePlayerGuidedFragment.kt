@@ -5,7 +5,15 @@ import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment.Companion.
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment.Companion.ARG_RELEASE_ID
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
+
+data class PlayerExtra(
+    val releaseId: ReleaseId,
+    val episodeId: EpisodeId?
+) : QuillExtra
 
 abstract class BasePlayerGuidedFragment : FakeGuidedStepFragment() {
 
@@ -14,11 +22,11 @@ abstract class BasePlayerGuidedFragment : FakeGuidedStepFragment() {
         const val ARG_EPISODE_ID = "episode id"
     }
 
-    protected val releaseId: ReleaseId by lazy {
-        requireNotNull(requireArguments().getParcelable(ARG_RELEASE_ID))
-    }
-    protected val episodeId: EpisodeId? by lazy {
-        requireArguments().getParcelable(ARG_EPISODE_ID)
+    protected val argExtra by lazy {
+        PlayerExtra(
+            releaseId = getExtraNotNull(ARG_RELEASE_ID),
+            episodeId = getExtra(ARG_EPISODE_ID)
+        )
     }
 }
 

@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.screen.player
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -10,25 +10,22 @@ import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.shared.ktx.EventFlow
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    var argReleaseId: ReleaseId? = null
-    var argEpisodeId: EpisodeId? = null
-
-    val videoData = MutableLiveData<Video>()
-    val qualityState = MutableLiveData<Int>()
-    val speedState = MutableLiveData<Float>()
-    val playAction = MutableLiveData<Boolean>()
+    val videoData = MutableStateFlow<Video?>(null)
+    val qualityState = MutableStateFlow<Int?>(null)
+    val speedState = MutableStateFlow<Float?>(null)
+    val playAction = EventFlow<Boolean>()
 
     private var currentEpisodes = mutableListOf<Episode>()
     private var currentRelease: Release? = null
@@ -36,9 +33,7 @@ class PlayerViewModel(
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         qualityState.value = releaseInteractor.getQuality()
         speedState.value = releaseInteractor.getPlaySpeed()
 
@@ -70,12 +65,12 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
 
         releaseInteractor
-            .observeFull(argReleaseId)
+            .observeFull(argExtra.releaseId)
             .onEach { release ->
                 currentRelease = release
                 currentEpisodes.clear()
                 currentEpisodes.addAll(release.episodes.reversed())
-                val episodeId = currentEpisode?.id ?: argEpisodeId
+                val episodeId = currentEpisode?.id ?: argExtra.episodeId
                 val episode = currentEpisodes.firstOrNull { it.id == episodeId }
                     ?: currentEpisodes.firstOrNull()
                 episode?.also { playEpisode(it) }
@@ -152,7 +147,7 @@ class PlayerViewModel(
         if (currentComplete == complete) return
         currentComplete = complete
         if (complete) {
-            playAction.value = false
+            playAction.emit(false)
             val nextEpisode = getNextEpisode()
             if (nextEpisode == null) {
                 guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
@@ -160,7 +155,7 @@ class PlayerViewModel(
                 guidedRouter.open(PlayerEndEpisodeGuidedScreen(release.id, episode.id))
             }
         } else {
-            playAction.value = true
+            playAction.emit(true)
         }
     }
 

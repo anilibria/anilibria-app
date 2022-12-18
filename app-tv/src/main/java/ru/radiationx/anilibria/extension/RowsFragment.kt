@@ -14,7 +14,9 @@ fun Fragment.createCardsRowBy(
     rowsAdapter: ArrayObjectAdapter,
     viewModel: BaseCardsViewModel
 ): ListRow {
-    val cardsPresenter = CardPresenterSelector()
+    val cardsPresenter = CardPresenterSelector {
+        viewModel.onLinkCardBind()
+    }
     val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
     val row = ListRow(rowId, HeaderItem(viewModel.defaultTitle), cardsAdapter)
     subscribeTo(viewModel.cardsData) {

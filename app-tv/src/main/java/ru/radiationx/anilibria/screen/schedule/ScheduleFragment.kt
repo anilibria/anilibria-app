@@ -26,11 +26,15 @@ class ScheduleFragment : BrowseSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-
         headersState = HEADERS_DISABLED
         isHeadersTransitionOnBackEnabled = false
         title = "Расписание"
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
             backgroundManager.applyCard(item)
@@ -59,13 +63,10 @@ class ScheduleFragment : BrowseSupportFragment() {
         }
 
         adapter = rowsAdapter
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         subscribeTo(viewModel.scheduleRows) {
             val rows = it.mapIndexed { index, day ->
-                val cardsPresenter = CardPresenterSelector()
+                val cardsPresenter = CardPresenterSelector(null)
                 val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
                 cardsAdapter.setItems(day.second, CardDiffCallback)
                 ListRow(index.toLong(), HeaderItem(day.first), cardsAdapter)

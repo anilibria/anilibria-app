@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.screen.search.completed
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
@@ -10,6 +8,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchCompletedViewModel(
+    private val argExtra: SearchCompletedExtra,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
@@ -19,28 +18,23 @@ class SearchCompletedViewModel(
         "Только завершенные"
     )
 
-    var argCompleted: Boolean = false
+    val titlesData = MutableStateFlow<List<String>>(emptyList())
+    val selectedIndex = MutableStateFlow<Int?>(null)
 
-    val titlesData = MutableLiveData<List<String>>()
-    val selectedIndex = MutableLiveData<Int>()
-
-    override fun onCreate() {
-        super.onCreate()
+    init {
         titlesData.value = titles
-        selectedIndex.value = if (argCompleted) 1 else 0
+        selectedIndex.value = if (argExtra.isCompleted) 1 else 0
     }
 
     fun applySort(index: Int) {
-        viewModelScope.launch {
-            val sort = when (index) {
-                0 -> false
-                1 -> true
-                else -> null
-            }
-            sort?.also {
-                searchController.completedEvent.emit(it)
-            }
-            guidedRouter.close()
+        guidedRouter.close()
+        val sort = when (index) {
+            0 -> false
+            1 -> true
+            else -> null
+        }
+        sort?.also {
+            searchController.completedEvent.emit(it)
         }
     }
 }

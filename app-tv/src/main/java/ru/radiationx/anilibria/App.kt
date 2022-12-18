@@ -3,12 +3,11 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
+import android.os.StrictMode
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
-import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
-import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
@@ -32,6 +31,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+
+
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
@@ -57,6 +59,22 @@ class App : Application() {
         initDependencies()
         initMintPermissions()
         initMintPermissionsFlow()
+
+       /* StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectNetwork()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )*/
+        /*StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )*/
     }
 
     private fun initDependencies() {

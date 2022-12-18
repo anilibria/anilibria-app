@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.screen.auth.main
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
 import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
@@ -28,7 +30,9 @@ class AuthViewModel(
     }
 
     fun onSkipClick() {
-        authRepository.setAuthSkipped(true)
-        guidedRouter.finishGuidedChain()
+        viewModelScope.launch {
+            authRepository.setAuthSkipped(true)
+            guidedRouter.finishGuidedChain()
+        }
     }
 }

@@ -4,8 +4,8 @@ import kotlinx.coroutines.flow.Flow
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 
 interface SocialAuthHolder {
-    fun get(): List<SocialAuth>
+    suspend fun get(): List<SocialAuth>
     fun observe(): Flow<List<SocialAuth>>
-    fun save(items: List<SocialAuth>)
-    fun delete()
+    suspend fun save(items: List<SocialAuth>)
+    suspend fun delete()
 }

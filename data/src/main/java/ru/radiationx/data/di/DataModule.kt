@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
@@ -154,7 +157,11 @@ class DataModule : QuillModule() {
         private val context: Context
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {
-            return PreferenceManager.getDefaultSharedPreferences(context)
+            return runBlocking {
+                withContext(Dispatchers.IO) {
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                }
+            }
         }
     }
 
@@ -163,10 +170,14 @@ class DataModule : QuillModule() {
         private val context: Context
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {
-            return context.getSharedPreferences(
-                "${context.packageName}_datastorage",
-                Context.MODE_PRIVATE
-            )
+            return runBlocking {
+                withContext(Dispatchers.IO) {
+                    context.getSharedPreferences(
+                        "${context.packageName}_datastorage",
+                        Context.MODE_PRIVATE
+                    )
+                }
+            }
         }
     }
 

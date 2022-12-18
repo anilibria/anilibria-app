@@ -2,6 +2,7 @@ package ru.radiationx.data.datasource.remote.address
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
@@ -22,9 +23,11 @@ class ApiConfig @Inject constructor(
     var needConfig = true
 
     init {
-        activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
-        val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
-        setConfig(initAddresses)
+        runBlocking {
+            activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
+            val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
+            setConfig(initAddresses)
+        }
     }
 
     fun observeNeedConfig(): Flow<Boolean> = needConfigRelay

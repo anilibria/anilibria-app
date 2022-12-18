@@ -24,10 +24,10 @@ class HistoryRepository @Inject constructor(
         .observeEpisodes()
         .map { it.asReversed() }
 
-    fun putRelease(releaseItem: Release) {
+    suspend fun putRelease(releaseItem: Release) {
         historyStorage.putRelease(releaseItem)
         updateHolder.viewRelease(releaseItem)
     }
 
-    fun removeRelease(id: ReleaseId) = historyStorage.removerRelease(id)
+    suspend fun removeRelease(id: ReleaseId) = historyStorage.removerRelease(id)
 }

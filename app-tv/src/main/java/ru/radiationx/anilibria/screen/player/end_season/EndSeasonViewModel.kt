@@ -36,15 +36,16 @@ class EndSeasonViewModel(
     fun onReplayEpisodeClick() {
         val episode = currentEpisode ?: return
 
-        guidedRouter.close()
-        releaseInteractor.putEpisode(
-            episode.access.copy(
-                seek = 0,
-                lastAccess = System.currentTimeMillis(),
-                isViewed = true
-            )
+        val newAccess = episode.access.copy(
+            seek = 0,
+            lastAccess = System.currentTimeMillis(),
+            isViewed = true
         )
-        playerController.selectEpisodeRelay.emit(episode.id)
+        viewModelScope.launch {
+            releaseInteractor.putEpisode(newAccess)
+            playerController.selectEpisodeRelay.emit(episode.id)
+            guidedRouter.close()
+        }
     }
 
     fun onReplaySeasonClick() {

@@ -38,7 +38,7 @@ class AuthRepository @Inject constructor(
             profileItem?.takeIf { authState == AuthState.AUTH }
         }.distinctUntilChanged()
 
-    fun getUser(): ProfileItem? = userHolder.getUser()?.takeIf {
+    suspend fun getUser(): ProfileItem? = userHolder.getUser()?.takeIf {
         getAuthState() == AuthState.AUTH
     }
 
@@ -49,11 +49,11 @@ class AuthRepository @Inject constructor(
         computeAuthState(cookies, skipped)
     }.distinctUntilChanged()
 
-    fun getAuthState(): AuthState {
+    suspend fun getAuthState(): AuthState {
         return computeAuthState(cookieHolder.getCookies(), authHolder.getAuthSkipped())
     }
 
-    fun setAuthSkipped(value: Boolean) {
+    suspend fun setAuthSkipped(value: Boolean) {
         authHolder.setAuthSkipped(value)
     }
 
@@ -116,7 +116,7 @@ class AuthRepository @Inject constructor(
         .toDomain(apiConfig)
         .also { updateUser(it) }
 
-    private fun updateUser(newUser: ProfileItem) {
+    private suspend fun updateUser(newUser: ProfileItem) {
         userHolder.saveUser(newUser)
     }
 

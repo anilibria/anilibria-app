@@ -2,6 +2,8 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import timber.log.Timber
@@ -21,22 +23,35 @@ class ApiConfigStorage @Inject constructor(
         moshi.adapter(ApiConfigResponse::class.java)
     }
 
-    fun save(config: ApiConfigResponse) {
-        try {
-            val json = adapter.toJson(config)
-            sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
-        } catch (ex: Throwable) {
-            Timber.e(ex)
+    suspend fun save(config: ApiConfigResponse) {
+        withContext(Dispatchers.IO) {
+            try {
+                val json = adapter.toJson(config)
+                sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
         }
     }
 
-    fun get(): ApiConfigResponse? = sharedPreferences
-        .getString(KEY_API_CONFIG, null)
-        ?.let { adapter.fromJson(it) }
+    suspend fun get(): ApiConfigResponse? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(KEY_API_CONFIG, null)
+                ?.let { adapter.fromJson(it) }
+        }
+    }
 
-    fun setActive(tag: String) =
-        sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
+    suspend fun setActive(tag: String) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
+        }
+    }
 
-    fun getActive(): String? = sharedPreferences
-        .getString(KEY_API_CONFIG_ACTIVE, null)
+    suspend fun getActive(): String? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(KEY_API_CONFIG_ACTIVE, null)
+        }
+    }
 }

@@ -61,12 +61,13 @@ class AppLauncherViewModel(
 
     private fun initMain() {
         firstLaunch = false
-        router.newRootScreen(MainPagesScreen())
-        //router.newRootScreen(SearchScreen())
-        if (authRepository.getAuthState() == AuthState.NO_AUTH) {
-            router.navigateTo(AuthGuidedScreen())
+        viewModelScope.launch {
+            router.newRootScreen(MainPagesScreen())
+            if (authRepository.getAuthState() == AuthState.NO_AUTH) {
+                router.navigateTo(AuthGuidedScreen())
+            }
+            appReadyState.value = Unit
         }
-        appReadyState.value = Unit
         GlobalScope.launch {
             coRunCatching {
                 authRepository.loadUser()

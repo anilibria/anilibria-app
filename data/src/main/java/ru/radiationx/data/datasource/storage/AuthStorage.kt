@@ -2,8 +2,13 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.AuthHolder
 import java.util.*
 import javax.inject.Inject
@@ -22,8 +27,8 @@ class AuthStorage @Inject constructor(
 
     private val vkAuthRelay = MutableSharedFlow<Boolean>()
 
-    private val authSkippedState by lazy {
-        MutableStateFlow(loadAuthSkipped())
+    private val authSkippedState = SuspendMutableStateFlow {
+        loadAuthSkipped()
     }
 
     override fun observeVkAuthChange(): Flow<Boolean> = vkAuthRelay.asSharedFlow()
@@ -32,34 +37,39 @@ class AuthStorage @Inject constructor(
         vkAuthRelay.emit(value)
     }
 
-    override fun getDeviceId(): String {
-        var uid = sharedPreferences.getString(KEY_DEVICE_UID, null)
+    override suspend fun getDeviceId(): String {
+        return withContext(Dispatchers.IO) {
+            var uid = sharedPreferences.getString(KEY_DEVICE_UID, null)
 
-        if (uid == null) {
-            uid = UUID.randomUUID()?.toString() ?: ""
-            sharedPreferences.edit().putString(KEY_DEVICE_UID, uid).apply()
+            if (uid == null) {
+                uid = UUID.randomUUID()?.toString() ?: ""
+                sharedPreferences.edit().putString(KEY_DEVICE_UID, uid).apply()
+            }
+            uid
         }
-
-        return uid
     }
 
     override fun observeAuthSkipped(): Flow<Boolean> {
-        return authSkippedState.asStateFlow()
+        return authSkippedState
     }
 
-    override fun getAuthSkipped(): Boolean {
-        return authSkippedState.value
+    override suspend fun getAuthSkipped(): Boolean {
+        return authSkippedState.getValue()
     }
 
-    override fun setAuthSkipped(value: Boolean) {
-        sharedPreferences.edit {
-            putBoolean(KEY_AUTH_SKIPPED, value)
+    override suspend fun setAuthSkipped(value: Boolean) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences.edit {
+                putBoolean(KEY_AUTH_SKIPPED, value)
+            }
         }
-        authSkippedState.value = loadAuthSkipped()
+        authSkippedState.setValue(loadAuthSkipped())
     }
 
-    private fun loadAuthSkipped(): Boolean {
-        return sharedPreferences.getBoolean(KEY_AUTH_SKIPPED, false)
+    private suspend fun loadAuthSkipped(): Boolean {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences.getBoolean(KEY_AUTH_SKIPPED, false)
+        }
     }
 
 }

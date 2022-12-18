@@ -10,15 +10,15 @@ class ReleaseUpdateMiddleware(
     private val holder: ReleaseUpdateHolder
 ) {
 
-    fun handle(releases: List<Release>) {
+    suspend fun handle(releases: List<Release>) {
         holder.putInitialRelease(releases)
     }
 
-    fun handle(release: Release) {
+    suspend fun handle(release: Release) {
         holder.putInitialRelease(listOf(release))
     }
 
-    fun handleFeed(feedItems: List<FeedItem>) {
+    suspend fun handleFeed(feedItems: List<FeedItem>) {
         handle(feedItems.mapNotNull { it.release })
     }
 }

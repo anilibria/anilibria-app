@@ -5,6 +5,6 @@ import ru.radiationx.data.entity.domain.release.YearItem
 
 interface YearsHolder {
     fun observeYears(): Flow<List<YearItem>>
-    fun saveYears(years: List<YearItem>)
-    fun getYears(): List<YearItem>
+    suspend fun saveYears(years: List<YearItem>)
+    suspend fun getYears(): List<YearItem>
 }

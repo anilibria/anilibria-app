@@ -8,7 +8,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 interface ReleaseUpdateHolder {
     fun observeEpisodes(): Flow<List<ReleaseUpdate>>
     suspend fun getReleases(): List<ReleaseUpdate>
-    fun getRelease(id: ReleaseId): ReleaseUpdate?
-    fun viewRelease(release: Release)
-    fun putInitialRelease(releases: List<Release>)
+    suspend fun getRelease(id: ReleaseId): ReleaseUpdate?
+    suspend fun viewRelease(release: Release)
+    suspend fun putInitialRelease(releases: List<Release>)
 }

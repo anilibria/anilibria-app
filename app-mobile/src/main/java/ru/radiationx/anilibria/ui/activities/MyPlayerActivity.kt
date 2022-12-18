@@ -520,6 +520,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             lastAccess = System.currentTimeMillis(),
             isViewed = true
         )
+        // todo TR-274 run in scope outside lifecycle
         runBlocking {
             releaseInteractor.putEpisode(newAccess)
         }

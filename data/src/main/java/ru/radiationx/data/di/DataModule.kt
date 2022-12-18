@@ -157,6 +157,7 @@ class DataModule : QuillModule() {
         private val context: Context
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {
+            // for strict-mode pass
             return runBlocking {
                 withContext(Dispatchers.IO) {
                     PreferenceManager.getDefaultSharedPreferences(context)
@@ -170,6 +171,7 @@ class DataModule : QuillModule() {
         private val context: Context
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {
+            // for strict-mode pass
             return runBlocking {
                 withContext(Dispatchers.IO) {
                     context.getSharedPreferences(

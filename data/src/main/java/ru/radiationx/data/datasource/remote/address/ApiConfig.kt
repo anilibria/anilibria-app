@@ -23,6 +23,7 @@ class ApiConfig @Inject constructor(
     var needConfig = true
 
     init {
+        // todo TR-274 make api config async
         runBlocking {
             activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
             val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))

@@ -75,6 +75,7 @@ class MainViewModel(
     private fun initMain() {
         firstLaunch = false
 
+        // todo TR-274 move in scope after refactor screen
         runBlocking {
             if (authRepository.getAuthState() == AuthState.NO_AUTH) {
                 authMainAnalytics.open(AnalyticsConstants.screen_main)
@@ -108,6 +109,7 @@ class MainViewModel(
         router.exit()
     }
 
+    // todo TR-274 refactor screen with no-getter viewmodel
     fun getAuthState() = runBlocking { authRepository.getAuthState() }
 
     fun selectTab(screenKey: String) {

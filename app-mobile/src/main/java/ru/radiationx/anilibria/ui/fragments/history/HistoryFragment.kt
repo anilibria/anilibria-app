@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.behavior.SearchBehavior
@@ -15,10 +16,9 @@ import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.FragmentListBinding
+import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
@@ -34,7 +34,8 @@ import ru.radiationx.quill.viewModel
 /**
  * Created by radiationx on 18.02.18.
  */
-class HistoryFragment : BaseToolbarFragment<FragmentListBinding>(R.layout.fragment_list),
+class HistoryFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener {
 
@@ -72,8 +73,8 @@ class HistoryFragment : BaseToolbarFragment<FragmentListBinding>(R.layout.fragme
 
     override val statusBarVisible: Boolean = true
 
-    override fun onCreateBinding(view: View): FragmentListBinding {
-        return FragmentListBinding.bind(view)
+    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
+        return FragmentListRefreshBinding.bind(view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,6 +116,10 @@ class HistoryFragment : BaseToolbarFragment<FragmentListBinding>(R.layout.fragme
             layoutManager = LinearLayoutManager(this.context)
             adapter = this@HistoryFragment.adapter
             disableItemChangeAnimation()
+        }
+
+        binding.refreshLayout.setOnRefreshListener {
+            viewModel.refresh()
         }
 
 
@@ -184,7 +189,9 @@ class HistoryFragment : BaseToolbarFragment<FragmentListBinding>(R.layout.fragme
     }
 
     private fun showState(state: HistoryScreenState) {
-        adapter.bindState(DataLoadingState(data = state.items))
+        binding.progressBarList.isVisible = state.data.emptyLoading
+        binding.refreshLayout.isRefreshing = state.data.refreshLoading
+        adapter.bindState(state.data)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 }

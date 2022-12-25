@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.loading.DataLoadingController
+import ru.radiationx.anilibria.model.loading.ScreenStateAction
+import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -32,66 +35,86 @@ class HistoryViewModel(
     private val systemUtils: SystemUtils
 ) : ViewModel() {
 
-    private val currentReleases = mutableListOf<Release>()
+    private val loadingController = DataLoadingController(viewModelScope) {
+        val items = historyRepository.getReleases()
+        ScreenStateAction.Data(items, false)
+    }
+
     private val _state = MutableStateFlow(HistoryScreenState())
     val state = _state.asStateFlow()
 
-    private var isSearchEnabled: Boolean = false
-    private var currentQuery: String = ""
+    private val queryFlow = MutableStateFlow("")
 
     private val updates = emptyMap<ReleaseId, ReleaseUpdate>()
 
     init {
-        observeReleases()
+        loadingController
+            .observeState()
+            .map { state ->
+                state.mapData { data ->
+                    data.map { it.toState(updates) }
+                }
+            }
+            .onEach { loadingState ->
+                _state.update {
+                    it.copy(data = loadingState)
+                }
+            }
+            .launchIn(viewModelScope)
+
+        historyRepository
+            .observeReleases()
+            .onEach { releases ->
+                loadingController.modifyData(releases)
+            }
+            .launchIn(viewModelScope)
+
+        combine(
+            queryFlow,
+            loadingController.observeState().map { it.data.orEmpty() }.distinctUntilChanged()
+        ) { query, releases ->
+            if (query.isEmpty()) {
+                return@combine emptyList()
+            }
+            releases.filter {
+                it.title.orEmpty().contains(query, true)
+                        || it.titleEng.orEmpty().contains(query, true)
+            }
+        }
+            .distinctUntilChanged()
+            .onEach { searchItems ->
+                _state.update { state ->
+                    state.copy(searchItems = searchItems.map { it.toState(updates) })
+                }
+            }
+            .launchIn(viewModelScope)
+
+        loadingController.refresh()
     }
 
     fun onBackPressed() {
         router.exit()
     }
 
-    private fun observeReleases() {
-        historyRepository
-            .observeReleases()
-            .onEach { releases ->
-                currentReleases.clear()
-                currentReleases.addAll(releases)
-
-                _state.update {
-                    it.copy(items = currentReleases.map { it.toState(updates) })
-                }
-
-                updateSearchState()
-            }
-            .launchIn(viewModelScope)
+    fun refresh() {
+        loadingController.refresh()
     }
 
-    private fun updateSearchState() {
-        isSearchEnabled = currentQuery.isNotEmpty()
-        val searchItes = if (currentQuery.isNotEmpty()) {
-            currentReleases.filter {
-                it.title.orEmpty().contains(currentQuery, true)
-                        || it.titleEng.orEmpty().contains(currentQuery, true)
-            }
-        } else {
-            emptyList()
-        }
-        _state.update {
-            it.copy(searchItems = searchItes.map { it.toState(updates) })
-        }
+    fun loadMore() {
+        loadingController.loadMore()
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        return currentReleases.find { it.id == id }
+        return loadingController.currentState.data?.find { it.id == id }
     }
 
     fun localSearch(query: String) {
-        currentQuery = query
-        updateSearchState()
+        queryFlow.value = query
     }
 
     fun onItemClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        if (isSearchEnabled) {
+        if (queryFlow.value.isNotEmpty()) {
             historyAnalytics.searchReleaseClick()
         } else {
             historyAnalytics.releaseClick()

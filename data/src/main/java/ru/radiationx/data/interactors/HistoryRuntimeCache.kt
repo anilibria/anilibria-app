@@ -1,6 +1,8 @@
 package ru.radiationx.data.interactors
 
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.ReleaseApi
 import ru.radiationx.data.entity.domain.release.Release
@@ -19,6 +21,8 @@ class HistoryRuntimeCache @Inject constructor(
     private val cachedData = MutableStateFlow<Map<ReleaseId, Release>>(emptyMap())
 
     private val sharedRequests = SharedRequests<Set<ReleaseId>, List<Release>>()
+
+    private val mutex = Mutex()
 
     fun observeCached(ids: List<ReleaseId>): Flow<List<Release>> {
         return cachedData
@@ -45,24 +49,26 @@ class HistoryRuntimeCache @Inject constructor(
     }
 
     private suspend fun decideToLoad(ids: List<ReleaseId>) {
-        val idsSet = ids.toSet()
-        val cachedIdsSet = cachedData.value.keys
-        val idsToLoad = idsSet - cachedIdsSet
-        if (idsToLoad.isNotEmpty()) {
-            val result = sharedRequests.request(idsToLoad) {
-                releaseApi.getReleasesByIds(idsToLoad.map { it.id }).map {
-                    it.toDomain(apiUtils, apiConfig)
+        mutex.withLock {
+            val idsSet = ids.toSet()
+            val cachedIdsSet = cachedData.value.keys
+            val idsToLoad = idsSet - cachedIdsSet
+            if (idsToLoad.isNotEmpty()) {
+                val result = sharedRequests.request(idsToLoad) {
+                    releaseApi.getReleasesByIds(idsToLoad.map { it.id }).map {
+                        it.toDomain(apiUtils, apiConfig)
+                    }
                 }
-            }
 
-            cachedData.update { cacheMap ->
-                val resultMap = cacheMap.toMutableMap()
-                result.forEach {
-                    resultMap[it.id] = it
+                cachedData.update { cacheMap ->
+                    val resultMap = cacheMap.toMutableMap()
+                    result.forEach {
+                        resultMap[it.id] = it
+                    }
+                    resultMap
                 }
-                resultMap
-            }
 
+            }
         }
     }
 

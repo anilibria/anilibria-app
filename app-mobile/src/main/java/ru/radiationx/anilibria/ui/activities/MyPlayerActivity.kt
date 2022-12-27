@@ -346,6 +346,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         binding.player.setOnCompletionListener(null)
         binding.player.setOnVideoSizedChangedListener(null)
         binding.player.setAnalyticsListener(null)
+        unregisterReceiver(mReceiver)
 
         videoControls?.apply {
             setOpeningListener(null)

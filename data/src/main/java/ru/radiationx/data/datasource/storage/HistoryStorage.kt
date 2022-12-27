@@ -9,13 +9,9 @@ import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.entity.domain.release.BlockedInfo
-import ru.radiationx.data.entity.domain.release.FavoriteInfo
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.shared.ktx.android.nullString
-import ru.radiationx.shared.ktx.android.toStringsList
+import ru.radiationx.shared.ktx.android.mapObjects
 import javax.inject.Inject
 
 /**
@@ -35,15 +31,15 @@ class HistoryStorage @Inject constructor(
 
     override suspend fun getEpisodes() = localReleasesRelay.getValue()
 
-    override fun observeEpisodes(): Flow<List<Release>> = localReleasesRelay
+    override fun observeEpisodes(): Flow<List<ReleaseId>> = localReleasesRelay
 
     override suspend fun putRelease(release: Release) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases
-                .firstOrNull { it.id == release.id }
+                .firstOrNull { it == release.id }
                 ?.let { mutableLocalReleases.remove(it) }
-            mutableLocalReleases.add(release)
+            mutableLocalReleases.add(release.id)
             mutableLocalReleases
         }
         saveAll()
@@ -54,9 +50,9 @@ class HistoryStorage @Inject constructor(
             val mutableLocalReleases = localReleases.toMutableList()
             releases.forEach { release ->
                 mutableLocalReleases
-                    .firstOrNull { it.id == release.id }
+                    .firstOrNull { it == release.id }
                     ?.let { mutableLocalReleases.remove(it) }
-                mutableLocalReleases.add(release)
+                mutableLocalReleases.add(release.id)
             }
             mutableLocalReleases
         }
@@ -66,7 +62,7 @@ class HistoryStorage @Inject constructor(
     override suspend fun removerRelease(id: ReleaseId) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
-            mutableLocalReleases.firstOrNull { it.id == id }?.also {
+            mutableLocalReleases.firstOrNull { it == id }?.also {
                 mutableLocalReleases.remove(it)
             }
             mutableLocalReleases
@@ -79,28 +75,7 @@ class HistoryStorage @Inject constructor(
             val jsonEpisodes = JSONArray()
             localReleasesRelay.getValue().forEach {
                 jsonEpisodes.put(JSONObject().apply {
-                    put("id", it.id.id)
-                    put("code", it.code.code)
-                    put("link", it.link)
-                    put("names", JSONArray(it.names))
-                    put("series", it.series)
-                    put("poster", it.poster)
-                    put("torrentUpdate", it.torrentUpdate)
-                    put("status", it.status)
-                    put("statusCode", it.statusCode)
-                    put("announce", it.announce)
-                    put("types", JSONArray(it.types))
-                    put("genres", JSONArray(it.genres))
-                    put("voices", JSONArray(it.voices))
-                    put("seasons", JSONArray(it.seasons))
-                    put("days", JSONArray(it.days))
-                    put("description", it.description)
-                    put("favoriteInfo", it.favoriteInfo.let { favInfo ->
-                        JSONObject().apply {
-                            put("rating", favInfo.rating)
-                            put("isAdded", favInfo.isAdded)
-                        }
-                    })
+                    put("id", it.id)
                 })
             }
             sharedPreferences
@@ -110,53 +85,18 @@ class HistoryStorage @Inject constructor(
         }
     }
 
-    private suspend fun loadAll(): List<Release> {
+    private suspend fun loadAll(): List<ReleaseId> {
         return withContext(Dispatchers.IO) {
-            val result = mutableListOf<Release>()
-            val jsonEpisodes =
-                sharedPreferences.getString(LOCAL_HISTORY_KEY, null)?.let { JSONArray(it) }
-            if (jsonEpisodes != null) {
-                (0 until jsonEpisodes.length()).forEach { releaseIndex ->
-                    val jsonRelease = jsonEpisodes.getJSONObject(releaseIndex)
-                    val favoriteInfo = jsonRelease.getJSONObject("favoriteInfo").let { jsonFav ->
-                        FavoriteInfo(
-                            rating = jsonFav.getInt("rating"),
-                            isAdded = jsonFav.getBoolean("isAdded")
-                        )
+            val result = mutableListOf<ReleaseId>()
+            sharedPreferences
+                .getString(LOCAL_HISTORY_KEY, null)
+                ?.let { JSONArray(it) }
+                ?.let { jsonEpisodes ->
+                    jsonEpisodes.mapObjects { jsonRelease ->
+                        val id = ReleaseId(jsonRelease.getInt("id"))
+                        result.add(id)
                     }
-                    val release = Release(
-                        id = ReleaseId(jsonRelease.getInt("id")),
-                        code = ReleaseCode(jsonRelease.nullString("code").orEmpty()),
-                        names = jsonRelease.getJSONArray("names").toStringsList(),
-                        series = jsonRelease.nullString("series"),
-                        poster = jsonRelease.nullString("poster"),
-                        torrentUpdate = jsonRelease.getInt("torrentUpdate"),
-                        status = jsonRelease.nullString("status"),
-                        statusCode = jsonRelease.nullString("statusCode"),
-                        types = jsonRelease.getJSONArray("types").toStringsList(),
-                        genres = jsonRelease.getJSONArray("genres").toStringsList(),
-                        voices = jsonRelease.getJSONArray("voices").toStringsList(),
-                        seasons = jsonRelease.getJSONArray("seasons").toStringsList(),
-                        days = jsonRelease.getJSONArray("days").toStringsList(),
-                        description = jsonRelease.nullString("description"),
-                        announce = jsonRelease.nullString("announce"),
-                        favoriteInfo = favoriteInfo,
-                        link = jsonRelease.nullString("link"),
-                        showDonateDialog = false,
-                        blockedInfo = BlockedInfo(
-                            isBlocked = false,
-                            reason = null
-                        ),
-                        moonwalkLink = null,
-                        episodes = listOf(),
-                        sourceEpisodes = listOf(),
-                        externalPlaylists = listOf(),
-                        rutubePlaylist = listOf(),
-                        torrents = listOf()
-                    )
-                    result.add(release)
                 }
-            }
             result
         }
     }

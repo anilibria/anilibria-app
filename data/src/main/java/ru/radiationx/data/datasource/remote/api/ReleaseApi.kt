@@ -50,7 +50,7 @@ class ReleaseApi @Inject constructor(
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "info",
             "id" to ids.joinToString(","),
-            "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+            "filter" to "id,torrents,playlist,externalPlaylist,favorite,moon,blockedInfo",
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
@@ -61,7 +61,7 @@ class ReleaseApi @Inject constructor(
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",
             "page" to page.toString(),
-            "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+            "filter" to "id,torrents,playlist,externalPlaylist,favorite,moon,blockedInfo",
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)

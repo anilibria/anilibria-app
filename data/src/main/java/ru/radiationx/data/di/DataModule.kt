@@ -22,6 +22,7 @@ import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
+import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
@@ -118,6 +119,8 @@ class DataModule : QuillModule() {
         single<ReleaseUpdateMiddleware>()
 
         single<ReleaseInteractor>()
+
+        single<HistoryRuntimeCache>()
 
 
         /* Analytics */

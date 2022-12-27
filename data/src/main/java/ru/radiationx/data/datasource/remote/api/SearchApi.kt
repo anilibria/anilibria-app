@@ -63,7 +63,7 @@ class SearchApi @Inject constructor(
             "xpage" to "catalog",
             "sort" to sort,
             "page" to page.toString(),
-            "filter" to "id,torrents,playlist,favorite,moon,blockedInfo",
+            "filter" to "id,torrents,playlist,externalPlaylist,favorite,moon,blockedInfo",
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)

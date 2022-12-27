@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.screen.auth
 
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
-import kotlinx.android.synthetic.main.wizard_progress_action_item.view.*
 import ru.radiationx.anilibria.R
 
 class GuidedProgressActionsStylist : GuidedActionsStylist() {
@@ -35,8 +35,8 @@ class GuidedProgressActionsStylist : GuidedActionsStylist() {
         super.onBindViewHolder(vh, action)
 
         if (action is GuidedProgressAction) {
-            vh.itemView.apply {
-                guidedactions_item_progressBar.isVisible = action.showProgress
+            vh.itemView.findViewById<ProgressBar>(R.id.guidedactions_item_progressBar).apply {
+                isVisible = action.showProgress
             }
             vh.contentView.isVisible = !action.showProgress
         }

@@ -1,19 +1,14 @@
 package ru.radiationx.data.interactors
 
-import android.util.Log
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.flow.*
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.RandomRelease
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.release.RandomRelease
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.ReleaseRepository
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 /**
@@ -23,131 +18,101 @@ class ReleaseInteractor @Inject constructor(
     private val releaseRepository: ReleaseRepository,
     private val episodesCheckerStorage: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
-    private val schedulers: SchedulersProvider
 ) {
 
-    private val checkerCombiner = BiFunction<ReleaseFull, List<ReleaseFull.Episode>, ReleaseFull> { release, savedEpisodes ->
-        val localEpisodes = savedEpisodes.filter { it.releaseId == release.id }
-        release.episodes.forEach { newEpisode ->
-            val localEpisode = localEpisodes.firstOrNull { it.id == newEpisode.id }
-            newEpisode.isViewed = localEpisode?.isViewed ?: false
-            newEpisode.seek = localEpisode?.seek ?: 0
-            newEpisode.lastAccess = localEpisode?.lastAccess ?: 0
+    private val checkerCombiner: (suspend (Release, List<EpisodeAccess>) -> Release) =
+        { release, episodeAccesses ->
+            val newEpisodes = release.episodes.map { episode ->
+                val episodeAccess = episodeAccesses.firstOrNull { it.id == episode.id }
+                if (episodeAccess != null) {
+                    episode.copy(access = episodeAccess)
+                } else {
+                    episode
+                }
+            }
+            release.copy(episodes = newEpisodes)
         }
-        release
+
+    private val releaseItems = MutableStateFlow<List<Release>>(emptyList())
+    private val releases = MutableStateFlow<List<Release>>(emptyList())
+
+    private val sharedRequests = SharedRequests<RequestKey, Release>()
+
+    suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
+
+    private suspend fun loadRelease(releaseId: ReleaseId): Release {
+        return releaseRepository.getRelease(releaseId).also(::updateFullCache)
     }
 
-    private val fullLoadCacheById = ConcurrentHashMap<Int, Observable<ReleaseFull>>()
-    private val fullLoadCacheByCode = ConcurrentHashMap<String, Observable<ReleaseFull>>()
-
-    private val releaseItemsById = mutableMapOf<Int, ReleaseItem>()
-    private val releaseItemsByCode = mutableMapOf<String, ReleaseItem>()
-
-    private val releasesById = mutableMapOf<Int, ReleaseFull>()
-    private val releasesByCode = mutableMapOf<String, ReleaseFull>()
-
-    private val itemsUpdateTrigger = PublishRelay.create<Boolean>()
-    private val fullUpdateTrigger = PublishRelay.create<Boolean>()
-
-    fun getRandomRelease(): Single<RandomRelease> = releaseRepository.getRandomRelease()
-
-    private fun loadRelease(releaseId: Int): Observable<ReleaseFull> = releaseRepository
-        .getRelease(releaseId)
-        .doOnSuccess(this::updateFullCache)
-        .doFinally { fullLoadCacheById.remove(releaseId) }
-        .toObservable()
-        .share()
-        .replay()
-        .autoConnect(1)
-        .also { fullLoadCacheById[releaseId] = it }
-
-    private fun loadRelease(releaseCode: String): Observable<ReleaseFull> = releaseRepository
-        .getRelease(releaseCode)
-        .doOnSuccess(this::updateFullCache)
-        .doFinally { fullLoadCacheByCode.remove(releaseCode) }
-        .toObservable()
-        .share()
-        .replay()
-        .autoConnect(1)
-        .also { fullLoadCacheByCode[releaseCode] = it }
-
-    fun loadRelease(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> {
-        val releaseSource = releaseId.idOrNull()
-            ?.let { fullLoadCacheById[it] }
-            ?: releaseCode?.let { fullLoadCacheByCode[it] }
-        (releaseSource)?.also {
-            return it
-        }
-        return when {
-            releaseId != -1 -> loadRelease(releaseId)
-            releaseCode != null -> loadRelease(releaseCode)
-            else -> Observable.error(Exception("Unknown id=$releaseId or code=$releaseCode"))
-        }
+    private suspend fun loadRelease(releaseCode: ReleaseCode): Release {
+        return releaseRepository.getRelease(releaseCode).also(::updateFullCache)
     }
 
-    fun loadReleases(page: Int): Single<Paginated<List<ReleaseItem>>> = releaseRepository
-        .getReleases(page)
-        .doOnSuccess { updateItemsCache(it.data) }
-
-    fun getItem(releaseId: Int = -1, releaseCode: String? = null): ReleaseItem? {
-        return releaseId.idOrNull()
-            ?.let { releaseItemsById[it] }
-            ?: releaseCode?.let { releaseItemsByCode[it] }
-    }
-
-    fun getFull(releaseId: Int = -1, releaseCode: String? = null): ReleaseFull? {
-        return releaseId.idOrNull()
-            ?.let { releasesById[it] }
-            ?: releaseCode?.let { releasesByCode[it] }
-    }
-
-    fun observeItem(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseItem> = Observable
-        .just(true)
-        .filter { getItem(releaseId, releaseCode) != null }
-        .map { getItem(releaseId, releaseCode)!! }
-        .repeatWhen { itemsUpdateTrigger }
-
-    fun observeFull(releaseId: Int = -1, releaseCode: String? = null): Observable<ReleaseFull> = Observable
-        .combineLatest(
-            createFullObservable(releaseId, releaseCode),
-            episodesCheckerStorage.observeEpisodes(),
-            checkerCombiner
-        )
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
-
-    private fun createFullObservable(releaseId: Int = -1, releaseCode: String? = null) = Observable
-        .just(true)
-        .filter { getFull(releaseId, releaseCode) != null }
-        .map { getFull(releaseId, releaseCode)!! }
-        .repeatWhen { fullUpdateTrigger }
-
-    fun updateItemsCache(items: List<ReleaseItem>) {
-        items.forEach { release ->
-            releaseItemsById[release.id] = release
-            release.code?.also { code ->
-                releaseItemsByCode[code] = release
+    suspend fun loadRelease(
+        releaseId: ReleaseId? = null,
+        releaseCode: ReleaseCode? = null
+    ): Release {
+        val key = RequestKey(releaseId, releaseCode)
+        return sharedRequests.request(key) {
+            when {
+                releaseId != null -> loadRelease(releaseId)
+                releaseCode != null -> loadRelease(releaseCode)
+                else -> throw Exception("Unknown id=$releaseId or code=$releaseCode")
             }
         }
-        itemsUpdateTrigger.accept(true)
     }
 
-    fun updateFullCache(release: ReleaseFull) {
-        releasesById[release.id] = release
-        release.code?.also { code ->
-            releasesByCode[code] = release
+    fun getItem(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Release? {
+        return releaseItems.value.findRelease(releaseId, releaseCode)
+    }
+
+    suspend fun getFull(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Release? {
+        return observeFull(releaseId, releaseCode).firstOrNull()
+    }
+
+    fun observeItem(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Flow<Release> {
+        return releaseItems.mapNotNull { it.findRelease(releaseId, releaseCode) }
+    }
+
+    fun observeFull(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Flow<Release> {
+        return flow {
+            emit(updateIfNotExists(releaseId, releaseCode))
+        }.flatMapLatest {
+            combine(
+                releases.mapNotNull { it.findRelease(releaseId, releaseCode) },
+                episodesCheckerStorage.observeEpisodes(),
+                checkerCombiner
+            )
         }
-        fullUpdateTrigger.accept(true)
+    }
+
+    fun updateItemsCache(items: List<Release>) {
+        releaseItems.update { releaseItems ->
+            releaseItems.filterNot { release ->
+                items.any {
+                    check(release, it.id, it.code)
+                }
+            } + items
+        }
+    }
+
+    fun updateFullCache(release: Release) {
+        releases.update { releases ->
+            releases.filterNot {
+                check(it, release.id, release.code)
+            } + release
+        }
     }
 
     /* Common */
-    fun putEpisode(episode: ReleaseFull.Episode) = episodesCheckerStorage.putEpisode(episode)
+    suspend fun putEpisode(episode: EpisodeAccess) = episodesCheckerStorage.putEpisode(episode)
 
-    fun putEpisodes(episodes: List<ReleaseFull.Episode>) = episodesCheckerStorage.putAllEpisode(episodes)
+    suspend fun putEpisodes(episodes: List<EpisodeAccess>) =
+        episodesCheckerStorage.putAllEpisode(episodes)
 
-    fun getEpisodes(releaseId: Int) = episodesCheckerStorage.getEpisodes(releaseId)
+    suspend fun getEpisodes(releaseId: ReleaseId) = episodesCheckerStorage.getEpisodes(releaseId)
 
-    fun resetEpisodesHistory(releaseId: Int) {
+    suspend fun resetEpisodesHistory(releaseId: ReleaseId) {
         episodesCheckerStorage.remove(releaseId)
     }
 
@@ -167,7 +132,7 @@ class ReleaseInteractor @Inject constructor(
         preferencesHolder.playSpeed = value
     }
 
-    fun observePlaySpeed(): Observable<Float> = preferencesHolder.observePlaySpeed()
+    fun observePlaySpeed(): Flow<Float> = preferencesHolder.observePlaySpeed()
 
     fun getPIPControl() = preferencesHolder.pipControl
 
@@ -175,9 +140,33 @@ class ReleaseInteractor @Inject constructor(
         preferencesHolder.pipControl = value
     }
 
-    private fun Int.idOrNull(limit: Int = -1): Int? = if (this > limit) {
-        this
-    } else {
-        null
+
+    private suspend fun updateIfNotExists(
+        releaseId: ReleaseId? = null,
+        releaseCode: ReleaseCode? = null
+    ) {
+        val release = releases.value.findRelease(releaseId, releaseCode)
+        if (release != null) {
+            return
+        }
+        runCatching {
+            loadRelease(releaseId, releaseCode)
+        }
     }
+
+    private fun List<Release>.findRelease(id: ReleaseId?, code: ReleaseCode?): Release? = find {
+        check(it, id, code)
+    }
+
+    private fun check(release: Release, id: ReleaseId?, code: ReleaseCode?): Boolean {
+        val foundById = id != null && release.id == id
+        val foundByCode = code != null && release.code == code
+        return foundById || foundByCode
+    }
+
+    data class RequestKey(
+        val id: ReleaseId?,
+        val code: ReleaseCode?
+    )
+
 }

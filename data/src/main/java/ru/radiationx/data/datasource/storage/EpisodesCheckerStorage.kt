@@ -1,103 +1,122 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
-import org.json.JSONArray
-import org.json.JSONObject
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.db.EpisodeAccessDb
+import ru.radiationx.data.entity.db.EpisodeAccessLegacyDb
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.mapper.toDb
+import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 17.02.18.
  */
 class EpisodesCheckerStorage @Inject constructor(
-    @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences,
+    private val moshi: Moshi
 ) : EpisodesCheckerHolder {
 
     companion object {
-        private const val LOCAL_EPISODES_KEY = "data.local_episodes"
+        private const val LEGACY_LOCAL_EPISODES_KEY = "data.local_episodes"
+        private const val LOCAL_EPISODES_KEY = "data.local_episodes_v2"
     }
 
-    private val localEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private val localEpisodesRelay = BehaviorRelay.createDefault(localEpisodes)
+    private val legacyDataAdapter by lazy {
+        val type = Types.newParameterizedType(List::class.java, EpisodeAccessLegacyDb::class.java)
+        moshi.adapter<List<EpisodeAccessLegacyDb>>(type)
+    }
 
-    init {
+    private val dataAdapter by lazy {
+        val type = Types.newParameterizedType(List::class.java, EpisodeAccessDb::class.java)
+        moshi.adapter<List<EpisodeAccessDb>>(type)
+    }
+
+    private val localEpisodesRelay = SuspendMutableStateFlow {
         loadAll()
     }
 
-    override fun observeEpisodes(): Observable<MutableList<ReleaseFull.Episode>> =
+    override fun observeEpisodes(): Flow<List<EpisodeAccess>> =
         localEpisodesRelay
 
-    override fun getEpisodes(): Single<List<ReleaseFull.Episode>> =
-        Single.fromCallable { localEpisodesRelay.value!! }
-
-    override fun putEpisode(episode: ReleaseFull.Episode) {
-        localEpisodes
-            .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-            ?.let { localEpisodes.remove(it) }
-        localEpisodes.add(episode)
-        saveAll()
-        localEpisodesRelay.accept(localEpisodes)
+    override suspend fun getEpisodes(): List<EpisodeAccess> {
+        return localEpisodesRelay.getValue()
     }
 
-    override fun putAllEpisode(episodes: List<ReleaseFull.Episode>) {
-        episodes.forEach { episode ->
-            localEpisodes
-                .firstOrNull { it.releaseId == episode.releaseId && it.id == episode.id }
-                ?.let { localEpisodes.remove(it) }
-            localEpisodes.add(episode)
+    override suspend fun putEpisode(episode: EpisodeAccess) {
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            mutableLocalEpisodes
+                .firstOrNull { it.id == episode.id }
+                ?.let { mutableLocalEpisodes.remove(it) }
+            mutableLocalEpisodes.add(episode)
+            mutableLocalEpisodes
         }
         saveAll()
-        localEpisodesRelay.accept(localEpisodes)
     }
 
-    override fun getEpisodes(releaseId: Int): List<ReleaseFull.Episode> {
-        return localEpisodes.filter { it.releaseId == releaseId }
-    }
-
-    override fun remove(releaseId: Int) {
-        localEpisodes.removeAll { it.releaseId == releaseId }
-        saveAll()
-        localEpisodesRelay.accept(localEpisodes)
-    }
-
-    private fun saveAll() {
-        val jsonEpisodes = JSONArray()
-        localEpisodes.forEach {
-            jsonEpisodes.put(JSONObject().apply {
-                put("releaseId", it.releaseId)
-                put("id", it.id)
-                put("seek", it.seek)
-                put("isViewed", it.isViewed)
-                put("lastAccess", it.lastAccess)
-            })
-        }
-        sharedPreferences
-            .edit()
-            .putString(LOCAL_EPISODES_KEY, jsonEpisodes.toString())
-            .apply()
-    }
-
-    private fun loadAll() {
-        val savedEpisodes = sharedPreferences.getString(LOCAL_EPISODES_KEY, null)
-        savedEpisodes?.let {
-            val jsonEpisodes = JSONArray(it)
-            (0 until jsonEpisodes.length()).forEach {
-                jsonEpisodes.getJSONObject(it).let {
-                    localEpisodes.add(ReleaseFull.Episode().apply {
-                        releaseId = it.getInt("releaseId")
-                        id = it.getInt("id")
-                        seek = it.optLong("seek", 0L)
-                        isViewed = it.optBoolean("isViewed", false)
-                        lastAccess = it.optLong("lastAccess", 0L)
-                    })
-                }
+    override suspend fun putAllEpisode(episodes: List<EpisodeAccess>) {
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            episodes.forEach { episode ->
+                mutableLocalEpisodes
+                    .firstOrNull { it.id == episode.id }
+                    ?.let { mutableLocalEpisodes.remove(it) }
+                mutableLocalEpisodes.add(episode)
             }
+            mutableLocalEpisodes
         }
-        localEpisodesRelay.accept(localEpisodes)
+        saveAll()
+    }
+
+    override suspend fun getEpisodes(releaseId: ReleaseId): List<EpisodeAccess> {
+        return localEpisodesRelay.getValue().filter { it.id.releaseId == releaseId }
+    }
+
+    override suspend fun remove(releaseId: ReleaseId) {
+        localEpisodesRelay.update { localEpisodes ->
+            val mutableLocalEpisodes = localEpisodes.toMutableList()
+            mutableLocalEpisodes.removeAll { it.id.releaseId == releaseId }
+            mutableLocalEpisodes
+        }
+        saveAll()
+    }
+
+    private suspend fun saveAll() {
+        withContext(Dispatchers.IO) {
+            val jsonEpisodes = localEpisodesRelay.getValue()
+                .map { it.toDb() }
+                .let { dataAdapter.toJson(it) }
+            sharedPreferences
+                .edit()
+                .putString(LOCAL_EPISODES_KEY, jsonEpisodes)
+                .apply()
+        }
+    }
+
+    private suspend fun loadAll(): List<EpisodeAccess> {
+        return withContext(Dispatchers.IO) {
+            val actualData = sharedPreferences
+                .getString(LOCAL_EPISODES_KEY, null)
+                ?.let { dataAdapter.fromJson(it) }
+            val data = actualData ?: loadAllLegacy()?.map { it.toDb() }
+            data?.map { it.toDomain() }.orEmpty()
+        }
+    }
+
+    private suspend fun loadAllLegacy(): List<EpisodeAccessLegacyDb>? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(LEGACY_LOCAL_EPISODES_KEY, null)
+                ?.let { legacyDataAdapter.fromJson(it) }
+        }
     }
 }

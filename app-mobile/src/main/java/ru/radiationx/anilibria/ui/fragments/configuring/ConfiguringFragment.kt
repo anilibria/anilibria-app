@@ -4,60 +4,52 @@ import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionSet
-import kotlinx.android.synthetic.main.fragment_configuring.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.shared_app.di.injectDependencies
-import ru.radiationx.anilibria.presentation.configuring.ConfiguringPresenter
-import ru.radiationx.anilibria.presentation.configuring.ConfiguringView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 
-class ConfiguringFragment : BaseFragment(), ConfiguringView {
+class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring) {
 
-    @InjectPresenter
-    lateinit var presenter: ConfiguringPresenter
+    private val binding by viewBinding<FragmentConfiguringBinding>()
 
-    @ProvidePresenter
-    fun provideAuthPresenter(): ConfiguringPresenter = getDependency(ConfiguringPresenter::class.java, screenScope)
-
-    override fun getBaseLayout(): Int = R.layout.fragment_configuring
-
-    override val statusBarVisible: Boolean = false
+    private val viewModel by viewModel<ConfiguringViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onViewCreated(view, savedInstanceState)
-        config_refresh.setOnClickListener { presenter.continueCheck() }
-        config_skip.setOnClickListener { presenter.skipCheck() }
-        config_next.setOnClickListener { presenter.nextCheck() }
+        binding.configRefresh.setOnClickListener { viewModel.continueCheck() }
+        binding.configSkip.setOnClickListener { viewModel.skipCheck() }
+        binding.configNext.setOnClickListener { viewModel.nextCheck() }
+
+        viewModel.state.onEach { state ->
+            updateScreen(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    override fun updateScreen(screenState: ConfigScreenState) {
-        config_status.text = screenState.status
-        config_next.text = if (screenState.hasNext) {
+    private fun updateScreen(screenState: ConfigScreenState) {
+        binding.configStatus.text = screenState.status
+        binding.configNext.text = if (screenState.hasNext) {
             "Следующий шаг"
         } else {
             "Начать проверку заново"
         }
 
-        TransitionManager.beginDelayedTransition(constraint, AutoTransition().apply {
+        TransitionManager.beginDelayedTransition(binding.constraint, AutoTransition().apply {
             duration = 225
             ordering = TransitionSet.ORDERING_TOGETHER
         })
         val needRefresh = screenState.needRefresh
-        config_refresh.visible(needRefresh)
-        config_skip.visible(needRefresh)
-        config_next.visible(needRefresh)
-        config_progress.gone(needRefresh)
-    }
-
-    override fun onBackPressed(): Boolean {
-        presenter.onBackPressed()
-        return false
+        binding.configRefresh.visible(needRefresh)
+        binding.configSkip.visible(needRefresh)
+        binding.configNext.visible(needRefresh)
+        binding.configProgress.gone(needRefresh)
     }
 }

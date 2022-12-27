@@ -1,7 +1,6 @@
 package ru.radiationx.shared_app.common.download
 
-import io.reactivex.Maybe
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 interface DownloadController {
 
@@ -10,8 +9,8 @@ interface DownloadController {
 
     fun getDownload(url: String): DownloadItem?
 
-    fun observeDownload(url: String): Observable<DownloadItem>
-    fun observeCompleted(url: String): Observable<DownloadItem>
+    fun observeDownload(url: String): Flow<DownloadItem>
+    fun observeCompleted(url: String): Flow<DownloadItem>
 
     /*fun getDownload(url: String): DownloadItem?
 

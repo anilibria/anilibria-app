@@ -2,11 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
+import android.util.Log
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailScreenState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseTorrentItemState
 import ru.radiationx.anilibria.ui.adapters.*
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
@@ -58,6 +56,18 @@ class ReleaseInfoAdapter(
             newItems.add(
                 ReleaseEpisodeControlItem(
                     releaseState.episodesControl.copy(hasWeb = false),
+                    EpisodeControlPlace.TOP
+                )
+            )
+        } else if (modifications.detailLoading) {
+            newItems.add(
+                ReleaseEpisodeControlItem(
+                    ReleaseEpisodesControlState(
+                        hasWeb = false,
+                        hasEpisodes = true,
+                        hasViewed = false,
+                        continueTitle = "Загрузка..."
+                    ),
                     EpisodeControlPlace.TOP
                 )
             )

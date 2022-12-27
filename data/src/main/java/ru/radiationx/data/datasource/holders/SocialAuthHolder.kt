@@ -1,11 +1,11 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
-import ru.radiationx.data.entity.app.auth.SocialAuth
+import kotlinx.coroutines.flow.Flow
+import ru.radiationx.data.entity.domain.auth.SocialAuth
 
 interface SocialAuthHolder {
-    fun get(): List<SocialAuth>
-    fun observe(): Observable<List<SocialAuth>>
-    fun save(items: List<SocialAuth>)
-    fun delete()
+    suspend fun get(): List<SocialAuth>
+    fun observe(): Flow<List<SocialAuth>>
+    suspend fun save(items: List<SocialAuth>)
+    suspend fun delete()
 }

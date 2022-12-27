@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
@@ -10,34 +8,30 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_updater.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.RuntimePermissions
+import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
-import ru.radiationx.anilibria.presentation.checker.CheckerView
+import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
 
 /**
  * Created by radiationx on 24.07.17.
  */
 
-@RuntimePermissions
-class UpdateCheckerActivity : BaseActivity(), CheckerView {
+class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     companion object {
         private const val ARG_FORCE = "force"
@@ -45,70 +39,72 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
 
         fun newIntent(context: Context, force: Boolean, analyticsFrom: String) =
             Intent(context, UpdateCheckerActivity::class.java).apply {
-                putExtra(ARG_FORCE, true)
+                putExtra(ARG_FORCE, force)
                 putExtra(ARG_ANALYTICS_FROM, analyticsFrom)
                 action = Intent.ACTION_VIEW
             }
     }
 
+    private val binding by viewBinding<ActivityUpdaterBinding>()
+
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    @Inject
-    lateinit var apiUtils: IApiUtils
+    private val viewModel by viewModel<CheckerViewModel>(){
+        CheckerExtra(forceLoad = getExtraNotNull(ARG_FORCE))
+    }
 
-    @Inject
-    lateinit var updaterAnalytics: UpdaterAnalytics
+    private val apiUtils by inject<IApiUtils>()
 
-    @InjectPresenter
-    lateinit var presenter: CheckerPresenter
-
-    @ProvidePresenter
-    fun provideCheckerPresenter() = getDependency(CheckerPresenter::class.java)
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_updater)
         lifecycle.addObserver(useTimeCounter)
 
         intent?.let {
-            presenter.forceLoad = it.getBooleanExtra(ARG_FORCE, false)
             it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
                 updaterAnalytics.open(it)
             }
         }
-        presenter.checkUpdate()
+        viewModel.checkUpdate()
 
-        toolbar.setNavigationOnClickListener { finish() }
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
-        currentInfo.text = generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+        binding.currentInfo.text =
+            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+
+        viewModel.state.onEach { state ->
+            state.data?.also { showUpdateData(it) }
+            setRefreshing(state.loading)
+        }.launchIn(lifecycleScope)
     }
 
-    override fun showUpdateData(update: UpdateData) {
+    private fun showUpdateData(update: UpdateData) {
         val currentVersionCode = BuildConfig.VERSION_CODE
 
         if (update.code > currentVersionCode) {
-            updateInfo.text = generateCurrentInfo(update.name, update.date)
+            binding.updateInfo.text = generateCurrentInfo(update.name, update.date)
             addSection("Важно", update.important)
             addSection("Добавлено", update.added)
             addSection("Исправлено", update.fixed)
             addSection("Изменено", update.changed)
 
-            updateInfo.visible()
-            updateButton.visible()
-            divider.visible()
+            binding.updateInfo.visible()
+            binding.updateButton.visible()
+            binding.divider.visible()
         } else {
-            updateInfo.text = "Обновлений нет, но вы можете загрузить текущую версию еще раз"
-            updateInfo.visible()
-            updateContent.gone()
-            divider.gone()
+            binding.updateInfo.text =
+                "Обновлений нет, но вы можете загрузить текущую версию еще раз"
+            binding.updateInfo.visible()
+            binding.updateContent.gone()
+            binding.divider.gone()
         }
-        updateButton.visible()
-        updateButton.setOnClickListener {
-            presenter.onDownloadClick()
+        binding.updateButton.visible()
+        binding.updateButton.setOnClickListener {
+            viewModel.onDownloadClick()
             openDownloadDialog(update)
         }
     }
@@ -119,51 +115,25 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         }
         if (update.links.size == 1) {
             val link = update.links.last()
-            presenter.onSourceDownloadClick(link.name)
-            decideDownload(link)
+            viewModel.onSourceDownloadClick(link)
             return
         }
         val titles = update.links.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
             .setTitle("Источник")
             .setItems(titles) { _, which ->
-                //Utils.externalLink(update.links[titles[which]].orEmpty())
                 val link = update.links[which]
-                presenter.onSourceDownloadClick(link.name)
-                decideDownload(link)
+                viewModel.onSourceDownloadClick(link)
             }
             .show()
     }
 
-    private fun decideDownload(link: UpdateData.UpdateLink) {
-        when (link.type) {
-            "file" -> systemDownloadWithPermissionCheck(link.url)
-            "site" -> Utils.externalLink(link.url)
-            else -> Utils.externalLink(link.url)
-        }
-    }
-
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun systemDownload(url: String) {
-        Utils.systemDownloader(this, url)
-    }
-
-    @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
-    }
-
-    override fun setRefreshing(isRefreshing: Boolean) {
-        progressBar.visible(isRefreshing)
-        updateInfo.gone(isRefreshing)
-        updateContent.gone(isRefreshing)
-        updateButton.gone(isRefreshing)
-        divider.gone(isRefreshing)
+    private fun setRefreshing(isRefreshing: Boolean) {
+        binding.progressBar.visible(isRefreshing)
+        binding.updateInfo.gone(isRefreshing)
+        binding.updateContent.gone(isRefreshing)
+        binding.updateButton.gone(isRefreshing)
+        binding.divider.gone(isRefreshing)
     }
 
     private fun addSection(title: String, array: List<String>) {
@@ -196,7 +166,7 @@ class UpdateCheckerActivity : BaseActivity(), CheckerView {
         sectionText.setTextColor(getColorFromAttr(R.attr.textDefault))
         root.addView(sectionText)
 
-        updateContent.addView(
+        binding.updateContent.addView(
             root,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

@@ -63,12 +63,12 @@ internal class SearchAnimation {
             animator.interpolator = AccelerateDecelerateInterpolator()
             animator.duration = duration
             animator.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     super.onAnimationStart(animation)
                     mAnimationListener?.onAnimationStart()
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     mAnimationListener?.onAnimationEnd()
                 }

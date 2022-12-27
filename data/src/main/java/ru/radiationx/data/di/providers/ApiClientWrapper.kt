@@ -1,21 +1,24 @@
 package ru.radiationx.data.di.providers
 
-import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.system.ClientWrapper
 import javax.inject.Inject
 
 class ApiClientWrapper @Inject constructor(
-        private val provider: ApiOkHttpProvider,
-        private val configChanger: ApiConfigChanger
+    private val provider: ApiOkHttpProvider,
+    private val configChanger: ApiConfigChanger
 ) : ClientWrapper(provider) {
 
     init {
-        val disposable = configChanger
-                .observeConfigChanges()
-                .subscribe {
-                    set(provider.get())
-                }
+        configChanger
+            .observeConfigChanges()
+            .onEach {
+                set(provider.get())
+            }
+            .launchIn(GlobalScope)
     }
 
 }

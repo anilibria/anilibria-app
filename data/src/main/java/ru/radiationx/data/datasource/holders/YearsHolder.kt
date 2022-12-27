@@ -1,10 +1,10 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
-import ru.radiationx.data.entity.app.release.YearItem
+import kotlinx.coroutines.flow.Flow
+import ru.radiationx.data.entity.domain.release.YearItem
 
 interface YearsHolder {
-    fun observeYears(): Observable<MutableList<YearItem>>
-    fun saveYears(genres: List<YearItem>)
-    fun getYears(): List<YearItem>
+    fun observeYears(): Flow<List<YearItem>>
+    suspend fun saveYears(years: List<YearItem>)
+    suspend fun getYears(): List<YearItem>
 }

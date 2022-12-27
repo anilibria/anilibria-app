@@ -10,53 +10,49 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.synthetic.main.activity_container.*
-import kotlinx.android.synthetic.main.activity_main.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
-import ru.radiationx.anilibria.App
-import ru.radiationx.anilibria.BuildConfig
+import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.extension.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.checker.CheckerPresenter
-import ru.radiationx.anilibria.presentation.checker.CheckerView
-import ru.radiationx.anilibria.presentation.main.MainPresenter
-import ru.radiationx.anilibria.presentation.main.MainView
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
+import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
-import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.entity.app.updater.UpdateData
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.di.DI
-import ru.radiationx.shared_app.di.getDependency
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
-import javax.inject.Inject
-import kotlin.math.max
 
 
-class MainActivity : BaseActivity(), MainView, CheckerView {
+class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
@@ -64,24 +60,24 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
-    @Inject
-    lateinit var screenMessenger: SystemMessenger
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
-    @Inject
-    lateinit var router: Router
+    private val screenMessenger by inject<SystemMessenger>()
 
-    @Inject
-    lateinit var navigationHolder: NavigatorHolder
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var dimensionsProvider: DimensionsProvider
+    private val navigationHolder by inject<NavigatorHolder>()
+
+    private val dimensionsProvider by inject<DimensionsProvider>()
+
+    private val binding by viewBinding<ActivityMainBinding>()
 
     private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
 
     private val allTabs = arrayOf(
         Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
         Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
-        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.ReleasesSearch()),
+        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.Catalog()),
         Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.MainYouTube()),
         Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
     )
@@ -89,60 +85,35 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private val tabsStack = mutableListOf<String>()
 
-    private var dimensionHelper: DimensionHelper? = null
+    private val viewModel by viewModel<MainViewModel>()
 
-    @InjectPresenter
-    lateinit var presenter: MainPresenter
-
-    @ProvidePresenter
-    fun provideMainPresenter(): MainPresenter = getDependency(MainPresenter::class.java)
-
-
-    @InjectPresenter
-    lateinit var checkerPresenter: CheckerPresenter
-
-    @ProvidePresenter
-    fun provideCheckerPresenter(): CheckerPresenter = getDependency(CheckerPresenter::class.java)
+    private val checkerViewModel by viewModel<CheckerViewModel> {
+        CheckerExtra(forceLoad = true)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.DayNightAppTheme_NoActionBar)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             resources.configuration.locales[0]
         } else {
             resources.configuration.locale
         }
-        injectDependencies(LocaleModule(locale), DI.DEFAULT_SCOPE)
-        setTheme(R.style.DayNightAppTheme_NoActionBar)
+        installModules(LocaleModule(locale))
         super.onCreate(savedInstanceState)
 
-        if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID) && !LocaleHolder.checkAvail(
-                locale.country
-            )
+        if (
+            Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)
+            && !LocaleHolder.checkAvail(locale.country)
         ) {
             startActivity(Screens.BlockedCountry().getActivityIntent(this))
             finish()
             return
         }
 
-        setContentView(R.layout.activity_main)
+        binding.initInsets(dimensionsProvider)
 
-        dimensionHelper = DimensionHelper(
-            measure_view,
-            measure_root_content,
-            object : DimensionHelper.DimensionsListener {
-                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    root_container.post {
-                        root_container.setPadding(
-                            root_container.paddingLeft,
-                            root_container.paddingTop,
-                            root_container.paddingRight,
-                            max(dimensions.keyboardHeight - tabsRecycler.height, 0)
-                        )
-                    }
-                    dimensionsProvider.update(dimensions)
-                }
-            })
-
-        tabsRecycler.apply {
+        binding.tabsRecycler.apply {
             layoutManager = GridLayoutManager(this.context, allTabs.size)
             adapter = tabsAdapter
             disableItemChangeAnimation()
@@ -155,21 +126,39 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
             it.getStringArrayList(TABS_STACK)?.let {
                 if (it.isNotEmpty()) {
                     tabsStack.addAll(it)
-                    presenter.defaultScreen = it.last()
                 }
             }
         }
-        checkerPresenter.forceLoad = true
+        checkerViewModel.state.mapNotNull { it.data }.onEach {
+            showUpdateData(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.state.mapNotNull { it.selectedTab }.distinctUntilChanged().onEach {
+            highlightTab(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.state.map { it.needConfig }.distinctUntilChanged().onEach {
+            if (it) {
+                showConfiguring()
+            } else {
+                hideConfiguring()
+            }
+        }.launchIn(lifecycleScope)
+
+        viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
+            onMainLogicCompleted()
+        }.launchIn(lifecycleScope)
+
+        viewModel.updateTabsAction.observe().onEach {
+            updateTabs()
+        }.launchIn(lifecycleScope)
     }
 
 
-    override fun setRefreshing(refreshing: Boolean) {}
-
-    override fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+    private fun showUpdateData(update: UpdateData) {
+        val currentVersionCode = sharedBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
-            val context: Context = App.instance
             val channelId = "anilibria_channel_updates"
             val channelName = "Обновления"
 
@@ -179,16 +168,16 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                     channelName,
                     NotificationManager.IMPORTANCE_DEFAULT
                 )
-                val manager = context.getSystemService(NotificationManager::class.java)
+                val manager = getSystemService(NotificationManager::class.java)
                 manager?.createNotificationChannel(channel)
             }
 
-            val mBuilder = NotificationCompat.Builder(context, channelId)
+            val mBuilder = NotificationCompat.Builder(this, channelId)
 
-            val mNotificationManager = NotificationManagerCompat.from(context)
+            val mNotificationManager = NotificationManagerCompat.from(this)
 
             mBuilder.setSmallIcon(R.drawable.ic_notify)
-            mBuilder.color = context.getCompatColor(R.color.alib_red)
+            mBuilder.color = getCompatColor(R.color.alib_red)
 
             mBuilder.setContentTitle("Обновление AniLibria")
             mBuilder.setContentText("Новая версия: ${update.name}")
@@ -197,8 +186,9 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
             val notifyIntent =
                 Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
-                    .getActivityIntent(context)
-            val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
+                    .getActivityIntent(this)
+            val notifyPendingIntent =
+                PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
             mBuilder.setContentIntent(notifyPendingIntent)
 
             mBuilder.setAutoCancel(true)
@@ -225,21 +215,21 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         navigationHolder.setNavigator(navigatorNew)
     }
 
-    override fun onMainLogicCompleted() {
+    private fun onMainLogicCompleted() {
         handleIntent(intent)
-        checkerPresenter.checkUpdate()
+        checkerViewModel.checkUpdate()
     }
 
-    override fun showConfiguring() {
-        configuring_container.visible()
+    private fun showConfiguring() {
+        binding.configuringContainer.visible()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.configuring_container, ConfiguringFragment())
             .commitNow()
     }
 
-    override fun hideConfiguring() {
-        configuring_container.gone()
+    private fun hideConfiguring() {
+        binding.configuringContainer.gone()
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
                 .beginTransaction()
@@ -258,13 +248,6 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        dimensionHelper?.destroy()
-        ImageLoader.getInstance().clearMemoryCache()
-        ImageLoader.getInstance().stop()
-    }
-
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
         val check = fragment != null
@@ -273,7 +256,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         if (check) {
             return
         } else {
-            presenter.onBackPressed()
+            viewModel.onBackPressed()
         }
     }
 
@@ -320,12 +303,12 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private fun updateBottomTabs() {
         tabsAdapter.bindItems(tabs)
-        (tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
+        (binding.tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
     }
 
-    override fun updateTabs() {
+    private fun updateTabs() {
         tabs.clear()
-        if (presenter.getAuthState() == AuthState.AUTH) {
+        if (viewModel.getAuthState() == AuthState.AUTH) {
             tabs.addAll(allTabs)
         } else {
             tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
@@ -333,10 +316,10 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
         updateBottomTabs()
     }
 
-    override fun highlightTab(screenKey: String) {
+    private fun highlightTab(screenKey: String) {
         tabsAdapter.setSelected(screenKey)
         val screen = tabs.first { it.screen.screenKey == screenKey }.screen
-        presenter.submitScreenAnalytics(screen)
+        viewModel.submitScreenAnalytics(screen)
         router.replaceScreen(screen)
     }
 
@@ -351,7 +334,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
 
     private val tabsListener = object : BottomTabsAdapter.Listener {
         override fun onTabClick(tab: Tab) {
-            presenter.selectTab(tab.screen.screenKey)
+            viewModel.selectTab(tab.screen.screenKey)
         }
     }
 
@@ -370,7 +353,7 @@ class MainActivity : BaseActivity(), MainView, CheckerView {
                 removeFromStack(tabsStack.last())
                 ta.commitNow()
                 if (tabsStack.isNotEmpty()) {
-                    presenter.selectTab(tabsStack.last())
+                    viewModel.selectTab(tabsStack.last())
                 } else {
                     activityBack()
                 }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.presenter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.leanback.widget.Presenter
 import ru.radiationx.anilibria.R
@@ -10,7 +11,8 @@ class LoadingCardPresenter : Presenter() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
         val cardHeight = parent.context.resources.getDimension(R.dimen.card_height).toInt()
-        val cardReleaseWidth = parent.context.resources.getDimension(R.dimen.card_release_width).toInt()
+        val cardReleaseWidth =
+            parent.context.resources.getDimension(R.dimen.card_release_width).toInt()
 
         val loadingView = CardLoadingView(parent.context)
         loadingView.layoutParams = ViewGroup.LayoutParams(cardReleaseWidth, cardHeight)

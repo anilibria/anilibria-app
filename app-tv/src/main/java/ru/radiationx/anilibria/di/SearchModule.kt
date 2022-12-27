@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.di
 
 import ru.radiationx.anilibria.screen.search.SearchController
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
 
-class SearchModule : Module() {
+class SearchModule : QuillModule() {
 
     init {
-        bind(SearchController::class.java).singleton()
+        single<SearchController>()
     }
 }

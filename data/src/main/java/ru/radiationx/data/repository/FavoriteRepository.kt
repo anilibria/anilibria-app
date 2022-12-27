@@ -1,29 +1,40 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.FavoriteApi
-import ru.radiationx.data.entity.app.Paginated
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.domain.Paginated
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
+import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 class FavoriteRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val favoriteApi: FavoriteApi
+    private val favoriteApi: FavoriteApi,
+    private val updateMiddleware: ReleaseUpdateMiddleware,
+    private val apiUtils: ApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
-    fun getFavorites(page: Int): Single<Paginated<List<ReleaseItem>>> = favoriteApi
+    suspend fun getFavorites(page: Int): Paginated<Release> = withContext(Dispatchers.IO) {
+        favoriteApi
             .getFavorites(page)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+            .toDomain { it.toDomain(apiUtils, apiConfig) }
+            .also { updateMiddleware.handle(it.data) }
+    }
 
-    fun deleteFavorite(releaseId: Int): Single<ReleaseItem> = favoriteApi
-            .deleteFavorite(releaseId)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    suspend fun deleteFavorite(releaseId: ReleaseId): Release = withContext(Dispatchers.IO) {
+        favoriteApi
+            .deleteFavorite(releaseId.id)
+            .toDomain(apiUtils, apiConfig)
+    }
 
-    fun addFavorite(releaseId: Int): Single<ReleaseItem> = favoriteApi
-            .addFavorite(releaseId)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+    suspend fun addFavorite(releaseId: ReleaseId): Release = withContext(Dispatchers.IO) {
+        favoriteApi
+            .addFavorite(releaseId.id)
+            .toDomain(apiUtils, apiConfig)
+    }
 }

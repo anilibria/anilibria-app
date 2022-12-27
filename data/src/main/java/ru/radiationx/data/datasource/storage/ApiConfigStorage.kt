@@ -1,16 +1,17 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import android.util.Log
-import org.json.JSONObject
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
-import ru.radiationx.data.datasource.remote.address.ApiAddress
-import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
+import timber.log.Timber
 import javax.inject.Inject
 
 class ApiConfigStorage @Inject constructor(
-        @DataPreferences private val sharedPreferences: SharedPreferences,
-        private val configurationParser: ConfigurationParser
+    @DataPreferences private val sharedPreferences: SharedPreferences,
+    private val moshi: Moshi
 ) {
 
     companion object {
@@ -18,20 +19,39 @@ class ApiConfigStorage @Inject constructor(
         private const val KEY_API_CONFIG_ACTIVE = "data.apiconfig_active_v2"
     }
 
-    fun saveJson(json: JSONObject) {
-        try {
-            sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
+    private val adapter by lazy {
+        moshi.adapter(ApiConfigResponse::class.java)
+    }
+
+    suspend fun save(config: ApiConfigResponse) {
+        withContext(Dispatchers.IO) {
+            try {
+                val json = adapter.toJson(config)
+                sharedPreferences.edit().putString(KEY_API_CONFIG, json.toString()).apply()
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
         }
     }
 
-    fun get(): List<ApiAddress>? = sharedPreferences
-            .getString(KEY_API_CONFIG, null)
-            ?.let { configurationParser.parse(JSONObject(it)) }
+    suspend fun get(): ApiConfigResponse? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(KEY_API_CONFIG, null)
+                ?.let { adapter.fromJson(it) }
+        }
+    }
 
-    fun setActive(tag: String) = sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
+    suspend fun setActive(tag: String) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences.edit().putString(KEY_API_CONFIG_ACTIVE, tag).apply()
+        }
+    }
 
-    fun getActive(): String? = sharedPreferences
-            .getString(KEY_API_CONFIG_ACTIVE, null)
+    suspend fun getActive(): String? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(KEY_API_CONFIG_ACTIVE, null)
+        }
+    }
 }

@@ -3,26 +3,29 @@ package ru.radiationx.anilibria.screen.trash
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
-import kotlinx.android.synthetic.main.test_fragment.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
+import ru.radiationx.anilibria.databinding.TestFragmentBinding
 import ru.radiationx.anilibria.screen.TestGuidedStepScreen
 import ru.radiationx.anilibria.screen.TestScreen
+import ru.radiationx.quill.getScope
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.attachBackPressed
-import ru.radiationx.shared_app.screen.ScopedFragment
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
-class TestFragment : ScopedFragment(R.layout.test_fragment), BrowseSupportFragment.MainFragmentAdapterProvider {
+class TestFragment : Fragment(R.layout.test_fragment),
+    BrowseSupportFragment.MainFragmentAdapterProvider {
+
+    private val binding by viewBinding<TestFragmentBinding>()
 
     private val selfMainFragmentAdapter by lazy { BrowseSupportFragment.MainFragmentAdapter(this) }
 
-    @Inject
-    lateinit var router: Router
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var guidedRouter: GuidedRouter
+    private val guidedRouter by inject<GuidedRouter>()
 
     override fun getMainFragmentAdapter(): BrowseSupportFragment.MainFragmentAdapter<*> {
         return selfMainFragmentAdapter
@@ -40,15 +43,16 @@ class TestFragment : ScopedFragment(R.layout.test_fragment), BrowseSupportFragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        testText.text = "${dependencyInjector.parentScopeTag} > ${dependencyInjector.screenScopeTag}"
-        btnback.setOnClickListener {
+        binding.testText.text =
+            "${requireParentFragment().getScope().name} > ${getScope().name}"
+        binding.btnback.setOnClickListener {
             router.exit()
         }
-        btnfwd.setOnClickListener {
+        binding.btnfwd.setOnClickListener {
             router.navigateTo(TestScreen())
         }
 
-        btndialog.setOnClickListener {
+        binding.btndialog.setOnClickListener {
             guidedRouter.navigateTo(TestGuidedStepScreen())
         }
     }

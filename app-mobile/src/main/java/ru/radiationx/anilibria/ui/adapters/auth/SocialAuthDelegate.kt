@@ -2,17 +2,16 @@ package ru.radiationx.anilibria.ui.adapters.auth
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_social_auth.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.databinding.ItemSocialAuthBinding
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.app.auth.SocialAuth
 
 class SocialAuthDelegate(
     private val clickListener: (SocialAuthItemState) -> Unit
@@ -25,22 +24,29 @@ class SocialAuthDelegate(
     override fun bindData(item: SocialAuthListItem, holder: ViewHolder) = holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (SocialAuthItemState) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
 
+        private val binding by viewBinding<ItemSocialAuthBinding>()
 
         fun bind(state: SocialAuthItemState) {
-            val icon = state.iconRes?.let { itemSocialBtn.getCompatDrawable(it) }
+            val icon = state.iconRes?.let { binding.itemSocialBtn.getCompatDrawable(it) }
 
-            val color = state.colorRes?.let { itemSocialBtn.getCompatColor(it) }
-                ?: itemSocialBtn.context.getColorFromAttr(R.attr.textDefault)
+            val color = state.colorRes
+                ?.let { binding.itemSocialBtn.getCompatColor(it) }
+                ?: binding.itemSocialBtn.context.getColorFromAttr(R.attr.textDefault)
 
-            itemSocialBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
-            itemSocialBtn.setTextColor(color)
+            binding.itemSocialBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                icon,
+                null,
+                null,
+                null
+            )
+            binding.itemSocialBtn.setTextColor(color)
 
-            itemSocialBtn.text = state.title
-            itemSocialBtn.setOnClickListener { clickListener.invoke(state) }
+            binding.itemSocialBtn.text = state.title
+            binding.itemSocialBtn.setOnClickListener { clickListener.invoke(state) }
         }
     }
 }

@@ -5,6 +5,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import timber.log.Timber
 import toothpick.InjectConstructor
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
@@ -33,7 +34,7 @@ class SystemUtils(
         try {
             fileName = URLDecoder.decode(url, "CP1251")
         } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
+            Timber.e(e)
         }
 
         val cut = fileName.lastIndexOf('/')
@@ -66,12 +67,17 @@ class SystemUtils(
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(Intent.createChooser(sendIntent, "Поделиться").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        context.startActivity(
+            Intent.createChooser(sendIntent, "Поделиться").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     fun externalLink(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(Intent.createChooser(intent, "Открыть в").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        val intent =
+            Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(
+            Intent.createChooser(intent, "Открыть в").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     fun longLog(msg: String) {

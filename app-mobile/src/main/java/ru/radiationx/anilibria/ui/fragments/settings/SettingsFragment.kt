@@ -8,10 +8,8 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
@@ -22,8 +20,8 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
+import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 
 /**
  * Created by radiationx on 25.12.16.
@@ -31,26 +29,19 @@ import javax.inject.Inject
 
 class SettingsFragment : BaseSettingFragment() {
 
-    @Inject
-    lateinit var appPreferences: PreferencesHolder
+    private val appPreferences by inject<PreferencesHolder>()
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
+    private val apiConfig by inject<ApiConfig>()
 
-    @Inject
-    lateinit var authRepository: AuthRepository
+    private val authRepository by inject<AuthRepository>()
 
-    @Inject
-    lateinit var errorHandler: IErrorHandler
+    private val errorHandler by inject<IErrorHandler>()
 
-    @Inject
-    lateinit var settingsAnalytics: SettingsAnalytics
+    private val settingsAnalytics by inject<SettingsAnalytics>()
 
-    @Inject
-    lateinit var updaterAnalytics: UpdaterAnalytics
+    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 
@@ -170,7 +161,7 @@ class SettingsFragment : BaseSettingFragment() {
             PreferencesHolder.QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
             else -> return null
         }
-        return context?.let { ContextCompat.getDrawable(it, iconRes) }
+        return ContextCompat.getDrawable(requireContext(), iconRes)
     }
 
     private fun getQualityTitle(quality: Int): String {

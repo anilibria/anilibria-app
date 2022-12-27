@@ -1,18 +1,19 @@
 package ru.radiationx.anilibria.screen.player
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MediaSourceFactory
@@ -26,9 +27,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dev.rx.tvtest.cust.CustomListRowPresenter
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedVideoFragment
 
-open class BasePlayerFragment : ScopedVideoFragment() {
+open class BasePlayerFragment : VideoSupportFragment() {
 
 
     protected var playerGlue: VideoPlayerGlue? = null
@@ -46,12 +46,25 @@ open class BasePlayerFragment : ScopedVideoFragment() {
     private val hlsMediaSourceFactory by lazy { HlsMediaSource.Factory(dataSourceFactory) }
     private val otherMediaSourceFactory by lazy { ProgressiveMediaSource.Factory(dataSourceFactory) }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()
+
+
+        fadeCompleteListener = object : OnFadeCompleteListener() {
+
+            override fun onFadeInComplete() {
+                super.onFadeInComplete()
+                // workaround for hiding controls when user click "enter"
+                isControlsOverlayAutoHideEnabled = false
+                isControlsOverlayAutoHideEnabled = true
+            }
+        }
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -92,10 +105,10 @@ open class BasePlayerFragment : ScopedVideoFragment() {
             .setTrackSelector(trackSelector)
             .build()
 
-        player.addListener(object : Player.EventListener {
+        player.addListener(object : Player.Listener {
 
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                super.onPlayerStateChanged(playWhenReady, playbackState)
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
                 when (playbackState) {
                     Player.STATE_ENDED -> onCompletePlaying()
                     Player.STATE_READY -> onPreparePlaying()
@@ -129,7 +142,7 @@ open class BasePlayerFragment : ScopedVideoFragment() {
     }
 
     private fun getMediaSource(url: String): MediaSource = Uri.parse(url).let {
-        getMediaSourceFactory(it).createMediaSource(it)
+        getMediaSourceFactory(it).createMediaSource(MediaItem.fromUri(it))
     }
 
     private fun getMediaSourceFactory(uri: Uri): MediaSourceFactory =

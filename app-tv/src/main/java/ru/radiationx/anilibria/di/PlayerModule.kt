@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.di
 
 import ru.radiationx.anilibria.screen.player.PlayerController
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
 
-class PlayerModule : Module() {
+class PlayerModule : QuillModule() {
 
     init {
-        bind(PlayerController::class.java).singleton()
+        single<PlayerController>()
     }
 }

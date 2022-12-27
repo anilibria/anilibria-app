@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.donation.adapter
 import android.view.View
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_donation_divider.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemDonationDividerBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.data.entity.domain.donation.DonationContentDivider
@@ -22,12 +22,14 @@ class DonationDividerDelegate :
         holder.bind(item.data)
 
     class ViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemDonationDividerBinding>()
 
         fun bind(data: DonationContentDivider) {
-            space.updateLayoutParams {
-                height = (data.height * space.resources.displayMetrics.density).roundToInt()
+            binding.space.updateLayoutParams {
+                height = (data.height * binding.space.resources.displayMetrics.density).roundToInt()
             }
         }
     }

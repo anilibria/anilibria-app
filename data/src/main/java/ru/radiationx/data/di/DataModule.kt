@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.SchedulersProvider
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
@@ -16,149 +18,172 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.datasource.remote.api.*
-import ru.radiationx.data.datasource.remote.parsers.*
+import ru.radiationx.data.datasource.remote.parsers.AuthParser
+import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
-import ru.radiationx.data.interactors.ConfiguringInteractor
+import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.repository.*
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
-import ru.radiationx.data.system.AppSchedulers
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
+import toothpick.InjectConstructor
+import javax.inject.Provider
 
-class DataModule(context: Context) : Module() {
-
+class DataModule : QuillModule() {
 
     init {
-        val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val dataStoragePreferences =
-            context.getSharedPreferences("${context.packageName}_datastorage", Context.MODE_PRIVATE)
-
-        bind(SchedulersProvider::class.java).to(AppSchedulers::class.java).singleton()
-
-        bind(Moshi::class.java).toInstance(Moshi.Builder().build())
-
-        bind(SharedPreferences::class.java).toInstance(defaultPreferences)
-        bind(SharedPreferences::class.java).withName(DataPreferences::class.java)
-            .toInstance(dataStoragePreferences)
-
-        bind(MigrationDataSource::class.java).to(MigrationDataSourceImpl::class.java).singleton()
-
-        bind(PreferencesStorage::class.java).singleton()
-
-        bind(PreferencesHolder::class.java).to(PreferencesStorage::class.java).singleton()
-        bind(EpisodesCheckerHolder::class.java).to(EpisodesCheckerStorage::class.java).singleton()
-        bind(HistoryHolder::class.java).to(HistoryStorage::class.java).singleton()
-        bind(ReleaseUpdateHolder::class.java).to(ReleaseUpdateStorage::class.java).singleton()
-        bind(GenresHolder::class.java).to(GenresStorage::class.java).singleton()
-        bind(YearsHolder::class.java).to(YearsStorage::class.java).singleton()
-        bind(SocialAuthHolder::class.java).to(SocialAuthStorage::class.java).singleton()
-        bind(MenuHolder::class.java).to(MenuStorage::class.java).singleton()
-        bind(DownloadsHolder::class.java).to(DownloadsStorage::class.java).singleton()
-        bind(DonationHolder::class.java).to(DonationStorage::class.java).singleton()
-        bind(TeamsHolder::class.java).to(TeamsStorage::class.java).singleton()
-
-        bind(CookieHolder::class.java).to(CookiesStorage::class.java).singleton()
-        bind(UserHolder::class.java).to(UserStorage::class.java).singleton()
-        bind(AuthHolder::class.java).to(AuthStorage::class.java).singleton()
-
-        bind(ApiConfigChanger::class.java).singleton()
-
-        bind(AppCookieJar::class.java).singleton()
-        bind(ApiConfig::class.java).singleton()
-        bind(ApiConfigStorage::class.java).singleton()
+        instance<Moshi> {
+            Moshi.Builder().build()
+        }
 
 
-        bind(MainOkHttpProvider::class.java).singleton()
-        bind(ApiOkHttpProvider::class.java).singleton()
+        singleProvider<SharedPreferences, PreferencesProvider>()
+        singleProvider<SharedPreferences, DataPreferencesProvider>(DataPreferences::class)
 
-        bind(MainClientWrapper::class.java).singleton()
-        bind(ApiClientWrapper::class.java).singleton()
+        singleImpl<MigrationDataSource, MigrationDataSourceImpl>()
 
-        bind(IClient::class.java).withName(MainClient::class.java).to(MainNetworkClient::class.java)
-            .singleton()
-        bind(IClient::class.java).withName(ApiClient::class.java).to(ApiNetworkClient::class.java)
-            .singleton()
+        single<PreferencesStorage>()
 
-        bind(IApiUtils::class.java).to(ApiUtils::class.java).singleton()
+        singleImpl<PreferencesHolder, PreferencesStorage>()
+        singleImpl<EpisodesCheckerHolder, EpisodesCheckerStorage>()
+        singleImpl<HistoryHolder, HistoryStorage>()
+        singleImpl<ReleaseUpdateHolder, ReleaseUpdateStorage>()
+        singleImpl<GenresHolder, GenresStorage>()
+        singleImpl<YearsHolder, YearsStorage>()
+        singleImpl<SocialAuthHolder, SocialAuthStorage>()
+        singleImpl<MenuHolder, MenuStorage>()
+        singleImpl<DownloadsHolder, DownloadsStorage>()
+        singleImpl<DonationHolder, DonationStorage>()
+        singleImpl<TeamsHolder, TeamsStorage>()
 
-        bind(AuthParser::class.java).singleton()
-        bind(CheckerParser::class.java).singleton()
-        bind(ConfigurationParser::class.java).singleton()
-        bind(PagesParser::class.java).singleton()
-        bind(ProfileParser::class.java).singleton()
-        bind(ReleaseParser::class.java).singleton()
-        bind(SearchParser::class.java).singleton()
-        bind(YoutubeParser::class.java).singleton()
-        bind(ScheduleParser::class.java).singleton()
-        bind(FeedParser::class.java).singleton()
-        bind(MenuParser::class.java).singleton()
+        singleImpl<CookieHolder, CookiesStorage>()
+        singleImpl<UserHolder, UserStorage>()
+        singleImpl<AuthHolder, AuthStorage>()
 
-        bind(AuthApi::class.java).singleton()
-        bind(CheckerApi::class.java).singleton()
-        bind(ConfigurationApi::class.java).singleton()
-        bind(FavoriteApi::class.java).singleton()
-        bind(ReleaseApi::class.java).singleton()
-        bind(SearchApi::class.java).singleton()
-        bind(PageApi::class.java).singleton()
-        bind(YoutubeApi::class.java).singleton()
-        bind(ScheduleApi::class.java).singleton()
-        bind(FeedApi::class.java).singleton()
-        bind(MenuApi::class.java).singleton()
-        bind(DonationApi::class.java).singleton()
-        bind(TeamsApi::class.java).singleton()
+        single<ApiConfigChanger>()
 
-        bind(AuthRepository::class.java).singleton()
-        bind(ReleaseRepository::class.java).singleton()
-        bind(ConfigurationRepository::class.java).singleton()
-        bind(SearchRepository::class.java).singleton()
-        bind(PageRepository::class.java).singleton()
-        bind(CheckerRepository::class.java).singleton()
-        bind(HistoryRepository::class.java).singleton()
-        bind(FavoriteRepository::class.java).singleton()
-        bind(YoutubeRepository::class.java).singleton()
-        bind(ScheduleRepository::class.java).singleton()
-        bind(FeedRepository::class.java).singleton()
-        bind(MenuRepository::class.java).singleton()
-        bind(DonationRepository::class.java).singleton()
-        bind(TeamsRepository::class.java).singleton()
+        single<AppCookieJar>()
+        single<ApiConfig>()
+        single<ApiConfigStorage>()
 
-        bind(ReleaseInteractor::class.java).singleton()
-        bind(ConfiguringInteractor::class.java).singleton()
+
+        single<MainOkHttpProvider>()
+        single<ApiOkHttpProvider>()
+
+        single<MainClientWrapper>()
+        single<ApiClientWrapper>()
+
+        singleImpl<IClient, MainNetworkClient>(MainClient::class)
+        singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
+
+        singleImpl<IApiUtils, ApiUtils>()
+
+        single<AuthParser>()
+        single<PagesParser>()
+        single<PagesParser>()
+
+        single<AuthApi>()
+        single<CheckerApi>()
+        single<ConfigurationApi>()
+        single<FavoriteApi>()
+        single<ReleaseApi>()
+        single<SearchApi>()
+        single<PageApi>()
+        single<YoutubeApi>()
+        single<ScheduleApi>()
+        single<FeedApi>()
+        single<MenuApi>()
+        single<DonationApi>()
+        single<TeamsApi>()
+
+        single<AuthRepository>()
+        single<ReleaseRepository>()
+        single<ConfigurationRepository>()
+        single<SearchRepository>()
+        single<PageRepository>()
+        single<CheckerRepository>()
+        single<HistoryRepository>()
+        single<FavoriteRepository>()
+        single<YoutubeRepository>()
+        single<ScheduleRepository>()
+        single<FeedRepository>()
+        single<MenuRepository>()
+        single<DonationRepository>()
+        single<TeamsRepository>()
+
+        single<ReleaseUpdateMiddleware>()
+
+        single<ReleaseInteractor>()
+
+        single<HistoryRuntimeCache>()
 
 
         /* Analytics */
-        bind(AnalyticsProfileDataSource::class.java).singleton()
-        bind(AppAnalytics::class.java).singleton()
-        bind(AuthDeviceAnalytics::class.java).singleton()
-        bind(AuthMainAnalytics::class.java).singleton()
-        bind(AuthSocialAnalytics::class.java).singleton()
-        bind(AuthVkAnalytics::class.java).singleton()
-        bind(CatalogAnalytics::class.java).singleton()
-        bind(CatalogFilterAnalytics::class.java).singleton()
-        bind(CommentsAnalytics::class.java).singleton()
-        bind(ConfiguringAnalytics::class.java).singleton()
-        bind(FastSearchAnalytics::class.java).singleton()
-        bind(FavoritesAnalytics::class.java).singleton()
-        bind(FeedAnalytics::class.java).singleton()
-        bind(HistoryAnalytics::class.java).singleton()
-        bind(OtherAnalytics::class.java).singleton()
-        bind(PlayerAnalytics::class.java).singleton()
-        bind(ReleaseAnalytics::class.java).singleton()
-        bind(ScheduleAnalytics::class.java).singleton()
-        bind(SettingsAnalytics::class.java).singleton()
-        bind(UpdaterAnalytics::class.java).singleton()
-        bind(WebPlayerAnalytics::class.java).singleton()
-        bind(YoutubeAnalytics::class.java).singleton()
-        bind(YoutubeVideosAnalytics::class.java).singleton()
-        bind(DonationCardAnalytics::class.java).singleton()
-        bind(DonationDetailAnalytics::class.java).singleton()
-        bind(DonationDialogAnalytics::class.java).singleton()
-        bind(DonationYooMoneyAnalytics::class.java).singleton()
-        bind(TeamsAnalytics::class.java).singleton()
+        single<AnalyticsProfileDataSource>()
+        single<AppAnalytics>()
+        single<AuthDeviceAnalytics>()
+        single<AuthMainAnalytics>()
+        single<AuthSocialAnalytics>()
+        single<AuthVkAnalytics>()
+        single<CatalogAnalytics>()
+        single<CatalogFilterAnalytics>()
+        single<CommentsAnalytics>()
+        single<ConfiguringAnalytics>()
+        single<FastSearchAnalytics>()
+        single<FavoritesAnalytics>()
+        single<FeedAnalytics>()
+        single<HistoryAnalytics>()
+        single<OtherAnalytics>()
+        single<PlayerAnalytics>()
+        single<ReleaseAnalytics>()
+        single<ScheduleAnalytics>()
+        single<SettingsAnalytics>()
+        single<UpdaterAnalytics>()
+        single<WebPlayerAnalytics>()
+        single<YoutubeAnalytics>()
+        single<YoutubeVideosAnalytics>()
+        single<DonationCardAnalytics>()
+        single<DonationDetailAnalytics>()
+        single<DonationDialogAnalytics>()
+        single<DonationYooMoneyAnalytics>()
+        single<TeamsAnalytics>()
+    }
+
+
+    @InjectConstructor
+    class PreferencesProvider(
+        private val context: Context
+    ) : Provider<SharedPreferences> {
+        override fun get(): SharedPreferences {
+            // for strict-mode pass
+            return runBlocking {
+                withContext(Dispatchers.IO) {
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                }
+            }
+        }
+    }
+
+    @InjectConstructor
+    class DataPreferencesProvider(
+        private val context: Context
+    ) : Provider<SharedPreferences> {
+        override fun get(): SharedPreferences {
+            // for strict-mode pass
+            return runBlocking {
+                withContext(Dispatchers.IO) {
+                    context.getSharedPreferences(
+                        "${context.packageName}_datastorage",
+                        Context.MODE_PRIVATE
+                    )
+                }
+            }
+        }
     }
 
 }

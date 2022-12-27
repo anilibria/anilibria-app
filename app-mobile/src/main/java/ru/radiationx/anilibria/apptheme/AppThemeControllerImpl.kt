@@ -8,9 +8,11 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.jakewharton.rxrelay2.BehaviorRelay
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import ru.radiationx.shared.ktx.repeatWhen
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import toothpick.InjectConstructor
 
@@ -24,8 +26,8 @@ class AppThemeControllerImpl(
         private const val APP_THEME_KEY = "app_theme"
     }
 
-    private val modeRelay by lazy { BehaviorRelay.createDefault(getMode()) }
-    private val triggerRelay by lazy { PublishRelay.create<Unit>() }
+    private val modeRelay by lazy { MutableStateFlow(getMode()) }
+    private val triggerRelay by lazy { MutableSharedFlow<Unit>() }
 
     // Важно, чтобы было вынесено именно в поле
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -33,15 +35,19 @@ class AppThemeControllerImpl(
             APP_THEME_KEY -> {
                 val mode = getMode()
                 applyTheme(mode)
-                modeRelay.accept(mode)
-                triggerRelay.accept(Unit)
+                modeRelay.value = mode
+                GlobalScope.launch {
+                    triggerRelay.emit(Unit)
+                }
             }
         }
     }
 
     private val lifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
-        override fun onActivityCreated(p0: Activity?, p1: Bundle?) {
-            triggerRelay.accept(Unit)
+        override fun onActivityCreated(p0: Activity, p1: Bundle?) {
+            GlobalScope.launch {
+                triggerRelay.emit(Unit)
+            }
         }
     }
 
@@ -51,15 +57,14 @@ class AppThemeControllerImpl(
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
     }
 
-    override fun observeTheme(): Observable<AppTheme> = Observable
-        .fromCallable { getAppTheme() }
-        .repeatWhen { triggerRelay }
+    override fun observeTheme(): Flow<AppTheme> = flow { emit(getAppTheme()) }
+        .repeatWhen(triggerRelay)
         .distinctUntilChanged()
 
     override fun getTheme(): AppTheme = getAppTheme()
 
-    override fun observeMode(): Observable<AppThemeMode> {
-        return modeRelay.hide().distinctUntilChanged()
+    override fun observeMode(): Flow<AppThemeMode> {
+        return modeRelay
     }
 
     override fun getMode(): AppThemeMode {

@@ -1,13 +1,17 @@
 package ru.radiationx.data.repository
 
-import android.util.Log
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.withContext
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.ScheduleApi
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.feed.ScheduleItem
+import ru.radiationx.data.entity.domain.schedule.ScheduleDay
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
+import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.isSameDay
 import java.util.*
@@ -15,19 +19,21 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleRepository @Inject constructor(
-        private val schedulers: SchedulersProvider,
-        private val scheduleApi: ScheduleApi
+    private val scheduleApi: ScheduleApi,
+    private val updateMiddleware: ReleaseUpdateMiddleware,
+    private val apiUtils: ApiUtils,
+    private val apiConfig: ApiConfig
 ) {
 
-    private val dataRelay = BehaviorRelay.create<List<ScheduleDay>>()
+    private val dataRelay = MutableStateFlow<List<ScheduleDay>?>(null)
 
-    fun observeSchedule(): Observable<List<ScheduleDay>> = dataRelay
-            .hide()
-            .observeOn(schedulers.ui())
+    fun observeSchedule(): Flow<List<ScheduleDay>> = dataRelay.filterNotNull()
 
-    fun loadSchedule(): Single<List<ScheduleDay>> = scheduleApi
+    suspend fun loadSchedule(): List<ScheduleDay> = withContext(Dispatchers.IO) {
+        scheduleApi
             .getSchedule()
-            .map {
+            .map { it.toDomain(apiUtils, apiConfig) }
+            .let {
                 it.map {
                     val currentTime = System.currentTimeMillis().asMsk()
                     val calendarDay = Calendar.getInstance().also {
@@ -40,12 +46,12 @@ class ScheduleRepository @Inject constructor(
                             val deviceTime = currentTime
 
                             val scheduleDates = listOf(
-                                    millisTime
+                                millisTime
                             )
                             val deviceDates = listOf(
-                                    deviceTime,
-                                    (deviceTime - TimeUnit.DAYS.toMillis(1)),
-                                    (deviceTime - TimeUnit.DAYS.toMillis(2))
+                                deviceTime,
+                                (deviceTime - TimeUnit.DAYS.toMillis(1)),
+                                (deviceTime - TimeUnit.DAYS.toMillis(2))
                             )
 
 
@@ -67,20 +73,24 @@ class ScheduleRepository @Inject constructor(
                     }
                 }
             }
-            .map {
+            .let {
                 it.map {
                     it.copy(items = it.items.sortedWith(
-                            compareByDescending<ScheduleItem> {
-                                it.completed
-                            }.then(compareByDescending {
-                                it.releaseItem.torrentUpdate
-                            })
-                    ))
+                        compareByDescending<ScheduleItem> {
+                            it.completed
+                        }.then(compareByDescending {
+                            it.releaseItem.torrentUpdate
+                        })
+                    )
+                    )
                 }
             }
-            .doOnSuccess {
-                dataRelay.accept(it)
+            .also {
+                dataRelay.value = it
             }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+            .also { scheduleDays ->
+                val releases = scheduleDays.map { it.items }.flatten().map { it.releaseItem }
+                updateMiddleware.handle(releases)
+            }
+    }
 }

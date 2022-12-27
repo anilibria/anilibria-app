@@ -1,24 +1,31 @@
 package ru.radiationx.anilibria.screen.update
 
-import android.app.DownloadManager
-import android.content.ContentResolver
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
+import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
+import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
+import ru.radiationx.anilibria.common.LeanbackDialogContentConsumer
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.MimeTypeUtil
 import ru.radiationx.shared_app.common.download.DownloadController
 import ru.radiationx.shared_app.common.download.DownloadItem
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -28,52 +35,51 @@ class UpdateViewModel(
     private val guidedRouter: GuidedRouter,
     private val downloadController: DownloadController,
     private val updateController: UpdateController,
+    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val context: Context
 ) : LifecycleViewModel() {
 
-    val updateData = MutableLiveData<UpdateData>()
-    val progressState = MutableLiveData<Boolean>()
-    val downloadProgressShowState = MutableLiveData<Boolean>()
-    val downloadProgressData = MutableLiveData<Int>()
-    val downloadActionTitle = MutableLiveData<String>()
+    val updateData = MutableStateFlow<UpdateData?>(null)
+    val progressState = MutableStateFlow(false)
+    val downloadProgressShowState = MutableStateFlow(false)
+    val downloadProgressData = MutableStateFlow(0)
+    val downloadActionTitle = MutableStateFlow<String?>(null)
 
     private var currentDownload: DownloadItem? = null
     private var downloadState: DownloadController.State? = null
     private var pendingInstall = false
 
-    private var updatesDisposable = Disposables.disposed()
-    private var completedDisposable = Disposables.disposed()
+    private var updatesJob: Job? = null
+    private var completedJob: Job? = null
 
     init {
         progressState.value = true
         downloadProgressShowState.value = false
         downloadProgressData.value = 0
-    }
-
-    override fun onCreate() {
-        super.onCreate()
         updateState()
 
-        checkerRepository
-            .checkUpdate(buildConfig.versionCode, false)
-            .doFinally {
-                progressState.value = false
-            }
-            .lifeSubscribe({
+        viewModelScope.launch {
+            progressState.value = true
+            coRunCatching {
+                checkerRepository
+                    .checkUpdate(buildConfig.versionCode, false)
+            }.onSuccess {
                 updateData.value = it
                 it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
                     startDownload(it.url)
                 }
-            }, {
-                it.printStackTrace()
-            })
-
+            }.onFailure {
+                Timber.e(it)
+            }
+            progressState.value = false
+        }
         updateController
             .downloadAction
-            .lifeSubscribe {
+            .onEach {
                 pendingInstall = true
                 startDownload(it.url)
             }
+            .launchIn(viewModelScope)
     }
 
     fun onActionClick() {
@@ -92,7 +98,7 @@ class UpdateViewModel(
             guidedRouter.open(UpdateSourceScreen())
         } else {
             val link = data.links.firstOrNull() ?: return
-            updateController.downloadAction.accept(link)
+            updateController.downloadAction.emit(link)
         }
     }
 
@@ -102,40 +108,52 @@ class UpdateViewModel(
     }
 
     private fun startDownload(url: String) {
-        val downloadItem = downloadController.getDownload(url)
-        if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
-            return
-        }
+        viewModelScope.launch {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                val result =
+                    mintPermissionsDialogFlow.request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        MintPermissionsFlow.defaultDialogConfig.copy(
+                            contentConsumer = LeanbackDialogContentConsumer()
+                        )
+                    )
+                if (!result.isSuccess()) {
+                    return@launch
+                }
+            }
 
-        updatesDisposable.dispose()
-        updatesDisposable = downloadController
-            .observeDownload(url)
-            .lifeSubscribe({
-                handleUpdate(it)
-            }, {
-                it.printStackTrace()
-            })
 
-        completedDisposable.dispose()
-        completedDisposable = downloadController
-            .observeCompleted(url)
-            .lifeSubscribe({
-                handleComplete(it)
-            }, {
-                it.printStackTrace()
-            })
+            val downloadItem = downloadController.getDownload(url)
+            if (currentDownload != null && currentDownload?.url == downloadItem?.url) {
+                return@launch
+            }
 
-        if (downloadItem == null) {
-            downloadController.startDownload(url)
-        } else {
-            if (downloadItem.state == DownloadController.State.SUCCESSFUL) {
-                handleComplete(downloadItem)
+            updatesJob?.cancel()
+            updatesJob = downloadController
+                .observeDownload(url)
+                .onEach {
+                    handleUpdate(it)
+                }
+                .launchIn(viewModelScope)
+
+            completedJob?.cancel()
+            completedJob = downloadController
+                .observeCompleted(url)
+                .onEach {
+                    handleComplete(it)
+                }
+                .launchIn(viewModelScope)
+
+            if (downloadItem == null) {
+                downloadController.startDownload(url)
             } else {
-                handleUpdate(downloadItem)
+                if (downloadItem.state == DownloadController.State.SUCCESSFUL) {
+                    handleComplete(downloadItem)
+                } else {
+                    handleUpdate(downloadItem)
+                }
             }
         }
-
-
     }
 
     private fun handleUpdate(downloadItem: DownloadItem) {
@@ -148,8 +166,8 @@ class UpdateViewModel(
         currentDownload = null
         updateState(null)
         startPendingInstall(downloadItem)
-        updatesDisposable.dispose()
-        completedDisposable.dispose()
+        updatesJob?.cancel()
+        completedJob?.cancel()
     }
 
     private fun startPendingInstall(downloadItem: DownloadItem) {

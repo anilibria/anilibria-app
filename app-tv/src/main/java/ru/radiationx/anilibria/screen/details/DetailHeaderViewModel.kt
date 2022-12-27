@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.screen.details
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposables
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.DetailDataConverter
 import ru.radiationx.anilibria.common.DetailsState
 import ru.radiationx.anilibria.common.LibriaDetails
@@ -13,17 +15,19 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
-import ru.radiationx.data.entity.app.release.ReleaseFull
-import ru.radiationx.data.entity.app.release.ReleaseItem
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailHeaderViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
@@ -33,67 +37,65 @@ class DetailHeaderViewModel(
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    var releaseId: Int = -1
+    private val releaseId = argExtra.id
 
-    val releaseData = MutableLiveData<LibriaDetails>()
-    val progressState = MutableLiveData<DetailsState>()
+    val releaseData = MutableStateFlow<LibriaDetails?>(null)
+    val progressState = MutableStateFlow<DetailsState>(DetailsState())
 
-    private var currentRelease: ReleaseItem? = null
+    private var currentRelease: Release? = null
 
-    private var selectEpisodeDisposable = Disposables.disposed()
-    private var favoriteDisposable = Disposables.disposed()
+    private var selectEpisodeJob: Job? = null
+    private var favoriteDisposable: Job? = null
 
-    override fun onCreate() {
-        super.onCreate()
-
-        (releaseInteractor.getFull(releaseId) ?: releaseInteractor.getItem(releaseId))?.also {
-            currentRelease = it
-            update(it)
-        }
+    init {
         updateProgress()
-
+        releaseInteractor.getItem(releaseId)?.also {
+            updateRelease(it)
+        }
         releaseInteractor
             .observeFull(releaseId)
-            //.delay(2000, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
-                currentRelease = it
-                update(it)
-                updateProgress()
+            .onEach {
+                updateRelease(it)
             }
+            .launchIn(viewModelScope)
     }
 
     override fun onResume() {
         super.onResume()
 
-        selectEpisodeDisposable.dispose()
-        selectEpisodeDisposable = playerController
+        selectEpisodeJob?.cancel()
+        selectEpisodeJob = playerController
             .selectEpisodeRelay
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe { episodeId ->
+            .onEach { episodeId ->
                 router.navigateTo(PlayerScreen(releaseId, episodeId))
             }
+            .launchIn(viewModelScope)
     }
 
     override fun onPause() {
         super.onPause()
-        selectEpisodeDisposable.dispose()
+        selectEpisodeJob?.cancel()
     }
 
     fun onContinueClick() {
-        releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.also {
-            router.navigateTo(PlayerScreen(releaseId, it.id))
+        viewModelScope.launch {
+            releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
+                router.navigateTo(PlayerScreen(releaseId, it.id))
+            }
         }
     }
 
     fun onPlayClick() {
-        val release = currentRelease as? ReleaseFull ?: return
+        val release = currentRelease ?: return
         if (release.episodes.isEmpty()) return
         if (release.episodes.size == 1) {
-            router.navigateTo(PlayerScreen(releaseId))
+            router.navigateTo(PlayerScreen(releaseId, null))
         } else {
-            val episodeId = releaseInteractor.getEpisodes(releaseId).maxBy { it.lastAccess }?.id ?: -1
-            guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
+            viewModelScope.launch {
+                val episodeId =
+                    releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id
+                guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
+            }
         }
     }
 
@@ -103,27 +105,32 @@ class DetailHeaderViewModel(
 
     fun onFavoriteClick() {
         val release = currentRelease ?: return
-        if (authRepository.getAuthState() != AuthState.AUTH) {
-            guidedRouter.open(AuthGuidedScreen())
-            return
-        }
 
-        val source = if (release.favoriteInfo.isAdded) {
-            favoriteRepository.deleteFavorite(releaseId)
-        } else {
-            favoriteRepository.addFavorite(releaseId)
+        favoriteDisposable?.cancel()
+        favoriteDisposable = viewModelScope.launch {
+            if (authRepository.getAuthState() != AuthState.AUTH) {
+                guidedRouter.open(AuthGuidedScreen())
+                return@launch
+            }
+            coRunCatching {
+                if (release.favoriteInfo.isAdded) {
+                    favoriteRepository.deleteFavorite(releaseId)
+                } else {
+                    favoriteRepository.addFavorite(releaseId)
+                }
+            }.onSuccess { releaseItem ->
+                currentRelease?.also { data ->
+                    val newData = data.copy(
+                        favoriteInfo = releaseItem.favoriteInfo
+                    )
+                    releaseInteractor.updateFullCache(newData)
+                }
+            }.onFailure {
+                Timber.e(it)
+            }
+        }.apply {
+            invokeOnCompletion { updateProgress() }
         }
-
-        favoriteDisposable.dispose()
-        favoriteDisposable = source
-            .doFinally { updateProgress() }
-            .lifeSubscribe({
-                release.favoriteInfo.isAdded = it.favoriteInfo.isAdded
-                release.favoriteInfo.rating = it.favoriteInfo.rating
-                update(release)
-            }, {
-                it.printStackTrace()
-            })
 
         updateProgress()
     }
@@ -132,14 +139,16 @@ class DetailHeaderViewModel(
 
     }
 
+    private fun updateRelease(release: Release) {
+        currentRelease = release
+        releaseData.value = converter.toDetail(release)
+        updateProgress()
+    }
+
     private fun updateProgress() {
         progressState.value = DetailsState(
             currentRelease == null,
-            currentRelease !is ReleaseFull || !favoriteDisposable.isDisposed
+            currentRelease == null || favoriteDisposable?.isActive ?: false
         )
-    }
-
-    private fun update(releaseItem: ReleaseItem) {
-        releaseData.value = converter.toDetail(releaseItem)
     }
 }

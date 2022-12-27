@@ -1,124 +1,171 @@
 package ru.radiationx.data.repository
 
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import ru.radiationx.data.SchedulersProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
+import okhttp3.Cookie
 import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.remote.ApiError
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.AuthApi
-import ru.radiationx.data.entity.app.auth.OtpInfo
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.other.ProfileItem
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.auth.OtpInfo
+import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.entity.domain.other.ProfileItem
+import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.system.HttpException
+import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 30.12.17.
  */
 class AuthRepository @Inject constructor(
-    private val schedulers: SchedulersProvider,
     private val authApi: AuthApi,
     private val userHolder: UserHolder,
     private val authHolder: AuthHolder,
-    private val socialAuthHolder: SocialAuthHolder
+    private val socialAuthHolder: SocialAuthHolder,
+    private val apiConfig: ApiConfig,
+    private val cookieHolder: CookieHolder
 ) {
 
-    /*private val socialAuthInfo = listOf(SocialAuth(
-            "vk",
-            "ВКонтакте",
-            "https://oauth.vk.com/authorize?client_id=5315207&redirect_uri=https://www.anilibria.tv/public/vk.php",
-            "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/public\\/vk\\.php([?&]code)",
-            "https?:\\/\\/(?:(?:www|api)?\\.)?anilibria\\.tv\\/pages\\/vk\\.php"
-    ))*/
+    fun observeUser(): Flow<ProfileItem?> =
+        combine(observeAuthState(), userHolder.observeUser()) { authState, profileItem ->
+            profileItem?.takeIf { authState == AuthState.AUTH }
+        }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
 
-    fun observeUser(): Observable<ProfileItem> = userHolder
-        .observeUser()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
 
-    fun getUser() = userHolder.getUser()
-
-    fun getAuthState(): AuthState = userHolder.getUser().authState
-
-    fun updateUser(authState: AuthState) {
-        val user = userHolder.getUser()
-        user.authState = authState
-        userHolder.saveUser(user)
+    suspend fun getUser(): ProfileItem? {
+        return withContext(Dispatchers.IO) {
+            userHolder.getUser()?.takeIf {
+                getAuthState() == AuthState.AUTH
+            }
+        }
     }
 
-    private fun updateUser(newUser: ProfileItem) {
-        newUser.authState = AuthState.AUTH
-        userHolder.saveUser(newUser)
+    fun observeAuthState(): Flow<AuthState> = combine(
+        cookieHolder.observeCookies(),
+        authHolder.observeAuthSkipped()
+    ) { cookies, skipped ->
+        computeAuthState(cookies, skipped)
+    }
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.IO)
+
+    suspend fun getAuthState(): AuthState {
+        return withContext(Dispatchers.IO) {
+            computeAuthState(cookieHolder.getCookies(), authHolder.getAuthSkipped())
+        }
+    }
+
+    suspend fun setAuthSkipped(value: Boolean) {
+        withContext(Dispatchers.IO) {
+            authHolder.setAuthSkipped(value)
+        }
     }
 
     // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.
-    fun loadUser(): Single<ProfileItem> = authApi
-        .loadUser()
-        .doOnSuccess { updateUser(it) }
-        .doOnError {
-            it.printStackTrace()
-            val code = ((it as? ApiError)?.code ?: (it as? HttpException)?.code)
-            if (code == 401) {
-                userHolder.delete()
+    suspend fun loadUser(): ProfileItem {
+        return withContext(Dispatchers.IO) {
+            try {
+                authApi
+                    .loadUser()
+                    .toDomain(apiConfig)
+                    .also { updateUser(it) }
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+                val code = ((ex as? ApiError)?.code ?: (ex as? HttpException)?.code)
+                if (code == 401) {
+                    userHolder.delete()
+                }
+                throw ex
             }
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    }
 
-    fun getOtpInfo(): Single<OtpInfo> = authApi
-        .loadOtpInfo(authHolder.getDeviceId())
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun getOtpInfo(): OtpInfo = withContext(Dispatchers.IO) {
+        authApi
+            .loadOtpInfo(authHolder.getDeviceId())
+            .toDomain()
+    }
 
-    fun acceptOtp(code: String): Completable = authApi
-        .acceptOtp(code)
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun acceptOtp(code: String) = withContext(Dispatchers.IO) {
+        authApi.acceptOtp(code)
+    }
 
-    fun signInOtp(code: String): Single<ProfileItem> = authApi
-        .signInOtp(code, authHolder.getDeviceId())
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun signInOtp(code: String): ProfileItem = withContext(Dispatchers.IO) {
+        authApi
+            .signInOtp(code, authHolder.getDeviceId())
+            .toDomain(apiConfig)
+            .also { updateUser(it) }
+    }
 
-    fun signIn(login: String, password: String, code2fa: String): Single<ProfileItem> = authApi
-        .signIn(login, password, code2fa)
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun signIn(login: String, password: String, code2fa: String): ProfileItem =
+        withContext(Dispatchers.IO) {
+            authApi
+                .signIn(login, password, code2fa)
+                .toDomain(apiConfig)
+                .also { updateUser(it) }
+        }
 
-    fun signOut(): Single<String> = authApi
-        .signOut()
-        .doOnSuccess {
+    suspend fun signOut() {
+        withContext(Dispatchers.IO) {
+            coRunCatching {
+                authApi.signOut()
+            }.onFailure {
+                Timber.e(it)
+            }
+            cookieHolder.removeCookie(CookieHolder.PHPSESSID)
             userHolder.delete()
         }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    }
 
-    fun observeSocialAuth(): Observable<List<SocialAuth>> = socialAuthHolder
+    fun observeSocialAuth(): Flow<List<SocialAuth>> = socialAuthHolder
         .observe()
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+        .flowOn(Dispatchers.IO)
 
-    fun loadSocialAuth(): Single<List<SocialAuth>> = authApi
-        .loadSocialAuth()
-        .doOnSuccess { socialAuthHolder.save(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun loadSocialAuth(): List<SocialAuth> = withContext(Dispatchers.IO) {
+        authApi
+            .loadSocialAuth()
+            .map { it.toDomain() }
+            .also { socialAuthHolder.save(it) }
+    }
 
-    fun getSocialAuth(key: String): Single<SocialAuth> = Single
-        .just(socialAuthHolder.get().first { it.key == key })
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun getSocialAuth(key: String): SocialAuth =
+        withContext(Dispatchers.IO) {
+            socialAuthHolder.get().first { it.key == key }
+        }
 
-    fun signInSocial(resultUrl: String, item: SocialAuth): Single<ProfileItem> = authApi
-        .signInSocial(resultUrl, item)
-        .doOnSuccess { userHolder.saveUser(it) }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
+    suspend fun signInSocial(resultUrl: String, item: SocialAuth): ProfileItem =
+        withContext(Dispatchers.IO) {
+            authApi
+                .signInSocial(resultUrl, item)
+                .toDomain(apiConfig)
+                .also { updateUser(it) }
+        }
+
+    private suspend fun updateUser(newUser: ProfileItem) {
+        withContext(Dispatchers.IO) {
+            userHolder.saveUser(newUser)
+        }
+    }
+
+    private fun computeAuthState(cookies: Map<String, Cookie>, skipped: Boolean): AuthState {
+        val cookie = cookies[CookieHolder.PHPSESSID]
+        return when {
+            cookie != null -> AuthState.AUTH
+            skipped -> AuthState.AUTH_SKIPPED
+            else -> AuthState.NO_AUTH
+        }
+    }
 
 }

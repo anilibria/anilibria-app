@@ -3,19 +3,16 @@ package ru.radiationx.anilibria.screen.player.quality
 import android.os.Bundle
 import android.view.View
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
-import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import java.lang.IllegalStateException
 
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
-    private val viewModel by viewModel<PlayerQualityViewModel>()
+    private val viewModel by viewModel<PlayerQualityViewModel>() { argExtra }
 
     private val sdAction by lazy {
         GuidedAction.Builder(requireContext())
@@ -43,21 +40,16 @@ class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        releaseId?.also { viewModel.argReleaseId = it }
-        episodeId?.also { viewModel.argEpisodeId = it }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.availableData) {
             actions = it.mapNotNull { id -> getActionById(id) }
         }
 
-        subscribeTo(viewModel.selectedData) {
+        subscribeTo(viewModel.selectedData.filterNotNull()) {
             selectedActionPosition = findActionPositionById(it)
         }
     }

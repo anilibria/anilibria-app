@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_feed_schedules.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFeedSchedulesBinding
 import ru.radiationx.anilibria.extension.addItemsPositionListener
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ScheduleItemState
@@ -45,17 +45,19 @@ class FeedSchedulesDelegate(
     }
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ScheduleItemState, View, Int) -> Unit,
         private val scrollListener: (Int) -> Unit,
         private val viewPool: RecyclerView.RecycledViewPool? = null
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer, IBundledViewHolder {
+    ) : RecyclerView.ViewHolder(itemView), IBundledViewHolder {
+
+        private val binding by viewBinding<ItemFeedSchedulesBinding>()
 
         private val currentItems = mutableListOf<ScheduleItemState>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
 
         init {
-            itemFeedScheduleList.apply {
+            binding.itemFeedScheduleList.apply {
                 isSaveEnabled = false
                 isNestedScrollingEnabled = false
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -85,11 +87,11 @@ class FeedSchedulesDelegate(
         }
 
         override fun saveState(): Parcelable? {
-            return itemFeedScheduleList.layoutManager?.onSaveInstanceState()
+            return binding.itemFeedScheduleList.layoutManager?.onSaveInstanceState()
         }
 
         override fun restoreState(state: Parcelable?) {
-            state?.also { itemFeedScheduleList.layoutManager?.onRestoreInstanceState(it) }
+            state?.also { binding.itemFeedScheduleList.layoutManager?.onRestoreInstanceState(it) }
         }
     }
 }

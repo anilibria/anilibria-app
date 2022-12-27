@@ -1,6 +1,6 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by radiationx on 03.02.18.
@@ -22,35 +22,35 @@ interface PreferencesHolder {
         const val PIP_AUTO = 1
     }
 
-    fun observeNewDonationRemind(): Observable<Boolean>
+    fun observeNewDonationRemind(): Flow<Boolean>
     var newDonationRemind: Boolean
 
-    fun observeReleaseRemind(): Observable<Boolean>
+    fun observeReleaseRemind(): Flow<Boolean>
     var releaseRemind: Boolean
 
-    fun observeSearchRemind(): Observable<Boolean>
+    fun observeSearchRemind(): Flow<Boolean>
     var searchRemind: Boolean
 
-    fun observeEpisodesIsReverse(): Observable<Boolean>
+    fun observeEpisodesIsReverse(): Flow<Boolean>
     val episodesIsReverse: Boolean
 
     fun getQuality(): Int
     fun setQuality(value: Int)
-    fun observeQuality(): Observable<Int>
+    fun observeQuality(): Flow<Int>
 
     fun getPlayerType(): Int
     fun setPlayerType(value: Int)
 
     var playSpeed: Float
-    fun observePlaySpeed(): Observable<Float>
+    fun observePlaySpeed(): Flow<Float>
 
     var pipControl: Int
 
 
     var notificationsAll: Boolean
-    fun observeNotificationsAll(): Observable<Boolean>
+    fun observeNotificationsAll(): Flow<Boolean>
 
     var notificationsService: Boolean
-    fun observeNotificationsService(): Observable<Boolean>
+    fun observeNotificationsService(): Flow<Boolean>
 
 }

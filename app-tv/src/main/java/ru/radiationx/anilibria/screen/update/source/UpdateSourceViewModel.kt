@@ -1,14 +1,17 @@
 package ru.radiationx.anilibria.screen.update.source
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.update.UpdateController
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.entity.app.updater.UpdateData
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.common.download.DownloadController
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -20,27 +23,26 @@ class UpdateSourceViewModel(
     private val updateController: UpdateController
 ) : LifecycleViewModel() {
 
-    val sourcesData = MutableLiveData<List<UpdateData.UpdateLink>>()
+    val sourcesData = MutableStateFlow<List<UpdateData.UpdateLink>>(emptyList())
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         checkerRepository
             .observeUpdate()
-            .lifeSubscribe({
+            .onEach {
                 sourcesData.value = it.links
-            }, {
-                it.printStackTrace()
-            })
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onLinkClick(index: Int) {
-        val link = sourcesData.value?.getOrNull(index) ?: return
-        when (link.type) {
-            "file" -> updateController.downloadAction.accept(link)
-            "site" -> systemUtils.externalLink(link.url)
-            else -> systemUtils.externalLink(link.url)
+        viewModelScope.launch {
+            guidedRouter.close()
+            val link = sourcesData.value?.getOrNull(index) ?: return@launch
+            when (link.type) {
+                "file" -> updateController.downloadAction.emit(link)
+                "site" -> systemUtils.externalLink(link.url)
+                else -> systemUtils.externalLink(link.url)
+            }
         }
-        guidedRouter.close()
     }
 }

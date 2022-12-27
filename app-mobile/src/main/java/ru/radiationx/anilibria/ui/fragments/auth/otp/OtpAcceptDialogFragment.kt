@@ -1,128 +1,59 @@
 package ru.radiationx.anilibria.ui.fragments.auth.otp
 
-import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import kotlinx.android.synthetic.main.fragment_otp.view.*
-import moxy.MvpAppCompatDialogFragment
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptPresenter
-import ru.radiationx.anilibria.presentation.auth.otp.OtpAcceptView
+import ru.radiationx.anilibria.databinding.FragmentOtpBinding
+import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.getDependency
 
-class OtpAcceptDialogFragment : MvpAppCompatDialogFragment(), OtpAcceptView {
-
-    private var otpLayoutView: ConstraintLayout? = null
-    private var otpInputLayout: TextInputLayout? = null
-    private var otpInputField: TextInputEditText? = null
-    private var otpProgressBar: ProgressBar? = null
-    private var otpSuccess: AppCompatTextView? = null
-    private var otpTitle: AppCompatTextView? = null
-    private var otpHelp: AppCompatTextView? = null
-
-    private val alertDialog: AlertDialog?
-        get() = dialog as? AlertDialog?
+class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
 
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    @InjectPresenter
-    lateinit var presenter: OtpAcceptPresenter
+    private val binding by viewBinding<FragmentOtpBinding>()
 
-    @ProvidePresenter
-    fun provideAuthPresenter(): OtpAcceptPresenter = getDependency(OtpAcceptPresenter::class.java)
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        AlertDialog.Builder(requireContext())
-            .setPositiveButton("Привязать", null)
-            .create()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val otpLayout =
-            inflater.inflate(R.layout.fragment_otp, container, false) as ConstraintLayout
-        otpLayoutView = otpLayout
-        otpInputLayout = otpLayout.otpInputLayout
-        otpInputField = otpLayout.otpInputField
-        otpProgressBar = otpLayout.otpProgress
-        otpSuccess = otpLayout.otpSuccess
-        otpTitle = otpLayout.otpTitle
-        otpHelp = otpLayout.otpHelp
-        otpTitle?.setOnClickListener {
-            otpHelp?.isVisible = !(otpHelp?.isVisible ?: false)
-        }
-        alertDialog?.setView(otpLayout)
-        return null
-    }
+    private val viewModel by viewModel<OtpAcceptViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
-            onPositiveClick()
+        binding.otpTitle.setOnClickListener {
+            binding.otpHelp.isVisible = !binding.otpHelp.isVisible
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        otpLayoutView = null
-        otpInputLayout = null
-        otpInputField = null
-        otpProgressBar = null
-        otpSuccess = null
-        otpTitle = null
-        otpHelp = null
-    }
-
-    override fun close() {
-        dismiss()
-    }
-
-    override fun setState(success: Boolean, progress: Boolean, error: String?) {
-        otpInputLayout?.also { TransitionManager.beginDelayedTransition(it) }
-
-        otpInputLayout?.isInvisible = progress || success
-        otpProgressBar?.isInvisible = !progress || success
-        otpSuccess?.isInvisible = !success
-
-        otpInputLayout?.isErrorEnabled = error != null
-        otpInputLayout?.error = error
-
-        if (otpInputLayout?.isVisible == true) {
-            otpInputLayout?.requestFocus()
+        binding.btAction.setOnClickListener {
+            val code = binding.otpInputField.text?.toString().orEmpty()
+            viewModel.onAcceptClick(code)
         }
 
-        alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = !progress && !success
-    }
+        viewModel.state.onEach { state ->
+            binding.otpInputLayout.also { TransitionManager.beginDelayedTransition(it) }
 
-    override fun setRefreshing(refreshing: Boolean) {
-    }
+            binding.otpInputLayout.isInvisible = state.progress || state.success
+            binding.otpProgress.isInvisible = !state.progress || state.success
+            binding.otpSuccess.isInvisible = !state.success
 
-    private fun onPositiveClick() {
-        val code = otpInputField?.text?.toString() ?: return
-        presenter.onAcceptClick(code)
+            binding.otpInputLayout.isErrorEnabled = state.error != null
+            binding.otpInputLayout.error = state.error
+
+            if (binding.otpInputLayout.isVisible) {
+                binding.otpInputLayout.requestFocus()
+            }
+            binding.btAction.isEnabled = !state.progress && !state.success
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.closeEvent.onEach {
+            dismiss()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

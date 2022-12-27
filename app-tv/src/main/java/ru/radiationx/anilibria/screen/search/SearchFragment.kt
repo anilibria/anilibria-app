@@ -13,37 +13,45 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.SearchTitleView
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
 class SearchFragment : BaseVerticalGridFragment() {
 
-    private val cardsPresenter = CardPresenterSelector()
+    private val cardsPresenter = CardPresenterSelector {
+        cardsViewModel.onLinkCardBind()
+    }
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
 
     private val emptyTextManager by lazy { ExternalTextManager() }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val cardsViewModel by viewModel<SearchViewModel>()
     private val formViewModel by viewModel<SearchFormViewModel>()
 
-    override fun onInflateTitleView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.lb_search_titleview, parent, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        lifecycle.addObserver(cardsViewModel)
-        lifecycle.addObserver(formViewModel)
-
         title = "Каталог"
         gridPresenter = VerticalGridPresenter().apply {
             numberOfColumns = 6
         }
+    }
+
+    override fun onInflateTitleView(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.lb_search_titleview, parent, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(cardsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(formViewModel)
 
         setOnSearchClickedListener {
             cardsViewModel.onSearchClick()
@@ -84,10 +92,6 @@ class SearchFragment : BaseVerticalGridFragment() {
 
         prepareEntranceTransition()
         adapter = cardsAdapter
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         emptyTextManager.rootView = view as ViewGroup
         emptyTextManager.initialDelay = 0L

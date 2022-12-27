@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:lb="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rowReleaseRoot"
     android:layout_width="match_parent"
@@ -33,16 +32,17 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/rowReleaseImageCard"
-        android:layout_width="200dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="100dp"
         android:layout_marginTop="?browsePaddingBottom"
         android:background="@color/dark_cardBackground"
         android:elevation="16dp"
+        android:layout_marginBottom="16dp"
         android:scaleType="centerCrop"
         android:theme="@style/AppTheme.Material"
         app:layout_constraintDimensionRatio="260:370"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
+        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/AppTheme.RoundedImageView" />
 
@@ -134,12 +134,15 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/bg_details_description"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        app:layout_constrainedHeight="true"
         android:nextFocusDown="@id/rowReleaseActions"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         android:padding="16dp"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
         app:layout_constraintStart_toStartOf="parent"
@@ -176,13 +179,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/rowReleaseActions_barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="rowReleaseDescriptionCard, rowReleaseImageCard" />
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rowReleaseActions"
         android:layout_width="wrap_content"
@@ -197,7 +193,6 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/rowReleaseActions_barrier"
         app:layout_constraintVertical_bias="1">
 
         <Button

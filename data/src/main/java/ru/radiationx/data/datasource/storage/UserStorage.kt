@@ -1,68 +1,79 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import androidx.core.content.edit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.UserHolder
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.other.ProfileItem
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 11.01.18.
  */
 class UserStorage @Inject constructor(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : UserHolder {
 
-    private val userRelay = BehaviorRelay.createDefault(getSavedUser())
+    companion object {
+        private const val KEY_SAVED_USER = "saved_user_v2"
+    }
 
-    override fun getUser(): ProfileItem = userRelay.value!!
+    private val userRelay = SuspendMutableStateFlow {
+        getSavedUser()
+    }
 
-    private fun getSavedUser(): ProfileItem {
-        val user = ProfileItem()
-        val userSource = sharedPreferences.getString("saved_user", null)
-        if (userSource == null) {
-            user.authState = AuthState.NO_AUTH
-            localSaveUser(user)
-        } else {
-            val userJson = JSONObject(userSource)
-            user.apply {
-                authState = AuthState.valueOf(userJson.getString("authState"))
-                id = userJson.getInt("id")
-                nick = userJson.getString("nick")
-                avatarUrl = userJson.getString("avatar")
+    override suspend fun getUser(): ProfileItem? {
+        return userRelay.getValue()
+    }
+
+    override fun observeUser(): Flow<ProfileItem?> {
+        return userRelay
+    }
+
+    override suspend fun saveUser(user: ProfileItem) {
+        localSaveUser(user)
+        updateState()
+    }
+
+    override suspend fun delete() {
+        withContext(Dispatchers.IO) {
+            sharedPreferences.edit {
+                remove(KEY_SAVED_USER)
             }
         }
-        return user
+        updateState()
     }
 
-    private fun localSaveUser(user: ProfileItem) {
-        val userJson = JSONObject()
-        userJson.put("authState", user.authState.toString())
-        userJson.put("id", user.id)
-        userJson.put("nick", user.nick)
-        userJson.put("avatar", user.avatarUrl)
-        sharedPreferences.edit().putString("saved_user", userJson.toString()).apply()
+    private suspend fun updateState() {
+        userRelay.setValue(getSavedUser())
     }
 
-    override fun observeUser(): Observable<ProfileItem> = userRelay
-
-    override fun saveUser(user: ProfileItem) {
-        localSaveUser(user)
-        userRelay.accept(user)
-    }
-
-    override fun delete() {
-        val user = getUser()
-        user.apply {
-            authState = AuthState.AUTH_SKIPPED
-            id = ProfileItem.NO_ID
-            nick = ProfileItem.NO_VALUE
-            avatarUrl = ProfileItem.NO_VALUE
+    private suspend fun getSavedUser(): ProfileItem? {
+        return withContext(Dispatchers.IO) {
+            sharedPreferences
+                .getString(KEY_SAVED_USER, null)
+                ?.let { JSONObject(it) }
+                ?.let { userJson ->
+                    ProfileItem(
+                        id = userJson.getInt("id"),
+                        nick = userJson.getString("nick"),
+                        avatarUrl = userJson.getString("avatar"),
+                    )
+                }
         }
-        saveUser(user)
     }
 
+    private suspend fun localSaveUser(user: ProfileItem) {
+        withContext(Dispatchers.IO) {
+            val userJson = JSONObject()
+            userJson.put("id", user.id)
+            userJson.put("nick", user.nick)
+            userJson.put("avatar", user.avatarUrl)
+            sharedPreferences.edit().putString(KEY_SAVED_USER, userJson.toString()).apply()
+        }
+    }
 }

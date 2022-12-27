@@ -1,18 +1,22 @@
 package ru.radiationx.data.system
 
-import android.util.Log
-import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 open class Client @Inject constructor(
     private val clientWrapper: ClientWrapper,
-    private val appCookieJar: AppCookieJar,
-    private val apiConfig: ApiConfig
+    private val sharedBuildConfig: SharedBuildConfig
 ) : IClient {
 
     companion object {
@@ -26,36 +30,36 @@ open class Client @Inject constructor(
             "mobileApp Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.68"
     }
 
-    override fun get(url: String, args: Map<String, String>): Single<String> =
-        getFull(url, args).map { it.body }
+    override suspend fun get(url: String, args: Map<String, String>): String =
+        requireNotNull(getFull(url, args).body)
 
-    override fun post(url: String, args: Map<String, String>): Single<String> =
-        postFull(url, args).map { it.body }
+    override suspend fun post(url: String, args: Map<String, String>): String =
+        requireNotNull(postFull(url, args).body)
 
-    override fun put(url: String, args: Map<String, String>): Single<String> =
-        putFull(url, args).map { it.body }
+    override suspend fun put(url: String, args: Map<String, String>): String =
+        requireNotNull(putFull(url, args).body)
 
-    override fun delete(url: String, args: Map<String, String>): Single<String> =
-        deleteFull(url, args).map { it.body }
+    override suspend fun delete(url: String, args: Map<String, String>): String =
+        requireNotNull(deleteFull(url, args).body)
 
-    override fun getFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun getFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_GET, url, args)
 
-    override fun postFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun postFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_POST, url, args)
 
-    override fun putFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun putFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_PUT, url, args)
 
-    override fun deleteFull(url: String, args: Map<String, String>): Single<NetworkResponse> =
+    override suspend fun deleteFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_DELETE, url, args)
 
-    private fun request(
+    private suspend fun request(
         method: String,
         url: String,
         args: Map<String, String>
-    ): Single<NetworkResponse> = Single
-        .fromCallable {
+    ): NetworkResponse {
+        return withContext(Dispatchers.IO) {
             val body = getRequestBody(method, args)
             val httpUrl = getHttpUrl(url, method, args)
             val request = Request.Builder()
@@ -63,30 +67,27 @@ open class Client @Inject constructor(
                 .method(method, body)
                 .build()
 
-            clientWrapper.get().newCall(request)
-        }
-        .flatMap { CallExecuteSingle(it) }
-        .doOnSuccess {
-            if (!it.isSuccessful) {
-                throw HttpException(it.code(), it.message(), it)
+            val call = clientWrapper.get().newCall(request)
+            val callResponse = call.awaitResponse()
+            if (!callResponse.isSuccessful) {
+                throw HttpException(callResponse.code, callResponse.message, callResponse)
             }
-        }
-        .map {
             NetworkResponse(
                 getHttpUrl(url, method, args).toString(),
-                it.code(),
-                it.message(),
-                it.request().url().toString(),
-                it.body()?.string().orEmpty(),
-                it.headers(HEADER_HOST_IP)?.firstOrNull()
+                callResponse.code,
+                callResponse.message,
+                callResponse.request.url.toString(),
+                callResponse.body?.string().orEmpty(),
+                callResponse.headers(HEADER_HOST_IP).firstOrNull()
             )
         }
+    }
 
     private fun getRequestBody(
         method: String,
         args: Map<String, String>
     ): RequestBody? = when (method) {
-        METHOD_POST -> {
+        METHOD_POST, METHOD_PUT -> {
             FormBody.Builder()
                 .apply {
                     args.forEach {
@@ -95,21 +96,35 @@ open class Client @Inject constructor(
                 }
                 .build()
         }
-        METHOD_PUT, METHOD_DELETE -> {
-            RequestBody.create(MediaType.parse("text/plain; charset=utf-8"), "")
-        }
-        METHOD_GET -> null
+        METHOD_GET, METHOD_DELETE -> null
         else -> throw Exception("Unknown method: $method")
     }
 
     private fun getHttpUrl(url: String, method: String, args: Map<String, String>): HttpUrl {
-        var httpUrl = HttpUrl.parse(url) ?: throw Exception("URL incorrect: '$url'")
-        if (method == METHOD_GET) {
+        var httpUrl = url.toHttpUrlOrNull() ?: throw Exception("URL incorrect: '$url'")
+        if (sharedBuildConfig.debug || method == METHOD_GET) {
             httpUrl = httpUrl.newBuilder().let { builder ->
                 args.forEach { builder.addQueryParameter(it.key, it.value) }
                 builder.build()
             }
         }
         return httpUrl
+    }
+
+    private suspend fun Call.awaitResponse(): Response {
+        return suspendCancellableCoroutine { continuation ->
+            continuation.invokeOnCancellation {
+                cancel()
+            }
+            enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    continuation.resume(response)
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(e)
+                }
+            })
+        }
     }
 }

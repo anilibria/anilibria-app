@@ -5,11 +5,11 @@ import android.view.Gravity
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_feed_section_header.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatDrawable
+import ru.radiationx.anilibria.databinding.ItemFeedSectionHeaderBinding
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -34,46 +34,46 @@ class FeedSectionDelegate(
         holder.bind(item)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (FeedSectionListItem) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
 
-        private lateinit var currentItem: FeedSectionListItem
+        private val binding by viewBinding<ItemFeedSectionHeaderBinding>()
+
 
         init {
-            containerView.setOnClickListener {
-                clickListener.invoke(currentItem)
-            }
-            itemFeedScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(
+            binding.itemFeedScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
-                itemFeedScheduleBtn.getCompatDrawable(R.drawable.ic_chevron_right),
+                binding.itemFeedScheduleBtn.getCompatDrawable(R.drawable.ic_chevron_right),
                 null
             )
         }
 
         fun bind(item: FeedSectionListItem) {
-            currentItem = item
-            itemFeedScheduleTitle.text = item.title
-            itemFeedScheduleTitle.gravity = if (item.center) {
+            binding.itemFeedScheduleTitle.text = item.title
+            binding.itemFeedScheduleTitle.gravity = if (item.center) {
                 Gravity.CENTER
             } else {
                 Gravity.START or Gravity.CENTER_VERTICAL
             }
-            itemFeedScheduleBtn.visible(item.route != null)
-            itemFeedScheduleBtn.text = item.route
-            itemFeedScheduleIcon.isVisible = item.routeIconRes != null
+            binding.itemFeedScheduleBtn.visible(item.route != null)
+            binding.itemFeedScheduleBtn.text = item.route
+            binding.itemFeedScheduleIcon.isVisible = item.routeIconRes != null
             item.routeIconRes?.also {
-                itemFeedScheduleIcon.setCompatDrawable(it)
+                binding.itemFeedScheduleIcon.setCompatDrawable(it)
             }
 
-            containerView.setBackgroundColor(
+            binding.root.setBackgroundColor(
                 if (item.hasBg) {
-                    containerView.context.getColorFromAttr(R.attr.colorSurface)
+                    binding.root.context.getColorFromAttr(R.attr.colorSurface)
                 } else {
                     Color.TRANSPARENT
                 }
             )
+            binding.root.setOnClickListener {
+                clickListener.invoke(item)
+            }
         }
     }
 }

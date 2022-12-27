@@ -2,14 +2,14 @@ package ru.radiationx.anilibria.ui.fragments.other
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_list.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.presentation.other.OtherPresenter
-import ru.radiationx.anilibria.presentation.other.OtherView
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
@@ -18,60 +18,52 @@ import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
-import ru.radiationx.shared_app.di.injectDependencies
+import ru.radiationx.quill.viewModel
 
 
 /**
  * Created by radiationx on 16.12.17.
  */
-class OtherFragment : BaseFragment(), OtherView {
+class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private val adapter = OtherAdapter()
 
-    @InjectPresenter
-    lateinit var presenter: OtherPresenter
+    private val binding by viewBinding<FragmentListBinding>()
 
-    @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter =
-        getDependency(OtherPresenter::class.java, screenScope)
-
-    override fun getBaseLayout(): Int = R.layout.fragment_list
+    private val viewModel by viewModel<OtherViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
         super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.apply {
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = this@OtherFragment.adapter
             disableItemChangeAnimation()
         }
-    }
 
-    override fun showState(state: ProfileScreenState) {
-        adapter.bindItems(state)
-    }
+        viewModel.refresh()
 
-    override fun showOtpCode() {
-        OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
-    }
+        viewModel.state.onEach { state ->
+            adapter.bindItems(state)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-    override fun onBackPressed(): Boolean {
-        return false
+        viewModel.otpEvent.onEach {
+            OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     inner class OtherAdapter : ListItemAdapter() {
 
-        private val profileClickListener = { _: ProfileItemState -> presenter.onProfileClick() }
+        private val profileClickListener = { _: ProfileItemState -> viewModel.onProfileClick() }
 
-        private val logoutClickListener = { presenter.signOut() }
+        private val logoutClickListener = { viewModel.signOut() }
 
-        private val menuClickListener = { item: OtherMenuItemState -> presenter.onMenuClick(item) }
+        private val menuClickListener = { item: OtherMenuItemState -> viewModel.onMenuClick(item) }
 
         init {
             delegatesManager.apply {

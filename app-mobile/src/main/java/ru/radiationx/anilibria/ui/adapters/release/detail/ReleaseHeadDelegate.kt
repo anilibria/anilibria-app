@@ -5,15 +5,15 @@ import android.view.View
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_head_new.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.presentation.release.details.ReleaseDetailModifiersState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseFavoriteState
-import ru.radiationx.anilibria.presentation.release.details.ReleaseInfoState
+import ru.radiationx.anilibria.databinding.ItemReleaseHeadNewBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseDetailModifiersState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFavoriteState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
@@ -33,83 +33,86 @@ class ReleaseHeadDelegate(
         holder.bind(item.item, item.modifiers)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemReleaseHeadNewBinding>()
 
         init {
             val tagsRegex = Regex("(\\w+)_(\\d+)")
 
-            full_fav_btn.setOnClickListener {
+            binding.fullFavBtn.setOnClickListener {
                 itemListener.onClickFav()
             }
-            full_days_bar.clickListener = {
+            binding.fullDaysBar.clickListener = {
                 itemListener.onScheduleClick(it)
             }
-            full_info.movementMethod = LinkMovementMethod {
+            binding.fullInfo.movementMethod = LinkMovementMethod {
                 val match = tagsRegex.find(it) ?: return@LinkMovementMethod true
                 val tag = match.groupValues[1]
                 val index = match.groupValues[2].toInt()
                 itemListener.onClickGenre(tag, index)
                 true
             }
-            full_announce.movementMethod = LinkMovementMethod {
+            binding.fullAnnounce.movementMethod = LinkMovementMethod {
                 itemListener.onClickSomeLink(it)
                 true
             }
-            full_description.movementMethod = LinkMovementMethod {
+            binding.fullDescription.movementMethod = LinkMovementMethod {
                 itemListener.onClickSomeLink(it)
                 true
             }
-            full_description_expander.setOnClickListener {
+            binding.fullDescriptionExpander.setOnClickListener {
                 itemListener.onExpandClick()
             }
         }
 
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
-            full_title.text = state.titleRus
-            full_title_en.text = state.titleEng
-            full_updated.text = state.updatedAt.relativeDate(full_updated.context).let {
-                "Обновлён $it"
-            }
-            full_description.text = Html.fromHtml(state.description)
-            full_description.doOnLayout {
+            binding.fullTitle.text = state.titleRus
+            binding.fullTitleEn.text = state.titleEng
+            binding.fullUpdated.text = state.updatedAt
+                .relativeDate(binding.fullUpdated.context)
+                .let { "Обновлён $it" }
+            binding.fullDescription.text = Html.fromHtml(state.description)
+            binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)
             }
-            full_info.text = Html.fromHtml(state.info)
+            binding.fullInfo.text = Html.fromHtml(state.info)
 
-            full_days_bar.selectDays(state.days)
-            full_days_bar.isVisible = state.isOngoing
-            full_days_divider.isVisible = state.isOngoing || state.announce != null
+            binding.fullDaysBar.selectDays(state.days)
+            binding.fullDaysBar.isVisible = state.isOngoing
+            binding.fullDaysDivider.isVisible = state.isOngoing || state.announce != null
 
-            full_announce.isVisible = state.announce != null
-            full_announce.text = state.announce?.let { Html.fromHtml(it) }
+            binding.fullAnnounce.isVisible = state.announce != null
+            binding.fullAnnounce.text = state.announce?.let { Html.fromHtml(it) }
 
-            bindFavorite(state.favorite, modifiers.favoriteRefreshing)
+            bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
         }
 
         private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {
-            full_fav_count.text = state.rating
+            binding.fullFavCount.text = state.rating
 
             val iconRes = if (state.isAdded) R.drawable.ic_fav else R.drawable.ic_fav_border
-            full_fav_icon.setCompatDrawable(iconRes)
+            binding.fullFavIcon.setCompatDrawable(iconRes)
 
-            full_fav_icon.isVisible = !favoritesRefresh
-            full_fav_progress.isVisible = favoritesRefresh
+            binding.fullFavIcon.isVisible = !favoritesRefresh
+            binding.fullFavProgress.isVisible = favoritesRefresh
 
-            full_fav_btn.isSelected = state.isAdded
-            full_fav_btn.isClickable = !favoritesRefresh
+            binding.fullFavBtn.isSelected = state.isAdded
+            binding.fullFavBtn.isClickable = !favoritesRefresh
         }
 
         private fun updateDescription(isExpanded: Boolean) {
-            val expanderVisible = full_description.lineCount > full_description.maxLines
+            val expanderVisible =
+                binding.fullDescription.lineCount > binding.fullDescription.maxLines
             if (isExpanded) {
-                full_description.expand()
+                binding.fullDescription.expand()
             } else {
-                full_description.collapse()
+                binding.fullDescription.collapse()
             }
-            full_description_expander.isVisible = expanderVisible
-            full_description_expander.text = if (isExpanded) {
+            binding.fullDescriptionExpander.isVisible = expanderVisible
+            binding.fullDescriptionExpander.text = if (isExpanded) {
                 "Скрыть"
             } else {
                 "Раскрыть"

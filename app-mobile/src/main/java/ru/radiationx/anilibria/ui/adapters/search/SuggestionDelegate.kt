@@ -8,14 +8,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_fast_search.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFastSearchBinding
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
  * Created by radiationx on 13.01.18.
@@ -31,20 +31,21 @@ class SuggestionDelegate(
     override fun bindData(item: SuggestionListItem, holder: ViewHolder) = holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (SuggestionItemState) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFastSearchBinding>()
 
         init {
-            item_image.scaleType = ImageView.ScaleType.CENTER_CROP
+            binding.itemImage.scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
         fun bind(state: SuggestionItemState) {
-            ImageLoader.getInstance().cancelDisplayTask(item_image)
-            ImageLoader.getInstance().displayImage(state.poster, item_image)
+            binding.itemImage.showImageUrl(state.poster)
             setTitle(state)
 
-            containerView.setOnClickListener {
+            binding.root.setOnClickListener {
                 clickListener.invoke(state)
             }
         }
@@ -56,7 +57,7 @@ class SuggestionDelegate(
                 val flags = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 spannableTitle.setSpan(span, it.first, it.last, flags)
             }
-            item_title.setText(spannableTitle, TextView.BufferType.SPANNABLE)
+            binding.itemTitle.setText(spannableTitle, TextView.BufferType.SPANNABLE)
         }
     }
 }

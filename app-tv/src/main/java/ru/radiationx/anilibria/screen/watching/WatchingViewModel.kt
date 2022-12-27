@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.screen.watching
 
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.common.AuthState
@@ -22,32 +25,21 @@ class WatchingViewModel(
         const val RECOMMENDS_ROW_ID = 4L
     }
 
-    override val rowIds: List<Long> = listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
+    override val rowIds: List<Long> =
+        listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override val availableRows: MutableSet<Long> = mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
+    override val availableRows: MutableSet<Long> =
+        mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
 
-    override fun onCreate() {
-        super.onCreate()
-
-        episodesCheckerHolder
-            .observeEpisodes()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
-                updateAvailableRow(CONTINUE_ROW_ID, it.isNotEmpty())
-            }
-
-        historyRepository
-            .observeReleases()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
-                updateAvailableRow(HISTORY_ROW_ID, it.isNotEmpty())
-            }
-
-        authRepository
-            .observeUser()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
-                updateAvailableRow(FAVORITES_ROW_ID, it.authState == AuthState.AUTH)
-            }
+    init {
+        combine(
+            episodesCheckerHolder.observeEpisodes().map { it.isNotEmpty() },
+            historyRepository.observeReleases().map { it.isNotEmpty() },
+            authRepository.observeAuthState().map { it == AuthState.AUTH }
+        ) { hasContinue, hasHistory, hasAuth ->
+            updateAvailableRow(CONTINUE_ROW_ID, hasContinue)
+            updateAvailableRow(HISTORY_ROW_ID, hasHistory)
+            updateAvailableRow(FAVORITES_ROW_ID, hasAuth)
+        }.launchIn(viewModelScope)
     }
 }

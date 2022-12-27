@@ -8,20 +8,26 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import org.json.JSONObject
-import ru.radiationx.anilibria.extension.getCompatColor
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
+import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
+import ru.radiationx.quill.get
+import ru.radiationx.shared.ktx.android.asMutableFlag
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 
 class NotificationService : FirebaseMessagingService() {
 
@@ -66,20 +72,21 @@ class NotificationService : FirebaseMessagingService() {
 
 
         if (data.type == CUSTOM_TYPE_CONFIG) {
-            try {
-                val configurationParser = DI.get(ConfigurationParser::class.java)
-                val apiConfig = DI.get(ApiConfig::class.java)
-                val apiConfigStorage = DI.get(ApiConfigStorage::class.java)
+            GlobalScope.launch {
+                coRunCatching {
+                    val apiConfig = get<ApiConfig>()
+                    val apiConfigStorage = get<ApiConfigStorage>()
+                    val moshi = get<Moshi>()
 
-                apiConfig.updateNeedConfig(true)
+                    apiConfig.updateNeedConfig(true)
 
-                val payload = data.payload.orEmpty()
-                val jsonObject = JSONObject(payload)
-                apiConfigStorage.saveJson(jsonObject)
-                val addresses = configurationParser.parse(jsonObject)
-                apiConfig.setAddresses(addresses)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+                    val payload = data.payload.orEmpty()
+                    val configResponse = payload.fetchResponse<ApiConfigResponse>(moshi)
+                    apiConfigStorage.save(configResponse)
+                    apiConfig.setConfig(configResponse.toDomain())
+                }.onFailure {
+                    Timber.e(it)
+                }
             }
         }
     }
@@ -131,6 +138,6 @@ class NotificationService : FirebaseMessagingService() {
             this,
             System.currentTimeMillis().toInt(),
             arrayOf(defaultIntent),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT.asMutableFlag()
         )
 }

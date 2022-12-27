@@ -1,10 +1,10 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
-import ru.radiationx.data.entity.app.other.LinkMenuItem
+import kotlinx.coroutines.flow.Flow
+import ru.radiationx.data.entity.domain.other.LinkMenuItem
 
 interface MenuHolder {
-    fun observe(): Observable<List<LinkMenuItem>>
-    fun save(items: List<LinkMenuItem>)
-    fun get(): List<LinkMenuItem>
+    fun observe(): Flow<List<LinkMenuItem>>
+    suspend fun save(items: List<LinkMenuItem>)
+    suspend fun get(): List<LinkMenuItem>
 }

@@ -4,17 +4,17 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_episode.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.extension.getColorFromAttr
-import ru.radiationx.anilibria.extension.getCompatColor
-import ru.radiationx.anilibria.extension.getCompatDrawable
-import ru.radiationx.anilibria.presentation.release.details.ReleaseEpisodeItemState
+import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeBinding
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
 import ru.radiationx.shared.ktx.android.relativeDate
 
 /**
@@ -34,39 +34,43 @@ class ReleaseEpisodeDelegate(
         holder.bind(item.state, item.isEven)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val itemListener: Listener
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemReleaseEpisodeBinding>()
 
         fun bind(state: ReleaseEpisodeItemState, isEven: Boolean) {
-            item_title.text = state.title
-            item_subtitle.text = state.subtitle
-            item_subtitle.isVisible = state.subtitle != null
-            item_date.text =
-                state.updatedAt?.relativeDate(item_date.context)?.let { "Обновлена $it" }
-            item_date.isVisible = state.updatedAt != null
+            binding.itemTitle.text = state.title
+            binding.itemSubtitle.text = state.subtitle
+            binding.itemSubtitle.isVisible = state.subtitle != null
+            binding.itemDate.text = state.updatedAt
+                ?.relativeDate(binding.itemDate.context)
+                ?.let { "Обновлена $it" }
+            binding.itemDate.isVisible = state.updatedAt != null
             val dateColor = if (state.hasUpdate) {
-                item_date.context.getCompatColor(R.color.md_green)
+                binding.itemDate.context.getCompatColor(R.color.md_green)
             } else {
-                item_date.context.getColorFromAttr(R.attr.textSecond)
+                binding.itemDate.context.getColorFromAttr(R.attr.textSecond)
             }
-            item_date.setTextColor(dateColor)
-            item_viewed_state.isVisible = state.isViewed
-            quality_sd.isVisible = state.hasSd
-            quality_hd.isVisible = state.hasHd
-            quality_full_hd.isVisible = state.hasFullHd
+            binding.itemDate.setTextColor(dateColor)
+            binding.itemViewedState.isVisible = state.isViewed
+            binding.qualitySd.isVisible = state.hasSd
+            binding.qualityHd.isVisible = state.hasHd
+            binding.qualityFullHd.isVisible = state.hasFullHd
 
-            tvAction.isVisible = state.hasActionUrl
+            binding.tvAction.isVisible = state.hasActionUrl
             if (state.hasActionUrl) {
-                tvAction.text = state.actionTitle
+                binding.tvAction.text = state.actionTitle
                 val textColor = state.actionColorRes
-                    ?.let { tvAction.getCompatColor(it) }
-                    ?: tvAction.context.getColorFromAttr(R.attr.colorAccent)
-                val iconDrawable = state.actionIconRes?.let { tvAction.getCompatDrawable(it) }
+                    ?.let { binding.tvAction.getCompatColor(it) }
+                    ?: binding.tvAction.context.getColorFromAttr(R.attr.colorAccent)
+                val iconDrawable =
+                    state.actionIconRes?.let { binding.tvAction.getCompatDrawable(it) }
 
-                tvAction.setTextColor(textColor)
+                binding.tvAction.setTextColor(textColor)
                 TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    tvAction,
+                    binding.tvAction,
                     null,
                     null,
                     iconDrawable,
@@ -75,25 +79,25 @@ class ReleaseEpisodeDelegate(
             }
 
             val bgColor = if (isEven) {
-                containerView.context.getColorFromAttr(R.attr.colorSurface)
+                binding.root.context.getColorFromAttr(R.attr.colorSurface)
             } else {
-                containerView.context.getColorFromAttr(R.attr.episode_even)
+                binding.root.context.getColorFromAttr(R.attr.episode_even)
             }
-            containerView.setBackgroundColor(bgColor)
+            binding.root.setBackgroundColor(bgColor)
 
-            quality_sd.setOnClickListener {
+            binding.qualitySd.setOnClickListener {
                 itemListener.onClickSd(state)
             }
-            quality_hd.setOnClickListener {
+            binding.qualityHd.setOnClickListener {
                 itemListener.onClickHd(state)
             }
-            quality_full_hd.setOnClickListener {
+            binding.qualityFullHd.setOnClickListener {
                 itemListener.onClickFullHd(state)
             }
-            containerView.setOnClickListener {
+            binding.root.setOnClickListener {
                 itemListener.onClickEpisode(state)
             }
-            containerView.setOnLongClickListener {
+            binding.root.setOnLongClickListener {
                 if (state.isViewed) {
                     itemListener.onLongClickEpisode(state)
                     true

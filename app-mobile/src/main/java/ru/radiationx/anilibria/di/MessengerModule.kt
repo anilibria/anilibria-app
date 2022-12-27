@@ -3,13 +3,13 @@ package ru.radiationx.anilibria.di
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import toothpick.config.Module
+import ru.radiationx.quill.QuillModule
 
-class MessengerModule : Module() {
+class MessengerModule : QuillModule() {
 
     init {
-        bind(SystemMessenger::class.java).singleton()
-        bind(IErrorHandler::class.java).to(ErrorHandler::class.java).singleton()
+        single<SystemMessenger>()
+        singleImpl<IErrorHandler, ErrorHandler>()
     }
 
 }

@@ -1,13 +1,13 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
-import io.reactivex.Single
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import kotlinx.coroutines.flow.Flow
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
 
 interface HistoryHolder {
-    fun getEpisodes(): Single<List<ReleaseItem>>
-    fun observeEpisodes(): Observable<MutableList<ReleaseItem>>
-    fun putRelease(release: ReleaseItem)
-    fun putAllRelease(releases: List<ReleaseItem>)
-    fun removerRelease(id: Int)
+    suspend fun getEpisodes(): List<ReleaseId>
+    fun observeEpisodes(): Flow<List<ReleaseId>>
+    suspend fun putRelease(release: Release)
+    suspend fun putAllRelease(releases: List<Release>)
+    suspend fun removerRelease(id: ReleaseId)
 }

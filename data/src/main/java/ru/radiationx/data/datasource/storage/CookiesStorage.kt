@@ -2,9 +2,12 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
 import android.net.Uri
-import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import okhttp3.Cookie
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.CookieHolder.Companion.cookieNames
 import javax.inject.Inject
@@ -13,59 +16,79 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class CookiesStorage @Inject constructor(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : CookieHolder {
 
-    private val clientCookies = mutableMapOf<String, Cookie>()
+    private val cookiesState = SuspendMutableStateFlow {
+        loadCookies()
+    }
 
-    init {
-        cookieNames.forEachIndexed { _, s ->
-            val savedCookie = sharedPreferences.getString("cookie_$s", null)
-            savedCookie?.let {
-                val cookie = parseCookie(it)
-                cookie?.let { it1 -> clientCookies.put(s, it1) }
+    override fun observeCookies(): Flow<Map<String, Cookie>> {
+        return cookiesState
+    }
+
+    override suspend fun getCookies(): Map<String, Cookie> {
+        return cookiesState.getValue()
+    }
+
+    override suspend fun putCookie(url: String, name: String, value: String) {
+        val domain = requireNotNull(Uri.parse(url).host) {
+            "cookie domain is null"
+        }
+        val cookie = Cookie.Builder()
+            .name(name.trim())
+            .value(value.trim())
+            .domain(domain)
+            .build()
+        putCookie(url, cookie)
+    }
+
+    override suspend fun putCookie(url: String, cookie: Cookie) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences
+                .edit()
+                .putString("cookie_${cookie.name}", convertCookie(url, cookie))
+                .apply()
+        }
+        updateCookies()
+    }
+
+    override suspend fun removeCookie(name: String) {
+        withContext(Dispatchers.IO) {
+            sharedPreferences
+                .edit()
+                .remove("cookie_$name")
+                .apply()
+        }
+        updateCookies()
+    }
+
+    private suspend fun updateCookies() {
+        cookiesState.setValue(loadCookies())
+    }
+
+    private suspend fun loadCookies(): Map<String, Cookie> {
+        return withContext(Dispatchers.IO) {
+            val result = mutableMapOf<String, Cookie>()
+            cookieNames.forEachIndexed { _, s ->
+                sharedPreferences
+                    .getString("cookie_$s", null)
+                    ?.let { parseCookie(it) }
+                    ?.let { cookie -> result[s] = cookie }
             }
+            result
         }
     }
 
     private fun parseCookie(cookieFields: String): Cookie? {
         val fields = cookieFields.split("\\|:\\|".toRegex())
-        val httpUrl = HttpUrl.parse(fields[0])
-                ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
+        val httpUrl = fields[0].toHttpUrlOrNull()
+            ?: throw RuntimeException("Unknown cookie url = ${fields[0]}")
         val cookieString = fields[1]
         return Cookie.parse(httpUrl, cookieString)
     }
 
     private fun convertCookie(url: String, cookie: Cookie): String {
         return "$url|:|$cookie"
-    }
-
-    override fun getCookies(): Map<String, Cookie> {
-        return clientCookies
-    }
-
-    override fun putCookie(url: String, name: String, value: String) {
-        putCookie(url, Cookie.Builder().name(name.trim()).value(value.trim()).domain(Uri.parse(url).host).build())
-    }
-
-    override fun putCookie(url: String, cookie: Cookie) {
-        sharedPreferences
-                .edit()
-                .putString("cookie_${cookie.name()}", convertCookie(url, cookie))
-                .apply()
-
-        if (!clientCookies.containsKey(cookie.name())) {
-            clientCookies.remove(cookie.name())
-        }
-        clientCookies[cookie.name()] = cookie
-    }
-
-    override fun removeCookie(name: String) {
-        sharedPreferences
-                .edit()
-                .remove("cookie_$name")
-                .apply()
-
-        clientCookies.remove(name)
     }
 }

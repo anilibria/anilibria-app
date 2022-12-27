@@ -1,21 +1,20 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-parcelize"
+apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
+        minSdkVersion app_min_sdk_version
+        targetSdkVersion app_target_sdk_version
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
 
@@ -23,41 +22,38 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
-    lintOptions {
-        disable 'RestrictedApi'
+    lint {
         checkReleaseBuilds false
+        disable "RestrictedApi"
     }
-}
-ext {
-    okHttpVersion = '3.12.3'
+    namespace "ru.radiationx.data"
+
 }
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation project(":shared-android-ktx")
+    implementation project(":quill-di")
 
     api "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     api "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
     api "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+    implementation "com.github.chuckerteam.chucker:library:$chucker_version"
 
-    api 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    api 'io.reactivex.rxjava2:rxjava:2.2.6'
-    api "com.jakewharton.rxrelay2:rxrelay:2.1.0"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    api 'org.bsc.util:minitemplator-repackaged:1.2'
+    api "org.bsc.util:minitemplator-repackaged:$minitemplator_version"
 
-    api "com.squareup.moshi:moshi:1.12.0"
-    api "com.squareup.moshi:moshi-adapters:1.12.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.12.0"
+    api "com.jakewharton.timber:timber:$timber_version"
 
-    implementation "com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0"
-    implementation "com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0"
-    implementation "com.github.stephanenicolas.toothpick:ktp:3.1.0"
-    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0"
+    api "com.squareup.moshi:moshi:$moshi_version"
+    api "com.squareup.moshi:moshi-adapters:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
-    implementation 'com.github.stealthcopter:AndroidNetworkTools:0.4.3'
+    implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
+    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
+
+    implementation "com.github.stealthcopter:AndroidNetworkTools:$androidnetworktools_version"
 }
 

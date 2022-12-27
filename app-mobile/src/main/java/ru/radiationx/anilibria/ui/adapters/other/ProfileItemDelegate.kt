@@ -3,17 +3,16 @@ package ru.radiationx.anilibria.ui.adapters.other
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_other_profile.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemOtherProfileBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.shared_app.di.DI
+import ru.radiationx.quill.Quill
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ProfileItemDelegate(
     private val clickListener: (ProfileItemState) -> Unit,
@@ -24,46 +23,35 @@ class ProfileItemDelegate(
     { ViewHolder(it, clickListener, logoutClickListener) }
 ) {
 
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        (holder as ViewHolder).onDetach()
-    }
-
     override fun bindData(item: ProfileListItem, holder: ViewHolder) = holder.bind(item.state)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ProfileItemState) -> Unit,
         private val logoutClickListener: () -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
 
-        private val dimensionsProvider = DI.get(DimensionsProvider::class.java)
-        private var compositeDisposable = CompositeDisposable()
+        private val binding by viewBinding<ItemOtherProfileBinding>()
 
-        init {
-            compositeDisposable.add(dimensionsProvider.observe().subscribe {
-                containerView.setPadding(
-                    containerView.paddingLeft,
-                    it.statusBar,
-                    containerView.paddingRight,
-                    containerView.paddingBottom
-                )
-            })
-        }
+        private val dimensionsProvider = Quill.getRootScope().get(DimensionsProvider::class)
 
         fun bind(state: ProfileItemState) {
-            profileNick.text = state.title
-            profileDesc.text = state.subtitle
-            profileLogout.isVisible = state.hasAuth
-            profileDesc.isVisible = state.subtitle != null
-            ImageLoader.getInstance().displayImage(state.avatar, profileAvatar)
+            dimensionsProvider.get().also {
+                binding.root.setPadding(
+                    binding.root.paddingLeft,
+                    it.statusBar,
+                    binding.root.paddingRight,
+                    binding.root.paddingBottom
+                )
+            }
+            binding.profileNick.text = state.title
+            binding.profileDesc.text = state.subtitle
+            binding.profileLogout.isVisible = state.hasAuth
+            binding.profileDesc.isVisible = state.subtitle != null
+            binding.profileAvatar.showImageUrl(state.avatar)
 
-            containerView.setOnClickListener { clickListener(state) }
-            profileLogout.setOnClickListener { logoutClickListener() }
-        }
-
-        fun onDetach() {
-            compositeDisposable.clear()
+            binding.root.setOnClickListener { clickListener(state) }
+            binding.profileLogout.setOnClickListener { logoutClickListener() }
         }
     }
 }

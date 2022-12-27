@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_release_expand.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemReleaseExpandBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseExpandListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -27,19 +27,15 @@ class ReleaseExpandDelegate(
         holder.bind(item)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val clickListener: (ReleaseExpandListItem) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
 
-        private lateinit var currentItem: ReleaseExpandListItem
-
-        init {
-            item_expand_title.setOnClickListener { clickListener.invoke(currentItem) }
-        }
+        private val binding by viewBinding<ItemReleaseExpandBinding>()
 
         fun bind(item: ReleaseExpandListItem) {
-            currentItem = item
-            item_expand_title.text = item.title
+            binding.itemExpandTitle.text = item.title
+            binding.itemExpandTitle.setOnClickListener { clickListener.invoke(item) }
         }
     }
 }

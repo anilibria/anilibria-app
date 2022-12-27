@@ -5,58 +5,58 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
-import com.nostra13.universalimageloader.core.DisplayImageOptions
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
-import io.reactivex.functions.Consumer
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import kotlinx.android.synthetic.main.fragment_paged.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.presentation.release.details.ReleasePresenter
-import ru.radiationx.anilibria.presentation.release.details.ReleaseView
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.databinding.FragmentPagedBinding
+import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
-import ru.radiationx.anilibria.ui.widgets.UILImageListener
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.analytics.features.CommentsAnalytics
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.visible
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
+import ru.radiationx.shared_app.common.SystemUtils
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 
 /* Created by radiationx on 16.11.17. */
-open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
+open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.fragment_paged),
+    SharedReceiver, BackButtonListener {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
         private const val ARG_ITEM: String = "release_item"
-        const val TRANSACTION = "CHTO_TEBE_SUKA_NADO_ESHO"
+
+        private const val PAGE_INFO = 0
+        private const val PAGE_COMMENTS = 1
 
         fun newInstance(
-            id: Int = -1,
-            code: String? = null,
-            item: ReleaseItem? = null
+            id: ReleaseId? = null,
+            code: ReleaseCode? = null,
+            item: Release? = null
         ) = ReleaseFragment().putExtra {
-            putInt(ARG_ID, id)
-            putString(ARG_ID_CODE, code)
-            putSerializable(ARG_ITEM, item)
+            putParcelable(ARG_ID, id)
+            putParcelable(ARG_ID_CODE, code)
+            putParcelable(ARG_ITEM, item)
         }
     }
 
@@ -65,25 +65,19 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
     private val pagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter() }
     private var currentColor: Int = Color.TRANSPARENT
     private var currentTitle: String? = null
-    private var toolbarHelperDisposable: Disposable = Disposables.disposed()
+    private var toolbarHelperJob: Job? = null
 
-    private val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
-        .cacheInMemory(true)
-        .resetViewBeforeLoading(false)
-        .cacheInMemory(true)
-        .cacheOnDisk(true)
-        .displayer(FadeInBitmapDisplayer(1000, true, false, false))
-        .bitmapConfig(Bitmap.Config.ARGB_8888)
+    private val shortcutHelper by inject<ShortcutHelper>()
 
-    @Inject
-    lateinit var commentsAnalytics: CommentsAnalytics
+    private val systemUtils by inject<SystemUtils>()
 
-    @InjectPresenter
-    lateinit var presenter: ReleasePresenter
-
-    @ProvidePresenter
-    fun provideReleasePresenter(): ReleasePresenter =
-        getDependency(ReleasePresenter::class.java, screenScope)
+    private val viewModel by viewModel<ReleaseViewModel> {
+        ReleaseExtra(
+            id = getExtra(ARG_ID),
+            code = getExtra(ARG_ID_CODE),
+            release = getExtra(ARG_ITEM)
+        )
+    }
 
     override var transitionNameLocal = ""
 
@@ -91,75 +85,72 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
         transitionNameLocal = name
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_paged
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
+        installModules(ReleaseModule())
         super.onCreate(savedInstanceState)
-        arguments?.also { bundle ->
-            presenter.releaseId = bundle.getInt(ARG_ID, presenter.releaseId)
-            presenter.releaseIdCode = bundle.getString(ARG_ID_CODE, presenter.releaseIdCode)
-            presenter.argReleaseItem = bundle.getSerializable(ARG_ITEM) as ReleaseItem?
-        }
+    }
+
+    override fun onCreateBinding(view: View): FragmentPagedBinding {
+        return FragmentPagedBinding.bind(view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarImage.transitionName = transitionNameLocal
+            baseBinding.toolbarImage.transitionName = transitionNameLocal
         }
         postponeEnterTransition()
-        ToolbarHelper.setTransparent(toolbar, appbarLayout)
+        ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(
-            toolbarLayout,
+            baseBinding.toolbarLayout,
             AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
         )
-        ToolbarHelper.fixInsets(toolbar)
-        ToolbarHelper.marqueeTitle(toolbar)
+        ToolbarHelper.fixInsets(baseBinding.toolbar)
+        ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
-        toolbar.apply {
+        baseBinding.toolbar.apply {
             currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener {
-                presenter.onBackPressed()
+                viewModel.onBackPressed()
             }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
             menu.add("Копировать ссылку")
                 .setOnMenuItemClickListener {
-                    presenter.onCopyLinkClick()
+                    viewModel.onCopyLinkClick()
                     false
                 }
 
             menu.add("Поделиться")
                 .setOnMenuItemClickListener {
-                    presenter.onShareClick()
+                    viewModel.onShareClick()
                     false
                 }
 
             menu.add("Добавить на главный экран")
                 .setOnMenuItemClickListener {
-                    presenter.onShortcutAddClick()
+                    viewModel.onShortcutAddClick()
                     false
                 }
         }
-        toolbarInsetShadow.visible()
-        toolbarImage.visible()
+        baseBinding.toolbarInsetShadow.visible()
+        baseBinding.toolbarImage.visible()
 
 
 
-        toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
+        baseBinding.toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
-        val scrimHelper = ScrimHelper(appbarLayout, toolbarLayout)
+        val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
             override fun onScrimChanged(scrim: Boolean) {
-                toolbarInsetShadow.gone(scrim)
+                baseBinding.toolbarInsetShadow.gone(scrim)
                 if (scrim) {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.clearColorFilter()
                         it.overflowIcon?.clearColorFilter()
                         it.title = currentTitle
                     }
                 } else {
-                    toolbar?.let {
+                    baseBinding.toolbar.let {
                         it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
                         it.title = null
@@ -168,107 +159,89 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             }
         })
 
-        viewPagerPaged.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        binding.viewPagerPaged.addOnPageChangeListener(object :
+            ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                if (position == 1) {
-                    appbarLayout.setExpanded(false)
-                    presenter.onCommentsSwipe()
+                if (position == PAGE_COMMENTS) {
+                    baseBinding.appbarLayout.setExpanded(false)
+                    viewModel.onCommentsSwipe()
                 }
             }
         })
 
-        viewPagerPaged.adapter = pagerAdapter
-    }
+        binding.viewPagerPaged.adapter = pagerAdapter
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(ARG_ID, presenter.releaseId)
-        outState.putString(ARG_ID_CODE, presenter.releaseIdCode)
+        viewModel.state.onEach {
+            showState(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.shareAction.observe().onEach {
+            systemUtils.shareText(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.copyAction.observe().onEach {
+            systemUtils.copyToClipBoard(it)
+            Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.shortcutAction.observe().onEach {
+            shortcutHelper.addShortcut(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.openCommentsAction.onEach {
+            binding.viewPagerPaged.currentItem = PAGE_COMMENTS
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewPagerPaged.currentItem > 0) {
-            viewPagerPaged.currentItem = viewPagerPaged.currentItem - 1
+        if (binding.viewPagerPaged.currentItem != PAGE_INFO) {
+            binding.viewPagerPaged.currentItem = PAGE_INFO
             return true
         }
-        presenter.onBackPressed()
-        return true
+        return false
     }
 
-    override fun setRefreshing(refreshing: Boolean) {
-        progressBarPaged.visible(refreshing)
-    }
-
-    override fun showState(state: ReleasePagerState) {
+    private fun showState(state: ReleasePagerState) {
         if (state.poster == null) {
             startPostponedEnterTransition()
         } else {
-            ImageLoader.getInstance().displayImage(
-                state.poster,
-                toolbarImage,
-                defaultOptionsUIL.build(),
-                imageListener
-            )
+            baseBinding.toolbarImage.showImageUrl(state.poster) {
+                onStart { baseBinding.toolbarImageProgress.visible() }
+                onSuccess { updateToolbarColors(it) }
+                onComplete {
+                    baseBinding.toolbarImageProgress.gone()
+                    startPostponedEnterTransition()
+                }
+            }
         }
 
         if (state.title != null) {
             currentTitle = state.title
         }
-    }
 
-    override fun shareRelease(text: String) {
-        Utils.shareText(text)
-    }
-
-    override fun copyLink(url: String) {
-        Utils.copyToClipBoard(url)
-        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun addShortCut(release: ReleaseItem) {
-        ShortcutHelper.addShortcut(release)
+        binding.progressBarPaged.visible(state.loading)
     }
 
     override fun onDestroyView() {
-        toolbarHelperDisposable.dispose()
+        toolbarHelperJob?.cancel()
         super.onDestroyView()
     }
 
-    private val imageListener = object : UILImageListener() {
-        override fun onLoadingStarted(imageUri: String?, view: View?) {
-            super.onLoadingStarted(imageUri, view)
-            toolbarImageProgress?.visible()
-        }
-
-        override fun onLoadingFinally(imageUrl: String?, view: View?) {
-            toolbarImageProgress?.gone()
-            startPostponedEnterTransition()
-        }
-
-        override fun onLoadingComplete(
-            imageUri: String?,
-            view: View?,
-            loadedImage: Bitmap
-        ) {
-            super.onLoadingComplete(imageUri, view, loadedImage)
-            updateToolbarColors(loadedImage)
-        }
-    }
-
     private fun updateToolbarColors(loadedImage: Bitmap) {
-        toolbarHelperDisposable.dispose()
-        toolbarHelperDisposable = ToolbarHelper.isDarkImage(loadedImage, Consumer {
-            currentColor = if (it) Color.WHITE else Color.BLACK
+        toolbarHelperJob?.cancel()
+        toolbarHelperJob = viewLifecycleOwner.lifecycleScope.launch {
+            val isDark = ToolbarHelper.isDarkImage(loadedImage)
+            currentColor = if (isDark) Color.WHITE else Color.BLACK
 
-            toolbar.navigationIcon?.setColorFilter(
+            baseBinding.toolbar.navigationIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
-            toolbar.overflowIcon?.setColorFilter(
+            baseBinding.toolbar.overflowIcon?.setColorFilter(
                 currentColor,
                 PorterDuff.Mode.SRC_ATOP
             )
-        })
+        }
     }
 
     private inner class CustomPagerAdapter :
@@ -281,16 +254,6 @@ open class ReleaseFragment : BaseFragment(), ReleaseView, SharedReceiver {
             ReleaseInfoFragment(),
             LazyVkCommentsFragment()
         )
-
-        init {
-            fragments.forEach {
-                val newBundle = (this@ReleaseFragment.arguments?.clone() as Bundle?)
-                it.arguments = newBundle
-                it.putExtra {
-                    putString(ARG_SCREEN_SCOPE, screenScope)
-                }
-            }
-        }
 
         override fun getItem(position: Int): Fragment = fragments[position]
 

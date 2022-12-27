@@ -3,14 +3,15 @@ package ru.radiationx.anilibria.ui.adapters.feed
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
-import kotlinx.android.synthetic.main.item_feed_youtube.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemFeedYoutubeBinding
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
  * Created by radiationx on 13.01.18.
@@ -28,25 +29,25 @@ class FeedYoutubeDelegate(
     override fun bindData(item: FeedListItem, holder: ViewHolder) = holder.bind(item)
 
     class ViewHolder(
-        val view: View,
+        itemView: View,
         private val clickListener: (YoutubeItemState, View) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemFeedYoutubeBinding>()
 
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.youtube)
-            view.apply {
-                item_title.text = state.title
+            binding.apply {
+                itemTitle.text = state.title
 
-                item_views_count.text = state.views
-                item_comments_count.text = state.comments
+                itemViewsCount.text = state.views
+                itemCommentsCount.text = state.comments
 
-                ImageLoader.getInstance().displayImage(state.image, item_image)
-                ViewCompat.setTransitionName(item_image, "${item.javaClass.simpleName}_${state.id}")
+                itemImage.showImageUrl(state.image)
+                ViewCompat.setTransitionName(itemImage, "${item.javaClass.simpleName}_${state.id}")
             }
-            itemView.run {
-                setOnClickListener {
-                    clickListener.invoke(state, item_image)
-                }
+            binding.root.setOnClickListener {
+                clickListener.invoke(state, binding.itemImage)
             }
         }
     }

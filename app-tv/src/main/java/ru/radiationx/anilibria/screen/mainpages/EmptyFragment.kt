@@ -2,17 +2,16 @@ package ru.radiationx.anilibria.screen.mainpages
 
 import android.os.Bundle
 import android.view.View
-import androidx.leanback.app.BackgroundManager
+import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
-import ru.radiationx.shared_app.screen.ScopedFragment
-import javax.inject.Inject
+import ru.radiationx.quill.inject
 
-class EmptyFragment : ScopedFragment(R.layout.fragment_empty), BrowseSupportFragment.MainFragmentAdapterProvider {
+class EmptyFragment : Fragment(R.layout.fragment_empty),
+    BrowseSupportFragment.MainFragmentAdapterProvider {
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
     private val selfMainFragmentAdapter by lazy { BrowseSupportFragment.MainFragmentAdapter(this) }
 

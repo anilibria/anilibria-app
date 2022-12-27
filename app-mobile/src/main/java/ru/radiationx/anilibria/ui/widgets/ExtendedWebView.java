@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ViewParent;
@@ -21,7 +20,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import ru.radiationx.anilibria.extension.ContextKt;
+import ru.radiationx.shared.ktx.android.ContextKt;
+import timber.log.Timber;
 
 /**
  * Created by radiationx on 01.11.16.
@@ -153,7 +153,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
             try {
                 evalJs(script, null);
             } catch (Exception error) {
-                error.printStackTrace();
+                Timber.e(error);
                 loadUrl("javascript:" + script);
             }
         } else {
@@ -179,7 +179,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
                 try {
                     runInUiThread(action);
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    Timber.e(exception);
                 }
             }
             actionsForWebView.clear();
@@ -189,7 +189,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
                 try {
                     jsLifeCycleListener.onDomContentComplete(actions);
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    Timber.e(exception);
                 }
             }
             actions.add("nativeEvents.onNativeDomComplete();");
@@ -206,7 +206,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
                 try {
                     jsLifeCycleListener.onPageComplete(actions);
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    Timber.e(exception);
                 }
             }
             actions.add("nativeEvents.onNativePageComplete();");
@@ -245,7 +245,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
             try {
                 runInUiThread(action);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Timber.e(ex);
             }
         }
     }

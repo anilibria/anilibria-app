@@ -21,9 +21,12 @@ import android.util.Rational
 import android.view.Surface
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
 import com.devbrackets.android.exomedia.listener.OnCompletionListener
 import com.devbrackets.android.exomedia.listener.OnPreparedListener
@@ -33,14 +36,13 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_myplayer.*
-import kotlinx.android.synthetic.main.view_video_control.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
-import ru.radiationx.anilibria.extension.getColorFromAttr
+import ru.radiationx.anilibria.databinding.ActivityMyplayerBinding
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
@@ -54,16 +56,19 @@ import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.gone
+import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.injectDependencies
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
@@ -74,7 +79,7 @@ fun Int.toPrefQuality() = when (this) {
     else -> PreferencesHolder.QUALITY_NO
 }
 
-class MyPlayerActivity : BaseActivity() {
+class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     companion object {
         const val ARG_RELEASE = "release"
@@ -107,33 +112,29 @@ class MyPlayerActivity : BaseActivity() {
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
-    private lateinit var releaseData: ReleaseFull
+    private lateinit var releaseData: Release
+    private lateinit var currentEpisodeId: EpisodeId
     private var playFlag = PLAY_FLAG_DEFAULT
-    private var currentEpisodeId = NO_ID
+    private var currentQuality = DEFAULT_QUALITY
 
     //private var currentEpisode = NOT_SELECTED
-    private var currentQuality = DEFAULT_QUALITY
     private var currentPlaySpeed = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
 
-    @Inject
-    lateinit var releaseInteractor: ReleaseInteractor
+    private val releaseInteractor by inject<ReleaseInteractor>()
 
-    @Inject
-    lateinit var appThemeController: AppThemeController
+    private val appThemeController by inject<AppThemeController>()
 
-    @Inject
-    lateinit var defaultPreferences: SharedPreferences
+    private val defaultPreferences by inject<SharedPreferences>()
 
-    @Inject
-    lateinit var appPreferences: PreferencesHolder
+    private val appPreferences by inject<PreferencesHolder>()
 
-    @Inject
-    lateinit var playerAnalytics: PlayerAnalytics
+    private val playerAnalytics by inject<PlayerAnalytics>()
 
-    @Inject
-    lateinit var errorReporter: AnalyticsErrorReporter
+    private val errorReporter by inject<AnalyticsErrorReporter>()
+
+    private val binding by viewBinding<ActivityMyplayerBinding>()
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(playerAnalytics::useTime)
@@ -151,7 +152,6 @@ class MyPlayerActivity : BaseActivity() {
     private var currentFullscreen = false
     private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED
 
-    private var compositeDisposable = CompositeDisposable()
     private val defaultScale = ScaleType.FIT_CENTER
     private var currentScale = defaultScale
     private var scaleEnabled = true
@@ -184,13 +184,9 @@ class MyPlayerActivity : BaseActivity() {
             }
     }
 
-    fun Disposable.addToDisposable() {
-        compositeDisposable.add(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
+        handleIntentData(intent)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
         createPIPParams()
@@ -199,16 +195,15 @@ class MyPlayerActivity : BaseActivity() {
         goFullscreen()
         currentPlaySpeed = loadPlaySpeed()
         currentPipControl = loadPIPControl()
-        setContentView(R.layout.activity_myplayer)
 
-        player.setScaleType(currentScale)
-        player.playbackSpeed = currentPlaySpeed
-        player.setOnPreparedListener(playerListener)
-        player.setOnCompletionListener(playerListener)
-        player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
+        binding.player.setScaleType(currentScale)
+        binding.player.playbackSpeed = currentPlaySpeed
+        binding.player.setOnPreparedListener(playerListener)
+        binding.player.setOnCompletionListener(playerListener)
+        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
-        player.setAnalyticsListener(object : AnalyticsListener {
+        binding.player.setAnalyticsListener(object : AnalyticsListener {
 
             private var wasFirstFrame = false
             private var lastLoadedUri: Uri? = null
@@ -299,7 +294,7 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.apply {
             setAnalytics(playerAnalytics)
             updatePIPControl()
-            player.setControls(this as VideoControlsCore)
+            binding.player.setControls(this as VideoControlsCore)
             setOpeningListener(alibControlListener)
             setVisibilityListener(ControlsVisibilityListener())
             let {
@@ -310,11 +305,63 @@ class MyPlayerActivity : BaseActivity() {
         }
         handleIntent(intent)
         updateUiFlags()
+
+        releaseInteractor.observeFull(releaseData.id, releaseData.code).onEach {
+            releaseData = it
+        }.launchIn(lifecycleScope)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.also { handleIntent(it) }
+    }
+
+    override fun onUserLeaveHint() {
+        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
+            enterPipMode()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveEpisodeAtNoZero()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.player.pause()
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        newConfig.also { config ->
+            updateByConfig(config)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.player.setOnPreparedListener(null)
+        binding.player.setOnCompletionListener(null)
+        binding.player.setOnVideoSizedChangedListener(null)
+        binding.player.setAnalyticsListener(null)
+
+        videoControls?.apply {
+            setOpeningListener(null)
+            setVisibilityListener(null)
+            setButtonListener(null)
+        }
+
+        getAverageStatisticsValues().forEach { statsEntry ->
+            statsEntry.value.forEach { qualityEntry ->
+                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
+            }
+        }
+        saveEpisodeAtNoZero()
+        binding.player.stopPlayback()
+        exitFullscreen()
+        videoControls = null
     }
 
     private fun checkPipMode(): Boolean {
@@ -339,10 +386,13 @@ class MyPlayerActivity : BaseActivity() {
         return notSausage != ratio
     }
 
-    private fun handleIntent(intent: Intent) {
-        val release = intent.getSerializableExtra(ARG_RELEASE) as ReleaseFull? ?: return
-        val episodeId =
-            intent.getIntExtra(ARG_EPISODE_ID, if (release.episodes.size > 0) 0 else NO_ID)
+    private fun handleIntentData(intent: Intent) {
+        val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
+            "Release must be not null"
+        }
+        val episodeId = requireNotNull(intent.getParcelableExtra<EpisodeId>(ARG_EPISODE_ID)) {
+            "Episode id must be not null"
+        }
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
         val playFlag = intent.getIntExtra(ARG_PLAY_FLAG, PLAY_FLAG_DEFAULT)
 
@@ -350,7 +400,10 @@ class MyPlayerActivity : BaseActivity() {
         this.currentEpisodeId = episodeId
         this.currentQuality = quality
         this.playFlag = playFlag
+    }
 
+    private fun handleIntent(intent: Intent) {
+        handleIntentData(intent)
         updateAndPlayRelease()
     }
 
@@ -399,7 +452,7 @@ class MyPlayerActivity : BaseActivity() {
         if (!inMultiWindow) {
             saveScale(currentOrientation, currentScale)
         }
-        player?.setScaleType(currentScale)
+        binding.player.setScaleType(currentScale)
     }
 
     private fun updateQuality(newQuality: Int) {
@@ -413,7 +466,7 @@ class MyPlayerActivity : BaseActivity() {
 
     private fun updatePlaySpeed(newPlaySpeed: Float) {
         currentPlaySpeed = newPlaySpeed
-        player.playbackSpeed = currentPlaySpeed
+        binding.player.playbackSpeed = currentPlaySpeed
         savePlaySpeed()
     }
 
@@ -422,22 +475,6 @@ class MyPlayerActivity : BaseActivity() {
         val pipCheck = checkPipMode() && newPipControl == PreferencesHolder.PIP_BUTTON
         videoControls?.setPictureInPictureEnabled(pipCheck)
         savePIPControl()
-    }
-
-    override fun onUserLeaveHint() {
-        if (checkPipMode() && currentPipControl == PreferencesHolder.PIP_AUTO) {
-            enterPipMode()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveEpisode()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        player.pause()
     }
 
     private fun getInMultiWindow(): Boolean {
@@ -456,13 +493,6 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        newConfig.also { config ->
-            updateByConfig(config)
-        }
-    }
-
     private fun updateByConfig(config: Configuration) {
         val correctOrientation = config.orientation
         fullscreenOrientation = when (correctOrientation) {
@@ -474,83 +504,56 @@ class MyPlayerActivity : BaseActivity() {
         videoControls?.setFullScreenMode(fullscreenOrientation)
     }
 
-    private fun saveEpisodeAtNoZero(position: Long = player.currentPosition) {
+    private fun saveEpisodeAtNoZero(position: Long = binding.player.currentPosition) {
         if (position == 0L) {
             return
         }
         saveEpisode(position)
     }
 
-    private fun saveEpisode(position: Long = player.currentPosition) {
+    private fun saveEpisode(position: Long = binding.player.currentPosition) {
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(getEpisode().apply {
-            seek = position
-            lastAccess = System.currentTimeMillis()
+        val newAccess = getEpisode().access.copy(
+            seek = position,
+            lastAccess = System.currentTimeMillis(),
             isViewed = true
-        })
-    }
-
-
-    private val random = Random()
-
-    private fun rand(from: Int, to: Int): Int {
-        return random.nextInt(to - from) + from
-    }
-
-    override fun onDestroy() {
-        getAverageStatisticsValues().forEach { statsEntry ->
-            statsEntry.value.forEach { qualityEntry ->
-                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
-            }
+        )
+        // todo TR-274 run in scope outside lifecycle
+        runBlocking {
+            releaseInteractor.putEpisode(newAccess)
         }
-        saveEpisodeAtNoZero()
-        compositeDisposable.dispose()
-        player.stopPlayback()
-        super.onDestroy()
-        exitFullscreen()
     }
 
-    private fun checkIndex(id: Int): Boolean {
-        val lastId = releaseData.episodes.last().id
-        val firstId = releaseData.episodes.first().id
-        return id in lastId..firstId
+    private fun getNextEpisode(): Episode? {
+        val currentIndex = releaseData.episodes.indexOfFirst { it.id == currentEpisodeId }
+        return releaseData.episodes.getOrNull(currentIndex - 1)
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? {
-        val nextId = currentEpisodeId + 1
-        if (checkIndex(nextId)) {
-            return getEpisode(nextId)
-        }
-        return null
+    private fun getPrevEpisode(): Episode? {
+        val currentIndex = releaseData.episodes.indexOfFirst { it.id == currentEpisodeId }
+        return releaseData.episodes.getOrNull(currentIndex + 1)
     }
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? {
-        val prevId = currentEpisodeId - 1
-        if (checkIndex(prevId)) {
-            return getEpisode(prevId)
-        }
-        return null
-    }
+    private fun getEpisode(id: EpisodeId = currentEpisodeId) =
+        releaseData.episodes.first { it.id == id }
 
-    private fun getEpisode(id: Int = currentEpisodeId) = releaseData.episodes.first { it.id == id }
-
-    private fun getEpisodeId(episode: ReleaseFull.Episode) =
+    private fun getEpisodeId(episode: Episode) =
         releaseData.episodes.first { it == episode }.id
 
-    private fun playEpisode(episode: ReleaseFull.Episode) {
+    private fun playEpisode(episode: Episode) {
         when (playFlag) {
             PLAY_FLAG_DEFAULT -> {
                 hardPlayEpisode(episode)
-                if (episode.seek > 0) {
+                if (episode.access.seek > 0) {
                     hardPlayEpisode(episode)
                     val titles = arrayOf("К началу", "К последней позиции")
                     AlertDialog.Builder(this)
                         .setTitle("Перемотать")
                         .setItems(titles) { _, which ->
                             if (which == 1) {
-                                player.seekTo(episode.seek)
+                                binding.player.seekTo(episode.access.seek)
                             }
                         }
                         .show()
@@ -561,14 +564,19 @@ class MyPlayerActivity : BaseActivity() {
             }
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
-                player.seekTo(episode.seek)
             }
         }
         playFlag = PLAY_FLAG_FORCE_CONTINUE
     }
 
-    private fun hardPlayEpisode(episode: ReleaseFull.Episode) {
-        toolbar.subtitle = "${episode.title} [${dialogController.getQualityTitle(currentQuality)}]"
+    private fun hardPlayEpisode(episode: Episode) {
+        videoControls?.setSubTitle(
+            "${episode.title} [${
+                dialogController.getQualityTitle(
+                    currentQuality
+                )
+            }]"
+        )
         currentEpisodeId = getEpisodeId(episode)
         val videoPath = when (currentQuality) {
             VAL_QUALITY_SD -> episode.urlSd
@@ -582,7 +590,7 @@ class MyPlayerActivity : BaseActivity() {
             it.setPreviousButtonRemoved(currentEpisodeId == releaseData.episodes.lastOrNull()?.id)
         }
         videoPath?.also {
-            player.setVideoPath(it)
+            binding.player.setVideoPath(it)
         }
     }
 
@@ -641,6 +649,7 @@ class MyPlayerActivity : BaseActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean, newConfig: Configuration
     ) {
@@ -668,7 +677,7 @@ class MyPlayerActivity : BaseActivity() {
             //videoControls?.setControlsEnabled(true)
 
             updateByConfig(newConfig)
-            player.showControls()
+            binding.player.showControls()
             videoControls?.visible()
 
             //player.showControls()
@@ -695,7 +704,7 @@ class MyPlayerActivity : BaseActivity() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
         if (checkPipMode()) {
-            player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
+            binding.player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
@@ -708,7 +717,7 @@ class MyPlayerActivity : BaseActivity() {
     private fun updatePictureInPictureParams() {
         if (checkPipMode()) {
             val params = pictureInPictureParams ?: return
-            val playState = player?.isPlaying ?: return
+            val playState = binding.player?.isPlaying ?: return
             val actions = mutableListOf<RemoteAction>()
             val maxActions = maxNumPictureInPictureActions
 
@@ -733,7 +742,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )
@@ -756,7 +765,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )
@@ -779,7 +788,7 @@ class MyPlayerActivity : BaseActivity() {
                                 EXTRA_REMOTE_CONTROL,
                                 actionCode
                             ),
-                            0
+                            immutableFlag()
                         )
                     )
                 )
@@ -1128,11 +1137,10 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private fun getSeekPercent(): Float {
-        if (player == null) return 0f
-        if (player.duration <= 0) {
+        if (binding.player.duration <= 0) {
             return 0f
         }
-        return player.currentPosition / player.duration.toFloat()
+        return binding.player.currentPosition / binding.player.duration.toFloat()
     }
 
 
@@ -1153,13 +1161,13 @@ class MyPlayerActivity : BaseActivity() {
 
         private val delta = TimeUnit.SECONDS.toMillis(90)
         override fun onMinusClick() {
-            val newPosition = player.currentPosition - delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
+            val newPosition = binding.player.currentPosition - delta
+            binding.player.seekTo(newPosition.coerceIn(0, binding.player.duration))
         }
 
         override fun onPlusClick() {
-            val newPosition = player.currentPosition + delta
-            player.seekTo(newPosition.coerceIn(0, player.duration))
+            val newPosition = binding.player.currentPosition + delta
+            binding.player.seekTo(newPosition.coerceIn(0, binding.player.duration))
         }
 
         override fun onFullScreenClick() {
@@ -1183,17 +1191,25 @@ class MyPlayerActivity : BaseActivity() {
     }
 
     private val playerListener = object : OnPreparedListener, OnCompletionListener {
+
+        private fun startAndSeek(episode: Episode) {
+            if (playFlag == PLAY_FLAG_FORCE_CONTINUE && episode.access.seek > 0) {
+                binding.player.seekTo(episode.access.seek)
+            }
+            binding.player.start()
+        }
+
         override fun onPrepared() {
             val episode = getEpisode()
-            if (episode.seek >= player.duration) {
-                player.stopPlayback()
+            if (episode.access.seek >= binding.player.duration) {
+                binding.player.pause()
                 if (getNextEpisode() == null) {
                     showSeasonFinishDialog()
                 } else {
                     showEpisodeFinishDialog()
                 }
             } else {
-                player.start()
+                startAndSeek(episode)
             }
         }
 
@@ -1206,12 +1222,12 @@ class MyPlayerActivity : BaseActivity() {
 
     private val controlsListener = object : VideoControlsButtonListener {
         override fun onPlayPauseClicked(): Boolean {
-            if (player.isPlaying) {
+            if (binding.player.isPlaying) {
                 playerAnalytics.pauseClick()
-                player.pause()
+                binding.player.pause()
             } else {
                 playerAnalytics.playClick()
-                player.start()
+                binding.player.start()
             }
             return true
         }
@@ -1244,7 +1260,7 @@ class MyPlayerActivity : BaseActivity() {
     private inner class FullScreenListener : View.OnSystemUiVisibilityChangeListener {
         override fun onSystemUiVisibilityChange(visibility: Int) {
             if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
-                player.showControls()
+                binding.player.showControls()
             }
         }
     }

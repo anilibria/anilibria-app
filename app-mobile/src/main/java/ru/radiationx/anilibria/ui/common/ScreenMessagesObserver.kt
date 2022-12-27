@@ -5,58 +5,53 @@ import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposables
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import ru.radiationx.anilibria.utils.messages.SystemMessage
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.shared.ktx.addTo
 import javax.inject.Inject
 
-
 class ScreenMessagesObserver @Inject constructor(
-        private val context: Context,
-        private val screenMessenger: SystemMessenger
+    private val context: Context,
+    private val screenMessenger: SystemMessenger
 ) : LifecycleObserver {
 
-    private val disposables = CompositeDisposable()
-    private var messengerDisposable = Disposables.disposed()
-    private val messageBufferTrigger = BehaviorSubject.create<Boolean>()
+    private val messageBufferTrigger = MutableSharedFlow<Boolean>()
     private val messagesBuffer = mutableListOf<SystemMessage>()
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private var messengerJob: Job? = null
 
     init {
         screenMessenger
-                .observe()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    messagesBuffer.add(it)
-                    messageBufferTrigger.onNext(true)
-                }
-                .addTo(disposables)
+            .observe()
+            .onEach {
+                messagesBuffer.add(it)
+                messageBufferTrigger.emit(true)
+            }
+            .launchIn(scope)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resume() {
-        messengerDisposable = messageBufferTrigger
-                .flatMapIterable { messagesBuffer.toList() }
-                .distinctUntilChanged()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { message ->
-                    showMessage(message)
-                    messagesBuffer.clear()
-                }
-                .addTo(disposables)
+        messengerJob?.cancel()
+        messengerJob = messageBufferTrigger
+            .map { messagesBuffer.toList() }
+            .onEach { messagesBuffer.clear() }
+            .flatMapConcat { it.asFlow() }
+            .onEach { message ->
+                showMessage(message)
+            }
+            .launchIn(scope)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun pause() {
-        messengerDisposable.dispose()
+        messengerJob?.cancel()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun destroy() {
-        disposables.dispose()
+        scope.cancel()
     }
 
     private fun showMessage(message: SystemMessage) {

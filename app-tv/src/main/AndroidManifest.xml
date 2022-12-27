@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ru.radiationx.anilibria">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -58,7 +57,8 @@
 
         </activity>
 
-        <provider android:name=".contentprovider.suggestions.SuggestionsContentProvider"
+        <provider
+            android:name=".contentprovider.suggestions.SuggestionsContentProvider"
             android:authorities="ru.radiationx.anilibria.contentprovider.suggestions"
             android:exported="true"
             tools:ignore="ExportedContentProvider" />

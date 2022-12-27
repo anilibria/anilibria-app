@@ -1,74 +1,81 @@
 package ru.radiationx.anilibria.screen.details
 
-import android.util.Log
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailRecommendsViewModel(
+    private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
-    var releaseId: Int = -1
+    private val releaseId = argExtra.id
 
     override val loadOnCreate: Boolean = false
 
     override val defaultTitle: String = "Рекомендации"
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         cardsData.value = listOf(loadingCard)
-
         releaseInteractor
             .observeFull(releaseId)
+            .map { it.genres }
             .distinctUntilChanged()
-            .lifeSubscribe {
+            .onEach {
                 onRefreshClick()
             }
+            .launchIn(viewModelScope)
     }
 
-    private fun searchGenres(genresCount: Int, requestPage: Int): Single<List<ReleaseItem>> = searchRepository
-        .searchReleases(SearchForm(genres = getGenres(genresCount), sort = SearchForm.Sort.RATING), requestPage)
-        .map { result -> result.data.filter { it.id != releaseId } }
+    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<Release> {
+        return searchRepository
+            .searchReleases(
+                SearchForm(
+                    genres = getGenres(genresCount),
+                    sort = SearchForm.Sort.RATING
+                ), requestPage
+            )
+            .let { result -> result.data.filter { it.id != releaseId } }
+    }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = searchGenres(3, requestPage)
-        .flatMap {
-            if (it.isEmpty()) {
-                searchGenres(2, requestPage)
-            } else {
-                Single.just(it)
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> =
+        searchGenres(3, requestPage)
+            .let {
+                if (it.isEmpty()) {
+                    searchGenres(2, requestPage)
+                } else {
+                    it
+                }
             }
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSuccess {
-            releaseInteractor.updateItemsCache(it)
-        }
-        .map { result ->
-            result.map { converter.toCard(it) }
-        }
+            .also {
+                releaseInteractor.updateItemsCache(it)
+            }
+            .let { result ->
+                result.map { converter.toCard(it) }
+            }
 
-    private fun getGenres(count: Int): List<GenreItem> {
-        val release = releaseInteractor.getFull(releaseId) ?: return emptyList()
-        return release.genres.take(count).map { GenreItem(it, it) }
+    private suspend fun getGenres(count: Int): Set<GenreItem> {
+        val release = releaseInteractor.getFull(releaseId) ?: return emptySet()
+        return release.genres.take(count).map { GenreItem(it, it) }.toSet()
     }
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

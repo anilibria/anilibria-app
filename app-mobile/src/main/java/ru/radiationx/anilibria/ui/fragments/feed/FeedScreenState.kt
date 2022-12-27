@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.model.loading.DataLoadingState
 
 data class FeedScreenState(
     val data: DataLoadingState<FeedDataState> = DataLoadingState(),
-    val hasAppUpdate: Boolean = false,
+    val warnings: List<FeedAppWarning> = emptyList(),
     val donationCardItemState: DonationCardItemState? = null
 )
 
@@ -21,3 +21,14 @@ data class FeedScheduleState(
     val title: String,
     val items: List<ScheduleItemState>
 )
+
+data class FeedAppWarning(
+    val tag: String,
+    val title: String,
+    val type: FeedAppWarningType
+)
+
+enum class FeedAppWarningType {
+    INFO,
+    WARNING
+}

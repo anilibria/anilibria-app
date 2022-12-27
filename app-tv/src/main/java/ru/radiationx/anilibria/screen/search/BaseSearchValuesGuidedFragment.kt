@@ -4,20 +4,29 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesGuidedFragment.Companion.ARG_VALUES
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
+import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
-abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
+data class SearchValuesExtra(
+    val values: List<String>
+) : QuillExtra
+
+abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         const val ARG_VALUES = "arg values"
     }
 
-    protected val argValues by lazy { arguments?.getStringArrayList(ARG_VALUES)?.toList() }
+    protected val argExtra by lazy {
+        SearchValuesExtra(getExtraNotNull(ARG_VALUES))
+    }
 
     private val progressManager by lazy { ExternalProgressManager() }
 
@@ -25,18 +34,13 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        arguments?.apply {
-            viewModel.argValues = argValues ?: viewModel.argValues
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressManager.rootView = view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
+
+        progressManager.rootView =
+            view.findViewById<View>(androidx.leanback.R.id.action_fragment_root) as? ViewGroup
 
         subscribeTo(viewModel.progressState) {
             if (it) {
@@ -66,12 +70,15 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) {
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) {
             selectedActionPosition = it
         }
     }
 
-    override fun onCreateButtonActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
+    override fun onCreateButtonActions(
+        actions: MutableList<GuidedAction>,
+        savedInstanceState: Bundle?
+    ) {
         actions.add(
             GuidedAction.Builder(requireContext())
                 .id(GuidedAction.ACTION_ID_OK)
@@ -96,6 +103,6 @@ abstract class BaseSearchValuesGuidedFragment : ScopedGuidedStepFragment() {
     }
 }
 
-fun <T : BaseSearchValuesGuidedFragment> T.putValues(values: List<String>?): T = putExtra {
-    putStringArrayList(ARG_VALUES, values?.let { ArrayList(it) })
+fun <T : BaseSearchValuesGuidedFragment> T.putValues(values: List<String>): T = putExtra {
+    putStringArrayList(ARG_VALUES, ArrayList(values))
 }

@@ -1,15 +1,13 @@
 package ru.radiationx.data.datasource.remote.api
 
 import com.squareup.moshi.Moshi
-import io.reactivex.Single
-import org.json.JSONObject
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.donation.DonationInfoResponse
+import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -20,25 +18,21 @@ class DonationApi(
     private val moshi: Moshi
 ) {
 
-    private val dataAdapter by lazy {
-        moshi.adapter(DonationInfoResponse::class.java)
-    }
-
-    fun getDonationDetail(): Single<DonationInfoResponse> {
+    suspend fun getDonationDetail(): DonationInfoResponse {
         val args: Map<String, String> = mapOf(
             "query" to "donation_details"
         )
-        return client.post(apiConfig.apiUrl, args)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .map { dataAdapter.fromJson(it.toString()) }
+        return client
+            .post(apiConfig.apiUrl, args)
+            .fetchApiResponse(moshi)
     }
 
     // Doc https://yoomoney.ru/docs/payment-buttons/using-api/forms
-    fun createYooMoneyPayLink(
+    suspend fun createYooMoneyPayLink(
         amount: Int,
         type: String,
         form: YooMoneyDialog.YooMoneyForm
-    ): Single<String> {
+    ): String {
         val yooMoneyType = when (type) {
             YooMoneyDialog.TYPE_ID_ACCOUNT -> "PC"
             YooMoneyDialog.TYPE_ID_CARD -> "AC"
@@ -56,7 +50,8 @@ class DonationApi(
             "label" to form.label.orEmpty()
         )
 
-        return mainClient.postFull("https://yoomoney.ru/quickpay/confirm.xml", params)
-            .map { it.redirect }
+        return mainClient
+            .postFull("https://yoomoney.ru/quickpay/confirm.xml", params)
+            .redirect
     }
 }

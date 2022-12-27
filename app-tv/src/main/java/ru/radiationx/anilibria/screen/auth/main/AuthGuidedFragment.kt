@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.screen.auth.main
 
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
-import ru.radiationx.shared_app.di.viewModel
+import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
+import ru.radiationx.quill.viewModel
 
-class AuthGuidedFragment : ScopedGuidedStepFragment() {
+class AuthGuidedFragment : FakeGuidedStepFragment() {
 
     companion object {
         private const val CODE_ACTION_ID = 1L
@@ -18,9 +18,9 @@ class AuthGuidedFragment : ScopedGuidedStepFragment() {
 
     private val viewModel by viewModel<AuthViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
     }
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(

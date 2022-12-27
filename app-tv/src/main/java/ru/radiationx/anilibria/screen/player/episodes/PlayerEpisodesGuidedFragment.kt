@@ -1,19 +1,13 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.leanback.widget.GuidedAction
+import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedGuidedStepFragment
-import ru.radiationx.anilibria.extension.getCompatDrawable
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
-import ru.radiationx.anilibria.screen.player.putIds
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import java.lang.IllegalStateException
 
 class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
@@ -24,19 +18,14 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         private const val CHUNK_ENABLED = false
     }
 
-    private val viewModel by viewModel<PlayerEpisodesViewModel>()
+    private val viewModel by viewModel<PlayerEpisodesViewModel>() { argExtra }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        releaseId?.also { viewModel.argReleaseId = it }
-        episodeId?.also { viewModel.argEpisodeId = it }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.episodesData) {
             actions = if (CHUNK_ENABLED && it.size > CHUNK_THRESHOLD) {
@@ -46,7 +35,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
             }
         }
 
-        subscribeTo(viewModel.selectedIndex) { selectedIndex ->
+        subscribeTo(viewModel.selectedIndex.filterNotNull()) { selectedIndex ->
             if (actions.any { it.hasSubActions() }) {
                 val chunkActionId = ((selectedIndex / CHUNK_SIZE) + CHUNK_ID_OFFSET).toLong()
                 val chunkPosition = findActionPositionById(chunkActionId)
@@ -70,7 +59,10 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
                 .build()
         }
 
-    private fun createEpisodesActions(offset: Int, episodes: List<Pair<String, String?>>): List<GuidedAction> =
+    private fun createEpisodesActions(
+        offset: Int,
+        episodes: List<Pair<String, String?>>
+    ): List<GuidedAction> =
         episodes.mapIndexed { index: Int, data: Pair<String, String?> ->
             GuidedAction.Builder(requireContext())
                 .id((offset + index).toLong())

@@ -1,14 +1,17 @@
 package ru.radiationx.data.datasource.remote.address
 
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
+import ru.radiationx.data.entity.mapper.toDomain
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
-        private val configChanger: ApiConfigChanger,
-        private val apiConfigStorage: ApiConfigStorage
+    private val configChanger: ApiConfigChanger,
+    private val apiConfigStorage: ApiConfigStorage
 ) {
 
     private val addresses = mutableListOf<ApiAddress>()
@@ -16,23 +19,26 @@ class ApiConfig @Inject constructor(
     private val possibleIps = mutableListOf<String>()
     private val proxyPings = mutableMapOf<String, Float>()
 
-    private val needConfigRelay = PublishRelay.create<Boolean>()
+    private val needConfigRelay = MutableSharedFlow<Boolean>()
     var needConfig = true
 
     init {
-        activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
-        val initAddresses = apiConfigStorage.get() ?: listOf(Api.DEFAULT_ADDRESS)
-        setAddresses(initAddresses)
+        // todo TR-274 make api config async
+        runBlocking {
+            activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
+            val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
+            setConfig(initAddresses)
+        }
     }
 
-    fun observeNeedConfig(): Observable<Boolean> = needConfigRelay.hide()
+    fun observeNeedConfig(): Flow<Boolean> = needConfigRelay
 
-    fun updateNeedConfig(state: Boolean) {
+    suspend fun updateNeedConfig(state: Boolean) {
         needConfig = state
-        needConfigRelay.accept(needConfig)
+        needConfigRelay.emit(needConfig)
     }
 
-    fun updateActiveAddress(address: ApiAddress) {
+    suspend fun updateActiveAddress(address: ApiAddress) {
         activeAddressTag = address.tag
         apiConfigStorage.setActive(activeAddressTag)
         configChanger.onChange()
@@ -44,7 +50,8 @@ class ApiConfig @Inject constructor(
     }
 
     @Synchronized
-    fun setAddresses(items: List<ApiAddress>) {
+    fun setConfig(configData: ApiConfigData) {
+        val items = configData.addresses
         addresses.clear()
         /*if (items.find { it.tag == Api.DEFAULT_ADDRESS.tag } == null) {
             addresses.add(Api.DEFAULT_ADDRESS)
@@ -52,7 +59,8 @@ class ApiConfig @Inject constructor(
         addresses.addAll(items)
 
         possibleIps.clear()
-        val ips = addresses.map { it.ips + it.proxies.map { it.ip } }.reduce { acc, list -> acc.plus(list) }.toSet().toList()
+        val ips = addresses.map { it.ips + it.proxies.map { it.ip } }
+            .reduce { acc, list -> acc.plus(list) }.toSet().toList()
         possibleIps.addAll(ips)
 
         addresses.forEach {

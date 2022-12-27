@@ -4,20 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
+import ru.radiationx.quill.inject
+import ru.radiationx.shared_app.common.SystemUtils
 
 /**
  * Created by radiationx on 23.02.18.
  */
 class IntentActivity : BaseActivity() {
 
-    @Inject
-    lateinit var linkHandler: ILinkHandler
+    private val linkHandler by inject<ILinkHandler>()
+
+    private val systemUtils by inject<SystemUtils>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         super.onCreate(savedInstanceState)
         intent?.data?.also { intentUri ->
             val screen = linkHandler.findScreen(intentUri.toString())
@@ -26,7 +25,7 @@ class IntentActivity : BaseActivity() {
                     data = intentUri
                 })
             } else {
-                Utils.externalLink(intentUri.toString())
+                systemUtils.externalLink(intentUri.toString())
             }
         }
         finish()

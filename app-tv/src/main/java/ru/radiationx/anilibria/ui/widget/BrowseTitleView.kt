@@ -17,86 +17,87 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.leanback.widget.SearchOrbView
 import androidx.leanback.widget.TitleViewAdapter
-import kotlinx.android.synthetic.main.view_titleview.view.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ViewTitleviewBinding
 
 open class BrowseTitleView @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.browseTitleViewStyle
 ) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {
 
+    private val binding by viewBinding<ViewTitleviewBinding>(attachToRoot = true)
     private var flags = TitleViewAdapter.FULL_VIEW_VISIBLE
     private var mHasSearchListener = false
     private val mTitleViewAdapter by lazy { Adapter(this) }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_titleview, this)
         clipToPadding = false
         clipChildren = false
     }
 
     var title: CharSequence?
-        get() = title_text.text
+        get() = binding.titleText.text
         set(titleText) {
-            title_text.text = titleText
+            binding.titleText.text = titleText
             updateBadgeVisibility()
         }
 
     var badgeDrawable: Drawable?
-        get() = title_badge.drawable
+        get() = binding.titleBadge.drawable
         set(drawable) {
-            title_badge.setImageDrawable(drawable)
+            binding.titleBadge.setImageDrawable(drawable)
             updateBadgeVisibility()
         }
 
     val searchAffordanceView: View
-        get() = title_orb
+        get() = binding.titleOrb
 
     var searchAffordanceColors: SearchOrbView.Colors
-        get() = title_orb.orbColors
+        get() = binding.titleOrb.orbColors
         set(colors) {
-            title_orb.orbColors = colors
+            binding.titleOrb.orbColors = colors
         }
 
     var alert: CharSequence?
-        get() = title_alert.text
+        get() = binding.titleAlert.text
         set(value) {
-            title_alert.text = value
+            binding.titleAlert.text = value
             updateAlertVisibility()
         }
 
     var other: CharSequence?
-        get() = title_other.text
+        get() = binding.titleOther.text
         set(value) {
-            title_other.text = value
+            binding.titleOther.text = value
             updateOtherVisibility()
         }
 
+    fun getControls() = binding.titleControls
+
     fun setOnSearchClickedListener(listener: OnClickListener?) {
         mHasSearchListener = listener != null
-        title_orb.setOnOrbClickedListener(listener)
+        binding.titleOrb.setOnOrbClickedListener(listener)
         updateSearchOrbViewVisibility()
     }
 
     fun setOnAlertClickedListener(listener: OnClickListener?) {
-        title_alert.setOnClickListener(listener)
+        binding.titleAlert.setOnClickListener(listener)
     }
 
     fun setOnOtherClickedListener(listener: OnClickListener?) {
-        title_other.setOnClickListener(listener)
+        binding.titleOther.setOnClickListener(listener)
     }
 
     fun enableAnimation(enable: Boolean) {
-        title_orb.enableOrbColorAnimation(enable && title_orb.hasFocus())
+        binding.titleOrb.enableOrbColorAnimation(enable && binding.titleOrb.hasFocus())
     }
 
     fun updateComponentsVisibility(flags: Int) {
@@ -104,8 +105,8 @@ open class BrowseTitleView @JvmOverloads constructor(
         if (flags and TitleViewAdapter.BRANDING_VIEW_VISIBLE == TitleViewAdapter.BRANDING_VIEW_VISIBLE) {
             updateBadgeVisibility()
         } else {
-            title_badge.visibility = View.GONE
-            title_text.visibility = View.GONE
+            binding.titleBadge.visibility = View.GONE
+            binding.titleText.visibility = View.GONE
         }
         updateSearchOrbViewVisibility()
         updateAlertVisibility()
@@ -115,26 +116,26 @@ open class BrowseTitleView @JvmOverloads constructor(
     private fun updateSearchOrbViewVisibility() {
         val visibility =
             if (mHasSearchListener && flags and TitleViewAdapter.SEARCH_VIEW_VISIBLE == TitleViewAdapter.SEARCH_VIEW_VISIBLE) View.VISIBLE else View.INVISIBLE
-        title_orb.visibility = visibility
+        binding.titleOrb.visibility = visibility
     }
 
     private fun updateBadgeVisibility() {
-        val drawable = title_badge.drawable
+        val drawable = binding.titleBadge.drawable
         if (drawable != null) {
-            title_badge.visibility = View.VISIBLE
-            title_text.visibility = View.GONE
+            binding.titleBadge.visibility = View.VISIBLE
+            binding.titleText.visibility = View.GONE
         } else {
-            title_badge.visibility = View.GONE
-            title_text.visibility = View.VISIBLE
+            binding.titleBadge.visibility = View.GONE
+            binding.titleText.visibility = View.VISIBLE
         }
     }
 
     private fun updateAlertVisibility() {
-        title_alert.isVisible = !alert.isNullOrEmpty()
+        binding.titleAlert.isVisible = !alert.isNullOrEmpty()
     }
 
     private fun updateOtherVisibility() {
-        title_other.isVisible = !other.isNullOrEmpty()
+        binding.titleOther.isVisible = !other.isNullOrEmpty()
     }
 
     override fun getTitleViewAdapter(): TitleViewAdapter = mTitleViewAdapter
@@ -166,8 +167,14 @@ open class BrowseTitleView @JvmOverloads constructor(
         return super.focusSearch(focused, direction)
     }
 
-    override fun onRequestFocusInDescendants(direction: Int, previouslyFocusedRect: Rect?): Boolean {
-        return searchAffordanceView.requestFocus() || super.onRequestFocusInDescendants(direction, previouslyFocusedRect)
+    override fun onRequestFocusInDescendants(
+        direction: Int,
+        previouslyFocusedRect: Rect?
+    ): Boolean {
+        return searchAffordanceView.requestFocus() || super.onRequestFocusInDescendants(
+            direction,
+            previouslyFocusedRect
+        )
     }
 
     class Adapter(private val titleView: BrowseTitleView) : TitleViewAdapter() {
@@ -178,7 +185,8 @@ open class BrowseTitleView @JvmOverloads constructor(
 
         fun getAlert(): CharSequence? = titleView.alert
 
-        fun setOnAlertClickedListener(listener: OnClickListener?) = titleView.setOnAlertClickedListener(listener)
+        fun setOnAlertClickedListener(listener: OnClickListener?) =
+            titleView.setOnAlertClickedListener(listener)
 
         fun setOther(otherText: CharSequence?) {
             titleView.other = otherText
@@ -186,13 +194,18 @@ open class BrowseTitleView @JvmOverloads constructor(
 
         fun getOther(): CharSequence? = titleView.other
 
-        fun setOnOtherClickedListener(listener: OnClickListener?) = titleView.setOnOtherClickedListener(listener)
+        fun setOnOtherClickedListener(listener: OnClickListener?) =
+            titleView.setOnOtherClickedListener(listener)
 
         override fun getSearchAffordanceView(): View = titleView.searchAffordanceView
-        override fun setOnSearchClickedListener(listener: OnClickListener?) = titleView.setOnSearchClickedListener(listener)
+        override fun setOnSearchClickedListener(listener: OnClickListener?) =
+            titleView.setOnSearchClickedListener(listener)
+
         override fun setAnimationEnabled(enable: Boolean) = titleView.enableAnimation(enable)
         override fun getBadgeDrawable(): Drawable? = titleView.badgeDrawable
-        override fun getSearchAffordanceColors(): SearchOrbView.Colors = titleView.searchAffordanceColors
+        override fun getSearchAffordanceColors(): SearchOrbView.Colors =
+            titleView.searchAffordanceColors
+
         override fun getTitle(): CharSequence? = titleView.title
         override fun setBadgeDrawable(drawable: Drawable?) {
             titleView.badgeDrawable = drawable
@@ -206,6 +219,7 @@ open class BrowseTitleView @JvmOverloads constructor(
             titleView.title = titleText
         }
 
-        override fun updateComponentsVisibility(flags: Int) = titleView.updateComponentsVisibility(flags)
+        override fun updateComponentsVisibility(flags: Int) =
+            titleView.updateComponentsVisibility(flags)
     }
 }

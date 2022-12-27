@@ -1,20 +1,19 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion app_min_sdk_version
+        targetSdkVersion app_target_sdk_version
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
 
@@ -25,29 +24,26 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    lintOptions {
-        disable 'RestrictedApi'
+    lint {
         checkReleaseBuilds false
+        disable "RestrictedApi"
     }
-}
+    namespace "ru.radiationx.shared.ktx.android"
 
-ext {
-    supportLibVersion = '28.0.0'
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ["*.jar"], dir: "libs")
     api project(":shared-ktx")
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    api "androidx.core:core-ktx:1.2.0"
-    api "androidx.collection:collection-ktx:1.1.0"
-    api "androidx.fragment:fragment-ktx:1.2.4"
-    api "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
-    api "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
-    api "androidx.palette:palette-ktx:1.0.0"
-    api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    api "androidx.core:core-ktx:$androidx_core_version"
+    api "androidx.collection:collection-ktx:$androidx_collection_version"
+    api "androidx.fragment:fragment-ktx:$androidx_fragment_version"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_lifecycle_version"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_version"
+    api "androidx.palette:palette-ktx:$androidx_palette_version"
 }
 

@@ -20,6 +20,7 @@
         app:layout_constraintEnd_toStartOf="@id/full_btn_episodes_menu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="16dp"
         app:strokeColor="?btn_border" />
 
     <com.google.android.material.button.MaterialButton
@@ -35,6 +36,7 @@
         app:layout_constraintEnd_toStartOf="@id/full_btn_episodes_menu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/full_button_web"
+        app:layout_goneMarginEnd="16dp"
         app:strokeColor="?btn_border" />
 
     <com.google.android.material.button.MaterialButton

@@ -24,7 +24,9 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
-import ru.radiationx.data.entity.app.release.ReleaseItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.ReleaseId
 
 /**
  * Created by radiationx on 17.11.17.
@@ -82,24 +84,23 @@ object Screens {
         override fun getFragment() = HistoryFragment()
     }
 
-    class Schedule(val day: Int = -1) : BaseAppScreen() {
-        override fun getFragment(): androidx.fragment.app.Fragment =
+    class Schedule(val day: Int? = null) : BaseAppScreen() {
+        override fun getFragment(): Fragment =
             ScheduleFragment.newInstance(day)
     }
 
     class ReleaseDetails(
-        val id: Int = -1,
-        val code: String? = null,
-        val item: ReleaseItem? = null
+        val id: ReleaseId? = null,
+        val code: ReleaseCode? = null,
+        val item: Release? = null
     ) : BaseAppScreen() {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }
 
-    class ReleasesSearch(
+    class Catalog(
         val genres: String? = null,
-        val years: String? = null
     ) : BaseAppScreen() {
-        override fun getFragment() = SearchCatalogFragment.newInstance(genres, years)
+        override fun getFragment() = SearchCatalogFragment.newInstance(genres)
     }
 
     class MainFeed : BaseAppScreen() {

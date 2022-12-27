@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- saveEnabled="false" для того, чтобы после восстановления вьюхи не конфликтовало с актуальным стейтом -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:saveEnabled="false">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

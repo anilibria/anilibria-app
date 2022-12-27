@@ -1,30 +1,32 @@
 package ru.radiationx.anilibria.model.loading
 
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import ru.radiationx.shared.ktx.coRunCatching
 
 class DataLoadingController<T>(
+    private val scope: CoroutineScope,
     private val firstPage: Int = 1,
-    private val dataSource: (PageLoadParams) -> Single<ScreenStateAction.Data<T>>
-) : Disposable {
+    private val dataSource: (suspend (PageLoadParams) -> ScreenStateAction.Data<T>),
+) {
 
-    private val stateRelay = BehaviorRelay.createDefault(DataLoadingState<T>())
+    private val stateRelay = MutableStateFlow(DataLoadingState<T>())
 
     private var currentPage = firstPage
 
-    private var dataDisposable = Disposables.disposed()
+    private var dataJob: Job? = null
 
     var currentState: DataLoadingState<T>
         get() = requireNotNull(stateRelay.value)
         private set(value) {
-            stateRelay.accept(value)
+            stateRelay.value = value
         }
 
-    fun observeState(): Observable<DataLoadingState<T>> {
-        return stateRelay.hide().distinctUntilChanged()
+    fun observeState(): Flow<DataLoadingState<T>> {
+        return stateRelay
     }
 
     fun refresh() {
@@ -39,7 +41,7 @@ class DataLoadingController<T>(
     }
 
     fun release() {
-        dataDisposable.dispose()
+        dataJob?.cancel()
     }
 
     fun modifyData(data: T?) {
@@ -48,7 +50,7 @@ class DataLoadingController<T>(
     }
 
     private fun loadPage(page: Int) {
-        if (!dataDisposable.isDisposed) {
+        if (dataJob?.isActive == true) {
             return
         }
 
@@ -64,19 +66,22 @@ class DataLoadingController<T>(
             updateStateByAction(startLoadingAction)
         }
 
-        dataDisposable = dataSource
-            .invoke(params)
-            .subscribe({ dataAction ->
-                updateStateByAction(dataAction)
+        dataJob?.cancel()
+        dataJob = scope.launch {
+            coRunCatching {
+                dataSource.invoke(params)
+            }.onSuccess {
+                updateStateByAction(it)
                 currentPage = page
-            }) { throwable ->
-                updateStateByAction(ScreenStateAction.Error(throwable))
+            }.onFailure {
+                updateStateByAction(ScreenStateAction.Error(it))
             }
+        }
     }
 
     private fun createPageLoadParams(page: Int): PageLoadParams {
         val isFirstPage = page == firstPage
-        val isEmptyData = stateRelay.value?.data == null
+        val isEmptyData = stateRelay.value.data == null
         return PageLoadParams(
             page = page,
             isFirstPage = isFirstPage,
@@ -95,14 +100,6 @@ class DataLoadingController<T>(
         updateState {
             it.applyAction(action)
         }
-    }
-
-    override fun dispose() {
-        dataDisposable.dispose()
-    }
-
-    override fun isDisposed(): Boolean {
-        return dataDisposable.isDisposed
     }
 }
 

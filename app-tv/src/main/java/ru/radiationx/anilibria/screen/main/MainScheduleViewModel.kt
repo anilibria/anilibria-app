@@ -1,11 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
-import io.reactivex.Single
-import ru.radiationx.anilibria.common.LinkCard
-import ru.radiationx.anilibria.common.BaseCardsViewModel
-import ru.radiationx.anilibria.common.CardsDataConverter
-import ru.radiationx.anilibria.common.LibriaCard
-import ru.radiationx.anilibria.screen.DetailsScreen
+import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.screen.ScheduleScreen
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
@@ -19,7 +14,8 @@ class MainScheduleViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
-    private val router: Router
+    private val router: Router,
+    private val cardRouter: LibriaCardRouter
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Ожидается сегодня"
@@ -27,20 +23,18 @@ class MainScheduleViewModel(
     override val loadMoreCard: LinkCard =
         LinkCard("Открыть полное расписание")
 
-    override val loadOnCreate: Boolean = false
-
-    override fun onColdCreate() {
-        super.onColdCreate()
+    override fun onResume() {
+        super.onResume()
         onRefreshClick()
     }
 
-    override fun getLoader(requestPage: Int): Single<List<LibriaCard>> = scheduleRepository
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = scheduleRepository
         .loadSchedule()
-        .doOnSuccess {
+        .also {
             val allReleases = it.map { it.items.map { it.releaseItem } }.flatten()
             releaseInteractor.updateItemsCache(allReleases)
         }
-        .map { schedueDays ->
+        .let { schedueDays ->
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()
 
@@ -51,11 +45,14 @@ class MainScheduleViewModel(
             val dayTitle = if (Date(currentTime).isSameDay(Date(mskTime))) {
                 "Ожидается сегодня"
             } else {
-                "Ожидается ${mskDay.asDayPretext()} ${mskDay.asDayNameDeclension().toLowerCase()} (по МСК)"
+                "Ожидается ${mskDay.asDayPretext()} ${
+                    mskDay.asDayNameDeclension().toLowerCase()
+                } (по МСК)"
             }
             rowTitle.value = dayTitle
 
-            val items = schedueDays.firstOrNull { it.day == mskDay }?.items?.map { it.releaseItem }.orEmpty()
+            val items = schedueDays.firstOrNull { it.day == mskDay }?.items?.map { it.releaseItem }
+                .orEmpty()
 
             items.map { converter.toCard(it) }
         }
@@ -68,7 +65,11 @@ class MainScheduleViewModel(
         router.navigateTo(ScheduleScreen())
     }
 
+    override fun onLinkCardBind() {
+        // do nothing
+    }
+
     override fun onLibriaCardClick(card: LibriaCard) {
-        router.navigateTo(DetailsScreen(card.id))
+        cardRouter.navigate(card)
     }
 }

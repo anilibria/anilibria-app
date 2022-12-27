@@ -1,51 +1,56 @@
 package ru.radiationx.anilibria.screen.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.leanback.app.RowsSupportFragment
 import androidx.leanback.widget.*
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
-import ru.radiationx.anilibria.screen.GridScreen
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModelFromParent
+import ru.radiationx.shared_app.di.quillParentViewModel
 import ru.terrakok.cicerone.Router
-import javax.inject.Inject
 
 
-class MainFragment : ScopedRowsFragment() {
+class MainFragment : RowsSupportFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    @Inject
-    lateinit var mockData: MockData
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var router: Router
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val mainViewModel by quillParentViewModel<MainViewModel>()
 
-    private val mainViewModel by viewModelFromParent<MainViewModel>()
+    private val feedViewModel by quillParentViewModel<MainFeedViewModel>()
+    private val scheduleViewModel by quillParentViewModel<MainScheduleViewModel>()
+    private val favoritesViewModel by quillParentViewModel<MainFavoritesViewModel>()
+    private val youtubeViewModel by quillParentViewModel<MainYouTubeViewModel>()
 
-    private val feedViewModel by viewModelFromParent<MainFeedViewModel>()
-    private val scheduleViewModel by viewModelFromParent<MainScheduleViewModel>()
-    private val favoritesViewModel by viewModelFromParent<MainFavoritesViewModel>()
-    private val youtubeViewModel by viewModelFromParent<MainYouTubeViewModel>()
+    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
+        MainViewModel.FEED_ROW_ID -> feedViewModel
+        MainViewModel.SCHEDULE_ROW_ID -> scheduleViewModel
+        MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
+        MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
+        else -> null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(mainViewModel)
-        lifecycle.addObserver(feedViewModel)
-        lifecycle.addObserver(scheduleViewModel)
-        lifecycle.addObserver(favoritesViewModel)
-        lifecycle.addObserver(youtubeViewModel)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(mainViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(feedViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(scheduleViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(favoritesViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(youtubeViewModel)
 
         adapter = rowsAdapter
         onItemViewSelectedListener = ItemViewSelectedListener()
@@ -64,27 +69,17 @@ class MainFragment : ScopedRowsFragment() {
                         viewMode?.onLibriaCardClick(item)
                     }
                     else -> {
-                        router.navigateTo(GridScreen())
+                        // do nothing
                     }
                 }
             }
         }
-    }
 
-    private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
-        MainViewModel.FEED_ROW_ID -> feedViewModel
-        MainViewModel.SCHEDULE_ROW_ID -> scheduleViewModel
-        MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
-        MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
-        else -> null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(mainViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->
-                val row = rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                val row =
+                    rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
                 rowMap[rowId] = row
                 row
             }

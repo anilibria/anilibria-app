@@ -1,26 +1,33 @@
 package ru.radiationx.anilibria.screen.search.genre
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
-import ru.radiationx.data.entity.app.release.GenreItem
+import ru.radiationx.anilibria.screen.search.SearchValuesExtra
+import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchGenreViewModel(
+    private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter
-) : BaseSearchValuesViewModel() {
+) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentGenres = mutableListOf<GenreItem>()
 
-    override fun onColdCreate() {
-        super.onColdCreate()
+    init {
         searchRepository
             .observeGenres()
-            .lifeSubscribe {
+            .onEach {
                 currentGenres.clear()
                 currentGenres.addAll(it)
                 currentValues.clear()
@@ -30,19 +37,24 @@ class SearchGenreViewModel(
                 updateChecked()
                 updateSelected()
             }
-    }
+            .launchIn(viewModelScope)
 
-    override fun onCreate() {
-        super.onCreate()
-        progressState.value = true
-        searchRepository
-            .getGenres()
-            .doFinally { progressState.value = false }
-            .lifeSubscribe({}, {})
+        viewModelScope.launch {
+            progressState.value = true
+            coRunCatching {
+                searchRepository.getGenres()
+            }.onFailure {
+                Timber.e(it)
+            }
+            progressState.value = false
+        }
     }
 
     override fun applyValues() {
-        searchController.genresEvent.accept(currentGenres.filterIndexed { index, item -> checkedValues.contains(item.value) })
         guidedRouter.close()
+        val newGenres = currentGenres.filterIndexed { index, item ->
+            checkedValues.contains(item.value)
+        }.toSet()
+        searchController.genresEvent.emit(newGenres)
     }
 }

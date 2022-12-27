@@ -1,20 +1,20 @@
 package ru.radiationx.anilibria.screen.search
 
-import com.jakewharton.rxrelay2.PublishRelay
-import ru.radiationx.data.entity.app.release.GenreItem
-import ru.radiationx.data.entity.app.release.SeasonItem
-import ru.radiationx.data.entity.app.release.YearItem
-import ru.radiationx.data.entity.app.search.SearchForm
+import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.shared.ktx.EventFlow
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchController {
 
-    val yearsEvent = PublishRelay.create<List<YearItem>>()
-    val seasonsEvent = PublishRelay.create<List<SeasonItem>>()
-    val genresEvent = PublishRelay.create<List<GenreItem>>()
-    val sortEvent = PublishRelay.create<SearchForm.Sort>()
-    val completedEvent = PublishRelay.create<Boolean>()
+    val yearsEvent = EventFlow<Set<YearItem>>()
+    val seasonsEvent = EventFlow<Set<SeasonItem>>()
+    val genresEvent = EventFlow<Set<GenreItem>>()
+    val sortEvent = EventFlow<SearchForm.Sort>()
+    val completedEvent = EventFlow<Boolean>()
 
-    val applyFormEvent = PublishRelay.create<SearchForm>()
+    val applyFormEvent = EventFlow<SearchForm>()
 }

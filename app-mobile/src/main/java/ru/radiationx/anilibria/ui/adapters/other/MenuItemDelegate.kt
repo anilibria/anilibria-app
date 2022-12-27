@@ -2,9 +2,9 @@ package ru.radiationx.anilibria.ui.adapters.other
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_other_menu.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemOtherMenuBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
@@ -22,14 +22,16 @@ class MenuItemDelegate(
     override fun bindData(item: MenuListItem, holder: ViewHolder) = holder.bind(item.menuItem)
 
     class ViewHolder(
-        override val containerView: View,
+        itemView: View,
         val clickListener: (OtherMenuItemState) -> Unit
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding by viewBinding<ItemOtherMenuBinding>()
 
         fun bind(state: OtherMenuItemState) {
-            otherMenuTitle.text = state.title
-            otherMenuIcon.setCompatDrawable(state.iconRes)
-            containerView.setOnClickListener { clickListener(state) }
+            binding.otherMenuTitle.text = state.title
+            binding.otherMenuIcon.setCompatDrawable(state.iconRes)
+            binding.root.setOnClickListener { clickListener(state) }
         }
     }
 }

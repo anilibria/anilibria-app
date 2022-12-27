@@ -1,5 +1,6 @@
 package ru.radiationx.data.datasource.holders
 
+import kotlinx.coroutines.flow.Flow
 import okhttp3.Cookie
 
 /**
@@ -10,12 +11,13 @@ interface CookieHolder {
         const val PHPSESSID = "PHPSESSID"
 
         val cookieNames = listOf(
-                PHPSESSID
+            PHPSESSID
         )
     }
 
-    fun getCookies(): Map<String, Cookie>
-    fun putCookie(url: String, cookie: Cookie)
-    fun putCookie(url: String, name: String, value: String)
-    fun removeCookie(name: String)
+    fun observeCookies(): Flow<Map<String, Cookie>>
+    suspend fun getCookies(): Map<String, Cookie>
+    suspend fun putCookie(url: String, cookie: Cookie)
+    suspend fun putCookie(url: String, name: String, value: String)
+    suspend fun removeCookie(name: String)
 }

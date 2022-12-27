@@ -1,99 +1,92 @@
 package ru.radiationx.data.datasource.remote.api
 
-import android.util.Log
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import org.json.JSONObject
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.MainClient
-import ru.radiationx.data.SchedulersProvider
-import ru.radiationx.data.datasource.remote.ApiResponse
 import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.parsers.ConfigurationParser
-import ru.radiationx.data.datasource.storage.ApiConfigStorage
-import java.lang.IllegalStateException
-import java.util.concurrent.TimeUnit
+import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchResponse
+import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import javax.inject.Inject
 
 class ConfigurationApi @Inject constructor(
     @ApiClient private val client: IClient,
     @MainClient private val mainClient: IClient,
-    private val configurationParser: ConfigurationParser,
     private val apiConfig: ApiConfig,
-    private val apiConfigStorage: ApiConfigStorage,
-    private val schedulers: SchedulersProvider
+    private val moshi: Moshi
 ) {
 
-    fun checkAvailable(apiUrl: String): Single<Boolean> = check(mainClient, apiUrl)
-        .timeout(15, TimeUnit.SECONDS)
+    suspend fun checkAvailable(apiUrl: String): Boolean {
+        return withTimeout(15_000) {
+            check(mainClient, apiUrl)
+        }
+    }
 
-    fun checkApiAvailable(apiUrl: String): Single<Boolean> = check(client, apiUrl)
-        .onErrorReturnItem(false)
-        .timeout(15, TimeUnit.SECONDS)
+    suspend fun checkApiAvailable(apiUrl: String): Boolean {
+        return withTimeout(15_000) {
+            try {
+                check(client, apiUrl)
+            } catch (ex: Throwable) {
+                false
+            }
+        }
+    }
 
-    fun getConfiguration(): Single<List<ApiAddress>> = getMergeConfig()
-        .doOnSuccess {
-            if (it.isEmpty()) {
+    suspend fun getConfiguration(): ApiConfigResponse {
+        return getMergeConfig().also {
+            if (it.addresses.isEmpty()) {
                 throw IllegalStateException("Empty config adresses")
             }
         }
+    }
 
-    private fun check(client: IClient, apiUrl: String): Single<Boolean> =
-        client.postFull(apiUrl, mapOf("query" to "empty"))
-            .map { true }
+    private suspend fun check(client: IClient, apiUrl: String): Boolean {
+        return client
+            .postFull(apiUrl, mapOf("query" to "empty"))
+            .let { true }
+    }
 
+    private suspend fun getMergeConfig(): ApiConfigResponse {
+        val apiFlow = flow {
+            emit(getConfigFromApi())
+        }.catch {
+            emit(ApiConfigResponse(emptyList()))
+        }
+        val reserveFlow = flow {
+            emit(getConfigFromReserve())
+        }.catch {
+            emit(ApiConfigResponse(emptyList()))
+        }
+        return merge(apiFlow, reserveFlow)
+            .filter { it.addresses.isNotEmpty() }
+            .onEmpty { emit(ApiConfigResponse(emptyList())) }
+            .first()
+    }
 
-    private fun getMergeConfig(): Single<List<ApiAddress>> = Single
-        .merge(
-            getConfigFromApi()
-                .subscribeOn(schedulers.io())
-                .onErrorReturn { emptyList() },
-            getConfigFromReserve()
-                .subscribeOn(schedulers.io())
-                .onErrorReturn { emptyList() }
-        )
-        .filter { it.isNotEmpty() }
-        .first(emptyList())
-
-    private fun getZipConfig(): Single<List<ApiAddress>> = Single
-        .zip(
-            getConfigFromApi()
-                .subscribeOn(schedulers.io())
-                .onErrorReturn { emptyList() },
-            getConfigFromReserve()
-                .subscribeOn(schedulers.io())
-                .onErrorReturn { emptyList() },
-            BiFunction<List<ApiAddress>, List<ApiAddress>, List<ApiAddress>> { conf1, conf2 ->
-                val addresses1 = conf1.takeIf { it.isNotEmpty() }
-                val addresses2 = conf2.takeIf { it.isNotEmpty() }
-                return@BiFunction (addresses1 ?: addresses2).orEmpty()
-            }
-        )
-
-
-    private fun getConfigFromApi(): Single<List<ApiAddress>> {
+    private suspend fun getConfigFromApi(): ApiConfigResponse {
         val args = mapOf(
             "query" to "config"
         )
-        return client.post(apiConfig.apiUrl, args)
-            .timeout(10, TimeUnit.SECONDS)
-            .compose(ApiResponse.fetchResult<JSONObject>())
-            .doOnSuccess { apiConfigStorage.saveJson(it) }
-            .map { configurationParser.parse(it) }
-            .doOnSuccess { apiConfig.setAddresses(it) }
+        val response = withTimeout(10_000) {
+            client.post(apiConfig.apiUrl, args)
+        }
+        return response
+            .fetchApiResponse(moshi)
     }
 
-    private fun getConfigFromReserve(): Single<List<ApiAddress>> {
-        return getReserve("https://raw.githubusercontent.com/anilibria/anilibria-app/master/config.json")
-            .onErrorResumeNext { getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json") }
+    private suspend fun getConfigFromReserve(): ApiConfigResponse {
+        return try {
+            getReserve("https://raw.githubusercontent.com/anilibria/anilibria-app/master/config.json")
+        } catch (ex: Throwable) {
+            getReserve("https://bitbucket.org/RadiationX/anilibria-app/raw/master/config.json")
+        }
     }
 
-    private fun getReserve(url: String): Single<List<ApiAddress>> = mainClient.get(url, emptyMap())
-        .map { JSONObject(it) }
-        .doOnSuccess { apiConfigStorage.saveJson(it) }
-        .map { configurationParser.parse(it) }
-        .doOnSuccess { apiConfig.setAddresses(it) }
+    private suspend fun getReserve(url: String): ApiConfigResponse = mainClient
+        .get(url, emptyMap())
+        .fetchResponse(moshi)
 
 }

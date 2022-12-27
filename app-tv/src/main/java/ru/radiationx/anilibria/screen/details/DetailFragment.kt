@@ -1,38 +1,47 @@
 package ru.radiationx.anilibria.screen.details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.graphics.ColorUtils
-import androidx.leanback.widget.*
+import androidx.leanback.app.RowsSupportFragment
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.ClassPresenterSelector
+import androidx.leanback.widget.ListRow
+import androidx.leanback.widget.Row
 import androidx.lifecycle.ViewModel
 import dev.rx.tvtest.cust.CustomListRowPresenter
 import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.*
-import ru.radiationx.anilibria.common.fragment.scoped.ScopedRowsFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.quill.QuillExtra
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.di.viewModel
-import javax.inject.Inject
 
-class DetailFragment : ScopedRowsFragment() {
+data class DetailExtra(
+    val id: ReleaseId
+) : QuillExtra
+
+class DetailFragment : RowsSupportFragment() {
 
     companion object {
         private const val ARG_ID = "id"
 
-        fun newInstance(releaseId: Int) = DetailFragment().putExtra {
-            putInt(ARG_ID, releaseId)
+        fun newInstance(releaseId: ReleaseId) = DetailFragment().putExtra {
+            putParcelable(ARG_ID, releaseId)
         }
     }
 
-    @Inject
-    lateinit var backgroundManager: GradientBackgroundManager
+    private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val releaseId by lazy { arguments?.getInt(ARG_ID) ?: -1 }
+    private val argExtra by lazy {
+        DetailExtra(id = getExtraNotNull(ARG_ID))
+    }
 
     private val rowsPresenter by lazy {
         ClassPresenterSelector().apply {
@@ -50,27 +59,34 @@ class DetailFragment : ScopedRowsFragment() {
     }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val detailsViewModel by viewModel<DetailsViewModel>()
-    private val headerViewModel by viewModel<DetailHeaderViewModel>()
-    private val relatedViewModel by viewModel<DetailRelatedViewModel>()
-    private val recommendsViewModel by viewModel<DetailRecommendsViewModel>()
+    private val detailsViewModel by viewModel<DetailsViewModel> { argExtra }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(detailsViewModel)
-        lifecycle.addObserver(headerViewModel)
-        lifecycle.addObserver(relatedViewModel)
-        lifecycle.addObserver(recommendsViewModel)
+    private val headerViewModel by viewModel<DetailHeaderViewModel> { argExtra }
 
-        detailsViewModel.releaseId = releaseId
-        headerViewModel.releaseId = releaseId
-        relatedViewModel.releaseId = releaseId
-        recommendsViewModel.releaseId = releaseId
+    private val relatedViewModel by viewModel<DetailRelatedViewModel> { argExtra }
+
+    private val recommendsViewModel by viewModel<DetailRecommendsViewModel> { argExtra }
+
+    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> headerViewModel
+        DetailsViewModel.RELATED_ROW_ID -> relatedViewModel
+        DetailsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
+        else -> null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycle.addObserver(detailsViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(headerViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(relatedViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
 
         adapter = rowsAdapter
 
         setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
-            val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id) as? BaseCardsViewModel
+            val viewMode: BaseCardsViewModel? =
+                getViewModel((row as ListRow).id) as? BaseCardsViewModel
             when (item) {
                 is LinkCard -> viewMode?.onLinkCardClick()
                 is LoadingCard -> viewMode?.onLoadingCardClick()
@@ -101,17 +117,7 @@ class DetailFragment : ScopedRowsFragment() {
                 }
             }
         }
-    }
 
-    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> headerViewModel
-        DetailsViewModel.RELATED_ROW_ID -> relatedViewModel
-        DetailsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
-        else -> null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val rowMap = mutableMapOf<Long, Row>()
         subscribeTo(detailsViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->
@@ -123,12 +129,24 @@ class DetailFragment : ScopedRowsFragment() {
         }
     }
 
-    private fun createRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: ViewModel): Row = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(rowId, rowsAdapter, viewModel as DetailHeaderViewModel)
+    private fun createRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: ViewModel
+    ): Row = when (rowId) {
+        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
+            rowId,
+            rowsAdapter,
+            viewModel as DetailHeaderViewModel
+        )
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
-    private fun createHeaderRowBy(rowId: Long, rowsAdapter: ArrayObjectAdapter, viewModel: DetailHeaderViewModel): Row {
+    private fun createHeaderRowBy(
+        rowId: Long,
+        rowsAdapter: ArrayObjectAdapter,
+        viewModel: DetailHeaderViewModel
+    ): Row {
         val row = LibriaDetailsRow(rowId)
         subscribeTo(viewModel.releaseData) {
             val position = rowsAdapter.indexOf(row)

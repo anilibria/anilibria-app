@@ -1,24 +1,28 @@
 package ru.radiationx.anilibria.model
 
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.app.auth.SocialAuth
-import ru.radiationx.data.entity.app.feed.FeedItem
-import ru.radiationx.data.entity.app.feed.ScheduleItem
-import ru.radiationx.data.entity.app.other.OtherMenuItem
-import ru.radiationx.data.entity.app.other.ProfileItem
-import ru.radiationx.data.entity.app.release.ReleaseItem
-import ru.radiationx.data.entity.app.search.SuggestionItem
-import ru.radiationx.data.entity.app.youtube.YoutubeItem
-import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.entity.domain.feed.FeedItem
+import ru.radiationx.data.entity.domain.feed.ScheduleItem
+import ru.radiationx.data.entity.domain.other.OtherMenuItem
+import ru.radiationx.data.entity.domain.other.ProfileItem
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.ReleaseUpdate
+import ru.radiationx.data.entity.domain.search.SuggestionItem
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 
-fun ReleaseItem.toState(): ReleaseItemState {
+fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
     val title = if (series == null) {
         title.toString()
     } else {
         "$title ($series)"
     }
+    val update = updates[id]
+    val isNew = update
+        ?.let { it.lastOpenTimestamp < torrentUpdate || it.timestamp < torrentUpdate }
+        ?: false
     return ReleaseItemState(
         id = id,
         title = title,
@@ -36,8 +40,9 @@ fun YoutubeItem.toState() = YoutubeItemState(
     comments = comments.toString()
 )
 
-fun FeedItem.toState() = FeedItemState(
-    release = release?.toState(),
+fun FeedItem.toState(updates: Map<ReleaseId, ReleaseUpdate>) = FeedItemState(
+    id = id,
+    release = release?.toState(updates),
     youtube = youtube?.toState()
 )
 
@@ -47,22 +52,18 @@ fun ScheduleItem.toState() = ScheduleItemState(
     isCompleted = completed
 )
 
-fun ProfileItem.toState(): ProfileItemState {
-    val hasAuth = authState == AuthState.AUTH
-    val title = if (hasAuth) {
-        nick
-    } else {
-        "Гость"
-    }
-    val subtitle = if (hasAuth) {
+fun ProfileItem?.toState(): ProfileItemState {
+    val title = this?.nick ?: "Гость"
+    val subtitle = if (this != null) {
         null
     } else {
         "Авторизоваться"
     }
-    val avatar = avatarUrl?.takeIf { it.isNotEmpty() } ?: "assets://res/alib_new_or_b.png"
+    val avatar = this?.avatarUrl
+        ?.takeIf { it.isNotEmpty() }
+        ?: "file:///android_asset/res/alib_new_or_b.png"
     return ProfileItemState(
-        id = id,
-        hasAuth = hasAuth,
+        hasAuth = this != null,
         title = title,
         subtitle = subtitle,
         avatar = avatar

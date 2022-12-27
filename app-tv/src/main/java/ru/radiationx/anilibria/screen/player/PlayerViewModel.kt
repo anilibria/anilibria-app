@@ -1,79 +1,82 @@
 package ru.radiationx.anilibria.screen.player
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.app.release.ReleaseFull
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.shared.ktx.EventFlow
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class PlayerViewModel(
+    private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController
 ) : LifecycleViewModel() {
 
-    var argReleaseId = -1
-    var argEpisodeId = -1
+    val videoData = MutableStateFlow<Video?>(null)
+    val qualityState = MutableStateFlow<Int?>(null)
+    val speedState = MutableStateFlow<Float?>(null)
+    val playAction = EventFlow<Boolean>()
 
-    val videoData = MutableLiveData<Video>()
-    val qualityState = MutableLiveData<Int>()
-    val speedState = MutableLiveData<Float>()
-    val playAction = MutableLiveData<Boolean>()
-
-    private var currentEpisodes = mutableListOf<ReleaseFull.Episode>()
-    private var currentRelease: ReleaseFull? = null
-    private var currentEpisode: ReleaseFull.Episode? = null
+    private var currentEpisodes = mutableListOf<Episode>()
+    private var currentRelease: Release? = null
+    private var currentEpisode: Episode? = null
     private var currentQuality: Int? = null
     private var currentComplete: Boolean? = null
 
-    override fun onCreate() {
-        super.onCreate()
-
+    init {
         qualityState.value = releaseInteractor.getQuality()
         speedState.value = releaseInteractor.getPlaySpeed()
 
         playerController
             .selectEpisodeRelay
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe { episodeId ->
+            .onEach { episodeId ->
                 currentEpisodes
                     .firstOrNull { it.id == episodeId }
                     ?.also { playEpisode(it, true) }
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
             .observeQuality()
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 currentQuality = handleRawQuality(it)
                 updateQuality()
                 updateEpisode()
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
             .observePlaySpeed()
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .lifeSubscribe {
+            .onEach {
                 speedState.value = it
             }
+            .launchIn(viewModelScope)
 
         releaseInteractor
-            .observeFull(argReleaseId)
-            .lifeSubscribe { release ->
+            .observeFull(argExtra.releaseId)
+            .onEach { release ->
                 currentRelease = release
                 currentEpisodes.clear()
                 currentEpisodes.addAll(release.episodes.reversed())
-                val episodeId = currentEpisode?.id ?: argEpisodeId
-                val episode = currentEpisodes.firstOrNull { it.id == episodeId } ?: currentEpisodes.firstOrNull()
+                val episodeId = currentEpisode?.id ?: argExtra.episodeId
+                val episode = currentEpisodes.firstOrNull { it.id == episodeId }
+                    ?: currentEpisodes.firstOrNull()
                 episode?.also { playEpisode(it) }
             }
+            .launchIn(viewModelScope)
     }
 
     fun onPlayClick(position: Long) {
@@ -141,11 +144,11 @@ class PlayerViewModel(
     fun onPrepare(position: Long, duration: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
-        val complete = episode.seek >= duration
+        val complete = episode.access.seek >= duration
         if (currentComplete == complete) return
         currentComplete = complete
         if (complete) {
-            playAction.value = false
+            playAction.emit(false)
             val nextEpisode = getNextEpisode()
             if (nextEpisode == null) {
                 guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
@@ -153,29 +156,35 @@ class PlayerViewModel(
                 guidedRouter.open(PlayerEndEpisodeGuidedScreen(release.id, episode.id))
             }
         } else {
-            playAction.value = true
+            playAction.emit(true)
         }
     }
 
-    private fun getNextEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
+    private fun getNextEpisode(): Episode? =
+        currentEpisodes.getOrNull(getCurrentEpisodeIndex() + 1)
 
-    private fun getPrevEpisode(): ReleaseFull.Episode? = currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
+    private fun getPrevEpisode(): Episode? =
+        currentEpisodes.getOrNull(getCurrentEpisodeIndex() - 1)
 
-    private fun getCurrentEpisodeIndex(): Int = currentEpisodes.indexOfFirst { it.id == currentEpisode?.id }
+    private fun getCurrentEpisodeIndex(): Int =
+        currentEpisodes.indexOfFirst { it.id == currentEpisode?.id }
 
     private fun saveEpisode(position: Long) {
         val episode = currentEpisode ?: return
         if (position < 0) {
             return
         }
-        releaseInteractor.putEpisode(episode.apply {
-            seek = position
-            lastAccess = System.currentTimeMillis()
+        val newAccess = episode.access.copy(
+            seek = position,
+            lastAccess = System.currentTimeMillis(),
             isViewed = true
-        })
+        )
+        viewModelScope.launch {
+            releaseInteractor.putEpisode(newAccess)
+        }
     }
 
-    private fun playEpisode(episode: ReleaseFull.Episode, force: Boolean = false) {
+    private fun playEpisode(episode: Episode, force: Boolean = false) {
         currentEpisode = episode
         currentComplete = null
         updateQuality()
@@ -194,7 +203,7 @@ class PlayerViewModel(
 
         val newVideo = episode.let {
             val url = getEpisodeUrl(it, quality)
-            Video(url!!, episode.seek, release.title.orEmpty(), it.title.orEmpty())
+            Video(url!!, episode.access.seek, release.title.orEmpty(), it.title.orEmpty())
         }
         if (force || videoData.value?.url != newVideo.url) {
             videoData.value = newVideo
@@ -207,7 +216,7 @@ class PlayerViewModel(
         else -> quality
     }
 
-    private fun getEpisodeQuality(episode: ReleaseFull.Episode, quality: Int): Int {
+    private fun getEpisodeQuality(episode: Episode, quality: Int): Int {
         var newQuality = quality
 
         if (newQuality == PreferencesHolder.QUALITY_FULL_HD && episode.urlFullHd.isNullOrEmpty()) {
@@ -223,10 +232,11 @@ class PlayerViewModel(
         return newQuality
     }
 
-    private fun getEpisodeUrl(episode: ReleaseFull.Episode, quality: Int): String? = when (getEpisodeQuality(episode, quality)) {
-        PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
-        PreferencesHolder.QUALITY_HD -> episode.urlHd
-        PreferencesHolder.QUALITY_SD -> episode.urlSd
-        else -> null
-    }
+    private fun getEpisodeUrl(episode: Episode, quality: Int): String? =
+        when (getEpisodeQuality(episode, quality)) {
+            PreferencesHolder.QUALITY_FULL_HD -> episode.urlFullHd
+            PreferencesHolder.QUALITY_HD -> episode.urlHd
+            PreferencesHolder.QUALITY_SD -> episode.urlSd
+            else -> null
+        }
 }

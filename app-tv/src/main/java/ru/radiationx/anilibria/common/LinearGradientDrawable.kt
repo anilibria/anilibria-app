@@ -122,11 +122,20 @@ class LinearGradientDrawable(
 
         if (DEBUG) {
             canvas.drawLine(invertedPoint.x, invertedPoint.y, rotatedPoint.x, rotatedPoint.y, blue)
-            canvas.drawText("${angle.toInt().toString()}, $radius, ${bounds.right}, ${rotatedPoint}", 100f, 100f, red)
+            canvas.drawText(
+                "${
+                    angle.toInt().toString()
+                }, $radius, ${bounds.right}, ${rotatedPoint}", 100f, 100f, red
+            )
         }
     }
 
-    private fun createShader(start: PointF, end: PointF, colors: IntArray, positions: FloatArray): Shader = LinearGradient(
+    private fun createShader(
+        start: PointF,
+        end: PointF,
+        colors: IntArray,
+        positions: FloatArray
+    ): Shader = LinearGradient(
         start.x, start.y,
         end.x, end.y,
         colors,

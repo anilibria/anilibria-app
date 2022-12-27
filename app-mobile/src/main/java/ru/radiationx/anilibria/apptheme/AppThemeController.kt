@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.apptheme
 
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 interface AppThemeController {
-    fun observeTheme(): Observable<AppTheme>
+    fun observeTheme(): Flow<AppTheme>
     fun getTheme(): AppTheme
 
-    fun observeMode(): Observable<AppThemeMode>
+    fun observeMode(): Flow<AppThemeMode>
     fun getMode(): AppThemeMode
     fun setMode(mode: AppThemeMode)
 }

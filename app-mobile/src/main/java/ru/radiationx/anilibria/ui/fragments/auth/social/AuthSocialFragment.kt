@@ -1,37 +1,37 @@
 package ru.radiationx.anilibria.ui.fragments.auth.social
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.fragment_auth_social.*
-import kotlinx.android.synthetic.main.fragment_main_base.*
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialPresenter
-import ru.radiationx.anilibria.presentation.auth.social.AuthSocialView
+import ru.radiationx.anilibria.databinding.FragmentAuthSocialBinding
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
-import ru.radiationx.anilibria.ui.fragments.BaseFragment
+import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
-import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.app.auth.SocialAuth
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
-import ru.radiationx.shared_app.di.injectDependencies
-import javax.inject.Inject
+import ru.radiationx.shared_app.common.SystemUtils
 
 
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseFragment(), AuthSocialView {
+class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -43,11 +43,17 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
         }
     }
 
-    private val authPatternWebViewClient by lazy { AuthPatternWebViewClient(presenter::onSuccessAuthResult) }
+    private val authPatternWebViewClient by lazy {
+        AuthPatternWebViewClient(viewModel::onSuccessAuthResult)
+    }
 
-    private val analyticsWebViewClient by lazy { AnalyticsWebViewClient(presenter::sendAnalyticsPageError) }
+    private val analyticsWebViewClient by lazy {
+        AnalyticsWebViewClient(viewModel::sendAnalyticsPageError)
+    }
 
-    private val webPageWebViewClient by lazy { WebPageStateWebViewClient(presenter::onPageStateChanged) }
+    private val webPageWebViewClient by lazy {
+        WebPageStateWebViewClient(viewModel::onPageStateChanged)
+    }
 
     private val compositeWebViewClient by lazy {
         compositeWebViewClientOf(
@@ -58,90 +64,81 @@ class AuthSocialFragment : BaseFragment(), AuthSocialView {
     }
 
     private val useTimeCounter by lazy {
-        LifecycleTimeCounter(presenter::submitUseTime)
+        LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    @Inject
-    lateinit var apiConfig: ApiConfig
-
-    @InjectPresenter
-    lateinit var presenter: AuthSocialPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): AuthSocialPresenter =
-        getDependency(AuthSocialPresenter::class.java, screenScope)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies(screenScope)
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            presenter.argKey = it.getString(ARG_KEY, presenter.argKey)
-        }
+    private val viewModel by viewModel<AuthSocialViewModel> {
+        AuthSocialExtra(key = getExtraNotNull(ARG_KEY))
     }
 
-    override fun getLayoutResource(): Int = R.layout.fragment_auth_social
+    private val apiConfig by inject<ApiConfig>()
+
+    private val systemUtils by inject<SystemUtils>()
 
     override val statusBarVisible: Boolean = true
+
+    override fun onCreateBinding(view: View): FragmentAuthSocialBinding {
+        return FragmentAuthSocialBinding.bind(view)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
-        appbarLayout.gone()
+        baseBinding.appbarLayout.gone()
 
-        webView.apply {
+        binding.webView.apply {
             settings.apply {
-                setAppCacheEnabled(false)
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
             webViewClient = compositeWebViewClient
         }
 
-        errorView.setPrimaryButtonClickListener {
-            webView.reload()
+        binding.errorView.setPrimaryButtonClickListener {
+            binding.webView.reload()
         }
 
-        cookieView.setPrimaryButtonClickListener {
-            presenter.onContinueClick()
+        binding.cookieView.setPrimaryButtonClickListener {
+            viewModel.onContinueClick()
         }
-        cookieView.setSecondaryClickListener {
-            presenter.onClearDataClick()
+        binding.cookieView.setSecondaryClickListener {
+            viewModel.onClearDataClick()
         }
-    }
 
-    override fun onBackPressed(): Boolean {
-        return false
+        viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
+            authPatternWebViewClient.resultPattern = data.resultPattern
+            binding.webView.loadUrl(data.socialUrl)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state.onEach { state ->
+            val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
+            binding.progressBarWv.isVisible = anyLoading
+            binding.webView.isVisible =
+                state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
+            binding.errorView.isVisible = state.pageState is WebPageViewState.Error
+            binding.cookieView.isVisible = state.showClearCookies
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.errorEvent.onEach {
+            showError()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroyView() {
-        webView.webViewClient = null
-        webView.stopLoading()
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.stopLoading()
         super.onDestroyView()
     }
 
-    override fun loadPage(data: SocialAuth) {
-        authPatternWebViewClient.resultPattern = data.resultPattern
-        webView.loadUrl(data.socialUrl)
-    }
-
-    override fun showState(state: AuthSocialScreenState) {
-        val anyLoading = state.isAuthProgress || state.pageState == WebPageViewState.Loading
-        progressBarWv.isVisible = anyLoading
-        webView.isVisible =
-            state.pageState == WebPageViewState.Success && !anyLoading && !state.showClearCookies
-        errorView.isVisible = state.pageState is WebPageViewState.Error
-        cookieView.isVisible = state.showClearCookies
-    }
-
-    override fun showError() {
+    private fun showError() {
         AlertDialog.Builder(requireContext())
             .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
             .setPositiveButton("Перейти") { _, _ ->
-                Utils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
+                systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
             }
             .setNegativeButton("Отмена", null)
             .show()
             .setOnDismissListener {
-                presenter.onUserUnderstandWhatToDo()
+                viewModel.onUserUnderstandWhatToDo()
             }
     }
 }

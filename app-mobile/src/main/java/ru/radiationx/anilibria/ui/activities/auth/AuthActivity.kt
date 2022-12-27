@@ -3,27 +3,27 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_container.*
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.core.view.WindowCompat
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
-import ru.radiationx.anilibria.utils.DimensionHelper
 import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.initInsets
+import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared_app.di.injectDependencies
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import javax.inject.Inject
 
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthActivity : BaseActivity() {
+class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
@@ -34,43 +34,23 @@ class AuthActivity : BaseActivity() {
             }
     }
 
-    @Inject
-    lateinit var router: Router
+    private val binding by viewBinding<ActivityMainBinding>()
 
-    @Inject
-    lateinit var navigationHolder: NavigatorHolder
+    private val router by inject<Router>()
 
-    @Inject
-    lateinit var dimensionsProvider: DimensionsProvider
+    private val navigationHolder by inject<NavigatorHolder>()
 
-    private var dimensionHelper: DimensionHelper? = null
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectDependencies()
         setTheme(R.style.DayNightAppTheme_NoActionBar)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        binding.bottomShadow.gone()
+        binding.tabsRecycler.gone()
 
-        bottomShadow.gone()
-        tabsRecycler.gone()
-
-        dimensionHelper = DimensionHelper(
-            measure_view,
-            measure_root_content,
-            object : DimensionHelper.DimensionsListener {
-                override fun onDimensionsChange(dimensions: DimensionHelper.Dimensions) {
-                    root_container.post {
-                        root_container.setPadding(
-                            root_container.paddingLeft,
-                            root_container.paddingTop,
-                            root_container.paddingRight,
-                            dimensions.keyboardHeight
-                        )
-                    }
-                    dimensionsProvider.update(dimensions)
-                }
-            })
+        binding.initInsets(dimensionsProvider)
 
         if (savedInstanceState == null) {
             val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
@@ -87,11 +67,6 @@ class AuthActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         navigationHolder.removeNavigator()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dimensionHelper?.destroy()
     }
 
     override fun onBackPressed() {

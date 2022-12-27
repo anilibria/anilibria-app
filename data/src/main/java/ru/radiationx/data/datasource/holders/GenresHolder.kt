@@ -1,10 +1,10 @@
 package ru.radiationx.data.datasource.holders
 
-import io.reactivex.Observable
-import ru.radiationx.data.entity.app.release.GenreItem
+import kotlinx.coroutines.flow.Flow
+import ru.radiationx.data.entity.domain.release.GenreItem
 
 interface GenresHolder {
-    fun observeGenres(): Observable<MutableList<GenreItem>>
-    fun saveGenres(genres: List<GenreItem>)
-    fun getGenres(): List<GenreItem>
+    fun observeGenres(): Flow<List<GenreItem>>
+    suspend fun saveGenres(genres: List<GenreItem>)
+    suspend fun getGenres(): List<GenreItem>
 }

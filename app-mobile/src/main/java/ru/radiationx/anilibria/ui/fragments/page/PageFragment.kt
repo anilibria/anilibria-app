@@ -186,6 +186,14 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.webView.endWork()
+        binding.webView.setJsLifeCycleListener(null)
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.webChromeClient = WebChromeClient()
+    }
+
     override fun onDomContentComplete(actions: ArrayList<String>) {
 
     }

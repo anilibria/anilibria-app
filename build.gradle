@@ -6,7 +6,7 @@ buildscript {
     ext {
         // only tv
         androidx_leanback_version = '1.2.0-alpha02'
-        exoplayer_leanback_version = '2.18.1'
+        exoplayer_leanback_version = '2.18.2'
 
         // main
         app_compile_sdk_version = 33
@@ -25,7 +25,7 @@ buildscript {
         androidx_appcompat_version = '1.5.1'
         androidx_core_version = '1.9.0'
         androidx_collection_version = '1.2.0'
-        androidx_fragment_version = '1.5.4'
+        androidx_fragment_version = '1.5.5'
         androidx_lifecycle_version = '2.5.1'
         androidx_palette_version = '1.0.0'
         androidx_recyclerview_version = '1.2.1'
@@ -39,10 +39,10 @@ buildscript {
         flexbox_version = '1.1.0'
 
         firebase_core_version = '21.1.1'
-        firebase_messaging_version = '23.1.0'
+        firebase_messaging_version = '23.1.1'
 
         mobmetrica_version = '5.2.0'
-        mintpermissions_version = '1.1.1'
+        mintpermissions_version = '1.1.2'
         exomedia_version = '4.3.0'
         minitemplator_version = '1.4.1'
         adapterdelegates_version = '4.3.2'

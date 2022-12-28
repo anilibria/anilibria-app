@@ -18,8 +18,8 @@ android {
         applicationId "ru.radiationx.anilibria"
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 62
-        versionName "2.8.0"
+        versionCode 63
+        versionName "2.8.1"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

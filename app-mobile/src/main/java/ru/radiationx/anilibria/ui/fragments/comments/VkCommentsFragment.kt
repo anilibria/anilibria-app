@@ -117,7 +117,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
 
         viewModel.reloadEvent.onEach {
             binding.webView.reload()
-        }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -138,8 +138,11 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     }
 
     override fun onDestroyView() {
-        binding.webView.endWork()
         super.onDestroyView()
+        binding.webView.endWork()
+        binding.webView.setJsLifeCycleListener(null)
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.webChromeClient = WebChromeClient()
     }
 
     private fun showState(state: VkCommentsScreenState) {

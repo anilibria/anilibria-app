@@ -36,6 +36,7 @@ import com.devbrackets.android.exomedia.ui.widget.VideoControlsCore
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.MediaSourceEventListener
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
@@ -161,6 +162,8 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private val dialogController = SettingDialogController()
 
     private var pictureInPictureParams: PictureInPictureParams.Builder? = null
+
+    private var releaseDataJob: Job? = null
 
     private fun getStatisticByDomain(host: String): MutableList<Pair<AnalyticsQuality, Long>> {
         if (!loadingStatistics.contains(host)) {
@@ -305,10 +308,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
         handleIntent(intent)
         updateUiFlags()
-
-        releaseInteractor.observeFull(releaseData.id, releaseData.code).onEach {
-            releaseData = it
-        }.launchIn(lifecycleScope)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -346,6 +345,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         binding.player.setOnCompletionListener(null)
         binding.player.setOnVideoSizedChangedListener(null)
         binding.player.setAnalyticsListener(null)
+        try {
+            unregisterReceiver(mReceiver)
+        } catch (ignore: Exception) {
+        }
 
         videoControls?.apply {
             setOpeningListener(null)
@@ -400,6 +403,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         this.currentEpisodeId = episodeId
         this.currentQuality = quality
         this.playFlag = playFlag
+
+        releaseDataJob?.cancel()
+        releaseDataJob = releaseInteractor.observeFull(releaseData.id, releaseData.code).onEach {
+            releaseData = it
+        }.launchIn(lifecycleScope)
     }
 
     private fun handleIntent(intent: Intent) {

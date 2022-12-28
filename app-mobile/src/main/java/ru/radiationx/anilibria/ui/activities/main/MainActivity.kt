@@ -8,10 +8,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.view.*
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -20,7 +23,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -41,6 +43,7 @@ import ru.radiationx.data.system.LocaleHolder
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.visible
@@ -137,13 +140,19 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             highlightTab(it)
         }.launchIn(lifecycleScope)
 
-        viewModel.state.map { it.needConfig }.distinctUntilChanged().onEach {
-            if (it) {
-                showConfiguring()
-            } else {
-                hideConfiguring()
+        // lifecycle needs for fragment manager
+        viewModel.state
+            .map { it.needConfig }
+            .distinctUntilChanged()
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach {
+                if (it) {
+                    showConfiguring()
+                } else {
+                    hideConfiguring()
+                }
             }
-        }.launchIn(lifecycleScope)
+            .launchIn(lifecycleScope)
 
         viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
             onMainLogicCompleted()

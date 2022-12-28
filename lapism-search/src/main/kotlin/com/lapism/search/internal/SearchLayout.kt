@@ -238,7 +238,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mRecyclerView?.layoutManager = LinearLayoutManager(context)
         mRecyclerView?.visibility = View.GONE
         mRecyclerView?.isNestedScrollingEnabled = false
-        mRecyclerView?.itemAnimator = DefaultItemAnimator()
+        mRecyclerView?.itemAnimator = null
         mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)

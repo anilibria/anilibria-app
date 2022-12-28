@@ -21,7 +21,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  * Created by radiationx on 13.01.18.
  */
 class SuggestionDelegate(
-    private val clickListener: (SuggestionItemState) -> Unit
+    private val clickListener: (SuggestionItemState) -> Unit,
 ) : AppAdapterDelegate<SuggestionListItem, ListItem, SuggestionDelegate.ViewHolder>(
     R.layout.item_fast_search,
     { it is SuggestionListItem },
@@ -32,7 +32,7 @@ class SuggestionDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: (SuggestionItemState) -> Unit
+        private val clickListener: (SuggestionItemState) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFastSearchBinding>()
@@ -55,7 +55,8 @@ class SuggestionDelegate(
             state.matchRanges.filterNot { it.isEmpty() }.forEach {
                 val span = StyleSpan(Typeface.BOLD)
                 val flags = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                spannableTitle.setSpan(span, it.first, it.last, flags)
+                val endIndex = (it.last + 1).coerceAtMost(state.title.length)
+                spannableTitle.setSpan(span, it.first, endIndex, flags)
             }
             binding.itemTitle.setText(spannableTitle, TextView.BufferType.SPANNABLE)
         }

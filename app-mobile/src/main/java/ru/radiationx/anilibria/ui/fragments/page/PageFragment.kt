@@ -114,7 +114,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             override fun onReceivedSslError(
                 view: WebView?,
                 handler: SslErrorHandler?,
-                error: SslError?
+                error: SslError?,
             ) {
                 super.onReceivedSslError(view, handler, error)
                 pageAnalytics.error(error.toException())
@@ -123,7 +123,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             override fun onReceivedHttpError(
                 view: WebView?,
                 request: WebResourceRequest?,
-                errorResponse: WebResourceResponse?
+                errorResponse: WebResourceResponse?,
             ) {
                 super.onReceivedHttpError(view, request, errorResponse)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
@@ -134,7 +134,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             override fun onReceivedError(
                 view: WebView?,
                 request: WebResourceRequest?,
-                error: WebResourceError?
+                error: WebResourceError?,
             ) {
                 super.onReceivedError(view, request, error)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
@@ -181,8 +181,8 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.webView.let {
-            outState.putInt(WEB_VIEW_SCROLL_Y, it.scrollY)
+        if (view != null) {
+            outState.putInt(WEB_VIEW_SCROLL_Y, binding.webView.scrollY)
         }
     }
 

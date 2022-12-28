@@ -1,18 +1,18 @@
 {
   "update": {
-    "version_code": "63",
-    "version_name": "2.8.1",
+    "version_code": "64",
+    "version_name": "2.8.2",
     "version_build": "0",
     "build_date": "28 декабря 2022 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.1/AniLibria_v2.8.1.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.2/AniLibria_v2.8.2.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.1/AniLibria_Lite_v2.8.1.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.2/AniLibria_Lite_v2.8.2.apk",
         "type": "file"
       }
     ],
@@ -23,7 +23,7 @@
       "Поддержка Android 13"
     ],
     "fixed": [
-      "Относительно 2.8.0: Повышена стабильность",
+      "Относительно 2.8.1: Повышена стабильность",
       "Анимация открытия релиза",
       "Теперь в истории загружаются актуальные данные о релизах",
       "Оптимизация производительности"

@@ -1222,8 +1222,12 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
 
         override fun onCompletion() {
-            if (!controlsListener.onNextClicked()) {
+            val episode = getEpisode()
+            binding.player.pause()
+            if (getNextEpisode() == null) {
                 showSeasonFinishDialog()
+            } else {
+                showEpisodeFinishDialog()
             }
         }
     }

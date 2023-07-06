@@ -23,6 +23,18 @@
       "api": "https://wwnd.space/public/api/index.php",
       "ips": [],
       "proxies": []
+    },
+    {
+      "tag": "api2",
+      "name": "Апи2",
+      "desc": null,
+      "widgetsSite": "https://www.anilibria.tv",
+      "site": "https://www.anilibria.tv",
+      "baseImages": "https://wwnd.anilib.top/",
+      "base": "https://wwnd.anilib.top",
+      "api": "https://wwnd.anilib.top/public/api/index.php",
+      "ips": [],
+      "proxies": []
     }
   ]
 }

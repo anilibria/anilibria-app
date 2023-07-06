@@ -30,9 +30,9 @@
       "desc": null,
       "widgetsSite": "https://www.anilibria.tv",
       "site": "https://www.anilibria.tv",
-      "baseImages": "https://wwnd.anilib.top/",
-      "base": "https://wwnd.anilib.top",
-      "api": "https://wwnd.anilib.top/public/api/index.php",
+      "baseImages": "https://static-libria.weekstorm.one/",
+      "base": "https://wwnd.anilib.moe",
+      "api": "https://wwnd.anilib.moe/public/api/index.php",
       "ips": [],
       "proxies": []
     }

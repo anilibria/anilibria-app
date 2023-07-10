@@ -13,14 +13,14 @@
       "proxies": []
     },
     {
-      "tag": "api1",
-      "name": "Апи1",
+      "tag": "api2",
+      "name": "Апи2",
       "desc": null,
       "widgetsSite": "https://www.anilibria.tv",
       "site": "https://www.anilibria.tv",
-      "baseImages": "https://static.wwnd.space/",
-      "base": "https://wwnd.space",
-      "api": "https://wwnd.space/public/api/index.php",
+      "baseImages": "https://static-libria.weekstorm.one/",
+      "base": "https://wwnd.anilib.moe",
+      "api": "https://wwnd.anilib.moe/public/api/index.php",
       "ips": [],
       "proxies": []
     }

@@ -12,12 +12,12 @@ android {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
     }
-
-    compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
-    }
 }
+
+kotlin {
+    jvmToolchain(java_toolchain_version)
+}
+
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation project(":shared-android-ktx")

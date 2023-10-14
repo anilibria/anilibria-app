@@ -24,7 +24,7 @@ android {
         versionName "2.8.2"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
-        resConfigs 'ru'
+        resourceConfigurations += ['ru']
     }
 
     buildFeatures {
@@ -56,15 +56,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
             def appName = "AniLibria"
@@ -72,6 +63,10 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+}
+
+kotlin {
+    jvmToolchain(java_toolchain_version)
 }
 
 dependencies {

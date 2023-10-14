@@ -1,13 +1,7 @@
-apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+kotlin {
+    jvmToolchain(java_toolchain_version)
 }
 
 dependencies {

@@ -13,6 +13,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(java_toolchain_version)
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

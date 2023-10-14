@@ -50,6 +50,7 @@
                     android:layout_gravity="center_horizontal"
                     android:freezesText="true"
                     android:hint="@string/auth_2fa"
+                    android:importantForAutofill="noExcludeDescendants"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:scrollHorizontally="true" />

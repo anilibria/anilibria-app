@@ -23,6 +23,7 @@ android {
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resConfigs "ru"
     }
 
     // Поиграться в случае "Unable to load publicsuffixes.gz resource from the classpath."

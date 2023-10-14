@@ -30,8 +30,8 @@ class YearsStorage @Inject constructor(
     override fun observeYears(): Flow<List<YearItem>> = localYearsRelay
 
     override suspend fun saveYears(years: List<YearItem>) {
+        localYearsRelay.setValue(years)
         saveAll()
-        localYearsRelay.setValue(loadAll())
     }
 
     override suspend fun getYears(): List<YearItem> = localYearsRelay.getValue()

@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.launchIn
@@ -15,16 +17,14 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtraNotNull
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 /**
@@ -92,17 +92,17 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
             addSection("Исправлено", update.fixed)
             addSection("Изменено", update.changed)
 
-            binding.updateInfo.visible()
-            binding.updateButton.visible()
-            binding.divider.visible()
+            binding.updateInfo.isVisible = true
+            binding.updateButton.isVisible = true
+            binding.divider.isVisible = true
         } else {
             binding.updateInfo.text =
                 "Обновлений нет, но вы можете загрузить текущую версию еще раз"
-            binding.updateInfo.visible()
-            binding.updateContent.gone()
-            binding.divider.gone()
+            binding.updateInfo.isVisible = true
+            binding.updateContent.isGone = true
+            binding.divider.isGone = true
         }
-        binding.updateButton.visible()
+        binding.updateButton.isVisible = true
         binding.updateButton.setOnClickListener {
             viewModel.onDownloadClick()
             openDownloadDialog(update)
@@ -129,11 +129,11 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {
-        binding.progressBar.visible(isRefreshing)
-        binding.updateInfo.gone(isRefreshing)
-        binding.updateContent.gone(isRefreshing)
-        binding.updateButton.gone(isRefreshing)
-        binding.divider.gone(isRefreshing)
+        binding.progressBar.isVisible = isRefreshing
+        binding.updateInfo.isGone = isRefreshing
+        binding.updateContent.isGone = isRefreshing
+        binding.updateButton.isGone = isRefreshing
+        binding.divider.isGone = isRefreshing
     }
 
     private fun addSection(title: String, array: List<String>) {

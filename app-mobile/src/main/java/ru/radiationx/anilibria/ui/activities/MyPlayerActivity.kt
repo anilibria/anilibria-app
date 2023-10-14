@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
@@ -56,7 +57,6 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsScale
 import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
-import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
@@ -65,9 +65,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
 import java.util.*
@@ -629,7 +627,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
             //videoControls?.setControlsEnabled(false)
             videoControls?.hide()
-            videoControls?.gone()
+            videoControls?.isGone = true
             updateByConfig(newConfig)
 
         } else {
@@ -647,7 +645,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             updateByConfig(newConfig)
             binding.player.showControls()
-            videoControls?.visible()
+            videoControls?.visibility = View.VISIBLE
 
             //player.showControls()
         }
@@ -774,7 +772,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         if (checkPipMode()) {
             pictureInPictureParams?.also {
                 playerAnalytics.pip(getSeekPercent())
-                videoControls?.gone()
+                videoControls?.isGone = true
                 enterPictureInPictureMode(it.build())
             }
         }

@@ -4,16 +4,16 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFeedScheduleBinding
-import ru.radiationx.shared.ktx.android.dpToPx
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedScheduleListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared.ktx.android.dpToPx
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -55,7 +55,7 @@ class FeedScheduleDelegate(
 
         fun bind(item: FeedScheduleListItem) {
             val state = item.state
-            binding.itemComplete.visible(state.isCompleted)
+            binding.itemComplete.isVisible = state.isCompleted
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${state.releaseId}"

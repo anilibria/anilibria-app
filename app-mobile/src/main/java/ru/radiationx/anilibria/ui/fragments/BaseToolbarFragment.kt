@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.viewbinding.ViewBinding
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -14,7 +15,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentMainBaseBinding
 import ru.radiationx.anilibria.utils.Dimensions
-import ru.radiationx.shared.ktx.android.visible
 
 /* Created by radiationx on 18.11.17. */
 
@@ -79,11 +79,11 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     }
 
     protected fun updateToolbarShadow(isVisible: Boolean) {
-        baseBinding.toolbarShadowPrelp.visible(isVisible && needToolbarShadow)
+        baseBinding.toolbarShadowPrelp.isVisible = isVisible && needToolbarShadow
     }
 
     private fun setStatusBarVisibility(isVisible: Boolean) {
-        baseBinding.baseStatusBar.visible(isVisible)
+        baseBinding.baseStatusBar.isVisible = isVisible
     }
 
 }

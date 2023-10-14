@@ -8,10 +8,11 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -44,9 +45,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
-import ru.radiationx.shared.ktx.android.visible
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -230,7 +229,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun showConfiguring() {
-        binding.configuringContainer.visible()
+        binding.configuringContainer.isVisible = true
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.configuring_container, ConfiguringFragment())
@@ -238,7 +237,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun hideConfiguring() {
-        binding.configuringContainer.gone()
+        binding.configuringContainer.isGone = true
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
                 .beginTransaction()

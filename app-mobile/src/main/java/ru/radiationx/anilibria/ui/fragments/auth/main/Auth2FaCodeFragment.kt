@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.text.isDigitsOnly
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,7 +15,6 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.getExtraNotNull
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -51,7 +51,7 @@ class Auth2FaCodeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        baseBinding.appbarLayout.gone()
+        baseBinding.appbarLayout.isGone = true
         binding.btPasteClipboard.setOnClickListener {
             val value = systemUtils.readFromClipboard()
                 .orEmpty()

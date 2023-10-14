@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionSet
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -14,8 +16,6 @@ import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 
 class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring) {
 
@@ -47,9 +47,9 @@ class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring
             ordering = TransitionSet.ORDERING_TOGETHER
         })
         val needRefresh = screenState.needRefresh
-        binding.configRefresh.visible(needRefresh)
-        binding.configSkip.visible(needRefresh)
-        binding.configNext.visible(needRefresh)
-        binding.configProgress.gone(needRefresh)
+        binding.configRefresh.isVisible = needRefresh
+        binding.configSkip.isVisible = needRefresh
+        binding.configNext.isVisible = needRefresh
+        binding.configProgress.isGone = needRefresh
     }
 }

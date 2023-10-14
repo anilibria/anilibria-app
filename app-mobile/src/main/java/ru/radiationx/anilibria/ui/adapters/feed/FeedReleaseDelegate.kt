@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters.feed
 import android.text.Html
 import android.view.View
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -12,7 +13,6 @@ import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -48,7 +48,7 @@ class FeedReleaseDelegate(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${state.id}"
             )
-            binding.itemNewIndicator.visible(state.isNew)
+            binding.itemNewIndicator.isVisible = state.isNew
             binding.itemImage.showImageUrl(state.posterUrl)
 
 

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.app.ActivityManager
+import android.app.AppOpsManager
 import android.app.PendingIntent
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -25,6 +26,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
@@ -219,7 +221,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             override fun onLoadCanceled(
                 eventTime: AnalyticsListener.EventTime,
                 loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData
+                mediaLoadData: MediaSourceEventListener.MediaLoadData,
             ) {
                 super.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData)
                 putStatistics(
@@ -232,7 +234,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             override fun onLoadCompleted(
                 eventTime: AnalyticsListener.EventTime,
                 loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData
+                mediaLoadData: MediaSourceEventListener.MediaLoadData,
             ) {
                 super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
                 lastLoadedUri = loadEventInfo.uri
@@ -246,7 +248,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             override fun onRenderedFirstFrame(
                 eventTime: AnalyticsListener.EventTime,
-                surface: Surface?
+                surface: Surface?,
             ) {
                 super.onRenderedFirstFrame(eventTime, surface)
                 if (!wasFirstFrame) {
@@ -264,7 +266,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 loadEventInfo: MediaSourceEventListener.LoadEventInfo,
                 mediaLoadData: MediaSourceEventListener.MediaLoadData,
                 error: IOException,
-                wasCanceled: Boolean
+                wasCanceled: Boolean,
             ) {
                 super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
                 if (lastLoadError?.toString() != error.toString()) {
@@ -276,7 +278,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             override fun onPlayerError(
                 eventTime: AnalyticsListener.EventTime,
-                error: ExoPlaybackException
+                error: ExoPlaybackException,
             ) {
                 super.onPlayerError(eventTime, error)
                 if (lastPlayerError?.toString() != error.toString()) {
@@ -367,11 +369,28 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         videoControls = null
     }
 
-    private fun checkPipMode(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    private fun hasPipPermission(): Boolean {
+        val appOps = getSystemService<AppOpsManager>() ?: return false
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         }
-        return false
+        val op = AppOpsManager.OPSTR_PICTURE_IN_PICTURE
+        val pid = android.os.Process.myUid()
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(op, pid, packageName)
+        } else {
+            appOps.checkOpNoThrow(op, pid, packageName)
+        }
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
+    private fun checkPipMode(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return false
+        }
+        val hasFeature = packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        val hasPermission = hasPipPermission()
+        return hasFeature && hasPermission
     }
 
     private fun checkSausage(): Boolean {
@@ -567,9 +586,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         .show()
                 }
             }
+
             PLAY_FLAG_FORCE_START -> {
                 hardPlayEpisode(episode)
             }
+
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
             }
@@ -659,7 +680,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPictureInPictureModeChanged(
-        isInPictureInPictureMode: Boolean, newConfig: Configuration
+        isInPictureInPictureMode: Boolean, newConfig: Configuration,
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         saveEpisode()
@@ -932,14 +953,17 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                             playerAnalytics.settingsQualityClick()
                             showQualityDialog()
                         }
+
                         settingPlaySpeed -> {
                             playerAnalytics.settingsSpeedClick()
                             showPlaySpeedDialog()
                         }
+
                         settingScale -> {
                             playerAnalytics.settingsScaleClick()
                             showScaleDialog()
                         }
+
                         settingPIP -> {
                             playerAnalytics.settingsPipClick()
                             showPIPDialog()
@@ -1097,12 +1121,14 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         saveEpisode(0)
                         hardPlayEpisode(getEpisode())
                     }
+
                     1 -> {
                         playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.RESTART_SEASON)
                         releaseData.episodes.lastOrNull()?.also {
                             hardPlayEpisode(it)
                         }
                     }
+
                     2 -> {
                         playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.CLOSE_PLAYER)
                         finish()
@@ -1131,6 +1157,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         saveEpisode(0)
                         hardPlayEpisode(getEpisode())
                     }
+
                     1 -> {
                         playerAnalytics.episodesFinishAction(AnalyticsEpisodeFinishAction.NEXT)
                         getNextEpisode()?.also { hardPlayEpisode(it) }

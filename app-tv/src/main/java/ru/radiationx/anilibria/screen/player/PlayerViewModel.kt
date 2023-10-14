@@ -7,7 +7,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.anilibria.screen.*
+import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.PlayerEndEpisodeGuidedScreen
+import ru.radiationx.anilibria.screen.PlayerEndSeasonGuidedScreen
+import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
+import ru.radiationx.anilibria.screen.PlayerQualityGuidedScreen
+import ru.radiationx.anilibria.screen.PlayerSpeedGuidedScreen
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
@@ -20,7 +25,7 @@ class PlayerViewModel(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
-    private val playerController: PlayerController
+    playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     val videoData = MutableStateFlow<Video?>(null)
@@ -79,16 +84,8 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun onPlayClick() {
-
-    }
-
     fun onPauseClick(position: Long) {
         saveEpisode(position)
-    }
-
-    fun onReplayClick() {
-
     }
 
     fun onNextClick(position: Long) {
@@ -212,7 +209,9 @@ class PlayerViewModel(
 
     private fun handleRawQuality(quality: Int): Int = when (quality) {
         PreferencesHolder.QUALITY_NO,
-        PreferencesHolder.QUALITY_ALWAYS -> PreferencesHolder.QUALITY_SD
+        PreferencesHolder.QUALITY_ALWAYS,
+        -> PreferencesHolder.QUALITY_SD
+
         else -> quality
     }
 

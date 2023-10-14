@@ -6,12 +6,11 @@ import kotlinx.coroutines.runBlocking
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
-import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
     private val configChanger: ApiConfigChanger,
-    private val apiConfigStorage: ApiConfigStorage
+    private val apiConfigStorage: ApiConfigStorage,
 ) {
 
     private val addresses = mutableListOf<ApiAddress>()
@@ -26,7 +25,8 @@ class ApiConfig @Inject constructor(
         // todo TR-274 make api config async
         runBlocking {
             activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
-            val initAddresses = apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
+            val initAddresses =
+                apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))
             setConfig(initAddresses)
         }
     }
@@ -59,13 +59,18 @@ class ApiConfig @Inject constructor(
         addresses.addAll(items)
 
         possibleIps.clear()
-        val ips = addresses.map { it.ips + it.proxies.map { it.ip } }
-            .reduce { acc, list -> acc.plus(list) }.toSet().toList()
+        val ips = addresses
+            .map { address ->
+                address.ips + address.proxies.map { it.ip }
+            }
+            .reduce { acc, list -> acc.plus(list) }
+            .toSet()
+            .toList()
         possibleIps.addAll(ips)
 
-        addresses.forEach {
-            it.proxies.forEach { proxy ->
-                proxyPings[it.tag]?.also {
+        addresses.forEach { address ->
+            address.proxies.forEach { proxy ->
+                proxyPings[address.tag]?.also {
                     proxy.ping = it
                 }
             }

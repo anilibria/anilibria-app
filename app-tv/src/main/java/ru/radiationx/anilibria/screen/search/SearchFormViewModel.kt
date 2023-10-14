@@ -5,16 +5,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
-import ru.radiationx.anilibria.screen.*
+import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.anilibria.screen.SearchCompletedGuidedScreen
+import ru.radiationx.anilibria.screen.SearchGenreGuidedScreen
+import ru.radiationx.anilibria.screen.SearchSeasonGuidedScreen
+import ru.radiationx.anilibria.screen.SearchSortGuidedScreen
+import ru.radiationx.anilibria.screen.SearchYearGuidedScreen
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.repository.SearchRepository
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchFormViewModel(
-    private val searchRepository: SearchRepository,
     private val searchController: SearchController,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
     val yearData = MutableStateFlow<String?>(null)
@@ -92,7 +95,7 @@ class SearchFormViewModel(
     }
 
     private fun List<String>?.generateListTitle(fallback: String, take: Int = 2): String {
-        if (this == null || isEmpty()) {
+        if (isNullOrEmpty()) {
             return fallback
         }
         var result = take(take).joinToString()

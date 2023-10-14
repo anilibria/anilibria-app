@@ -39,8 +39,8 @@ class MainScheduleViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = scheduleRepository
         .loadSchedule()
-        .also {
-            val allReleases = it.map { it.items.map { it.releaseItem } }.flatten()
+        .also { days ->
+            val allReleases = days.map { day -> day.items.map { it.releaseItem } }.flatten()
             releaseInteractor.updateItemsCache(allReleases)
         }
         .let { schedueDays ->

@@ -9,7 +9,7 @@ open class CachedRowsFragmentFactory : BrowseSupportFragment.FragmentFactory<Fra
 
     private val fragments = mutableMapOf<Long, Fragment>()
 
-    var behavior = Behavior.CACHE
+    private var behavior = Behavior.CACHE
 
     override fun createFragment(rowObj: Any): Fragment {
         val row = rowObj as Row

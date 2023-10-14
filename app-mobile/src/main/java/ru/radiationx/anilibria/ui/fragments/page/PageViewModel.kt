@@ -16,16 +16,16 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class PageExtra(
-    val path: String
+    val path: String,
 ) : QuillExtra
 
 @InjectConstructor
 class PageViewModel(
-    private val argExtra: PageExtra,
+    argExtra: PageExtra,
     private val pageRepository: PageRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
-    private val pageAnalytics: PageAnalytics
+    private val pageAnalytics: PageAnalytics,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PageScreenState())
@@ -57,5 +57,5 @@ class PageViewModel(
 
 data class PageScreenState(
     val loading: Boolean = false,
-    val data: PageLibria? = null
+    val data: PageLibria? = null,
 )

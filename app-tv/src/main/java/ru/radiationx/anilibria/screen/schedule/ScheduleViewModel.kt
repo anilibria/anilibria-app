@@ -15,9 +15,9 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class ScheduleViewModel(
-    private val scheduleRepository: ScheduleRepository,
+    scheduleRepository: ScheduleRepository,
     private val dataConverter: CardsDataConverter,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : LifecycleViewModel() {
 
     val scheduleRows = MutableStateFlow<List<Pair<String, List<LibriaCard>>>>(emptyList())

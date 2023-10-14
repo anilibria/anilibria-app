@@ -22,8 +22,8 @@ import ru.radiationx.shared.ktx.android.getColorFromAttr
 
 
 class CatalogFilterDialog(
-    private val context: Context,
-    private val listener: ClickListener
+    context: Context,
+    private val listener: ClickListener,
 ) {
 
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)

@@ -11,7 +11,7 @@ import javax.inject.Inject
 @OptIn(DelicateCoroutinesApi::class)
 class ApiClientWrapper @Inject constructor(
     private val provider: ApiOkHttpProvider,
-    private val configChanger: ApiConfigChanger
+    configChanger: ApiConfigChanger,
 ) : ClientWrapper(provider) {
 
     init {

@@ -10,8 +10,8 @@ import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 
 open class OptimizeAdapter<T>(
-    private val itemCallback: DiffUtil.ItemCallback<T>,
-    private val manager: OptimizeDelegateManager<List<T>> = OptimizeDelegateManager()
+    itemCallback: DiffUtil.ItemCallback<T>,
+    private val manager: OptimizeDelegateManager<List<T>> = OptimizeDelegateManager(),
 ) : AsyncListDifferDelegationAdapter<T>(itemCallback, manager) {
 
     private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
@@ -46,7 +46,7 @@ open class OptimizeAdapter<T>(
     override fun onBindViewHolder(
         holder: RecyclerView.ViewHolder,
         position: Int,
-        payloads: MutableList<Any?>
+        payloads: MutableList<Any?>,
     ) {
         super.onBindViewHolder(holder, position, payloads)
         (holder as? IBundledViewHolder)?.apply {
@@ -87,7 +87,11 @@ open class OptimizeAdapter<T>(
         manager.addDelegate(viewType, delegate)
     }
 
-    fun addDelegate(viewType: Int, allowReplacingDelegate: Boolean, delegate: AdapterDelegate<List<T>>) {
+    fun addDelegate(
+        viewType: Int,
+        allowReplacingDelegate: Boolean,
+        delegate: AdapterDelegate<List<T>>,
+    ) {
         manager.addDelegate(viewType, allowReplacingDelegate, delegate)
     }
 }

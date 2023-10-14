@@ -51,7 +51,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         LifecycleTimeCounter(viewModel::submitUseTime)
     }
 
-    private val viewModel by viewModel<CheckerViewModel>(){
+    private val viewModel by viewModel<CheckerViewModel> {
         CheckerExtra(forceLoad = getExtraNotNull(ARG_FORCE))
     }
 
@@ -63,10 +63,8 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
 
-        intent?.let {
-            it.getStringExtra(ARG_ANALYTICS_FROM)?.also {
-                updaterAnalytics.open(it)
-            }
+        intent?.getStringExtra(ARG_ANALYTICS_FROM)?.also {
+            updaterAnalytics.open(it)
         }
         viewModel.checkUpdate()
 

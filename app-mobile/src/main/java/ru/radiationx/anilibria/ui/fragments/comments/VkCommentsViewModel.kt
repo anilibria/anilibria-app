@@ -3,7 +3,14 @@ package ru.radiationx.anilibria.ui.fragments.comments
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
@@ -27,14 +34,14 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class VkCommentsViewModel(
     private val argExtra: ReleaseExtra,
-    private val authRepository: AuthRepository,
+    authRepository: AuthRepository,
     private val pageRepository: PageRepository,
     private val releaseInteractor: ReleaseInteractor,
-    private val authHolder: AuthHolder,
+    authHolder: AuthHolder,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val authVkAnalytics: AuthVkAnalytics,
-    private val commentsAnalytics: CommentsAnalytics
+    private val commentsAnalytics: CommentsAnalytics,
 ) : ViewModel() {
 
     private var isVisibleToUser = false

@@ -15,7 +15,7 @@ class ActivityModule(activity: FragmentActivity) : QuillModule() {
         instance<Context> { activity }
         instance { SystemUtils(activity) }
         instance { CardsDataConverter(activity) }
-        instance { DetailDataConverter(activity) }
+        instance { DetailDataConverter() }
         instance { GradientBackgroundManager(activity) }
     }
 }

@@ -5,6 +5,6 @@ import ru.radiationx.data.system.Client
 import javax.inject.Inject
 
 class ApiNetworkClient @Inject constructor(
-    private val clientWrapper: ApiClientWrapper,
-    private val sharedBuildConfig: SharedBuildConfig
+    clientWrapper: ApiClientWrapper,
+    sharedBuildConfig: SharedBuildConfig,
 ) : Client(clientWrapper, sharedBuildConfig)

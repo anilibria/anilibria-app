@@ -24,9 +24,9 @@ class VkWebViewClient(
     private val appThemeController: AppThemeController,
 ) : WebViewClient() {
 
-    var loadingFinished = true
-    var redirect = false
-    var authCheckIntercepted = false
+    private var loadingFinished = true
+    private var redirect = false
+    private var authCheckIntercepted = false
 
     private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
     private val authCheckRegex = Regex("vk\\.com\\/login\\?act=authcheck")

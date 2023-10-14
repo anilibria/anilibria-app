@@ -9,17 +9,13 @@ import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
-import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 
@@ -31,15 +27,7 @@ class SettingsFragment : BaseSettingFragment() {
 
     private val appPreferences by inject<PreferencesHolder>()
 
-    private val apiConfig by inject<ApiConfig>()
-
-    private val authRepository by inject<AuthRepository>()
-
-    private val errorHandler by inject<IErrorHandler>()
-
     private val settingsAnalytics by inject<SettingsAnalytics>()
-
-    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

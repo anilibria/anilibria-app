@@ -34,8 +34,6 @@ class DownloadsDataSource(
     private val downloadsHolder: DownloadsHolder,
 ) {
 
-    private val TAG = "DownloadsDataSource"
-
     private val downloadManager by lazy { context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager }
 
     private val completeFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
@@ -88,7 +86,7 @@ class DownloadsDataSource(
 
     private fun startTimer() {
         stopTimer()
-        timerJob = flow<Unit> {
+        timerJob = flow {
             while (true) {
                 emit(Unit)
                 delay(1000)
@@ -169,11 +167,11 @@ class DownloadsDataSource(
 
     private fun updateComplete(downloadId: Long) {
         scope.launch {
-            (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also {
-                if (it.state != DownloadController.State.SUCCESSFUL) {
+            (fetchDownloadRow(downloadId) ?: findCached(downloadId))?.also { item ->
+                if (item.state != DownloadController.State.SUCCESSFUL) {
                     cachedDownloads.removeAll { it.downloadId == downloadId }
                 }
-                completeRelay.emit(it)
+                completeRelay.emit(item)
             }
         }
     }
@@ -217,13 +215,14 @@ class DownloadsDataSource(
     }
 
     private fun Cursor.asDownloadItem(): DownloadItem {
-        val id = getLong(getColumnIndex(DownloadManager.COLUMN_ID))
-        val url = getString(getColumnIndex(DownloadManager.COLUMN_URI))
-        val localUrl = getString(getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-        val status = getInt(getColumnIndex(DownloadManager.COLUMN_STATUS))
-        val reason = getInt(getColumnIndex(DownloadManager.COLUMN_REASON))
-        val allBytes = getLong(getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-        val loadedBytes = getLong(getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+        val id = getLong(getColumnIndexOrThrow(DownloadManager.COLUMN_ID))
+        val url = getString(getColumnIndexOrThrow(DownloadManager.COLUMN_URI))
+        val localUrl = getString(getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+        val status = getInt(getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+        val reason = getInt(getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
+        val allBytes = getLong(getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+        val loadedBytes =
+            getLong(getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
 
         val progress = let {
             if (allBytes <= 0L || loadedBytes <= 0L) {

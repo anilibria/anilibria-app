@@ -9,7 +9,6 @@ import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.HistoryRuntimeCache
-import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 /**

@@ -16,7 +16,7 @@ import toothpick.InjectConstructor
 class PlayerQualityViewModel(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
     companion object {
@@ -50,7 +50,7 @@ class PlayerQualityViewModel(
 
     private fun updateAvailable(release: Release, quality: Int) {
         val episode = release.episodes.firstOrNull { it.id == argExtra.episodeId } ?: return
-        val available = buildList<Long> {
+        val available = buildList {
             if (!episode.urlSd.isNullOrEmpty()) {
                 add(SD_ACTION_ID)
             }

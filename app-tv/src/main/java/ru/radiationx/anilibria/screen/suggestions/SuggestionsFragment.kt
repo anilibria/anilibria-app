@@ -4,15 +4,28 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.app.SearchSupportFragment
-import androidx.leanback.widget.*
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.HeaderItem
+import androidx.leanback.widget.ListRow
+import androidx.leanback.widget.ObjectAdapter
+import androidx.leanback.widget.OnItemViewSelectedListener
+import androidx.leanback.widget.Presenter
+import androidx.leanback.widget.Row
+import androidx.leanback.widget.RowPresenter
 import androidx.lifecycle.ViewModel
-import dev.rx.tvtest.cust.CustomListRowPresenter
-import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.*
+import ru.radiationx.anilibria.common.BaseCardsViewModel
+import ru.radiationx.anilibria.common.CardDiffCallback
+import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LinkCard
+import ru.radiationx.anilibria.common.LoadingCard
+import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.ui.widget.manager.ExternalProgressManager
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
 import ru.radiationx.quill.inject
@@ -54,14 +67,13 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         setSearchResultProvider(this)
         setOnItemViewSelectedListener(ItemViewSelectedListener())
         setOnItemViewClickedListener { _, item, _, row ->
-
-            val viewModel = getViewModel((row as ListRow).id)
-            when (viewModel) {
+            when (val viewModel = getViewModel((row as ListRow).id)) {
                 is BaseCardsViewModel -> when (item) {
                     is LinkCard -> viewModel.onLinkCardClick()
                     is LoadingCard -> viewModel.onLoadingCardClick()
                     is LibriaCard -> viewModel.onLibriaCardClick(item)
                 }
+
                 is SuggestionsResultViewModel -> when (item) {
                     is LibriaCard -> resultViewModel.onCardClick(item)
                 }
@@ -105,18 +117,19 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
     private fun createRowBy(
         rowId: Long,
         rowsAdapter: ArrayObjectAdapter,
-        viewModel: ViewModel
+        viewModel: ViewModel,
     ): Row = when (rowId) {
         DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
             rowId,
             viewModel as SuggestionsResultViewModel
         )
+
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
     private fun createHeaderRowBy(
         rowId: Long,
-        viewModel: SuggestionsResultViewModel
+        viewModel: SuggestionsResultViewModel,
     ): Row {
         val cardsPresenter = CardPresenterSelector(null)
         val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
@@ -151,7 +164,7 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
-            rowViewHolder: RowPresenter.ViewHolder, row: Row
+            rowViewHolder: RowPresenter.ViewHolder, row: Row,
         ) {
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
@@ -159,12 +172,15 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
                     is LibriaCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     is LinkCard -> {
                         rowViewHolder.setDescription(item.title, "")
                     }
+
                     is LoadingCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     else -> {
                         rowViewHolder.setDescription("", "")
                     }

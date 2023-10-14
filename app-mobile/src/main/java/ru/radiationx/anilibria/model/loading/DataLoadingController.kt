@@ -103,24 +103,3 @@ class DataLoadingController<T>(
     }
 }
 
-data class DataLoadingStateInfo(
-    val initialState: Boolean = false,
-    val emptyLoading: Boolean = false,
-    val refreshLoading: Boolean = false,
-    val moreLoading: Boolean = false,
-    val hasMorePages: Boolean = false,
-    val hasError: Boolean = false,
-    val hasData: Boolean = false
-)
-
-fun DataLoadingState<*>.toInfo() = this.let {
-    DataLoadingStateInfo(
-        it.initialState,
-        it.emptyLoading,
-        it.refreshLoading,
-        it.moreLoading,
-        it.hasMorePages,
-        it.error != null,
-        it.data != null
-    )
-}

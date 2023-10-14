@@ -16,7 +16,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchGenreViewModel(
-    private val argExtra: SearchValuesExtra,
+    argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter,
@@ -27,12 +27,12 @@ class SearchGenreViewModel(
     init {
         searchRepository
             .observeGenres()
-            .onEach {
+            .onEach { genres ->
                 currentGenres.clear()
-                currentGenres.addAll(it)
+                currentGenres.addAll(genres)
                 currentValues.clear()
-                currentValues.addAll(it.map { it.value })
-                valuesData.value = it.map { it.title }
+                currentValues.addAll(genres.map { it.value })
+                valuesData.value = genres.map { it.title }
                 progressState.value = false
                 updateChecked()
                 updateSelected()

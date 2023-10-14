@@ -12,7 +12,7 @@ import javax.inject.Inject
 class YoutubeApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) {
 
     suspend fun getYoutubeList(page: Int): PaginatedResponse<YoutubeResponse> {
@@ -21,6 +21,6 @@ class YoutubeApi @Inject constructor(
             "page" to page.toString()
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchPaginatedApiResponse<YoutubeResponse>(moshi)
+            .fetchPaginatedApiResponse(moshi)
     }
 }

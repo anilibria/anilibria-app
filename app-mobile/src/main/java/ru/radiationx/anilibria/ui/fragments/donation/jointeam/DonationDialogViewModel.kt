@@ -10,15 +10,15 @@ import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
 data class DonationDialogExtra(
-    val tag: String
+    val tag: String,
 ) : QuillExtra
 
 @InjectConstructor
 class DonationDialogViewModel(
     private val argExtra: DonationDialogExtra,
-    private val donationRepository: DonationRepository,
+    donationRepository: DonationRepository,
     private val analytics: DonationDialogAnalytics,
-    private val systemUtils: SystemUtils
+    private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
     val state = donationRepository

@@ -2,7 +2,12 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -23,7 +28,7 @@ import toothpick.InjectConstructor
 data class ReleaseExtra(
     val id: ReleaseId?,
     val code: ReleaseCode?,
-    val release: Release?
+    val release: Release?,
 ) : QuillExtra
 
 @InjectConstructor
@@ -34,9 +39,9 @@ class ReleaseViewModel(
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
-    private val commentsNotifier: ReleaseCommentsNotifier,
+    commentsNotifier: ReleaseCommentsNotifier,
     private val commentsAnalytics: CommentsAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
 ) : ViewModel() {
 
     private var currentData: Release? = null

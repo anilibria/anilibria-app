@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,10 +13,9 @@ import timber.log.Timber
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
     val cardsData = MutableStateFlow<List<CardItem>>(emptyList())
-    val rowTitle = MutableStateFlow<String>("")
+    val rowTitle = MutableStateFlow("")
 
     protected open val firstPage = 1
-    protected open val perPage = 20
     protected open val loadOnCreate = true
     protected open val progressOnRefresh = true
     open val defaultTitle = "Cards"
@@ -25,9 +23,8 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     protected open val loadMoreCard = LinkCard("Загрузить еще")
     protected open val loadingCard = LoadingCard("Загрузка данных")
 
-    protected val currentCards = mutableListOf<LibriaCard>()
-    protected var currentPage = -1
-        private set
+    private val currentCards = mutableListOf<LibriaCard>()
+    private var currentPage = -1
 
     private var requestJob: Job? = null
 
@@ -61,9 +58,8 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
 
     protected open fun hasMoreCards(
         newCards: List<LibriaCard>,
-        allCards: List<LibriaCard>
-    ): Boolean =
-        newCards.size >= 10 && newCards.isNotEmpty()
+        allCards: List<LibriaCard>,
+    ): Boolean = newCards.size >= 10
 
     protected open fun getErrorCard(error: Throwable) = LoadingCard(
         "Повторить загрузку",

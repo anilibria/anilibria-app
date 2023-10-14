@@ -27,7 +27,6 @@ class SuggestionsContentProvider : ContentProvider() {
             SearchManager.SUGGEST_COLUMN_INTENT_ACTION,
             SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID
         )
-        private const val TAG = "SearchContentProvider"
         private const val AUTHORITY = "ru.radiationx.anilibria.contentprovider.suggestions"
         private const val SEARCH_SUGGEST = 1
     }
@@ -46,8 +45,8 @@ class SuggestionsContentProvider : ContentProvider() {
         projection: Array<out String>?,
         selection: String?,
         selectionArgs: Array<out String>?,
-        sortOrder: String?
-    ): Cursor? {
+        sortOrder: String?,
+    ): Cursor {
         runBlocking { App.appCreateAction.filter { it }.first() }
 
         return if (uriMatcher.match(uri) == SEARCH_SUGGEST) {
@@ -67,7 +66,7 @@ class SuggestionsContentProvider : ContentProvider() {
         uri: Uri,
         values: ContentValues?,
         selection: String?,
-        selectionArgs: Array<out String>?
+        selectionArgs: Array<out String>?,
     ): Int {
         throw UnsupportedOperationException("update is not implemented.")
     }

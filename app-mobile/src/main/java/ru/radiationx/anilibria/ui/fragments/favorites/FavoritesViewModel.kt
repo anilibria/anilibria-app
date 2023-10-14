@@ -2,7 +2,15 @@ package ru.radiationx.anilibria.ui.fragments.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -35,9 +43,9 @@ class FavoritesViewModel(
     private val errorHandler: IErrorHandler,
     private val favoritesAnalytics: FavoritesAnalytics,
     private val releaseAnalytics: ReleaseAnalytics,
-    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    releaseUpdateHolder: ReleaseUpdateHolder,
     private val shortcutHelper: ShortcutHelper,
-    private val systemUtils: SystemUtils
+    private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
     private val loadingController = DataLoadingController(viewModelScope) {

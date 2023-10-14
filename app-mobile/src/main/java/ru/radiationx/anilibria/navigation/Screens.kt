@@ -33,17 +33,18 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
  */
 object Screens {
 
-    class AppUpdateScreen(val force: Boolean, val analyticsFrom: String) : BaseAppScreen() {
+    class AppUpdateScreen(private val force: Boolean, private val analyticsFrom: String) :
+        BaseAppScreen() {
         override fun getActivityIntent(context: Context): Intent {
             return UpdateCheckerActivity.newIntent(context, force, analyticsFrom)
         }
     }
 
-    class TabScreen(val rootScreen: BaseAppScreen) : BaseAppScreen() {
+    class TabScreen(private val rootScreen: BaseAppScreen) : BaseAppScreen() {
         override fun getFragment() = TabFragment.newInstance(rootScreen)
     }
 
-    class Auth(val rootScreen: BaseAppScreen? = null) : BaseAppScreen() {
+    class Auth(private val rootScreen: BaseAppScreen? = null) : BaseAppScreen() {
         override fun getActivityIntent(context: Context) =
             AuthActivity.createIntent(context, rootScreen)
     }
@@ -52,7 +53,7 @@ object Screens {
         override fun getFragment() = AuthFragment()
     }
 
-    class Auth2FaCode(val login: String, val password: String) : BaseAppScreen() {
+    class Auth2FaCode(private val login: String, private val password: String) : BaseAppScreen() {
         override fun getFragment() = Auth2FaCodeFragment.newInstance(login, password)
     }
 
@@ -76,7 +77,7 @@ object Screens {
         override fun getFragment() = FavoritesFragment()
     }
 
-    class StaticPage(val pagePath: String, val title: String? = null) : BaseAppScreen() {
+    class StaticPage(private val pagePath: String, val title: String? = null) : BaseAppScreen() {
         override fun getFragment() = PageFragment.newInstance(pagePath)
     }
 
@@ -92,13 +93,13 @@ object Screens {
     class ReleaseDetails(
         val id: ReleaseId? = null,
         val code: ReleaseCode? = null,
-        val item: Release? = null
+        val item: Release? = null,
     ) : BaseAppScreen() {
         override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
     }
 
     class Catalog(
-        val genres: String? = null,
+        private val genres: String? = null,
     ) : BaseAppScreen() {
         override fun getFragment() = SearchCatalogFragment.newInstance(genres)
     }

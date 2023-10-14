@@ -3,7 +3,6 @@ package ru.radiationx.shared_app.imageloader.impls
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.os.SystemClock
 import android.widget.ImageView
 import coil.ImageLoader
 import coil.load
@@ -24,7 +23,7 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class CoilLibriaImageLoaderImpl(
     private val context: Context,
-    private val apiClientWrapper: ApiClientWrapper
+    private val apiClientWrapper: ApiClientWrapper,
 ) : LibriaImageLoader {
 
     private var _okHttpClient: OkHttpClient? = null
@@ -94,8 +93,7 @@ class CoilLibriaImageLoaderImpl(
             .memoryCacheKey(url.toCacheKey())
             .data(url).build()
         val result = getImageLoader().execute(request)
-        val bitmap = (result.drawable as BitmapDrawable).bitmap
-        return bitmap
+        return (result.drawable as BitmapDrawable).bitmap
     }
 
     private var ImageView.successUrl: String?

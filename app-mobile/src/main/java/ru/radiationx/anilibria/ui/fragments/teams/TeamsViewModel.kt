@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.Teams
@@ -21,7 +20,6 @@ import toothpick.InjectConstructor
 class TeamsViewModel(
     private val router: Router,
     private val repository: TeamsRepository,
-    private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val analytics: TeamsAnalytics
 ) : ViewModel() {

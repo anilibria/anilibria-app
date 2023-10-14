@@ -23,15 +23,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="4dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ru.radiationx.anilibria.ui.widgets.AspectRatioImageView
                 android:id="@+id/item_image"
                 android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
                 android:background="?imageBackground"
+                android:scaleType="centerCrop"
                 app:aspectRatio="1.456"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

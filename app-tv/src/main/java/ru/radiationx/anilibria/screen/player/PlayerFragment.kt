@@ -23,7 +23,7 @@ class PlayerFragment : BasePlayerFragment() {
 
         fun newInstance(
             releaseId: ReleaseId,
-            episodeId: EpisodeId?
+            episodeId: EpisodeId?,
         ): PlayerFragment = PlayerFragment().putExtra {
             putParcelable(ARG_RELEASE_ID, releaseId)
             putParcelable(ARG_EPISODE_ID, episodeId)
@@ -69,7 +69,7 @@ class PlayerFragment : BasePlayerFragment() {
         }
 
         subscribeTo(viewModel.speedState.filterNotNull()) {
-            player?.setPlaybackParameters(PlaybackParameters(it))
+            player?.playbackParameters = PlaybackParameters(it)
         }
 
         subscribeTo(viewModel.qualityState.filterNotNull()) {

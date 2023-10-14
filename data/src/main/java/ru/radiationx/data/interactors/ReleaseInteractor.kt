@@ -51,14 +51,14 @@ class ReleaseInteractor @Inject constructor(
 
     suspend fun loadRelease(
         releaseId: ReleaseId? = null,
-        releaseCode: ReleaseCode? = null
+        releaseCode: ReleaseCode? = null,
     ): Release {
         val key = RequestKey(releaseId, releaseCode)
         return sharedRequests.request(key) {
             when {
                 releaseId != null -> loadRelease(releaseId)
                 releaseCode != null -> loadRelease(releaseCode)
-                else -> throw Exception("Unknown id=$releaseId or code=$releaseCode")
+                else -> throw Exception("Unknown id=null or code=null")
             }
         }
     }
@@ -145,7 +145,7 @@ class ReleaseInteractor @Inject constructor(
 
     private suspend fun updateIfNotExists(
         releaseId: ReleaseId? = null,
-        releaseCode: ReleaseCode? = null
+        releaseCode: ReleaseCode? = null,
     ) {
         val release = releases.value.findRelease(releaseId, releaseCode)
         if (release != null) {
@@ -168,7 +168,7 @@ class ReleaseInteractor @Inject constructor(
 
     data class RequestKey(
         val id: ReleaseId?,
-        val code: ReleaseCode?
+        val code: ReleaseCode?,
     )
 
 }

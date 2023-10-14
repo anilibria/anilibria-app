@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SearchApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) {
 
     suspend fun getGenres(): List<String> {
@@ -23,7 +23,7 @@ class SearchApi @Inject constructor(
             "query" to "genres"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<String>(moshi)
+            .fetchListApiResponse(moshi)
     }
 
     suspend fun getYears(): List<String> {
@@ -31,7 +31,7 @@ class SearchApi @Inject constructor(
             "query" to "years"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<String>(moshi)
+            .fetchListApiResponse(moshi)
     }
 
     suspend fun fastSearch(name: String): List<SuggestionResponse> {
@@ -41,7 +41,7 @@ class SearchApi @Inject constructor(
             "filter" to "id,code,names,poster"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<SuggestionResponse>(moshi)
+            .fetchListApiResponse(moshi)
     }
 
     suspend fun searchReleases(
@@ -50,7 +50,7 @@ class SearchApi @Inject constructor(
         season: String,
         sort: String,
         complete: String,
-        page: Int
+        page: Int,
     ): PaginatedResponse<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "catalog",
@@ -67,7 +67,7 @@ class SearchApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchPaginatedApiResponse<ReleaseResponse>(moshi)
+            .fetchPaginatedApiResponse(moshi)
     }
 
 }

@@ -18,11 +18,11 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailRecommendsViewModel(
-    private val argExtra: DetailExtra,
+    argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val searchRepository: SearchRepository,
     private val converter: CardsDataConverter,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : BaseCardsViewModel() {
 
     private val releaseId = argExtra.id
@@ -56,12 +56,8 @@ class DetailRecommendsViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> =
         searchGenres(3, requestPage)
-            .let {
-                if (it.isEmpty()) {
-                    searchGenres(2, requestPage)
-                } else {
-                    it
-                }
+            .ifEmpty {
+                searchGenres(2, requestPage)
             }
             .also {
                 releaseInteractor.updateItemsCache(it)

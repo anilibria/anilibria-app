@@ -36,7 +36,7 @@ class ApiOkHttpProvider @Inject constructor(
                 apiConfig.getAddresses().map { it.tag }.contains(apiConfig.active.tag)
 
             if (!availableAddress) {
-                val proxy = apiConfig.proxies.sortedBy { it.ping }.firstOrNull()
+                val proxy = apiConfig.proxies.minByOrNull { it.ping }
                 proxy?.also {
                     proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(it.ip, it.port)))
                     val username = it.user

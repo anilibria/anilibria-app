@@ -28,7 +28,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import dev.rx.tvtest.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 
 open class BasePlayerFragment : VideoSupportFragment() {
 
@@ -116,6 +116,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
                     Player.STATE_READY -> onPreparePlaying()
                     Player.STATE_BUFFERING -> {
                     }
+
                     Player.STATE_IDLE -> {
                     }
                 }
@@ -153,6 +154,6 @@ open class BasePlayerFragment : VideoSupportFragment() {
             C.TYPE_SS -> ssMediaSourceFactory
             C.TYPE_HLS -> hlsMediaSourceFactory
             C.TYPE_OTHER -> otherMediaSourceFactory
-            else -> throw  IllegalStateException("Unsupported type: $type");
+            else -> throw IllegalStateException("Unsupported type: $type")
         }
 }

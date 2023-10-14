@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.update.UpdateController
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared_app.common.SystemUtils
@@ -16,11 +15,10 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class UpdateSourceViewModel(
-    private val checkerRepository: CheckerRepository,
-    private val buildConfig: SharedBuildConfig,
+    checkerRepository: CheckerRepository,
     private val guidedRouter: GuidedRouter,
     private val systemUtils: SystemUtils,
-    private val updateController: UpdateController
+    private val updateController: UpdateController,
 ) : LifecycleViewModel() {
 
     val sourcesData = MutableStateFlow<List<UpdateData.UpdateLink>>(emptyList())

@@ -65,15 +65,15 @@ fun <T> T?.bindOptional(
 fun <T> T?.bindOptionalView(
     view: View,
     bindAction: (T) -> Unit,
-) = bindOptional(bindAction, { visible ->
+) = bindOptional(bindAction) { visible ->
     view.isVisible = visible
-})
+}
 
 fun <T> T?.bindOptionalViews(
     views: Iterable<View>,
     bindAction: (T) -> Unit,
-) = bindOptional(bindAction, { visible ->
+) = bindOptional(bindAction) { visible ->
     views.forEach {
         it.isVisible = visible
     }
-})
+}

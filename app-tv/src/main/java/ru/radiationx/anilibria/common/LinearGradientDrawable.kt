@@ -45,7 +45,7 @@ class LinearGradientDrawable(
     private val gradientPaint = Paint()
 
 
-    val blue = Paint().apply {
+    private val blue = Paint().apply {
         color = Color.BLUE
         isAntiAlias = true
     }
@@ -119,8 +119,8 @@ class LinearGradientDrawable(
             canvas.drawLine(invertedPoint.x, invertedPoint.y, rotatedPoint.x, rotatedPoint.y, blue)
             canvas.drawText(
                 "${
-                    angle.toInt().toString()
-                }, $radius, ${bounds.right}, ${rotatedPoint}", 100f, 100f, red
+                    angle.toInt()
+                }, $radius, ${bounds.right}, $rotatedPoint", 100f, 100f, red
             )
         }
     }
@@ -138,7 +138,7 @@ class LinearGradientDrawable(
         Shader.TileMode.CLAMP
     )
 
-    fun PointF.rotate(center: PointF, rotationAngle: Float): PointF {
+    private fun PointF.rotate(center: PointF, rotationAngle: Float): PointF {
         val translatedAngle = 360 - rotationAngle
         val radianAngle = translatedAngle * Math.PI / 180
         val deltaX = x - center.x
@@ -153,18 +153,18 @@ class LinearGradientDrawable(
         val centerDeltaY = y - center.y
         val scaledDeltaX = abs(abs(centerDeltaX) - abs(centerDeltaX) * scale)
         val scaledDeltaY = abs(abs(centerDeltaY) - abs(centerDeltaY) * scale)
-        val scaledTranslationX: Float
-        val scaledTranslationY: Float
-        scaledTranslationX = if (centerDeltaX < 0 && scale > 1 || centerDeltaX > 0 && scale < 1) {
-            -scaledDeltaX
-        } else {
-            scaledDeltaX
-        }
-        scaledTranslationY = if (centerDeltaY < 0 && scale > 1 || centerDeltaY > 0 && scale < 1) {
-            -scaledDeltaY
-        } else {
-            scaledDeltaY
-        }
+        val scaledTranslationX: Float =
+            if (centerDeltaX < 0 && scale > 1 || centerDeltaX > 0 && scale < 1) {
+                -scaledDeltaX
+            } else {
+                scaledDeltaX
+            }
+        val scaledTranslationY: Float =
+            if (centerDeltaY < 0 && scale > 1 || centerDeltaY > 0 && scale < 1) {
+                -scaledDeltaY
+            } else {
+                scaledDeltaY
+            }
         return PointF(x + scaledTranslationX, y + scaledTranslationY)
     }
 

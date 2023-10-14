@@ -27,20 +27,20 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailHeaderViewModel(
-    private val argExtra: DetailExtra,
+    argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
     private val converter: DetailDataConverter,
     private val router: Router,
     private val guidedRouter: GuidedRouter,
-    private val playerController: PlayerController
+    private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     private val releaseId = argExtra.id
 
     val releaseData = MutableStateFlow<LibriaDetails?>(null)
-    val progressState = MutableStateFlow<DetailsState>(DetailsState())
+    val progressState = MutableStateFlow(DetailsState())
 
     private var currentRelease: Release? = null
 

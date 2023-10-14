@@ -66,7 +66,7 @@ class SearchRepository @Inject constructor(
         )
     }
 
-    suspend fun searchReleases(
+    private suspend fun searchReleases(
         genre: String,
         year: String,
         season: String,

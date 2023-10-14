@@ -15,7 +15,7 @@ class EndSeasonGuidedFragment : BasePlayerGuidedFragment() {
         private const val CLOSE_ACTION_ID = 2L
     }
 
-    private val viewModel by viewModel<EndSeasonViewModel>() { argExtra }
+    private val viewModel by viewModel<EndSeasonViewModel> { argExtra }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 

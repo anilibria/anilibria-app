@@ -9,8 +9,6 @@ import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.Row
 import androidx.lifecycle.ViewModel
-import dev.rx.tvtest.cust.CustomListRowPresenter
-import dev.rx.tvtest.cust.CustomListRowViewHolder
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.common.LibriaCard
@@ -21,6 +19,8 @@ import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject

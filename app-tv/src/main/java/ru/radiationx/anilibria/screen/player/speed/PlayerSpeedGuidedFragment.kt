@@ -15,10 +15,6 @@ class PlayerSpeedGuidedFragment : BasePlayerGuidedFragment() {
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

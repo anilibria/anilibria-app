@@ -2,7 +2,12 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
@@ -36,12 +41,12 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class CatalogExtra(
-    val genre: String?
+    val genre: String?,
 ) : QuillExtra
 
 @InjectConstructor
 class CatalogViewModel(
-    private val argExtra: CatalogExtra,
+    argExtra: CatalogExtra,
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -52,7 +57,7 @@ class CatalogViewModel(
     private val releaseAnalytics: ReleaseAnalytics,
     private val appPreferences: PreferencesHolder,
     private val shortcutHelper: ShortcutHelper,
-    private val systemUtils: SystemUtils
+    private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
     private var lastLoadedPage: Int? = null
@@ -263,5 +268,5 @@ data class CatalogFilterState(
     val genres: List<GenreItem> = emptyList(),
     val years: List<YearItem> = emptyList(),
     val seasons: List<SeasonItem> = emptyList(),
-    val form: SearchForm = SearchForm()
+    val form: SearchForm = SearchForm(),
 )

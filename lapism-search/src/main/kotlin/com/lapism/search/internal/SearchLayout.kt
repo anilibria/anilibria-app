@@ -32,7 +32,6 @@ import com.lapism.search.SearchUtils
  * @hide
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 abstract class SearchLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -274,7 +273,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewNavigation?.setImageResource(resId)
     }
 
-    fun setNavigationIconImageDrawable(@Nullable drawable: Drawable?) {
+    fun setNavigationIconImageDrawable(drawable: Drawable?) {
         mImageViewNavigation?.setImageDrawable(drawable)
     }
 
@@ -303,7 +302,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewMic?.setImageResource(resId)
     }
 
-    fun setMicIconImageDrawable(@Nullable drawable: Drawable?) {
+    fun setMicIconImageDrawable(drawable: Drawable?) {
         mImageViewMic?.setImageDrawable(drawable)
     }
 
@@ -332,7 +331,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewClear?.setImageResource(resId)
     }
 
-    fun setClearIconImageDrawable(@Nullable drawable: Drawable?) {
+    fun setClearIconImageDrawable(drawable: Drawable?) {
         mImageViewClear?.setImageDrawable(drawable)
     }
 
@@ -361,7 +360,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewMenu?.setImageResource(resId)
     }
 
-    fun setMenuIconImageDrawable(@Nullable drawable: Drawable?) {
+    fun setMenuIconImageDrawable(drawable: Drawable?) {
         mImageViewMenu?.setImageDrawable(drawable)
     }
 
@@ -386,7 +385,7 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
-    fun setAdapterLayoutManager(@Nullable layout: RecyclerView.LayoutManager?) {
+    fun setAdapterLayoutManager(layout: RecyclerView.LayoutManager?) {
         mRecyclerView?.layoutManager = layout
     }
 
@@ -397,19 +396,18 @@ abstract class SearchLayout @JvmOverloads constructor(
     /**
      * DividerItemDecoration class
      */
-    fun addAdapterItemDecoration(@NonNull decor: RecyclerView.ItemDecoration) {
+    fun addAdapterItemDecoration(decor: RecyclerView.ItemDecoration) {
         mRecyclerView?.addItemDecoration(decor)
     }
 
-    fun removeAdapterItemDecoration(@NonNull decor: RecyclerView.ItemDecoration) {
+    fun removeAdapterItemDecoration(decor: RecyclerView.ItemDecoration) {
         mRecyclerView?.removeItemDecoration(decor)
     }
 
-    fun setAdapter(@Nullable adapter: RecyclerView.Adapter<*>?) {
+    fun setAdapter(adapter: RecyclerView.Adapter<*>?) {
         mRecyclerView?.adapter = adapter
     }
 
-    @Nullable
     fun getAdapter(): RecyclerView.Adapter<*>? {
         return mRecyclerView?.adapter
     }
@@ -431,11 +429,10 @@ abstract class SearchLayout @JvmOverloads constructor(
      *
      * TODO PARAMETERS NAME
      */
-    fun setTextTypeface(@Nullable typeface: Typeface?) {
+    fun setTextTypeface(typeface: Typeface?) {
         mSearchEditText?.typeface = typeface
     }
 
-    @Nullable
     fun getTextTypeface(): Typeface? {
         return mSearchEditText?.typeface
     }
@@ -456,7 +453,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         return mSearchEditText?.imeOptions
     }
 
-    fun setTextQuery(@Nullable query: CharSequence?, submit: Boolean) {
+    fun setTextQuery(query: CharSequence?, submit: Boolean) {
         mSearchEditText?.setText(query)
         if (query != null) {
             mSearchEditText?.setSelection(mSearchEditText?.length()!!)
@@ -466,7 +463,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
     }
 
-    @Nullable
     fun getTextQuery(): CharSequence? {
         return mSearchEditText?.text
     }
@@ -504,7 +500,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mCardView?.setCardBackgroundColor(color)
     }
 
-    fun setBackgroundColor(@Nullable color: ColorStateList?) {
+    fun setBackgroundColor(color: ColorStateList?) {
         mCardView?.setCardBackgroundColor(color)
     }
 
@@ -529,7 +525,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
     }
 
-    fun setBackgroundRippleColorResource(@Nullable rippleColor: ColorStateList?) {
+    fun setBackgroundRippleColorResource(rippleColor: ColorStateList?) {
         if (mCardView is MaterialCardView) {
             (mCardView as MaterialCardView).rippleColor = rippleColor
         }

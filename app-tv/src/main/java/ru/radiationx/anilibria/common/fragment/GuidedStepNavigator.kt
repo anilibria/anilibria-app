@@ -16,8 +16,8 @@ import kotlin.math.max
 
 class GuidedStepNavigator(
     private val activity: FragmentActivity,
-    private val containerId: Int,
-    private val fragmentManager: FragmentManager = activity.supportFragmentManager,
+    containerId: Int,
+    fragmentManager: FragmentManager = activity.supportFragmentManager,
 ) : SupportAppNavigator(activity, fragmentManager, containerId) {
 
     private val guidedStack = LinkedList<String>()
@@ -61,7 +61,7 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedForward(command: Forward) {
+    private fun guidedForward(command: Forward) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment =
@@ -86,7 +86,7 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedReplace(command: Replace) {
+    private fun guidedReplace(command: Replace) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment =
@@ -118,12 +118,12 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedBackTo(command: BackTo) {
+    private fun guidedBackTo(command: BackTo) {
         if (guidedStack.isNotEmpty()) {
             val key = command.screen?.screenKey
             val index = max(guidedStack.indexOf(key), 0)
             val range = (0 until guidedStack.size - index)
-            range.forEach {
+            repeat(range.count()) {
                 guidedStack.removeLast()
                 fragmentManager.popBackStack(key, 0)
             }
@@ -132,7 +132,7 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedBack() {
+    private fun guidedBack() {
         if (guidedStack.isNotEmpty()) {
             fragmentManager.popBackStack()
             guidedStack.removeLast()

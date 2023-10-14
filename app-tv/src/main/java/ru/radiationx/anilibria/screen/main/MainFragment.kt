@@ -3,24 +3,31 @@ package ru.radiationx.anilibria.screen.main
 import android.os.Bundle
 import android.view.View
 import androidx.leanback.app.RowsSupportFragment
-import androidx.leanback.widget.*
-import dev.rx.tvtest.cust.CustomListRowPresenter
-import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.*
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.ListRow
+import androidx.leanback.widget.OnItemViewSelectedListener
+import androidx.leanback.widget.Presenter
+import androidx.leanback.widget.Row
+import androidx.leanback.widget.RowPresenter
+import ru.radiationx.anilibria.common.BaseCardsViewModel
+import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LinkCard
+import ru.radiationx.anilibria.common.LoadingCard
+import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.quillParentViewModel
-import ru.terrakok.cicerone.Router
 
 
 class MainFragment : RowsSupportFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
-
-    private val router by inject<Router>()
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
@@ -37,10 +44,6 @@ class MainFragment : RowsSupportFragment() {
         MainViewModel.FAVORITE_ROW_ID -> favoritesViewModel
         MainViewModel.YOUTUBE_ROW_ID -> youtubeViewModel
         else -> null
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,12 +65,15 @@ class MainFragment : RowsSupportFragment() {
                     is LinkCard -> {
                         viewMode?.onLinkCardClick()
                     }
+
                     is LoadingCard -> {
                         viewMode?.onLoadingCardClick()
                     }
+
                     is LibriaCard -> {
                         viewMode?.onLibriaCardClick(item)
                     }
+
                     else -> {
                         // do nothing
                     }
@@ -99,7 +105,7 @@ class MainFragment : RowsSupportFragment() {
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
             itemViewHolder: Presenter.ViewHolder?, item: Any?,
-            rowViewHolder: RowPresenter.ViewHolder, row: Row
+            rowViewHolder: RowPresenter.ViewHolder, row: Row,
         ) {
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
@@ -107,12 +113,15 @@ class MainFragment : RowsSupportFragment() {
                     is LibriaCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     is LinkCard -> {
                         rowViewHolder.setDescription(item.title, "")
                     }
+
                     is LoadingCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     else -> {
                         rowViewHolder.setDescription("", "")
                     }

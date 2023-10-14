@@ -4,7 +4,11 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
 import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
@@ -15,13 +19,25 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.features.AuthMainAnalytics
+import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.DonationDetailAnalytics
+import ru.radiationx.data.analytics.features.PlayerAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.analytics.features.ScheduleAnalytics
+import ru.radiationx.data.analytics.features.TeamsAnalytics
+import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.domain.release.*
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.ExternalEpisode
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.RutubeEpisode
+import ru.radiationx.data.entity.domain.release.SourceEpisode
+import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -39,7 +55,7 @@ class ReleaseInfoViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
-    private val donationRepository: DonationRepository,
+    donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
     private val errorHandler: IErrorHandler,
@@ -54,7 +70,7 @@ class ReleaseInfoViewModel(
     private val releaseAnalytics: ReleaseAnalytics,
     private val playerAnalytics: PlayerAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
-    private val teamsAnalytics: TeamsAnalytics
+    private val teamsAnalytics: TeamsAnalytics,
 ) : ViewModel() {
 
     private val remindText =
@@ -256,7 +272,7 @@ class ReleaseInfoViewModel(
 
     private fun onRutubeEpisodeClick(
         release: Release,
-        episode: RutubeEpisode
+        episode: RutubeEpisode,
     ) {
         releaseAnalytics.episodeRutubeClick(release.id.id)
         playWebAction.set(ActionPlayWeb(episode.url, release.code.code))
@@ -265,7 +281,7 @@ class ReleaseInfoViewModel(
     private fun onExternalEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
         release: Release,
-        episode: ExternalEpisode
+        episode: ExternalEpisode,
     ) {
         releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
         episode.url?.also { systemUtils.externalLink(it) }
@@ -274,7 +290,7 @@ class ReleaseInfoViewModel(
     private fun onSourceEpisodeClick(
         release: Release,
         episode: SourceEpisode,
-        quality: Int? = null
+        quality: Int? = null,
     ) {
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
@@ -286,7 +302,7 @@ class ReleaseInfoViewModel(
         release: Release,
         episode: Episode,
         playFlag: Int? = null,
-        quality: Int? = null
+        quality: Int? = null,
     ) {
         val analyticsQuality =
             quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
@@ -297,7 +313,7 @@ class ReleaseInfoViewModel(
     fun onEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
         playFlag: Int? = null,
-        quality: Int? = null
+        quality: Int? = null,
     ) {
         val release = currentData ?: return
         when (episodeState.type) {
@@ -305,14 +321,17 @@ class ReleaseInfoViewModel(
                 val episodeItem = getEpisodeItem(episodeState) ?: return
                 onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
             }
+
             ReleaseEpisodeItemType.SOURCE -> {
                 val episodeItem = getSourceEpisode(episodeState) ?: return
                 onSourceEpisodeClick(release, episodeItem, quality)
             }
+
             ReleaseEpisodeItemType.EXTERNAL -> {
                 val episodeItem = getExternalEpisode(episodeState) ?: return
                 onExternalEpisodeClick(episodeState, release, episodeItem)
             }
+
             ReleaseEpisodeItemType.RUTUBE -> {
                 val episodeItem = getRutubeEpisode(episodeState) ?: return
                 onRutubeEpisodeClick(release, episodeItem)
@@ -439,6 +458,7 @@ class ReleaseInfoViewModel(
                 catalogAnalytics.open(AnalyticsConstants.screen_release)
                 router.navigateTo(Screens.Catalog(genre))
             }
+
             ReleaseInfoState.TAG_VOICE -> {
                 val voice = data.voices.getOrNull(index) ?: return
                 releaseAnalytics.voiceClick(data.id.id)
@@ -505,8 +525,8 @@ class ReleaseInfoViewModel(
     fun onCheckAllEpisodesHistoryClick() {
         viewModelScope.launch {
             releaseAnalytics.historyViewAll()
-            currentData?.also {
-                val accesses = it.episodes.map {
+            currentData?.also { release ->
+                val accesses = release.episodes.map {
                     it.access.copy(isViewed = true)
                 }
                 releaseInteractor.putEpisodes(accesses)
@@ -532,22 +552,22 @@ class ReleaseInfoViewModel(
 
 data class ActionContinue(
     val release: Release,
-    val startWith: Episode
+    val startWith: Episode,
 )
 
 data class ActionPlayWeb(
     val link: String,
-    val code: String
+    val code: String,
 )
 
 data class ActionPlayEpisode(
     val release: Release,
     val episode: Episode,
     val playFlag: Int?,
-    val quality: Int?
+    val quality: Int?,
 )
 
 data class ActionLoadEpisode(
     val episode: SourceEpisode,
-    val quality: Int?
+    val quality: Int?,
 )

@@ -107,9 +107,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         const val REMOTE_CONTROL_NEXT = 4
 
 
-        //private const val NOT_SELECTED = -1
-        private const val NO_ID = -1
-
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
@@ -452,14 +449,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
     }
 
-    private fun getInPIP(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            isInPictureInPictureMode
-        } else {
-            false
-        }
-    }
-
     private fun updateByConfig(config: Configuration) {
         val correctOrientation = config.orientation
         fullscreenOrientation = when (correctOrientation) {
@@ -610,8 +599,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             if (intent == null || intent.action != ACTION_REMOTE_CONTROL) {
                 return
             }
-            val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
-            when (remoteControl) {
+            when (intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)) {
                 REMOTE_CONTROL_PLAY -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PAUSE -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PREV -> controlsListener.onPreviousClicked()
@@ -1153,10 +1141,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
 
         override fun onFullScreenClick() {
-            if (fullscreenOrientation) {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            requestedOrientation = if (fullscreenOrientation) {
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             } else {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             }
             fullscreenOrientation = !fullscreenOrientation
             if (fullscreenOrientation) {

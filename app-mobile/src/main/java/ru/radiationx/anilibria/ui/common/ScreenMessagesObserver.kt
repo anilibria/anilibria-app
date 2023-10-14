@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 class ScreenMessagesObserver @Inject constructor(
     private val context: Context,
-    private val screenMessenger: SystemMessenger,
+    screenMessenger: SystemMessenger,
 ) : DefaultLifecycleObserver {
 
     private val messageBufferTrigger = MutableSharedFlow<Boolean>()

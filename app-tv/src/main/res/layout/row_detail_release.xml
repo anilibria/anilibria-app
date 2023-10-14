@@ -98,13 +98,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_fullhd"
-        android:tint="@color/dark_textDefault"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/rowReleaseExtra"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseFavoriteCount"
         app:layout_constraintStart_toEndOf="@id/rowReleaseExtra"
         app:layout_constraintTop_toTopOf="@id/rowReleaseExtra"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        app:tint="@color/dark_textDefault" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rowReleaseFavoriteCount"
@@ -248,10 +248,10 @@
         android:layout_marginBottom="@dimen/lb_browse_padding_top"
         android:alpha="0.75"
         android:src="@drawable/ic_wide_arrow_down"
-        android:tint="@color/dark_textDefault"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/dark_textDefault" />
 
     <ProgressBar
         android:id="@+id/rowReleaseLoadingProgress"

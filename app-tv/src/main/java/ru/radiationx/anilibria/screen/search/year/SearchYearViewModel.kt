@@ -16,7 +16,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchYearViewModel(
-    private val argExtra: SearchValuesExtra,
+    argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter,
@@ -27,12 +27,12 @@ class SearchYearViewModel(
     init {
         searchRepository
             .observeYears()
-            .onEach {
+            .onEach { years ->
                 currentYears.clear()
-                currentYears.addAll(it)
+                currentYears.addAll(years)
                 currentValues.clear()
-                currentValues.addAll(it.map { it.value })
-                valuesData.value = it.map { it.title }
+                currentValues.addAll(years.map { it.value })
+                valuesData.value = years.map { it.title }
                 progressState.value = false
                 updateChecked()
                 updateSelected()

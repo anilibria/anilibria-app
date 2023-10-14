@@ -138,7 +138,7 @@ class GradientBackgroundManager(
         }
     }
 
-    fun applyPalette(
+    private fun applyPalette(
         palette: Palette,
         colorSelector: (Palette) -> Int? = defaultColorSelector,
         colorModifier: (Int) -> Int = defaultColorModifier,
@@ -146,7 +146,10 @@ class GradientBackgroundManager(
         applyColor(colorSelector(palette) ?: defaultColorSelector(palette), colorModifier)
     }
 
-    fun applyColor(@ColorInt color: Int, colorModifier: (Int) -> Int = defaultColorModifier) {
+    private fun applyColor(
+        @ColorInt color: Int,
+        colorModifier: (Int) -> Int = defaultColorModifier,
+    ) {
         val finalColor = colorModifier.invoke(color)
         subscribeColorApplier()
         colorApplier.value = finalColor

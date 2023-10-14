@@ -132,11 +132,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         updateTabs()
         initContainers()
 
-        savedInstanceState?.let {
-            it.getStringArrayList(TABS_STACK)?.let {
-                if (it.isNotEmpty()) {
-                    tabsStack.addAll(it)
-                }
+        savedInstanceState?.getStringArrayList(TABS_STACK)?.let {
+            if (it.isNotEmpty()) {
+                tabsStack.addAll(it)
             }
         }
         checkerViewModel.state.mapNotNull { it.data }.onEach {
@@ -291,8 +289,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
-        tabs.forEach {
-            fm.findFragmentByTag(it)?.let {
+        tabs.forEach { tab ->
+            fm.findFragmentByTag(tab)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true
                 }

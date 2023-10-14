@@ -47,7 +47,7 @@ class FeedSchedulesDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: (ScheduleItemState, View, Int) -> Unit,
+        clickListener: (ScheduleItemState, View, Int) -> Unit,
         private val scrollListener: (Int) -> Unit,
         private val viewPool: RecyclerView.RecycledViewPool? = null,
     ) : RecyclerView.ViewHolder(itemView), IBundledViewHolder {

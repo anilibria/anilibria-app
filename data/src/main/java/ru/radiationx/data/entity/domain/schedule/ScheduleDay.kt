@@ -1,20 +1,20 @@
 package ru.radiationx.data.entity.domain.schedule
 
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
-import java.util.*
+import java.util.Calendar
 
 data class ScheduleDay(
     val day: Int,
-    val items: List<ScheduleItem>
+    val items: List<ScheduleItem>,
 ) {
     companion object {
-        const val MONDAY = "1"
-        const val TUESDAY = "2"
-        const val WEDNESDAY = "3"
-        const val THURSDAY = "4"
-        const val FRIDAY = "5"
-        const val SATURDAY = "6"
-        const val SUNDAY = "7"
+        private const val MONDAY = "1"
+        private const val TUESDAY = "2"
+        private const val WEDNESDAY = "3"
+        private const val THURSDAY = "4"
+        private const val FRIDAY = "5"
+        private const val SATURDAY = "6"
+        private const val SUNDAY = "7"
 
         fun fromCalendarDay(day: Int): String = when (day) {
             Calendar.MONDAY -> MONDAY

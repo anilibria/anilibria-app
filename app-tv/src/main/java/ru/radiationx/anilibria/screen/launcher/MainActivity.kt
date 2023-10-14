@@ -4,17 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
-import ru.radiationx.anilibria.di.*
+import ru.radiationx.anilibria.di.ActivityModule
+import ru.radiationx.anilibria.di.NavigationModule
+import ru.radiationx.anilibria.di.PlayerModule
+import ru.radiationx.anilibria.di.SearchModule
+import ru.radiationx.anilibria.di.UpdateModule
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
 
 class MainActivity : FragmentActivity() {
 
@@ -26,10 +28,6 @@ class MainActivity : FragmentActivity() {
             R.id.fragmentContainer
         )
     }
-
-    private val router by inject<Router>()
-
-    private val guidedRouter by inject<GuidedRouter>()
 
     private val navigatorHolder by inject<NavigatorHolder>()
 

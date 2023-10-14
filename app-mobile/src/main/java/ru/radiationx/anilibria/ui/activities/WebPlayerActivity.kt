@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities
 
+import android.annotation.SuppressLint
 import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
@@ -44,6 +45,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

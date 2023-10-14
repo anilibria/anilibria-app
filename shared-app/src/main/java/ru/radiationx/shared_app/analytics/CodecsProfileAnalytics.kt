@@ -1,14 +1,18 @@
 package ru.radiationx.shared_app.analytics
 
 import ru.radiationx.data.analytics.profile.ProfileConstants
-import ru.radiationx.shared_app.codecs.*
+import ru.radiationx.shared_app.codecs.MediaCodecsProvider
+import ru.radiationx.shared_app.codecs.filterKnown
+import ru.radiationx.shared_app.codecs.isDecoder
+import ru.radiationx.shared_app.codecs.isHardware
+import ru.radiationx.shared_app.codecs.isSoftware
 import ru.radiationx.shared_app.codecs.types.KnownCodec
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class CodecsProfileAnalytics {
 
-    suspend fun getCodecsInfo(): Map<String, String> {
+    fun getCodecsInfo(): Map<String, String> {
         return KnownCodec.values().associate { knownCodec ->
             val codecs = MediaCodecsProvider.codecs.filterKnown(knownCodec)
             val hasSoftware = codecs.any {

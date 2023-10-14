@@ -12,7 +12,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import ru.radiationx.shared.ktx.repeatWhen
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import toothpick.InjectConstructor
@@ -116,8 +115,4 @@ class AppThemeControllerImpl(
         AppCompatDelegate.setDefaultNightMode(delegateMode)
     }
 
-    private fun AppTheme.toMode() = when (this) {
-        AppTheme.LIGHT -> AppThemeMode.LIGHT
-        AppTheme.DARK -> AppThemeMode.DARK
-    }
 }

@@ -3,6 +3,8 @@ apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 
 android {
+    namespace "ru.radiationx.anilibria"
+
     compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
@@ -13,31 +15,32 @@ android {
         versionName "1.1.0_RC2"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    namespace "ru.radiationx.anilibria"
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             def appName = "AniLibria_TV"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
         }
-    }
-
-    buildFeatures {
-        viewBinding true
     }
 }
 

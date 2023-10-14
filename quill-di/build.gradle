@@ -3,6 +3,8 @@ apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 
 android {
+    namespace "ru.radiationx.quill"
+
     compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
@@ -18,8 +20,6 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
-    namespace "ru.radiationx.quill"
-
 }
 
 dependencies {

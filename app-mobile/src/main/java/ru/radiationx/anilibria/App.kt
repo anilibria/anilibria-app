@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.multidex.MultiDex
 import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
@@ -26,13 +25,6 @@ import toothpick.configuration.Configuration
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-        when (BuildConfig.FLAVOR) {
-            "appDev", "store" -> MultiDex.install(this)
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()

@@ -8,6 +8,8 @@ buildscript {
 }
 
 android {
+    namespace "com.lapism.search"
+
     compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
@@ -33,14 +35,9 @@ android {
         jvmTarget = "1.8"
     }
 
-    /*lintOptions {
-        abortOnError false
-    }*/
-
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
     }
-    namespace "com.lapism.search"
 }
 
 dependencies {
@@ -51,5 +48,3 @@ dependencies {
 
     implementation "com.google.android.material:material:$material_version"
 }
-
-// $ ./gradlew clean build bintrayUpload -PbintrayUser=lapism -PbintrayKey= -PdryRun=false

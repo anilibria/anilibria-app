@@ -3,6 +3,8 @@ apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 
 android {
+    namespace "ru.radiationx.shared.ktx.android"
+
     compileSdkVersion app_compile_sdk_version
 
     defaultConfig {
@@ -21,15 +23,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     lint {
         checkReleaseBuilds false
         disable "RestrictedApi"
     }
-    namespace "ru.radiationx.shared.ktx.android"
-
 }
 
 dependencies {

@@ -211,7 +211,7 @@ class ReleaseInfoViewModel(
         commentsNotifier.requireOpen()
     }
 
-    fun onClickWatchWeb(place: EpisodeControlPlace) {
+    fun onClickWatchWeb() {
         currentData?.also { release ->
             releaseAnalytics.webPlayerClick(release.id.id)
             release.moonwalkLink?.let {
@@ -248,7 +248,7 @@ class ReleaseInfoViewModel(
         playerAnalytics.open(AnalyticsConstants.screen_release, playerType, quality)
     }
 
-    fun onClickEpisodesMenu(place: EpisodeControlPlace) {
+    fun onClickEpisodesMenu() {
         currentData?.also {
             showEpisodesMenuAction.set(Unit)
         }

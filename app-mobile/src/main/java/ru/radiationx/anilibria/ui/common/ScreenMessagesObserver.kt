@@ -2,19 +2,28 @@ package ru.radiationx.anilibria.ui.common
 
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.utils.messages.SystemMessage
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import javax.inject.Inject
 
 class ScreenMessagesObserver @Inject constructor(
     private val context: Context,
-    private val screenMessenger: SystemMessenger
-) : LifecycleObserver {
+    private val screenMessenger: SystemMessenger,
+) : DefaultLifecycleObserver {
 
     private val messageBufferTrigger = MutableSharedFlow<Boolean>()
     private val messagesBuffer = mutableListOf<SystemMessage>()
@@ -31,8 +40,9 @@ class ScreenMessagesObserver @Inject constructor(
             .launchIn(scope)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun resume() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
         messengerJob?.cancel()
         messengerJob = messageBufferTrigger
             .map { messagesBuffer.toList() }
@@ -44,13 +54,13 @@ class ScreenMessagesObserver @Inject constructor(
             .launchIn(scope)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun pause() {
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
         messengerJob?.cancel()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun destroy() {
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
         scope.cancel()
     }
 

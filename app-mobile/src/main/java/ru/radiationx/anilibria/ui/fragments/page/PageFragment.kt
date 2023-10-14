@@ -112,6 +112,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
 
         binding.webView.webViewClient = object : WebViewClient() {
 
+            @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 systemUtils.externalLink(url.orEmpty())
                 return true

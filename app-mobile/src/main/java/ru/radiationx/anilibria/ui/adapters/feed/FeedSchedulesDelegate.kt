@@ -68,7 +68,7 @@ class FeedSchedulesDelegate(
                     setRecycledViewPool(it)
                 }
                 var prevScrollPosition = -1
-                addItemsPositionListener { first, last ->
+                addItemsPositionListener { _, last ->
                     if (prevScrollPosition != last) {
                         scrollListener.invoke(last)
                         prevScrollPosition = last

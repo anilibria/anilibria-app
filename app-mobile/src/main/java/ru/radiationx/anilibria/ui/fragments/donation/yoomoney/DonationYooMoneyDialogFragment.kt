@@ -212,7 +212,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
 
     private fun MaterialButtonToggleGroup.addCheckedListener(action: (checkedId: Int?) -> Unit) {
         var lastValue: Int? = null
-        addOnButtonCheckedListener { group, checkedId, isChecked ->
+        addOnButtonCheckedListener { group, _, _ ->
             val isSameValue = group.checkedButtonIds.size == 1
                     && group.checkedButtonIds[0] == group.checkedButtonId
             val isNoSelection = group.checkedButtonIds.isEmpty()

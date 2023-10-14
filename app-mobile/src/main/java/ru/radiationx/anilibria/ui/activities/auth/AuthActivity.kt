@@ -42,6 +42,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val dimensionsProvider by inject<DimensionsProvider>()
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -69,6 +70,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         navigationHolder.removeNavigator()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.root_container)
         val fragmentBackHandled = (fragment as? BackButtonListener)?.onBackPressed() ?: false

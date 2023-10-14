@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
@@ -19,7 +21,12 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
@@ -93,6 +100,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         CheckerExtra(forceLoad = true)
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -253,9 +261,11 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+        outState.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
     }
 
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
         val check = fragment != null
@@ -271,9 +281,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private fun handleIntent(intent: Intent?) {
         intent?.data?.also { intentData ->
             val url = intentData.toString()
-            var handled = findTabIntentHandler(url, tabsStack.asReversed())
+            val handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
-                handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
+                findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
         }
         intent?.data = null
@@ -399,7 +409,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             if (!exitToastShowed) {
                 screenMessenger.showMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true
-                Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
+                Handler(Looper.getMainLooper()).postDelayed({ exitToastShowed = false }, 3L * 1000)
             } else {
                 super.activityBack()
             }
@@ -409,6 +419,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     data class Tab(
         val title: Int,
         val icon: Int,
-        val screen: BaseAppScreen
+        val screen: BaseAppScreen,
     )
 }

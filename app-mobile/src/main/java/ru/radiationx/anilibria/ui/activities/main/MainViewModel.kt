@@ -42,7 +42,7 @@ class MainViewModel(
     private val otherAnalytics: OtherAnalytics
 ) : ViewModel() {
 
-    private val defaultScreen = Screens.MainFeed().screenKey!!
+    private val defaultScreen = Screens.MainFeed().screenKey
 
     private var firstLaunch = true
 

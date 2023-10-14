@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package ru.radiationx.data.di
 
 import android.content.Context
@@ -158,8 +160,9 @@ class DataModule : QuillModule() {
 
     @InjectConstructor
     class PreferencesProvider(
-        private val context: Context
+        private val context: Context,
     ) : Provider<SharedPreferences> {
+        @Suppress("DEPRECATION")
         override fun get(): SharedPreferences {
             // for strict-mode pass
             return runBlocking {
@@ -172,7 +175,7 @@ class DataModule : QuillModule() {
 
     @InjectConstructor
     class DataPreferencesProvider(
-        private val context: Context
+        private val context: Context,
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {
             // for strict-mode pass

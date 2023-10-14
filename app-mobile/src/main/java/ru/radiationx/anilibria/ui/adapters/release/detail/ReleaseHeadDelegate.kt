@@ -68,6 +68,7 @@ class ReleaseHeadDelegate(
             }
         }
 
+        @Suppress("DEPRECATION")
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng

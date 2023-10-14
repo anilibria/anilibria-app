@@ -38,6 +38,7 @@ class ReleaseItemDelegate(
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
+        @Suppress("DEPRECATION")
         fun bind(item: ReleaseListItem) {
             val releaseItem = item.item
             binding.itemTitle.text = releaseItem.title

@@ -1,6 +1,7 @@
 package ru.radiationx.data.repository
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.HistoryHolder
@@ -27,6 +28,7 @@ class HistoryRepository @Inject constructor(
             .let { historyRuntimeCache.getCached(it) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun observeReleases(): Flow<List<Release>> = historyStorage
         .observeEpisodes()
         .map { it.asReversed() }

@@ -177,7 +177,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         binding.player.playbackSpeed = currentPlaySpeed
         binding.player.setOnPreparedListener(playerListener)
         binding.player.setOnCompletionListener(playerListener)
-        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
+        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, _ ->
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
         binding.player.setAnalyticsListener(object : AnalyticsListener {
@@ -307,6 +307,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         videoControls = null
     }
 
+    @Suppress("DEPRECATION")
     private fun hasPipPermission(): Boolean {
         val appOps = getSystemService<AppOpsManager>() ?: return false
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -331,6 +332,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return hasFeature && hasPermission
     }
 
+    @Suppress("DEPRECATION")
     private fun checkSausage(): Boolean {
         val size = windowManager.defaultDisplay.let {
             val size = Point()
@@ -346,6 +348,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
+    @Suppress("DEPRECATION")
     private fun handleIntentData(intent: Intent) {
         val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
@@ -372,10 +375,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         updateAndPlayRelease()
     }
 
+    @Suppress("DEPRECATION")
     private fun updateAndPlayRelease() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
-        }
+        setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
 
         videoControls?.apply {
             setTitle(releaseData.title)
@@ -571,12 +573,14 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         updateUiFlags()
     }
 
+    @Suppress("DEPRECATION")
     private fun initUiFlags() {
         window.decorView.also {
             it.setOnSystemUiVisibilityChangeListener(fullScreenListener)
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun updateUiFlags() {
         val scale = loadScale(currentOrientation)
         val inMultiWindow = getInMultiWindow()
@@ -671,7 +675,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
         if (checkPipMode()) {
-            binding.player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
+            binding.player.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
@@ -684,7 +688,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private fun updatePictureInPictureParams() {
         if (checkPipMode()) {
             val params = pictureInPictureParams ?: return
-            val playState = binding.player?.isPlaying ?: return
+            val playState = binding.player.isPlaying
             val actions = mutableListOf<RemoteAction>()
             val maxActions = maxNumPictureInPictureActions
 
@@ -824,6 +828,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
         }
 
+        @Suppress("DEPRECATION")
         fun showSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 updateSettingsDialog()
@@ -917,6 +922,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showPlaySpeedDialog() {
             val values = arrayOf(
                 0.25f,
@@ -953,6 +959,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showQualityDialog() {
             val qualities = mutableListOf<Int>()
             if (getEpisode().urlSd != null) qualities.add(VAL_QUALITY_SD)
@@ -983,6 +990,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showScaleDialog() {
             val values = arrayOf(
                 ScaleType.FIT_CENTER,
@@ -1013,6 +1021,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showPIPDialog() {
             val values = arrayOf(
                 PreferencesHolder.PIP_AUTO,
@@ -1230,6 +1239,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
     }
 
+    @Suppress("DEPRECATION")
     private inner class FullScreenListener : View.OnSystemUiVisibilityChangeListener {
         override fun onSystemUiVisibilityChange(visibility: Int) {
             if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {

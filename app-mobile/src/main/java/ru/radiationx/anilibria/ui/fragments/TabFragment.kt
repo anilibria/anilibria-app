@@ -50,6 +50,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
+    @Suppress("DEPRECATION")
     private val localScreen: BaseAppScreen by lazy {
         arguments?.let {
             (it.getSerializable(ARG_ROOT_SCREEN) as? BaseAppScreen?)

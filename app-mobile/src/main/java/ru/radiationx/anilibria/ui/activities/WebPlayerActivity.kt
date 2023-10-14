@@ -44,6 +44,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
@@ -67,11 +68,12 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             javaScriptEnabled = true
         }
         binding.webView.webViewClient = object : WebViewClient() {
+            @Deprecated("Deprecated in Java")
             @Suppress("OverridingDeprecatedMember")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 val matcher =
                     Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)")
-                        .matcher(url)
+                        .matcher(url.orEmpty())
                 return if (matcher.find()) {
                     false
                 } else {
@@ -87,7 +89,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             override fun onReceivedSslError(
                 view: WebView?,
                 handler: SslErrorHandler?,
-                error: SslError?
+                error: SslError?,
             ) {
                 super.onReceivedSslError(view, handler, error)
                 webPlayerAnalytics.error(error.toException())
@@ -96,7 +98,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             override fun onReceivedHttpError(
                 view: WebView?,
                 request: WebResourceRequest?,
-                errorResponse: WebResourceResponse?
+                errorResponse: WebResourceResponse?,
             ) {
                 super.onReceivedHttpError(view, request, errorResponse)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
@@ -107,7 +109,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             override fun onReceivedError(
                 view: WebView?,
                 request: WebResourceRequest?,
-                error: WebResourceError?
+                error: WebResourceError?,
             ) {
                 super.onReceivedError(view, request, error)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {

@@ -39,6 +39,7 @@ class FeedReleaseDelegate(
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
+        @Suppress("DEPRECATION")
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.release)
 

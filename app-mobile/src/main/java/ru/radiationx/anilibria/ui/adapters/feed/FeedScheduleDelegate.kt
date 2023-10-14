@@ -53,6 +53,7 @@ class FeedScheduleDelegate(
             binding.itemComplete.background = gradientDrawable
         }
 
+        @Suppress("DEPRECATION")
         fun bind(item: FeedScheduleListItem) {
             val state = item.state
             binding.itemComplete.isVisible = state.isCompleted

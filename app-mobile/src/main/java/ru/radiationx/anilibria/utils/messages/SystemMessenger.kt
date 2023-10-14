@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.utils.messages
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,11 +15,10 @@ class SystemMessenger @Inject constructor() {
     fun observe(): Flow<SystemMessage> = messagesRelay.asSharedFlow()
 
     fun showMessage(message: String) {
-        GlobalScope.launch {
-            messagesRelay.emit(SystemMessage(message))
-        }
+        showMessage(SystemMessage(message))
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun showMessage(message: SystemMessage) {
         GlobalScope.launch {
             messagesRelay.emit(message)

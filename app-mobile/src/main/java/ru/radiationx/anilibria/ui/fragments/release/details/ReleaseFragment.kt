@@ -141,6 +141,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
         val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
+            @Suppress("DEPRECATION")
             override fun onScrimChanged(scrim: Boolean) {
                 baseBinding.toolbarInsetShadow.isGone = scrim
                 if (scrim) {
@@ -227,6 +228,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         super.onDestroyView()
     }
 
+    @Suppress("DEPRECATION")
     private fun updateToolbarColors(loadedImage: Bitmap) {
         toolbarHelperJob?.cancel()
         toolbarHelperJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -244,6 +246,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         }
     }
 
+    @Suppress("DEPRECATION")
     private inner class CustomPagerAdapter :
         androidx.fragment.app.FragmentStatePagerAdapter(
             childFragmentManager,

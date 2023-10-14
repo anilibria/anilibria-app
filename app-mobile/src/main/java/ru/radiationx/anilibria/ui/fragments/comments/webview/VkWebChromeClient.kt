@@ -18,6 +18,8 @@ class VkWebChromeClient(
         return super.onConsoleMessage(consoleMessage)
     }
 
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onConsoleMessage(message: String?, lineNumber: Int, sourceID: String?) {
         super.onConsoleMessage(message, lineNumber, sourceID)
         val hasJsError = jsErrorRegex.containsMatchIn(message.orEmpty())

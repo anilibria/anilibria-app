@@ -46,21 +46,21 @@ class SettingsFragment : BaseSettingFragment() {
         addPreferencesFromResource(R.xml.preferences)
 
         findPreference<SwitchPreferenceCompat>("notifications.all")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::notificationMainChange)
                 return@setOnPreferenceChangeListener true
             }
         }
 
         findPreference<SwitchPreferenceCompat>("notifications.service")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::notificationSystemChange)
                 return@setOnPreferenceChangeListener true
             }
         }
 
         findPreference<SwitchPreferenceCompat>("app_theme_dark")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also { isDark ->
                     val theme = if (isDark) {
                         AnalyticsAppTheme.DARK
@@ -74,7 +74,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<SwitchPreferenceCompat>("episodes_is_reverse")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::episodesOrderChange)
                 return@setOnPreferenceChangeListener true
             }
@@ -123,7 +123,7 @@ class SettingsFragment : BaseSettingFragment() {
                 val titles = values.map { getPlayerTypeTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
                     .setTitle(preference.title)
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val playerType = values[which]
                         settingsAnalytics.playerChange(playerType.toAnalyticsPlayer())
                         appPreferences.setPlayerType(playerType)

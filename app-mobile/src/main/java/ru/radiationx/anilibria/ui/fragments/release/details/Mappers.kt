@@ -14,6 +14,7 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.asTimeSecString
+import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared_app.codecs.MediaCodecsFinder
 import ru.radiationx.shared_app.codecs.types.CodecProcessingType
 import ru.radiationx.shared_app.codecs.types.CodecQuery
@@ -44,7 +45,7 @@ fun Release.toInfoState(): ReleaseInfoState {
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
     val genresHtml = "<b>Жанр:</b> " + genres.joinToString(", ") {
         val index = genres.indexOf(it)
-        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalize()}</a>"
+        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalizeDefault()}</a>"
     }
     val arrHtml = arrayOf(
         seasonsHtml,

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.other
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -113,6 +114,7 @@ class OtherViewModel(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun signOut() {
         otherAnalytics.logoutClick()
         GlobalScope.launch {

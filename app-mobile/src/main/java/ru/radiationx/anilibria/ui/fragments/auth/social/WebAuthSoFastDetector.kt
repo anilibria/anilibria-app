@@ -19,6 +19,7 @@ class WebAuthSoFastDetector {
         loadTime = Date()
     }
 
+    @Suppress("DEPRECATION")
     fun clearCookies() {
         CookieManager.getInstance().removeAllCookie()
     }

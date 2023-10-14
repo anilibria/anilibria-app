@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ import java.util.*
 
 /* Created by radiationx on 05.11.17. */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class FeedViewModel(
     private val feedRepository: FeedRepository,
@@ -350,7 +352,7 @@ class FeedViewModel(
                 "Ожидается сегодня"
             } else {
                 val preText = mskDay.asDayPretext()
-                val dayName = mskDay.asDayNameDeclension().toLowerCase()
+                val dayName = mskDay.asDayNameDeclension().lowercase(Locale.getDefault())
                 "Ожидается $preText $dayName (по МСК)"
             }
 

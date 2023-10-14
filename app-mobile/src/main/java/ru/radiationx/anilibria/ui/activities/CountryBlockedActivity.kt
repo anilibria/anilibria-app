@@ -15,6 +15,7 @@ class CountryBlockedActivity : BaseActivity(R.layout.activity_country_blocked) {
 
     private val binding by viewBinding<ActivityCountryBlockedBinding>()
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)

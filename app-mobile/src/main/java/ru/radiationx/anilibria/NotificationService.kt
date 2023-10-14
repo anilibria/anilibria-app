@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
@@ -48,6 +49,7 @@ class NotificationService : FirebaseMessagingService() {
         val payload: String? = null
     )
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

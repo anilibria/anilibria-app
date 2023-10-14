@@ -245,7 +245,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                 when (playerType) {
                     PreferencesHolder.PLAYER_TYPE_EXTERNAL -> {
                         selectQuality(qualityInfo, { selected ->
-                            playExternal(release, episode, selected)
+                            playExternal(episode, selected)
                         }, true)
                     }
                     PreferencesHolder.PLAYER_TYPE_INTERNAL -> {
@@ -257,7 +257,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             } else {
                 when (playerType) {
                     PreferencesHolder.PLAYER_TYPE_EXTERNAL -> playExternal(
-                        release,
                         episode,
                         quality
                     )
@@ -300,7 +299,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     ) {
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
         AlertDialog.Builder(requireContext())
-            .setItems(titles) { dialog, which ->
+            .setItems(titles) { _, which ->
                 val playerType = when (which) {
                     0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
                     1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
@@ -336,7 +335,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         })
     }
 
-    private fun playExternal(release: Release, episode: Episode, quality: Int) {
+    private fun playExternal(episode: Episode, quality: Int) {
         viewModel.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
@@ -513,7 +512,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     private val episodeControlListener = object : ReleaseEpisodeControlDelegate.Listener {
 
         override fun onClickWatchWeb(place: EpisodeControlPlace) {
-            viewModel.onClickWatchWeb(place)
+            viewModel.onClickWatchWeb()
         }
 
         override fun onClickWatchAll(place: EpisodeControlPlace) {
@@ -525,7 +524,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }
 
         override fun onClickEpisodesMenu(place: EpisodeControlPlace) {
-            viewModel.onClickEpisodesMenu(place)
+            viewModel.onClickEpisodesMenu()
         }
     }
 

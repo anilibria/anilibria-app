@@ -238,6 +238,7 @@ class ConfiguringInteractor @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun checkProxies() {
         updateState(State.CHECK_PROXIES)
         val timeCounter = TimeCounter()

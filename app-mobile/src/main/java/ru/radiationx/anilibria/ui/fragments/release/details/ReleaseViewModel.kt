@@ -79,7 +79,7 @@ class ReleaseViewModel(
             coRunCatching {
                 releaseInteractor.loadRelease(argExtra.id, argExtra.code)
             }.onSuccess {
-                historyRepository.putRelease(it as Release)
+                historyRepository.putRelease(it)
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -92,7 +92,7 @@ class ReleaseViewModel(
             .observeFull(argExtra.id, argExtra.code)
             .onEach { release ->
                 updateLocalRelease(release)
-                historyRepository.putRelease(release as Release)
+                historyRepository.putRelease(release)
             }
             .launchIn(viewModelScope)
     }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -43,6 +44,7 @@ class App : Application() {
         YandexMetrica.enableActivityAutoTracking(this)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun initInMainProcess() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -16,6 +17,7 @@ import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -120,6 +122,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun getLayoutResource() = R.layout.view_video_control
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun retrieveViews() {
         super.retrieveViews()
         val viewRoot = findViewById<CoordinatorLayout>(R.id.videoControlsRoot)
@@ -160,7 +163,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             private var tapSeekStarted = false
 
             private var tapJob: Job? = null
-            private val tapSeekHandler = Handler()
+            private val tapSeekHandler = Handler(Looper.getMainLooper())
             private val tapSeekRunnable = Runnable {
                 applyPlayerSeek()
                 binding.gestureSeekValue.isGone = true
@@ -239,13 +242,10 @@ class VideoControlsAlib @JvmOverloads constructor(
                     swipeSeekStarted = true
                 }
 
-                val duration = videoView?.duration ?: 0
-                val currentPosition = videoView?.currentPosition ?: 0
                 val percent: Int = ((delta / binding.gesturesControllerView.width) * 100).toInt()
                 val seconds =
                     (pow(percent.toDouble(), 2.0) / 25).toLong() * if (percent < 0) -1 else 1
                 val seekMillis = TimeUnit.SECONDS.toMillis(seconds)
-                val targetPosition = (currentPosition + seekMillis).coerceIn(0, duration)
 
                 val textValue =
                     "${if (seekMillis > 0) "+" else "-"}${Date(seekMillis.absoluteValue).asTimeSecString()}"

@@ -52,7 +52,7 @@ class AuthVkViewModel(
 
     fun onContinueClick() {
         _state.update { it.copy(showClearCookies = false) }
-        currentSuccessUrl?.also { successSignVk(it) }
+        currentSuccessUrl?.also { successSignVk() }
     }
 
     fun onSuccessAuthResult(result: String) {
@@ -60,7 +60,7 @@ class AuthVkViewModel(
             currentSuccessUrl = result
             _state.update { it.copy(showClearCookies = true) }
         } else {
-            successSignVk(result)
+            successSignVk()
         }
     }
 
@@ -68,7 +68,7 @@ class AuthVkViewModel(
         _state.update { it.copy(pageState = pageState) }
     }
 
-    private fun successSignVk(resultUrl: String) {
+    private fun successSignVk() {
         viewModelScope.launch {
             authHolder.changeVkAuth(true)
             router.exit()

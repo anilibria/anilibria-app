@@ -72,7 +72,7 @@ object ToolbarHelper {
                 }
 
                 val allPixelsCount = bitmapCopy.width * bitmapCopy.height
-                val darkPixelCount = (0 until 64).sumBy { histogram[it] }
+                val darkPixelCount = (0 until 64).sumOf { histogram[it] }
 
                 darkPixelCount > allPixelsCount * 0.25
             }

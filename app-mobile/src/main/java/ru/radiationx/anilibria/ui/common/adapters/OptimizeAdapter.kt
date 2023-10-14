@@ -71,6 +71,7 @@ open class OptimizeAdapter<T>(
         outState?.putSparseParcelableArray(bundleNestedStatesKey, states)
     }
 
+    @Suppress("DEPRECATION")
     fun restoreState(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) return
         savedInstanceState.getSparseParcelableArray<Parcelable?>(bundleNestedStatesKey)?.also {

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.teams
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -15,6 +16,7 @@ import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class TeamsViewModel(
     private val router: Router,

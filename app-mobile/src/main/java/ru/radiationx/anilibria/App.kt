@@ -1,11 +1,9 @@
 package ru.radiationx.anilibria
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.os.Build
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDex
 import com.google.firebase.messaging.FirebaseMessaging
@@ -17,24 +15,17 @@ import kotlinx.coroutines.flow.onEach
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
 import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
-import ru.radiationx.data.analytics.TimeCounter
-import ru.radiationx.data.analytics.features.AppAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.quill.Quill
 import ru.radiationx.quill.get
-import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
-
-    private val timeCounter = TimeCounter().apply {
-        start()
-    }
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
@@ -45,25 +36,10 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val timeToCreate = timeCounter.elapsed()
         initYandexAppMetrica()
 
         if (isMainProcess()) {
             initInMainProcess()
-
-            val timeToInit = timeCounter.elapsed()
-            val appAnalytics = get<AppAnalytics>()
-            appAnalytics.timeToCreate(timeToCreate)
-            appAnalytics.timeToInit(timeToInit)
-
-            registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
-                override fun onActivityCreated(p0: Activity, p1: Bundle?) {
-                    super.onActivityCreated(p0, p1)
-                    val timeToActivity = timeCounter.elapsed()
-                    appAnalytics.timeToActivity(timeToActivity)
-                    unregisterActivityLifecycleCallbacks(this)
-                }
-            })
         }
     }
 

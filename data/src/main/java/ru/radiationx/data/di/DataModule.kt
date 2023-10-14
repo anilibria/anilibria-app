@@ -127,7 +127,6 @@ class DataModule : QuillModule() {
 
         /* Analytics */
         single<AnalyticsProfileDataSource>()
-        single<AppAnalytics>()
         single<AuthDeviceAnalytics>()
         single<AuthMainAnalytics>()
         single<AuthSocialAnalytics>()

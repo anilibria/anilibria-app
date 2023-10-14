@@ -163,7 +163,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             private var tapJob: Job? = null
             private val tapSeekHandler = Handler()
             private val tapSeekRunnable = Runnable {
-                playerAnalytics?.rewindDoubleTap(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
                 binding.gestureSeekValue.gone()
                 tapJob?.cancel()
@@ -174,7 +173,6 @@ class VideoControlsAlib @JvmOverloads constructor(
             private val tapRelay = EventFlow<MotionEvent>()
 
             private fun handleEndSwipeSeek() {
-                playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
                 binding.gestureSeekValue.gone()
                 binding.gesturesControllerView.background = null

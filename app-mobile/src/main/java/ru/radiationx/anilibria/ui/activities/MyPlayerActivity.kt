@@ -145,10 +145,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     private val timeToStartCounter = TimeCounter()
 
-    private val loadingStatistics =
-        mutableMapOf<String, MutableList<Pair<AnalyticsQuality, Long>>>()
-
-
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
 
@@ -166,28 +162,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private var pictureInPictureParams: PictureInPictureParams.Builder? = null
 
     private var releaseDataJob: Job? = null
-
-    private fun getStatisticByDomain(host: String): MutableList<Pair<AnalyticsQuality, Long>> {
-        if (!loadingStatistics.contains(host)) {
-            loadingStatistics[host] = mutableListOf()
-        }
-        return loadingStatistics.getValue(host)
-    }
-
-    private fun putStatistics(uri: Uri, quality: AnalyticsQuality, time: Long) {
-        uri.host?.let { getStatisticByDomain(it) }?.add(quality to time)
-    }
-
-    private fun getAverageStatisticsValues(): Map<String, Map<AnalyticsQuality, Long>> {
-        return loadingStatistics
-            .mapValues { statsMap ->
-                statsMap.value
-                    .groupBy { it.first }
-                    .mapValues { qualityMap ->
-                        qualityMap.value.map { it.second }.average().toLong()
-                    }
-            }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -216,34 +190,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             private var lastLoadError: Throwable? = null
             private var lastPlayerError: Throwable? = null
-
-
-            override fun onLoadCanceled(
-                eventTime: AnalyticsListener.EventTime,
-                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData,
-            ) {
-                super.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData)
-                putStatistics(
-                    loadEventInfo.uri,
-                    currentQuality.toPrefQuality().toAnalyticsQuality(),
-                    loadEventInfo.loadDurationMs
-                )
-            }
-
-            override fun onLoadCompleted(
-                eventTime: AnalyticsListener.EventTime,
-                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData,
-            ) {
-                super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
-                lastLoadedUri = loadEventInfo.uri
-                putStatistics(
-                    loadEventInfo.uri,
-                    currentQuality.toPrefQuality().toAnalyticsQuality(),
-                    loadEventInfo.loadDurationMs
-                )
-            }
 
 
             override fun onRenderedFirstFrame(
@@ -356,12 +302,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             setOpeningListener(null)
             setVisibilityListener(null)
             setButtonListener(null)
-        }
-
-        getAverageStatisticsValues().forEach { statsEntry ->
-            statsEntry.value.forEach { qualityEntry ->
-                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
-            }
         }
         saveEpisodeAtNoZero()
         binding.player.stopPlayback()

@@ -8,7 +8,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.system.*
+import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
+import ru.radiationx.data.system.AppCookieJar
+import ru.radiationx.data.system.Client
+import ru.radiationx.data.system.appendConnectionSpecs
+import ru.radiationx.data.system.appendSocketFactoryIfNeeded
+import ru.radiationx.data.system.appendTimeouts
 import java.net.InetSocketAddress
 import java.net.Proxy
 import javax.inject.Inject
@@ -18,7 +23,8 @@ class ApiOkHttpProvider @Inject constructor(
     private val context: Context,
     private val appCookieJar: AppCookieJar,
     private val apiConfig: ApiConfig,
-    private val sharedBuildConfig: SharedBuildConfig
+    private val sharedBuildConfig: SharedBuildConfig,
+    private val unauthorizedInterceptor: UnauthorizedInterceptor,
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
@@ -75,6 +81,8 @@ class ApiOkHttpProvider @Inject constructor(
                     .build()
                 it.proceed(additionalHeadersRequest)
             }
+
+            addInterceptor(unauthorizedInterceptor)
 
             cookieJar(appCookieJar)
         }

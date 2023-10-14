@@ -18,6 +18,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.datasource.remote.api.*
+import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.*
@@ -68,6 +69,7 @@ class DataModule : QuillModule() {
         single<ApiConfigChanger>()
 
         single<AppCookieJar>()
+        single<UnauthorizedInterceptor>()
         single<ApiConfig>()
         single<ApiConfigStorage>()
 

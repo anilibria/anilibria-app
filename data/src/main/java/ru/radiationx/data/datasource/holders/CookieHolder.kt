@@ -18,6 +18,6 @@ interface CookieHolder {
     fun observeCookies(): Flow<Map<String, Cookie>>
     suspend fun getCookies(): Map<String, Cookie>
     suspend fun putCookie(url: String, cookie: Cookie)
-    suspend fun putCookie(url: String, name: String, value: String)
     suspend fun removeCookie(name: String)
+    suspend fun removeAuthCookie()
 }

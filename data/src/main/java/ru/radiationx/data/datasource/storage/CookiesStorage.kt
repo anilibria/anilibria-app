@@ -31,18 +31,6 @@ class CookiesStorage @Inject constructor(
         return cookiesState.getValue()
     }
 
-    override suspend fun putCookie(url: String, name: String, value: String) {
-        val domain = requireNotNull(Uri.parse(url).host) {
-            "cookie domain is null"
-        }
-        val cookie = Cookie.Builder()
-            .name(name.trim())
-            .value(value.trim())
-            .domain(domain)
-            .build()
-        putCookie(url, cookie)
-    }
-
     override suspend fun putCookie(url: String, cookie: Cookie) {
         withContext(Dispatchers.IO) {
             sharedPreferences
@@ -61,6 +49,10 @@ class CookiesStorage @Inject constructor(
                 .apply()
         }
         updateCookies()
+    }
+
+    override suspend fun removeAuthCookie() {
+        removeCookie(CookieHolder.PHPSESSID)
     }
 
     private suspend fun updateCookies() {

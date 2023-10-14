@@ -11,7 +11,6 @@ import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
-import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.AuthApi
 import ru.radiationx.data.entity.common.AuthState
@@ -19,7 +18,6 @@ import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.mapper.toDomain
-import ru.radiationx.data.system.HttpException
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,7 +31,7 @@ class AuthRepository @Inject constructor(
     private val authHolder: AuthHolder,
     private val socialAuthHolder: SocialAuthHolder,
     private val apiConfig: ApiConfig,
-    private val cookieHolder: CookieHolder
+    private val cookieHolder: CookieHolder,
 ) {
 
     fun observeUser(): Flow<ProfileItem?> =
@@ -73,23 +71,11 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    // охеренный метод, которым проверяем авторизацию и одновременно подтягиваем юзера. двойной профит.
-    suspend fun loadUser(): ProfileItem {
-        return withContext(Dispatchers.IO) {
-            try {
-                authApi
-                    .loadUser()
-                    .toDomain(apiConfig)
-                    .also { updateUser(it) }
-            } catch (ex: Throwable) {
-                Timber.e(ex)
-                val code = ((ex as? ApiError)?.code ?: (ex as? HttpException)?.code)
-                if (code == 401) {
-                    userHolder.delete()
-                }
-                throw ex
-            }
-        }
+    suspend fun loadUser(): ProfileItem = withContext(Dispatchers.IO) {
+        authApi
+            .loadUser()
+            .toDomain(apiConfig)
+            .also { updateUser(it) }
     }
 
     suspend fun getOtpInfo(): OtpInfo = withContext(Dispatchers.IO) {
@@ -124,7 +110,7 @@ class AuthRepository @Inject constructor(
             }.onFailure {
                 Timber.e(it)
             }
-            cookieHolder.removeCookie(CookieHolder.PHPSESSID)
+            cookieHolder.removeAuthCookie()
             userHolder.delete()
         }
     }

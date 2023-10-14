@@ -117,7 +117,7 @@ object Screens {
     }
 
     class BlockedCountry : BaseAppScreen() {
-        override fun getActivityIntent(context: Context?): Intent =
+        override fun getActivityIntent(context: Context): Intent =
             Intent(context, CountryBlockedActivity::class.java)
     }
 

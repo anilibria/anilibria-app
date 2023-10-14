@@ -129,10 +129,10 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
 
     private val navigatorLocal: Navigator by lazy {
-        object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+        object : SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
-                command: Command?,
+                command: Command,
                 currentFragment: Fragment?,
                 nextFragment: Fragment?,
                 fragmentTransaction: FragmentTransaction

@@ -20,7 +20,7 @@ buildscript {
         kotlin_version = '1.9.10'
         coroutines_version = '1.7.3'
         timber_version = '5.0.1'
-        cicerone_version = '5.0.0'
+        cicerone_version = '5.1.0'
         toothpick_version = '3.1.0'
         coil_version = '2.4.0'
         viewbindingdelegate_version = '1.5.9'

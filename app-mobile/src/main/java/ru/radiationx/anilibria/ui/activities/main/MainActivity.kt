@@ -349,7 +349,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
-        override fun applyCommand(command: Command?) {
+        override fun applyCommand(command: Command) {
             if (command is Back) {
                 if (tabsStack.size <= 1) {
                     activityBack()

@@ -1,84 +1,18 @@
 apply plugin: "com.android.library"
 
+// from https://github.com/michaelbel/bottomsheet.git
 android {
     namespace "org.michaelbel.bottomsheetdialog"
 
-    compileSdkVersion app_compile_sdk_version
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-
-    lint {
-        abortOnError false
     }
 }
 
 dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-}
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file("local.properties").newDataInputStream())
-/*bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-    configurations = ["archives"]
-}*/
-
-ext {
-    bintrayRepo = "maven"
-    bintrayName = "bottomsheet"
-
-    artifact = "bottomsheet"
-    publishedGroupId = "org.michaelbel"
-
-    libraryVersion = "1.2.4"
-    libraryName = "BottomSheet"
-    libraryDescription = "BottomSheet dialogs library for Android"
-
-    siteUrl = "https://github.com/michaelbel/bottomsheet"
-    gitUrl = "https://github.com/michaelbel/bottomsheet.git"
-
-    developerId = "michaelbel"
-    developerName = "Michael Bel"
-    developerEmail = "michael-bel@outlook.com"
-
-    licenseName = "The Apache Software License, Version 2.0"
-    licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-    allLicenses = ["Apache-2.0"]
-}
-
-/*apply from: "https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle"
-apply from: "https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle"*/
-
-/*
-javadoc {
-    options {
-        encoding = "UTF-8"
-    }
-}
-*/
-
-/*
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-*/
-
-allprojects {
-    tasks.withType(Javadoc) {
-        options.addStringOption("Xdoclint:none", "-quiet")
-        options.addStringOption("encoding", "UTF-8")
-    }
 }

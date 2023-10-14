@@ -14,7 +14,7 @@ static def getDateTime() {
 android {
     namespace "ru.radiationx.anilibria"
 
-    compileSdkVersion app_compile_sdk_version
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app"
@@ -47,12 +47,10 @@ android {
 
     flavorDimensions = ["type"]
     productFlavors {
-        // red icon
         app {
             dimension "type"
         }
 
-        // white icon
         store {
             dimension "type"
             applicationId "tv.anilibria.store"
@@ -66,11 +64,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-
-    lint {
-        checkReleaseBuilds false
-        disable "RestrictedApi"
     }
 
     applicationVariants.configureEach { variant ->
@@ -130,8 +123,6 @@ dependencies {
     implementation "me.zhanghai.android.materialprogressbar:library:$materialprogressbar_version"
 
     implementation project(":bottomsheet")
-/*
-    implementation "org.michaelbel:bottomsheet:1.2.3"*/
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

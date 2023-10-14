@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package ru.radiationx.anilibria.screen.player
 
 import android.annotation.SuppressLint

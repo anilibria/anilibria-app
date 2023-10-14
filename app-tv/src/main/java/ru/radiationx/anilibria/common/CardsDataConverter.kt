@@ -5,6 +5,8 @@ import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.shared.ktx.android.relativeDate
+import ru.radiationx.shared.ktx.capitalizeDefault
+import ru.radiationx.shared.ktx.decapitalizeDefault
 import java.util.*
 
 class CardsDataConverter(
@@ -16,10 +18,10 @@ class CardsDataConverter(
             title.orEmpty(),
             "${seasons.firstOrNull()} год • ${
                 genres.firstOrNull()
-                    ?.capitalize()
+                    ?.capitalizeDefault()
             } • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${
                 Date(torrentUpdate * 1000L).relativeDate(context)
-                    .decapitalize()
+                    .decapitalizeDefault()
             }",
             poster.orEmpty(),
             LibriaCard.Type.Release(releaseItem.id)
@@ -29,7 +31,7 @@ class CardsDataConverter(
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
         LibriaCard(
             title.orEmpty(),
-            "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalize()}",
+            "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalizeDefault()}",
             image.orEmpty(),
             LibriaCard.Type.Youtube(youtubeItem.link)
         )

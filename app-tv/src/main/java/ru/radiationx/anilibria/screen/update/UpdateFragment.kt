@@ -38,6 +38,7 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
         super.onCreate(savedInstanceState)
     }
 
+    @Suppress("DEPRECATION")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -51,7 +52,7 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
             val string = StringBuilder().apply {
                 appendParam("Версия", it.name.orEmpty())
                 appendParam("Дата", it.date.orEmpty())
-                appendln("<br>")
+                appendLine("<br>")
                 appendSection("Важно", it.important)
                 appendSection("Добавлено", it.added)
                 appendSection("Исправлено", it.fixed)

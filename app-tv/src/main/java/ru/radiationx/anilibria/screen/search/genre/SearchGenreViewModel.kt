@@ -19,7 +19,7 @@ class SearchGenreViewModel(
     private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentGenres = mutableListOf<GenreItem>()
@@ -52,7 +52,7 @@ class SearchGenreViewModel(
 
     override fun applyValues() {
         guidedRouter.close()
-        val newGenres = currentGenres.filterIndexed { index, item ->
+        val newGenres = currentGenres.filter { item ->
             checkedValues.contains(item.value)
         }.toSet()
         searchController.genresEvent.emit(newGenres)

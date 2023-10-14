@@ -53,7 +53,7 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
 
         setSearchResultProvider(this)
         setOnItemViewSelectedListener(ItemViewSelectedListener())
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, row ->
 
             val viewModel = getViewModel((row as ListRow).id)
             when (viewModel) {
@@ -71,7 +71,7 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         progressManager.rootView = view as ViewGroup
         progressManager.initialDelay = 0L
 
-        emptyTextManager.rootView = view as ViewGroup
+        emptyTextManager.rootView = view
         emptyTextManager.initialDelay = 0L
         emptyTextManager.text = "Ничего не найдено"
 
@@ -109,7 +109,6 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
     ): Row = when (rowId) {
         DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
             rowId,
-            rowsAdapter,
             viewModel as SuggestionsResultViewModel
         )
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
@@ -117,7 +116,6 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
 
     private fun createHeaderRowBy(
         rowId: Long,
-        rowsAdapter: ArrayObjectAdapter,
         viewModel: SuggestionsResultViewModel
     ): Row {
         val cardsPresenter = CardPresenterSelector(null)

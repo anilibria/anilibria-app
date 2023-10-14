@@ -79,7 +79,7 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun onPlayClick(position: Long) {
+    fun onPlayClick() {
 
     }
 
@@ -87,7 +87,7 @@ class PlayerViewModel(
         saveEpisode(position)
     }
 
-    fun onReplayClick(position: Long) {
+    fun onReplayClick() {
 
     }
 
@@ -120,7 +120,7 @@ class PlayerViewModel(
         guidedRouter.open(PlayerQualityGuidedScreen(release.id, episode.id))
     }
 
-    fun onSpeedClick(position: Long) {
+    fun onSpeedClick() {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
         guidedRouter.open(PlayerSpeedGuidedScreen(release.id, episode.id))
@@ -141,7 +141,7 @@ class PlayerViewModel(
         }
     }
 
-    fun onPrepare(position: Long, duration: Long) {
+    fun onPrepare(duration: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
         val complete = episode.access.seek >= duration

@@ -1,18 +1,29 @@
 package ru.radiationx.anilibria.common
 
-import android.animation.ValueAnimator
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
-import android.view.animation.LinearInterpolator
 import androidx.annotation.ColorInt
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class LinearGradientDrawable(
     private var angle: Float = 0f,
     private var colorValues: IntArray? = null,
     private var colorPositions: FloatArray? = null,
-    private var withCoercing: Boolean = false
+    private var withCoercing: Boolean = false,
 ) : Drawable() {
 
     companion object {
@@ -37,22 +48,6 @@ class LinearGradientDrawable(
     val blue = Paint().apply {
         color = Color.BLUE
         isAntiAlias = true
-    }
-
-    init {
-        val valueAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
-            duration = 20000
-            interpolator = LinearInterpolator()
-            repeatMode = ValueAnimator.REVERSE
-            repeatCount = ValueAnimator.INFINITE
-            startDelay = 1000
-            addUpdateListener {
-                val angle = it.animatedValue as Float
-                this@LinearGradientDrawable.angle = angle
-                invalidateSelf()
-            }
-        }
-        //valueAnimator.start()
     }
 
     fun setColors(@ColorInt colorStart: Int, @ColorInt colorEnd: Int) {
@@ -134,7 +129,7 @@ class LinearGradientDrawable(
         start: PointF,
         end: PointF,
         colors: IntArray,
-        positions: FloatArray
+        positions: FloatArray,
     ): Shader = LinearGradient(
         start.x, start.y,
         end.x, end.y,

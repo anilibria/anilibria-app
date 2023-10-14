@@ -44,7 +44,7 @@ class WatchingFragment : RowsSupportFragment() {
         viewLifecycleOwner.lifecycle.addObserver(continueViewModel)
         viewLifecycleOwner.lifecycle.addObserver(favoritesViewModel)
         viewLifecycleOwner.lifecycle.addObserver(recommendsViewModel)
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, row ->
             val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
             when (item) {
                 is LinkCard -> viewMode?.onLinkCardClick()
@@ -53,7 +53,7 @@ class WatchingFragment : RowsSupportFragment() {
             }
         }
 
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewSelectedListener { _, item, rowViewHolder, _ ->
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
                 when (item) {

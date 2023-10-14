@@ -1,7 +1,6 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -16,7 +15,7 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class CookiesStorage @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
 ) : CookieHolder {
 
     private val cookiesState = SuspendMutableStateFlow {
@@ -62,7 +61,7 @@ class CookiesStorage @Inject constructor(
     private suspend fun loadCookies(): Map<String, Cookie> {
         return withContext(Dispatchers.IO) {
             val result = mutableMapOf<String, Cookie>()
-            cookieNames.forEachIndexed { _, s ->
+            cookieNames.forEach { s ->
                 sharedPreferences
                     .getString("cookie_$s", null)
                     ?.let { parseCookie(it) }

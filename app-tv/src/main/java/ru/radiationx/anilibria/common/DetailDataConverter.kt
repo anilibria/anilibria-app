@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Html
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
+import ru.radiationx.shared.ktx.capitalizeDefault
 import toothpick.InjectConstructor
 import java.text.NumberFormat
 import java.util.*
@@ -13,13 +14,14 @@ class DetailDataConverter(
     private val context: Context
 ) {
 
+    @Suppress("DEPRECATION")
     fun toDetail(releaseItem: Release): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
             titleRu = title.orEmpty(),
             titleEn = titleEng.orEmpty(),
             extra = listOf(
-                genres.firstOrNull()?.capitalize()?.trim(),
+                genres.firstOrNull()?.capitalizeDefault()?.trim(),
                 "${seasons.firstOrNull()} год",
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim() ?: "Не доступно"}"
@@ -42,7 +44,7 @@ class DetailDataConverter(
             return "Релиз завершен"
         }
 
-        val originalAnnounce = announce?.trim()?.trim('.')?.capitalize()
+        val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
         val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
         return originalAnnounce ?: scheduleAnnounce
     }
@@ -59,10 +61,6 @@ class DetailDataConverter(
 
     fun String.toAnnounce2(): String {
         val calendarDay = ScheduleDay.toCalendarDay(this)
-        val displayDay = Calendar.getInstance().let {
-            it.set(Calendar.DAY_OF_WEEK, calendarDay)
-            it.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
-        }.orEmpty()
         val prefix = calendarDay.dayIterationPrefix2()
         return "Серии выходят $prefix"
     }

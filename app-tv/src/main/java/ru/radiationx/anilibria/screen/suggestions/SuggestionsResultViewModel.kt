@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
@@ -11,6 +13,7 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class SuggestionsResultViewModel(
     private val searchRepository: SearchRepository,

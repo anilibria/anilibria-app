@@ -55,7 +55,7 @@ class MainFragment : RowsSupportFragment() {
         adapter = rowsAdapter
         onItemViewSelectedListener = ItemViewSelectedListener()
 
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
                 val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
                 when (item) {

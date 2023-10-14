@@ -19,7 +19,7 @@ class SearchYearViewModel(
     private val argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentYears = mutableListOf<YearItem>()
@@ -53,7 +53,7 @@ class SearchYearViewModel(
 
     override fun applyValues() {
         guidedRouter.close()
-        val newYears = currentYears.filterIndexed { index, item ->
+        val newYears = currentYears.filter { item ->
             checkedValues.contains(item.value)
         }.toSet()
         searchController.yearsEvent.emit(newYears)

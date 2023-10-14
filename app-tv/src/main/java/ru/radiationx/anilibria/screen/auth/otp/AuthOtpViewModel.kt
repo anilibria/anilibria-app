@@ -104,9 +104,9 @@ class AuthOtpViewModel(
     }
 
     private fun updateState(
-        buttonState: ButtonState = state.value!!.buttonState,
-        progress: Boolean = state.value!!.progress,
-        error: String = state.value!!.error
+        buttonState: ButtonState = state.value.buttonState,
+        progress: Boolean = state.value.progress,
+        error: String = state.value.error
     ) {
         state.value = State(buttonState, progress, error)
     }

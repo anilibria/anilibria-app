@@ -36,7 +36,7 @@ class ScheduleFragment : BrowseSupportFragment() {
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewSelectedListener { _, item, rowViewHolder, _ ->
             backgroundManager.applyCard(item)
             if (rowViewHolder is CustomListRowViewHolder) {
                 when (item) {
@@ -56,7 +56,7 @@ class ScheduleFragment : BrowseSupportFragment() {
             }
         }
 
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, _ ->
             if (item is LibriaCard) {
                 viewModel.onCardClick(item)
             }

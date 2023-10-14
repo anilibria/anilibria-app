@@ -11,3 +11,11 @@ fun String.capitalizeDefault(): String {
         }
     }
 }
+
+fun String.decapitalizeDefault(): String {
+    return replaceFirstChar { it.lowercase(Locale.getDefault()) }
+}
+
+fun String.lowercaseDefault(): String {
+    return lowercase(Locale.getDefault())
+}

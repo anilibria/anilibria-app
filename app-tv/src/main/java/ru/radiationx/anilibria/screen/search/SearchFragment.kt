@@ -58,7 +58,7 @@ class SearchFragment : BaseVerticalGridFragment() {
         }
 
         backgroundManager.clearGradient()
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewSelectedListener { _, item, _, _ ->
             backgroundManager.applyCard(item)
             when (item) {
                 is LibriaCard -> {
@@ -76,7 +76,7 @@ class SearchFragment : BaseVerticalGridFragment() {
             }
         }
 
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, _ ->
             when (item) {
                 is LinkCard -> {
                     cardsViewModel.onLinkCardClick()

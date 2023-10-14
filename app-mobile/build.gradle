@@ -25,7 +25,7 @@ android {
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resConfigs "ru"
+        resConfigs 'ru'
     }
 
     buildFeatures {

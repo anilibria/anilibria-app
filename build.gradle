@@ -37,8 +37,8 @@ buildscript {
         androidx_preference_version = '1.2.1'
         androidx_swiperefresh_version = '1.1.0'
 
-        material_version = '1.7.0'
-        flexbox_version = '1.1.0'
+        material_version = '1.10.0'
+        flexbox_version = '2.0.1'
 
         firebase_core_version = '21.1.1'
         firebase_messaging_version = '23.2.1'
@@ -52,7 +52,7 @@ buildscript {
         expandabletextview_version = '1.0.5'
 
         chucker_version = '4.0.0'
-        okHttpVersion = '4.10.0'
+        okHttpVersion = '4.11.0'
         moshi_version = '1.15.0'
         androidnetworktools_version = '0.4.3'
     }
@@ -71,6 +71,10 @@ buildscript {
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
+}
+
+plugins {
+    id 'com.google.devtools.ksp' version '1.9.10-1.0.13' apply false
 }
 
 allprojects {

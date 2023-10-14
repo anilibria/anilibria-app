@@ -2,6 +2,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-parcelize"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.google.devtools.ksp"
 
 android {
     namespace "ru.radiationx.data"
@@ -23,9 +24,11 @@ dependencies {
     implementation project(":shared-android-ktx")
     implementation project(":quill-di")
 
-    api "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    api "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
-    api "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+    api(platform("com.squareup.okhttp3:okhttp-bom:$okHttpVersion"))
+    api("com.squareup.okhttp3:okhttp")
+    api("com.squareup.okhttp3:logging-interceptor")
+    api("com.squareup.okhttp3:okhttp-urlconnection")
+
     implementation "com.github.chuckerteam.chucker:library:$chucker_version"
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -38,7 +41,7 @@ dependencies {
 
     api "com.squareup.moshi:moshi:$moshi_version"
     api "com.squareup.moshi:moshi-adapters:$moshi_version"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+    ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

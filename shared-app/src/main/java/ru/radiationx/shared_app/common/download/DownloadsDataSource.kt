@@ -10,8 +10,19 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import android.os.Looper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.data.datasource.holders.DownloadsHolder
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -20,7 +31,7 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class DownloadsDataSource(
     private val context: Context,
-    private val downloadsHolder: DownloadsHolder
+    private val downloadsHolder: DownloadsHolder,
 ) {
 
     private val TAG = "DownloadsDataSource"
@@ -35,7 +46,7 @@ class DownloadsDataSource(
         }
     }
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val observesMap = mutableMapOf<String, ContentObserver>()
 
     private val cachedDownloads = mutableListOf<DownloadItem>()

@@ -175,7 +175,7 @@ class ConfiguringInteractor @Inject constructor(
             }.onSuccess {
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
                 val addresses = apiConfig.getAddresses()
-                val proxies = addresses.sumBy { it.proxies.size }
+                val proxies = addresses.sumOf { it.proxies.size }
                 screenState.update {
                     it.copy(status = "Загружено адресов: ${addresses.size}; прокси: $proxies")
                 }

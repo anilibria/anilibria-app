@@ -1,6 +1,7 @@
 package ru.radiationx.shared_app.analytics.profile
 
 import android.util.Log
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class LoggingAnalyticsProfile(
     private val dataSource: AnalyticsProfileDataSource,
-    private val codecs: CodecsProfileAnalytics
+    private val codecs: CodecsProfileAnalytics,
 ) : AnalyticsProfile {
 
     override fun update() {
@@ -25,6 +26,7 @@ class LoggingAnalyticsProfile(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun unsafeUpdate() {
         val singleSources = with(dataSource) {
             listOf<Flow<Pair<String, Any>>>(
@@ -59,7 +61,7 @@ class LoggingAnalyticsProfile(
                     Timber.e(it)
                 }
                 .onEach {
-                    Log.d("LoggingAnalyticsProfile", it.toMap().toString())
+                    Timber.tag("LoggingAnalyticsProfile").d(it.toMap().toString())
                 }
                 .launchIn(GlobalScope)
         }

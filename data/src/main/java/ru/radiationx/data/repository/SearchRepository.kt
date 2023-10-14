@@ -20,6 +20,7 @@ import ru.radiationx.data.entity.mapper.toGenreItem
 import ru.radiationx.data.entity.mapper.toYearItem
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.system.ApiUtils
+import ru.radiationx.shared.ktx.capitalizeDefault
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
@@ -28,7 +29,7 @@ class SearchRepository @Inject constructor(
     private val yearsHolder: YearsHolder,
     private val updateMiddleware: ReleaseUpdateMiddleware,
     private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
 ) {
 
     fun observeGenres(): Flow<List<GenreItem>> = genresHolder
@@ -71,7 +72,7 @@ class SearchRepository @Inject constructor(
         season: String,
         sort: String,
         onlyCompleted: String,
-        page: Int
+        page: Int,
     ): Paginated<Release> = withContext(Dispatchers.IO) {
         searchApi
             .searchReleases(genre, year, season, sort, onlyCompleted, page)
@@ -99,7 +100,7 @@ class SearchRepository @Inject constructor(
 
     suspend fun getSeasons(): List<SeasonItem> {
         return withContext(Dispatchers.IO) {
-            listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalize(), it) }
+            listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalizeDefault(), it) }
         }
     }
 

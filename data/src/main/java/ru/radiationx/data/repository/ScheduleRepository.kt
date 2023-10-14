@@ -54,11 +54,6 @@ class ScheduleRepository @Inject constructor(
                                 (deviceTime - TimeUnit.DAYS.toMillis(2))
                             )
 
-
-                            val updDate = Calendar.getInstance().also {
-                                it.timeInMillis = millisTime
-                            }
-
                             val isSameDay = scheduleDates.any { scheduleDate ->
                                 deviceDates.any { deviceDate ->
                                     Date(scheduleDate).isSameDay(Date(deviceDate))

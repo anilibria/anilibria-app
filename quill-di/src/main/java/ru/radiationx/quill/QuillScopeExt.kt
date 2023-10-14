@@ -20,12 +20,12 @@ fun FragmentActivity.getParentScope(): QuillScope {
 
 
 private fun Fragment.getQuillScopeVM(): QuillScopeViewModel {
-    val factory = createQuillViewModelFactory(toString(), getParentScope())
+    val factory = createQuillViewModelFactory(getParentScope())
     return ViewModelProvider(this, factory).get()
 }
 
 private fun FragmentActivity.getQuillScopeVM(): QuillScopeViewModel {
-    val factory = createQuillViewModelFactory(toString(), getParentScope())
+    val factory = createQuillViewModelFactory(getParentScope())
     return ViewModelProvider(this, factory).get()
 }
 

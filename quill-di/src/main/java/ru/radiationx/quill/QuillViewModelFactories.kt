@@ -25,7 +25,6 @@ fun <T : ViewModel> createViewModelFactory(
 }
 
 internal fun createQuillViewModelFactory(
-    tag: String,
     scope: QuillScope,
 ): ViewModelProvider.Factory = viewModelFactory {
     addInitializer(QuillScopeViewModel::class) {

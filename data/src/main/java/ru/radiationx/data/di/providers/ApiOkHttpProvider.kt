@@ -42,7 +42,7 @@ class ApiOkHttpProvider @Inject constructor(
                     val username = it.user
                     val password = it.password
                     if (username != null && password != null) {
-                        proxyAuthenticator { route, response ->
+                        proxyAuthenticator { _, response ->
                             val credential = Credentials.basic(username, password)
                             response.request.newBuilder()
                                 .header("Proxy-Authorization", credential)

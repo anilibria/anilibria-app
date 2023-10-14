@@ -22,7 +22,6 @@ import android.widget.LinearLayout
 import androidx.annotation.*
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -38,8 +37,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), View.OnClickListener {
+    defStyleRes: Int = 0,
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
 
     // *********************************************************************************************
     protected var mLinearLayout: LinearLayout? = null
@@ -76,16 +75,19 @@ abstract class SearchLayout @JvmOverloads constructor(
                         R.drawable.search_ic_outline_menu_24px
                     )
                 )
+
                 SearchUtils.NavigationIconSupport.ARROW -> setNavigationIconImageDrawable(
                     ContextCompat.getDrawable(
                         context,
                         R.drawable.search_ic_outline_arrow_back_24px
                     )
                 )
+
                 SearchUtils.NavigationIconSupport.ANIMATION -> {
                     mSearchArrowDrawable = SearchArrowDrawable(context)
                     setNavigationIconImageDrawable(mSearchArrowDrawable)
                 }
+
                 SearchUtils.NavigationIconSupport.SEARCH -> setNavigationIconImageDrawable(
                     ContextCompat.getDrawable(
                         context,
@@ -127,6 +129,7 @@ abstract class SearchLayout @JvmOverloads constructor(
                     params.setMargins(left, top, right, bottom)
                     mCardView?.layoutParams = params
                 }
+
                 SearchUtils.Margins.NONE_MENU_ITEM -> {
                     left =
                         context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
@@ -145,6 +148,7 @@ abstract class SearchLayout @JvmOverloads constructor(
                     params.setMargins(left, top, right, bottom)
                     mCardView?.layoutParams = params
                 }
+
                 SearchUtils.Margins.TOOLBAR -> {
                     left =
                         context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
@@ -163,6 +167,7 @@ abstract class SearchLayout @JvmOverloads constructor(
                     params.setMargins(left, top, right, bottom)
                     mCardView?.layoutParams = params
                 }
+
                 SearchUtils.Margins.MENU_ITEM -> {
                     left =
                         context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item)
@@ -190,7 +195,9 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     // *********************************************************************************************
     protected fun init() {
-        setAnimationDuration(context.resources.getInteger(R.integer.search_animation_duration).toLong())
+        setAnimationDuration(
+            context.resources.getInteger(R.integer.search_animation_duration).toLong()
+        )
 
         mLinearLayout = findViewById(R.id.search_linearLayout)
 

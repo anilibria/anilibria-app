@@ -62,8 +62,6 @@ dependencies {
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
 
-    implementation "com.google.android:flexbox:$flexbox_version"
-
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 

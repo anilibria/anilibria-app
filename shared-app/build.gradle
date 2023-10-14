@@ -21,7 +21,7 @@ dependencies {
     implementation project(":shared-android-ktx")
     implementation project(":quill-di")
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation("io.coil-kt:coil:2.2.2")
+    implementation "io.coil-kt:coil:$coil_version"
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

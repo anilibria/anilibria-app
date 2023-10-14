@@ -88,7 +88,7 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.cardview:cardview:$androidx_cardview_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
-    implementation "androidx.preference:preference:$androidx_preference_version"
+    implementation "androidx.preference:preference-ktx:$androidx_preference_version"
 
     implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
@@ -97,8 +97,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     //implementation "com.lapism:searchview:4.0"
     //implementation "com.lapism:search:1.0.0"

@@ -5,7 +5,7 @@ buildscript {
 
     ext {
         // only tv
-        androidx_leanback_version = '1.2.0-alpha03'
+        androidx_leanback_version = '1.2.0-alpha02'
         exoplayer_leanback_version = '2.19.1'
 
         // main
@@ -15,10 +15,7 @@ buildscript {
         tv_min_sdk_version = 21
 
         //java
-        java_toolchain_version = 17
-        java_source_compat_version = JavaVersion.VERSION_17
-        java_target_compat_version = JavaVersion.VERSION_17
-        java_jvm_target = '17'
+        jvm_toolchain_version = 17
 
         kotlin_version = '1.9.10'
         coroutines_version = '1.7.3'

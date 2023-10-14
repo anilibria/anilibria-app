@@ -26,15 +26,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
             def appName = "AniLibria_TV"
@@ -42,6 +33,10 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+}
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
 }
 
 dependencies {

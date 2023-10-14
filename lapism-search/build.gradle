@@ -23,7 +23,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(java_toolchain_version)
+    jvmToolchain(jvm_toolchain_version)
 }
 
 dependencies {

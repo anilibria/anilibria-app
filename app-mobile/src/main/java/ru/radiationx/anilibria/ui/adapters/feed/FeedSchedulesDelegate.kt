@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters.feed
 import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -23,7 +24,7 @@ import ru.radiationx.shared.ktx.android.inflate
  */
 class FeedSchedulesDelegate(
     private val clickListener: (ScheduleItemState, View, Int) -> Unit,
-    private val scrollListener: (Int) -> Unit
+    private val scrollListener: (Int) -> Unit,
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
     R.layout.item_feed_schedules,
     { it is FeedSchedulesListItem },
@@ -48,7 +49,7 @@ class FeedSchedulesDelegate(
         itemView: View,
         private val clickListener: (ScheduleItemState, View, Int) -> Unit,
         private val scrollListener: (Int) -> Unit,
-        private val viewPool: RecyclerView.RecycledViewPool? = null
+        private val viewPool: RecyclerView.RecycledViewPool? = null,
     ) : RecyclerView.ViewHolder(itemView), IBundledViewHolder {
 
         private val binding by viewBinding<ItemFeedSchedulesBinding>()
@@ -80,6 +81,8 @@ class FeedSchedulesDelegate(
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)
+            binding.itemFeedScheduleList.isVisible = currentItems.isNotEmpty()
+            binding.itemFeedScheduleEmpty.isVisible = currentItems.isEmpty()
         }
 
         override fun getStateId(): Int {

@@ -28,7 +28,7 @@
                 android:layoutDirection="locale"
                 android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/search_imageView_navigation"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/search_imageView_mic"
                         android:layout_width="@dimen/search_icon_56"
                         android:layout_height="match_parent"
@@ -69,7 +69,7 @@
                         android:scaleType="center"
                         app:tint="?attr/colorControlNormal" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/search_imageView_clear"
                         android:layout_width="@dimen/search_icon_56"
                         android:layout_height="match_parent"
@@ -80,7 +80,7 @@
 
                 </FrameLayout>
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/search_imageView_menu"
                     android:layout_width="@dimen/search_icon_48"
                     android:layout_height="match_parent"

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
@@ -79,6 +80,11 @@ class GradientBackgroundManager(
     init {
         if (!backgroundManager.isAttached) {
             backgroundManager.isAutoReleaseOnStop = false
+
+            // to avoid java.lang.NullPointerException: Attempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable()' on a null object reference
+            // hope this helps
+            backgroundManager.color = foregroundColor
+
             backgroundManager.attach(activity.window)
             backgroundManager.drawable = layerDrawable
         }

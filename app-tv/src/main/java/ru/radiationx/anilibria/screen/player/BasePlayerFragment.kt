@@ -83,14 +83,15 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected open fun onPreparePlaying() {}
 
     private fun initializeRows() {
-        val playerGlue = this.playerGlue!!
+        val playerGlue = this.playerGlue ?: return
+        val controlsRow = playerGlue.controlsRow ?: return
 
         val rowsPresenter = ClassPresenterSelector().apply {
             addClassPresenter(ListRow::class.java, CustomListRowPresenter())
-            addClassPresenter(playerGlue.controlsRow.javaClass, playerGlue.playbackRowPresenter)
+            addClassPresenter(controlsRow.javaClass, playerGlue.playbackRowPresenter)
         }
         val rowsAdapter = ArrayObjectAdapter(rowsPresenter).apply {
-            add(playerGlue.controlsRow)
+            add(controlsRow)
         }
 
         adapter = rowsAdapter

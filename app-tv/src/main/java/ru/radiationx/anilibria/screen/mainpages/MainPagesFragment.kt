@@ -116,10 +116,12 @@ class MainPagesFragment : BrowseSupportFragment() {
         setOther("Каталог")
         //progressBarManager.show()
 
-        ImageViewCompat.setImageTintList(
-            titleView.findViewById(R.id.title_badge),
-            ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
-        )
+        titleView?.also { tview ->
+            ImageViewCompat.setImageTintList(
+                tview.findViewById(R.id.title_badge),
+                ColorStateList.valueOf(tview.context.getCompatColor(R.color.dark_contrast_icon))
+            )
+        }
     }
 
     override fun onStart() {

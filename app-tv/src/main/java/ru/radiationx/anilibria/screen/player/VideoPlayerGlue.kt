@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit
  */
 class VideoPlayerGlue(
     context: Context,
-    playerAdapter: LeanbackPlayerAdapter
+    playerAdapter: LeanbackPlayerAdapter,
 ) : PlaybackTransportControlGlue<LeanbackPlayerAdapter>(context, playerAdapter) {
 
     interface OnActionClickedListener {
@@ -112,16 +112,18 @@ class VideoPlayerGlue(
                 action.nextIndex()
                 // Notify adapter of action changes to handle secondary actions, such as, thumbs up/down
                 // and repeat.
-                notifyActionChanged(
-                    action,
-                    controlsRow.secondaryActionsAdapter as ArrayObjectAdapter
-                )
+                controlsRow?.also {
+                    notifyActionChanged(
+                        action,
+                        it.secondaryActionsAdapter as ArrayObjectAdapter
+                    )
+                }
             }
         }
     }
 
     private fun notifyActionChanged(
-        action: MultiAction, adapter: ArrayObjectAdapter
+        action: MultiAction, adapter: ArrayObjectAdapter,
     ) {
         val index = adapter.indexOf(action)
         if (index >= 0) {
@@ -160,10 +162,12 @@ class VideoPlayerGlue(
             PreferencesHolder.QUALITY_FULL_HD -> QualityAction.INDEX_FHD
             else -> QualityAction.INDEX_SD
         }
-        notifyActionChanged(
-            qualityAction,
-            controlsRow.secondaryActionsAdapter as ArrayObjectAdapter
-        )
+        controlsRow?.also {
+            notifyActionChanged(
+                qualityAction,
+                it.secondaryActionsAdapter as ArrayObjectAdapter
+            )
+        }
     }
 
     companion object {

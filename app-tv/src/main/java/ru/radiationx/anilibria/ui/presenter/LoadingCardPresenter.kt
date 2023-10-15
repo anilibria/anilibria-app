@@ -18,7 +18,8 @@ class LoadingCardPresenter : Presenter() {
         return ViewHolder(loadingView)
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any?) {
+        item ?: return
         item as LoadingCard
         val loadingView = (viewHolder.view as CardLoadingView)
         loadingView.setState(

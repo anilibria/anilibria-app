@@ -27,10 +27,6 @@ class GuidedProgressActionsStylist : GuidedActionsStylist() {
         return super.onProvideItemLayoutId(viewType)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        return super.onCreateViewHolder(parent, viewType)
-    }
-
     override fun onBindViewHolder(vh: ViewHolder, action: GuidedAction) {
         super.onBindViewHolder(vh, action)
 
@@ -38,7 +34,7 @@ class GuidedProgressActionsStylist : GuidedActionsStylist() {
             vh.itemView.findViewById<ProgressBar>(R.id.guidedactions_item_progressBar).apply {
                 isVisible = action.showProgress
             }
-            vh.contentView.isVisible = !action.showProgress
+            vh.contentView?.isVisible = !action.showProgress
         }
     }
 }

@@ -39,7 +39,9 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
             selectedActionPosition = if (actions.any { it.hasSubActions() }) {
                 val chunkActionId = ((selectedIndex / CHUNK_SIZE) + CHUNK_ID_OFFSET).toLong()
                 val chunkPosition = findActionPositionById(chunkActionId)
-                expandAction(findActionById(chunkActionId), false)
+                findActionById(chunkActionId)?.also {
+                    expandAction(it, false)
+                }
                 chunkPosition
             } else {
                 selectedIndex

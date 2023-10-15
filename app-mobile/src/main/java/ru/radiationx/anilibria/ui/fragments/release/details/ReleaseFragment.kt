@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -31,9 +33,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
@@ -52,7 +52,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         fun newInstance(
             id: ReleaseId? = null,
             code: ReleaseCode? = null,
-            item: Release? = null
+            item: Release? = null,
         ) = ReleaseFragment().putExtra {
             putParcelable(ARG_ID, id)
             putParcelable(ARG_ID_CODE, code)
@@ -132,8 +132,8 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
                     false
                 }
         }
-        baseBinding.toolbarInsetShadow.visible()
-        baseBinding.toolbarImage.visible()
+        baseBinding.toolbarInsetShadow.isVisible = true
+        baseBinding.toolbarImage.isVisible = true
 
 
 
@@ -141,8 +141,9 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
         val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
         scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
+            @Suppress("DEPRECATION")
             override fun onScrimChanged(scrim: Boolean) {
-                baseBinding.toolbarInsetShadow.gone(scrim)
+                baseBinding.toolbarInsetShadow.isGone = scrim
                 if (scrim) {
                     baseBinding.toolbar.let {
                         it.navigationIcon?.clearColorFilter()
@@ -206,10 +207,10 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
             startPostponedEnterTransition()
         } else {
             baseBinding.toolbarImage.showImageUrl(state.poster) {
-                onStart { baseBinding.toolbarImageProgress.visible() }
+                onStart { baseBinding.toolbarImageProgress.isVisible = true }
                 onSuccess { updateToolbarColors(it) }
                 onComplete {
-                    baseBinding.toolbarImageProgress.gone()
+                    baseBinding.toolbarImageProgress.isGone = true
                     startPostponedEnterTransition()
                 }
             }
@@ -219,7 +220,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
             currentTitle = state.title
         }
 
-        binding.progressBarPaged.visible(state.loading)
+        binding.progressBarPaged.isVisible = state.loading
     }
 
     override fun onDestroyView() {
@@ -227,6 +228,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         super.onDestroyView()
     }
 
+    @Suppress("DEPRECATION")
     private fun updateToolbarColors(loadedImage: Bitmap) {
         toolbarHelperJob?.cancel()
         toolbarHelperJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -244,6 +246,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         }
     }
 
+    @Suppress("DEPRECATION")
     private inner class CustomPagerAdapter :
         androidx.fragment.app.FragmentStatePagerAdapter(
             childFragmentManager,

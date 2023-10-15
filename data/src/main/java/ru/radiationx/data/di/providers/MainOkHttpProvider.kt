@@ -5,7 +5,6 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.data.system.appendConnectionSpecs
 import ru.radiationx.data.system.appendSocketFactoryIfNeeded
 import ru.radiationx.data.system.appendTimeouts
@@ -15,7 +14,6 @@ import javax.inject.Provider
 
 class MainOkHttpProvider @Inject constructor(
     private val context: Context,
-    private val appCookieJar: AppCookieJar,
     private val sharedBuildConfig: SharedBuildConfig
 ) : Provider<OkHttpClient> {
 

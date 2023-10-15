@@ -1,7 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
-import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
@@ -10,11 +15,11 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 /* Created by radiationx on 31.10.17. */
 
 class YoutubeAdapter(
-    private val loadMoreListener: () -> Unit,
-    private val loadRetryListener: () -> Unit,
-    private val listener: ItemListener,
+    loadMoreListener: () -> Unit,
+    loadRetryListener: () -> Unit,
+    listener: ItemListener,
     private val emptyPlaceHolder: PlaceholderListItem,
-    private val errorPlaceHolder: PlaceholderListItem
+    private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
 
     init {

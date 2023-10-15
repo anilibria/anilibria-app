@@ -37,6 +37,7 @@ class DonationSectionDelegate(
             }
         }
 
+        @Suppress("DEPRECATION")
         fun bind(divider: DonationContentSection) {
             binding.tvTitle.text = divider.title
             binding.tvSubtitle.text = divider.subtitle?.let { Html.fromHtml(it) }

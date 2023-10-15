@@ -23,10 +23,6 @@ class PageApi @Inject constructor(
         const val PAGE_PATH_TEAM = "pages/team.php"
         const val PAGE_PATH_DONATE = "pages/donate.php"
 
-        val PAGE_IDS = listOf(
-            PAGE_PATH_TEAM,
-            PAGE_PATH_DONATE
-        )
     }
 
     suspend fun getPage(pagePath: String): PageLibria {

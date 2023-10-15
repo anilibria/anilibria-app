@@ -13,14 +13,14 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
-import java.util.*
+import java.util.Date
 
 @InjectConstructor
 class PlayerEpisodesViewModel(
     private val argExtra: PlayerExtra,
-    private val releaseInteractor: ReleaseInteractor,
+    releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
-    private val playerController: PlayerController
+    private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     val episodesData = MutableStateFlow<List<Pair<String, String?>>>(emptyList())

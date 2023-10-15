@@ -1,21 +1,16 @@
-package dev.rx.iosanimation
+package com.lapism.search
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
 import androidx.transition.Transition
 import androidx.transition.TransitionValues
-import com.google.android.material.card.MaterialCardView
 
 /**
  * Transitions a view from [startRadius] to [endRadius] through a [ViewOutlineProvider].
@@ -23,7 +18,6 @@ import com.google.android.material.card.MaterialCardView
  *
  * @author Stefan de Bruijn
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class ChangeElevation : Transition {
 
     private companion object {
@@ -83,7 +77,7 @@ class ChangeElevation : Transition {
     override fun createAnimator(
         sceneRoot: ViewGroup,
         startValues: TransitionValues?,
-        endValues: TransitionValues?
+        endValues: TransitionValues?,
     ): Animator? {
         startValues ?: return null
         endValues ?: return null

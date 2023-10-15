@@ -11,7 +11,7 @@ import javax.inject.Inject
 class ScheduleApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) {
 
     suspend fun getSchedule(): List<ScheduleDayResponse> {
@@ -21,7 +21,7 @@ class ScheduleApi @Inject constructor(
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchListApiResponse<ScheduleDayResponse>(moshi)
+            .fetchListApiResponse(moshi)
     }
 
 }

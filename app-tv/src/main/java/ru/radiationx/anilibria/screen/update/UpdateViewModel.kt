@@ -36,7 +36,7 @@ class UpdateViewModel(
     private val downloadController: DownloadController,
     private val updateController: UpdateController,
     private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
-    private val context: Context
+    private val context: Context,
 ) : LifecycleViewModel() {
 
     val updateData = MutableStateFlow<UpdateData?>(null)
@@ -63,11 +63,13 @@ class UpdateViewModel(
             coRunCatching {
                 checkerRepository
                     .checkUpdate(buildConfig.versionCode, false)
-            }.onSuccess {
-                updateData.value = it
-                it.links.mapNotNull { downloadController.getDownload(it.url) }.firstOrNull()?.also {
-                    startDownload(it.url)
-                }
+            }.onSuccess { update ->
+                updateData.value = update
+                update.links
+                    .firstNotNullOfOrNull { downloadController.getDownload(it.url) }
+                    ?.also {
+                        startDownload(it.url)
+                    }
             }.onFailure {
                 Timber.e(it)
             }
@@ -87,7 +89,9 @@ class UpdateViewModel(
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
             DownloadController.State.PAUSED,
-            DownloadController.State.FAILED -> cancelDownloadClick()
+            DownloadController.State.FAILED,
+            -> cancelDownloadClick()
+
             else -> downloadClick()
         }
     }
@@ -182,13 +186,17 @@ class UpdateViewModel(
         downloadProgressShowState.value = when (state) {
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
-            DownloadController.State.PAUSED -> true
+            DownloadController.State.PAUSED,
+            -> true
+
             else -> false
         }
         downloadActionTitle.value = when (state) {
             DownloadController.State.PENDING,
             DownloadController.State.RUNNING,
-            DownloadController.State.PAUSED -> "Отмена"
+            DownloadController.State.PAUSED,
+            -> "Отмена"
+
             else -> "Установить"
         }
     }

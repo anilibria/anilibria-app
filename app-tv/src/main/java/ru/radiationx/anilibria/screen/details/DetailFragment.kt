@@ -9,12 +9,18 @@ import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.Row
 import androidx.lifecycle.ViewModel
-import dev.rx.tvtest.cust.CustomListRowPresenter
-import dev.rx.tvtest.cust.CustomListRowViewHolder
-import ru.radiationx.anilibria.common.*
+import ru.radiationx.anilibria.common.BaseCardsViewModel
+import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LibriaDetailsRow
+import ru.radiationx.anilibria.common.LinkCard
+import ru.radiationx.anilibria.common.LoadingCard
+import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject
@@ -24,7 +30,7 @@ import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 data class DetailExtra(
-    val id: ReleaseId
+    val id: ReleaseId,
 ) : QuillExtra
 
 class DetailFragment : RowsSupportFragment() {
@@ -84,7 +90,7 @@ class DetailFragment : RowsSupportFragment() {
 
         adapter = rowsAdapter
 
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, row ->
             val viewMode: BaseCardsViewModel? =
                 getViewModel((row as ListRow).id) as? BaseCardsViewModel
             when (item) {
@@ -94,7 +100,7 @@ class DetailFragment : RowsSupportFragment() {
             }
         }
 
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewSelectedListener { _, item, rowViewHolder, row ->
             if (row is ListRow) {
                 backgroundManager.applyCard(item)
             } else if (row is LibriaDetailsRow) {
@@ -105,12 +111,15 @@ class DetailFragment : RowsSupportFragment() {
                     is LibriaCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     is LinkCard -> {
                         rowViewHolder.setDescription(item.title, "")
                     }
+
                     is LoadingCard -> {
                         rowViewHolder.setDescription(item.title, item.description)
                     }
+
                     else -> {
                         rowViewHolder.setDescription("", "")
                     }
@@ -132,20 +141,21 @@ class DetailFragment : RowsSupportFragment() {
     private fun createRowBy(
         rowId: Long,
         rowsAdapter: ArrayObjectAdapter,
-        viewModel: ViewModel
+        viewModel: ViewModel,
     ): Row = when (rowId) {
         DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
             rowId,
             rowsAdapter,
             viewModel as DetailHeaderViewModel
         )
+
         else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
     }
 
     private fun createHeaderRowBy(
         rowId: Long,
         rowsAdapter: ArrayObjectAdapter,
-        viewModel: DetailHeaderViewModel
+        viewModel: DetailHeaderViewModel,
     ): Row {
         val row = LibriaDetailsRow(rowId)
         subscribeTo(viewModel.releaseData) {
@@ -162,12 +172,7 @@ class DetailFragment : RowsSupportFragment() {
     }
 
     private fun applyImage(image: String) {
-        backgroundManager.applyImage(image, colorSelector = {
-            val swatch = it.darkVibrantSwatch ?: it.vibrantSwatch
-            val color = swatch?.rgb
-            color
-            null
-        }) {
+        backgroundManager.applyImage(image, colorSelector = { null }) {
             val hslColor = FloatArray(3)
             ColorUtils.colorToHSL(it, hslColor)
             hslColor[1] = (hslColor[1] + 0.05f).coerceAtMost(1.0f)

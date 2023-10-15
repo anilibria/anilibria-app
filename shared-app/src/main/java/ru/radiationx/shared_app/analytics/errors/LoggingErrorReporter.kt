@@ -1,22 +1,21 @@
 package ru.radiationx.shared_app.analytics.errors
 
-import android.util.Log
-import com.yandex.metrica.YandexMetrica
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class LoggingErrorReporter : AnalyticsErrorReporter {
 
     override fun report(message: String, error: Throwable) {
-        Log.e("LoggingErrorReporter", message, error)
+        Timber.tag("LoggingErrorReporter").e(error, message)
     }
 
     override fun report(group: String, message: String) {
-        Log.e("LoggingErrorReporter", "$group -> $message")
+        Timber.tag("LoggingErrorReporter").e("$group -> $message")
     }
 
     override fun report(group: String, message: String, error: Throwable) {
-        Log.e("LoggingErrorReporter", "$group -> $message", error)
+        Timber.tag("LoggingErrorReporter").e(error, "$group -> $message")
     }
 }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,17 +9,24 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.LocaleModule
@@ -44,9 +52,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
-import ru.radiationx.shared.ktx.android.visible
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -94,6 +100,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         CheckerExtra(forceLoad = true)
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -125,11 +132,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         updateTabs()
         initContainers()
 
-        savedInstanceState?.let {
-            it.getStringArrayList(TABS_STACK)?.let {
-                if (it.isNotEmpty()) {
-                    tabsStack.addAll(it)
-                }
+        savedInstanceState?.getStringArrayList(TABS_STACK)?.let {
+            if (it.isNotEmpty()) {
+                tabsStack.addAll(it)
             }
         }
         checkerViewModel.state.mapNotNull { it.data }.onEach {
@@ -230,7 +235,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun showConfiguring() {
-        binding.configuringContainer.visible()
+        binding.configuringContainer.isVisible = true
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.configuring_container, ConfiguringFragment())
@@ -238,7 +243,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun hideConfiguring() {
-        binding.configuringContainer.gone()
+        binding.configuringContainer.isGone = true
         supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
             supportFragmentManager
                 .beginTransaction()
@@ -254,9 +259,11 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+        outState.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
     }
 
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
         val check = fragment != null
@@ -272,9 +279,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private fun handleIntent(intent: Intent?) {
         intent?.data?.also { intentData ->
             val url = intentData.toString()
-            var handled = findTabIntentHandler(url, tabsStack.asReversed())
+            val handled = findTabIntentHandler(url, tabsStack.asReversed())
             if (!handled) {
-                handled = findTabIntentHandler(url, tabs.map { it.screen.screenKey })
+                findTabIntentHandler(url, tabs.map { it.screen.screenKey })
             }
         }
         intent?.data = null
@@ -282,8 +289,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
         val fm = supportFragmentManager
-        tabs.forEach {
-            fm.findFragmentByTag(it)?.let {
+        tabs.forEach { tab ->
+            fm.findFragmentByTag(tab)?.let {
                 if (it is IntentHandler && it.handle(url)) {
                     return true
                 }
@@ -349,7 +356,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
 
-        override fun applyCommand(command: Command?) {
+        override fun applyCommand(command: Command) {
             if (command is Back) {
                 if (tabsStack.size <= 1) {
                     activityBack()
@@ -400,7 +407,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             if (!exitToastShowed) {
                 screenMessenger.showMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
                 exitToastShowed = true
-                Handler().postDelayed({ exitToastShowed = false }, 3L * 1000)
+                Handler(Looper.getMainLooper()).postDelayed({ exitToastShowed = false }, 3L * 1000)
             } else {
                 super.activityBack()
             }
@@ -410,6 +417,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     data class Tab(
         val title: Int,
         val icon: Int,
-        val screen: BaseAppScreen
+        val screen: BaseAppScreen,
     )
 }

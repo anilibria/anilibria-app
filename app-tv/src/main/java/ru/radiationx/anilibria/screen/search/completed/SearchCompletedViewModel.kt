@@ -8,9 +8,9 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchCompletedViewModel(
-    private val argExtra: SearchCompletedExtra,
+    argExtra: SearchCompletedExtra,
     private val searchController: SearchController,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
     private val titles = listOf(

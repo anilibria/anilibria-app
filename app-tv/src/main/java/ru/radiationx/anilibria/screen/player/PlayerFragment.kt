@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package ru.radiationx.anilibria.screen.player
 
 import android.os.Bundle
@@ -21,7 +23,7 @@ class PlayerFragment : BasePlayerFragment() {
 
         fun newInstance(
             releaseId: ReleaseId,
-            episodeId: EpisodeId?
+            episodeId: EpisodeId?,
         ): PlayerFragment = PlayerFragment().putExtra {
             putParcelable(ARG_RELEASE_ID, releaseId)
             putParcelable(ARG_EPISODE_ID, episodeId)
@@ -45,7 +47,7 @@ class PlayerFragment : BasePlayerFragment() {
             override fun onPrevious() = viewModel.onPrevClick(getPosition())
             override fun onNext() = viewModel.onNextClick(getPosition())
             override fun onQualityClick() = viewModel.onQualityClick(getPosition())
-            override fun onSpeedClick() = viewModel.onSpeedClick(getPosition())
+            override fun onSpeedClick() = viewModel.onSpeedClick()
             override fun onEpisodesClick() = viewModel.onEpisodesClick(getPosition())
         }
 
@@ -67,7 +69,7 @@ class PlayerFragment : BasePlayerFragment() {
         }
 
         subscribeTo(viewModel.speedState.filterNotNull()) {
-            player?.setPlaybackParameters(PlaybackParameters(it))
+            player?.playbackParameters = PlaybackParameters(it)
         }
 
         subscribeTo(viewModel.qualityState.filterNotNull()) {
@@ -85,7 +87,7 @@ class PlayerFragment : BasePlayerFragment() {
     }
 
     override fun onPreparePlaying() {
-        viewModel.onPrepare(getPosition(), getDuration())
+        viewModel.onPrepare(getDuration())
     }
 
     private fun getPosition(): Long = player?.currentPosition ?: 0

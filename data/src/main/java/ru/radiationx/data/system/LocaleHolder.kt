@@ -1,11 +1,11 @@
 package ru.radiationx.data.system
 
-import java.util.*
-
-class LocaleHolder(val locale: Locale) {
+class LocaleHolder {
     companion object {
-        val AVAIL_COUNTRIES = arrayOf("AZ", "AM", "BY", "KZ", "KG", "MD", "RU", "TJ", "UZ", "UA")
+        private val AVAIL_COUNTRIES =
+            arrayOf("AZ", "AM", "BY", "KZ", "KG", "MD", "RU", "TJ", "UZ", "UA")
 
-        fun checkAvail(countryCode: String): Boolean = AVAIL_COUNTRIES.find { it.equals(countryCode, true) } != null
+        fun checkAvail(countryCode: String): Boolean =
+            AVAIL_COUNTRIES.find { it.equals(countryCode, true) } != null
     }
 }

@@ -30,6 +30,7 @@ class ReleaseBlockedDelegate :
 
         private val binding by viewBinding<ItemReleaseBlockedBinding>()
 
+        @Suppress("DEPRECATION")
         fun bind(state: ReleaseBlockedInfoState) {
             binding.itemTitle.text = Html.fromHtml(state.title)
         }

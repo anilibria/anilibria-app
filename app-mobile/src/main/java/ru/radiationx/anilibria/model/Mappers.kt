@@ -88,7 +88,7 @@ fun SuggestionItem.toState(query: String): SuggestionItemState {
     val matchRanges = try {
         Regex(query, RegexOption.IGNORE_CASE).findAll(itemTitle).map { it.range }.toList()
     } catch (ignore: Throwable) {
-        emptyList<IntRange>()
+        emptyList()
     }
 
     return SuggestionItemState(

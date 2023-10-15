@@ -9,20 +9,23 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.transition.*
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeTransform
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
+import com.lapism.search.ChangeElevation
+import com.lapism.search.ChangeOutlineRadius
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
-import dev.rx.iosanimation.ChangeElevation
-import dev.rx.iosanimation.ChangeOutlineRadius
 
 
 class SearchView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+    defStyleRes: Int = 0,
 ) : SearchLayout(context, attrs, defStyleAttr, defStyleRes), CoordinatorLayout.AttachedBehavior {
 
     // *********************************************************************************************
@@ -62,7 +65,7 @@ class SearchView @JvmOverloads constructor(
                 transition: LayoutTransition?,
                 container: ViewGroup?,
                 view: View?,
-                transitionType: Int
+                transitionType: Int,
             ) {
 
             }
@@ -71,13 +74,12 @@ class SearchView @JvmOverloads constructor(
                 transition: LayoutTransition?,
                 container: ViewGroup?,
                 view: View?,
-                transitionType: Int
+                transitionType: Int,
             ) {
 
             }
         })
 
-        val frameLayout = findViewById<FrameLayout>(R.id.search_frameLayout)
         this.layoutTransition = transition
     }
 
@@ -120,7 +122,8 @@ class SearchView @JvmOverloads constructor(
         margins = SearchUtils.Margins.NONE_TOOLBAR
         mViewDivider?.visibility = View.VISIBLE
         animateHamburgerToArrow(false)
-        elevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
+        elevation =
+            context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
         val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
         val paddingTop = context.resources.getDimensionPixelSize(R.dimen.search_key_line_4)
         //mSearchEditText?.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
@@ -154,7 +157,7 @@ class SearchView @JvmOverloads constructor(
         //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
         //mSearchEditText?.setPadding(0, 0, 0, 0)
         mSearchEditText?.layoutParams =
-            (mSearchEditText?.layoutParams as MarginLayoutParams)?.apply {
+            (mSearchEditText?.layoutParams as? MarginLayoutParams)?.apply {
                 marginEnd = 0
                 marginStart = 0
             }

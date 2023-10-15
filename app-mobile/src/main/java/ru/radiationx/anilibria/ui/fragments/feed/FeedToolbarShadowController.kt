@@ -5,11 +5,11 @@ import com.google.android.material.appbar.AppBarLayout
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 
 class FeedToolbarShadowController(
-        recyclerView: RecyclerView,
-        appBarLayout: AppBarLayout? = null,
-        visibleListener: (Boolean) -> Unit
+    recyclerView: RecyclerView,
+    appBarLayout: AppBarLayout? = null,
+    visibleListener: (Boolean) -> Unit,
 ) : ToolbarShadowController(recyclerView, appBarLayout, visibleListener) {
     override fun isShadowVisible(): Boolean {
-        return -appBarOffset == appBarLayout?.height ?: 0
+        return -appBarOffset == (appBarLayout?.height ?: 0)
     }
 }

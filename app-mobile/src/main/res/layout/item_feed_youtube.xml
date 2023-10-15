@@ -72,8 +72,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginEnd="4dp"
                 android:contentDescription="@null"
-                android:tint="?textSecond"
-                app:srcCompat="@drawable/ic_comment" />
+                app:srcCompat="@drawable/ic_comment"
+                app:tint="?textSecond" />
 
             <TextView
                 android:id="@+id/item_comments_count"
@@ -92,8 +92,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="4dp"
                 android:contentDescription="@null"
-                android:tint="?textSecond"
-                app:srcCompat="@drawable/ic_eye" />
+                app:srcCompat="@drawable/ic_eye"
+                app:tint="?textSecond" />
 
 
             <TextView

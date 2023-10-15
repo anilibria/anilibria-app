@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 
+@Suppress("DEPRECATION")
 class WebPageStateWebViewClient(
     listener: (WebPageViewState) -> Unit
 ) : WebViewClient() {
@@ -48,6 +49,7 @@ class WebPageStateWebViewClient(
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onReceivedError(
         view: WebView?,
         errorCode: Int,

@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class YearsStorage @Inject constructor(
-    @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences,
 ) : YearsHolder {
 
     companion object {
@@ -30,8 +30,8 @@ class YearsStorage @Inject constructor(
     override fun observeYears(): Flow<List<YearItem>> = localYearsRelay
 
     override suspend fun saveYears(years: List<YearItem>) {
+        localYearsRelay.setValue(years)
         saveAll()
-        localYearsRelay.setValue(loadAll())
     }
 
     override suspend fun getYears(): List<YearItem> = localYearsRelay.getValue()
@@ -56,8 +56,8 @@ class YearsStorage @Inject constructor(
         return withContext(Dispatchers.IO) {
             val result = mutableListOf<YearItem>()
             val savedYears = sharedPreferences.getString(LOCAL_YEARS_KEY, null)
-            savedYears?.let {
-                val jsonYears = JSONArray(it)
+            savedYears?.let { year ->
+                val jsonYears = JSONArray(year)
                 (0 until jsonYears.length()).forEach { index ->
                     jsonYears.getJSONObject(index).let {
                         result.add(

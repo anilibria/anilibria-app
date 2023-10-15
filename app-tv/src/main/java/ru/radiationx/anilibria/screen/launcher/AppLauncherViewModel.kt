@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.launcher
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -59,6 +60,7 @@ class AppLauncherViewModel(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun initMain() {
         firstLaunch = false
         viewModelScope.launch {

@@ -33,8 +33,6 @@ import ru.terrakok.cicerone.commands.Command
 class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     companion object {
-        private const val TRANSITION_MOVE_TIME: Long = 375
-        private const val TRANSITION_OTHER_TIME: Long = 225
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
         fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
@@ -50,6 +48,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
+    @Suppress("DEPRECATION")
     private val localScreen: BaseAppScreen by lazy {
         arguments?.let {
             (it.getSerializable(ARG_ROOT_SCREEN) as? BaseAppScreen?)
@@ -129,10 +128,10 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
 
     private val navigatorLocal: Navigator by lazy {
-        object : SupportAppNavigator(activity, childFragmentManager, R.id.fragments_container) {
+        object : SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
-                command: Command?,
+                command: Command,
                 currentFragment: Fragment?,
                 nextFragment: Fragment?,
                 fragmentTransaction: FragmentTransaction

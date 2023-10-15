@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.presenter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.leanback.widget.Presenter
 import ru.radiationx.anilibria.R

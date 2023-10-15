@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
@@ -36,6 +35,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared_app.common.SystemUtils
+import timber.log.Timber
 
 
 class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments) {
@@ -191,7 +191,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
 
     @JavascriptInterface
     fun log(string: String) {
-        Log.d("VkCommentsFragment.log", string)
+        Timber.tag("VkCommentsFragment.log").d(string)
     }
 
 

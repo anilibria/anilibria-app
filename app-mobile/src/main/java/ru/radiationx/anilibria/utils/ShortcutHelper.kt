@@ -9,6 +9,7 @@ import android.net.Uri
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
@@ -28,6 +29,7 @@ class ShortcutHelper(
     private val context: Context
 ) {
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun addShortcut(data: Release) {
         GlobalScope.launch {
             coRunCatching {

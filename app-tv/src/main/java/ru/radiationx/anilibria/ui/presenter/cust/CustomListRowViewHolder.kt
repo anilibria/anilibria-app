@@ -1,4 +1,4 @@
-package dev.rx.tvtest.cust
+package ru.radiationx.anilibria.ui.presenter.cust
 
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.ui.widget.CardDescriptionView
 class CustomListRowViewHolder(
     rootView: ListRowView,
     gridView: HorizontalGridView,
-    presenter: ListRowPresenter
+    presenter: ListRowPresenter,
 ) : ListRowPresenter.ViewHolder(rootView, gridView, presenter) {
 
     private val cardDescriptionView =

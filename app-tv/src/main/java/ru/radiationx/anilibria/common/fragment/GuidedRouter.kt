@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.common.fragment
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.commands.BackTo
 
-class GuidedRouter() : Router() {
+class GuidedRouter : Router() {
 
     fun open(screen: GuidedAppScreen) {
         navigateTo(screen)

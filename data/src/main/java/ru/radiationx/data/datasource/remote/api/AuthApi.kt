@@ -4,8 +4,12 @@ import android.net.Uri
 import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import ru.radiationx.data.ApiClient
-import ru.radiationx.data.datasource.remote.*
+import ru.radiationx.data.datasource.remote.ApiError
+import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.fetchApiResponse
+import ru.radiationx.data.datasource.remote.fetchEmptyApiResponse
+import ru.radiationx.data.datasource.remote.fetchListApiResponse
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.auth.SocialAuthException
@@ -23,7 +27,7 @@ class AuthApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val authParser: AuthParser,
     private val apiConfig: ApiConfig,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) {
 
     suspend fun loadUser(): ProfileResponse {
@@ -31,7 +35,7 @@ class AuthApi @Inject constructor(
             "query" to "user"
         )
         return client.post(apiConfig.apiUrl, args)
-            .fetchApiResponse<ProfileResponse>(moshi)
+            .fetchApiResponse(moshi)
     }
 
     suspend fun loadOtpInfo(deviceId: String): OtpInfoResponse {

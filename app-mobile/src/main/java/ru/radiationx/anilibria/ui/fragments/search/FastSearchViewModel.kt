@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
@@ -21,6 +23,7 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.net.URLEncoder
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @InjectConstructor
 class FastSearchViewModel(
     private val searchRepository: SearchRepository,

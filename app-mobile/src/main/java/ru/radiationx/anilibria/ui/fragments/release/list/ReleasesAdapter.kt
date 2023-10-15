@@ -3,21 +3,25 @@ package ru.radiationx.anilibria.ui.fragments.release.list
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingState
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
-import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.search.SearchScreenState
 
 /* Created by radiationx on 31.10.17. */
 
 class ReleasesAdapter(
-    private val loadMoreListener: () -> Unit,
-    private val loadRetryListener: () -> Unit,
-    private val listener: ItemListener,
+    loadMoreListener: () -> Unit,
+    loadRetryListener: () -> Unit,
+    listener: ItemListener,
     private val emptyPlaceHolder: PlaceholderListItem,
-    private val errorPlaceHolder: PlaceholderListItem
+    private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
 
     init {

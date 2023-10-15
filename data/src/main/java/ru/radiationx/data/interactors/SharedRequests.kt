@@ -15,6 +15,7 @@ class SharedRequests<KEY, DATA> {
 
     private val jobs = mutableMapOf<KEY, Job>()
 
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun request(key: KEY, block: suspend () -> DATA): DATA {
         if (jobs[key]?.isActive != true) {
             val job = scope.launch {

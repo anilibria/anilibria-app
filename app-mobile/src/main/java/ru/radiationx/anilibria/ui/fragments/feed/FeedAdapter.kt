@@ -1,10 +1,33 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
-import ru.radiationx.anilibria.model.*
+import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.anilibria.model.FeedItemState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.ScheduleItemState
+import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
-import ru.radiationx.anilibria.ui.adapters.*
-import ru.radiationx.anilibria.ui.adapters.feed.*
+import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
+import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem
+import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
+import ru.radiationx.anilibria.ui.adapters.DonationCardListItem
+import ru.radiationx.anilibria.ui.adapters.FeedListItem
+import ru.radiationx.anilibria.ui.adapters.FeedRandomBtnListItem
+import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
+import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.feed.AppInfoCardDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.AppWarningCardDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.DonationCardDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.FeedRandomBtnDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.FeedReleaseDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.FeedSchedulesDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
+import ru.radiationx.anilibria.ui.adapters.feed.FeedYoutubeDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
@@ -13,12 +36,12 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 /* Created by radiationx on 31.10.17. */
 
 class FeedAdapter(
-    private val loadMoreListener: () -> Unit,
-    private val loadRetryListener: () -> Unit,
-    private val warningClickListener: (FeedAppWarning) -> Unit,
-    private val warningClickCloseListener: (FeedAppWarning) -> Unit,
-    private val donationListener: (DonationCardItemState) -> Unit,
-    private val donationCloseListener: (DonationCardItemState) -> Unit,
+    loadMoreListener: () -> Unit,
+    loadRetryListener: () -> Unit,
+    warningClickListener: (FeedAppWarning) -> Unit,
+    warningClickCloseListener: (FeedAppWarning) -> Unit,
+    donationListener: (DonationCardItemState) -> Unit,
+    donationCloseListener: (DonationCardItemState) -> Unit,
     schedulesClickListener: () -> Unit,
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
@@ -27,7 +50,7 @@ class FeedAdapter(
     youtubeClickListener: (YoutubeItemState, View) -> Unit,
     scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
-    private val errorPlaceHolder: PlaceholderListItem
+    private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
 
     companion object {

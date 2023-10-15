@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.WindowCompat
+import androidx.core.view.isGone
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
@@ -14,7 +15,6 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
-import ru.radiationx.shared.ktx.android.gone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -42,13 +42,14 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val dimensionsProvider by inject<DimensionsProvider>()
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
-        binding.bottomShadow.gone()
-        binding.tabsRecycler.gone()
+        binding.bottomShadow.isGone = true
+        binding.tabsRecycler.isGone = true
 
         binding.initInsets(dimensionsProvider)
 
@@ -69,6 +70,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         navigationHolder.removeNavigator()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.root_container)
         val fragmentBackHandled = (fragment as? BackButtonListener)?.onBackPressed() ?: false

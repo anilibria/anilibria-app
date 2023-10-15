@@ -4,10 +4,12 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.MotionEvent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator
 import com.devbrackets.android.exomedia.listener.VideoControlsSeekListener
@@ -15,6 +17,7 @@ import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation
 import com.devbrackets.android.exomedia.ui.widget.VideoControls
 import com.devbrackets.android.exomedia.ui.widget.VideoControlsMobile
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -28,8 +31,6 @@ import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.entity.domain.release.PlayerSkips
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.android.getCompatDrawable
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared.ktx.asTimeSecString
 import java.lang.Math.pow
 import java.util.*
@@ -92,8 +93,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     /*override fun updateProgress(position: Long, duration: Long, bufferPercent: Int) {
         super.updateProgress(position, duration, bufferPercent)
         val percent = position.toFloat() / duration.toFloat()
-        controlMinusOpening.visible(percent < 0.3)
-        controlPlusOpening.visible(percent < 0.3)
+        controlMinusOpening.isVisible = percent < 0.3
+        controlPlusOpening.isVisible = percent < 0.3
     }*/
 
     private fun getSeekPercent(): Float {
@@ -121,6 +122,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
     override fun getLayoutResource() = R.layout.view_video_control
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun retrieveViews() {
         super.retrieveViews()
         val viewRoot = findViewById<CoordinatorLayout>(R.id.videoControlsRoot)
@@ -161,11 +163,10 @@ class VideoControlsAlib @JvmOverloads constructor(
             private var tapSeekStarted = false
 
             private var tapJob: Job? = null
-            private val tapSeekHandler = Handler()
+            private val tapSeekHandler = Handler(Looper.getMainLooper())
             private val tapSeekRunnable = Runnable {
-                playerAnalytics?.rewindDoubleTap(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
-                binding.gestureSeekValue.gone()
+                binding.gestureSeekValue.isGone = true
                 tapJob?.cancel()
                 tapSeekStarted = false
                 localSeekDelta = 0
@@ -174,9 +175,8 @@ class VideoControlsAlib @JvmOverloads constructor(
             private val tapRelay = EventFlow<MotionEvent>()
 
             private fun handleEndSwipeSeek() {
-                playerAnalytics?.rewindSlide(getSeekPercent(), localSeekDelta)
                 applyPlayerSeek()
-                binding.gestureSeekValue.gone()
+                binding.gestureSeekValue.isGone = true
                 binding.gesturesControllerView.background = null
                 swipeSeekStarted = false
                 localSeekDelta = 0
@@ -227,7 +227,7 @@ class VideoControlsAlib @JvmOverloads constructor(
             override fun onDoubleTap(event: MotionEvent?) {
                 event ?: return
                 if (!tapSeekStarted) {
-                    binding.gestureSeekValue.visible()
+                    binding.gestureSeekValue.isVisible = true
                     tapSeekStarted = true
                     handleStartTapSeek()
                 }
@@ -238,17 +238,14 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             override fun onHorizontalScroll(event: MotionEvent?, delta: Float) {
                 if (!swipeSeekStarted) {
-                    binding.gestureSeekValue.visible()
+                    binding.gestureSeekValue.isVisible = true
                     swipeSeekStarted = true
                 }
 
-                val duration = videoView?.duration ?: 0
-                val currentPosition = videoView?.currentPosition ?: 0
                 val percent: Int = ((delta / binding.gesturesControllerView.width) * 100).toInt()
                 val seconds =
                     (pow(percent.toDouble(), 2.0) / 25).toLong() * if (percent < 0) -1 else 1
                 val seekMillis = TimeUnit.SECONDS.toMillis(seconds)
-                val targetPosition = (currentPosition + seekMillis).coerceIn(0, duration)
 
                 val textValue =
                     "${if (seekMillis > 0) "+" else "-"}${Date(seekMillis.absoluteValue).asTimeSecString()}"
@@ -385,11 +382,11 @@ class VideoControlsAlib @JvmOverloads constructor(
         }
 
         isLoading = true
-        loadingProgressBar.visible()
+        loadingProgressBar.isVisible = true
 
         if (initialLoad) {
-            controlsContainer.gone()
-            binding.controlButtonsWrapper.gone()
+            controlsContainer.isGone = true
+            binding.controlButtonsWrapper.isGone = true
         } else {
             playPauseButton.isEnabled = false
             previousButton.isEnabled = false
@@ -405,9 +402,9 @@ class VideoControlsAlib @JvmOverloads constructor(
         }
 
         isLoading = false
-        loadingProgressBar.gone()
-        controlsContainer.visible()
-        binding.controlButtonsWrapper.visible()
+        loadingProgressBar.isGone = true
+        controlsContainer.isVisible = true
+        binding.controlButtonsWrapper.isVisible = true
 
         playPauseButton.isEnabled = true
         previousButton.isEnabled = enabledViews.get(

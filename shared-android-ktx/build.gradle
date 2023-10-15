@@ -3,33 +3,18 @@ apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion app_compile_sdk_version
+    namespace "ru.radiationx.shared.ktx.android"
+
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
     }
+}
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    lint {
-        checkReleaseBuilds false
-        disable "RestrictedApi"
-    }
-    namespace "ru.radiationx.shared.ktx.android"
-
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
 }
 
 dependencies {

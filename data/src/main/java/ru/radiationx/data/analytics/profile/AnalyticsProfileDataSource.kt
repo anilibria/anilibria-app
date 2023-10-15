@@ -1,3 +1,5 @@
+@file:Suppress("RemoveExplicitTypeArguments", "RemoveExplicitTypeArguments")
+
 package ru.radiationx.data.analytics.profile
 
 import kotlinx.coroutines.flow.Flow
@@ -6,7 +8,11 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
-import ru.radiationx.data.datasource.holders.*
+import ru.radiationx.data.datasource.holders.DownloadsHolder
+import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
+import ru.radiationx.data.datasource.holders.HistoryHolder
+import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.repository.AuthRepository
@@ -22,7 +28,7 @@ class AnalyticsProfileDataSource(
     private val downloadsHolder: DownloadsHolder,
     private val migrationDataSource: MigrationDataSource,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) {
 
     fun getApiAddressTag(): Flow<String> = single {
@@ -85,7 +91,7 @@ class AnalyticsProfileDataSource(
         migrationDataSource.getHistory().joinToString()
     }
 
-    private fun <T> single(callable: suspend () -> T) = flow<T> {
+    private fun <T> single(callable: suspend () -> T) = flow {
         emit(callable.invoke())
     }
 }

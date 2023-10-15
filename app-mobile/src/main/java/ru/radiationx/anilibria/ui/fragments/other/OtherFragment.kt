@@ -34,10 +34,6 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private val viewModel by viewModel<OtherViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.apply {
@@ -75,8 +71,8 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         fun bindItems(state: ProfileScreenState) {
             items = mutableListOf<ListItem>().apply {
-                state.profile?.also {
-                    add(ProfileListItem("profile", it))
+                state.profile?.also { profile ->
+                    add(ProfileListItem("profile", profile))
                     addAll(state.profileMenuItems.map { MenuListItem(it) })
                     add(DividerShadowListItem("profile"))
                 }

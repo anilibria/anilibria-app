@@ -1,7 +1,16 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
@@ -11,17 +20,18 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class SuggestionsResultViewModel(
     private val searchRepository: SearchRepository,
     private val cardRouter: LibriaCardRouter,
-    private val suggestionsController: SuggestionsController
+    private val suggestionsController: SuggestionsController,
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
     private val queryRelay = MutableSharedFlow<String>()
 
-    val progressState = MutableStateFlow<Boolean>(false)
+    val progressState = MutableStateFlow(false)
     val resultData = MutableStateFlow<List<LibriaCard>>(emptyList())
 
     init {

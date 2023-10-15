@@ -6,15 +6,14 @@ import androidx.leanback.app.GuidedStepSupportFragment
 
 object GuidedStepFragmentHelper {
 
-    const val TAG = "GuidedStepF"
     const val TAG_LEAN_BACK_ACTIONS_FRAGMENT = "leanBackGuidedStepSupportFragment"
     private const val ENTRY_NAME_REPLACE = "GuidedStepDefault"
     private const val ENTRY_NAME_ENTRANCE = "GuidedStepEntrance"
 
-    fun generateStackEntryName(fragment: GuidedStepSupportFragment): String =
+    private fun generateStackEntryName(fragment: GuidedStepSupportFragment): String =
         generateStackEntryName(fragment.uiStyle, fragment.javaClass)
 
-    fun generateStackEntryName(uiStyle: Int, guidedStepFragmentClass: Class<*>): String =
+    private fun generateStackEntryName(uiStyle: Int, guidedStepFragmentClass: Class<*>): String =
         when (uiStyle) {
             GuidedStepSupportFragment.UI_STYLE_REPLACE -> ENTRY_NAME_REPLACE + guidedStepFragmentClass.name
             GuidedStepSupportFragment.UI_STYLE_ENTRANCE -> ENTRY_NAME_ENTRANCE + guidedStepFragmentClass.name
@@ -25,7 +24,7 @@ object GuidedStepFragmentHelper {
     fun add(
         fragmentManager: FragmentManager,
         fragment: FakeGuidedStepFragment,
-        containerId: Int = android.R.id.content
+        containerId: Int = android.R.id.content,
     ): Int {
         val current = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
         val inGuidedStep = current != null
@@ -43,7 +42,7 @@ object GuidedStepFragmentHelper {
     fun prepare(
         fragmentManager: FragmentManager,
         fragmentTransaction: FragmentTransaction,
-        fragment: FakeGuidedStepFragment
+        fragment: FakeGuidedStepFragment,
     ) {
         val current = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
         val inGuidedStep = current != null

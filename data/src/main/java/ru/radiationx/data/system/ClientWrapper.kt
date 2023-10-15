@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 open class ClientWrapper @Inject constructor(
-        private val provider: Provider<OkHttpClient>
+    provider: Provider<OkHttpClient>,
 ) {
 
     private var client: OkHttpClient = provider.get()

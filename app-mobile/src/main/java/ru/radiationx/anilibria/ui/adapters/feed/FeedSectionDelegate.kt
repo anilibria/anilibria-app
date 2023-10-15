@@ -8,14 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFeedSectionHeaderBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.setCompatDrawable
-import ru.radiationx.shared.ktx.android.visible
 
 /**
  * Created by radiationx on 13.01.18.
@@ -57,7 +56,7 @@ class FeedSectionDelegate(
             } else {
                 Gravity.START or Gravity.CENTER_VERTICAL
             }
-            binding.itemFeedScheduleBtn.visible(item.route != null)
+            binding.itemFeedScheduleBtn.isVisible = item.route != null
             binding.itemFeedScheduleBtn.text = item.route
             binding.itemFeedScheduleIcon.isVisible = item.routeIconRes != null
             item.routeIconRes?.also {

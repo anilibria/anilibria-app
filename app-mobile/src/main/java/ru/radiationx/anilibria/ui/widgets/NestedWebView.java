@@ -7,15 +7,14 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.webkit.WebView;
 
-import androidx.core.view.MotionEventCompat;
 import androidx.core.view.NestedScrollingChild;
 import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.ViewCompat;
 
 
 /*
-* Обработка событий аккуратно слизана с RecyclerView с некоторыми доработками.
-* */
+ * Обработка событий аккуратно слизана с RecyclerView с некоторыми доработками.
+ * */
 public class NestedWebView extends WebView implements NestedScrollingChild {
 
     public static final int SCROLL_STATE_IDLE = 0;
@@ -63,7 +62,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         final MotionEvent ev = MotionEvent.obtain(e);
-        final int action = MotionEventCompat.getActionMasked(e);
+        final int action = ev.getAction();
 
         if (action == MotionEvent.ACTION_DOWN) {
             mNestedOffsets[0] = mNestedOffsets[1] = 0;

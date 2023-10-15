@@ -15,6 +15,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
@@ -97,8 +99,6 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        //setRelativeFontSize(Preferences.Main.getWebViewSize(getContext()));
-        //setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
         setBackgroundColor(ContextKt.getColorFromAttr(getContext(), android.R.attr.colorBackground));
     }
 
@@ -107,25 +107,25 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     @Override
-    public void loadData(String data, String mimeType, String encoding) {
+    public void loadData(@NonNull String data, String mimeType, String encoding) {
         isJsReady = false;
         super.loadData(data, mimeType, encoding);
     }
 
     @Override
-    public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
+    public void loadDataWithBaseURL(String baseUrl, @NonNull String data, String mimeType, String encoding, String historyUrl) {
         isJsReady = false;
         super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
     }
 
     @Override
-    public void loadUrl(String url) {
+    public void loadUrl(@NonNull String url) {
         isJsReady = false;
         super.loadUrl(url);
     }
 
     @Override
-    public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
+    public void loadUrl(@NonNull String url, @NonNull Map<String, String> additionalHttpHeaders) {
         isJsReady = false;
         super.loadUrl(url, additionalHttpHeaders);
     }

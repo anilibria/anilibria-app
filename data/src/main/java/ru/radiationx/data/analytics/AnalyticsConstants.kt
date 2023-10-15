@@ -35,9 +35,6 @@ object AnalyticsConstants {
 
 
     /* App */
-    const val app_time_to_create = "app_time_to_create"
-    const val app_time_to_init = "app_time_to_init"
-    const val app_time_to_activity = "app_time_to_activity"
 
     /* Configuring */
     const val config_open = "config_open"
@@ -200,15 +197,12 @@ object AnalyticsConstants {
     /* Player */
     const val player_open = "player_open"
     const val player_time_to_start = "player_time_to_start"
-    const val player_buffering_time = "player_load_time"
     const val player_error = "player_error"
     const val player_use_time = "player_use_time"
     const val player_play_click = "player_play_click"
     const val player_pause_click = "player_pause_click"
     const val player_prev_click = "player_prev_click"
     const val player_next_click = "player_next_click"
-    const val player_rewind_slide = "player_rewind_slide"
-    const val player_rewind_double_tap = "player_rewind_double_tap"
     const val player_rewind_seek = "player_rewind_seek"
     const val player_fullscreen = "player_fullscreen"
     const val player_pip = "player_pip"

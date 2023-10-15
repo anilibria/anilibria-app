@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.content.res.Configuration
-import android.util.Log
 import android.view.View
 
+@Suppress("DEPRECATION")
 object PlayerWindowFlagHelper {
 
     fun getFlags(orientation: Int, fullScreen: Boolean): Int {

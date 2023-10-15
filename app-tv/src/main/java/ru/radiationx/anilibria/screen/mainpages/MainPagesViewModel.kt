@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.screen.mainpages
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.SearchScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
@@ -19,11 +18,10 @@ import toothpick.InjectConstructor
 class MainPagesViewModel(
     private val checkerRepository: CheckerRepository,
     private val buildConfig: SharedBuildConfig,
-    private val guidedRouter: GuidedRouter,
-    private val router: Router
+    private val router: Router,
 ) : LifecycleViewModel() {
 
-    val hasUpdatesData = MutableStateFlow<Boolean>(false)
+    val hasUpdatesData = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {

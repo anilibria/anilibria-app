@@ -20,12 +20,12 @@ class SearchViewModel(
     private val converter: CardsDataConverter,
     private val router: Router,
     private val cardRouter: LibriaCardRouter,
-    private val searchController: SearchController
+    searchController: SearchController,
 ) : BaseCardsViewModel() {
 
     private var searchForm = SearchForm()
 
-    val progressState = MutableStateFlow<Boolean>(false)
+    val progressState = MutableStateFlow(false)
 
     override val loadOnCreate: Boolean = false
 
@@ -42,7 +42,7 @@ class SearchViewModel(
         progressState.value = requestPage == firstPage
         val result = searchRepository
             .searchReleases(searchForm, requestPage)
-            .let { it.data.map { converter.toCard(it) } }
+            .data.map { converter.toCard(it) }
         progressState.value = false
         return result
     }

@@ -1,10 +1,13 @@
 package ru.radiationx.shared_app.common
 
 import android.app.DownloadManager
-import android.content.*
+import android.content.ClipData
+import android.content.ClipDescription
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import timber.log.Timber
 import toothpick.InjectConstructor
 import java.io.UnsupportedEncodingException
@@ -12,7 +15,7 @@ import java.net.URLDecoder
 
 @InjectConstructor
 class SystemUtils(
-    private val context: Context
+    private val context: Context,
 ) {
 
     /* PLEASE CHECK STORAGE PERMISSION */
@@ -80,13 +83,4 @@ class SystemUtils(
         )
     }
 
-    fun longLog(msg: String) {
-        val maxLogSize = 1000
-        for (i in 0..msg.length / maxLogSize) {
-            val start = i * maxLogSize
-            var end = (i + 1) * maxLogSize
-            end = if (end > msg.length) msg.length else end
-            Log.v("LONG_LOG", msg.substring(start, end))
-        }
-    }
 }

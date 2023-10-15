@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.VerticalGridPresenter
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.*
+import ru.radiationx.anilibria.common.CardDiffCallback
+import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LinkCard
+import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.fragment.BaseVerticalGridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
@@ -42,7 +46,7 @@ class SearchFragment : BaseVerticalGridFragment() {
     override fun onInflateTitleView(
         inflater: LayoutInflater,
         parent: ViewGroup,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
     }
@@ -58,32 +62,37 @@ class SearchFragment : BaseVerticalGridFragment() {
         }
 
         backgroundManager.clearGradient()
-        setOnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewSelectedListener { _, item, _, _ ->
             backgroundManager.applyCard(item)
             when (item) {
                 is LibriaCard -> {
                     setDescription(item.title, item.description)
                 }
+
                 is LinkCard -> {
                     setDescription(item.title, "")
                 }
+
                 is LoadingCard -> {
                     setDescription(item.title, item.description)
                 }
+
                 else -> {
                     setDescription("", "")
                 }
             }
         }
 
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, _ ->
             when (item) {
                 is LinkCard -> {
                     cardsViewModel.onLinkCardClick()
                 }
+
                 is LoadingCard -> {
                     cardsViewModel.onLoadingCardClick()
                 }
+
                 is LibriaCard -> {
                     cardsViewModel.onLibriaCardClick(item)
                 }
@@ -98,11 +107,11 @@ class SearchFragment : BaseVerticalGridFragment() {
         emptyTextManager.text = "По данным параметрам ничего не найдено"
 
         (titleView as? SearchTitleView?)?.apply {
-            setYearClickListener(View.OnClickListener { formViewModel.onYearClick() })
-            setSeasonClickListener(View.OnClickListener { formViewModel.onSeasonClick() })
-            setGenreClickListener(View.OnClickListener { formViewModel.onGenreClick() })
-            setSortClickListener(View.OnClickListener { formViewModel.onSortClick() })
-            setOnlyCompletedClickListener(View.OnClickListener { formViewModel.onOnlyCompletedClick() })
+            setYearClickListener({ formViewModel.onYearClick() })
+            setSeasonClickListener({ formViewModel.onSeasonClick() })
+            setGenreClickListener({ formViewModel.onGenreClick() })
+            setSortClickListener({ formViewModel.onSortClick() })
+            setOnlyCompletedClickListener({ formViewModel.onOnlyCompletedClick() })
 
             subscribeTo(formViewModel.yearData) { year = it }
             subscribeTo(formViewModel.seasonData) { season = it }

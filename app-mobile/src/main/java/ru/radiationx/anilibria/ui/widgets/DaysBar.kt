@@ -6,12 +6,13 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.databinding.MergeDaysBarBinding
-import java.util.*
+import java.util.Calendar
 
 class DaysBar @JvmOverloads constructor(
-    context: Context, attrs:
+    context: Context,
+    attrs:
     AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by viewBinding<MergeDaysBarBinding>(attachToRoot = true)
@@ -30,8 +31,8 @@ class DaysBar @JvmOverloads constructor(
     var clickListener: ((day: Int) -> Unit)? = null
 
     init {
-        buttons.forEach {
-            it.setOnClickListener { btn ->
+        buttons.forEach { view ->
+            view.setOnClickListener { btn ->
                 val day = daysViews.entries.firstOrNull { it.value == btn }?.key
                 day?.also {
                     clickListener?.invoke(it)

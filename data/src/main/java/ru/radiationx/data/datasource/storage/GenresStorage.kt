@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.02.18.
  */
 class GenresStorage @Inject constructor(
-    @DataPreferences private val sharedPreferences: SharedPreferences
+    @DataPreferences private val sharedPreferences: SharedPreferences,
 ) : GenresHolder {
 
     companion object {
@@ -56,10 +56,10 @@ class GenresStorage @Inject constructor(
         return withContext(Dispatchers.IO) {
             val result = mutableListOf<GenreItem>()
             val savedGenres = sharedPreferences.getString(LOCAL_GENRES_KEY, null)
-            savedGenres?.let {
-                val jsonGenres = JSONArray(it)
-                (0 until jsonGenres.length()).forEach {
-                    jsonGenres.getJSONObject(it).let {
+            savedGenres?.let { genre ->
+                val jsonGenres = JSONArray(genre)
+                (0 until jsonGenres.length()).forEach { index ->
+                    jsonGenres.getJSONObject(index).let {
                         result.add(
                             GenreItem(
                                 title = it.getString("title"),

@@ -36,6 +36,7 @@ class DonationCaptionDelegate(
             }
         }
 
+        @Suppress("DEPRECATION")
         fun bind(data: DonationContentCaption) {
             binding.tvText.text = data.text.let { Html.fromHtml(it) }
         }

@@ -5,10 +5,10 @@ import toothpick.Toothpick
 import kotlin.reflect.KClass
 
 class QuillScope(
-    internal val tpScope: Scope
+    private val tpScope: Scope,
 ) {
 
-    val name = tpScope.name
+    val name: Any = tpScope.name
 
     fun openSubScope(): QuillScope {
         val tpSubScope = tpScope.openSubScope(Quill.generateScopeName())

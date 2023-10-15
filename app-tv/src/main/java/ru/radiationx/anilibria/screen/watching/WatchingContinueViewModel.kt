@@ -15,7 +15,7 @@ class WatchingContinueViewModel(
     private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val converter: CardsDataConverter,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Продолжить просмотр"
@@ -27,8 +27,8 @@ class WatchingContinueViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
-        .let {
-            it.sortedByDescending { it.lastAccess }.map { it.id.releaseId }
+        .let { episodeAccesses ->
+            episodeAccesses.sortedByDescending { it.lastAccess }.map { it.id.releaseId }
         }
         .let { ids ->
             if (ids.isEmpty()) {
@@ -45,8 +45,8 @@ class WatchingContinueViewModel(
                 Pair(release, lastEpisode)
             }
         }
-        .let {
-            it.sortedByDescending { it.second?.lastAccess }.map {
+        .let { pairs ->
+            pairs.sortedByDescending { it.second?.lastAccess }.map {
                 converter.toCard(it.first)
                     .copy(description = "Вы остановились на ${it.second?.id?.id} серии")
             }

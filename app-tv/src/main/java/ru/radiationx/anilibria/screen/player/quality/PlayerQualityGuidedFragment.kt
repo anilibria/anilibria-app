@@ -12,7 +12,7 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
-    private val viewModel by viewModel<PlayerQualityViewModel>() { argExtra }
+    private val viewModel by viewModel<PlayerQualityViewModel> { argExtra }
 
     private val sdAction by lazy {
         GuidedAction.Builder(requireContext())

@@ -25,8 +25,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="40dp"
             android:contentDescription="@null"
-            android:tint="@color/alib_red"
-            app:srcCompat="@drawable/ic_anilibria" />
+            app:srcCompat="@drawable/ic_anilibria"
+            app:tint="@color/alib_red" />
 
         <TextView
             android:id="@+id/authSocialTop"
@@ -83,6 +83,7 @@
                 android:ems="10"
                 android:freezesText="true"
                 android:hint="@string/auth_login"
+                android:importantForAutofill="noExcludeDescendants"
                 android:inputType="textPersonName"
                 android:maxLines="1"
                 android:scrollHorizontally="true" />
@@ -96,7 +97,6 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
-
             app:passwordToggleDrawable="@drawable/ic_eye"
             app:passwordToggleEnabled="true">
 
@@ -107,6 +107,7 @@
                 android:layout_gravity="center_horizontal"
                 android:freezesText="true"
                 android:hint="@string/auth_password"
+                android:importantForAutofill="noExcludeDescendants"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:scrollHorizontally="true" />

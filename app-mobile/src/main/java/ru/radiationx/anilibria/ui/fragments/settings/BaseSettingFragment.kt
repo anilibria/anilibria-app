@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 open class BaseSettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {}
 
+    @Suppress("DEPRECATION")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val rootView = view
         view?.let {
             it.findViewById<RecyclerView>(androidx.preference.R.id.recycler_view)?.setPadding(0, 0, 0, 0)
         }

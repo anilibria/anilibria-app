@@ -7,13 +7,11 @@ import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
 import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.AuthRepository
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class AuthViewModel(
     private val authRepository: AuthRepository,
-    private val router: Router,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
 

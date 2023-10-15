@@ -4,5 +4,4 @@ enum class AnalyticsAppTheme(val value: String) {
     LIGHT("light"),
     DARK("dark"),
     SYSTEM("system"),
-    UNKNOWN("unknown")
 }

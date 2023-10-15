@@ -9,7 +9,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SuggestionsRowsViewModel(
-    private val suggestionsController: SuggestionsController
+    suggestionsController: SuggestionsController,
 ) : BaseRowsViewModel() {
 
     companion object {

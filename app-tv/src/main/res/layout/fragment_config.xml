@@ -35,7 +35,7 @@
         android:contentDescription="@string/cd_config_logo"
         android:focusable="false"
         android:src="@drawable/ic_anilibria_splash"
-        android:tint="?android:colorAccent" />
+        app:tint="?android:colorAccent" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottombarrier"

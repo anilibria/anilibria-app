@@ -3,13 +3,22 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.entity.domain.release.*
+import ru.radiationx.data.entity.domain.release.BlockedInfo
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.ExternalEpisode
+import ru.radiationx.data.entity.domain.release.ExternalPlaylist
+import ru.radiationx.data.entity.domain.release.FavoriteInfo
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.RutubeEpisode
+import ru.radiationx.data.entity.domain.release.SourceEpisode
+import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.asTimeSecString
+import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared_app.codecs.MediaCodecsFinder
 import ru.radiationx.shared_app.codecs.types.CodecProcessingType
 import ru.radiationx.shared_app.codecs.types.CodecQuery
-import java.util.*
+import java.util.Date
 
 fun Release.toState(): ReleaseDetailState = ReleaseDetailState(
     id = id,
@@ -36,7 +45,7 @@ fun Release.toInfoState(): ReleaseInfoState {
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
     val genresHtml = "<b>Жанр:</b> " + genres.joinToString(", ") {
         val index = genres.indexOf(it)
-        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalize()}</a>"
+        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalizeDefault()}</a>"
     }
     val arrHtml = arrayOf(
         seasonsHtml,
@@ -51,7 +60,7 @@ fun Release.toInfoState(): ReleaseInfoState {
         titleRus = title.orEmpty(),
         titleEng = titleEng.orEmpty(),
         description = description.orEmpty(),
-        updatedAt = Date(torrentUpdate * 1000L),
+        updatedAt = torrentUpdate.takeIf { it != 0 }?.let { Date(it * 1000L) },
         info = infoStr,
         days = days.map { ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
@@ -149,7 +158,7 @@ fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
 )
 
 fun ExternalEpisode.toState(
-    playlist: ExternalPlaylist
+    playlist: ExternalPlaylist,
 ): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     id = id,
     title = title.orEmpty(),

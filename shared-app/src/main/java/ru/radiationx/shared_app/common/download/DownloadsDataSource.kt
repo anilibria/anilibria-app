@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -74,7 +75,12 @@ class DownloadsDataSource(
     fun enableObserving(enabled: Boolean) {
         if (enabled) {
             startTimer()
-            context.registerReceiver(completeReceiver, completeFilter)
+            ContextCompat.registerReceiver(
+                context,
+                completeReceiver,
+                completeFilter,
+                ContextCompat.RECEIVER_EXPORTED
+            )
             downloadsHolder.getDownloads().forEach { startObserve(it) }
             updateAll()
         } else {

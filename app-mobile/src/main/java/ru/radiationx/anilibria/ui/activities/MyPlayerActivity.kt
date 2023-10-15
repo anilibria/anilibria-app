@@ -616,7 +616,13 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         saveEpisode()
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
-            registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
+            val filter = IntentFilter(ACTION_REMOTE_CONTROL)
+            ContextCompat.registerReceiver(
+                this,
+                mReceiver,
+                filter,
+                ContextCompat.RECEIVER_EXPORTED
+            )
             //videoControls?.setControlsEnabled(false)
             videoControls?.hide()
             videoControls?.isGone = true

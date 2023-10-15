@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import android.os.Bundle
+import android.speech.SpeechRecognizer
 import android.view.View
 import android.view.ViewGroup
 import androidx.leanback.app.SearchSupportFragment
@@ -105,6 +106,55 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
                 row
             }
             rowsAdapter.setItems(rows, RowDiffCallback)
+        }
+    }
+
+    override fun onPause() {
+        avoidSpeechRecognitinCrash()
+        super.onPause()
+    }
+
+    // "destroy" may throw java.lang.IllegalArgumentException: Service not registered: android.speech.SpeechRecognizer$Connection@dabd9b8
+    // do all this mehod's work and wrap "destroy" to try catch
+    //    private void releaseRecognizer() {
+    //        if (null != mSpeechRecognizer) {
+    //            mSearchBar.setSpeechRecognizer(null);
+    //            mSpeechRecognizer.destroy();
+    //            mSpeechRecognizer = null;
+    //        }
+    //    }
+    private fun avoidSpeechRecognitinCrash() {
+        val mSpeechRecognizerField =
+            SearchSupportFragment::class.java.getDeclaredField("mSpeechRecognizer").apply {
+                isAccessible = true
+            }
+        val mSearchBarField =
+            SearchSupportFragment::class.java.getDeclaredField("mSearchBar").apply {
+                isAccessible = true
+            }
+        val currentSpeechRecognizer = mSpeechRecognizerField.get(this)
+        if (currentSpeechRecognizer != null) {
+            val mSearchBar = mSearchBarField.get(this)
+            val setSpeechRecognizerMethod = mSearchBar::class.java.getDeclaredMethod(
+                "setSpeechRecognizer",
+                SpeechRecognizer::class.java
+            ).apply {
+                isAccessible = true
+            }
+            setSpeechRecognizerMethod.invoke(mSearchBar, null)
+
+            val destroyMethod = currentSpeechRecognizer::class.java.getDeclaredMethod(
+                "destroy"
+            ).apply {
+                isAccessible = true
+            }
+            try {
+                destroyMethod.invoke(currentSpeechRecognizer)
+            } catch (ignore: IllegalArgumentException) {
+                // ignore
+            }
+
+            mSpeechRecognizerField.set(this, null)
         }
     }
 

@@ -48,26 +48,27 @@ class MainPagesFragment : BrowseSupportFragment() {
             viewModel.onSearchClick()
         }
 
-        setAlertClickListener({
+        setAlertClickListener {
             viewModel.onAppUpdateClick()
-        })
+        }
 
-        setOtherClickListener({
+        setOtherClickListener {
             viewModel.onCatalogClick()
-        })
+        }
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
 
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
-
+                val titleView = titleView ?: return
                 TransitionManager.beginDelayedTransition(
                     titleView as ViewGroup,
                     Fade(Fade.IN).apply {
                         interpolator = FastOutSlowInInterpolator()
-                    })
+                    }
+                )
                 badgeDrawable = if (withHeaders) {
-                    requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
+                    titleView.context.getCompatDrawable(R.drawable.ic_anilibria_splash)
                 } else {
                     null
                 }

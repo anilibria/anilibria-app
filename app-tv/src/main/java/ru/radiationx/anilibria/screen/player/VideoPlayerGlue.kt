@@ -57,7 +57,12 @@ class VideoPlayerGlue(
         fun onEpisodesClick()
     }
 
+    interface PlaybackListener {
+        fun onUpdateProgress()
+    }
+
     var actionListener: OnActionClickedListener? = null
+    var playbackListener: PlaybackListener? = null
 
     private val previousAction by lazy { SkipPreviousAction(context) }
     private val nextAction by lazy { SkipNextAction(context) }
@@ -68,6 +73,10 @@ class VideoPlayerGlue(
     private val speedAction by lazy { SpeedAction(context) }
     private val episodesAction by lazy { EpisodesAction(context) }
 
+    override fun onUpdateProgress() {
+        super.onUpdateProgress()
+        playbackListener?.onUpdateProgress()
+    }
 
     init {
         isSeekEnabled = true

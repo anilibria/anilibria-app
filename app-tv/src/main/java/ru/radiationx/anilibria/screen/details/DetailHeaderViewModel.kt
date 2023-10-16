@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.common.DetailsState
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
+import ru.radiationx.anilibria.screen.DetailOtherGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
@@ -99,10 +100,6 @@ class DetailHeaderViewModel(
         }
     }
 
-    fun onPlayWebClick() {
-
-    }
-
     fun onFavoriteClick() {
         val release = currentRelease ?: return
 
@@ -137,6 +134,10 @@ class DetailHeaderViewModel(
 
     fun onDescriptionClick() {
 
+    }
+
+    fun onOtherClick() {
+        guidedRouter.open(DetailOtherGuidedScreen(releaseId))
     }
 
     private fun updateRelease(release: Release) {

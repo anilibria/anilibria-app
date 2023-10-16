@@ -29,6 +29,8 @@ class MainFavoritesViewModel(
 
     override val loadOnCreate: Boolean = false
 
+    override val preventClearOnRefresh: Boolean = true
+
     init {
         authRepository
             .observeAuthState()

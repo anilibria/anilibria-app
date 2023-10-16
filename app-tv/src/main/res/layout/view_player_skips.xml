@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:gravity="end|bottom"
+    android:orientation="horizontal"
+    android:padding="48dp">
+
+    <Button
+        android:id="@+id/btSkipsSkip"
+        style="?attr/detailsActionButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Пропустить" />
+
+    <Button
+        android:id="@+id/btSkipsCancel"
+        style="?attr/detailsActionButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Смотреть" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -198,8 +198,13 @@ class PlayerViewModel(
         val episode = currentEpisode ?: return
         val quality = currentQuality ?: return
         val newUrl = getEpisodeUrl(episode, quality) ?: return
-        val newVideo =
-            Video(newUrl, episode.access.seek, release.title.orEmpty(), episode.title.orEmpty())
+        val newVideo = Video(
+            url = newUrl,
+            seek = episode.access.seek,
+            title = release.title.orEmpty(),
+            subtitle = episode.title.orEmpty(),
+            episode.skips
+        )
         if (force || videoData.value?.url != newVideo.url) {
             videoData.value = newVideo
         }

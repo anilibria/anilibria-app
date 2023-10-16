@@ -35,14 +35,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="?browsePaddingBottom"
+        android:layout_marginBottom="16dp"
         android:background="@color/dark_cardBackground"
         android:elevation="16dp"
-        android:layout_marginBottom="16dp"
         android:scaleType="centerCrop"
         android:theme="@style/AppTheme.Material"
+        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintDimensionRatio="260:370"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
-        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/AppTheme.RoundedImageView" />
 
@@ -103,8 +103,8 @@
         app:layout_constraintEnd_toStartOf="@id/rowReleaseFavoriteCount"
         app:layout_constraintStart_toEndOf="@id/rowReleaseExtra"
         app:layout_constraintTop_toTopOf="@id/rowReleaseExtra"
-        tools:visibility="visible"
-        app:tint="@color/dark_textDefault" />
+        app:tint="@color/dark_textDefault"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rowReleaseFavoriteCount"
@@ -139,11 +139,11 @@
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        app:layout_constrainedHeight="true"
         android:nextFocusDown="@id/rowReleaseActions"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         android:padding="16dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra">
@@ -213,20 +213,26 @@
             android:text="Смотреть" />
 
         <Button
-            android:id="@+id/rowReleaseActionPlayWeb"
-            style="?attr/detailsActionButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="Веб-плеер"
-            android:visibility="gone" />
-
-        <Button
             android:id="@+id/rowReleaseActionFavorite"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="Добавить в избранное" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/rowReleaseActionOther"
+            style="?attr/detailsActionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:text="Смотреть"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:tint="@color/text_button_color" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -236,9 +242,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseArrow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView

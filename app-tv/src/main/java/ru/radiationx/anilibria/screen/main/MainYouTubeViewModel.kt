@@ -16,6 +16,8 @@ class MainYouTubeViewModel(
 
     override val defaultTitle: String = "Обновления на YouTube"
 
+    override val preventClearOnRefresh: Boolean = true
+
     override fun onResume() {
         super.onResume()
         onRefreshClick()

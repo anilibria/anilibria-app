@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.radiationx.shared.ktx.coRunCatching
+import java.util.Collections
 
 class SharedRequests<KEY, DATA> {
 
@@ -13,7 +14,7 @@ class SharedRequests<KEY, DATA> {
 
     private val requestEvent = MutableSharedFlow<Pair<KEY, Result<DATA>>>()
 
-    private val jobs = mutableMapOf<KEY, Job>()
+    private val jobs = Collections.synchronizedMap<KEY, Job>(mutableMapOf())
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun request(key: KEY, block: suspend () -> DATA): DATA {
@@ -22,6 +23,7 @@ class SharedRequests<KEY, DATA> {
                 val result = coRunCatching {
                     block.invoke()
                 }
+                jobs[key] = null
                 requestEvent.emit(key to result)
             }
             jobs[key] = job

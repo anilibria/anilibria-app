@@ -17,7 +17,7 @@ import javax.inject.Inject
 class HistoryRepository @Inject constructor(
     private val historyStorage: HistoryHolder,
     private val updateHolder: ReleaseUpdateHolder,
-    private val historyRuntimeCache: HistoryRuntimeCache
+    private val historyRuntimeCache: HistoryRuntimeCache,
 ) {
 
     suspend fun getReleases(): List<Release> = withContext(Dispatchers.IO) {

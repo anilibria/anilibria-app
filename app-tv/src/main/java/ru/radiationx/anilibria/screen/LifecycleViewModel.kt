@@ -14,7 +14,6 @@ open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         onCreate()
-        //Log.d("kekeke", "${this::class.simpleName} onCreate")
     }
 
     @CallSuper
@@ -29,7 +28,6 @@ open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
-        //Log.d("kekeke", "${this::class.simpleName} onStart")
         onStart()
         if (!coldStarted) {
             coldStarted = true
@@ -46,7 +44,6 @@ open class LifecycleViewModel : ViewModel(), DefaultLifecycleObserver {
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-       // Log.d("kekeke", "${this::class.simpleName} onResume")
         onResume()
         if (!coldResumed) {
             coldResumed = true

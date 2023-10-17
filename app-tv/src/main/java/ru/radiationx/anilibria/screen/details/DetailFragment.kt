@@ -56,9 +56,9 @@ class DetailFragment : RowsSupportFragment() {
                 LibriaDetailsRow::class.java, ReleaseDetailsPresenter(
                     continueClickListener = headerViewModel::onContinueClick,
                     playClickListener = headerViewModel::onPlayClick,
-                    playWebClickListener = headerViewModel::onPlayWebClick,
                     favoriteClickListener = headerViewModel::onFavoriteClick,
-                    descriptionClickListener = headerViewModel::onDescriptionClick
+                    descriptionClickListener = headerViewModel::onDescriptionClick,
+                    otherClickListener = headerViewModel::onOtherClick
                 )
             )
         }

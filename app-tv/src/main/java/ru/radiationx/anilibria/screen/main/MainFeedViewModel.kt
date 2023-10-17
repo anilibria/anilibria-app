@@ -18,6 +18,8 @@ class MainFeedViewModel(
 
     override val defaultTitle: String = "Самое актуальное"
 
+    override val preventClearOnRefresh: Boolean = true
+
     override fun onResume() {
         super.onResume()
         onRefreshClick()

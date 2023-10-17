@@ -7,12 +7,13 @@ import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.common.LoadingCard
 
 class CardPresenterSelector(
-    private val linkBindListener: (() -> Unit)?
+    private val linkBindListener: (() -> Unit)?,
 ) : PresenterSelector() {
 
     private val presentersMap = mutableMapOf<Class<*>, Presenter>()
 
-    override fun getPresenter(item: Any): Presenter {
+    override fun getPresenter(item: Any?): Presenter? {
+        item ?: return null
         val presenter = presentersMap[item::class.java]
         if (presenter != null) {
             return presenter

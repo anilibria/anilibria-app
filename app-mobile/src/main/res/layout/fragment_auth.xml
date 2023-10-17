@@ -18,7 +18,7 @@
         android:paddingTop="24dp"
         android:paddingBottom="24dp">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/auth_logo"
             android:layout_width="96dp"
             android:layout_height="96dp"

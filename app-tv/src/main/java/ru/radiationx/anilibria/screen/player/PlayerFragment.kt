@@ -58,6 +58,7 @@ class PlayerFragment : BasePlayerFragment() {
                 seekTo(it.seek)
                 preparePlayer(it.url)
             }
+            skipsPart?.setSkips(it.skips)
         }
 
         subscribeTo(viewModel.playAction.filterNotNull()) {

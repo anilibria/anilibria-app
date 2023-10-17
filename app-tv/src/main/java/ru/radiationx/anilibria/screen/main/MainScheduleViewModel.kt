@@ -29,8 +29,9 @@ class MainScheduleViewModel(
 
     override val defaultTitle: String = "Ожидается сегодня"
 
-    override val loadMoreCard: LinkCard =
-        LinkCard("Открыть полное расписание")
+    override val loadMoreCard: LinkCard = LinkCard("Открыть полное расписание")
+
+    override val preventClearOnRefresh: Boolean = true
 
     override fun onResume() {
         super.onResume()

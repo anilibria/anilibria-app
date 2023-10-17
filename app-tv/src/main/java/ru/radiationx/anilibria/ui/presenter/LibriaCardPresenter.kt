@@ -14,7 +14,8 @@ class LibriaCardPresenter : Presenter() {
         return LibriaCardViewHolder(cardView)
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any?) {
+        item ?: return
         item as LibriaCard
         viewHolder as LibriaCardViewHolder
         viewHolder.bind(item)
@@ -27,7 +28,7 @@ class LibriaCardPresenter : Presenter() {
 }
 
 class LibriaCardViewHolder(
-    private val containerView: ImageCardView
+    private val containerView: ImageCardView,
 ) : Presenter.ViewHolder(containerView) {
 
     private val cardHeight by lazy {
@@ -46,12 +47,13 @@ class LibriaCardViewHolder(
                 cardReleaseWidth,
                 cardHeight
             )
+
             is LibriaCard.Type.Youtube -> containerView.setMainImageDimensions(
                 cardYoutubeWidth,
                 cardHeight
             )
         }
-        containerView.mainImageView.showImageUrl(item.image)
+        containerView.mainImageView?.showImageUrl(item.image)
     }
 
     fun unbind() {

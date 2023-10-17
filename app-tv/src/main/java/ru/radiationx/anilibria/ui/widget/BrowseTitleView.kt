@@ -30,7 +30,7 @@ import ru.radiationx.anilibria.databinding.ViewTitleviewBinding
 open class BrowseTitleView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.browseTitleViewStyle
+    defStyleAttr: Int = R.attr.browseTitleViewStyle,
 ) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {
 
     private val binding by viewBinding<ViewTitleviewBinding>(attachToRoot = true)
@@ -60,10 +60,11 @@ open class BrowseTitleView @JvmOverloads constructor(
     val searchAffordanceView: View
         get() = binding.titleOrb
 
-    var searchAffordanceColors: SearchOrbView.Colors
+    var searchAffordanceColors: SearchOrbView.Colors?
         get() = binding.titleOrb.orbColors
         set(colors) {
-            binding.titleOrb.orbColors = colors
+            colors ?: return
+            binding.titleOrb.setOrbColors(colors)
         }
 
     var alert: CharSequence?
@@ -169,7 +170,7 @@ open class BrowseTitleView @JvmOverloads constructor(
 
     override fun onRequestFocusInDescendants(
         direction: Int,
-        previouslyFocusedRect: Rect?
+        previouslyFocusedRect: Rect?,
     ): Boolean {
         return searchAffordanceView.requestFocus() || super.onRequestFocusInDescendants(
             direction,
@@ -203,7 +204,7 @@ open class BrowseTitleView @JvmOverloads constructor(
 
         override fun setAnimationEnabled(enable: Boolean) = titleView.enableAnimation(enable)
         override fun getBadgeDrawable(): Drawable? = titleView.badgeDrawable
-        override fun getSearchAffordanceColors(): SearchOrbView.Colors =
+        override fun getSearchAffordanceColors(): SearchOrbView.Colors? =
             titleView.searchAffordanceColors
 
         override fun getTitle(): CharSequence? = titleView.title

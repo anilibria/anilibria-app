@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -39,6 +40,9 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected var player: SimpleExoPlayer? = null
         private set
 
+    protected var skipsPart: PlayerSkipsPart? = null
+        private set
+
     private val dataSourceFactory by lazy {
         val userAgent = Util.getUserAgent(requireActivity(), "VideoPlayerGlue")
         DefaultDataSourceFactory(requireContext(), userAgent)
@@ -55,6 +59,25 @@ open class BasePlayerFragment : VideoSupportFragment() {
         initializePlayer()
         initializeRows()
 
+        skipsPart = PlayerSkipsPart(
+            parent = view as FrameLayout,
+            onSeek = {
+                player?.seekTo(it)
+            },
+            onSkipShow = {
+                isShowOrHideControlsOverlayOnUserInteraction = false
+                hideControlsOverlay(false)
+            },
+            onSkipHide = {
+                isShowOrHideControlsOverlayOnUserInteraction = true
+            }
+        )
+
+        playerGlue?.playbackListener = object : VideoPlayerGlue.PlaybackListener {
+            override fun onUpdateProgress() {
+                skipsPart?.update(player?.currentPosition ?: 0)
+            }
+        }
 
         fadeCompleteListener = object : OnFadeCompleteListener() {
 
@@ -67,6 +90,12 @@ open class BasePlayerFragment : VideoSupportFragment() {
         }
     }
 
+    override fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
+        if (videoWidth == 0 || videoHeight == 0) {
+            return
+        }
+        super.onVideoSizeChanged(videoWidth, videoHeight)
+    }
 
     override fun onPause() {
         super.onPause()
@@ -75,6 +104,8 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        skipsPart = null
+        playerGlue?.playbackListener = null
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         releasePlayer()
     }
@@ -83,14 +114,15 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected open fun onPreparePlaying() {}
 
     private fun initializeRows() {
-        val playerGlue = this.playerGlue!!
+        val playerGlue = this.playerGlue ?: return
+        val controlsRow = playerGlue.controlsRow ?: return
 
         val rowsPresenter = ClassPresenterSelector().apply {
             addClassPresenter(ListRow::class.java, CustomListRowPresenter())
-            addClassPresenter(playerGlue.controlsRow.javaClass, playerGlue.playbackRowPresenter)
+            addClassPresenter(controlsRow.javaClass, playerGlue.playbackRowPresenter)
         }
         val rowsAdapter = ArrayObjectAdapter(rowsPresenter).apply {
-            add(playerGlue.controlsRow)
+            add(controlsRow)
         }
 
         adapter = rowsAdapter

@@ -53,8 +53,8 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
 
         subscribeTo(viewModel.otpInfoData.filterNotNull()) {
             guidanceStylist.apply {
-                titleView.text = "Код: ${it.code}"
-                descriptionView.text = it.description
+                titleView?.text = "Код: ${it.code}"
+                descriptionView?.text = it.description
             }
         }
 

@@ -15,7 +15,7 @@ import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 data class SearchValuesExtra(
-    val values: List<String>
+    val values: List<String>,
 ) : QuillExtra
 
 abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
@@ -63,7 +63,7 @@ abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
         subscribeTo(viewModel.checkedIndicesData) {
             it.forEach { pair ->
                 val action = findActionById(pair.first.toLong())
-                if (action.isChecked != pair.second) {
+                if (action != null && action.isChecked != pair.second) {
                     action.isChecked = pair.second
                     notifyActionChanged(findActionPositionById(action.id))
                 }
@@ -77,7 +77,7 @@ abstract class BaseSearchValuesGuidedFragment : FakeGuidedStepFragment() {
 
     override fun onCreateButtonActions(
         actions: MutableList<GuidedAction>,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ) {
         actions.add(
             GuidedAction.Builder(requireContext())

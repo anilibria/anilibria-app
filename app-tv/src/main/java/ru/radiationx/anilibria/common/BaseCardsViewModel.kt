@@ -18,6 +18,7 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     protected open val firstPage = 1
     protected open val loadOnCreate = true
     protected open val progressOnRefresh = true
+    protected open val preventClearOnRefresh = false
     open val defaultTitle = "Cards"
 
     protected open val loadMoreCard = LinkCard("Загрузить еще")
@@ -59,7 +60,19 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
     protected open fun hasMoreCards(
         newCards: List<LibriaCard>,
         allCards: List<LibriaCard>,
-    ): Boolean = newCards.size >= 10
+    ): Boolean {
+        return newCards.size >= 10
+    }
+
+    protected open fun needsModify(
+        newCards: List<LibriaCard>,
+        allCards: List<LibriaCard>,
+    ): Boolean {
+        if (!preventClearOnRefresh) return true
+        val oldFirstIds = allCards.take(newCards.size).map { it.getId() }.toSet()
+        val newIds = newCards.map { it.getId() }.toSet()
+        return oldFirstIds != newIds
+    }
 
     protected open fun getErrorCard(error: Throwable) = LoadingCard(
         "Повторить загрузку",
@@ -82,10 +95,18 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                 }
             }.onSuccess { newCards ->
                 currentPage = requestPage
-                if (requestPage <= 1) {
+                val isFirstPage = requestPage <= 1
+                val needsModify = if (isFirstPage) {
+                    needsModify(newCards, currentCards)
+                } else {
+                    true
+                }
+                if (isFirstPage && needsModify) {
                     currentCards.clear()
                 }
-                currentCards.addAll(newCards)
+                if (needsModify) {
+                    currentCards.addAll(newCards)
+                }
 
                 if (hasMoreCards(newCards, currentCards)) {
                     cardsData.value = currentCards + loadMoreCard

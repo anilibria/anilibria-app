@@ -17,7 +17,7 @@ open class CustomListRowPresenter @JvmOverloads constructor(
         (holder as CustomListRowViewHolder).isExpanded = expanded
     }
 
-    override fun onRowViewSelected(holder: RowPresenter.ViewHolder?, selected: Boolean) {
+    override fun onRowViewSelected(holder: RowPresenter.ViewHolder, selected: Boolean) {
         super.onRowViewSelected(holder, selected)
         (holder as CustomListRowViewHolder).isSelected = selected
     }

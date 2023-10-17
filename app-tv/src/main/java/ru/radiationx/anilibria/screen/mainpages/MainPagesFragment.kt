@@ -48,26 +48,27 @@ class MainPagesFragment : BrowseSupportFragment() {
             viewModel.onSearchClick()
         }
 
-        setAlertClickListener({
+        setAlertClickListener {
             viewModel.onAppUpdateClick()
-        })
+        }
 
-        setOtherClickListener({
+        setOtherClickListener {
             viewModel.onCatalogClick()
-        })
+        }
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
 
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
-
+                val titleView = titleView ?: return
                 TransitionManager.beginDelayedTransition(
                     titleView as ViewGroup,
                     Fade(Fade.IN).apply {
                         interpolator = FastOutSlowInInterpolator()
-                    })
+                    }
+                )
                 badgeDrawable = if (withHeaders) {
-                    requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
+                    titleView.context.getCompatDrawable(R.drawable.ic_anilibria_splash)
                 } else {
                     null
                 }
@@ -116,10 +117,12 @@ class MainPagesFragment : BrowseSupportFragment() {
         setOther("Каталог")
         //progressBarManager.show()
 
-        ImageViewCompat.setImageTintList(
-            titleView.findViewById(R.id.title_badge),
-            ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
-        )
+        titleView?.also { tview ->
+            ImageViewCompat.setImageTintList(
+                tview.findViewById(R.id.title_badge),
+                ColorStateList.valueOf(tview.context.getCompatColor(R.color.dark_contrast_icon))
+            )
+        }
     }
 
     override fun onStart() {

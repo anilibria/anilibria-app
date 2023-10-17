@@ -38,14 +38,14 @@ class SearchFragment : BaseVerticalGridFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "Каталог"
-        gridPresenter = VerticalGridPresenter().apply {
+        setGridPresenter(VerticalGridPresenter().apply {
             numberOfColumns = 6
-        }
+        })
     }
 
     override fun onInflateTitleView(
         inflater: LayoutInflater,
-        parent: ViewGroup,
+        parent: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)

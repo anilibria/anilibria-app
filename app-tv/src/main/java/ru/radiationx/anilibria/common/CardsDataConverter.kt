@@ -7,22 +7,24 @@ import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared.ktx.decapitalizeDefault
-import java.util.*
+import java.util.Date
 
 class CardsDataConverter(
-    private val context: Context
+    private val context: Context,
 ) {
 
     fun toCard(releaseItem: Release) = releaseItem.run {
+        val torrentDate = torrentUpdate.takeIf { it != 0 }?.let { Date(it * 1000L) }
+        val seasonText = "${seasons.firstOrNull()} год"
+        val genreText = genres.firstOrNull()?.capitalizeDefault()
+        val seriesText = "Серии: ${series?.trim() ?: "Не доступно"}"
+        val updateText = torrentDate?.let {
+            "Обновлен ${it.relativeDate(context).decapitalizeDefault()}"
+        }
+        val descItems = listOfNotNull(seasonText, genreText, seriesText, updateText)
         LibriaCard(
             title.orEmpty(),
-            "${seasons.firstOrNull()} год • ${
-                genres.firstOrNull()
-                    ?.capitalizeDefault()
-            } • Серии: ${series?.trim() ?: "Не доступно"} • Обновлен ${
-                Date(torrentUpdate * 1000L).relativeDate(context)
-                    .decapitalizeDefault()
-            }",
+            descItems.joinToString(" • "),
             poster.orEmpty(),
             LibriaCard.Type.Release(releaseItem.id)
         )

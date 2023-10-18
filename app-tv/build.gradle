@@ -12,7 +12,7 @@ android {
         minSdkVersion tv_min_sdk_version
         targetSdkVersion app_target_sdk_version
         versionCode 3
-        versionName "1.1.0_RC3"
+        versionName "1.1.0_RC4"
     }
 
     buildFeatures {

@@ -12,7 +12,7 @@ import java.util.*
 class DetailDataConverter {
 
     @Suppress("DEPRECATION")
-    fun toDetail(releaseItem: Release): LibriaDetails = releaseItem.run {
+    fun toDetail(releaseItem: Release, isFull: Boolean): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
             titleRu = title.orEmpty(),
@@ -25,7 +25,7 @@ class DetailDataConverter {
             ).joinToString(" • "),
             description = Html.fromHtml(description.orEmpty()).toString().trim()
                 .trim('"')/*.replace('\n', ' ')*/,
-            announce = getAnnounce(),
+            announce = getAnnounce(isFull),
             image = poster.orEmpty(),
             favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
             hasFullHd = episodes.any { it.urlFullHd != null },
@@ -36,14 +36,21 @@ class DetailDataConverter {
         )
     }
 
-    private fun Release.getAnnounce(): String {
-        if (statusCode == Release.STATUS_CODE_COMPLETE) {
-            return "Релиз завершен"
+    private fun Release.getAnnounce(isFull: Boolean): String {
+        if (!isFull) return ""
+        val announceText = if (statusCode == Release.STATUS_CODE_COMPLETE) {
+            "Релиз завершен"
+        } else {
+            val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
+            val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
+            originalAnnounce ?: scheduleAnnounce
         }
-
-        val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
-        val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
-        return originalAnnounce ?: scheduleAnnounce
+        val episodesWarning = if (episodes.isEmpty()) {
+            "Нет доступных для просмотра серий"
+        } else {
+            null
+        }
+        return listOfNotNull(announceText, episodesWarning).joinToString(" • ")
     }
 
     private fun String.toAnnounce2(): String {

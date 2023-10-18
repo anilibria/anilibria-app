@@ -119,6 +119,7 @@ class LibriaReleaseViewHolder(
         binding.rowReleaseExtra.text = details.extra
         binding.rowReleaseDescription.text = details.description
         binding.rowReleaseAnnounce.text = details.announce
+        binding.rowReleaseAnnounce.isVisible = details.announce.isNotEmpty()
         binding.rowReleaseFavoriteCount.text = details.favoriteCount
         binding.rowReleaseFavoriteCount.isVisible = details.favoriteCount != "0"
 

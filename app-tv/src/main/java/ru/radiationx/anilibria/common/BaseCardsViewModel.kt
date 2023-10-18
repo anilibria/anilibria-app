@@ -94,7 +94,6 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                     getLoader(requestPage)
                 }
             }.onSuccess { newCards ->
-                currentPage = requestPage
                 val isFirstPage = requestPage <= 1
                 val needsModify = if (isFirstPage) {
                     needsModify(newCards, currentCards)
@@ -105,6 +104,7 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                     currentCards.clear()
                 }
                 if (needsModify) {
+                    currentPage = requestPage
                     currentCards.addAll(newCards)
                 }
 

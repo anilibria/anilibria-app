@@ -11,8 +11,8 @@ android {
         applicationId "ru.radiationx.anilibria.app.tv"
         minSdkVersion tv_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 3
-        versionName "1.1.0_RC4"
+        versionCode 4
+        versionName "1.1.0"
     }
 
     buildFeatures {

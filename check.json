@@ -1,35 +1,30 @@
 {
   "update": {
-    "version_code": "64",
-    "version_name": "2.8.2",
+    "version_code": "65",
+    "version_name": "2.9.0",
     "version_build": "0",
-    "build_date": "28 декабря 2022 г.",
+    "build_date": "19 октября 2023 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.2/AniLibria_v2.8.2.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.9.0/AniLibria_v2.9.0.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.8.2/AniLibria_Lite_v2.8.2.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.9.0/AniLibria_Lite_v2.9.0.apk",
         "type": "file"
       }
     ],
-    "important": [
-      "Android 5.0 теперь минимальная поддерживаемая версия системы"
-    ],
-    "added": [
-      "Поддержка Android 13"
-    ],
+    "important": [],
+    "added": [],
     "fixed": [
-      "Относительно 2.8.1: Повышена стабильность",
-      "Анимация открытия релиза",
-      "Теперь в истории загружаются актуальные данные о релизах",
-      "Оптимизация производительности"
+      "Отсутствуют даты в фильтре поиска",
+      "Скрытие даты, если это 1970 год",
+      "Заглушка для пустого расписания",
+      "При нажатии на кнопку \"авторизоваться\" не чего не происходит",
+      "Вылеты приложения"
     ],
-    "changed": [
-      "Было сделано много изменений \"под капотом\", которые позволяют сделать приложение более стабильным и быстрым"
-    ]
+    "changed": []
   }
 }

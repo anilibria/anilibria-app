@@ -13,9 +13,9 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class WatchingViewModel(
-    private val authRepository: AuthRepository,
-    private val historyRepository: HistoryRepository,
-    private val episodesCheckerHolder: EpisodesCheckerHolder
+    authRepository: AuthRepository,
+    historyRepository: HistoryRepository,
+    episodesCheckerHolder: EpisodesCheckerHolder,
 ) : BaseRowsViewModel() {
 
     companion object {

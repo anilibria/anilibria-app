@@ -58,6 +58,7 @@
                 android:id="@+id/yooMoneyAmountField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="noExcludeDescendants"
                 android:inputType="number"
                 tools:hint="Своё значение"
                 tools:text="1800" />

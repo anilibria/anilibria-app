@@ -1,6 +1,5 @@
 package ru.radiationx.data.interactors
 
-import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.radiationx.data.analytics.TimeCounter
@@ -20,7 +19,7 @@ import javax.net.ssl.*
 class ConfiguringInteractor @Inject constructor(
     private val apiConfig: ApiConfig,
     private val configurationRepository: ConfigurationRepository,
-    private val analytics: ConfiguringAnalytics
+    private val analytics: ConfiguringAnalytics,
 ) {
 
     private val screenState = MutableStateFlow(ConfigScreenState())
@@ -119,9 +118,9 @@ class ConfiguringInteractor @Inject constructor(
             }
             runCatching {
                 zipLastCheck()
-            }.onSuccess {
-                analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), it, null)
-                if (it) {
+            }.onSuccess { result ->
+                analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), result, null)
+                if (result) {
                     isFullSuccess = true
                     screenState.update {
                         it.copy(status = "Сервер доступен")
@@ -137,13 +136,10 @@ class ConfiguringInteractor @Inject constructor(
                 when (error) {
                     is WrongHostException,
                     is TimeoutException,
-                    is TimeoutCancellationException -> loadConfig()
+                    is TimeoutCancellationException,
                     is IOException,
-                    is SSLException,
-                    is SSLHandshakeException,
-                    is SSLKeyException,
-                    is SSLProtocolException,
-                    is SSLPeerUnverifiedException -> loadConfig()
+                    -> loadConfig()
+
                     else -> {
                         screenState.update {
                             it.copy(
@@ -175,7 +171,7 @@ class ConfiguringInteractor @Inject constructor(
             }.onSuccess {
                 analytics.loadConfig(timeCounter.elapsed(), true, null)
                 val addresses = apiConfig.getAddresses()
-                val proxies = addresses.sumBy { it.proxies.size }
+                val proxies = addresses.sumOf { it.proxies.size }
                 screenState.update {
                     it.copy(status = "Загружено адресов: ${addresses.size}; прокси: $proxies")
                 }
@@ -224,6 +220,7 @@ class ConfiguringInteractor @Inject constructor(
                     is NoSuchElementException -> {
                         checkProxies()
                     }
+
                     else -> {
                         screenState.update {
                             it.copy(
@@ -238,6 +235,7 @@ class ConfiguringInteractor @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun checkProxies() {
         updateState(State.CHECK_PROXIES)
         val timeCounter = TimeCounter()
@@ -265,7 +263,8 @@ class ConfiguringInteractor @Inject constructor(
                     }
                     .flatMapConcat { proxy ->
                         flowOf(
-                            configurationRepository.getPingHost(proxy.ip).let { Pair(proxy, it) })
+                            Pair(proxy, configurationRepository.getPingHost(proxy.ip))
+                        )
                     }
                     .filter { !it.second.hasError() }
                     .toList()

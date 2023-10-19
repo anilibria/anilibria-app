@@ -9,6 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import ru.radiationx.anilibria.R
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 
+@Suppress("DEPRECATION")
 fun BottomSheetDialog.fillNavigationBarColor() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) return
     val window = window ?: return

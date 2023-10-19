@@ -4,7 +4,14 @@ import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -25,7 +32,10 @@ import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.*
+import ru.radiationx.shared.ktx.android.extraNotNull
+import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.toBase64
+import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -102,6 +112,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
 
         binding.webView.webViewClient = object : WebViewClient() {
 
+            @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 systemUtils.externalLink(url.orEmpty())
                 return true
@@ -161,7 +172,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.state.onEach { state ->
-            binding.progressBarWv.visible(state.loading)
+            binding.progressBarWv.isVisible = state.loading
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->

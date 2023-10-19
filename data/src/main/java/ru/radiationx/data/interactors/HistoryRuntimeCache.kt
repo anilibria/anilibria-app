@@ -1,8 +1,11 @@
 package ru.radiationx.data.interactors
 
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.ReleaseApi
 import ru.radiationx.data.entity.domain.release.Release
@@ -15,14 +18,12 @@ import javax.inject.Inject
 class HistoryRuntimeCache @Inject constructor(
     private val releaseApi: ReleaseApi,
     private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig
+    private val apiConfig: ApiConfig,
 ) {
 
     private val cachedData = MutableStateFlow<Map<ReleaseId, Release>>(emptyMap())
 
     private val sharedRequests = SharedRequests<Set<ReleaseId>, List<Release>>()
-
-    private val mutex = Mutex()
 
     fun observeCached(ids: List<ReleaseId>): Flow<List<Release>> {
         return cachedData
@@ -49,28 +50,24 @@ class HistoryRuntimeCache @Inject constructor(
     }
 
     private suspend fun decideToLoad(ids: List<ReleaseId>) {
-        mutex.withLock {
-            val idsSet = ids.toSet()
-            val cachedIdsSet = cachedData.value.keys
-            val idsToLoad = idsSet - cachedIdsSet
-            if (idsToLoad.isNotEmpty()) {
-                val result = sharedRequests.request(idsToLoad) {
-                    releaseApi.getReleasesByIds(idsToLoad.map { it.id }).map {
-                        it.toDomain(apiUtils, apiConfig)
-                    }
-                }
+        val idsSet = ids.toSet()
+        val cachedIdsSet = cachedData.value.keys
+        val idsToLoad = idsSet - cachedIdsSet
+        if (idsToLoad.isEmpty()) return
 
-                cachedData.update { cacheMap ->
-                    val resultMap = cacheMap.toMutableMap()
-                    result.forEach {
-                        resultMap[it.id] = it
-                    }
-                    resultMap
-                }
-
+        val result = sharedRequests.request(idsToLoad) {
+            releaseApi.getReleasesByIds(idsToLoad.map { it.id }).map {
+                it.toDomain(apiUtils, apiConfig)
             }
         }
-    }
 
+        cachedData.update { cacheMap ->
+            val resultMap = cacheMap.toMutableMap()
+            result.forEach {
+                resultMap[it.id] = it
+            }
+            resultMap
+        }
+    }
 
 }

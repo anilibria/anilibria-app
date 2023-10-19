@@ -192,7 +192,7 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
 
     private fun getFieldValue(actionId: Long): String {
         val action = findActionById(actionId)
-        return action.editDescription?.toString().orEmpty()
+        return action?.editDescription?.toString().orEmpty()
     }
 
     private fun updateProgress(progress: Boolean) {

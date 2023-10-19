@@ -10,20 +10,20 @@ class SystemSuggestionEntity(
     val id: Int,
     val title: String,
     val duration: Int,
-    val productionYear: Int,
+    productionYear: Int,
     val description: String? = null,
     val cardImage: String? = null,
     val backgroundImage: String? = null,
     val videoUrl: String? = null,
-    val contentType: String? = null,
-    val live: Boolean? = null,
+    contentType: String? = null,
+    live: Boolean? = null,
     val width: Int? = null,
     val height: Int? = null,
-    val audioChannelConfig: String? = null,
-    val purchasePrice: String? = null,
-    val rentalPrice: String? = null,
-    val ratingStyle: Int? = null,
-    val ratingScore: Double? = null
+    audioChannelConfig: String? = null,
+    purchasePrice: String? = null,
+    rentalPrice: String? = null,
+    ratingStyle: Int? = null,
+    ratingScore: Double? = null,
 ) {
 
     companion object {

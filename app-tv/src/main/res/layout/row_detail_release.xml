@@ -35,14 +35,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="?browsePaddingBottom"
+        android:layout_marginBottom="16dp"
         android:background="@color/dark_cardBackground"
         android:elevation="16dp"
-        android:layout_marginBottom="16dp"
         android:scaleType="centerCrop"
         android:theme="@style/AppTheme.Material"
+        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintDimensionRatio="260:370"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
-        app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/AppTheme.RoundedImageView" />
 
@@ -92,18 +92,18 @@
         app:layout_constraintWidth_default="wrap"
         tools:text="2019 год, Экшен, ТВ (12эп.) 12 мин., Выходит по четвергам " />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/rowReleaseHQMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_fullhd"
-        android:tint="@color/dark_textDefault"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/rowReleaseExtra"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseFavoriteCount"
         app:layout_constraintStart_toEndOf="@id/rowReleaseExtra"
         app:layout_constraintTop_toTopOf="@id/rowReleaseExtra"
+        app:tint="@color/dark_textDefault"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -126,27 +126,47 @@
         tools:text="13 999"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/rowReleaseAnnounce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="?browsePaddingEnd"
+        android:background="@drawable/bg_detail_announce"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="@color/dark_textDefault"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
+        tools:text="Новая серия каждую субботу."
+        tools:visibility="visible" />
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rowReleaseDescriptionCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="?browsePaddingEnd"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_details_description"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        app:layout_constrainedHeight="true"
         android:nextFocusDown="@id/rowReleaseActions"
         android:orientation="vertical"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
-        android:padding="16dp"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra">
+        app:layout_constraintStart_toStartOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/rowReleaseAnnounce">
 
         <TextView
             android:id="@+id/rowReleaseDescription"
@@ -162,19 +182,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
             tools:text="@tools:sample/lorem/random" />
-
-        <TextView
-            android:id="@+id/rowReleaseAnnounce"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:alpha="0.8"
-            android:textColor="@color/dark_textDefault"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rowReleaseDescription"
-            tools:text="Новая серия каждую субботу." />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -213,20 +220,26 @@
             android:text="Смотреть" />
 
         <Button
-            android:id="@+id/rowReleaseActionPlayWeb"
-            style="?attr/detailsActionButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="Веб-плеер"
-            android:visibility="gone" />
-
-        <Button
             android:id="@+id/rowReleaseActionFavorite"
             style="?attr/detailsActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="Добавить в избранное" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/rowReleaseActionOther"
+            style="?attr/detailsActionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:minWidth="48dp"
+            android:padding="12dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:text="Смотреть"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:tint="@color/text_button_color" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -236,22 +249,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseArrow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/rowReleaseArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/lb_browse_padding_top"
         android:alpha="0.75"
         android:src="@drawable/ic_wide_arrow_down"
-        android:tint="@color/dark_textDefault"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/dark_textDefault" />
 
     <ProgressBar
         android:id="@+id/rowReleaseLoadingProgress"

@@ -10,11 +10,12 @@ class AuthPatternWebViewClient(
 
     var resultPattern: String? = null
 
-    @Suppress("OverridingDeprecatedMember")
+    @Deprecated("Deprecated in Java")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         resultPattern?.let { resultPattern ->
             val matchSuccess = try {
-                val matcher = Pattern.compile(resultPattern).matcher(url)
+                val matcher = Pattern.compile(resultPattern).matcher(url.orEmpty())
                 if (matcher.find()) {
                     matcher.group(1) != null
                 } else {

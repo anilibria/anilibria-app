@@ -2,7 +2,14 @@ package ru.radiationx.data.datasource.remote.parsers
 
 import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.entity.domain.auth.*
+import ru.radiationx.data.entity.domain.auth.EmptyFieldException
+import ru.radiationx.data.entity.domain.auth.InvalidUserException
+import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
+import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
+import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
+import ru.radiationx.data.entity.domain.auth.Wrong2FaCodeException
+import ru.radiationx.data.entity.domain.auth.WrongPasswordException
+import ru.radiationx.data.entity.domain.auth.WrongUserAgentException
 import ru.radiationx.shared.ktx.android.nullString
 import javax.inject.Inject
 
@@ -30,7 +37,8 @@ class AuthParser @Inject constructor() {
         if (error != "ok" && key != "authorized") {
             val apiError = ApiError(400, message ?: key, null)
             throw when (key) {
-                "authorized" -> AlreadyAuthorizedException(apiError)
+                //ignore
+                //"authorized" -> AlreadyAuthorizedException(apiError)
                 "empty" -> EmptyFieldException(apiError)
                 "wrongUserAgent" -> WrongUserAgentException(apiError)
                 "invalidUser" -> InvalidUserException(apiError)

@@ -21,9 +21,9 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
 class ReleaseDetailsPresenter(
     private val continueClickListener: () -> Unit,
     private val playClickListener: () -> Unit,
-    private val playWebClickListener: () -> Unit,
     private val favoriteClickListener: () -> Unit,
-    private val descriptionClickListener: () -> Unit
+    private val descriptionClickListener: () -> Unit,
+    private val otherClickListener: () -> Unit,
 ) : RowPresenter() {
 
     init {
@@ -41,9 +41,9 @@ class ReleaseDetailsPresenter(
             view,
             continueClickListener,
             playClickListener,
-            playWebClickListener,
             favoriteClickListener,
-            descriptionClickListener
+            descriptionClickListener,
+            otherClickListener
         )
     }
 
@@ -60,9 +60,9 @@ class LibriaReleaseViewHolder(
     itemView: View,
     private val continueClickListener: () -> Unit,
     private val playClickListener: () -> Unit,
-    private val playWebClickListener: () -> Unit,
     private val favoriteClickListener: () -> Unit,
-    private val descriptionClickListener: () -> Unit
+    private val descriptionClickListener: () -> Unit,
+    private val otherClickListener: () -> Unit,
 ) : RowPresenter.ViewHolder(itemView) {
 
     private val binding by lazy {
@@ -75,7 +75,7 @@ class LibriaReleaseViewHolder(
     init {
         binding.rowReleaseActionContinue.setOnClickListener { continueClickListener.invoke() }
         binding.rowReleaseActionPlay.setOnClickListener { playClickListener.invoke() }
-        binding.rowReleaseActionPlayWeb.setOnClickListener { playWebClickListener.invoke() }
+        binding.rowReleaseActionOther.setOnClickListener { otherClickListener.invoke() }
         binding.rowReleaseActionFavorite.setOnClickListener { favoriteClickListener.invoke() }
         binding.rowReleaseDescriptionCard.setOnClickListener { descriptionClickListener.invoke() }
         binding.root.updateLayoutParams {
@@ -119,6 +119,7 @@ class LibriaReleaseViewHolder(
         binding.rowReleaseExtra.text = details.extra
         binding.rowReleaseDescription.text = details.description
         binding.rowReleaseAnnounce.text = details.announce
+        binding.rowReleaseAnnounce.isVisible = details.announce.isNotEmpty()
         binding.rowReleaseFavoriteCount.text = details.favoriteCount
         binding.rowReleaseFavoriteCount.isVisible = details.favoriteCount != "0"
 
@@ -128,11 +129,7 @@ class LibriaReleaseViewHolder(
             binding.rowReleaseFavoriteCount.getCompatDrawable(R.drawable.ic_details_favorite)
         }
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            binding.rowReleaseFavoriteCount,
-            null,
-            null,
-            favoriteDrawable,
-            null
+            binding.rowReleaseFavoriteCount, null, null, favoriteDrawable, null
         )
         TextViewCompat.setCompoundDrawableTintList(
             binding.rowReleaseFavoriteCount,
@@ -142,7 +139,7 @@ class LibriaReleaseViewHolder(
 
         binding.rowReleaseActionPlay.isVisible = details.hasEpisodes
         binding.rowReleaseActionContinue.isVisible = details.hasViewed
-        binding.rowReleaseActionPlayWeb.isVisible = details.hasWebPlayer
+        binding.rowReleaseActionOther.isVisible = details.hasEpisodes || details.hasViewed
         binding.rowReleaseActionFavorite.text = if (details.isFavorite) {
             "Убрать из избранного"
         } else {

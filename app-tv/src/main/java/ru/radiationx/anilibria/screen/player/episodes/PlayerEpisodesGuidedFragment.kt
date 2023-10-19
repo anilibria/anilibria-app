@@ -18,7 +18,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         private const val CHUNK_ENABLED = false
     }
 
-    private val viewModel by viewModel<PlayerEpisodesViewModel>() { argExtra }
+    private val viewModel by viewModel<PlayerEpisodesViewModel> { argExtra }
 
     override fun onProvideTheme(): Int = R.style.AppTheme_Player_LeanbackWizard
 
@@ -36,13 +36,15 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         }
 
         subscribeTo(viewModel.selectedIndex.filterNotNull()) { selectedIndex ->
-            if (actions.any { it.hasSubActions() }) {
+            selectedActionPosition = if (actions.any { it.hasSubActions() }) {
                 val chunkActionId = ((selectedIndex / CHUNK_SIZE) + CHUNK_ID_OFFSET).toLong()
                 val chunkPosition = findActionPositionById(chunkActionId)
-                expandAction(findActionById(chunkActionId), false)
-                selectedActionPosition = chunkPosition
+                findActionById(chunkActionId)?.also {
+                    expandAction(it, false)
+                }
+                chunkPosition
             } else {
-                selectedActionPosition = selectedIndex
+                selectedIndex
             }
         }
     }
@@ -61,7 +63,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
     private fun createEpisodesActions(
         offset: Int,
-        episodes: List<Pair<String, String?>>
+        episodes: List<Pair<String, String?>>,
     ): List<GuidedAction> =
         episodes.mapIndexed { index: Int, data: Pair<String, String?> ->
             GuidedAction.Builder(requireContext())

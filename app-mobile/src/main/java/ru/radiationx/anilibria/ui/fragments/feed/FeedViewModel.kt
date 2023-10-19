@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -43,21 +44,22 @@ import java.util.*
 
 /* Created by radiationx on 05.11.17. */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class FeedViewModel(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val scheduleRepository: ScheduleRepository,
-    private val checkerRepository: CheckerRepository,
+    checkerRepository: CheckerRepository,
     private val sharedBuildConfig: SharedBuildConfig,
-    private val releaseUpdateHolder: ReleaseUpdateHolder,
+    releaseUpdateHolder: ReleaseUpdateHolder,
     private val appPreferences: PreferencesHolder,
     private val donationRepository: DonationRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val shortcutHelper: ShortcutHelper,
     private val systemUtils: SystemUtils,
-    private val permissionsController: MintPermissionsController,
+    permissionsController: MintPermissionsController,
     private val permissionsDialogFlow: MintPermissionsDialogFlow,
     private val fastSearchAnalytics: FastSearchAnalytics,
     private val feedAnalytics: FeedAnalytics,
@@ -66,7 +68,7 @@ class FeedViewModel(
     private val releaseAnalytics: ReleaseAnalytics,
     private val updaterAnalytics: UpdaterAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
-    private val donationCardAnalytics: DonationCardAnalytics
+    private val donationCardAnalytics: DonationCardAnalytics,
 ) : ViewModel() {
 
     companion object {
@@ -248,6 +250,7 @@ class FeedViewModel(
                 val screen = Screens.AppUpdateScreen(false, AnalyticsConstants.app_update_card)
                 router.navigateTo(screen)
             }
+
             appNotificationsWarning.tag -> {
                 requestNotificationsPermission()
             }
@@ -259,6 +262,7 @@ class FeedViewModel(
             appUpdateWarning.tag -> {
                 updaterAnalytics.appUpdateCardCloseClick()
             }
+
             appNotificationsWarning.tag -> {
                 // do nothing
             }
@@ -350,7 +354,7 @@ class FeedViewModel(
                 "Ожидается сегодня"
             } else {
                 val preText = mskDay.asDayPretext()
-                val dayName = mskDay.asDayNameDeclension().toLowerCase()
+                val dayName = mskDay.asDayNameDeclension().lowercase(Locale.getDefault())
                 "Ожидается $preText $dayName (по МСК)"
             }
 
@@ -403,12 +407,12 @@ class FeedViewModel(
 
     private data class FeedData(
         val feedItems: List<FeedItem> = emptyList(),
-        val schedule: FeedScheduleData? = null
+        val schedule: FeedScheduleData? = null,
     )
 
     private data class FeedScheduleData(
         val title: String,
-        val items: List<ScheduleItem>
+        val items: List<ScheduleItem>,
     )
 
     private fun FeedData.toState(updates: Map<ReleaseId, ReleaseUpdate>): FeedDataState =

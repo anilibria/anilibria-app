@@ -11,7 +11,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class MainViewModel(
-    private val authRepository: AuthRepository
+    authRepository: AuthRepository,
 ) : BaseRowsViewModel() {
 
     companion object {

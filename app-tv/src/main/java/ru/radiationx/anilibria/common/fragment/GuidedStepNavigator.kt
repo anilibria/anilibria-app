@@ -6,19 +6,21 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.leanback.app.GuidedStepSupportFragment
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.*
-import java.util.*
+import ru.terrakok.cicerone.commands.Back
+import ru.terrakok.cicerone.commands.BackTo
+import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.Forward
+import ru.terrakok.cicerone.commands.Replace
+import java.util.LinkedList
 import kotlin.math.max
 
 class GuidedStepNavigator(
     private val activity: FragmentActivity,
-    private val containerId: Int,
-    private val fragmentManager: FragmentManager = activity.supportFragmentManager
+    containerId: Int,
+    fragmentManager: FragmentManager = activity.supportFragmentManager,
 ) : SupportAppNavigator(activity, fragmentManager, containerId) {
 
     private val guidedStack = LinkedList<String>()
-
-    private val activityFragmentManager = activity.supportFragmentManager
 
     private val backStack: List<FragmentManager.BackStackEntry>
         get() = (0 until fragmentManager.backStackEntryCount).map {
@@ -30,10 +32,10 @@ class GuidedStepNavigator(
     fun backStackById(id: Int): FragmentManager.BackStackEntry? = backStack.find { it.id == id }
 
     override fun setupFragmentTransaction(
-        command: Command?,
+        command: Command,
         currentFragment: Fragment?,
         nextFragment: Fragment?,
-        fragmentTransaction: FragmentTransaction
+        fragmentTransaction: FragmentTransaction,
     ) {
         super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
         fragmentTransaction.setReorderingAllowed(true)
@@ -50,7 +52,7 @@ class GuidedStepNavigator(
         }
     }
 
-    override fun applyCommand(command: Command?) {
+    override fun applyCommand(command: Command) {
         when (command) {
             is Forward -> guidedForward(command)
             is Replace -> guidedReplace(command)
@@ -59,16 +61,16 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedForward(command: Forward) {
+    private fun guidedForward(command: Forward) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment =
                 screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
 
-            activityFragmentManager
+            fragmentManager
                 .beginTransaction()
                 .also {
-                    GuidedStepFragmentHelper.prepare(activity.supportFragmentManager, it, fragment)
+                    GuidedStepFragmentHelper.prepare(fragmentManager, it, fragment)
                 }
                 .replace(
                     android.R.id.content,
@@ -84,7 +86,7 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedReplace(command: Replace) {
+    private fun guidedReplace(command: Replace) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
             val fragment =
@@ -97,10 +99,10 @@ class GuidedStepNavigator(
                 guidedStack.removeLast()
             }
 
-            activityFragmentManager
+            fragmentManager
                 .beginTransaction()
                 .also {
-                    GuidedStepFragmentHelper.prepare(activity.supportFragmentManager, it, fragment)
+                    GuidedStepFragmentHelper.prepare(fragmentManager, it, fragment)
                 }
                 .replace(
                     android.R.id.content,
@@ -116,12 +118,12 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedBackTo(command: BackTo) {
+    private fun guidedBackTo(command: BackTo) {
         if (guidedStack.isNotEmpty()) {
             val key = command.screen?.screenKey
             val index = max(guidedStack.indexOf(key), 0)
             val range = (0 until guidedStack.size - index)
-            range.forEach {
+            repeat(range.count()) {
                 guidedStack.removeLast()
                 fragmentManager.popBackStack(key, 0)
             }
@@ -130,7 +132,7 @@ class GuidedStepNavigator(
         }
     }
 
-    protected fun guidedBack() {
+    private fun guidedBack() {
         if (guidedStack.isNotEmpty()) {
             fragmentManager.popBackStack()
             guidedStack.removeLast()

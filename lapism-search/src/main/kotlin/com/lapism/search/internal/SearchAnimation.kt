@@ -31,7 +31,7 @@ internal class SearchAnimation {
         cardView: CardView?,
         x: Int,
         duration: Long,
-        back: Boolean
+        back: Boolean,
     ) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mAnimationListener?.onAnimationStart()
@@ -54,8 +54,7 @@ internal class SearchAnimation {
             val displaySize = Point()
             val radius = hypot(max(cx, displaySize.x - cx).toDouble(), cy.toDouble()).toFloat()
 
-            val animator: Animator
-            animator = if (back) {
+            val animator: Animator = if (back) {
                 ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0.0f, radius)
             } else {
                 ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0.0f)

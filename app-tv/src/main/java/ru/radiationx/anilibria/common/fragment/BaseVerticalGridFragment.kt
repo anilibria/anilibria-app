@@ -36,7 +36,7 @@ open class BaseVerticalGridFragment : VerticalGridSupportFragment() {
             )
         )
 
-        gridView.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        gridView.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             val cardDescriptionView =
                 shadowDescriptionView?.getCardDescriptionView() ?: return@addOnLayoutChangeListener
             val newWidth =

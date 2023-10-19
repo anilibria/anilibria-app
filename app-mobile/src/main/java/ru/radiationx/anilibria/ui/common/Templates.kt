@@ -6,11 +6,10 @@ import timber.log.Timber
 import toothpick.InjectConstructor
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.nio.charset.Charset
 
 @InjectConstructor
 class Templates(
-    private val context: Context
+    private val context: Context,
 ) {
 
     val staticPageTemplate by lazy { findTemplate("static_page") }
@@ -20,15 +19,14 @@ class Templates(
     val videoPageTemplate by lazy { findTemplate("video_page") }
 
     private fun findTemplate(name: String): MiniTemplator {
-        val charset = Charset.forName("utf-8")
         return try {
             context.assets.open("templates/$name.html").use {
-                MiniTemplator.Builder().build(it, charset)
+                MiniTemplator.Builder().build(it)
             }
         } catch (e: IOException) {
             Timber.e(e)
-            ByteArrayInputStream("Template error!".toByteArray(charset)).use {
-                MiniTemplator.Builder().build(it, charset)
+            ByteArrayInputStream("Template error!".toByteArray()).use {
+                MiniTemplator.Builder().build(it)
             }
         }
     }

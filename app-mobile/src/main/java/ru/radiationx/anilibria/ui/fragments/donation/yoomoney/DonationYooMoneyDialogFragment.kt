@@ -93,6 +93,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
                 }
                 binding.yooMoneyAmountField.clearFocus()
             }
+
             DonationYooMoneyState.AmountType.CUSTOM -> {
                 binding.yooMoneyAmounts.clearChecked()
                 binding.yooMoneyAmountField.requestFocus()
@@ -128,7 +129,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
             binding.yooMoneyTitle.setOnClickListener(null)
         }
 
-        val amountViews = listOf<View>(
+        val amountViews = listOf(
             binding.yooMoneyAmountTitle,
             binding.yooMoneyAmounts,
             binding.yooMoneyAmountInput
@@ -183,7 +184,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
             binding.yooMoneyAmounts.clearChecked()
             binding.yooMoneyAmounts.removeAllViews()
 
-            amounts.forEach {
+            repeat(amounts.size) {
                 val button = MaterialButton(
                     binding.yooMoneyAmounts.context,
                     null,
@@ -212,7 +213,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
 
     private fun MaterialButtonToggleGroup.addCheckedListener(action: (checkedId: Int?) -> Unit) {
         var lastValue: Int? = null
-        addOnButtonCheckedListener { group, checkedId, isChecked ->
+        addOnButtonCheckedListener { group, _, _ ->
             val isSameValue = group.checkedButtonIds.size == 1
                     && group.checkedButtonIds[0] == group.checkedButtonId
             val isNoSelection = group.checkedButtonIds.isEmpty()

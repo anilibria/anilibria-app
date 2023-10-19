@@ -41,15 +41,6 @@ class PlayerAnalytics(
         )
     }
 
-    fun loadTime(host: String, quality: AnalyticsQuality, timeInMillis: Long) {
-        sender.send(
-            AnalyticsConstants.player_buffering_time,
-            host.toParam(PARAM_HOST),
-            quality.toQualityParam(),
-            timeInMillis.toTimeParam()
-        )
-    }
-
     fun error(error: Throwable) {
         sender.send(
             AnalyticsConstants.player_error,
@@ -83,28 +74,6 @@ class PlayerAnalytics(
         sender.send(
             AnalyticsConstants.player_next_click,
             fromSeekPercent.toSeekPercentParam()
-        )
-    }
-
-    fun rewindSlide(
-        @FloatRange(from = 0.0, to = 1.0) fromSeekPercent: Float,
-        rewindTimeInMillis: Long
-    ) {
-        sender.send(
-            AnalyticsConstants.player_rewind_slide,
-            fromSeekPercent.toSeekPercentParam(),
-            rewindTimeInMillis.toRewindTimeParam()
-        )
-    }
-
-    fun rewindDoubleTap(
-        @FloatRange(from = 0.0, to = 1.0) fromSeekPercent: Float,
-        rewindTimeInMillis: Long
-    ) {
-        sender.send(
-            AnalyticsConstants.player_rewind_double_tap,
-            fromSeekPercent.toSeekPercentParam(),
-            rewindTimeInMillis.toRewindTimeParam()
         )
     }
 

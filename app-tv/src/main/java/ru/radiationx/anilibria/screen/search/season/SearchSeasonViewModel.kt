@@ -14,10 +14,10 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class SearchSeasonViewModel(
-    private val argExtra: SearchValuesExtra,
+    argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : BaseSearchValuesViewModel(argExtra) {
 
     private val currentSeasons = mutableListOf<SeasonItem>()
@@ -26,12 +26,12 @@ class SearchSeasonViewModel(
         viewModelScope.launch {
             coRunCatching {
                 searchRepository.getSeasons()
-            }.onSuccess {
+            }.onSuccess { seasons ->
                 currentSeasons.clear()
-                currentSeasons.addAll(it)
+                currentSeasons.addAll(seasons)
                 currentValues.clear()
-                currentValues.addAll(it.map { it.value })
-                valuesData.value = it.map { it.title }
+                currentValues.addAll(seasons.map { it.value })
+                valuesData.value = seasons.map { it.title }
                 updateChecked()
                 updateSelected()
             }.onFailure {
@@ -42,7 +42,7 @@ class SearchSeasonViewModel(
 
     override fun applyValues() {
         guidedRouter.close()
-        val newSeasons = currentSeasons.filterIndexed { index, item ->
+        val newSeasons = currentSeasons.filter { item ->
             checkedValues.contains(item.value)
         }.toSet()
         searchController.seasonsEvent.emit(newSeasons)

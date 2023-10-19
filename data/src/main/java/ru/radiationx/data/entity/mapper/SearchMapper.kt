@@ -8,10 +8,11 @@ import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.response.search.SuggestionResponse
 import ru.radiationx.data.system.ApiUtils
+import ru.radiationx.shared.ktx.capitalizeDefault
 
 fun SuggestionResponse.toDomain(
     apiUtils: ApiUtils,
-    apiConfig: ApiConfig
+    apiConfig: ApiConfig,
 ) = SuggestionItem(
     id = ReleaseId(id),
     code = ReleaseCode(code),
@@ -27,6 +28,6 @@ fun String.toYearItem(): YearItem = YearItem(
 )
 
 fun String.toGenreItem(): GenreItem = GenreItem(
-    title = this.capitalize(),
+    title = this.capitalizeDefault(),
     value = this
 )

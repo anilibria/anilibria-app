@@ -36,6 +36,7 @@ object MediaCodecsProvider {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun getCodecsList(): List<MediaCodecInfo> {
         return (0 until MediaCodecList.getCodecCount()).map {
             MediaCodecList.getCodecInfoAt(it)

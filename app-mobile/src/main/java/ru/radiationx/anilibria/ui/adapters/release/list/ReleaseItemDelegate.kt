@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.adapters.release.list
 import android.text.Html
 import android.view.View
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -13,7 +14,6 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -38,6 +38,7 @@ class ReleaseItemDelegate(
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
+        @Suppress("DEPRECATION")
         fun bind(item: ReleaseListItem) {
             val releaseItem = item.item
             binding.itemTitle.text = releaseItem.title
@@ -47,7 +48,7 @@ class ReleaseItemDelegate(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${releaseItem.id}"
             )
-            binding.itemNewIndicator.visible(releaseItem.isNew)
+            binding.itemNewIndicator.isVisible = releaseItem.isNew
             binding.itemImage.showImageUrl(releaseItem.posterUrl)
 
             binding.root.setOnClickListener {

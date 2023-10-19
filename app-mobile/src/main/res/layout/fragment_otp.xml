@@ -48,7 +48,8 @@
             android:id="@+id/otpInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:gravity="center"
+            android:importantForAutofill="noExcludeDescendants" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ProgressBar

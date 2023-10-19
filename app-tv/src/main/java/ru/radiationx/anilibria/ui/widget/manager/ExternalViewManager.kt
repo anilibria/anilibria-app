@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.widget.manager
 
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -23,7 +24,7 @@ abstract class ExternalViewManager {
     private var isEnabled = true
     private var isShowing = false
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private val showingRunnable = Runnable {
         if (!isEnabled || !userProvidedView && rootView == null) {

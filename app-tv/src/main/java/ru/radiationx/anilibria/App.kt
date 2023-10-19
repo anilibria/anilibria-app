@@ -3,7 +3,6 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.os.StrictMode
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow

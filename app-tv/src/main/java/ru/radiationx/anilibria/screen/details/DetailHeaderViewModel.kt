@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.common.DetailsState
 import ru.radiationx.anilibria.common.LibriaDetails
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
+import ru.radiationx.anilibria.screen.DetailOtherGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
@@ -27,22 +28,23 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailHeaderViewModel(
-    private val argExtra: DetailExtra,
+    argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
     private val converter: DetailDataConverter,
     private val router: Router,
     private val guidedRouter: GuidedRouter,
-    private val playerController: PlayerController
+    private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     private val releaseId = argExtra.id
 
     val releaseData = MutableStateFlow<LibriaDetails?>(null)
-    val progressState = MutableStateFlow<DetailsState>(DetailsState())
+    val progressState = MutableStateFlow(DetailsState())
 
     private var currentRelease: Release? = null
+    private var isFullLoaded = false
 
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
@@ -55,6 +57,7 @@ class DetailHeaderViewModel(
         releaseInteractor
             .observeFull(releaseId)
             .onEach {
+                isFullLoaded = true
                 updateRelease(it)
             }
             .launchIn(viewModelScope)
@@ -99,10 +102,6 @@ class DetailHeaderViewModel(
         }
     }
 
-    fun onPlayWebClick() {
-
-    }
-
     fun onFavoriteClick() {
         val release = currentRelease ?: return
 
@@ -139,9 +138,13 @@ class DetailHeaderViewModel(
 
     }
 
+    fun onOtherClick() {
+        guidedRouter.open(DetailOtherGuidedScreen(releaseId))
+    }
+
     private fun updateRelease(release: Release) {
         currentRelease = release
-        releaseData.value = converter.toDetail(release)
+        releaseData.value = converter.toDetail(release, isFullLoaded)
         updateProgress()
     }
 

@@ -1,6 +1,7 @@
 package ru.radiationx.data.repository
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.HistoryHolder
@@ -8,7 +9,6 @@ import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.HistoryRuntimeCache
-import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 /**
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class HistoryRepository @Inject constructor(
     private val historyStorage: HistoryHolder,
     private val updateHolder: ReleaseUpdateHolder,
-    private val historyRuntimeCache: HistoryRuntimeCache
+    private val historyRuntimeCache: HistoryRuntimeCache,
 ) {
 
     suspend fun getReleases(): List<Release> = withContext(Dispatchers.IO) {
@@ -27,6 +27,7 @@ class HistoryRepository @Inject constructor(
             .let { historyRuntimeCache.getCached(it) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun observeReleases(): Flow<List<Release>> = historyStorage
         .observeEpisodes()
         .map { it.asReversed() }

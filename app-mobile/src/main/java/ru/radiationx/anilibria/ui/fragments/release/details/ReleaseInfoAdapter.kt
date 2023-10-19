@@ -2,27 +2,46 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 /* Created by radiationx on 18.11.17. */
 
-import android.util.Log
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.CommentRouteListItem
+import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
+import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseDonateListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.*
+import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseBlockedDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseDonateDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodesHeadDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseExpandDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 class ReleaseInfoAdapter(
-    private val headListener: ReleaseHeadDelegate.Listener,
-    private val episodeListener: ReleaseEpisodeDelegate.Listener,
-    private val episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
-    private val donationListener: (DonationCardItemState) -> Unit,
-    private val donationCloseListener: (DonationCardItemState) -> Unit,
-    private val torrentClickListener: (ReleaseTorrentItemState) -> Unit,
-    private val commentsClickListener: () -> Unit,
-    private val episodesTabListener: (String) -> Unit,
-    private val remindCloseListener: () -> Unit,
-    private val torrentInfoListener: () -> Unit
+    headListener: ReleaseHeadDelegate.Listener,
+    episodeListener: ReleaseEpisodeDelegate.Listener,
+    episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
+    donationListener: (DonationCardItemState) -> Unit,
+    donationCloseListener: (DonationCardItemState) -> Unit,
+    torrentClickListener: (ReleaseTorrentItemState) -> Unit,
+    commentsClickListener: () -> Unit,
+    episodesTabListener: (String) -> Unit,
+    remindCloseListener: () -> Unit,
+    private val torrentInfoListener: () -> Unit,
 ) : ListItemAdapter() {
 
     companion object {

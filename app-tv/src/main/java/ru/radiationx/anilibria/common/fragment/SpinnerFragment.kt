@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 class SpinnerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         val progressBar = ProgressBar(container?.context)
         if (container is FrameLayout) {
             val layoutParams =

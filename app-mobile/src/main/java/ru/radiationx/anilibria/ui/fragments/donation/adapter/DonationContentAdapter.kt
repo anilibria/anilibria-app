@@ -1,11 +1,16 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.domain.donation.*
+import ru.radiationx.data.entity.domain.donation.DonationContentButton
+import ru.radiationx.data.entity.domain.donation.DonationContentCaption
+import ru.radiationx.data.entity.domain.donation.DonationContentDivider
+import ru.radiationx.data.entity.domain.donation.DonationContentHeader
+import ru.radiationx.data.entity.domain.donation.DonationContentItem
+import ru.radiationx.data.entity.domain.donation.DonationContentSection
 
 class DonationContentAdapter(
-    private val buttonClickListener: (DonationContentButton) -> Unit,
-    private val linkClickListener: (String) -> Unit
+    buttonClickListener: (DonationContentButton) -> Unit,
+    linkClickListener: (String) -> Unit,
 ) : ListItemAdapter() {
 
     init {
@@ -25,6 +30,7 @@ class DonationContentAdapter(
                     val index = content.indexOf(it)
                     DonationDividerListItem(index, it)
                 }
+
                 is DonationContentHeader -> DonationHeaderListItem(it)
                 is DonationContentSection -> DonationSectionListItem(it)
                 else -> null

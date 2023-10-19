@@ -5,9 +5,8 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import ru.radiationx.shared_app.common.MimeTypeUtil
@@ -18,21 +17,18 @@ import toothpick.InjectConstructor
 class DownloadControllerImpl(
     private val context: Context,
     private val dataSource: DownloadsDataSource,
-    private val systemUtils: SystemUtils
-) : DownloadController, LifecycleObserver {
+    private val systemUtils: SystemUtils,
+) : DownloadController, DefaultLifecycleObserver {
 
     private val downloadManager by lazy { context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager }
 
-    init {
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start() {
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
         dataSource.enableObserving(true)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun stop() {
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
         dataSource.enableObserving(false)
     }
 

@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 
 abstract class BaseSearchValuesViewModel(
-    private val argExtra: SearchValuesExtra
+    argExtra: SearchValuesExtra,
 ) : LifecycleViewModel() {
 
-    val progressState = MutableStateFlow<Boolean>(false)
+    val progressState = MutableStateFlow(false)
     val valuesData = MutableStateFlow<List<String>>(emptyList())
     val checkedIndicesData = MutableStateFlow<List<Pair<Int, Boolean>>>(emptyList())
     val selectedIndex = MutableStateFlow<Int?>(null)

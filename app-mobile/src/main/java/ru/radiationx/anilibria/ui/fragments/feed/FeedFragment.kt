@@ -56,9 +56,9 @@ class FeedFragment :
         }, releaseClickListener = { releaseItem, view ->
             this.sharedViewLocal = view
             viewModel.onItemClick(releaseItem)
-        }, releaseLongClickListener = { releaseItem, view ->
+        }, releaseLongClickListener = { releaseItem, _ ->
             releaseOnLongClick(releaseItem)
-        }, youtubeClickListener = { youtubeItem, view ->
+        }, youtubeClickListener = { youtubeItem, _ ->
             viewModel.onYoutubeClick(youtubeItem)
         }, scheduleClickListener = { feedScheduleItem, view, position ->
             this.sharedViewLocal = view
@@ -213,7 +213,7 @@ class FeedFragment :
     private fun releaseOnLongClick(item: ReleaseItemState) {
         val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
         AlertDialog.Builder(requireContext())
-            .setItems(titles) { dialog, which ->
+            .setItems(titles) { _, which ->
                 when (which) {
                     0 -> {
                         viewModel.onCopyClick(item)

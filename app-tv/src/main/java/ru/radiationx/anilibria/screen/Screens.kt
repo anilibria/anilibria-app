@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
 import ru.radiationx.anilibria.screen.auth.otp.AuthOtpGuidedFragment
 import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
+import ru.radiationx.anilibria.screen.details.other.DetailOtherGuidedFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
 import ru.radiationx.anilibria.screen.player.PlayerFragment
 import ru.radiationx.anilibria.screen.player.end_episode.EndEpisodeGuidedFragment
@@ -48,6 +49,12 @@ class MainPagesScreen : SupportAppScreen() {
 class DetailsScreen(private val releaseId: ReleaseId) : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return DetailFragment.newInstance(releaseId)
+    }
+}
+
+class DetailOtherGuidedScreen(private val releaseId: ReleaseId) : GuidedAppScreen() {
+    override fun getFragment(): FakeGuidedStepFragment {
+        return DetailOtherGuidedFragment.newInstance(releaseId)
     }
 }
 
@@ -138,7 +145,7 @@ class AuthOtpGuidedScreen : GuidedAppScreen() {
 
 class PlayerScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : SupportAppScreen() {
     override fun getFragment(): Fragment {
         return PlayerFragment.newInstance(releaseId, episodeId)
@@ -147,7 +154,7 @@ class PlayerScreen(
 
 class PlayerQualityGuidedScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return PlayerQualityGuidedFragment().putIds(releaseId, episodeId)
@@ -156,7 +163,7 @@ class PlayerQualityGuidedScreen(
 
 class PlayerSpeedGuidedScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return PlayerSpeedGuidedFragment().putIds(releaseId, episodeId)
@@ -165,7 +172,7 @@ class PlayerSpeedGuidedScreen(
 
 class PlayerEpisodesGuidedScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return PlayerEpisodesGuidedFragment().putIds(releaseId, episodeId)
@@ -174,7 +181,7 @@ class PlayerEpisodesGuidedScreen(
 
 class PlayerEndEpisodeGuidedScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return EndEpisodeGuidedFragment().putIds(releaseId, episodeId)
@@ -183,7 +190,7 @@ class PlayerEndEpisodeGuidedScreen(
 
 class PlayerEndSeasonGuidedScreen(
     private val releaseId: ReleaseId,
-    private val episodeId: EpisodeId?
+    private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
     override fun getFragment(): FakeGuidedStepFragment {
         return EndSeasonGuidedFragment().putIds(releaseId, episodeId)

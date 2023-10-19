@@ -6,13 +6,13 @@ import ru.radiationx.data.datasource.remote.address.ApiProxy
 /* Created by radiationx on 31.10.17. */
 
 object Api {
-    const val WIDGETS_SITE_URL = "https://www.anilibria.tv"
-    const val SITE_URL = "https://www.anilibria.tv"
-    const val BASE_URL_IMAGES = "https://static.anilibria.tv/"
-    const val BASE_URL = "https://www.anilibria.tv"
-    const val API_URL = "https://www.anilibria.tv/public/api/index.php"
-    val DEFAULT_IP_ADDRESSES = listOf<String>()
-    val DEFAULT_PROXIES = listOf<ApiProxy>()
+    private const val WIDGETS_SITE_URL = "https://www.anilibria.tv"
+    private const val SITE_URL = "https://www.anilibria.tv"
+    private const val BASE_URL_IMAGES = "https://static.anilibria.tv/"
+    private const val BASE_URL = "https://www.anilibria.tv"
+    private const val API_URL = "https://www.anilibria.tv/public/api/index.php"
+    private val DEFAULT_IP_ADDRESSES = listOf<String>()
+    private val DEFAULT_PROXIES = listOf<ApiProxy>()
 
     val STORE_APP_IDS = arrayOf<String>()
 

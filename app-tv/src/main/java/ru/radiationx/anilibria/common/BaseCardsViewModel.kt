@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,20 +13,19 @@ import timber.log.Timber
 abstract class BaseCardsViewModel : LifecycleViewModel() {
 
     val cardsData = MutableStateFlow<List<CardItem>>(emptyList())
-    val rowTitle = MutableStateFlow<String>("")
+    val rowTitle = MutableStateFlow("")
 
     protected open val firstPage = 1
-    protected open val perPage = 20
     protected open val loadOnCreate = true
     protected open val progressOnRefresh = true
+    protected open val preventClearOnRefresh = false
     open val defaultTitle = "Cards"
 
     protected open val loadMoreCard = LinkCard("Загрузить еще")
     protected open val loadingCard = LoadingCard("Загрузка данных")
 
-    protected val currentCards = mutableListOf<LibriaCard>()
-    protected var currentPage = -1
-        private set
+    private val currentCards = mutableListOf<LibriaCard>()
+    private var currentPage = -1
 
     private var requestJob: Job? = null
 
@@ -61,9 +59,20 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
 
     protected open fun hasMoreCards(
         newCards: List<LibriaCard>,
-        allCards: List<LibriaCard>
-    ): Boolean =
-        newCards.size >= 10 && newCards.isNotEmpty()
+        allCards: List<LibriaCard>,
+    ): Boolean {
+        return newCards.size >= 10
+    }
+
+    protected open fun needsModify(
+        newCards: List<LibriaCard>,
+        allCards: List<LibriaCard>,
+    ): Boolean {
+        if (!preventClearOnRefresh) return true
+        val oldFirstIds = allCards.take(newCards.size).map { it.getId() }.toSet()
+        val newIds = newCards.map { it.getId() }.toSet()
+        return oldFirstIds != newIds
+    }
 
     protected open fun getErrorCard(error: Throwable) = LoadingCard(
         "Повторить загрузку",
@@ -85,11 +94,19 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                     getLoader(requestPage)
                 }
             }.onSuccess { newCards ->
-                currentPage = requestPage
-                if (requestPage <= 1) {
+                val isFirstPage = requestPage <= 1
+                val needsModify = if (isFirstPage) {
+                    needsModify(newCards, currentCards)
+                } else {
+                    true
+                }
+                if (isFirstPage && needsModify) {
                     currentCards.clear()
                 }
-                currentCards.addAll(newCards)
+                if (needsModify) {
+                    currentPage = requestPage
+                    currentCards.addAll(newCards)
+                }
 
                 if (hasMoreCards(newCards, currentCards)) {
                     cardsData.value = currentCards + loadMoreCard

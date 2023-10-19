@@ -55,8 +55,11 @@
 -keep class toothpick.** { *; }
 
 -keep @javax.inject.Singleton class *
-#You need to keep your custom scopes too
 
-# Поиграться в случае "Unable to load publicsuffixes.gz resource from the classpath."
-#-keep class okhttp3.internal.publicsuffix.PublicSuffixDatabase
-#-keepdirectories src/main/resources/okhttp3/**
+
+# idk why it is applied from library...
+# added for viewbindingpropertydelegate 1.5.9
+-keep,allowoptimization class * implements androidx.viewbinding.ViewBinding {
+    public static *** bind(android.view.View);
+    public static *** inflate(...);
+}

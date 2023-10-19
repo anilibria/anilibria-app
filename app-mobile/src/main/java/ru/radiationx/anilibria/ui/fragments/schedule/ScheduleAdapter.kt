@@ -11,11 +11,11 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 class ScheduleAdapter(
     scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
-    scrollListener: (Int) -> Unit
+    scrollListener: (Int) -> Unit,
 ) : ListItemAdapter() {
 
     init {
-        addDelegate(FeedSectionDelegate({}))
+        addDelegate(FeedSectionDelegate {})
         addDelegate(FeedSchedulesDelegate(scheduleClickListener, scrollListener))
     }
 

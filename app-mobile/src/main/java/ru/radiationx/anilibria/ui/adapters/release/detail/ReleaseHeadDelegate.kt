@@ -22,7 +22,7 @@ import ru.radiationx.shared.ktx.android.setCompatDrawable
  * Created by radiationx on 13.01.18.
  */
 class ReleaseHeadDelegate(
-    private val itemListener: Listener
+    private val itemListener: Listener,
 ) : AppAdapterDelegate<ReleaseHeadListItem, ListItem, ReleaseHeadDelegate.ViewHolder>(
     R.layout.item_release_head_new,
     { it is ReleaseHeadListItem },
@@ -34,7 +34,7 @@ class ReleaseHeadDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val itemListener: Listener
+        private val itemListener: Listener,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemReleaseHeadNewBinding>()
@@ -68,12 +68,17 @@ class ReleaseHeadDelegate(
             }
         }
 
+        @Suppress("DEPRECATION")
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
-            binding.fullUpdated.text = state.updatedAt
-                .relativeDate(binding.fullUpdated.context)
-                .let { "Обновлён $it" }
+            binding.fullUpdated.isVisible = state.updatedAt != null
+            state.updatedAt?.also { updatedAt ->
+                binding.fullUpdated.text = updatedAt
+                    .relativeDate(binding.fullUpdated.context)
+                    .let { "Обновлён $it" }
+            }
+
             binding.fullDescription.text = Html.fromHtml(state.description)
             binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)

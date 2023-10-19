@@ -12,30 +12,24 @@ static def getDateTime() {
 }
 
 android {
-    compileSdkVersion app_compile_sdk_version
+    namespace "ru.radiationx.anilibria"
+
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
-        applicationId "ru.radiationx.anilibria"
+        applicationId "ru.radiationx.anilibria.app"
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 64
-        versionName "2.8.2"
+        versionCode 65
+        versionName "2.9.0"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resourceConfigurations += ['ru']
     }
 
-    // Поиграться в случае "Unable to load publicsuffixes.gz resource from the classpath."
-    /* packagingOptions {
-         pickFirst  "META-INF/*"
-         doNotStrip "okhttp3/internal/publicsuffix/publicsuffixes.gz"
-     }*/
-
-    /*sourceSets {
-        main {
-            resources.srcDirs = ["src/main/resources", "src/main/resources/okhttp3/internal/publicsuffix"]
-        }
-    }*/
+    buildFeatures {
+        viewBinding true
+    }
 
     buildTypes {
         debug {
@@ -49,64 +43,36 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-    flavorDimensions "wtf"
+
+    flavorDimensions = ["type"]
     productFlavors {
-        /*
-        * Для приложений в сторе нужно добавить id аппки в
-        * ru.radiationx.anilibria.model.data.remote.Api
-        * */
-        stable {
-            dimension "wtf"
-        }
         app {
-            dimension "wtf"
-            applicationIdSuffix ".app"
+            dimension "type"
         }
-        appDev {
-            dimension "wtf"
-            multiDexEnabled true
-            applicationIdSuffix ".app"
-        }
+
         store {
-            dimension "wtf"
+            dimension "type"
             applicationId "tv.anilibria.store"
-            multiDexEnabled true
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    lint {
-        checkReleaseBuilds false
-        disable "RestrictedApi"
-    }
-    namespace "ru.radiationx.anilibria"
 
-
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             def appName = "AniLibria"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
-
-    buildFeatures {
-        viewBinding true
-    }
 }
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
+}
+
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
@@ -117,7 +83,7 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.cardview:cardview:$androidx_cardview_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
-    implementation "androidx.preference:preference:$androidx_preference_version"
+    implementation "androidx.preference:preference-ktx:$androidx_preference_version"
 
     implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
@@ -126,8 +92,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     //implementation "com.lapism:searchview:4.0"
     //implementation "com.lapism:search:1.0.0"
@@ -146,11 +110,7 @@ dependencies {
 
     implementation "me.zhanghai.android.materialprogressbar:library:$materialprogressbar_version"
 
-    implementation "androidx.multidex:multidex:$androidx_multidex_version"
-
     implementation project(":bottomsheet")
-/*
-    implementation "org.michaelbel:bottomsheet:1.2.3"*/
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

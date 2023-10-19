@@ -18,11 +18,11 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class AuthOtpViewModel(
     private val authRepository: AuthRepository,
-    private val guidedRouter: GuidedRouter
+    private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
     val otpInfoData = MutableStateFlow<OtpInfo?>(null)
-    val state = MutableStateFlow<State>(State())
+    val state = MutableStateFlow(State())
 
     private var timerJob: Job? = null
     private var signInJob: Job? = null
@@ -104,9 +104,9 @@ class AuthOtpViewModel(
     }
 
     private fun updateState(
-        buttonState: ButtonState = state.value!!.buttonState,
-        progress: Boolean = state.value!!.progress,
-        error: String = state.value!!.error
+        buttonState: ButtonState = state.value.buttonState,
+        progress: Boolean = state.value.progress,
+        error: String = state.value.error,
     ) {
         state.value = State(buttonState, progress, error)
     }
@@ -114,7 +114,7 @@ class AuthOtpViewModel(
     data class State(
         val buttonState: ButtonState = ButtonState.COMPLETE,
         val progress: Boolean = false,
-        val error: String = ""
+        val error: String = "",
     )
 
     enum class ButtonState {

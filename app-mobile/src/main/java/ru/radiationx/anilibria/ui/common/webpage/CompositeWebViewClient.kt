@@ -32,6 +32,8 @@ class CompositeWebViewClient(
         clients.clear()
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         return clients.mapFirstBooleanOrNull { it.shouldOverrideUrlLoading(view, url) }
             ?: super.shouldOverrideUrlLoading(view, url)
@@ -64,12 +66,12 @@ class CompositeWebViewClient(
         super.onPageCommitVisible(view, url)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
         return clients.mapFirstNotNullOrNull { it.shouldInterceptRequest(view, url) }
             ?: super.shouldInterceptRequest(view, url)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(
         view: WebView?,
         request: WebResourceRequest?
@@ -78,11 +80,13 @@ class CompositeWebViewClient(
             ?: super.shouldInterceptRequest(view, request)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onTooManyRedirects(view: WebView?, cancelMsg: Message?, continueMsg: Message?) {
         clients.forEach { it.onTooManyRedirects(view, cancelMsg, continueMsg) }
         super.onTooManyRedirects(view, cancelMsg, continueMsg)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onReceivedError(
         view: WebView?,
         errorCode: Int,
@@ -129,7 +133,6 @@ class CompositeWebViewClient(
         super.onReceivedSslError(view, handler, error)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onReceivedClientCertRequest(view: WebView?, request: ClientCertRequest?) {
         clients.forEach { it.onReceivedClientCertRequest(view, request) }
         super.onReceivedClientCertRequest(view, request)

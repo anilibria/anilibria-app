@@ -59,7 +59,7 @@ open class GridFragment : Fragment(R.layout.fragment_grid),
             }
         }
 
-    private val mChildLaidOutListener = OnChildLaidOutListener { parent, view, position, id ->
+    private val mChildLaidOutListener = OnChildLaidOutListener { _, _, position, _ ->
         if (position == 0) {
             showOrHideTitle()
         }
@@ -104,7 +104,7 @@ open class GridFragment : Fragment(R.layout.fragment_grid),
         mSceneAfterEntranceTransition = TransitionHelper.createScene(binding.browseGridDock) {
             setEntranceTransitionState(true)
         }
-        mGridViewHolder?.gridView?.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        mGridViewHolder?.gridView?.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             val cardDescriptionView = binding.shadowDescriptionView.getCardDescriptionView()
             val newWidth =
                 max(v.width - v.paddingLeft - v.paddingRight, cardDescriptionView.minimumWidth)
@@ -142,7 +142,8 @@ open class GridFragment : Fragment(R.layout.fragment_grid),
     }
 
     fun setEntranceTransitionState(afterTransition: Boolean) {
-        mGridPresenter?.setEntranceTransitionState(mGridViewHolder, afterTransition)
+        val gridViewHolder = mGridViewHolder ?: return
+        mGridPresenter?.setEntranceTransitionState(gridViewHolder, afterTransition)
     }
 
     private fun gridOnItemSelected(position: Int) {
@@ -167,7 +168,7 @@ open class GridFragment : Fragment(R.layout.fragment_grid),
     private fun updateAdapter() {
         val gridViewHolder = mGridViewHolder ?: return
         val gridPresenter = mGridPresenter ?: return
-        gridPresenter.onBindViewHolder(mGridViewHolder, mAdapter)
+        gridPresenter.onBindViewHolder(gridViewHolder, mAdapter)
         if (mSelectedPosition != -1) {
             gridViewHolder.gridView.selectedPosition = mSelectedPosition
         }

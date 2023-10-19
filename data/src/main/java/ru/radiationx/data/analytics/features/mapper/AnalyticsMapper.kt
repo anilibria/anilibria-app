@@ -8,7 +8,6 @@ fun AuthState.toAnalyticsAuthState(): AnalyticsAuthState = when (this) {
     AuthState.NO_AUTH -> AnalyticsAuthState.NO
     AuthState.AUTH_SKIPPED -> AnalyticsAuthState.SKIP
     AuthState.AUTH -> AnalyticsAuthState.AUTH
-    else -> AnalyticsAuthState.UNKNOWN
 }
 
 fun Int.toAnalyticsQuality(): AnalyticsQuality = when (this) {

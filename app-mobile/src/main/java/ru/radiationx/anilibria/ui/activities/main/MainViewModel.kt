@@ -2,12 +2,22 @@ package ru.radiationx.anilibria.ui.activities.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.features.AuthMainAnalytics
+import ru.radiationx.data.analytics.features.CatalogAnalytics
+import ru.radiationx.data.analytics.features.FavoritesAnalytics
+import ru.radiationx.data.analytics.features.FeedAnalytics
+import ru.radiationx.data.analytics.features.OtherAnalytics
+import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
@@ -24,7 +34,7 @@ import toothpick.InjectConstructor
 data class MainScreenState(
     val selectedTab: String? = null,
     val needConfig: Boolean = false,
-    val mainLogicCompleted: Boolean = false
+    val mainLogicCompleted: Boolean = false,
 )
 
 @InjectConstructor
@@ -32,17 +42,17 @@ class MainViewModel(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
-    private val apiConfig: ApiConfig,
-    private val analyticsProfile: AnalyticsProfile,
+    apiConfig: ApiConfig,
+    analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val favoritesAnalytics: FavoritesAnalytics,
     private val feedAnalytics: FeedAnalytics,
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
-    private val otherAnalytics: OtherAnalytics
+    private val otherAnalytics: OtherAnalytics,
 ) : ViewModel() {
 
-    private val defaultScreen = Screens.MainFeed().screenKey!!
+    private val defaultScreen = Screens.MainFeed().screenKey
 
     private var firstLaunch = true
 

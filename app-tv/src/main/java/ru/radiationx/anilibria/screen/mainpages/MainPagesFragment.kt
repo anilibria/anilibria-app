@@ -16,11 +16,10 @@ import androidx.leanback.widget.PageRow
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.common.RowDiffCallback
-import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.widget.BrowseTitleView
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.subscribeTo
 
 class MainPagesFragment : BrowseSupportFragment() {
@@ -49,26 +48,27 @@ class MainPagesFragment : BrowseSupportFragment() {
             viewModel.onSearchClick()
         }
 
-        setAlertClickListener(View.OnClickListener {
+        setAlertClickListener {
             viewModel.onAppUpdateClick()
-        })
+        }
 
-        setOtherClickListener(View.OnClickListener {
+        setOtherClickListener {
             viewModel.onCatalogClick()
-        })
+        }
 
         setBrowseTransitionListener(object : BrowseTransitionListener() {
 
             override fun onHeadersTransitionStop(withHeaders: Boolean) {
                 super.onHeadersTransitionStop(withHeaders)
-
+                val titleView = titleView ?: return
                 TransitionManager.beginDelayedTransition(
                     titleView as ViewGroup,
                     Fade(Fade.IN).apply {
                         interpolator = FastOutSlowInInterpolator()
-                    })
+                    }
+                )
                 badgeDrawable = if (withHeaders) {
-                    requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
+                    titleView.context.getCompatDrawable(R.drawable.ic_anilibria_splash)
                 } else {
                     null
                 }
@@ -92,7 +92,7 @@ class MainPagesFragment : BrowseSupportFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
 
         if (savedInstanceState == null) {
@@ -117,10 +117,12 @@ class MainPagesFragment : BrowseSupportFragment() {
         setOther("Каталог")
         //progressBarManager.show()
 
-        ImageViewCompat.setImageTintList(
-            titleView.findViewById(R.id.title_badge),
-            ColorStateList.valueOf(titleView.context.getCompatColor(R.color.dark_contrast_icon))
-        )
+        titleView?.also { tview ->
+            ImageViewCompat.setImageTintList(
+                tview.findViewById(R.id.title_badge),
+                ColorStateList.valueOf(tview.context.getCompatColor(R.color.dark_contrast_icon))
+            )
+        }
     }
 
     override fun onStart() {
@@ -160,22 +162,22 @@ class MainPagesFragment : BrowseSupportFragment() {
         )
     }
 
-    protected fun setAlert(alertText: CharSequence?) {
+    private fun setAlert(alertText: CharSequence?) {
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setAlert(alertText)
     }
 
-    protected fun setAlertClickListener(listener: View.OnClickListener?) {
+    private fun setAlertClickListener(listener: View.OnClickListener?) {
         mOnAlertClickedListener = listener
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnAlertClickedListener(
             mOnAlertClickedListener
         )
     }
 
-    protected fun setOther(otherText: CharSequence?) {
+    private fun setOther(otherText: CharSequence?) {
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOther(otherText)
     }
 
-    protected fun setOtherClickListener(listener: View.OnClickListener?) {
+    private fun setOtherClickListener(listener: View.OnClickListener?) {
         mOnOtherClickedListener = listener
         (titleViewAdapter as? BrowseTitleView.Adapter?)?.setOnOtherClickedListener(
             mOnOtherClickedListener

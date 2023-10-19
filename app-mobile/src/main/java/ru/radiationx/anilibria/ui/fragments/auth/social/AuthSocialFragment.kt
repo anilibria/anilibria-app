@@ -5,6 +5,7 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -23,7 +24,6 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -84,7 +84,7 @@ class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(useTimeCounter)
-        baseBinding.appbarLayout.gone()
+        baseBinding.appbarLayout.isGone = true
 
         binding.webView.apply {
             settings.apply {

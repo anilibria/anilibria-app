@@ -24,22 +24,23 @@ class VkWebViewClient(
     private val appThemeController: AppThemeController,
 ) : WebViewClient() {
 
-    var loadingFinished = true
-    var redirect = false
-    var authCheckIntercepted = false
+    private var loadingFinished = true
+    private var redirect = false
+    private var authCheckIntercepted = false
 
     private val authRequestRegex = Regex("oauth\\.vk\\.com\\/authorize\\?|vk\\.com\\/login\\?")
     private val authCheckRegex = Regex("vk\\.com\\/login\\?act=authcheck")
     private val commentsRegex = Regex("widget_comments(?:\\.\\w+?)?\\.css")
 
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION", "OverridingDeprecatedMember")
     override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
-        return tryInterceptAuthCheck(view, url)
-            ?: tryInterceptComments(view, url)
+        return tryInterceptAuthCheck(url)
+            ?: tryInterceptComments(url)
             ?: super.shouldInterceptRequest(view, url)
     }
 
-    private fun tryInterceptAuthCheck(view: WebView?, url: String?): WebResourceResponse? {
+    private fun tryInterceptAuthCheck(url: String?): WebResourceResponse? {
         val needAuth = authCheckRegex.containsMatchIn(url.orEmpty())
         if (needAuth && !authCheckIntercepted) {
             authCheckIntercepted = true
@@ -53,7 +54,7 @@ class VkWebViewClient(
         return null
     }
 
-    private fun tryInterceptComments(view: WebView?, url: String?): WebResourceResponse? {
+    private fun tryInterceptComments(url: String?): WebResourceResponse? {
         val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
         return if (needIntercept) {
             val cssSrc = try {
@@ -85,9 +86,9 @@ class VkWebViewClient(
         }
     }
 
+    @Deprecated("Deprecated in Java")
     @Suppress("OverridingDeprecatedMember")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        val cookies = CookieManager.getInstance().getCookie(url)
         if (!loadingFinished) {
             redirect = true
         }

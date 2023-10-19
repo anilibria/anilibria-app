@@ -3,6 +3,8 @@ package ru.radiationx.anilibria.ui.fragments.auth.main
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.flow.launchIn
@@ -16,8 +18,6 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
-import ru.radiationx.shared.ktx.android.gone
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -49,7 +49,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycle.addObserver(lifecycleTimeCounter)
-        baseBinding.appbarLayout.gone()
+        baseBinding.appbarLayout.isGone = true
 
         binding.authSocialList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -70,9 +70,9 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
             binding.authSubmit.isEnabled = state.actionEnabled
             binding.authSwitcher.displayedChild = if (state.sending) 1 else 0
 
-            binding.authSocialTop.visible(socialItems.isNotEmpty())
-            binding.authSocialContent.visible(socialItems.isNotEmpty())
-            binding.authSocialBottom.visible(socialItems.isNotEmpty())
+            binding.authSocialTop.isVisible = socialItems.isNotEmpty()
+            binding.authSocialContent.isVisible = socialItems.isNotEmpty()
+            binding.authSocialBottom.isVisible = socialItems.isNotEmpty()
             socialAuthAdapter.bindItems(socialItems)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

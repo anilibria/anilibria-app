@@ -1,13 +1,22 @@
 package ru.radiationx.anilibria.screen.main
 
-import ru.radiationx.anilibria.common.*
+import ru.radiationx.anilibria.common.BaseCardsViewModel
+import ru.radiationx.anilibria.common.CardsDataConverter
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.screen.ScheduleScreen
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
-import ru.radiationx.shared.ktx.*
+import ru.radiationx.shared.ktx.asDayNameDeclension
+import ru.radiationx.shared.ktx.asDayPretext
+import ru.radiationx.shared.ktx.asMsk
+import ru.radiationx.shared.ktx.getDayOfWeek
+import ru.radiationx.shared.ktx.isSameDay
+import ru.radiationx.shared.ktx.lowercaseDefault
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.*
+import java.util.Date
 
 @InjectConstructor
 class MainScheduleViewModel(
@@ -15,13 +24,14 @@ class MainScheduleViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
     private val router: Router,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Ожидается сегодня"
 
-    override val loadMoreCard: LinkCard =
-        LinkCard("Открыть полное расписание")
+    override val loadMoreCard: LinkCard = LinkCard("Открыть полное расписание")
+
+    override val preventClearOnRefresh: Boolean = true
 
     override fun onResume() {
         super.onResume()
@@ -30,15 +40,14 @@ class MainScheduleViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = scheduleRepository
         .loadSchedule()
-        .also {
-            val allReleases = it.map { it.items.map { it.releaseItem } }.flatten()
+        .also { days ->
+            val allReleases = days.map { day -> day.items.map { it.releaseItem } }.flatten()
             releaseInteractor.updateItemsCache(allReleases)
         }
         .let { schedueDays ->
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()
 
-            val currentDay = currentTime.getDayOfWeek()
             val mskDay = mskTime.getDayOfWeek()
 
 
@@ -46,7 +55,7 @@ class MainScheduleViewModel(
                 "Ожидается сегодня"
             } else {
                 "Ожидается ${mskDay.asDayPretext()} ${
-                    mskDay.asDayNameDeclension().toLowerCase()
+                    mskDay.asDayNameDeclension().lowercaseDefault()
                 } (по МСК)"
             }
             rowTitle.value = dayTitle

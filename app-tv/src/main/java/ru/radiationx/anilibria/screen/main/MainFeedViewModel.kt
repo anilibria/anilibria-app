@@ -13,10 +13,12 @@ class MainFeedViewModel(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Самое актуальное"
+
+    override val preventClearOnRefresh: Boolean = true
 
     override fun onResume() {
         super.onResume()
@@ -25,9 +27,10 @@ class MainFeedViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = feedRepository
         .getFeed(requestPage)
-        .also {
-            releaseInteractor.updateItemsCache(it.filter { it.release != null }
-                .map { it.release!! })
+        .also { items ->
+            releaseInteractor
+                .updateItemsCache(items.filter { it.release != null }
+                    .map { it.release!! })
         }
         .let { feedList -> feedList.map { converter.toCard(it) } }
 

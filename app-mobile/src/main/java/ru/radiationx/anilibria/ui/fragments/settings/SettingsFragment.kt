@@ -9,17 +9,13 @@ import androidx.preference.SwitchPreferenceCompat
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
-import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.remote.Api
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 
@@ -31,36 +27,28 @@ class SettingsFragment : BaseSettingFragment() {
 
     private val appPreferences by inject<PreferencesHolder>()
 
-    private val apiConfig by inject<ApiConfig>()
-
-    private val authRepository by inject<AuthRepository>()
-
-    private val errorHandler by inject<IErrorHandler>()
-
     private val settingsAnalytics by inject<SettingsAnalytics>()
-
-    private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
 
         findPreference<SwitchPreferenceCompat>("notifications.all")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::notificationMainChange)
                 return@setOnPreferenceChangeListener true
             }
         }
 
         findPreference<SwitchPreferenceCompat>("notifications.service")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::notificationSystemChange)
                 return@setOnPreferenceChangeListener true
             }
         }
 
         findPreference<SwitchPreferenceCompat>("app_theme_dark")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also { isDark ->
                     val theme = if (isDark) {
                         AnalyticsAppTheme.DARK
@@ -74,7 +62,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<SwitchPreferenceCompat>("episodes_is_reverse")?.apply {
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Boolean)?.also(settingsAnalytics::episodesOrderChange)
                 return@setOnPreferenceChangeListener true
             }
@@ -123,7 +111,7 @@ class SettingsFragment : BaseSettingFragment() {
                 val titles = values.map { getPlayerTypeTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
                     .setTitle(preference.title)
-                    .setItems(titles) { dialog, which ->
+                    .setItems(titles) { _, which ->
                         val playerType = values[which]
                         settingsAnalytics.playerChange(playerType.toAnalyticsPlayer())
                         appPreferences.setPlayerType(playerType)

@@ -41,8 +41,6 @@ import ru.radiationx.shared_app.analytics.profile.CombinedAnalyticsProfile
 import ru.radiationx.shared_app.analytics.profile.LoggingAnalyticsProfile
 import ru.radiationx.shared_app.imageloader.LibriaImageLoader
 import ru.radiationx.shared_app.imageloader.impls.CoilLibriaImageLoaderImpl
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
 
 class AppModule(application: Application) : QuillModule() {
 
@@ -81,10 +79,10 @@ class AppModule(application: Application) : QuillModule() {
         instance {
             ciceroneHolder
         }
-        instance<Router> {
+        instance {
             cicerone.router
         }
-        instance<NavigatorHolder> {
+        instance {
             cicerone.navigatorHolder
         }
 

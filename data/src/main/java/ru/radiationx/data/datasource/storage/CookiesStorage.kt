@@ -1,7 +1,6 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
-import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -16,7 +15,7 @@ import javax.inject.Inject
  * Created by radiationx on 30.12.17.
  */
 class CookiesStorage @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
 ) : CookieHolder {
 
     private val cookiesState = SuspendMutableStateFlow {
@@ -29,18 +28,6 @@ class CookiesStorage @Inject constructor(
 
     override suspend fun getCookies(): Map<String, Cookie> {
         return cookiesState.getValue()
-    }
-
-    override suspend fun putCookie(url: String, name: String, value: String) {
-        val domain = requireNotNull(Uri.parse(url).host) {
-            "cookie domain is null"
-        }
-        val cookie = Cookie.Builder()
-            .name(name.trim())
-            .value(value.trim())
-            .domain(domain)
-            .build()
-        putCookie(url, cookie)
     }
 
     override suspend fun putCookie(url: String, cookie: Cookie) {
@@ -63,6 +50,10 @@ class CookiesStorage @Inject constructor(
         updateCookies()
     }
 
+    override suspend fun removeAuthCookie() {
+        removeCookie(CookieHolder.PHPSESSID)
+    }
+
     private suspend fun updateCookies() {
         cookiesState.setValue(loadCookies())
     }
@@ -70,7 +61,7 @@ class CookiesStorage @Inject constructor(
     private suspend fun loadCookies(): Map<String, Cookie> {
         return withContext(Dispatchers.IO) {
             val result = mutableMapOf<String, Cookie>()
-            cookieNames.forEachIndexed { _, s ->
+            cookieNames.forEach { s ->
                 sharedPreferences
                     .getString("cookie_$s", null)
                     ?.let { parseCookie(it) }

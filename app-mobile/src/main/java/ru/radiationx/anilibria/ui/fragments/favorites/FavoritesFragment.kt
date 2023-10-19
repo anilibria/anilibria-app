@@ -77,10 +77,6 @@ class FavoritesFragment :
         return FragmentListRefreshBinding.bind(view)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -181,7 +177,7 @@ class FavoritesFragment :
         val titles =
             arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
         AlertDialog.Builder(requireContext())
-            .setItems(titles) { dialog, which ->
+            .setItems(titles) { _, which ->
                 when (which) {
                     0 -> {
                         viewModel.onCopyClick(item)

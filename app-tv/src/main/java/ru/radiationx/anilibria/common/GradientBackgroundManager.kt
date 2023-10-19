@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -29,7 +31,7 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class GradientBackgroundManager(
-    private val activity: FragmentActivity
+    private val activity: FragmentActivity,
 ) {
 
     private val backgroundManager: BackgroundManager by lazy {
@@ -70,12 +72,7 @@ class GradientBackgroundManager(
     private val urlColorMap = mutableMapOf<String, Int>()
 
     private val defaultColorSelector = { palette: Palette ->
-        val lightMuted = palette.getLightMutedColor(defaultColor)
-        val lightVibrant = palette.getLightVibrantColor(lightMuted)
-        val vibrant = palette.getVibrantColor(lightVibrant)
-        val muted = palette.getMutedColor(defaultColor)
-        val dark = palette.getDarkMutedColor(Color.BLACK)
-        muted
+        palette.getMutedColor(defaultColor)
     }
 
     private val defaultColorModifier = { color: Int -> color }
@@ -83,11 +80,17 @@ class GradientBackgroundManager(
     init {
         if (!backgroundManager.isAttached) {
             backgroundManager.isAutoReleaseOnStop = false
+
+            // to avoid java.lang.NullPointerException: Attempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable()' on a null object reference
+            // hope this helps
+            backgroundManager.color = foregroundColor
+
             backgroundManager.attach(activity.window)
             backgroundManager.drawable = layerDrawable
         }
     }
 
+    @OptIn(FlowPreview::class)
     private fun subscribeColorApplier() {
         colorApplierJob?.cancel()
         colorApplierJob = colorApplier
@@ -111,7 +114,7 @@ class GradientBackgroundManager(
     fun applyImage(
         url: String,
         colorSelector: (Palette) -> Int? = defaultColorSelector,
-        colorModifier: (Int) -> Int = defaultColorModifier
+        colorModifier: (Int) -> Int = defaultColorModifier,
     ) {
         val color = urlColorMap[url]
         if (colorSelector == defaultColorSelector && color != null) {
@@ -141,15 +144,18 @@ class GradientBackgroundManager(
         }
     }
 
-    fun applyPalette(
+    private fun applyPalette(
         palette: Palette,
         colorSelector: (Palette) -> Int? = defaultColorSelector,
-        colorModifier: (Int) -> Int = defaultColorModifier
+        colorModifier: (Int) -> Int = defaultColorModifier,
     ) {
         applyColor(colorSelector(palette) ?: defaultColorSelector(palette), colorModifier)
     }
 
-    fun applyColor(@ColorInt color: Int, colorModifier: (Int) -> Int = defaultColorModifier) {
+    private fun applyColor(
+        @ColorInt color: Int,
+        colorModifier: (Int) -> Int = defaultColorModifier,
+    ) {
         val finalColor = colorModifier.invoke(color)
         subscribeColorApplier()
         colorApplier.value = finalColor

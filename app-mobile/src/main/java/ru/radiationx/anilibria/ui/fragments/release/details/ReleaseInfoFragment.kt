@@ -237,7 +237,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         release: Release,
         episode: Episode,
         playFlag: Int?,
-        quality: Int?
+        quality: Int?,
     ) {
         val qualityInfo = QualityInfo(episode, episode.urlSd, episode.urlHd, episode.urlFullHd)
         selectPlayer({ playerType ->
@@ -245,9 +245,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                 when (playerType) {
                     PreferencesHolder.PLAYER_TYPE_EXTERNAL -> {
                         selectQuality(qualityInfo, { selected ->
-                            playExternal(release, episode, selected)
+                            playExternal(episode, selected)
                         }, true)
                     }
+
                     PreferencesHolder.PLAYER_TYPE_INTERNAL -> {
                         selectQuality(qualityInfo, { selected ->
                             playInternal(release, episode, selected, playFlag)
@@ -257,10 +258,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             } else {
                 when (playerType) {
                     PreferencesHolder.PLAYER_TYPE_EXTERNAL -> playExternal(
-                        release,
                         episode,
                         quality
                     )
+
                     PreferencesHolder.PLAYER_TYPE_INTERNAL -> playInternal(
                         release,
                         episode,
@@ -276,17 +277,19 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         if (forceDialog) {
             showSelectPlayerDialog(onSelect)
         } else {
-            val savedPlayerType = viewModel.getPlayerType()
-            when (savedPlayerType) {
+            when (viewModel.getPlayerType()) {
                 PreferencesHolder.PLAYER_TYPE_NO -> {
                     showSelectPlayerDialog(onSelect)
                 }
+
                 PreferencesHolder.PLAYER_TYPE_ALWAYS -> {
                     showSelectPlayerDialog(onSelect, false)
                 }
+
                 PreferencesHolder.PLAYER_TYPE_INTERNAL -> {
                     onSelect(PreferencesHolder.PLAYER_TYPE_INTERNAL)
                 }
+
                 PreferencesHolder.PLAYER_TYPE_EXTERNAL -> {
                     onSelect(PreferencesHolder.PLAYER_TYPE_EXTERNAL)
                 }
@@ -296,11 +299,11 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private fun showSelectPlayerDialog(
         onSelect: (playerType: Int) -> Unit,
-        savePlayerType: Boolean = true
+        savePlayerType: Boolean = true,
     ) {
         val titles = arrayOf("Внешний плеер", "Внутренний плеер")
         AlertDialog.Builder(requireContext())
-            .setItems(titles) { dialog, which ->
+            .setItems(titles) { _, which ->
                 val playerType = when (which) {
                     0 -> PreferencesHolder.PLAYER_TYPE_EXTERNAL
                     1 -> PreferencesHolder.PLAYER_TYPE_INTERNAL
@@ -320,7 +323,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         release: Release,
         episode: Episode,
         quality: Int,
-        playFlag: Int? = null
+        playFlag: Int? = null,
     ) {
         viewModel.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
@@ -336,7 +339,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         })
     }
 
-    private fun playExternal(release: Release, episode: Episode, quality: Int) {
+    private fun playExternal(episode: Episode, quality: Int) {
         viewModel.submitPlayerOpenAnalytics(
             PreferencesHolder.PLAYER_TYPE_EXTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
@@ -370,7 +373,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     private fun <T> selectQuality(
         qualityInfo: QualityInfo<T>,
         onSelect: (quality: Int) -> Unit,
-        forceDialog: Boolean = false
+        forceDialog: Boolean = false,
     ) {
         val savedQuality = viewModel.getQuality()
 
@@ -401,7 +404,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     private fun <T> showQualityDialog(
         qualityInfo: QualityInfo<T>,
         onSelect: (quality: Int) -> Unit,
-        saveQuality: Boolean = true
+        saveQuality: Boolean = true,
     ) {
         val qualities = mutableListOf<Int>()
         if (qualityInfo.hasSd) qualities.add(MyPlayerActivity.VAL_QUALITY_SD)
@@ -513,7 +516,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     private val episodeControlListener = object : ReleaseEpisodeControlDelegate.Listener {
 
         override fun onClickWatchWeb(place: EpisodeControlPlace) {
-            viewModel.onClickWatchWeb(place)
+            viewModel.onClickWatchWeb()
         }
 
         override fun onClickWatchAll(place: EpisodeControlPlace) {
@@ -525,7 +528,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }
 
         override fun onClickEpisodesMenu(place: EpisodeControlPlace) {
-            viewModel.onClickEpisodesMenu(place)
+            viewModel.onClickEpisodesMenu()
         }
     }
 
@@ -533,7 +536,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         val data: T,
         val urlSd: String?,
         val urlHd: String?,
-        val urlFullHd: String?
+        val urlFullHd: String?,
     ) {
         val hasSd = urlSd != null
         val hasHd = urlHd != null

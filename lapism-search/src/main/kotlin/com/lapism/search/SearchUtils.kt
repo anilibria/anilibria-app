@@ -14,7 +14,7 @@ import androidx.annotation.IntDef
 object SearchUtils {
 
     // *********************************************************************************************
-    const val SPEECH_REQUEST_CODE = 300
+    private const val SPEECH_REQUEST_CODE = 300
 
     // *********************************************************************************************
     @IntDef(

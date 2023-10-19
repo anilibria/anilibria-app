@@ -1,7 +1,11 @@
 package ru.radiationx.anilibria.screen.watching
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -16,14 +20,16 @@ import toothpick.InjectConstructor
 class WatchingFavoritesViewModel(
     private val favoriteRepository: FavoriteRepository,
     private val releaseInteractor: ReleaseInteractor,
-    private val authRepository: AuthRepository,
+    authRepository: AuthRepository,
     private val converter: CardsDataConverter,
-    private val cardRouter: LibriaCardRouter
+    private val cardRouter: LibriaCardRouter,
 ) : BaseCardsViewModel() {
 
     override val defaultTitle: String = "Избранное"
 
     override val loadOnCreate: Boolean = false
+
+    override val preventClearOnRefresh: Boolean = true
 
     init {
         authRepository

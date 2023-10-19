@@ -36,7 +36,7 @@ class YoutubeFragment : GridFragment() {
 
         backgroundManager.clearGradient()
         onItemViewSelectedListener =
-            OnItemViewSelectedListener { itemViewHolder, item, rowViewHolder, row ->
+            OnItemViewSelectedListener { _, item, _, _ ->
                 backgroundManager.applyCard(item)
                 when (item) {
                     is LibriaCard -> {

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.TargetApi
 import android.app.ActivityManager
+import android.app.AppOpsManager
 import android.app.PendingIntent
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -25,6 +26,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
@@ -54,7 +57,6 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsScale
 import ru.radiationx.data.analytics.features.model.AnalyticsEpisodeFinishAction
-import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsSeasonFinishAction
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
@@ -63,9 +65,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.gone
 import ru.radiationx.shared.ktx.android.immutableFlag
-import ru.radiationx.shared.ktx.android.visible
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
 import java.util.*
@@ -107,9 +107,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         const val REMOTE_CONTROL_NEXT = 4
 
 
-        //private const val NOT_SELECTED = -1
-        private const val NO_ID = -1
-
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
     }
 
@@ -143,10 +140,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     private val timeToStartCounter = TimeCounter()
 
-    private val loadingStatistics =
-        mutableMapOf<String, MutableList<Pair<AnalyticsQuality, Long>>>()
-
-
     private val flagsHelper = PlayerWindowFlagHelper
     private var fullscreenOrientation = false
 
@@ -165,28 +158,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     private var releaseDataJob: Job? = null
 
-    private fun getStatisticByDomain(host: String): MutableList<Pair<AnalyticsQuality, Long>> {
-        if (!loadingStatistics.contains(host)) {
-            loadingStatistics[host] = mutableListOf()
-        }
-        return loadingStatistics.getValue(host)
-    }
-
-    private fun putStatistics(uri: Uri, quality: AnalyticsQuality, time: Long) {
-        uri.host?.let { getStatisticByDomain(it) }?.add(quality to time)
-    }
-
-    private fun getAverageStatisticsValues(): Map<String, Map<AnalyticsQuality, Long>> {
-        return loadingStatistics
-            .mapValues { statsMap ->
-                statsMap.value
-                    .groupBy { it.first }
-                    .mapValues { qualityMap ->
-                        qualityMap.value.map { it.second }.average().toLong()
-                    }
-            }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleIntentData(intent)
@@ -203,7 +174,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         binding.player.playbackSpeed = currentPlaySpeed
         binding.player.setOnPreparedListener(playerListener)
         binding.player.setOnCompletionListener(playerListener)
-        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, pixelWidthHeightRatio ->
+        binding.player.setOnVideoSizedChangedListener { intrinsicWidth, intrinsicHeight, _ ->
             updatePIPRatio(intrinsicWidth, intrinsicHeight)
         }
         binding.player.setAnalyticsListener(object : AnalyticsListener {
@@ -216,37 +187,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             private var lastPlayerError: Throwable? = null
 
 
-            override fun onLoadCanceled(
-                eventTime: AnalyticsListener.EventTime,
-                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData
-            ) {
-                super.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData)
-                putStatistics(
-                    loadEventInfo.uri,
-                    currentQuality.toPrefQuality().toAnalyticsQuality(),
-                    loadEventInfo.loadDurationMs
-                )
-            }
-
-            override fun onLoadCompleted(
-                eventTime: AnalyticsListener.EventTime,
-                loadEventInfo: MediaSourceEventListener.LoadEventInfo,
-                mediaLoadData: MediaSourceEventListener.MediaLoadData
-            ) {
-                super.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData)
-                lastLoadedUri = loadEventInfo.uri
-                putStatistics(
-                    loadEventInfo.uri,
-                    currentQuality.toPrefQuality().toAnalyticsQuality(),
-                    loadEventInfo.loadDurationMs
-                )
-            }
-
-
             override fun onRenderedFirstFrame(
                 eventTime: AnalyticsListener.EventTime,
-                surface: Surface?
+                surface: Surface?,
             ) {
                 super.onRenderedFirstFrame(eventTime, surface)
                 if (!wasFirstFrame) {
@@ -264,7 +207,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 loadEventInfo: MediaSourceEventListener.LoadEventInfo,
                 mediaLoadData: MediaSourceEventListener.MediaLoadData,
                 error: IOException,
-                wasCanceled: Boolean
+                wasCanceled: Boolean,
             ) {
                 super.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled)
                 if (lastLoadError?.toString() != error.toString()) {
@@ -276,7 +219,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             override fun onPlayerError(
                 eventTime: AnalyticsListener.EventTime,
-                error: ExoPlaybackException
+                error: ExoPlaybackException,
             ) {
                 super.onPlayerError(eventTime, error)
                 if (lastPlayerError?.toString() != error.toString()) {
@@ -355,25 +298,38 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             setVisibilityListener(null)
             setButtonListener(null)
         }
-
-        getAverageStatisticsValues().forEach { statsEntry ->
-            statsEntry.value.forEach { qualityEntry ->
-                playerAnalytics.loadTime(statsEntry.key, qualityEntry.key, qualityEntry.value)
-            }
-        }
         saveEpisodeAtNoZero()
         binding.player.stopPlayback()
         exitFullscreen()
         videoControls = null
     }
 
-    private fun checkPipMode(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    @Suppress("DEPRECATION")
+    private fun hasPipPermission(): Boolean {
+        val appOps = getSystemService<AppOpsManager>() ?: return false
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         }
-        return false
+        val op = AppOpsManager.OPSTR_PICTURE_IN_PICTURE
+        val pid = android.os.Process.myUid()
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(op, pid, packageName)
+        } else {
+            appOps.checkOpNoThrow(op, pid, packageName)
+        }
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 
+    private fun checkPipMode(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return false
+        }
+        val hasFeature = packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        val hasPermission = hasPipPermission()
+        return hasFeature && hasPermission
+    }
+
+    @Suppress("DEPRECATION")
     private fun checkSausage(): Boolean {
         val size = windowManager.defaultDisplay.let {
             val size = Point()
@@ -389,6 +345,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
+    @Suppress("DEPRECATION")
     private fun handleIntentData(intent: Intent) {
         val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
@@ -415,10 +372,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         updateAndPlayRelease()
     }
 
+    @Suppress("DEPRECATION")
     private fun updateAndPlayRelease() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
-        }
+        setTaskDescription(ActivityManager.TaskDescription(releaseData.title))
 
         videoControls?.apply {
             setTitle(releaseData.title)
@@ -493,14 +449,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
     }
 
-    private fun getInPIP(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            isInPictureInPictureMode
-        } else {
-            false
-        }
-    }
-
     private fun updateByConfig(config: Configuration) {
         val correctOrientation = config.orientation
         fullscreenOrientation = when (correctOrientation) {
@@ -567,9 +515,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         .show()
                 }
             }
+
             PLAY_FLAG_FORCE_START -> {
                 hardPlayEpisode(episode)
             }
+
             PLAY_FLAG_FORCE_CONTINUE -> {
                 hardPlayEpisode(episode)
             }
@@ -612,12 +562,14 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         updateUiFlags()
     }
 
+    @Suppress("DEPRECATION")
     private fun initUiFlags() {
         window.decorView.also {
             it.setOnSystemUiVisibilityChangeListener(fullScreenListener)
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun updateUiFlags() {
         val scale = loadScale(currentOrientation)
         val inMultiWindow = getInMultiWindow()
@@ -647,8 +599,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             if (intent == null || intent.action != ACTION_REMOTE_CONTROL) {
                 return
             }
-            val remoteControl = intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)
-            when (remoteControl) {
+            when (intent.getIntExtra(EXTRA_REMOTE_CONTROL, 0)) {
                 REMOTE_CONTROL_PLAY -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PAUSE -> controlsListener.onPlayPauseClicked()
                 REMOTE_CONTROL_PREV -> controlsListener.onPreviousClicked()
@@ -659,16 +610,22 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPictureInPictureModeChanged(
-        isInPictureInPictureMode: Boolean, newConfig: Configuration
+        isInPictureInPictureMode: Boolean, newConfig: Configuration,
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         saveEpisode()
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
-            registerReceiver(mReceiver, IntentFilter(ACTION_REMOTE_CONTROL))
+            val filter = IntentFilter(ACTION_REMOTE_CONTROL)
+            ContextCompat.registerReceiver(
+                this,
+                mReceiver,
+                filter,
+                ContextCompat.RECEIVER_EXPORTED
+            )
             //videoControls?.setControlsEnabled(false)
             videoControls?.hide()
-            videoControls?.gone()
+            videoControls?.isGone = true
             updateByConfig(newConfig)
 
         } else {
@@ -686,7 +643,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
             updateByConfig(newConfig)
             binding.player.showControls()
-            videoControls?.visible()
+            videoControls?.visibility = View.VISIBLE
 
             //player.showControls()
         }
@@ -712,7 +669,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     @TargetApi(Build.VERSION_CODES.O)
     private fun updatePIPRect() {
         if (checkPipMode()) {
-            binding.player?.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
+            binding.player.findViewById<View>(com.devbrackets.android.exomedia.R.id.exomedia_video_view)
                 ?.also {
                     val rect = Rect(0, 0, 0, 0)
                     it.getGlobalVisibleRect(rect)
@@ -725,7 +682,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     private fun updatePictureInPictureParams() {
         if (checkPipMode()) {
             val params = pictureInPictureParams ?: return
-            val playState = binding.player?.isPlaying ?: return
+            val playState = binding.player.isPlaying
             val actions = mutableListOf<RemoteAction>()
             val maxActions = maxNumPictureInPictureActions
 
@@ -813,7 +770,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         if (checkPipMode()) {
             pictureInPictureParams?.also {
                 playerAnalytics.pip(getSeekPercent())
-                videoControls?.gone()
+                videoControls?.isGone = true
                 enterPictureInPictureMode(it.build())
             }
         }
@@ -865,6 +822,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
         }
 
+        @Suppress("DEPRECATION")
         fun showSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 updateSettingsDialog()
@@ -932,14 +890,17 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                             playerAnalytics.settingsQualityClick()
                             showQualityDialog()
                         }
+
                         settingPlaySpeed -> {
                             playerAnalytics.settingsSpeedClick()
                             showPlaySpeedDialog()
                         }
+
                         settingScale -> {
                             playerAnalytics.settingsScaleClick()
                             showScaleDialog()
                         }
+
                         settingPIP -> {
                             playerAnalytics.settingsPipClick()
                             showPIPDialog()
@@ -955,6 +916,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showPlaySpeedDialog() {
             val values = arrayOf(
                 0.25f,
@@ -991,6 +953,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showQualityDialog() {
             val qualities = mutableListOf<Int>()
             if (getEpisode().urlSd != null) qualities.add(VAL_QUALITY_SD)
@@ -1021,6 +984,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showScaleDialog() {
             val values = arrayOf(
                 ScaleType.FIT_CENTER,
@@ -1051,6 +1015,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
+        @Suppress("DEPRECATION")
         fun showPIPDialog() {
             val values = arrayOf(
                 PreferencesHolder.PIP_AUTO,
@@ -1097,12 +1062,14 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         saveEpisode(0)
                         hardPlayEpisode(getEpisode())
                     }
+
                     1 -> {
                         playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.RESTART_SEASON)
                         releaseData.episodes.lastOrNull()?.also {
                             hardPlayEpisode(it)
                         }
                     }
+
                     2 -> {
                         playerAnalytics.seasonFinishAction(AnalyticsSeasonFinishAction.CLOSE_PLAYER)
                         finish()
@@ -1131,6 +1098,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         saveEpisode(0)
                         hardPlayEpisode(getEpisode())
                     }
+
                     1 -> {
                         playerAnalytics.episodesFinishAction(AnalyticsEpisodeFinishAction.NEXT)
                         getNextEpisode()?.also { hardPlayEpisode(it) }
@@ -1179,10 +1147,10 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
 
         override fun onFullScreenClick() {
-            if (fullscreenOrientation) {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            requestedOrientation = if (fullscreenOrientation) {
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             } else {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             }
             fullscreenOrientation = !fullscreenOrientation
             if (fullscreenOrientation) {
@@ -1265,6 +1233,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         }
     }
 
+    @Suppress("DEPRECATION")
     private inner class FullScreenListener : View.OnSystemUiVisibilityChangeListener {
         override fun onSystemUiVisibilityChange(visibility: Int) {
             if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {

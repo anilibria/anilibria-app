@@ -4,6 +4,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
+import androidx.annotation.NonNull;
+
 import timber.log.Timber;
 
 public class VideoGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -20,25 +22,25 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
     }
 
     @Override
-    public boolean onSingleTapUp(MotionEvent e) {
+    public boolean onSingleTapUp(@NonNull MotionEvent e) {
         listener.onTap(e);
         return super.onSingleTapUp(e);
     }
 
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
+    public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
         //listener.onTap(e);
         return super.onSingleTapConfirmed(e);
     }
 
     @Override
-    public boolean onDoubleTap(MotionEvent e) {
+    public boolean onDoubleTap(@NonNull MotionEvent e) {
         listener.onDoubleTap(e);
         return true;
     }
 
     @Override
-    public void onLongPress(MotionEvent e) {
+    public void onLongPress(@NonNull MotionEvent e) {
         // Touch has been long enough to indicate a long press.
         // Does not indicate motion is complete yet (no up event necessarily)
     }
@@ -57,7 +59,7 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
     }
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+    public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
         // Fling event occurred.  Notification of this one happens after an "up" event.
         boolean result = false;
         try {
@@ -88,11 +90,11 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
     }
 
     @Override
-    public void onShowPress(MotionEvent e) {
+    public void onShowPress(@NonNull MotionEvent e) {
     }
 
     @Override
-    public boolean onDown(MotionEvent e) {
+    public boolean onDown(@NonNull MotionEvent e) {
         return false;
     }
 

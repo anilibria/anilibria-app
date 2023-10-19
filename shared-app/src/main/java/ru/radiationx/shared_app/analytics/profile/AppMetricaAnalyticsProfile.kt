@@ -4,6 +4,7 @@ import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.profile.Attribute
 import com.yandex.metrica.profile.UserProfile
 import com.yandex.metrica.profile.UserProfileUpdate
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ class AppMetricaAnalyticsProfile(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun unsafeUpdate() {
         val singleSources = with(dataSource) {
             listOf<Flow<UserProfileUpdate<*>>>(

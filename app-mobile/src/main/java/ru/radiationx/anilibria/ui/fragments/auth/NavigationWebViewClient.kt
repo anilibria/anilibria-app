@@ -7,7 +7,8 @@ class NavigationWebViewClient(
     private val navigationListener: (String) -> Boolean
 ) : WebViewClient() {
 
-    @Suppress("OverridingDeprecatedMember")
+    @Deprecated("Deprecated in Java")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         val result = navigationListener.invoke(url.orEmpty())
         if (result) {

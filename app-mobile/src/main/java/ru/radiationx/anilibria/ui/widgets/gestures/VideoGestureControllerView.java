@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets.gestures;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -31,6 +32,7 @@ public class VideoGestureControllerView extends View {
         setFocusable(true);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

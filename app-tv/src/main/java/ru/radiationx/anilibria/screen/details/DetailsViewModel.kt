@@ -1,7 +1,12 @@
 package ru.radiationx.anilibria.screen.details
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -14,10 +19,10 @@ import toothpick.InjectConstructor
 
 @InjectConstructor
 class DetailsViewModel(
-    private val argExtra: DetailExtra,
+    argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
-    private val authRepository: AuthRepository
+    authRepository: AuthRepository,
 ) : BaseRowsViewModel() {
 
     companion object {

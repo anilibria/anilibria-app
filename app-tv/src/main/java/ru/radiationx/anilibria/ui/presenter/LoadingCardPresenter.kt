@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.presenter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.leanback.widget.Presenter
 import ru.radiationx.anilibria.R
@@ -19,7 +18,8 @@ class LoadingCardPresenter : Presenter() {
         return ViewHolder(loadingView)
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any?) {
+        item ?: return
         item as LoadingCard
         val loadingView = (viewHolder.view as CardLoadingView)
         loadingView.setState(

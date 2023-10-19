@@ -30,8 +30,8 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
  * in and out from the bottom of the screen when changing visibilities.
  */
 public class CenterViewHideShowAnimation extends AnimationSet {
-    private View animationView;
-    private boolean toVisible;
+    private final View animationView;
+    private final boolean toVisible;
 
     public CenterViewHideShowAnimation(View view, boolean toVisible, long duration) {
         super(false);
@@ -50,7 +50,7 @@ public class CenterViewHideShowAnimation extends AnimationSet {
         float startScale = toVisible ? 0.8f : 1;
         float endScale = toVisible ? 1 : 0.8f;
 
-        ScaleAnimation scaleAnimation = new ScaleAnimation(startScale, endScale, startScale, endScale, view.getWidth() / 2, view.getHeight() / 2);
+        ScaleAnimation scaleAnimation = new ScaleAnimation(startScale, endScale, startScale, endScale, view.getWidth() / 2f, view.getHeight() / 2f);
         scaleAnimation.setInterpolator(toVisible ? new LinearOutSlowInInterpolator() : new FastOutLinearInInterpolator());
         scaleAnimation.setDuration(duration);
 

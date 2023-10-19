@@ -30,7 +30,7 @@ class PagesParser @Inject constructor() {
         }
         matcher = titlePattern.matcher(httpResponse)
         if (matcher.find()) {
-            title = matcher.group(1)
+            title = matcher.group(1) ?: title
         }
         return PageLibria(
             title = title,

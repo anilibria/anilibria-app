@@ -11,19 +11,19 @@ import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
-import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.shared.ktx.android.visible
+import ru.radiationx.shared.ktx.android.getColorFromAttr
 
 
 class CatalogFilterDialog(
-    private val context: Context,
-    private val listener: ClickListener
+    context: Context,
+    private val listener: ClickListener,
 ) {
 
     private val dialog: BottomSheetDialog = BottomSheetDialog(context)
@@ -267,7 +267,7 @@ class CatalogFilterDialog(
             it.genres.size + it.years.size + it.seasons.size
         }
         actionButtonCount.text = "$allCount"
-        actionButtonCount.visible(allCount > 0)
+        actionButtonCount.isVisible = allCount > 0
     }
 
     private fun updateSorting() {

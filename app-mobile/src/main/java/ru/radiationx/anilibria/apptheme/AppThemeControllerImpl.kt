@@ -8,10 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import ru.radiationx.shared.ktx.repeatWhen
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
 import toothpick.InjectConstructor
@@ -30,6 +30,7 @@ class AppThemeControllerImpl(
     private val triggerRelay by lazy { MutableSharedFlow<Unit>() }
 
     // Важно, чтобы было вынесено именно в поле
+    @OptIn(DelicateCoroutinesApi::class)
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             APP_THEME_KEY -> {
@@ -43,6 +44,7 @@ class AppThemeControllerImpl(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private val lifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             GlobalScope.launch {
@@ -113,8 +115,4 @@ class AppThemeControllerImpl(
         AppCompatDelegate.setDefaultNightMode(delegateMode)
     }
 
-    private fun AppTheme.toMode() = when (this) {
-        AppTheme.LIGHT -> AppThemeMode.LIGHT
-        AppTheme.DARK -> AppThemeMode.DARK
-    }
 }

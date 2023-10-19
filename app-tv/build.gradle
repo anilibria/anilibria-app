@@ -3,14 +3,20 @@ apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion app_compile_sdk_version
+    namespace "ru.radiationx.anilibria"
+
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app.tv"
         minSdkVersion tv_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 3
-        versionName "1.1.0_RC2"
+        versionCode 4
+        versionName "1.1.0"
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
@@ -19,26 +25,18 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    namespace "ru.radiationx.anilibria"
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             def appName = "AniLibria_TV"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+}
 
-    buildFeatures {
-        viewBinding true
-    }
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
 }
 
 dependencies {
@@ -58,8 +56,6 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
-
-    implementation "com.google.android:flexbox:$flexbox_version"
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

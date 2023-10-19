@@ -7,16 +7,18 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:paddingBottom="12dp"
-    android:paddingEnd="16dp"
     android:paddingStart="16dp"
-    android:paddingTop="12dp">
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/otherMenuIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/otherMenuTitle"

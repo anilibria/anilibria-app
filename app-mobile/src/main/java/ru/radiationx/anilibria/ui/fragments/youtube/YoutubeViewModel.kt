@@ -2,7 +2,11 @@ package ru.radiationx.anilibria.ui.fragments.youtube
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
@@ -15,17 +19,15 @@ import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor
 class YoutubeViewModel(
     private val youtubeRepository: YoutubeRepository,
-    private val router: Router,
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val youtubeAnalytics: YoutubeAnalytics,
-    private val youtubeVideosAnalytics: YoutubeVideosAnalytics
+    private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
 ) : ViewModel() {
 
     private val loadingController = DataLoadingController(viewModelScope) {

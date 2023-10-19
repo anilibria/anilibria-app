@@ -25,11 +25,11 @@ abstract class BaseRowsViewModel : LifecycleViewModel() {
         updateRows()
     }
 
-    protected fun updateRows() {
+    private fun updateRows() {
         rowListData.value = getRows()
     }
 
-    protected fun getRows(): List<Long> =
+    private fun getRows(): List<Long> =
         rowIds.toMutableList().filter { availableRows.contains(it) }
 
 }

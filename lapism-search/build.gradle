@@ -8,39 +8,22 @@ buildscript {
 }
 
 android {
-    compileSdkVersion app_compile_sdk_version
+    namespace "com.lapism.search"
+
+    compileSdk app_compile_sdk_version
 
     defaultConfig {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    /*lintOptions {
-        abortOnError false
-    }*/
 
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
     }
-    namespace "com.lapism.search"
+}
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
 }
 
 dependencies {
@@ -51,5 +34,3 @@ dependencies {
 
     implementation "com.google.android.material:material:$material_version"
 }
-
-// $ ./gradlew clean build bintrayUpload -PbintrayUser=lapism -PbintrayKey= -PdryRun=false

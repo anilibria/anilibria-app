@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package ru.radiationx.anilibria.screen.player
 
 import android.annotation.SuppressLint
@@ -5,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -26,7 +29,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import dev.rx.tvtest.cust.CustomListRowPresenter
+import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 
 open class BasePlayerFragment : VideoSupportFragment() {
 
@@ -35,6 +38,9 @@ open class BasePlayerFragment : VideoSupportFragment() {
         private set
 
     protected var player: SimpleExoPlayer? = null
+        private set
+
+    protected var skipsPart: PlayerSkipsPart? = null
         private set
 
     private val dataSourceFactory by lazy {
@@ -53,6 +59,25 @@ open class BasePlayerFragment : VideoSupportFragment() {
         initializePlayer()
         initializeRows()
 
+        skipsPart = PlayerSkipsPart(
+            parent = view as FrameLayout,
+            onSeek = {
+                player?.seekTo(it)
+            },
+            onSkipShow = {
+                isShowOrHideControlsOverlayOnUserInteraction = false
+                hideControlsOverlay(false)
+            },
+            onSkipHide = {
+                isShowOrHideControlsOverlayOnUserInteraction = true
+            }
+        )
+
+        playerGlue?.playbackListener = object : VideoPlayerGlue.PlaybackListener {
+            override fun onUpdateProgress() {
+                skipsPart?.update(player?.currentPosition ?: 0)
+            }
+        }
 
         fadeCompleteListener = object : OnFadeCompleteListener() {
 
@@ -65,6 +90,12 @@ open class BasePlayerFragment : VideoSupportFragment() {
         }
     }
 
+    override fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
+        if (videoWidth == 0 || videoHeight == 0) {
+            return
+        }
+        super.onVideoSizeChanged(videoWidth, videoHeight)
+    }
 
     override fun onPause() {
         super.onPause()
@@ -73,6 +104,8 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        skipsPart = null
+        playerGlue?.playbackListener = null
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         releasePlayer()
     }
@@ -81,14 +114,15 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected open fun onPreparePlaying() {}
 
     private fun initializeRows() {
-        val playerGlue = this.playerGlue!!
+        val playerGlue = this.playerGlue ?: return
+        val controlsRow = playerGlue.controlsRow ?: return
 
         val rowsPresenter = ClassPresenterSelector().apply {
             addClassPresenter(ListRow::class.java, CustomListRowPresenter())
-            addClassPresenter(playerGlue.controlsRow.javaClass, playerGlue.playbackRowPresenter)
+            addClassPresenter(controlsRow.javaClass, playerGlue.playbackRowPresenter)
         }
         val rowsAdapter = ArrayObjectAdapter(rowsPresenter).apply {
-            add(playerGlue.controlsRow)
+            add(controlsRow)
         }
 
         adapter = rowsAdapter
@@ -114,6 +148,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
                     Player.STATE_READY -> onPreparePlaying()
                     Player.STATE_BUFFERING -> {
                     }
+
                     Player.STATE_IDLE -> {
                     }
                 }
@@ -151,6 +186,6 @@ open class BasePlayerFragment : VideoSupportFragment() {
             C.TYPE_SS -> ssMediaSourceFactory
             C.TYPE_HLS -> hlsMediaSourceFactory
             C.TYPE_OTHER -> otherMediaSourceFactory
-            else -> throw  IllegalStateException("Unsupported type: $type");
+            else -> throw IllegalStateException("Unsupported type: $type")
         }
 }

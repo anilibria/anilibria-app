@@ -44,6 +44,7 @@ class DetailHeaderViewModel(
     val progressState = MutableStateFlow(DetailsState())
 
     private var currentRelease: Release? = null
+    private var isFullLoaded = false
 
     private var selectEpisodeJob: Job? = null
     private var favoriteDisposable: Job? = null
@@ -56,6 +57,7 @@ class DetailHeaderViewModel(
         releaseInteractor
             .observeFull(releaseId)
             .onEach {
+                isFullLoaded = true
                 updateRelease(it)
             }
             .launchIn(viewModelScope)
@@ -142,7 +144,7 @@ class DetailHeaderViewModel(
 
     private fun updateRelease(release: Release) {
         currentRelease = release
-        releaseData.value = converter.toDetail(release)
+        releaseData.value = converter.toDetail(release, isFullLoaded)
         updateProgress()
     }
 

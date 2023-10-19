@@ -126,14 +126,35 @@
         tools:text="13 999"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/rowReleaseAnnounce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="?browsePaddingEnd"
+        android:background="@drawable/bg_detail_announce"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="@color/dark_textDefault"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
+        tools:text="Новая серия каждую субботу."
+        tools:visibility="visible" />
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rowReleaseDescriptionCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="?browsePaddingEnd"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_details_description"
         android:clickable="false"
@@ -141,12 +162,11 @@
         android:focusableInTouchMode="false"
         android:nextFocusDown="@id/rowReleaseActions"
         android:orientation="vertical"
-        android:padding="16dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra">
+        app:layout_constraintStart_toStartOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/rowReleaseAnnounce">
 
         <TextView
             android:id="@+id/rowReleaseDescription"
@@ -162,19 +182,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
             tools:text="@tools:sample/lorem/random" />
-
-        <TextView
-            android:id="@+id/rowReleaseAnnounce"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:alpha="0.8"
-            android:textColor="@color/dark_textDefault"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rowReleaseDescription"
-            tools:text="Новая серия каждую субботу." />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -226,8 +233,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:padding="12dp"
             android:minWidth="48dp"
+            android:padding="12dp"
             android:paddingStart="0dp"
             android:paddingEnd="0dp"
             android:text="Смотреть"

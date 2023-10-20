@@ -15,6 +15,7 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -42,7 +43,6 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val dimensionsProvider by inject<DimensionsProvider>()
 
-    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -54,8 +54,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         binding.initInsets(dimensionsProvider)
 
         if (savedInstanceState == null) {
-            val initScreen = (intent?.extras?.getSerializable(ARG_INIT_SCREEN) as? BaseAppScreen)
-                ?: Screens.AuthMain()
+            val initScreen = getExtra<BaseAppScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
             router.newRootScreen(initScreen)
         }
     }
@@ -81,6 +80,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
                 router.exit()
                 true
             }
+
             else -> false
         }
         if (!handleResult) {

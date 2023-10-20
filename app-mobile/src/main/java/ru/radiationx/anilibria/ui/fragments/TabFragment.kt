@@ -23,6 +23,7 @@ import ru.radiationx.anilibria.ui.common.ScreenMessagesObserver
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
@@ -48,11 +49,8 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
-    @Suppress("DEPRECATION")
     private val localScreen: BaseAppScreen by lazy {
-        arguments?.let {
-            (it.getSerializable(ARG_ROOT_SCREEN) as? BaseAppScreen?)
-        } ?: throw NullPointerException("localScreen is null")
+        getExtraNotNull(ARG_ROOT_SCREEN)
     }
 
     private val navigationQueue = mutableListOf<Runnable>()
@@ -69,7 +67,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_tab_root, container, false)
     }
@@ -128,13 +126,14 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
 
     private val navigatorLocal: Navigator by lazy {
-        object : SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
+        object :
+            SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
 
             override fun setupFragmentTransaction(
                 command: Command,
                 currentFragment: Fragment?,
                 nextFragment: Fragment?,
-                fragmentTransaction: FragmentTransaction
+                fragmentTransaction: FragmentTransaction,
             ) {
                 if (currentFragment !is SharedProvider || nextFragment !is SharedReceiver) {
                     return
@@ -157,7 +156,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
     private fun setupSharedTransition(
         sharedProvider: SharedProvider,
         sharedReceiver: SharedReceiver,
-        fragmentTransaction: FragmentTransaction
+        fragmentTransaction: FragmentTransaction,
     ) {
 
         val nextFragment = sharedReceiver as Fragment

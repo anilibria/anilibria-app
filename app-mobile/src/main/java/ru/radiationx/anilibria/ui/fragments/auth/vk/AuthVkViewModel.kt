@@ -43,11 +43,13 @@ class AuthVkViewModel(
     }
 
     fun onClearDataClick() {
-        currentSuccessUrl = null
-        detector.reset()
-        detector.clearCookies()
-        resetPage()
-        _state.update { it.copy(showClearCookies = false) }
+        viewModelScope.launch {
+            currentSuccessUrl = null
+            detector.reset()
+            detector.clearCookies()
+            resetPage()
+            _state.update { it.copy(showClearCookies = false) }
+        }
     }
 
     fun onContinueClick() {

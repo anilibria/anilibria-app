@@ -69,11 +69,8 @@ class ApiOkHttpProvider @Inject constructor(
                 val additionalHeadersRequest = it.request()
                     .newBuilder()
                     .header("mobileApp", "true")
-                    .apply {
-                        if (Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)) {
-                            header("Store-Published", "Google")
-                        }
-                    }
+                    // deprecated header
+                    //.header("Store-Published", "Google")
                     .header("App-Id", sharedBuildConfig.applicationId)
                     .header("App-Ver-Name", sharedBuildConfig.versionName)
                     .header("App-Ver-Code", sharedBuildConfig.versionCode.toString())

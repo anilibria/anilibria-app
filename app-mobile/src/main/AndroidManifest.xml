@@ -98,11 +98,6 @@
             android:exported="false"
             android:theme="@style/DayNightAppTheme.NoActionBar" />
 
-        <activity
-            android:name=".ui.activities.CountryBlockedActivity"
-            android:exported="false"
-            android:theme="@style/Splash.DayNightAppTheme" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_push_notification" />

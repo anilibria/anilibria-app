@@ -123,12 +123,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("about.application")?.apply {
-            val appendix = if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
-                " для Play Market"
-            } else {
-                ""
-            }
-            summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
+            summary = "Версия ${BuildConfig.VERSION_NAME}"
         }
 
         findPreference<Preference>("about.check_update")?.apply {

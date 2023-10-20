@@ -1,21 +1,24 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.webkit.WebView
-import android.webkit.WebViewClient
+import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
+import ru.radiationx.shared.ktx.android.WebViewClientCompat
 import java.util.regex.Pattern
 
 class AuthPatternWebViewClient(
-    private val resultListener: (String) -> Unit
-) : WebViewClient() {
+    private val resultListener: (String) -> Unit,
+) : WebViewClientCompat() {
 
     var resultPattern: String? = null
 
-    @Deprecated("Deprecated in Java")
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
-    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+    override fun shouldOverrideUrlLoading(
+        view: WebView,
+        request: WebResourceRequestCompat,
+    ): Boolean {
         resultPattern?.let { resultPattern ->
+            val url = request.url.toString()
             val matchSuccess = try {
-                val matcher = Pattern.compile(resultPattern).matcher(url.orEmpty())
+                val matcher = Pattern.compile(resultPattern).matcher(url)
                 if (matcher.find()) {
                     matcher.group(1) != null
                 } else {
@@ -25,11 +28,10 @@ class AuthPatternWebViewClient(
                 false
             }
             if (matchSuccess) {
-                val result = url.orEmpty()
-                resultListener.invoke(result)
+                resultListener.invoke(url)
                 return true
             }
         }
-        return super.shouldOverrideUrlLoading(view, url)
+        return super.shouldOverrideUrlLoading(view, request)
     }
 }

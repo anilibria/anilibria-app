@@ -39,6 +39,9 @@ class AuthSocialViewModel(
     private val _errorEvent = EventFlow<Unit>()
     val errorEvent = _errorEvent.observe()
 
+    private val _reloadEvent = EventFlow<Unit>()
+    val reloadEvent = _reloadEvent.observe()
+
     init {
         loadData()
     }
@@ -62,7 +65,8 @@ class AuthSocialViewModel(
             currentSuccessUrl = null
             detector.reset()
             detector.clearCookies()
-            loadData()
+            detector.loadUrl(state.value.data?.socialUrl)
+            _reloadEvent.set(Unit)
             _state.update { it.copy(showClearCookies = false) }
         }
     }

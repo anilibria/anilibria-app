@@ -119,6 +119,10 @@ class AuthSocialFragment :
             binding.cookieView.isVisible = state.showClearCookies
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.reloadEvent.onEach {
+            binding.webView.reload()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.errorEvent.onEach {
             showError()
         }.launchIn(viewLifecycleOwner.lifecycleScope)

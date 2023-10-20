@@ -10,6 +10,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
 
 
 fun WebView.setWebViewClientCompat(clientCompat: WebViewClientCompat?) {
@@ -116,6 +117,7 @@ private class DefaultWebviewClient(
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onReceivedError(
         view: WebView,
         request: WebResourceRequest,
@@ -151,7 +153,7 @@ data class WebResourceRequestCompat(
     val isRedirect: Boolean = false,
     val hasGesture: Boolean = false,
     val method: String = "GET",
-    val requestHeaders: Map<String, String> = emptyMap(),
+    val requestHeaders: Map<String, String>? = null,
 )
 
 data class WebResourceErrorCompat(
@@ -159,6 +161,7 @@ data class WebResourceErrorCompat(
     val description: CharSequence,
 )
 
+@RequiresApi(Build.VERSION_CODES.M)
 private fun WebResourceError.toCompat(): WebResourceErrorCompat {
     return WebResourceErrorCompat(
         errorCode = errorCode,

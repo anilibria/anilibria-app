@@ -86,6 +86,10 @@ class AuthVkFragment :
             binding.errorView.isVisible = state.pageState is WebPageViewState.Error
             binding.cookieView.isVisible = state.showClearCookies
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.reloadEvent.onEach {
+            binding.webView.reload()
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroyView() {

@@ -96,9 +96,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccessFromFileURLs(true);
         settings.setAllowUniversalAccessFromFileURLs(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         setBackgroundColor(ContextKt.getColorFromAttr(getContext(), android.R.attr.colorBackground));
     }
 

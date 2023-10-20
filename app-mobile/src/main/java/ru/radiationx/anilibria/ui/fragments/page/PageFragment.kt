@@ -32,7 +32,7 @@ import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.extraNotNull
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
@@ -60,7 +60,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         LifecycleTimeCounter(pageAnalytics::useTime)
     }
 
-    private val argPath by extraNotNull<String>(ARG_PATH)
+    private val argPath by lazy { getExtraNotNull<String>(ARG_PATH) }
 
     private val viewModel by viewModel<PageViewModel> {
         PageExtra(path = argPath)

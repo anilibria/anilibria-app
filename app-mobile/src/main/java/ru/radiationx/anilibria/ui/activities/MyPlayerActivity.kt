@@ -65,6 +65,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
@@ -345,12 +346,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
-    @Suppress("DEPRECATION")
     private fun handleIntentData(intent: Intent) {
-        val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
+        val release = requireNotNull(intent.getExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
         }
-        val episodeId = requireNotNull(intent.getParcelableExtra<EpisodeId>(ARG_EPISODE_ID)) {
+        val episodeId = requireNotNull(intent.getExtra<EpisodeId>(ARG_EPISODE_ID)) {
             "Episode id must be not null"
         }
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)

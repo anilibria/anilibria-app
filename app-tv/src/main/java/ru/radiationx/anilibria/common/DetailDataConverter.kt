@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.common
 
-import android.text.Html
+import androidx.core.text.parseAsHtml
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.capitalizeDefault
@@ -11,7 +11,6 @@ import java.util.*
 @InjectConstructor
 class DetailDataConverter {
 
-    @Suppress("DEPRECATION")
     fun toDetail(releaseItem: Release, isFull: Boolean): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
@@ -23,7 +22,7 @@ class DetailDataConverter {
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),
-            description = Html.fromHtml(description.orEmpty()).toString().trim()
+            description = description.orEmpty().parseAsHtml().toString().trim()
                 .trim('"')/*.replace('\n', ' ')*/,
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),

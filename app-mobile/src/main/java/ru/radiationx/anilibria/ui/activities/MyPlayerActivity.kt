@@ -17,7 +17,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -27,6 +26,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.text.parseAsHtml
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -822,7 +822,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
         }
 
-        @Suppress("DEPRECATION")
         fun showSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 updateSettingsDialog()
@@ -856,7 +855,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         else -> "Привет"
                     }
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toList()
                 .toTypedArray()
 
@@ -916,7 +915,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
-        @Suppress("DEPRECATION")
         fun showPlaySpeedDialog() {
             val values = arrayOf(
                 0.25f,
@@ -937,7 +935,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         else -> stringValue
                     }
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -953,7 +951,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
-        @Suppress("DEPRECATION")
         fun showQualityDialog() {
             val qualities = mutableListOf<Int>()
             if (getEpisode().urlSd != null) qualities.add(VAL_QUALITY_SD)
@@ -968,7 +965,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getQualityTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -984,7 +981,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
-        @Suppress("DEPRECATION")
         fun showScaleDialog() {
             val values = arrayOf(
                 ScaleType.FIT_CENTER,
@@ -997,7 +993,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getScaleTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -1015,7 +1011,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .register()
         }
 
-        @Suppress("DEPRECATION")
         fun showPIPDialog() {
             val values = arrayOf(
                 PreferencesHolder.PIP_AUTO,
@@ -1027,7 +1022,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getPIPTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)

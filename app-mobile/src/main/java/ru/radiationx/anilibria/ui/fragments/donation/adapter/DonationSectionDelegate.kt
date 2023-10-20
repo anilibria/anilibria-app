@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
-import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.data.entity.domain.donation.DonationContentSection
 
 class DonationSectionDelegate(
-    private val linkClickListener: (String) -> Unit
+    private val linkClickListener: (String) -> Unit,
 ) : AppAdapterDelegate<DonationSectionListItem, ListItem, DonationSectionDelegate.ViewHolder>(
     R.layout.item_donation_section,
     { it is DonationSectionListItem },
@@ -25,7 +25,7 @@ class DonationSectionDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val linkClickListener: (String) -> Unit
+        private val linkClickListener: (String) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemDonationSectionBinding>()
@@ -37,10 +37,9 @@ class DonationSectionDelegate(
             }
         }
 
-        @Suppress("DEPRECATION")
         fun bind(divider: DonationContentSection) {
             binding.tvTitle.text = divider.title
-            binding.tvSubtitle.text = divider.subtitle?.let { Html.fromHtml(it) }
+            binding.tvSubtitle.text = divider.subtitle?.parseAsHtml()
             binding.tvTitle.isVisible = divider.title != null
             binding.tvSubtitle.isVisible = divider.subtitle != null
         }

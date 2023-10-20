@@ -35,6 +35,7 @@ import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
@@ -157,7 +158,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     1 -> viewModel.downloadFile(url)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showFileDonateDialog(url: String) {
@@ -178,7 +179,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
 
         dialogBinding.dialogFilePatreonBtn.setOnClickListener {
             viewModel.onDialogPatreonClick()
@@ -206,7 +207,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     1 -> viewModel.onCheckAllEpisodesHistoryClick()
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showLongPressEpisodeDialog(episode: Episode) {
@@ -219,7 +220,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     0 -> viewModel.markEpisodeUnviewed(episode)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun downloadEpisode(episode: SourceEpisode, quality: Int?) {
@@ -316,7 +317,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     onSelect.invoke(playerType)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun playInternal(
@@ -440,7 +441,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     onSelect.invoke(quality)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showFavoriteDialog() {
@@ -448,7 +449,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
             .setPositiveButton("Да") { _, _ -> viewModel.openAuth() }
             .setNegativeButton("Нет", null)
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showTorrentInfoDialog() {

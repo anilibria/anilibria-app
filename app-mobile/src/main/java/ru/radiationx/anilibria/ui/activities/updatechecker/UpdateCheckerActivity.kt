@@ -25,6 +25,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 /**
@@ -125,7 +126,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
                 val link = update.links[which]
                 viewModel.onSourceDownloadClick(link)
             }
-            .show()
+            .showWithLifecycle(this)
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {

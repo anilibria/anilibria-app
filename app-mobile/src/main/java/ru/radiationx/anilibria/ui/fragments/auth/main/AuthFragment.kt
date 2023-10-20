@@ -18,6 +18,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -90,7 +91,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
             .setNegativeButton("Личный кабинет") { _, _ ->
                 systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showRegistrationDialog() {
@@ -100,6 +101,6 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
                 viewModel.registrationToSiteClick()
             }
             .setNeutralButton("Отмена", null)
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 }

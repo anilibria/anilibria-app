@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
@@ -26,6 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 /* Created by radiationx on 05.11.17. */
@@ -217,12 +220,14 @@ class FeedFragment :
                 when (which) {
                     0 -> {
                         viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
+                            .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 }

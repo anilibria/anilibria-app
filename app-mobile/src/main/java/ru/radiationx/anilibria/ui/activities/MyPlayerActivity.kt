@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.text.parseAsHtml
 import androidx.core.view.isGone
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
@@ -67,6 +68,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
 import java.util.*
@@ -512,7 +514,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                                 binding.player.seekTo(episode.access.seek)
                             }
                         }
-                        .show()
+                        .showWithLifecycle(this)
                 }
             }
 
@@ -784,7 +786,13 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
         private var openedDialogs = mutableListOf<BottomSheet>()
 
-        private fun BottomSheet.register() = openedDialogs.add(this)
+        private fun BottomSheet.Builder.showAndRegister(): Boolean {
+            val dialog = create()
+            dialog.showWithLifecycle(this@MyPlayerActivity) {
+                openedDialogs.remove(dialog)
+            }
+            return openedDialogs.add(dialog)
+        }
 
         fun getQualityTitle(quality: Int) = when (quality) {
             VAL_QUALITY_SD -> "480p"
@@ -911,8 +919,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
         fun showPlaySpeedDialog() {
@@ -947,8 +954,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
         fun showQualityDialog() {
@@ -977,8 +983,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
         fun showScaleDialog() {
@@ -1007,8 +1012,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
         fun showPIPDialog() {
@@ -1036,8 +1040,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
     }
 
@@ -1075,7 +1078,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-            .show()
+            .showWithLifecycle(this)
     }
 
     private fun showEpisodeFinishDialog() {
@@ -1104,7 +1107,16 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-            .show()
+            .showWithLifecycle(this)
+    }
+
+    private fun BottomSheet.Builder.showWithLifecycle(
+        lifecycleOwner: LifecycleOwner,
+        ondDismiss: (() -> Unit)? = null,
+    ): BottomSheet {
+        val dialog = create()
+        dialog.showWithLifecycle(lifecycleOwner, ondDismiss)
+        return dialog
     }
 
     private fun getSeekPercent(): Float {

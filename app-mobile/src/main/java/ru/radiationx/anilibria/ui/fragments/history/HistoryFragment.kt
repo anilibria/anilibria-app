@@ -30,6 +30,7 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
  * Created by radiationx on 18.02.18.
@@ -180,7 +181,7 @@ class HistoryFragment :
                     3 -> viewModel.onDeleteClick(item)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

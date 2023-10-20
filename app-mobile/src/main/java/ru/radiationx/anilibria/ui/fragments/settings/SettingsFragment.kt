@@ -17,6 +17,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getCompatDrawable
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
  * Created by radiationx on 25.12.16.
@@ -92,7 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
                         icon = getQualityIcon(quality)
                         summary = getQualityTitle(quality)
                     }
-                    .show()
+                    .showWithLifecycle(viewLifecycleOwner)
                 false
             }
         }
@@ -118,7 +119,7 @@ class SettingsFragment : BaseSettingFragment() {
                         appPreferences.setPlayerType(playerType)
                         summary = getPlayerTypeTitle(playerType)
                     }
-                    .show()
+                    .showWithLifecycle(viewLifecycleOwner)
                 false
             }
         }

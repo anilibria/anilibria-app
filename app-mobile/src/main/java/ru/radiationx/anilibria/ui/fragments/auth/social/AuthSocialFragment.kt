@@ -24,6 +24,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -141,8 +142,7 @@ class AuthSocialFragment :
                 systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
             }
             .setNegativeButton("Отмена", null)
-            .show()
-            .setOnDismissListener {
+            .showWithLifecycle(viewLifecycleOwner) {
                 viewModel.onUserUnderstandWhatToDo()
             }
     }

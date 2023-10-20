@@ -14,10 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
@@ -59,6 +59,8 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     private val updaterAnalytics by inject<UpdaterAnalytics>()
 
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(useTimeCounter)
@@ -72,7 +74,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
         binding.currentInfo.text =
-            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+            generateCurrentInfo(sharedBuildConfig.versionName, sharedBuildConfig.buildDate)
 
         viewModel.state.onEach { state ->
             state.data?.also { showUpdateData(it) }
@@ -81,7 +83,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     }
 
     private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionCode = sharedBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
             binding.updateInfo.text = generateCurrentInfo(update.name, update.date)

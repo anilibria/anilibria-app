@@ -6,16 +6,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
-import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 
@@ -28,6 +27,8 @@ class SettingsFragment : BaseSettingFragment() {
     private val appPreferences by inject<PreferencesHolder>()
 
     private val settingsAnalytics by inject<SettingsAnalytics>()
+
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +124,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("about.application")?.apply {
-            summary = "Версия ${BuildConfig.VERSION_NAME}"
+            summary = "Версия ${sharedBuildConfig.versionName}"
         }
 
         findPreference<Preference>("about.check_update")?.apply {

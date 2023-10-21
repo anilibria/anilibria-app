@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
@@ -96,10 +97,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         CheckerExtra(forceLoad = true)
     }
 
+    private var createdWithSavedState = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        createdWithSavedState = savedInstanceState != null
 
         binding.initInsets(dimensionsProvider)
 
@@ -210,7 +214,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun onMainLogicCompleted() {
-        handleIntent(intent)
+        Log.d(
+            "kekeke",
+            "onMainLogicCompleted ${savedStateRegistry.isRestored}, ${createdWithSavedState}"
+        )
+        if (!createdWithSavedState) {
+            handleIntent(intent)
+        }
         checkerViewModel.checkUpdate()
     }
 

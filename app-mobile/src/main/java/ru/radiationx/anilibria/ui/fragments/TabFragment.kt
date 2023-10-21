@@ -59,9 +59,11 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
         installModules(RouterModule(localScreen.screenKey), MessengerModule())
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(screenMessagesObserver)
-        navigationQueue.add(Runnable {
-            router.newRootScreen(localScreen)
-        })
+        if (needsToInitialScreen()) {
+            navigationQueue.add(Runnable {
+                router.newRootScreen(localScreen)
+            })
+        }
     }
 
     override fun onCreateView(
@@ -74,7 +76,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (childFragmentManager.findFragmentById(R.id.fragments_container) == null) {
+        if (needsToInitialScreen()) {
             updateNavQueue()
         }
     }
@@ -117,13 +119,16 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
         return false
     }
 
+    private fun needsToInitialScreen(): Boolean {
+        return childFragmentManager.findFragmentById(R.id.fragments_container) == null
+    }
+
     private fun updateNavQueue() {
         navigationQueue.forEach {
             it.run()
         }
         navigationQueue.clear()
     }
-
 
     private val navigatorLocal: Navigator by lazy {
         object :

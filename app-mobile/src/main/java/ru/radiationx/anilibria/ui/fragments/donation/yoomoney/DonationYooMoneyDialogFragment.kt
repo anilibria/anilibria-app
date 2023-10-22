@@ -77,7 +77,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.closeEvent.onEach {
-            dismiss()
+            dismissAllowingStateLoss()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 

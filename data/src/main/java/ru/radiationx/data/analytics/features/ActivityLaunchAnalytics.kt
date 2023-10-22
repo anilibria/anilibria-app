@@ -18,9 +18,9 @@ class ActivityLaunchAnalytics(
             AnalyticsConstants.activity_from_history,
             activity::class.simpleName.toParam("name"),
             (intent != null).toParam("has_intent"),
-            intent?.extras.toParam("has_extra"),
+            (intent?.extras != null).toParam("has_extra"),
             intent?.extras?.keySet()?.toList().toParam("extra_keys"),
-            savedState.toParam("has_saved"),
+            (savedState != null).toParam("has_saved"),
             savedState?.keySet()?.toList().toParam("saved_keys")
         )
     }

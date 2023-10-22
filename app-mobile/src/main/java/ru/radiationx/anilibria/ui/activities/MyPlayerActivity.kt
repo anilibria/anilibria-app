@@ -53,6 +53,7 @@ import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import ru.radiationx.data.analytics.ErrorReporterConstants
 import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
@@ -64,6 +65,7 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtra
@@ -181,6 +183,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
             startMainActivity()
             finish()
             return

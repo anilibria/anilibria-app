@@ -18,9 +18,11 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.data.SharedBuildConfig
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getColorFromAttr
@@ -67,6 +69,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
             startMainActivity()
             finish()
             return

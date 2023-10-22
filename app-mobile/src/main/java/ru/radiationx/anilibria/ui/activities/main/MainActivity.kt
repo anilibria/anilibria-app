@@ -44,12 +44,15 @@ import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -106,6 +109,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
+        }
         createdWithSavedState = savedInstanceState != null
 
         binding.initInsets(dimensionsProvider)

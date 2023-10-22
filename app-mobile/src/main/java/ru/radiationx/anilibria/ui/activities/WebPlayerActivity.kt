@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.apptheme.AppTheme
 import ru.radiationx.anilibria.databinding.ActivityMoonBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.get
@@ -65,6 +66,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isInvalidIntent()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
             startMainActivity()
             finish()
             return

@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.net.http.SslError
 import android.os.Bundle
 import android.view.WindowManager
@@ -29,6 +31,12 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     companion object {
         const val ARG_URL = "iframe_url"
         const val ARG_RELEASE_CODE = "release_code"
+
+        fun newIntent(context: Context, link: String, code: String) =
+            Intent(context, WebPlayerActivity::class.java).apply {
+                putExtra(ARG_URL, link)
+                putExtra(ARG_RELEASE_CODE, code)
+            }
     }
 
     private var argUrl: String = ""

@@ -111,6 +111,21 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
 
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
+
+        fun newIntent(
+            context: Context,
+            release: Release,
+            episodeId: EpisodeId,
+            quality: Int,
+            playFlag: Int?,
+        ): Intent = Intent(context, MyPlayerActivity::class.java).apply {
+            putExtra(ARG_RELEASE, release)
+            putExtra(ARG_EPISODE_ID, episodeId)
+            putExtra(ARG_QUALITY, quality)
+            playFlag?.let {
+                putExtra(ARG_PLAY_FLAG, it)
+            }
+        }
     }
 
     private lateinit var releaseData: Release

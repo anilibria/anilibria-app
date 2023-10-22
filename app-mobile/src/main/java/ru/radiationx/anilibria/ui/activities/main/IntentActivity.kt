@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.quill.inject
@@ -12,6 +15,14 @@ import ru.radiationx.shared_app.common.SystemUtils
  */
 class IntentActivity : BaseActivity() {
 
+    companion object {
+        fun newIntent(context: Context, url: String? = null) =
+            Intent(context, IntentActivity::class.java).apply {
+                action = Intent.ACTION_VIEW
+                data = url?.let { Uri.parse(it) }
+            }
+    }
+
     private val linkHandler by inject<ILinkHandler>()
 
     private val systemUtils by inject<SystemUtils>()
@@ -21,9 +32,8 @@ class IntentActivity : BaseActivity() {
         intent?.data?.also { intentUri ->
             val screen = linkHandler.findScreen(intentUri.toString())
             if (screen != null) {
-                startActivity(Intent(this@IntentActivity, MainActivity::class.java).apply {
-                    data = intentUri
-                })
+                val intent = Screens.Main(intentUri.toString()).getActivityIntent(this)
+                startActivity(intent)
             } else {
                 systemUtils.externalLink(intentUri.toString())
             }

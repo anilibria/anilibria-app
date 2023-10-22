@@ -3,8 +3,11 @@ package ru.radiationx.anilibria.navigation
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
+import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
+import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
@@ -24,6 +27,7 @@ import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 
@@ -32,20 +36,52 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
  */
 object Screens {
 
-    class AppUpdateScreen(private val force: Boolean, private val analyticsFrom: String) :
-        BaseAppScreen() {
+    class AppUpdateScreen(
+        private val force: Boolean,
+        private val analyticsFrom: String,
+    ) : BaseAppScreen() {
         override fun getActivityIntent(context: Context): Intent {
             return UpdateCheckerActivity.newIntent(context, force, analyticsFrom)
         }
     }
 
-    class TabScreen(private val rootScreen: BaseAppScreen) : BaseAppScreen() {
-        override fun getFragment() = TabFragment.newInstance(rootScreen)
+    class IntentHandler(private val uri: String? = null) : BaseAppScreen() {
+        override fun getActivityIntent(context: Context) = IntentActivity.newIntent(context, uri)
+    }
+
+    class Main(private val url: String? = null) : BaseAppScreen() {
+        override fun getActivityIntent(context: Context) = MainActivity.newIntent(context, url)
+    }
+
+    class Settings : BaseAppScreen() {
+        override fun getActivityIntent(context: Context) = SettingsActivity.newIntent(context)
     }
 
     class Auth(private val rootScreen: BaseAppScreen? = null) : BaseAppScreen() {
         override fun getActivityIntent(context: Context) =
-            AuthActivity.createIntent(context, rootScreen)
+            AuthActivity.newIntent(context, rootScreen)
+    }
+
+    class Player(
+        private val release: Release,
+        private val episodeId: EpisodeId,
+        private val quality: Int,
+        private val playFlag: Int?,
+    ) : BaseAppScreen() {
+        override fun getActivityIntent(context: Context) =
+            MyPlayerActivity.newIntent(context, release, episodeId, quality, playFlag)
+    }
+
+    class WebPlayer(
+        private val link: String,
+        private val code: String,
+    ) : BaseAppScreen() {
+        override fun getActivityIntent(context: Context) =
+            WebPlayerActivity.newIntent(context, link, code)
+    }
+
+    class TabScreen(private val rootScreen: BaseAppScreen) : BaseAppScreen() {
+        override fun getFragment() = TabFragment.newInstance(rootScreen)
     }
 
     class AuthMain : BaseAppScreen() {
@@ -62,14 +98,6 @@ object Screens {
 
     class AuthSocial(val key: String) : BaseAppScreen() {
         override fun getFragment() = AuthSocialFragment.newInstance(key)
-    }
-
-    class Main : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = MainActivity.getIntent(context)
-    }
-
-    class Settings : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = SettingsActivity.getIntent(context)
     }
 
     class Favorites : BaseAppScreen() {

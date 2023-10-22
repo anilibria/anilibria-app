@@ -29,7 +29,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
-        fun createIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent =
+        fun newIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent =
             Intent(context, AuthActivity::class.java).apply {
                 putExtra(ARG_INIT_SCREEN, rootScreen)
             }

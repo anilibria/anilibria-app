@@ -6,11 +6,11 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
@@ -63,7 +63,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     companion object {
         private const val TABS_STACK = "TABS_STACK"
 
-        fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
+        fun newIntent(context: Context, url: String? = null) =
+            Intent(context, MainActivity::class.java).apply {
+                data = url?.let { Uri.parse(it) }
+            }
     }
 
     private val sharedBuildConfig by inject<SharedBuildConfig>()
@@ -214,10 +217,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun onMainLogicCompleted() {
-        Log.d(
-            "kekeke",
-            "onMainLogicCompleted ${savedStateRegistry.isRestored}, ${createdWithSavedState}"
-        )
         if (!createdWithSavedState) {
             handleIntent(intent)
         }

@@ -18,8 +18,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
-import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
@@ -330,14 +330,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
         )
-        startActivity(Intent(requireContext(), MyPlayerActivity::class.java).apply {
-            putExtra(MyPlayerActivity.ARG_RELEASE, release)
-            putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
-            putExtra(MyPlayerActivity.ARG_QUALITY, quality)
-            playFlag?.let {
-                putExtra(MyPlayerActivity.ARG_PLAY_FLAG, it)
-            }
-        })
+        val intent = Screens.Player(release, episode.id, quality, playFlag)
+            .getActivityIntent(requireContext())
+        startActivity(intent)
     }
 
     private fun playExternal(episode: Episode, quality: Int) {
@@ -365,10 +360,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private fun playWeb(link: String, code: String) {
         viewModel.onWebPlayerClick()
-        startActivity(Intent(requireContext(), WebPlayerActivity::class.java).apply {
-            putExtra(WebPlayerActivity.ARG_URL, link)
-            putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)
-        })
+        val intent = Screens.WebPlayer(link, code).getActivityIntent(requireContext())
+        startActivity(intent)
     }
 
     private fun <T> selectQuality(

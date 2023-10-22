@@ -40,7 +40,7 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
     companion object {
 
-        fun getIntent(context: Context): Intent {
+        fun newIntent(context: Context): Intent {
             return Intent(context, SettingsActivity::class.java)
         }
     }

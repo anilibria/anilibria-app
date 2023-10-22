@@ -2,6 +2,9 @@ package ru.radiationx.data.analytics
 
 object AnalyticsConstants {
 
+    /* Activity Launch */
+    const val activity_from_history = "activity_from_history"
+
     /* Shared/Screens */
     const val screen_main = "screen_main"
     const val screen_fast_search = "screen_fast_search"

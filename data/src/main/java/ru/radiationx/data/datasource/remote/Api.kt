@@ -14,8 +14,6 @@ object Api {
     private val DEFAULT_IP_ADDRESSES = listOf<String>()
     private val DEFAULT_PROXIES = listOf<ApiProxy>()
 
-    val STORE_APP_IDS = arrayOf<String>()
-
     val DEFAULT_ADDRESS = ApiAddress(
         "default",
         "Стандартный домен",

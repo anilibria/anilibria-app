@@ -1,8 +1,9 @@
 package ru.radiationx.anilibria.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.net.http.SslError
-import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.*
@@ -12,14 +13,21 @@ import ru.radiationx.anilibria.apptheme.AppTheme
 import ru.radiationx.anilibria.databinding.ActivityMoonBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
+import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
+import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
+import ru.radiationx.shared.ktx.android.WebViewClientCompat
+import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.setWebViewClientCompat
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
-import java.util.regex.Pattern
 
 
 class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
@@ -27,10 +35,16 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     companion object {
         const val ARG_URL = "iframe_url"
         const val ARG_RELEASE_CODE = "release_code"
+
+        fun newIntent(context: Context, link: String, code: String) =
+            Intent(context, WebPlayerActivity::class.java).apply {
+                putExtra(ARG_URL, link)
+                putExtra(ARG_RELEASE_CODE, code)
+            }
     }
 
-    private var argUrl: String = ""
-    private var argReleaseCode: String = ""
+    private val argUrl by lazy { getExtraNotNull(ARG_URL, "") }
+    private val argReleaseCode by lazy { getExtraNotNull(ARG_RELEASE_CODE, "") }
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(webPlayerAnalytics::useTime)
@@ -44,20 +58,20 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
+    private fun isInvalidIntent(): Boolean {
+        return isLaunchedFromHistory() || argUrl.isEmpty() || argReleaseCode.isEmpty()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
-    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(useTimeCounter)
-
-        argUrl = intent?.getStringExtra(ARG_URL).orEmpty()
-        argReleaseCode = intent?.getStringExtra(ARG_RELEASE_CODE).orEmpty()
-
-        if (argUrl.isEmpty()) {
+        if (isInvalidIntent()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
+            startMainActivity()
             finish()
             return
         }
+        lifecycle.addObserver(useTimeCounter)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -69,58 +83,66 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             cacheMode = WebSettings.LOAD_NO_CACHE
             javaScriptEnabled = true
         }
-        binding.webView.webViewClient = object : WebViewClient() {
-            @Deprecated("Deprecated in Java")
-            @Suppress("OverridingDeprecatedMember")
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                val matcher =
-                    Pattern.compile("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)")
-                        .matcher(url.orEmpty())
-                return if (matcher.find()) {
-                    false
-                } else {
-                    systemUtils.externalLink(url.orEmpty())
+
+        val webViewClient = object : WebViewClientCompat() {
+
+            private val urlRegex =
+                Regex("https?:\\/\\/(?:vk\\.com\\/video_ext|streamguard\\.cc|kodik\\.info)")
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequestCompat,
+            ): Boolean {
+                val url = request.url.toString()
+                return urlRegex.find(url)?.let {
+                    systemUtils.externalLink(url)
                     true
-                }
+                } ?: false
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
+            override fun onPageFinished(view: WebView, url: String) {
                 webPlayerAnalytics.loaded()
             }
 
             override fun onReceivedSslError(
-                view: WebView?,
-                handler: SslErrorHandler?,
-                error: SslError?,
+                view: WebView,
+                handler: SslErrorHandler,
+                error: SslError,
             ) {
-                super.onReceivedSslError(view, handler, error)
                 webPlayerAnalytics.error(error.toException())
             }
 
             override fun onReceivedHttpError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                errorResponse: WebResourceResponse?,
+                view: WebView,
+                request: WebResourceRequestCompat,
+                errorResponse: WebResourceResponse,
             ) {
-                super.onReceivedHttpError(view, request, errorResponse)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+                if (view.url == request.url.toString()) {
                     webPlayerAnalytics.error(errorResponse.toException(request))
                 }
             }
 
             override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?,
+                view: WebView,
+                request: WebResourceRequestCompat,
+                error: WebResourceErrorCompat,
             ) {
-                super.onReceivedError(view, request, error)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+                if (view.url == request.url.toString()) {
                     webPlayerAnalytics.error(error.toException(request))
                 }
             }
         }
 
+        binding.webView.setWebViewClientCompat(webViewClient)
+
         loadUrl()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isInvalidIntent()) {
+            binding.webView.setWebViewClientCompat(null)
+        }
     }
 
     private fun loadUrl() {

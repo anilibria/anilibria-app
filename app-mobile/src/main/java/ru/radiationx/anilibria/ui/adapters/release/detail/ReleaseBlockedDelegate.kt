@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -30,9 +30,8 @@ class ReleaseBlockedDelegate :
 
         private val binding by viewBinding<ItemReleaseBlockedBinding>()
 
-        @Suppress("DEPRECATION")
         fun bind(state: ReleaseBlockedInfoState) {
-            binding.itemTitle.text = Html.fromHtml(state.title)
+            binding.itemTitle.text = state.title.parseAsHtml()
         }
     }
 }

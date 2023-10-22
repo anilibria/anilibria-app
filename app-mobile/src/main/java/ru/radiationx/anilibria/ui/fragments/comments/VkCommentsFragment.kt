@@ -6,7 +6,6 @@ import android.view.View
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
-import android.webkit.WebViewClient
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -33,6 +32,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.setWebViewClientCompat
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber
@@ -85,21 +85,21 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
             this.databaseEnabled = true
         }
 
-        binding.webView.webViewClient = composite(
+
+        val webViewClient = composite(
             viewModel = viewModel,
             systemUtils = systemUtils,
             networkClient = get(MainClient::class),
             commentsCss = get(),
             appThemeController = appThemeController
         )
+        binding.webView.setWebViewClientCompat(webViewClient)
         binding.webView.webChromeClient = VkWebChromeClient(viewModel)
 
         val cookieManager = CookieManager.getInstance()
 
         cookieManager.setAcceptCookie(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.setAcceptThirdPartyCookies(binding.webView, true)
-        }
+        cookieManager.setAcceptThirdPartyCookies(binding.webView, true)
 
         appThemeController
             .observeTheme()
@@ -141,7 +141,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     override fun onDestroyView() {
         super.onDestroyView()
         binding.webView.setJsLifeCycleListener(null)
-        binding.webView.webViewClient = WebViewClient()
+        binding.webView.setWebViewClientCompat(null)
         binding.webView.webChromeClient = WebChromeClient()
         binding.webView.endWork()
     }

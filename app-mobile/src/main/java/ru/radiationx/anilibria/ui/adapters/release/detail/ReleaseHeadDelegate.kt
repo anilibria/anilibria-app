@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +69,6 @@ class ReleaseHeadDelegate(
             }
         }
 
-        @Suppress("DEPRECATION")
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
@@ -79,18 +79,18 @@ class ReleaseHeadDelegate(
                     .let { "Обновлён $it" }
             }
 
-            binding.fullDescription.text = Html.fromHtml(state.description)
+            binding.fullDescription.text = state.description.parseAsHtml()
             binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)
             }
-            binding.fullInfo.text = Html.fromHtml(state.info)
+            binding.fullInfo.text = state.info.parseAsHtml()
 
             binding.fullDaysBar.selectDays(state.days)
             binding.fullDaysBar.isVisible = state.isOngoing
             binding.fullDaysDivider.isVisible = state.isOngoing || state.announce != null
 
             binding.fullAnnounce.isVisible = state.announce != null
-            binding.fullAnnounce.text = state.announce?.let { Html.fromHtml(it) }
+            binding.fullAnnounce.text = state.announce?.parseAsHtml()
 
             bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
         }

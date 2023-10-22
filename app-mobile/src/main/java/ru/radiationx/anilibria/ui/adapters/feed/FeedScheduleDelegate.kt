@@ -20,7 +20,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  * Created by radiationx on 13.01.18.
  */
 class FeedScheduleDelegate(
-    private val clickListener: (ScheduleItemState, View, Int) -> Unit
+    private val clickListener: (ScheduleItemState, View, Int) -> Unit,
 ) : AppAdapterDelegate<FeedScheduleListItem, ListItem, FeedScheduleDelegate.ViewHolder>(
     R.layout.item_feed_schedule,
     { it is FeedScheduleListItem },
@@ -32,7 +32,7 @@ class FeedScheduleDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: (ScheduleItemState, View, Int) -> Unit
+        private val clickListener: (ScheduleItemState, View, Int) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedScheduleBinding>()
@@ -53,7 +53,6 @@ class FeedScheduleDelegate(
             binding.itemComplete.background = gradientDrawable
         }
 
-        @Suppress("DEPRECATION")
         fun bind(item: FeedScheduleListItem) {
             val state = item.state
             binding.itemComplete.isVisible = state.isCompleted
@@ -64,7 +63,7 @@ class FeedScheduleDelegate(
             binding.itemImage.showImageUrl(state.posterUrl)
 
             binding.root.setOnClickListener {
-                clickListener.invoke(state, binding.itemImage, adapterPosition)
+                clickListener.invoke(state, binding.itemImage, bindingAdapterPosition)
             }
         }
     }

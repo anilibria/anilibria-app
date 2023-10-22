@@ -14,17 +14,22 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityUpdaterBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.data.SharedBuildConfig
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.datasource.remote.IApiUtils
 import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 /**
@@ -59,8 +64,16 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     private val updaterAnalytics by inject<UpdaterAnalytics>()
 
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
+            startMainActivity()
+            finish()
+            return
+        }
         lifecycle.addObserver(useTimeCounter)
 
         intent?.getStringExtra(ARG_ANALYTICS_FROM)?.also {
@@ -72,7 +85,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
         binding.currentInfo.text =
-            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+            generateCurrentInfo(sharedBuildConfig.versionName, sharedBuildConfig.buildDate)
 
         viewModel.state.onEach { state ->
             state.data?.also { showUpdateData(it) }
@@ -81,7 +94,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     }
 
     private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionCode = sharedBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
             binding.updateInfo.text = generateCurrentInfo(update.name, update.date)
@@ -123,7 +136,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
                 val link = update.links[which]
                 viewModel.onSourceDownloadClick(link)
             }
-            .show()
+            .showWithLifecycle(this)
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {

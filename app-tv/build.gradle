@@ -1,6 +1,14 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
+
+static def getDateTime() {
+    DateFormat df = new SimpleDateFormat("dd MMMMM yyyy")
+    return df.format(new Date()) + " г."
+}
 
 android {
     namespace "ru.radiationx.anilibria"
@@ -13,6 +21,7 @@ android {
         targetSdkVersion app_target_sdk_version
         versionCode 4
         versionName "1.1.0"
+        buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
     }
 
     buildFeatures {

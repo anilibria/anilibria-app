@@ -29,6 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 /**
@@ -189,7 +190,7 @@ class FavoritesFragment :
                     3 -> viewModel.deleteFav(item.id)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

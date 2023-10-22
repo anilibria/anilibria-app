@@ -17,7 +17,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.util.Rational
 import android.view.Surface
 import android.view.View
@@ -27,7 +26,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.text.parseAsHtml
 import androidx.core.view.isGone
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.devbrackets.android.exomedia.core.video.scale.ScaleType
@@ -52,6 +53,7 @@ import ru.radiationx.anilibria.ui.widgets.VideoControlsAlib
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import ru.radiationx.data.analytics.ErrorReporterConstants
 import ru.radiationx.data.analytics.TimeCounter
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
@@ -63,9 +65,14 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
 import java.util.*
@@ -108,6 +115,21 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
 
         private const val DEFAULT_QUALITY = VAL_QUALITY_SD
+
+        fun newIntent(
+            context: Context,
+            release: Release,
+            episodeId: EpisodeId,
+            quality: Int,
+            playFlag: Int?,
+        ): Intent = Intent(context, MyPlayerActivity::class.java).apply {
+            putExtra(ARG_RELEASE, release)
+            putExtra(ARG_EPISODE_ID, episodeId)
+            putExtra(ARG_QUALITY, quality)
+            playFlag?.let {
+                putExtra(ARG_PLAY_FLAG, it)
+            }
+        }
     }
 
     private lateinit var releaseData: Release
@@ -160,6 +182,12 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
+            startMainActivity()
+            finish()
+            return
+        }
         handleIntentData(intent)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
@@ -284,24 +312,26 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.player.setOnPreparedListener(null)
-        binding.player.setOnCompletionListener(null)
-        binding.player.setOnVideoSizedChangedListener(null)
-        binding.player.setAnalyticsListener(null)
-        try {
-            unregisterReceiver(mReceiver)
-        } catch (ignore: Exception) {
-        }
+        if (!isLaunchedFromHistory()) {
+            binding.player.setOnPreparedListener(null)
+            binding.player.setOnCompletionListener(null)
+            binding.player.setOnVideoSizedChangedListener(null)
+            binding.player.setAnalyticsListener(null)
+            try {
+                unregisterReceiver(mReceiver)
+            } catch (ignore: Exception) {
+            }
 
-        videoControls?.apply {
-            setOpeningListener(null)
-            setVisibilityListener(null)
-            setButtonListener(null)
+            videoControls?.apply {
+                setOpeningListener(null)
+                setVisibilityListener(null)
+                setButtonListener(null)
+            }
+            saveEpisodeAtNoZero()
+            binding.player.stopPlayback()
+            exitFullscreen()
+            videoControls = null
         }
-        saveEpisodeAtNoZero()
-        binding.player.stopPlayback()
-        exitFullscreen()
-        videoControls = null
     }
 
     @Suppress("DEPRECATION")
@@ -345,12 +375,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return notSausage != ratio
     }
 
-    @Suppress("DEPRECATION")
     private fun handleIntentData(intent: Intent) {
-        val release = requireNotNull(intent.getParcelableExtra<Release>(ARG_RELEASE)) {
+        val release = requireNotNull(intent.getExtra<Release>(ARG_RELEASE)) {
             "Release must be not null"
         }
-        val episodeId = requireNotNull(intent.getParcelableExtra<EpisodeId>(ARG_EPISODE_ID)) {
+        val episodeId = requireNotNull(intent.getExtra<EpisodeId>(ARG_EPISODE_ID)) {
             "Episode id must be not null"
         }
         val quality = intent.getIntExtra(ARG_QUALITY, DEFAULT_QUALITY)
@@ -512,7 +541,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                                 binding.player.seekTo(episode.access.seek)
                             }
                         }
-                        .show()
+                        .showWithLifecycle(this)
                 }
             }
 
@@ -784,7 +813,13 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
         private var openedDialogs = mutableListOf<BottomSheet>()
 
-        private fun BottomSheet.register() = openedDialogs.add(this)
+        private fun BottomSheet.Builder.showAndRegister(): Boolean {
+            val dialog = create()
+            dialog.showWithLifecycle(this@MyPlayerActivity) {
+                openedDialogs.remove(dialog)
+            }
+            return openedDialogs.add(dialog)
+        }
 
         fun getQualityTitle(quality: Int) = when (quality) {
             VAL_QUALITY_SD -> "480p"
@@ -822,7 +857,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             }
         }
 
-        @Suppress("DEPRECATION")
         fun showSettingsDialog() {
             if (openedDialogs.isNotEmpty()) {
                 updateSettingsDialog()
@@ -856,7 +890,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         else -> "Привет"
                     }
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toList()
                 .toTypedArray()
 
@@ -912,11 +946,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setIconColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorOnSurface))
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
-        @Suppress("DEPRECATION")
         fun showPlaySpeedDialog() {
             val values = arrayOf(
                 0.25f,
@@ -937,7 +969,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                         else -> stringValue
                     }
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -949,11 +981,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
-        @Suppress("DEPRECATION")
         fun showQualityDialog() {
             val qualities = mutableListOf<Int>()
             if (getEpisode().urlSd != null) qualities.add(VAL_QUALITY_SD)
@@ -968,7 +998,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getQualityTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -980,11 +1010,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
-        @Suppress("DEPRECATION")
         fun showScaleDialog() {
             val values = arrayOf(
                 ScaleType.FIT_CENTER,
@@ -997,7 +1025,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getScaleTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -1011,11 +1039,9 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
 
-        @Suppress("DEPRECATION")
         fun showPIPDialog() {
             val values = arrayOf(
                 PreferencesHolder.PIP_AUTO,
@@ -1027,7 +1053,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                     val stringValue = getPIPTitle(s)
                     if (index == activeIndex) "<b>$stringValue</b>" else stringValue
                 }
-                .map { Html.fromHtml(it) }
+                .map { it.parseAsHtml() }
                 .toTypedArray()
 
             BottomSheet.Builder(this@MyPlayerActivity)
@@ -1041,8 +1067,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
                 .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
                 .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
                 .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-                .show()
-                .register()
+                .showAndRegister()
         }
     }
 
@@ -1080,7 +1105,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-            .show()
+            .showWithLifecycle(this)
     }
 
     private fun showEpisodeFinishDialog() {
@@ -1109,7 +1134,16 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
             .setItemTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textDefault))
             .setTitleTextColor(this@MyPlayerActivity.getColorFromAttr(R.attr.textSecond))
             .setBackgroundColor(this@MyPlayerActivity.getColorFromAttr(R.attr.colorSurface))
-            .show()
+            .showWithLifecycle(this)
+    }
+
+    private fun BottomSheet.Builder.showWithLifecycle(
+        lifecycleOwner: LifecycleOwner,
+        ondDismiss: (() -> Unit)? = null,
+    ): BottomSheet {
+        val dialog = create()
+        dialog.showWithLifecycle(lifecycleOwner, ondDismiss)
+        return dialog
     }
 
     private fun getSeekPercent(): Float {

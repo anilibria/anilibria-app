@@ -28,6 +28,7 @@ import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class SearchCatalogFragment :
@@ -208,7 +209,7 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.showFilterAction.observe().onEach { state ->
-            genresDialog.showDialog(state)
+            genresDialog.showDialog(state, viewLifecycleOwner)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
@@ -239,11 +240,12 @@ class SearchCatalogFragment :
                         Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

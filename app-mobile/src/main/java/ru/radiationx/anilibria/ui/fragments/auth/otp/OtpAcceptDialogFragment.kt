@@ -53,7 +53,7 @@ class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.closeEvent.onEach {
-            dismiss()
+            dismissAllowingStateLoss()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

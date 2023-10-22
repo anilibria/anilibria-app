@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
-import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.data.entity.domain.donation.DonationContentCaption
 
 class DonationCaptionDelegate(
-    private val linkClickListener: (String) -> Unit
+    private val linkClickListener: (String) -> Unit,
 ) : AppAdapterDelegate<DonationCaptionListItem, ListItem, DonationCaptionDelegate.ViewHolder>(
     R.layout.item_donation_caption,
     { it is DonationCaptionListItem },
@@ -24,7 +24,7 @@ class DonationCaptionDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val linkClickListener: (String) -> Unit
+        private val linkClickListener: (String) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemDonationCaptionBinding>()
@@ -36,9 +36,8 @@ class DonationCaptionDelegate(
             }
         }
 
-        @Suppress("DEPRECATION")
         fun bind(data: DonationContentCaption) {
-            binding.tvText.text = data.text.let { Html.fromHtml(it) }
+            binding.tvText.text = data.text.parseAsHtml()
         }
     }
 }

@@ -6,18 +6,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
-import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getCompatDrawable
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
  * Created by radiationx on 25.12.16.
@@ -28,6 +28,8 @@ class SettingsFragment : BaseSettingFragment() {
     private val appPreferences by inject<PreferencesHolder>()
 
     private val settingsAnalytics by inject<SettingsAnalytics>()
+
+    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
                         icon = getQualityIcon(quality)
                         summary = getQualityTitle(quality)
                     }
-                    .show()
+                    .showWithLifecycle(viewLifecycleOwner)
                 false
             }
         }
@@ -117,18 +119,13 @@ class SettingsFragment : BaseSettingFragment() {
                         appPreferences.setPlayerType(playerType)
                         summary = getPlayerTypeTitle(playerType)
                     }
-                    .show()
+                    .showWithLifecycle(viewLifecycleOwner)
                 false
             }
         }
 
         findPreference<Preference>("about.application")?.apply {
-            val appendix = if (Api.STORE_APP_IDS.contains(BuildConfig.APPLICATION_ID)) {
-                " для Play Market"
-            } else {
-                ""
-            }
-            summary = "Версия ${BuildConfig.VERSION_NAME}$appendix"
+            summary = "Версия ${sharedBuildConfig.versionName}"
         }
 
         findPreference<Preference>("about.check_update")?.apply {

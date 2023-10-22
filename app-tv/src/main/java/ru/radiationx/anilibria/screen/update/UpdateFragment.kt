@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.screen.update
 
 import android.os.Bundle
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.parseAsHtml
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.ProgressBarManager
@@ -38,7 +38,6 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
         super.onCreate(savedInstanceState)
     }
 
-    @Suppress("DEPRECATION")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,7 +57,7 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
                 appendSection("Исправлено", it.fixed)
                 appendSection("Изменено", it.changed)
             }
-            binding.updateDescription.text = Html.fromHtml(string.toString())
+            binding.updateDescription.text = string.toString().parseAsHtml()
         }
 
         subscribeTo(viewModel.downloadActionTitle) {

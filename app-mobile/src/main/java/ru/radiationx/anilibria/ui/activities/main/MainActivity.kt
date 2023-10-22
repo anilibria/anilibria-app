@@ -323,6 +323,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             tabs.addAll(allTabs)
         } else {
             tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
+            removeFromStack(allTabs.first { it.screen is Screens.Favorites }.screen.screenKey)
         }
         updateBottomTabs()
     }

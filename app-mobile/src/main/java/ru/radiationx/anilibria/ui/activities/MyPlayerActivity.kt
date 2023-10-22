@@ -68,7 +68,9 @@ import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import java.io.IOException
 import java.util.*
@@ -178,6 +180,11 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            startMainActivity()
+            finish()
+            return
+        }
         handleIntentData(intent)
         lifecycle.addObserver(useTimeCounter)
         timeToStartCounter.start()
@@ -302,24 +309,26 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.player.setOnPreparedListener(null)
-        binding.player.setOnCompletionListener(null)
-        binding.player.setOnVideoSizedChangedListener(null)
-        binding.player.setAnalyticsListener(null)
-        try {
-            unregisterReceiver(mReceiver)
-        } catch (ignore: Exception) {
-        }
+        if (!isLaunchedFromHistory()) {
+            binding.player.setOnPreparedListener(null)
+            binding.player.setOnCompletionListener(null)
+            binding.player.setOnVideoSizedChangedListener(null)
+            binding.player.setAnalyticsListener(null)
+            try {
+                unregisterReceiver(mReceiver)
+            } catch (ignore: Exception) {
+            }
 
-        videoControls?.apply {
-            setOpeningListener(null)
-            setVisibilityListener(null)
-            setButtonListener(null)
+            videoControls?.apply {
+                setOpeningListener(null)
+                setVisibilityListener(null)
+                setButtonListener(null)
+            }
+            saveEpisodeAtNoZero()
+            binding.player.stopPlayback()
+            exitFullscreen()
+            videoControls = null
         }
-        saveEpisodeAtNoZero()
-        binding.player.stopPlayback()
-        exitFullscreen()
-        videoControls = null
     }
 
     @Suppress("DEPRECATION")

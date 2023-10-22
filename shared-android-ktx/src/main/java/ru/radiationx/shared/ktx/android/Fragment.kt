@@ -6,6 +6,15 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 
+fun Activity.isLaunchedFromHistory(): Boolean {
+    return intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
+}
+
+fun Activity.startMainActivity() {
+    val intent = packageName?.let { packageManager.getLaunchIntentForPackage(it) } ?: return
+    startActivity(intent)
+}
+
 /* Intent */
 @Suppress("DEPRECATION")
 inline fun <reified T : Any> Intent.getExtraNotNull(key: String, default: T? = null): T {

@@ -20,7 +20,10 @@ import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
 import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
 import ru.radiationx.shared.ktx.android.WebViewClientCompat
+import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
@@ -39,8 +42,8 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
             }
     }
 
-    private var argUrl: String = ""
-    private var argReleaseCode: String = ""
+    private val argUrl by lazy { getExtraNotNull(ARG_URL, "") }
+    private val argReleaseCode by lazy { getExtraNotNull(ARG_RELEASE_CODE, "") }
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(webPlayerAnalytics::useTime)
@@ -54,19 +57,19 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
+    private fun isInvalidIntent(): Boolean {
+        return isLaunchedFromHistory() || argUrl.isEmpty() || argReleaseCode.isEmpty()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(useTimeCounter)
-
-        argUrl = intent?.getStringExtra(ARG_URL).orEmpty()
-        argReleaseCode = intent?.getStringExtra(ARG_RELEASE_CODE).orEmpty()
-
-        if (argUrl.isEmpty()) {
+        if (isInvalidIntent()) {
+            startMainActivity()
             finish()
             return
         }
+        lifecycle.addObserver(useTimeCounter)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -135,7 +138,9 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.webView.setWebViewClientCompat(null)
+        if (!isInvalidIntent()) {
+            binding.webView.setWebViewClientCompat(null)
+        }
     }
 
     private fun loadUrl() {

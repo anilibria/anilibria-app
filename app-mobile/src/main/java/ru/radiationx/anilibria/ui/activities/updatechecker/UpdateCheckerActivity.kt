@@ -25,7 +25,9 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 /**
@@ -64,6 +66,11 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            startMainActivity()
+            finish()
+            return
+        }
         lifecycle.addObserver(useTimeCounter)
 
         intent?.getStringExtra(ARG_ANALYTICS_FROM)?.also {

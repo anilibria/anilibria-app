@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
-import android.Manifest
-import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,8 +9,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
-import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -51,7 +47,6 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.regex.Pattern
 
 @InjectConstructor
 class ReleaseInfoViewModel(
@@ -65,7 +60,6 @@ class ReleaseInfoViewModel(
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
-    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val commentsNotifier: ReleaseCommentsNotifier,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
@@ -484,41 +478,21 @@ class ReleaseInfoViewModel(
     }
 
     fun downloadFile(url: String) {
-        var fileName = systemUtils.getFileNameFromUrl(url)
-        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
-        if (matcher.find()) {
-            matcher.group(1)?.also {
-                fileName = it
-            }
-        }
-        if (true) {
-            viewModelScope.launch {
-                Log.d("kekeke", "testDownload luanch")
-                fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.Torrent(currentData?.id!!))
-                    .collect {
-                        Log.d("kekeke", "testDownload collect ${it}")
-                        if (it is DownloadState.Success) {
-                            systemUtils.shareRemoteFile(
-                                it.file.local,
-                                it.file.remote.name,
-                                it.file.remote.mimeType
-                            )
-                        }
-                    }
-                Log.d("kekeke", "testDownload finish")
-            }
-            return
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            systemUtils.systemDownloader(url, fileName)
-            return
-        }
+        val releaseId = currentData?.id ?: return
         viewModelScope.launch {
-            val result =
-                mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            if (result.isSuccess()) {
-                systemUtils.systemDownloader(url, fileName)
-            }
+            Log.d("kekeke", "testDownload luanch")
+            fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.Torrent(releaseId))
+                .collect {
+                    Log.d("kekeke", "testDownload collect ${it}")
+                    if (it is DownloadState.Success) {
+                        systemUtils.shareRemoteFile(
+                            it.file.local,
+                            it.file.remote.name,
+                            it.file.remote.mimeType
+                        )
+                    }
+                }
+            Log.d("kekeke", "testDownload finish")
         }
     }
 

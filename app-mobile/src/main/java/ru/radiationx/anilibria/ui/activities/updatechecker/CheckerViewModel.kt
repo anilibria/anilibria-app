@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker
 
-import android.Manifest
-import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,8 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
-import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
@@ -36,7 +32,6 @@ class CheckerViewModel(
     private val updaterAnalytics: UpdaterAnalytics,
     private val sharedBuildConfig: SharedBuildConfig,
     private val systemUtils: SystemUtils,
-    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val fileDownloaderRepository: FileDownloaderRepository,
 ) : ViewModel() {
 
@@ -72,27 +67,13 @@ class CheckerViewModel(
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
         when (link.type) {
-            "file" -> testDownload(link)
+            "file" -> downloadFile(link)
             "site" -> systemUtils.externalLink(link.url)
             else -> systemUtils.externalLink(link.url)
         }
     }
 
     private fun downloadFile(link: UpdateData.UpdateLink) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            systemUtils.systemDownloader(link.url)
-            return
-        }
-        viewModelScope.launch {
-            val result =
-                mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            if (result.isSuccess()) {
-                systemUtils.systemDownloader(link.url)
-            }
-        }
-    }
-
-    private fun testDownload(link: UpdateData.UpdateLink) {
         val url = link.url
         viewModelScope.launch {
             Log.d("kekeke", "testDownload luanch")

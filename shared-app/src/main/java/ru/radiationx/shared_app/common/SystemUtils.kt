@@ -67,35 +67,6 @@ class SystemUtils(
         context.startActivity(chooserIntent)
     }
 
-    /* PLEASE CHECK STORAGE PERMISSION */
-    fun systemDownloader(url: String, fileName: String = getFileNameFromUrl(url)) {
-        val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-        dm?.let {
-            val request = DownloadManager.Request(Uri.parse(url))
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-            request.setMimeType(MimeTypeUtil.getType(fileName))
-            request.setTitle(fileName)
-            request.setDescription(fileName)
-            it.enqueue(request)
-        }
-    }
-
-    fun getFileNameFromUrl(url: String): String {
-        var fileName = url
-        try {
-            fileName = URLDecoder.decode(url, "CP1251")
-        } catch (e: UnsupportedEncodingException) {
-            Timber.e(e)
-        }
-
-        val cut = fileName.lastIndexOf('/')
-        if (cut != -1) {
-            fileName = fileName.substring(cut + 1)
-        }
-        return fileName
-    }
-
     fun copyToClipBoard(s: String) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("label", s)

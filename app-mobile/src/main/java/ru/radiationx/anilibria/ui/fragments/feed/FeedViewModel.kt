@@ -106,7 +106,7 @@ class FeedViewModel(
         checkerRepository
             .observeUpdate()
             .onEach {
-                val hasAppUpdate = it.code > sharedBuildConfig.versionCode
+                val hasAppUpdate = it.code >= sharedBuildConfig.versionCode
                 if (hasAppUpdate) {
                     warningsController.put(appUpdateWarning)
                 } else {

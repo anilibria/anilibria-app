@@ -126,7 +126,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
     }
 
     private fun loadTorrent(torrent: TorrentItem) {
-        torrent.url?.also { systemUtils.externalLink(it) }
+        torrent.url?.also {
+            viewModel.downloadFile(it)
+        }
+
     }
 
     private fun playEpisodes(release: Release) {

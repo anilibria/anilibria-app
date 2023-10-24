@@ -25,6 +25,9 @@ import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
+import ru.radiationx.data.downloader.FileDownloaderRepository
+import ru.radiationx.data.downloader.RemoteFileHolder
+import ru.radiationx.data.downloader.RemoteFileStorage
 import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
@@ -63,6 +66,7 @@ class DataModule : QuillModule() {
         singleImpl<DownloadsHolder, DownloadsStorage>()
         singleImpl<DonationHolder, DonationStorage>()
         singleImpl<TeamsHolder, TeamsStorage>()
+        singleImpl<RemoteFileHolder, RemoteFileStorage>()
 
         singleImpl<CookieHolder, CookiesStorage>()
         singleImpl<UserHolder, UserStorage>()
@@ -119,6 +123,7 @@ class DataModule : QuillModule() {
         single<MenuRepository>()
         single<DonationRepository>()
         single<TeamsRepository>()
+        single<FileDownloaderRepository>()
 
         single<ReleaseUpdateMiddleware>()
 

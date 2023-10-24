@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,8 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.downloader.FileDownloaderRepository
+import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
@@ -71,6 +74,7 @@ class ReleaseInfoViewModel(
     private val playerAnalytics: PlayerAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics,
+    private val fileDownloaderRepository: FileDownloaderRepository,
 ) : ViewModel() {
 
     private val remindText =
@@ -485,6 +489,16 @@ class ReleaseInfoViewModel(
             matcher.group(1)?.also {
                 fileName = it
             }
+        }
+        if (true) {
+            viewModelScope.launch {
+                Log.d("kekeke", "testDownload luanch")
+                fileDownloaderRepository.loadFile(url,RemoteFile.Bucket.Torrent(currentData?.id!!)).collect {
+                    Log.d("kekeke", "testDownload collect ${it}")
+                }
+                Log.d("kekeke", "testDownload finish")
+            }
+            return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             systemUtils.systemDownloader(url, fileName)

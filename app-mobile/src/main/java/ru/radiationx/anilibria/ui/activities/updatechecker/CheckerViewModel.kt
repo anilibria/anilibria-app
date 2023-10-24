@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.activities.updatechecker
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,8 @@ import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
+import ru.radiationx.data.downloader.FileDownloaderRepository
+import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.quill.QuillExtra
@@ -21,7 +24,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 
 data class CheckerExtra(
-    val forceLoad: Boolean
+    val forceLoad: Boolean,
 ) : QuillExtra
 
 @InjectConstructor
@@ -32,7 +35,8 @@ class CheckerViewModel(
     private val updaterAnalytics: UpdaterAnalytics,
     private val sharedBuildConfig: SharedBuildConfig,
     private val systemUtils: SystemUtils,
-    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow
+    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
+    private val fileDownloaderRepository: FileDownloaderRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CheckerScreenState())
@@ -67,7 +71,7 @@ class CheckerViewModel(
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
         when (link.type) {
-            "file" -> downloadFile(link)
+            "file" -> testDownload(link)
             "site" -> systemUtils.externalLink(link.url)
             else -> systemUtils.externalLink(link.url)
         }
@@ -86,9 +90,20 @@ class CheckerViewModel(
             }
         }
     }
+
+    private fun testDownload(link: UpdateData.UpdateLink) {
+        val url = link.url
+        viewModelScope.launch {
+            Log.d("kekeke", "testDownload luanch")
+            fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.AppUpdates).collect {
+                Log.d("kekeke", "testDownload collect ${it}")
+            }
+            Log.d("kekeke", "testDownload finish")
+        }
+    }
 }
 
 data class CheckerScreenState(
     val loading: Boolean = false,
-    val data: UpdateData? = null
+    val data: UpdateData? = null,
 )

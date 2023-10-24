@@ -32,6 +32,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.common.AuthState
@@ -493,9 +494,17 @@ class ReleaseInfoViewModel(
         if (true) {
             viewModelScope.launch {
                 Log.d("kekeke", "testDownload luanch")
-                fileDownloaderRepository.loadFile(url,RemoteFile.Bucket.Torrent(currentData?.id!!)).collect {
-                    Log.d("kekeke", "testDownload collect ${it}")
-                }
+                fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.Torrent(currentData?.id!!))
+                    .collect {
+                        Log.d("kekeke", "testDownload collect ${it}")
+                        if (it is DownloadState.Success) {
+                            systemUtils.shareRemoteFile(
+                                it.file.local,
+                                it.file.remote.name,
+                                it.file.remote.mimeType
+                            )
+                        }
+                    }
                 Log.d("kekeke", "testDownload finish")
             }
             return

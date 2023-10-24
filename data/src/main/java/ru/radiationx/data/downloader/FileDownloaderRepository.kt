@@ -59,7 +59,7 @@ class FileDownloaderRepository @Inject constructor(
         .flowOn(Dispatchers.IO)
 
     private fun getCacheDir(): File {
-        val file = File(context.cacheDir, "anilibria_remote_test")
+        val file = File(context.cacheDir, "anilibria_remote")
         file.mkdir()
         return file
     }

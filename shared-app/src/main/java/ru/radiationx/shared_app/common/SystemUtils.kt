@@ -6,10 +6,13 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import androidx.core.content.FileProvider
 import timber.log.Timber
 import toothpick.InjectConstructor
+import java.io.File
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 
@@ -17,6 +20,52 @@ import java.net.URLDecoder
 class SystemUtils(
     private val context: Context,
 ) {
+
+    private fun getRemoteFileUri(file: File, name: String): Uri {
+        val packageName = context.packageName
+        val authority = "${packageName}.remotefileprovider"
+        return FileProvider.getUriForFile(context, authority, file, name).also {
+            context.grantUriPermission(packageName, it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
+
+    fun openRemoteFile(file: File, name: String, mimeType: String) {
+        val data = getRemoteFileUri(file, name)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(data, mimeType)
+            putExtra(Intent.EXTRA_TITLE, name)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        val chooserIntent = Intent.createChooser(intent, "Открыть в").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(chooserIntent);
+    }
+
+    fun shareRemoteFile(file: File, name: String, mimeType: String) {
+        val data = getRemoteFileUri(file, name)
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = mimeType
+            putExtra(Intent.EXTRA_TITLE, name)
+            putExtra(Intent.EXTRA_STREAM, data)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        val chooserIntent = Intent.createChooser(sendIntent, "Поделиться").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        val resolves = context.packageManager.queryIntentActivities(
+            chooserIntent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        resolves.forEach {
+            val packageName = it.activityInfo.packageName
+            context.grantUriPermission(packageName, data, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(chooserIntent)
+    }
 
     /* PLEASE CHECK STORAGE PERMISSION */
     fun systemDownloader(url: String, fileName: String = getFileNameFromUrl(url)) {

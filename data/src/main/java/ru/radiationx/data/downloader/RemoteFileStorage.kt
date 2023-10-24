@@ -18,7 +18,7 @@ class RemoteFileStorage @Inject constructor(
 ) : RemoteFileHolder {
 
     companion object {
-        private const val REMOTE_FILES_KEY = "data.remote_files.test"
+        private const val REMOTE_FILES_KEY = "data.remote_files"
         private const val BUCKET_APP_UPDATES = "app_updates"
         private const val BUCKET_TORRENT = "torrent"
     }

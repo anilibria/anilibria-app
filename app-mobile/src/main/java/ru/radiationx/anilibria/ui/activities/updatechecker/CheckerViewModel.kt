@@ -14,6 +14,7 @@ import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
+import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
@@ -97,6 +98,13 @@ class CheckerViewModel(
             Log.d("kekeke", "testDownload luanch")
             fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.AppUpdates).collect {
                 Log.d("kekeke", "testDownload collect ${it}")
+                if (it is DownloadState.Success) {
+                    systemUtils.openRemoteFile(
+                        it.file.local,
+                        it.file.remote.name,
+                        it.file.remote.mimeType
+                    )
+                }
             }
             Log.d("kekeke", "testDownload finish")
         }

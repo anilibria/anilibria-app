@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
+import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
@@ -80,12 +81,15 @@ class DataModule : QuillModule() {
         single<ApiConfigStorage>()
 
 
+        single<SimpleOkHttpProvider>()
         single<MainOkHttpProvider>()
         single<ApiOkHttpProvider>()
 
+        single<SimpleClientWrapper>()
         single<MainClientWrapper>()
         single<ApiClientWrapper>()
 
+        singleImpl<IClient, SimpleNetworkClient>(SimpleClient::class)
         singleImpl<IClient, MainNetworkClient>(MainClient::class)
         singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 

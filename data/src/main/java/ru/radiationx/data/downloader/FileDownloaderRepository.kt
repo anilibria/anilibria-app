@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.ResponseBody
-import ru.radiationx.data.MainClient
+import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.datasource.remote.IClient
 import java.io.File
 import java.io.InputStream
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class FileDownloaderRepository @Inject constructor(
     private val context: Context,
-    @MainClient private val client: IClient,
+    @SimpleClient private val client: IClient,
     private val holder: RemoteFileHolder,
 ) {
 

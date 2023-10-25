@@ -1,136 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinatorLayout"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:background="?colorSurface"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarLayout"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/alib_gray"
-        android:fitsSystemWindows="true"
-        android:stateListAnimator="@null"
-        android:theme="?app_bar_overlay">
+        app:navigationIcon="@drawable/ic_toolbar_arrow_back" />
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="@color/alib_gray"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:statusBarScrim="@color/alib_gray_dark"
-            app:titleEnabled="false">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:singleLine="false"
-                    android:text="@string/app_name"
-                    android:textColor="#f8f8f8"
-                    android:textSize="42sp" />
-
-                <TextView
-                    android:id="@+id/currentInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:singleLine="false"
-                    android:textColor="#f8f8f8" />
-
-            </LinearLayout>
-
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:contentInsetEndWithActions="0dp"
-                app:contentInsetStart="0dp"
-                app:contentInsetStartWithNavigation="0dp"
-                app:layout_collapseMode="pin"
-                app:popupTheme="?popup_overlay" />
-
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:colorBackground"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
 
-        <LinearLayout
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorSurface"
+            android:singleLine="false"
+            android:text="@string/app_name"
+            android:textColor="?textDefault"
+            android:textSize="42sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/currentInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="?textDefault"
+            tools:text="Версия: 2.10.0\nСборка от: 24 октября 2023 г." />
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/updateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?divider_line" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Доступно обновление"
+            android:textColor="?textDefault"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/updateInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?textDefault"
+            tools:text="Версия: 2.10.0\nСборка от: 24 октября 2023 г." />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:id="@+id/updateContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/updateRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_update_link" />
+
+        <ProgressBar
+            android:id="@+id/updateLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/updatePlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/updatePlaceholderTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:padding="16dp">
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_centerInParent="true" />
-
-                <TextView
-                    android:id="@+id/updateInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_toStartOf="@+id/updateButton"
-                    android:singleLine="false"
-                    android:textColor="?textDefault"
-                    android:visibility="gone" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/updateButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="@string/updater_download"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="?divider_line"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/updateContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?colorSurface"
-                android:orientation="vertical"
+                android:gravity="center"
                 android:padding="16dp"
-                android:visibility="gone" />
+                android:text="Обновлений нет"
+                android:textColor="?textDefault"
+                android:textStyle="bold" />
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/updatePlaceholderAction"
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Проверить обновления" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?divider_line" />
+
+    </FrameLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

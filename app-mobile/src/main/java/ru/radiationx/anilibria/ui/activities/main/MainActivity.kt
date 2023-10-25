@@ -35,7 +35,9 @@ import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
+import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerScreenState
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
@@ -71,8 +73,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 data = url?.let { Uri.parse(it) }
             }
     }
-
-    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
     private val screenMessenger by inject<SystemMessenger>()
 
@@ -162,10 +162,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
 
-    private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = sharedBuildConfig.versionCode
-
-        if (update.code > currentVersionCode) {
+    private fun showUpdateData(update: UpdateDataState) {
+        if (update.hasUpdate) {
             val channelId = "anilibria_channel_updates"
             val channelName = "Обновления"
 

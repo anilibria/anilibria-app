@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
@@ -23,7 +22,6 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class UpdateViewModel(
     private val checkerRepository: CheckerRepository,
-    private val buildConfig: SharedBuildConfig,
     private val guidedRouter: GuidedRouter,
     private val updateController: UpdateController,
     private val fileDownloaderRepository: FileDownloaderRepository,
@@ -44,8 +42,7 @@ class UpdateViewModel(
         viewModelScope.launch {
             progressState.value = true
             coRunCatching {
-                checkerRepository
-                    .checkUpdate(buildConfig.versionCode, false)
+                checkerRepository.checkUpdate(false)
             }.onSuccess { update ->
                 updateData.value = update
             }.onFailure {

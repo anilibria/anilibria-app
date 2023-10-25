@@ -1,14 +1,13 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.FileDownloaderRepository
@@ -30,69 +29,136 @@ class CheckerViewModel(
     private val checkerRepository: CheckerRepository,
     private val errorHandler: IErrorHandler,
     private val updaterAnalytics: UpdaterAnalytics,
-    private val sharedBuildConfig: SharedBuildConfig,
     private val systemUtils: SystemUtils,
     private val fileDownloaderRepository: FileDownloaderRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CheckerScreenState())
-    val state = _state.asStateFlow()
+    private val loadingJobs = mutableMapOf<UpdateData.UpdateLink, Job>()
+
+    private val _currentLoadings =
+        MutableStateFlow<Map<UpdateData.UpdateLink, MutableStateFlow<Int>>>(emptyMap())
+    private val _currentData = MutableStateFlow(CheckerScreenState())
+
+    val state = combine(
+        _currentLoadings,
+        _currentData
+    ) { loadings, data ->
+        if (data.data == null) return@combine data
+        val newLinks = data.data.links.map {
+            it.copy(progress = loadings[it.link])
+        }
+        data.copy(data = data.data.copy(links = newLinks))
+    }
 
     fun submitUseTime(time: Long) {
         updaterAnalytics.useTime(time)
     }
 
-    fun checkUpdate() {
+    fun checkUpdate(force: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true) }
+            _currentData.update { it.copy(loading = true) }
             coRunCatching {
-                checkerRepository.checkUpdate(sharedBuildConfig.versionCode, argExtra.forceLoad)
+                checkerRepository.checkUpdate(force || argExtra.forceLoad)
             }.onSuccess { data ->
-                _state.update { it.copy(data = data) }
+                _currentData.update { it.copy(data = data.toState()) }
             }.onFailure {
                 errorHandler.handle(it)
             }
-            _state.update { it.copy(loading = false) }
+            _currentData.update { it.copy(loading = false) }
         }
     }
 
-    fun onDownloadClick() {
+    fun onLinkClick(link: UpdateData.UpdateLink) {
         updaterAnalytics.downloadClick()
-    }
-
-    fun onSourceDownloadClick(link: UpdateData.UpdateLink) {
         updaterAnalytics.sourceDownload(link.name)
-        decideDownload(link)
+        when (link.type) {
+            UpdateData.LinkType.FILE -> downloadFile(link)
+            UpdateData.LinkType.SITE -> systemUtils.externalLink(link.url)
+        }
     }
 
-    private fun decideDownload(link: UpdateData.UpdateLink) {
-        when (link.type) {
-            "file" -> downloadFile(link)
-            "site" -> systemUtils.externalLink(link.url)
-            else -> systemUtils.externalLink(link.url)
-        }
+    fun onCancelDownloadClick(link: UpdateData.UpdateLink) {
+        loadingJobs[link]?.cancel()
+        loadingJobs.remove(link)
+        _currentLoadings.update { it.minus(link) }
     }
 
     private fun downloadFile(link: UpdateData.UpdateLink) {
-        val url = link.url
-        viewModelScope.launch {
-            Log.d("kekeke", "testDownload luanch")
-            fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.AppUpdates).collect {
-                Log.d("kekeke", "testDownload collect ${it}")
-                if (it is DownloadState.Success) {
-                    systemUtils.openRemoteFile(
-                        it.file.local,
-                        it.file.remote.name,
-                        it.file.remote.mimeType
-                    )
-                }
+        if (loadingJobs[link]?.isActive == true) {
+            return
+        }
+        loadingJobs[link] = viewModelScope.launch {
+            val progressFlow = MutableStateFlow(0)
+            _currentLoadings.update {
+                it.plus(link to progressFlow)
             }
-            Log.d("kekeke", "testDownload finish")
+            fileDownloaderRepository
+                .loadFile(link.url, RemoteFile.Bucket.AppUpdates)
+                .collect {
+                    when (it) {
+                        is DownloadState.InProgress -> {
+                            progressFlow.value = it.progress
+                        }
+
+                        is DownloadState.Success -> {
+                            systemUtils.openRemoteFile(
+                                it.file.local,
+                                it.file.remote.name,
+                                it.file.remote.mimeType
+                            )
+                        }
+
+                        is DownloadState.Failure -> {
+                            errorHandler.handle(it.error)
+                        }
+                    }
+                }
+            _currentLoadings.update {
+                it.minus(link)
+            }
         }
     }
 }
 
+private fun UpdateData.UpdateLink.toState() = UpdateLinkState(
+    link = this,
+    progress = null
+)
+
+private fun UpdateData.toState() = UpdateDataState(
+    hasUpdate = hasUpdate,
+    code = code,
+    name = name,
+    date = date,
+    links = links.map { it.toState() },
+    info = listOf(
+        UpdateInfoState("Важно", fixed),
+        UpdateInfoState("Добавлено", fixed),
+        UpdateInfoState("Исправлено", fixed),
+        UpdateInfoState("Изменено", fixed),
+    )
+)
+
 data class CheckerScreenState(
     val loading: Boolean = false,
-    val data: UpdateData? = null,
+    val data: UpdateDataState? = null,
+)
+
+data class UpdateDataState(
+    val hasUpdate: Boolean,
+    val code: Int,
+    val name: String?,
+    val date: String?,
+    val links: List<UpdateLinkState>,
+    val info: List<UpdateInfoState>,
+)
+
+data class UpdateInfoState(
+    val title: String,
+    val items: List<String>,
+)
+
+data class UpdateLinkState(
+    val link: UpdateData.UpdateLink,
+    val progress: MutableStateFlow<Int>?,
 )

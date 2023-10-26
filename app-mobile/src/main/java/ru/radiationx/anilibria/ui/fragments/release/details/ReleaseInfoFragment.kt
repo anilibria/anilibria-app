@@ -101,10 +101,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             showFavoriteDialog()
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.showDownloadAction.observe().onEach {
-            showDownloadDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
         viewModel.showFileDonateAction.observe().onEach {
             showFileDonateDialog(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -145,19 +141,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }.orEmpty()
     }
 
-    private fun showDownloadDialog(url: String) {
-        val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                viewModel.submitDownloadEpisodeUrlAnalytics()
-                when (which) {
-                    0 -> systemUtils.externalLink(url)
-                    1 -> viewModel.downloadFile(url)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
-    }
-
     private fun showFileDonateDialog(url: String) {
         val dialogBinding = DialogFileDownloadBinding.inflate(
             LayoutInflater.from(requireView().context),
@@ -187,7 +170,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             dialog.dismiss()
         }
         dialogBinding.dialogFileDownloadBtn.setOnClickListener {
-            showDownloadDialog(url)
+            viewModel.downloadFile(url)
             dialog.dismiss()
         }
     }

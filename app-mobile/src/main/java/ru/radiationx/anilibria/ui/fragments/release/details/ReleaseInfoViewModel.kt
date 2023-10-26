@@ -1,10 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -31,7 +29,6 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
@@ -95,7 +92,6 @@ class ReleaseInfoViewModel(
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
     val loadEpisodeAction = EventFlow<ActionLoadEpisode>()
     val showUnauthAction = EventFlow<Unit>()
-    val showDownloadAction = EventFlow<String>()
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
@@ -515,34 +511,15 @@ class ReleaseInfoViewModel(
             if (it.showDonateDialog) {
                 showFileDonateAction.set(url)
             } else {
-                showDownloadAction.set(url)
+                downloadFile(url)
             }
         }
     }
 
     fun downloadFile(url: String) {
-        val releaseId = currentData?.id ?: return
-        viewModelScope.launch {
-            Log.d("kekeke", "testDownload luanch")
-            fileDownloaderRepository.loadFile(url, RemoteFile.Bucket.Torrent(releaseId))
-                .collect {
-                    Log.d("kekeke", "testDownload collect ${it}")
-                    if (it is DownloadState.Success) {
-                        systemUtils.shareRemoteFile(
-                            it.file.local,
-                            it.file.remote.name,
-                            it.file.remote.mimeType
-                        )
-                    }
-                }
-            Log.d("kekeke", "testDownload finish")
-        }
-    }
-
-    fun submitDownloadEpisodeUrlAnalytics() {
-        currentData?.also {
-            releaseAnalytics.episodeDownloadByUrl(it.id.id)
-        }
+        val data = currentData ?: return
+        releaseAnalytics.episodeDownloadByUrl(data.id.id)
+        systemUtils.externalLink(url)
     }
 
     fun onDialogPatreonClick() {

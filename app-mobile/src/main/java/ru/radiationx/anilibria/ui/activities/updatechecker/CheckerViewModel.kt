@@ -121,10 +121,10 @@ private fun UpdateData.toState() = UpdateDataState(
     date = date,
     links = links.map { it.toState() },
     info = listOf(
-        UpdateInfoState("Важно", fixed),
-        UpdateInfoState("Добавлено", fixed),
+        UpdateInfoState("Важно", important),
+        UpdateInfoState("Добавлено", added),
         UpdateInfoState("Исправлено", fixed),
-        UpdateInfoState("Изменено", fixed),
+        UpdateInfoState("Изменено", changed),
     )
 )
 

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.downloader.DownloadedFile
-import ru.radiationx.data.downloader.FileDownloaderRepository
+import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
@@ -31,7 +31,7 @@ class CheckerViewModel(
     private val errorHandler: IErrorHandler,
     private val updaterAnalytics: UpdaterAnalytics,
     private val systemUtils: SystemUtils,
-    private val fileDownloaderRepository: FileDownloaderRepository,
+    private val remoteFileRepository: RemoteFileRepository,
 ) : ViewModel() {
 
     private val loadingJobs = mutableMapOf<UpdateData.UpdateLink, Job>()
@@ -96,7 +96,7 @@ class CheckerViewModel(
                 it.plus(link to progress)
             }
             coRunCatching {
-                fileDownloaderRepository.loadFile(link.url, RemoteFile.Bucket.AppUpdates, progress)
+                remoteFileRepository.loadFile(link.url, RemoteFile.Bucket.AppUpdates, progress)
             }.onSuccess {
                 openDownloadedFileAction.set(it)
             }.onFailure {

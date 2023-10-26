@@ -16,56 +16,18 @@ import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
 
-class FileDownloaderRepository @Inject constructor(
+class RemoteFileRepository @Inject constructor(
     private val context: Context,
     @SimpleClient private val client: IClient,
     private val holder: RemoteFileHolder,
 ) {
-
-    fun loadFile(url: String, bucket: RemoteFile.Bucket): Flow<DownloadState> = flow {
-        val existedFile = getDownloadedFile(url)
-        if (existedFile != null) {
-            emit(DownloadState.Success(existedFile))
-            return@flow
-        }
-
-        val loadingFileId = holder.get(url)?.id ?: holder.generateId()
-        val loadingFile = getFileById(loadingFileId)
-        try {
-            val response = client.getRaw(url, emptyMap())
-
-            val responseBody = requireNotNull(response.body) {
-                "Response doesn't contain a body"
-            }
-            require(responseBody.contentLength() >= 0) {
-                "Response content length < 0 bytes"
-            }
-            loadingFile.createNewFile()
-            responseBody.copyToWithProgress(loadingFile).collect {
-                emit(DownloadState.InProgress(it))
-            }
-            val saveData = RemoteFileSaveData(
-                id = loadingFileId,
-                url = url,
-                bucket = bucket,
-                contentDisposition = response.header("Content-Disposition"),
-                contentType = response.header("Content-Type"),
-            )
-            val remoteFile = holder.put(saveData)
-            emit(DownloadState.Success(DownloadedFile(remoteFile, loadingFile)))
-        } catch (ex: Exception) {
-
-            loadingFile.delete()
-            emit(DownloadState.Failure(ex))
-        }
-    }
-        .flowOn(Dispatchers.IO)
 
     suspend fun loadFile(
         url: String,
         bucket: RemoteFile.Bucket,
         progress: MutableStateFlow<Int>,
     ): DownloadedFile = withContext(Dispatchers.IO) {
+        progress.value = 0
         val existedFile = getDownloadedFile(url)
         if (existedFile != null) {
             return@withContext existedFile
@@ -119,13 +81,6 @@ class FileDownloaderRepository @Inject constructor(
             null
         }
     }
-}
-
-
-sealed class DownloadState {
-    data class InProgress(val progress: Int) : DownloadState()
-    data class Success(val file: DownloadedFile) : DownloadState()
-    data class Failure(val error: Throwable) : DownloadState()
 }
 
 private fun ResponseBody.copyToWithProgress(destinationFile: File): Flow<Int> {

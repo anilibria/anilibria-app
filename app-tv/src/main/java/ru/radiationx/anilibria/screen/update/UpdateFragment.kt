@@ -49,14 +49,15 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
             binding.updateDescription.text = string.toString().parseAsHtml()
         }
 
-        subscribeTo(viewModel.downloadActionTitle) {
-            binding.updateButton.text = it
-        }
-
         subscribeTo(viewModel.downloadProgressShowState) {
             TransitionManager.beginDelayedTransition(view as ViewGroup)
             binding.progressBar.isVisible = it
             binding.progressText.isVisible = it
+            binding.updateButton.text = if (it) {
+                "Отмена"
+            } else {
+                "Установить"
+            }
         }
 
         subscribeTo(viewModel.downloadProgressData) {

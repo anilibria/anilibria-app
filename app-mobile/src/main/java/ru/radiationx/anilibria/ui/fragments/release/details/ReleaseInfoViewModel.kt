@@ -30,7 +30,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.DownloadedFile
-import ru.radiationx.data.downloader.FileDownloaderRepository
+import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Episode
@@ -71,7 +71,7 @@ class ReleaseInfoViewModel(
     private val playerAnalytics: PlayerAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics,
-    private val fileDownloaderRepository: FileDownloaderRepository,
+    private val remoteFileRepository: RemoteFileRepository,
 ) : ViewModel() {
 
     private val remindText =
@@ -246,7 +246,7 @@ class ReleaseInfoViewModel(
             }
             coRunCatching {
                 val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
-                fileDownloaderRepository.loadFile(url, bucket, progress)
+                remoteFileRepository.loadFile(url, bucket, progress)
             }.onSuccess {
                 openDownloadedFileAction.set(it)
             }.onFailure {

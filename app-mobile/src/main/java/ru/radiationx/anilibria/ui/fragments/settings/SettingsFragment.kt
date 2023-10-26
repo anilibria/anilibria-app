@@ -125,7 +125,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("about.application")?.apply {
-            summary = "Версия ${sharedBuildConfig.versionName}"
+            summary = "Версия ${sharedBuildConfig.versionName} (${sharedBuildConfig.buildDate})"
         }
 
         findPreference<Preference>("about.check_update")?.apply {

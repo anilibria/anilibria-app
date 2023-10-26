@@ -3,6 +3,9 @@ package ru.radiationx.anilibria.ui.activities.updatechecker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Spanned
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -89,9 +92,6 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
-        binding.currentInfo.text =
-            generateInfo(sharedBuildConfig.versionName, sharedBuildConfig.buildDate)
-
         binding.updateRecycler.apply {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = null
@@ -117,14 +117,18 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         binding.updatePlaceholderTitle.isVisible = state.data?.hasUpdate != true
         binding.updateRecycler.isVisible = state.data?.hasUpdate == true
         binding.updateLoading.isVisible = state.loading
-        binding.updateContainer.isVisible = state.data?.hasUpdate == true
+        binding.updateHeader.isVisible = state.data?.hasUpdate == true
         state.data?.let {
             binding.updateInfo.text = generateInfo(it.name, it.date)
             contentAdapter.bindState(it)
         }
     }
 
-    private fun generateInfo(name: String?, date: String?): String {
-        return String.format("Версия: %s\nСборка от: %s", name, date)
-    }
+    private fun generateInfo(name: String?, date: String?): Spanned = buildSpannedString {
+         bold { append("Версия: ") }
+         append(name)
+         appendLine()
+         bold { append("Сборка от: ") }
+         append(date)
+     }
 }

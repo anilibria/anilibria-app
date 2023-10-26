@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
@@ -13,6 +14,7 @@ import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared_app.codecs.MediaCodecsFinder
@@ -20,12 +22,14 @@ import ru.radiationx.shared_app.codecs.types.CodecProcessingType
 import ru.radiationx.shared_app.codecs.types.CodecQuery
 import java.util.Date
 
-fun Release.toState(): ReleaseDetailState = ReleaseDetailState(
+fun Release.toState(
+    loadings: Map<TorrentId, MutableStateFlow<Int>>,
+): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
     episodesControl = toEpisodeControlState(),
     episodesTabs = toTabsState(),
-    torrents = torrents.map { it.toState() },
+    torrents = torrents.map { it.toState(loadings) },
     blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
 )
 
@@ -103,7 +107,9 @@ fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
     }
 }
 
-fun TorrentItem.toState(): ReleaseTorrentItemState {
+fun TorrentItem.toState(
+    loadings: Map<TorrentId, MutableStateFlow<Int>>,
+): ReleaseTorrentItemState {
     val isTorrentHevc = quality?.contains("hevc", ignoreCase = true) ?: false
     val isSupportHevcHw = MediaCodecsFinder
         .find(CodecQuery("hevc", "hevc"))
@@ -117,7 +123,8 @@ fun TorrentItem.toState(): ReleaseTorrentItemState {
         seeders = seeders.toString(),
         leechers = leechers.toString(),
         date = date,
-        isPrefer = isPrefer
+        isPrefer = isPrefer,
+        progress = loadings[id]
     )
 }
 

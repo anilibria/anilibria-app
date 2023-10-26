@@ -38,6 +38,7 @@ class ReleaseInfoAdapter(
     donationListener: (DonationCardItemState) -> Unit,
     donationCloseListener: (DonationCardItemState) -> Unit,
     torrentClickListener: (ReleaseTorrentItemState) -> Unit,
+    torrentCancelClickListener: (ReleaseTorrentItemState) -> Unit,
     commentsClickListener: () -> Unit,
     episodesTabListener: (String) -> Unit,
     remindCloseListener: () -> Unit,
@@ -57,7 +58,7 @@ class ReleaseInfoAdapter(
         })
         addDelegate(ReleaseExpandDelegate {})
         addDelegate(ReleaseEpisodeDelegate(episodeListener))
-        addDelegate(ReleaseTorrentDelegate(torrentClickListener))
+        addDelegate(ReleaseTorrentDelegate(torrentClickListener, torrentCancelClickListener))
         addDelegate(ReleaseEpisodeControlDelegate(episodeControlListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodesTabListener))
         addDelegate(ReleaseDonateDelegate(donationListener, donationCloseListener))

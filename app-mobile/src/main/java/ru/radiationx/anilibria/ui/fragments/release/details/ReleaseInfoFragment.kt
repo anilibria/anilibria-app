@@ -32,7 +32,6 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
-import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.showWithLifecycle
@@ -50,6 +49,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
             torrentClickListener = viewModel::onTorrentClick,
+            torrentCancelClickListener = viewModel::onCancelTorrentClick,
             commentsClickListener = viewModel::onCommentsClick,
             episodesTabListener = viewModel::onEpisodeTabClick,
             remindCloseListener = viewModel::onRemindCloseClick,
@@ -74,10 +74,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         viewModel.state.onEach {
             showState(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.loadTorrentAction.observe().onEach {
-            loadTorrent(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.playEpisodesAction.observe().onEach {
@@ -123,13 +119,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
-    }
-
-    private fun loadTorrent(torrent: TorrentItem) {
-        torrent.url?.also {
-            viewModel.downloadFile(it)
-        }
-
     }
 
     private fun playEpisodes(release: Release) {

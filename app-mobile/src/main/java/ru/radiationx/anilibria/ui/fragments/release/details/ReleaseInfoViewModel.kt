@@ -3,8 +3,10 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -38,6 +40,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -80,8 +83,10 @@ class ReleaseInfoViewModel(
     private val _state = MutableStateFlow(ReleaseDetailScreenState())
     val state = _state.asStateFlow()
 
+    private val loadingJobs = mutableMapOf<TorrentId, Job>()
+    private val _currentLoadings =
+        MutableStateFlow<Map<TorrentId, MutableStateFlow<Int>>>(emptyMap())
 
-    val loadTorrentAction = EventFlow<TorrentItem>()
     val playEpisodesAction = EventFlow<Release>()
     val playContinueAction = EventFlow<ActionContinue>()
     val playWebAction = EventFlow<ActionPlayWeb>()
@@ -138,10 +143,10 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it)
+            updateLocalRelease(it, _currentLoadings.value)
         }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
-            updateLocalRelease(it)
+            updateLocalRelease(it, _currentLoadings.value)
         }
         observeRelease()
     }
@@ -164,15 +169,20 @@ class ReleaseInfoViewModel(
                 updateModifiers {
                     it.copy(detailLoading = false)
                 }
-                updateLocalRelease(release)
+            }
+            .combine(_currentLoadings) { release, loadings ->
+                updateLocalRelease(release, loadings)
             }
             .launchIn(viewModelScope)
     }
 
-    private fun updateLocalRelease(release: Release) {
+    private fun updateLocalRelease(
+        release: Release,
+        loadings: Map<TorrentId, MutableStateFlow<Int>>,
+    ) {
         currentData = release
         _state.update {
-            it.copy(data = release.toState())
+            it.copy(data = release.toState(loadings))
         }
     }
 
@@ -216,7 +226,37 @@ class ReleaseInfoViewModel(
         val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
-        loadTorrentAction.set(torrentItem)
+        loadTorrent(torrentItem)
+    }
+
+    fun onCancelTorrentClick(item: ReleaseTorrentItemState) {
+        loadingJobs[item.id]?.cancel()
+        loadingJobs.remove(item.id)
+        _currentLoadings.update { it.minus(item.id) }
+    }
+
+    private fun loadTorrent(item: TorrentItem) {
+        val url = item.url ?: return
+        if (loadingJobs[item.id]?.isActive == true) {
+            return
+        }
+        loadingJobs[item.id] = viewModelScope.launch {
+            val progress = MutableStateFlow(0)
+            _currentLoadings.update {
+                it.plus(item.id to progress)
+            }
+            coRunCatching {
+                val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
+                fileDownloaderRepository.loadFile(url, bucket, progress)
+            }.onSuccess {
+                systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
+            _currentLoadings.update {
+                it.minus(item.id)
+            }
+        }
     }
 
     fun onCommentsClick() {

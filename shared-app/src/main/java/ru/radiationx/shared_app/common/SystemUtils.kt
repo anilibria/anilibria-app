@@ -1,6 +1,5 @@
 package ru.radiationx.shared_app.common
 
-import android.app.DownloadManager
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
@@ -8,13 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Environment
 import androidx.core.content.FileProvider
-import timber.log.Timber
 import toothpick.InjectConstructor
 import java.io.File
-import java.io.UnsupportedEncodingException
-import java.net.URLDecoder
 
 @InjectConstructor
 class SystemUtils(

@@ -25,8 +25,10 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import ru.radiationx.shared_app.common.SystemUtils
 
 class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
@@ -55,6 +57,8 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     private val updaterAnalytics by inject<UpdaterAnalytics>()
 
     private val sharedBuildConfig by inject<SharedBuildConfig>()
+
+    private val systemUtils by inject<SystemUtils>()
 
     private val contentAdapter = UpdateContentAdapter(
         actionClickListener = { viewModel.onLinkClick(it) },
@@ -101,6 +105,10 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         viewModel.state.onEach { state ->
             bindState(state)
         }.launchIn(lifecycleScope)
+
+        viewModel.openDownloadedFileAction.observe().onEach {
+            systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+        }.launchInResumed(this)
     }
 
     private fun bindState(state: CheckerScreenState) {

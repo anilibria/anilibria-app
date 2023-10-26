@@ -34,6 +34,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
@@ -115,6 +116,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         viewModel.showContextEpisodeAction.observe().onEach {
             showLongPressEpisodeDialog(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.openDownloadedFileAction.observe().onEach {
+            systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     private fun showState(state: ReleaseDetailScreenState) {

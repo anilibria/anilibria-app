@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
+import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
@@ -37,6 +39,8 @@ class CheckerViewModel(
     private val _currentLoadings =
         MutableStateFlow<Map<UpdateData.UpdateLink, MutableStateFlow<Int>>>(emptyMap())
     private val _currentData = MutableStateFlow(CheckerScreenState())
+
+    val openDownloadedFileAction = EventFlow<DownloadedFile>()
 
     val state = combine(
         _currentLoadings,
@@ -94,7 +98,7 @@ class CheckerViewModel(
             coRunCatching {
                 fileDownloaderRepository.loadFile(link.url, RemoteFile.Bucket.AppUpdates, progress)
             }.onSuccess {
-                systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+                openDownloadedFileAction.set(it)
             }.onFailure {
                 errorHandler.handle(it)
             }

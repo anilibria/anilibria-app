@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -31,6 +32,7 @@ import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.DownloadState
+import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.common.AuthState
@@ -97,6 +99,7 @@ class ReleaseInfoViewModel(
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
+    val openDownloadedFileAction = EventFlow<DownloadedFile>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         _state.update {
@@ -249,7 +252,7 @@ class ReleaseInfoViewModel(
                 val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
                 fileDownloaderRepository.loadFile(url, bucket, progress)
             }.onSuccess {
-                systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+                openDownloadedFileAction.set(it)
             }.onFailure {
                 errorHandler.handle(it)
             }

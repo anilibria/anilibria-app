@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
-import ru.radiationx.data.downloader.DownloadState
 import ru.radiationx.data.downloader.FileDownloaderRepository
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
@@ -88,31 +87,17 @@ class CheckerViewModel(
             return
         }
         loadingJobs[link] = viewModelScope.launch {
-            val progressFlow = MutableStateFlow(0)
+            val progress = MutableStateFlow(0)
             _currentLoadings.update {
-                it.plus(link to progressFlow)
+                it.plus(link to progress)
             }
-            fileDownloaderRepository
-                .loadFile(link.url, RemoteFile.Bucket.AppUpdates)
-                .collect {
-                    when (it) {
-                        is DownloadState.InProgress -> {
-                            progressFlow.value = it.progress
-                        }
-
-                        is DownloadState.Success -> {
-                            systemUtils.openRemoteFile(
-                                it.file.local,
-                                it.file.remote.name,
-                                it.file.remote.mimeType
-                            )
-                        }
-
-                        is DownloadState.Failure -> {
-                            errorHandler.handle(it.error)
-                        }
-                    }
-                }
+            coRunCatching {
+                fileDownloaderRepository.loadFile(link.url, RemoteFile.Bucket.AppUpdates, progress)
+            }.onSuccess {
+                systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
             _currentLoadings.update {
                 it.minus(link)
             }

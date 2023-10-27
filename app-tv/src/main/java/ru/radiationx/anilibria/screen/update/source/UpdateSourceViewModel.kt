@@ -37,9 +37,8 @@ class UpdateSourceViewModel(
             guidedRouter.close()
             val link = sourcesData.value.getOrNull(index) ?: return@launch
             when (link.type) {
-                "file" -> updateController.downloadAction.emit(link)
-                "site" -> systemUtils.externalLink(link.url)
-                else -> systemUtils.externalLink(link.url)
+                UpdateData.LinkType.FILE -> updateController.downloadAction.emit(link)
+                UpdateData.LinkType.SITE -> systemUtils.externalLink(link.url)
             }
         }
     }

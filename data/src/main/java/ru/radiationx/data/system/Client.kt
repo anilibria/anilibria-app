@@ -3,8 +3,14 @@ package ru.radiationx.data.system
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
@@ -16,7 +22,7 @@ import kotlin.coroutines.resumeWithException
 
 open class Client @Inject constructor(
     private val clientWrapper: ClientWrapper,
-    private val sharedBuildConfig: SharedBuildConfig
+    private val sharedBuildConfig: SharedBuildConfig,
 ) : IClient {
 
     companion object {
@@ -54,11 +60,33 @@ open class Client @Inject constructor(
     override suspend fun deleteFull(url: String, args: Map<String, String>): NetworkResponse =
         request(METHOD_DELETE, url, args)
 
+    override suspend fun getRaw(url: String, args: Map<String, String>): Response =
+        requestRaw(METHOD_GET, url, args)
+
+    override suspend fun postRaw(url: String, args: Map<String, String>): Response =
+        requestRaw(METHOD_POST, url, args)
+
     private suspend fun request(
         method: String,
         url: String,
-        args: Map<String, String>
+        args: Map<String, String>,
     ): NetworkResponse {
+        val callResponse = requestRaw(method, url, args)
+        return NetworkResponse(
+            getHttpUrl(url, method, args).toString(),
+            callResponse.code,
+            callResponse.message,
+            callResponse.request.url.toString(),
+            callResponse.body?.string().orEmpty(),
+            callResponse.headers(HEADER_HOST_IP).firstOrNull()
+        )
+    }
+
+    private suspend fun requestRaw(
+        method: String,
+        url: String,
+        args: Map<String, String>,
+    ): Response {
         return withContext(Dispatchers.IO) {
             val body = getRequestBody(method, args)
             val httpUrl = getHttpUrl(url, method, args)
@@ -72,20 +100,13 @@ open class Client @Inject constructor(
             if (!callResponse.isSuccessful) {
                 throw HttpException(callResponse.code, callResponse.message, callResponse)
             }
-            NetworkResponse(
-                getHttpUrl(url, method, args).toString(),
-                callResponse.code,
-                callResponse.message,
-                callResponse.request.url.toString(),
-                callResponse.body?.string().orEmpty(),
-                callResponse.headers(HEADER_HOST_IP).firstOrNull()
-            )
+            callResponse
         }
     }
 
     private fun getRequestBody(
         method: String,
-        args: Map<String, String>
+        args: Map<String, String>,
     ): RequestBody? = when (method) {
         METHOD_POST, METHOD_PUT -> {
             FormBody.Builder()
@@ -96,6 +117,7 @@ open class Client @Inject constructor(
                 }
                 .build()
         }
+
         METHOD_GET, METHOD_DELETE -> null
         else -> throw Exception("Unknown method: $method")
     }

@@ -1,50 +1,65 @@
 package ru.radiationx.shared_app.common
 
-import android.app.DownloadManager
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Environment
-import timber.log.Timber
+import androidx.core.content.FileProvider
 import toothpick.InjectConstructor
-import java.io.UnsupportedEncodingException
-import java.net.URLDecoder
+import java.io.File
 
 @InjectConstructor
 class SystemUtils(
     private val context: Context,
 ) {
 
-    /* PLEASE CHECK STORAGE PERMISSION */
-    fun systemDownloader(url: String, fileName: String = getFileNameFromUrl(url)) {
-        val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-        dm?.let {
-            val request = DownloadManager.Request(Uri.parse(url))
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-            request.setMimeType(MimeTypeUtil.getType(fileName))
-            request.setTitle(fileName)
-            request.setDescription(fileName)
-            it.enqueue(request)
+    private fun getRemoteFileUri(file: File, name: String): Uri {
+        val packageName = context.packageName
+        val authority = "${packageName}.remotefileprovider"
+        return FileProvider.getUriForFile(context, authority, file, name).also {
+            context.grantUriPermission(packageName, it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 
-    fun getFileNameFromUrl(url: String): String {
-        var fileName = url
-        try {
-            fileName = URLDecoder.decode(url, "CP1251")
-        } catch (e: UnsupportedEncodingException) {
-            Timber.e(e)
+    fun openRemoteFile(file: File, name: String, mimeType: String) {
+        val data = getRemoteFileUri(file, name)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(data, mimeType)
+            putExtra(Intent.EXTRA_TITLE, name)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        val chooserIntent = Intent.createChooser(intent, "Открыть в").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(chooserIntent);
+    }
+
+    fun shareRemoteFile(file: File, name: String, mimeType: String) {
+        val data = getRemoteFileUri(file, name)
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = mimeType
+            putExtra(Intent.EXTRA_TITLE, name)
+            putExtra(Intent.EXTRA_STREAM, data)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
-        val cut = fileName.lastIndexOf('/')
-        if (cut != -1) {
-            fileName = fileName.substring(cut + 1)
+        val chooserIntent = Intent.createChooser(sendIntent, "Поделиться").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        return fileName
+
+        val resolves = context.packageManager.queryIntentActivities(
+            chooserIntent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        resolves.forEach {
+            val packageName = it.activityInfo.packageName
+            context.grantUriPermission(packageName, data, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(chooserIntent)
     }
 
     fun copyToClipBoard(s: String) {

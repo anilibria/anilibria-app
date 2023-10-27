@@ -1,23 +1,24 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
-import java.util.*
+import java.util.Date
 
 data class ReleaseDetailScreenState(
     val data: ReleaseDetailState? = null,
     val modifiers: ReleaseDetailModifiersState = ReleaseDetailModifiersState(),
     val remindText: String? = null,
-    val donationCardState: DonationCardItemState? = null
+    val donationCardState: DonationCardItemState? = null,
 )
 
 data class EpisodesTabState(
     val tag: String,
     val title: String,
     val textColor: Int?,
-    val episodes: List<ReleaseEpisodeItemState>
+    val episodes: List<ReleaseEpisodeItemState>,
 )
 
 data class ReleaseDetailModifiersState(
@@ -25,7 +26,7 @@ data class ReleaseDetailModifiersState(
     val favoriteRefreshing: Boolean = false,
     val episodesReversed: Boolean = false,
     val descriptionExpanded: Boolean = false,
-    val detailLoading: Boolean = true
+    val detailLoading: Boolean = true,
 )
 
 data class ReleaseDetailState(
@@ -34,7 +35,7 @@ data class ReleaseDetailState(
     val episodesControl: ReleaseEpisodesControlState?,
     val episodesTabs: List<EpisodesTabState>,
     val torrents: List<ReleaseTorrentItemState>,
-    val blockedInfo: ReleaseBlockedInfoState?
+    val blockedInfo: ReleaseBlockedInfoState?,
 )
 
 data class ReleaseInfoState(
@@ -46,7 +47,7 @@ data class ReleaseInfoState(
     val days: List<Int>,
     val isOngoing: Boolean,
     val announce: String?,
-    val favorite: ReleaseFavoriteState
+    val favorite: ReleaseFavoriteState,
 ) {
     companion object {
         const val TAG_GENRE = "genre"
@@ -56,7 +57,7 @@ data class ReleaseInfoState(
 
 data class ReleaseFavoriteState(
     val rating: String,
-    val isAdded: Boolean
+    val isAdded: Boolean,
 )
 
 data class ReleaseEpisodeItemState(
@@ -74,7 +75,7 @@ data class ReleaseEpisodeItemState(
     val actionTitle: String?,
     val actionColorRes: Int?,
     val actionIconRes: Int?,
-    val hasActionUrl: Boolean
+    val hasActionUrl: Boolean,
 )
 
 enum class ReleaseEpisodeItemType {
@@ -89,16 +90,17 @@ data class ReleaseTorrentItemState(
     val seeders: String,
     val leechers: String,
     val date: Date?,
-    val isPrefer: Boolean
+    val isPrefer: Boolean,
+    val progress: MutableStateFlow<Int>?,
 )
 
 data class ReleaseEpisodesControlState(
     val hasWeb: Boolean,
     val hasEpisodes: Boolean,
     val hasViewed: Boolean,
-    val continueTitle: String
+    val continueTitle: String,
 )
 
 data class ReleaseBlockedInfoState(
-    val title: String
+    val title: String,
 )

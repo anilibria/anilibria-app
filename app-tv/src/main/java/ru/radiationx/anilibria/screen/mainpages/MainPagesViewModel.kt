@@ -7,7 +7,6 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.SearchScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.terrakok.cicerone.Router
@@ -17,7 +16,6 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class MainPagesViewModel(
     private val checkerRepository: CheckerRepository,
-    private val buildConfig: SharedBuildConfig,
     private val router: Router,
 ) : LifecycleViewModel() {
 
@@ -26,9 +24,9 @@ class MainPagesViewModel(
     init {
         viewModelScope.launch {
             coRunCatching {
-                checkerRepository.checkUpdate(buildConfig.versionCode, true)
+                checkerRepository.checkUpdate(true)
             }.onSuccess {
-                hasUpdatesData.value = it.code > buildConfig.versionCode
+                hasUpdatesData.value = it.hasUpdate
             }.onFailure {
                 Timber.e(it)
             }

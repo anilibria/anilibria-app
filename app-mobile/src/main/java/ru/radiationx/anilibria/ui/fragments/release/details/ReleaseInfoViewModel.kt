@@ -1,17 +1,15 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
-import android.Manifest
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
-import ru.mintrocket.lib.mintpermissions.flows.ext.isSuccess
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -31,6 +29,9 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.downloader.DownloadedFile
+import ru.radiationx.data.downloader.RemoteFileRepository
+import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
@@ -38,6 +39,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -47,7 +49,6 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.regex.Pattern
 
 @InjectConstructor
 class ReleaseInfoViewModel(
@@ -61,7 +62,6 @@ class ReleaseInfoViewModel(
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,
     private val appPreferences: PreferencesHolder,
-    private val mintPermissionsDialogFlow: MintPermissionsDialogFlow,
     private val commentsNotifier: ReleaseCommentsNotifier,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
@@ -71,6 +71,7 @@ class ReleaseInfoViewModel(
     private val playerAnalytics: PlayerAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics,
+    private val remoteFileRepository: RemoteFileRepository,
 ) : ViewModel() {
 
     private val remindText =
@@ -81,18 +82,20 @@ class ReleaseInfoViewModel(
     private val _state = MutableStateFlow(ReleaseDetailScreenState())
     val state = _state.asStateFlow()
 
+    private val loadingJobs = mutableMapOf<TorrentId, Job>()
+    private val _currentLoadings =
+        MutableStateFlow<Map<TorrentId, MutableStateFlow<Int>>>(emptyMap())
 
-    val loadTorrentAction = EventFlow<TorrentItem>()
     val playEpisodesAction = EventFlow<Release>()
     val playContinueAction = EventFlow<ActionContinue>()
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
     val loadEpisodeAction = EventFlow<ActionLoadEpisode>()
     val showUnauthAction = EventFlow<Unit>()
-    val showDownloadAction = EventFlow<String>()
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
+    val openDownloadedFileAction = EventFlow<DownloadedFile>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         _state.update {
@@ -139,10 +142,10 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it)
+            updateLocalRelease(it, _currentLoadings.value)
         }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
-            updateLocalRelease(it)
+            updateLocalRelease(it, _currentLoadings.value)
         }
         observeRelease()
     }
@@ -165,15 +168,20 @@ class ReleaseInfoViewModel(
                 updateModifiers {
                     it.copy(detailLoading = false)
                 }
-                updateLocalRelease(release)
+            }
+            .combine(_currentLoadings) { release, loadings ->
+                updateLocalRelease(release, loadings)
             }
             .launchIn(viewModelScope)
     }
 
-    private fun updateLocalRelease(release: Release) {
+    private fun updateLocalRelease(
+        release: Release,
+        loadings: Map<TorrentId, MutableStateFlow<Int>>,
+    ) {
         currentData = release
         _state.update {
-            it.copy(data = release.toState())
+            it.copy(data = release.toState(loadings))
         }
     }
 
@@ -217,7 +225,37 @@ class ReleaseInfoViewModel(
         val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
-        loadTorrentAction.set(torrentItem)
+        loadTorrent(torrentItem)
+    }
+
+    fun onCancelTorrentClick(item: ReleaseTorrentItemState) {
+        loadingJobs[item.id]?.cancel()
+        loadingJobs.remove(item.id)
+        _currentLoadings.update { it.minus(item.id) }
+    }
+
+    private fun loadTorrent(item: TorrentItem) {
+        val url = item.url ?: return
+        if (loadingJobs[item.id]?.isActive == true) {
+            return
+        }
+        loadingJobs[item.id] = viewModelScope.launch {
+            val progress = MutableStateFlow(0)
+            _currentLoadings.update {
+                it.plus(item.id to progress)
+            }
+            coRunCatching {
+                val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
+                remoteFileRepository.loadFile(url, bucket, progress)
+            }.onSuccess {
+                openDownloadedFileAction.set(it)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
+            _currentLoadings.update {
+                it.minus(item.id)
+            }
+        }
     }
 
     fun onCommentsClick() {
@@ -473,36 +511,15 @@ class ReleaseInfoViewModel(
             if (it.showDonateDialog) {
                 showFileDonateAction.set(url)
             } else {
-                showDownloadAction.set(url)
+                downloadFile(url)
             }
         }
     }
 
     fun downloadFile(url: String) {
-        var fileName = systemUtils.getFileNameFromUrl(url)
-        val matcher = Pattern.compile("\\?download=([\\s\\S]+)").matcher(fileName)
-        if (matcher.find()) {
-            matcher.group(1)?.also {
-                fileName = it
-            }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            systemUtils.systemDownloader(url, fileName)
-            return
-        }
-        viewModelScope.launch {
-            val result =
-                mintPermissionsDialogFlow.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            if (result.isSuccess()) {
-                systemUtils.systemDownloader(url, fileName)
-            }
-        }
-    }
-
-    fun submitDownloadEpisodeUrlAnalytics() {
-        currentData?.also {
-            releaseAnalytics.episodeDownloadByUrl(it.id.id)
-        }
+        val data = currentData ?: return
+        releaseAnalytics.episodeDownloadByUrl(data.id.id)
+        systemUtils.externalLink(url)
     }
 
     fun onDialogPatreonClick() {

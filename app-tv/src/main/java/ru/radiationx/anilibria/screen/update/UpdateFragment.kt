@@ -14,12 +14,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentUpdateBinding
-import ru.radiationx.anilibria.di.DownloadModule
 import ru.radiationx.quill.inject
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.radiationx.shared_app.common.download.DownloadControllerImpl
 
 class UpdateFragment : Fragment(R.layout.fragment_update) {
 
@@ -29,20 +26,12 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
 
     private val backgroundManager by inject<GradientBackgroundManager>()
 
-    private val downloadController by inject<DownloadControllerImpl>()
-
     private val viewModel by viewModel<UpdateViewModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        installModules(DownloadModule())
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
-        viewLifecycleOwner.lifecycle.addObserver(downloadController)
 
         backgroundManager.clearGradient()
         progressBarManager.setRootView(binding.updateRoot)
@@ -60,14 +49,15 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
             binding.updateDescription.text = string.toString().parseAsHtml()
         }
 
-        subscribeTo(viewModel.downloadActionTitle) {
-            binding.updateButton.text = it
-        }
-
         subscribeTo(viewModel.downloadProgressShowState) {
             TransitionManager.beginDelayedTransition(view as ViewGroup)
             binding.progressBar.isVisible = it
             binding.progressText.isVisible = it
+            binding.updateButton.text = if (it) {
+                "Отмена"
+            } else {
+                "Установить"
+            }
         }
 
         subscribeTo(viewModel.downloadProgressData) {

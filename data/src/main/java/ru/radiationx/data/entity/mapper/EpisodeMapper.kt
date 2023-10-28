@@ -1,6 +1,12 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.domain.release.*
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.release.ExternalEpisode
+import ru.radiationx.data.entity.domain.release.ExternalPlaylist
+import ru.radiationx.data.entity.domain.release.PlayerSkips
+import ru.radiationx.data.entity.domain.release.RutubeEpisode
+import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.response.release.EpisodeResponse
@@ -25,7 +31,7 @@ fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {
     val episodeId = id.toId(releaseId)
     return Episode(
         id = episodeId,
-        title = title,
+        title = createCombinedTitle(),
         urlSd = urlSd,
         urlHd = urlHd,
         urlFullHd = urlFullHd,
@@ -61,7 +67,7 @@ fun EpisodeResponse.toSourceDomain(releaseId: ReleaseId): SourceEpisode? {
     }
     return SourceEpisode(
         id = id.toId(releaseId),
-        title = title,
+        title = createCombinedTitle(),
         updatedAt = updatedAt?.secToDate(),
         urlSd = srcUrlSd?.takeIf { it != VK_URL },
         urlHd = srcUrlHd?.takeIf { it != VK_URL },
@@ -75,7 +81,7 @@ fun EpisodeResponse.toRutubeDomain(releaseId: ReleaseId): RutubeEpisode? {
     }
     return RutubeEpisode(
         id = id.toId(releaseId),
-        title = title,
+        title = createCombinedTitle(),
         updatedAt = updatedAt?.secToDate(),
         rutubeId = rutubeId,
         url = "https://rutube.ru/play/embed/$rutubeId"
@@ -96,3 +102,10 @@ fun ExternalEpisodeResponse.toDomain(releaseId: ReleaseId): ExternalEpisode = Ex
     title = title,
     url = url
 )
+
+private fun EpisodeResponse.createCombinedTitle(): String? {
+    if (title == null && name == null) {
+        return null
+    }
+    return listOfNotNull(title, name).joinToString(" • ")
+}

@@ -1,27 +1,31 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.relativeDate
+import ru.radiationx.shared_app.common.CompatDrawableSpan
+import kotlin.math.roundToInt
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class ReleaseEpisodeDelegate(
-    private val itemListener: Listener
+    private val itemListener: Listener,
 ) : AppAdapterDelegate<ReleaseEpisodeListItem, ListItem, ReleaseEpisodeDelegate.ViewHolder>(
     R.layout.item_release_episode,
     { it is ReleaseEpisodeListItem },
@@ -35,13 +39,30 @@ class ReleaseEpisodeDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val itemListener: Listener
+        private val itemListener: Listener,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemReleaseEpisodeBinding>()
 
+        private val viewedDrawable by lazy {
+            val size = (binding.root.context.resources.displayMetrics.density * 18).roundToInt()
+            binding.root.context
+                .getCompatDrawable(R.drawable.ic_checkbox_marked_circle)!!.mutate()
+                .apply {
+                    setBounds(0, 0, size, size)
+                }
+        }
+
         fun bind(state: ReleaseEpisodeItemState, isEven: Boolean) {
-            binding.itemTitle.text = state.title
+            binding.itemTitle.text = buildSpannedString {
+                if (state.isViewed) {
+                    inSpans(CompatDrawableSpan(viewedDrawable, CompatDrawableSpan.ALIGN_CENTER)) {
+                        append(" ")
+                    }
+                    append(" ")
+                }
+                append(state.title)
+            }
             binding.itemSubtitle.text = state.subtitle
             binding.itemSubtitle.isVisible = state.subtitle != null
             binding.itemDate.text = state.updatedAt
@@ -54,7 +75,6 @@ class ReleaseEpisodeDelegate(
                 binding.itemDate.context.getColorFromAttr(R.attr.textSecond)
             }
             binding.itemDate.setTextColor(dateColor)
-            binding.itemViewedState.isVisible = state.isViewed
             binding.qualitySd.isVisible = state.hasSd
             binding.qualityHd.isVisible = state.hasHd
             binding.qualityFullHd.isVisible = state.hasFullHd

@@ -3,32 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="wrap_content"
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?selectableItemBackground">
+    android:foreground="?selectableItemBackground"
+    android:minHeight="72dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:maxLines="1"
         android:textColor="?textDefault"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/item_subtitle"
-        app:layout_constraintEnd_toStartOf="@id/item_viewed_state"
+        app:layout_constraintEnd_toStartOf="@id/quality_sd"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Серия 660" />
+        tools:text="Серия 660Серия 660Серия 660Серия 660Серия 660" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/item_subtitle"
@@ -54,27 +56,12 @@
         tools:text="Обновлена 12.12.12 12:00"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/item_viewed_state"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="4dp"
-        android:padding="3dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/item_title"
-        app:layout_constraintEnd_toStartOf="@id/quality_sd"
-        app:layout_constraintStart_toEndOf="@id/item_title"
-        app:layout_constraintTop_toTopOf="@id/item_title"
-        app:srcCompat="@drawable/ic_checkbox_marked_circle"
-        tools:visibility="visible" />
-
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/quality_sd"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
         android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_hd"
+        android:background="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_hd"
         app:layout_constraintTop_toTopOf="parent"
@@ -83,10 +70,10 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/quality_hd"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
         android:layout_height="0dp"
         android:layout_toStartOf="@+id/quality_full_hd"
+        android:background="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/quality_full_hd"
         app:layout_constraintTop_toTopOf="parent"
@@ -95,9 +82,9 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/quality_full_hd"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="56dp"
         android:layout_height="0dp"
+        android:background="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

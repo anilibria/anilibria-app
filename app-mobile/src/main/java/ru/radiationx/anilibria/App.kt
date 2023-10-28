@@ -46,9 +46,6 @@ class App : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun initInMainProcess() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        }
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

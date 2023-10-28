@@ -6,14 +6,14 @@
         android:layout="@layout/preference_category_custom"
         android:title="Уведомления">
 
-        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="notifications.all"
             android:layout="@layout/preference_custom"
             android:summary="Уведомления о новых сериях и YouTube роликах"
             android:title="Общие" />
 
-        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="notifications.service"
             android:layout="@layout/preference_custom"
@@ -37,7 +37,7 @@
             android:summary="%s"
             android:title="@string/pref_title_theme_mode" />
 
-        <ru.radiationx.anilibria.ui.widgets.SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="episodes_is_reverse"
             android:layout="@layout/preference_custom"

@@ -126,9 +126,7 @@ class CatalogFilterDialog(
             (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
                 it.gravity = Gravity.BOTTOM
             })
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            actionButton.z = parentView.z
-        }
+        actionButton.z = parentView.z
 
         sortingGroup.setOnCheckedChangeListener(sortingListener)
         filterComplete.setOnCheckedChangeListener(completeListener)

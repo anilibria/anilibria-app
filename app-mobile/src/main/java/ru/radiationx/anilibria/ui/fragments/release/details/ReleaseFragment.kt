@@ -98,9 +98,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            baseBinding.toolbarImage.transitionName = transitionNameLocal
-        }
+        baseBinding.toolbarImage.transitionName = transitionNameLocal
         postopneEnterTransitionWithTimout()
         ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(

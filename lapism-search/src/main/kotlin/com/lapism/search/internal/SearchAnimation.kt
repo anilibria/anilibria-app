@@ -33,11 +33,6 @@ internal class SearchAnimation {
         duration: Long,
         back: Boolean,
     ) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mAnimationListener?.onAnimationStart()
-            mAnimationListener?.onAnimationEnd()
-            return
-        }
         var cx = x
         if (cx <= 0) {
             val padding = context.resources.getDimensionPixelSize(R.dimen.search_reveal)

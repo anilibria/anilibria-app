@@ -7,6 +7,7 @@ import com.squareup.moshi.JsonClass
 data class EpisodeResponse(
     @Json(name = "id") val id: Float,
     @Json(name = "title") val title: String?,
+    @Json(name = "name") val name: String?,
     @Json(name = "sd") val urlSd: String?,
     @Json(name = "hd") val urlHd: String?,
     @Json(name = "fullhd") val urlFullHd: String?,

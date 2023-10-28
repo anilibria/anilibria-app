@@ -29,6 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
@@ -82,7 +83,7 @@ class FavoritesFragment :
         super.onViewCreated(view, savedInstanceState)
 
         //ToolbarHelper.fixInsets(toolbar)
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
         }

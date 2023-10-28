@@ -145,21 +145,15 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         actionsForWebView.clear();
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                evalJs(script, null);
-            } catch (Exception error) {
-                Timber.e(error);
-                loadUrl("javascript:" + script);
-            }
-        } else {
+        try {
+            evalJs(script, null);
+        } catch (Exception error) {
+            Timber.e(error);
             loadUrl("javascript:" + script);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void evalJs(String script, ValueCallback<String> resultCallback) {
         syncWithJs(() -> evaluateJavascript(script, resultCallback));
     }

@@ -5,6 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import java.util.concurrent.TimeUnit
+
+fun Fragment.postopneEnterTransitionWithTimout() {
+    postponeEnterTransition(1L, TimeUnit.SECONDS)
+}
 
 fun Activity.isLaunchedFromHistory(): Boolean {
     return intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0

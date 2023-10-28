@@ -33,9 +33,11 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
+import java.util.concurrent.TimeUnit
 
 
 /* Created by radiationx on 16.11.17. */
@@ -99,7 +101,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             baseBinding.toolbarImage.transitionName = transitionNameLocal
         }
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(
             baseBinding.toolbarLayout,

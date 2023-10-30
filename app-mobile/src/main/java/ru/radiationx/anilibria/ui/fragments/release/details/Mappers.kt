@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
+import androidx.core.text.htmlEncode
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
@@ -9,6 +10,7 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
 import ru.radiationx.data.entity.domain.release.FavoriteInfo
+import ru.radiationx.data.entity.domain.release.Members
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
@@ -39,24 +41,21 @@ fun FavoriteInfo.toState() = ReleaseFavoriteState(
 )
 
 fun Release.toInfoState(): ReleaseInfoState {
-    val seasonsHtml = "<b>Год:</b> " + seasons.joinToString(", ")
-    val voicesHtml = "<b>Голоса:</b> " + voices.joinToString(", ") {
-        val index = voices.indexOf(it)
-        "<a href=\"${ReleaseInfoState.TAG_VOICE}_$index\">${it}</a>"
-    }
+    val seasonsHtml = "<b>Сезон:</b> ${year.orEmpty()} ${season.orEmpty()}"
+    val voicesHtml = members?.toInfo().orEmpty().toTypedArray()
     val typesHtml = "<b>Тип:</b> " + types.joinToString(", ")
-    val releaseStatus = status ?: "Не указано"
+    val releaseStatus = status?.takeIf { it.isNotEmpty() } ?: "Не указано"
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
-    val genresHtml = "<b>Жанр:</b> " + genres.joinToString(", ") {
-        val index = genres.indexOf(it)
-        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$index\">${it.capitalizeDefault()}</a>"
+    val genresHtml = "<b>Жанры:</b> " + genres.joinToString(", ") {
+        val value = it.htmlEncode()
+        "<a href=\"${ReleaseInfoState.TAG_GENRE}_$value\">${value.capitalizeDefault()}</a>"
     }
-    val arrHtml = arrayOf(
+    val arrHtml = listOfNotNull(
         seasonsHtml,
-        voicesHtml,
         typesHtml,
-        releaseStatusHtml,
-        genresHtml
+        genresHtml,
+        *voicesHtml,
+        releaseStatusHtml
     )
     val infoStr = arrHtml.joinToString("<br>")
 
@@ -71,6 +70,23 @@ fun Release.toInfoState(): ReleaseInfoState {
         announce = announce,
         favorite = favoriteInfo.toState()
     )
+}
+
+private fun Members.toInfo(): List<String> {
+    return listOfNotNull(
+        voicing.asMemberRole("Озвучка"),
+        timing.asMemberRole("Тайминг"),
+        (translating + editing + decorating).asMemberRole("Работа над субтитрами"),
+    )
+}
+
+private fun List<String>.asMemberRole(title: String): String? {
+    if (isEmpty()) return null
+    val links = joinToString(", ") {
+        val value = it.htmlEncode()
+        "<a href=\"${ReleaseInfoState.TAG_VOICE}_$value\">${value}</a>"
+    }
+    return "<b>$title:</b> $links"
 }
 
 fun BlockedInfo.toState(): ReleaseBlockedInfoState {

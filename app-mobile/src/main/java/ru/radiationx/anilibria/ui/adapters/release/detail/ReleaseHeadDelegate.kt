@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.text.Html
+import android.util.Log
 import android.view.View
 import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
@@ -41,7 +41,7 @@ class ReleaseHeadDelegate(
         private val binding by viewBinding<ItemReleaseHeadNewBinding>()
 
         init {
-            val tagsRegex = Regex("(\\w+)_(\\d+)")
+            val tagsRegex = Regex("(\\w+?)_([\\s\\S]+)")
 
             binding.fullFavBtn.setOnClickListener {
                 itemListener.onClickFav()
@@ -52,8 +52,8 @@ class ReleaseHeadDelegate(
             binding.fullInfo.movementMethod = LinkMovementMethod {
                 val match = tagsRegex.find(it) ?: return@LinkMovementMethod true
                 val tag = match.groupValues[1]
-                val index = match.groupValues[2].toInt()
-                itemListener.onClickGenre(tag, index)
+                val value = match.groupValues[2]
+                itemListener.onClickGenre(tag, value)
                 true
             }
             binding.fullAnnounce.movementMethod = LinkMovementMethod {
@@ -128,7 +128,7 @@ class ReleaseHeadDelegate(
     interface Listener {
         fun onClickSomeLink(url: String)
 
-        fun onClickGenre(tag: String, index: Int)
+        fun onClickGenre(tag: String, value: String)
 
         fun onClickFav()
 

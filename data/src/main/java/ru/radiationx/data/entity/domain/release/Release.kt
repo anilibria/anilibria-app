@@ -21,7 +21,9 @@ data class Release(
     val types: List<String>,
     val genres: List<String>,
     val voices: List<String>,
-    val seasons: List<String>,
+    val members: Members?,
+    val year: String?,
+    val season: String?,
     val days: List<String>,
     val description: String?,
     val announce: String?,
@@ -41,6 +43,7 @@ data class Release(
 
 
     companion object {
+        const val STATUS_CODE_NOTHING = "0"
         const val STATUS_CODE_PROGRESS = "1"
         const val STATUS_CODE_COMPLETE = "2"
         const val STATUS_CODE_HIDDEN = "3"

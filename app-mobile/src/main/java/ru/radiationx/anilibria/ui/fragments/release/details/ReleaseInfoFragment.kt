@@ -435,8 +435,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             viewModel.onClickLink(url)
         }
 
-        override fun onClickGenre(tag: String, index: Int) {
-            viewModel.openSearch(tag, index)
+        override fun onClickGenre(tag: String, value: String) {
+            viewModel.openSearch(tag, value)
         }
 
         override fun onClickFav() {

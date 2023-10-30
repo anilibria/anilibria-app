@@ -52,6 +52,7 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -158,7 +159,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
         viewModel.updateTabsAction.observe().onEach {
             updateTabs()
-        }.launchIn(lifecycleScope)
+        }.launchInResumed(this)
     }
 
 

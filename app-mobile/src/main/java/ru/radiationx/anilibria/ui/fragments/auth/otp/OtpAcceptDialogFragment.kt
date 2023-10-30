@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
 import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 
 class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
@@ -54,6 +55,6 @@ class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
 
         viewModel.closeEvent.onEach {
             dismissAllowingStateLoss()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 }

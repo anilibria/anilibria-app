@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
 
@@ -89,7 +90,7 @@ class AuthVkFragment :
 
         viewModel.reloadEvent.onEach {
             binding.webView.reload()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {

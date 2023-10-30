@@ -33,6 +33,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
@@ -178,20 +179,20 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
         viewModel.shareAction.observe().onEach {
             systemUtils.shareText(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.copyAction.observe().onEach {
             systemUtils.copyToClipBoard(it)
             Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.shortcutAction.observe().onEach {
             shortcutHelper.addShortcut(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.openCommentsAction.onEach {
             binding.viewPagerPaged.currentItem = PAGE_COMMENTS
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onBackPressed(): Boolean {

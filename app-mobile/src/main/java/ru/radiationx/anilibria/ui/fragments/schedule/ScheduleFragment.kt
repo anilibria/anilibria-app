@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -94,7 +95,7 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
             (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
                 it.scrollToPositionWithOffset(position, 0)
             }
-        }
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

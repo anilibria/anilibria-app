@@ -30,8 +30,8 @@ import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.DownloadedFile
-import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
+import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
@@ -487,21 +487,19 @@ class ReleaseInfoViewModel(
         router.navigateTo(Screens.Auth())
     }
 
-    fun openSearch(tag: String, index: Int) {
+    fun openSearch(tag: String, value: String) {
         val data = currentData ?: return
         when (tag) {
             ReleaseInfoState.TAG_GENRE -> {
-                val genre = data.genres.getOrNull(index) ?: return
                 releaseAnalytics.genreClick(data.id.id)
                 catalogAnalytics.open(AnalyticsConstants.screen_release)
-                router.navigateTo(Screens.Catalog(genre))
+                router.navigateTo(Screens.Catalog(value))
             }
 
             ReleaseInfoState.TAG_VOICE -> {
-                val voice = data.voices.getOrNull(index) ?: return
                 releaseAnalytics.voiceClick(data.id.id)
                 teamsAnalytics.open(AnalyticsConstants.screen_release)
-                router.navigateTo(Screens.Teams(voice))
+                router.navigateTo(Screens.Teams(value))
             }
         }
     }

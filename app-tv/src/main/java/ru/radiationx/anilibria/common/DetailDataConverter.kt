@@ -6,7 +6,7 @@ import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.capitalizeDefault
 import toothpick.InjectConstructor
 import java.text.NumberFormat
-import java.util.*
+import java.util.Calendar
 
 @InjectConstructor
 class DetailDataConverter {
@@ -18,7 +18,7 @@ class DetailDataConverter {
             titleEn = titleEng.orEmpty(),
             extra = listOf(
                 genres.firstOrNull()?.capitalizeDefault()?.trim(),
-                "${seasons.firstOrNull()} год",
+                "${year.orEmpty()} ${season.orEmpty()}",
                 types.firstOrNull()?.trim(),
                 "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),

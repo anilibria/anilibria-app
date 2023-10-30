@@ -224,6 +224,13 @@ class SearchCatalogFragment :
         searchView?.requestLayout()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
+    }
+
     override fun onItemClick(position: Int, view: View) {
         sharedViewLocal = view
     }

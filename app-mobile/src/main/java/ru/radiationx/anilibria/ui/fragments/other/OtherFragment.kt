@@ -54,6 +54,11 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }.launchInResumed(viewLifecycleOwner)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+    }
+
     inner class OtherAdapter : ListItemAdapter() {
 
         private val profileClickListener = { _: ProfileItemState -> viewModel.onProfileClick() }

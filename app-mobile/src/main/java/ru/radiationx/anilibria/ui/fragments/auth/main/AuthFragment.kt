@@ -83,6 +83,11 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
         }.launchInResumed(viewLifecycleOwner)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.authSocialList.adapter = null
+    }
+
     private fun onSocialClick(item: SocialAuthItemState) {
         AlertDialog.Builder(requireContext())
             .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")

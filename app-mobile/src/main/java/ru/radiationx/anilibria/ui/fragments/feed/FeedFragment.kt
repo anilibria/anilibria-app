@@ -210,8 +210,11 @@ class FeedFragment :
     }
 
     override fun onDestroyView() {
-        adapter.saveState(null)
         super.onDestroyView()
+        adapter.saveState(null)
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {

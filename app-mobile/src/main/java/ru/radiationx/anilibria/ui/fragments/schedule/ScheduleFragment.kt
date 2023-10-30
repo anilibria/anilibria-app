@@ -109,7 +109,8 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
     }
 
     override fun onDestroyView() {
-        scheduleAdapter.saveState(null)
         super.onDestroyView()
+        scheduleAdapter.saveState(null)
+        binding.recyclerView.adapter = null
     }
 }

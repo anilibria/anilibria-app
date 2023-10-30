@@ -118,6 +118,11 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }.launchInResumed(viewLifecycleOwner)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+    }
+
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
     }

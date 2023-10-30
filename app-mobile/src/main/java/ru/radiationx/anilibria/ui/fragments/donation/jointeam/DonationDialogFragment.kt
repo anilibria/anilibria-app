@@ -60,4 +60,9 @@ class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_cont
             binding.btCancel.isVisible = data.cancelText != null
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.contentRecycler.adapter = null
+    }
 }

@@ -163,8 +163,11 @@ class FavoritesFragment :
     }
 
     override fun onDestroyView() {
-        searchView?.clearFocus()
         super.onDestroyView()
+        searchView?.clearFocus()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
     }
 
     override fun onItemClick(position: Int, view: View) {

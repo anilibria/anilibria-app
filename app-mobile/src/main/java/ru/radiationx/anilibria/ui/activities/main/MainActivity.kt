@@ -162,6 +162,11 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }.launchInResumed(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.tabsRecycler.adapter = null
+    }
+
 
     private fun showUpdateData(update: UpdateDataState) {
         if (update.hasUpdate) {

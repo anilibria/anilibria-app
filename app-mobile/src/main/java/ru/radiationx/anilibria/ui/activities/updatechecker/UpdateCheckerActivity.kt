@@ -111,6 +111,13 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         }.launchInResumed(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isLaunchedFromHistory()) {
+            binding.updateRecycler.adapter = null
+        }
+    }
+
     private fun bindState(state: CheckerScreenState) {
         binding.updatePlaceholder.isVisible =
             (state.data == null || !state.data.hasUpdate) && !state.loading
@@ -125,10 +132,10 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     }
 
     private fun generateInfo(name: String?, date: String?): Spanned = buildSpannedString {
-         bold { append("Версия: ") }
-         append(name)
-         appendLine()
-         bold { append("Сборка от: ") }
-         append(date)
-     }
+        bold { append("Версия: ") }
+        append(name)
+        appendLine()
+        bold { append("Сборка от: ") }
+        append(date)
+    }
 }

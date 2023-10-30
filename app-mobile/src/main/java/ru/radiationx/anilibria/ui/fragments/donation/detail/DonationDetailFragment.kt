@@ -71,4 +71,9 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
             binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.donationRecycler.adapter = null
+    }
 }

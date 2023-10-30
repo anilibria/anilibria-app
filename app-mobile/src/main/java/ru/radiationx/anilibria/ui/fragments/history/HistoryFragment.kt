@@ -162,6 +162,13 @@ class HistoryFragment :
         searchView?.requestLayout()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
+    }
+
     override fun onItemClick(item: ReleaseItemState, position: Int) {
         viewModel.onItemClick(item)
     }

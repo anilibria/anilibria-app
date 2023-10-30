@@ -42,8 +42,8 @@ class MainViewModel(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
-    apiConfig: ApiConfig,
-    analyticsProfile: AnalyticsProfile,
+    private val apiConfig: ApiConfig,
+    private val analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
     private val favoritesAnalytics: FavoritesAnalytics,
@@ -61,7 +61,7 @@ class MainViewModel(
 
     val updateTabsAction = EventFlow<Unit>()
 
-    init {
+    fun init(savedScreen: String?) {
         analyticsProfile.update()
 
         apiConfig
@@ -70,7 +70,7 @@ class MainViewModel(
             .onEach { needConfig ->
                 _state.update { it.copy(needConfig = needConfig) }
                 if (!needConfig && firstLaunch) {
-                    initMain()
+                    initMain(savedScreen)
                 }
             }
             .launchIn(viewModelScope)
@@ -78,11 +78,11 @@ class MainViewModel(
         if (apiConfig.needConfig) {
             _state.update { it.copy(needConfig = true) }
         } else {
-            initMain()
+            initMain(savedScreen)
         }
     }
 
-    private fun initMain() {
+    private fun initMain(savedScreen: String?) {
         firstLaunch = false
 
         // todo TR-274 move in scope after refactor screen
@@ -94,7 +94,7 @@ class MainViewModel(
         }
 
 
-        selectTab(defaultScreen)
+        selectTab(savedScreen ?: defaultScreen)
         authRepository
             .observeAuthState()
             .onEach { updateTabsAction.set(Unit) }

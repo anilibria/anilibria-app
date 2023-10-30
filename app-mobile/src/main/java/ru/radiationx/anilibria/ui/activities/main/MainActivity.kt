@@ -35,7 +35,6 @@ import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
-import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerScreenState
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
@@ -44,11 +43,9 @@ import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -67,6 +64,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
+        private const val SELECTED_TAB = "SELECTED_TAB"
 
         fun newIntent(context: Context, url: String? = null) =
             Intent(context, MainActivity::class.java).apply {
@@ -114,6 +112,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }
         createdWithSavedState = savedInstanceState != null
 
+        viewModel.init(savedInstanceState?.getString(SELECTED_TAB))
+        savedInstanceState?.getStringArrayList(TABS_STACK)?.also {
+            if (it.isNotEmpty()) {
+                tabsStack.addAll(it)
+            }
+        }
+
         binding.initInsets(dimensionsProvider)
 
         binding.tabsRecycler.apply {
@@ -125,11 +130,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         updateTabs()
         initContainers()
 
-        savedInstanceState?.getStringArrayList(TABS_STACK)?.let {
-            if (it.isNotEmpty()) {
-                tabsStack.addAll(it)
-            }
-        }
         checkerViewModel.state.mapNotNull { it.data }.onEach {
             showUpdateData(it)
         }.launchIn(lifecycleScope)
@@ -253,6 +253,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+        outState.putString(SELECTED_TAB, viewModel.state.value.selectedTab)
     }
 
     @Deprecated("Deprecated in Java")

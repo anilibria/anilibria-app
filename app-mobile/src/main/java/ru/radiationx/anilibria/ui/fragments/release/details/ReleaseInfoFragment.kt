@@ -79,39 +79,39 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         viewModel.playEpisodesAction.observe().onEach {
             playEpisodes(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playContinueAction.observe().onEach {
             playContinue(it.release, it.startWith)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playWebAction.observe().onEach {
             playWeb(it.link, it.code)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playEpisodeAction.observe().onEach {
             playEpisode(it.release, it.episode, it.playFlag, it.quality)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.loadEpisodeAction.observe().onEach {
             downloadEpisode(it.episode, it.quality)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showUnauthAction.observe().onEach {
             showFavoriteDialog()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showFileDonateAction.observe().onEach {
             showFileDonateDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showEpisodesMenuAction.observe().onEach {
             showEpisodesMenuDialog()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showContextEpisodeAction.observe().onEach {
             showLongPressEpisodeDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.openDownloadedFileAction.observe().onEach {
             systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)

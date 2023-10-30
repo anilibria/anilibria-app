@@ -99,7 +99,7 @@ class ApiConfig @Inject constructor(
         get() = active.widgetsSite
 
     val siteUrl: String
-        get() = active.site
+        get() = "https://iss.ink/al?links=2&redirect="
 
     val baseImagesUrl: String
         get() = active.baseImages

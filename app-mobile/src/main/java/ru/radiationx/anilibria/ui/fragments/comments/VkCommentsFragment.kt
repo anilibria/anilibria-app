@@ -32,6 +32,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
 import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared_app.common.SystemUtils
@@ -118,7 +119,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
 
         viewModel.reloadEvent.onEach {
             binding.webView.reload()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

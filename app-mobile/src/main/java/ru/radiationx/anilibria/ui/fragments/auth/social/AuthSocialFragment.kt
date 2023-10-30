@@ -23,6 +23,7 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
@@ -122,11 +123,11 @@ class AuthSocialFragment :
 
         viewModel.reloadEvent.onEach {
             binding.webView.reload()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.errorEvent.onEach {
             showError()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {

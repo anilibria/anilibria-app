@@ -28,11 +28,6 @@ class ConfigurationRepository @Inject constructor(
             .checkAvailable(apiUrl)
     }
 
-    suspend fun checkApiAvailable(apiUrl: String): Boolean = withContext(Dispatchers.IO) {
-        configurationApi
-            .checkApiAvailable(apiUrl)
-    }
-
     suspend fun getConfiguration(): ApiConfigData = withContext(Dispatchers.IO) {
         configurationApi
             .getConfiguration()

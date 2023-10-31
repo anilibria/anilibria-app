@@ -85,10 +85,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
     implementation "androidx.preference:preference-ktx:$androidx_preference_version"
 
-    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"

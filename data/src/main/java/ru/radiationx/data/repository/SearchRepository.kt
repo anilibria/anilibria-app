@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.GenresHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.api.ReleaseApi
 import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.GenreItem
@@ -17,6 +18,7 @@ import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.mapper.toGenreItem
+import ru.radiationx.data.entity.mapper.toSuggestionDomain
 import ru.radiationx.data.entity.mapper.toYearItem
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.system.ApiUtils
@@ -25,12 +27,15 @@ import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
     private val searchApi: SearchApi,
+    private val releaseApi: ReleaseApi,
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,
     private val updateMiddleware: ReleaseUpdateMiddleware,
     private val apiUtils: ApiUtils,
     private val apiConfig: ApiConfig,
 ) {
+
+    private val searchIdRegex = Regex("^id(\\d{3,})\$")
 
     fun observeGenres(): Flow<List<GenreItem>> = genresHolder
         .observeGenres()
@@ -40,10 +45,23 @@ class SearchRepository @Inject constructor(
         .observeYears()
         .flowOn(Dispatchers.IO)
 
+    private fun getQueryId(query: String): Int? {
+        return searchIdRegex.find(query)?.let { matchResult ->
+            matchResult.groupValues.getOrNull(1)?.toIntOrNull()
+        }
+    }
+
     suspend fun fastSearch(query: String): List<SuggestionItem> = withContext(Dispatchers.IO) {
-        searchApi
-            .fastSearch(query)
-            .map { it.toDomain(apiUtils, apiConfig) }
+        val releaseId = getQueryId(query)
+        if (releaseId != null) {
+            releaseApi
+                .getReleasesByIds(listOf(releaseId))
+                .map { it.toSuggestionDomain(apiUtils, apiConfig) }
+        } else {
+            searchApi
+                .fastSearch(query)
+                .map { it.toDomain(apiUtils, apiConfig) }
+        }
     }
 
     suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {

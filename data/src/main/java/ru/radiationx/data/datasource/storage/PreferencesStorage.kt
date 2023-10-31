@@ -4,17 +4,18 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.02.18.
  */
 class PreferencesStorage @Inject constructor(
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
 ) : PreferencesHolder {
 
     companion object {
-        private const val NEW_DONATION_REMIND_KEY = "new_donation_remind"
+        private const val NEW_DONATION_REMIND_KEY = "new_donation_remind_access"
         private const val RELEASE_REMIND_KEY = "release_remind"
         private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
@@ -24,6 +25,8 @@ class PreferencesStorage @Inject constructor(
         private const val PIP_CONTROL_KEY = "pip_control"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
+
+        private val DONATION_THRESHOLD = TimeUnit.DAYS.toMillis(7)
     }
 
     private val qualityRelay by lazy { MutableStateFlow(getQuality()) }
@@ -57,8 +60,15 @@ class PreferencesStorage @Inject constructor(
     override fun observeNewDonationRemind(): Flow<Boolean> = newDonationRemindRelay
 
     override var newDonationRemind: Boolean
-        get() = sharedPreferences.getBoolean(NEW_DONATION_REMIND_KEY, true)
-        set(value) = sharedPreferences.edit().putBoolean(NEW_DONATION_REMIND_KEY, value).apply()
+        get() {
+            val accessDate = sharedPreferences.getLong(NEW_DONATION_REMIND_KEY, 0L)
+            val diff = System.currentTimeMillis() - accessDate
+            return diff > DONATION_THRESHOLD
+        }
+        set(value) {
+            val accessDate = if (value) 0L else System.currentTimeMillis()
+            sharedPreferences.edit().putLong(NEW_DONATION_REMIND_KEY, accessDate).apply()
+        }
 
     override fun observeReleaseRemind(): Flow<Boolean> = releaseRemindRelay
 

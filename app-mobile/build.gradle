@@ -20,8 +20,8 @@ android {
         applicationId "ru.radiationx.anilibria.app"
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 65
-        versionName "2.10.0_RC4"
+        versionCode 66
+        versionName "2.10.0"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['ru']

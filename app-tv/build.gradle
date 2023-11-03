@@ -19,8 +19,8 @@ android {
         applicationId "ru.radiationx.anilibria.app.tv"
         minSdkVersion tv_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 4
-        versionName "1.1.0"
+        versionCode 5
+        versionName "1.2.0"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
     }
 

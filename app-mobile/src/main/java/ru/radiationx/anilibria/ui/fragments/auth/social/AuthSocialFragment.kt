@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.auth.social
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
-import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -24,6 +23,9 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.setWebViewClientCompat
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
 
@@ -31,7 +33,8 @@ import ru.radiationx.shared_app.common.SystemUtils
 /**
  * Created by radiationx on 31.12.17.
  */
-class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
+class AuthSocialFragment :
+    BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
 
     companion object {
         private const val ARG_KEY = "key"
@@ -90,7 +93,7 @@ class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layo
             settings.apply {
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
-            webViewClient = compositeWebViewClient
+            setWebViewClientCompat(compositeWebViewClient)
         }
 
         binding.errorView.setPrimaryButtonClickListener {
@@ -118,13 +121,17 @@ class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layo
             binding.cookieView.isVisible = state.showClearCookies
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.reloadEvent.onEach {
+            binding.webView.reload()
+        }.launchInResumed(viewLifecycleOwner)
+
         viewModel.errorEvent.onEach {
             showError()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {
-        binding.webView.webViewClient = WebViewClient()
+        binding.webView.setWebViewClientCompat(null)
         binding.webView.stopLoading()
         super.onDestroyView()
     }
@@ -136,8 +143,7 @@ class AuthSocialFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layo
                 systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
             }
             .setNegativeButton("Отмена", null)
-            .show()
-            .setOnDismissListener {
+            .showWithLifecycle(viewLifecycleOwner) {
                 viewModel.onUserUnderstandWhatToDo()
             }
     }

@@ -16,7 +16,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.quill.viewModel
 
-class YoutubeFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
+class YoutubeFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
@@ -66,11 +67,16 @@ class YoutubeFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout
             updateToolbarShadow(it)
         }
 
-        viewModel.state.onEach {state->
+        viewModel.state.onEach { state ->
             binding.progressBarList.isVisible = state.data.emptyLoading
             binding.refreshLayout.isRefreshing = state.data.refreshLoading
             youtubeAdapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {

@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.auth.otp.OtpAcceptDialogFragment
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
 
 
 /**
@@ -50,7 +51,12 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         viewModel.otpEvent.onEach {
             OtpAcceptDialogFragment().show(childFragmentManager, "otp_f")
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
     }
 
     inner class OtherAdapter : ListItemAdapter() {

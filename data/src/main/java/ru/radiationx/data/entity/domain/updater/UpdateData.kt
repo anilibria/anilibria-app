@@ -5,6 +5,7 @@ package ru.radiationx.data.entity.domain.updater
  */
 
 data class UpdateData(
+    val hasUpdate: Boolean,
     val code: Int,
     val build: Int,
     val name: String?,
@@ -13,12 +14,17 @@ data class UpdateData(
     val important: List<String>,
     val added: List<String>,
     val fixed: List<String>,
-    val changed: List<String>
+    val changed: List<String>,
 ) {
 
     data class UpdateLink(
         val name: String,
         val url: String,
-        val type: String
+        val type: LinkType,
     )
+
+    enum class LinkType {
+        FILE,
+        SITE
+    }
 }

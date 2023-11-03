@@ -16,6 +16,8 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 
 class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
@@ -59,7 +61,7 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
         }
@@ -93,7 +95,7 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
             (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
                 it.scrollToPositionWithOffset(position, 0)
             }
-        }
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -107,7 +109,8 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
     }
 
     override fun onDestroyView() {
-        scheduleAdapter.saveState(null)
         super.onDestroyView()
+        scheduleAdapter.saveState(null)
+        binding.recyclerView.adapter = null
     }
 }

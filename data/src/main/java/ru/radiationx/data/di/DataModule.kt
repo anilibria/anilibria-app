@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
+import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.datasource.holders.*
@@ -25,6 +26,9 @@ import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.*
 import ru.radiationx.data.di.providers.*
+import ru.radiationx.data.downloader.RemoteFileRepository
+import ru.radiationx.data.downloader.RemoteFileHolder
+import ru.radiationx.data.downloader.RemoteFileStorage
 import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
@@ -63,6 +67,7 @@ class DataModule : QuillModule() {
         singleImpl<DownloadsHolder, DownloadsStorage>()
         singleImpl<DonationHolder, DonationStorage>()
         singleImpl<TeamsHolder, TeamsStorage>()
+        singleImpl<RemoteFileHolder, RemoteFileStorage>()
 
         singleImpl<CookieHolder, CookiesStorage>()
         singleImpl<UserHolder, UserStorage>()
@@ -76,12 +81,15 @@ class DataModule : QuillModule() {
         single<ApiConfigStorage>()
 
 
+        single<SimpleOkHttpProvider>()
         single<MainOkHttpProvider>()
         single<ApiOkHttpProvider>()
 
+        single<SimpleClientWrapper>()
         single<MainClientWrapper>()
         single<ApiClientWrapper>()
 
+        singleImpl<IClient, SimpleNetworkClient>(SimpleClient::class)
         singleImpl<IClient, MainNetworkClient>(MainClient::class)
         singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 
@@ -119,6 +127,7 @@ class DataModule : QuillModule() {
         single<MenuRepository>()
         single<DonationRepository>()
         single<TeamsRepository>()
+        single<RemoteFileRepository>()
 
         single<ReleaseUpdateMiddleware>()
 
@@ -128,6 +137,7 @@ class DataModule : QuillModule() {
 
 
         /* Analytics */
+        single<ActivityLaunchAnalytics>()
         single<AnalyticsProfileDataSource>()
         single<AuthDeviceAnalytics>()
         single<AuthMainAnalytics>()

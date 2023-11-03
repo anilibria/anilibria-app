@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.contentprovider.suggestions
 
-import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.ContentProvider
 import android.content.ContentValues
@@ -39,7 +38,6 @@ class SuggestionsContentProvider : ContentProvider() {
         return true
     }
 
-    @SuppressLint("CheckResult")
     override fun query(
         uri: Uri,
         projection: Array<out String>?,

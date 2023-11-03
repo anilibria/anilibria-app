@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.auth.vk
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
-import android.webkit.WebViewClient
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -20,9 +19,12 @@ import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.setWebViewClientCompat
 
-class AuthVkFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
+class AuthVkFragment :
+    BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
     companion object {
         private const val ARG_URL = "ARG_SOCIAL_URL"
 
@@ -42,7 +44,7 @@ class AuthVkFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.f
         )
     }
 
-    private val viewModel by viewModel<AuthVkViewModel>{
+    private val viewModel by viewModel<AuthVkViewModel> {
         AuthVkExtra(url = getExtraNotNull(ARG_URL))
     }
 
@@ -71,7 +73,7 @@ class AuthVkFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.f
         binding.webView.settings.apply {
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
-        binding.webView.webViewClient = compositeWebViewClient
+        binding.webView.setWebViewClientCompat(compositeWebViewClient)
 
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
             authPatternWebViewClient.resultPattern = data.pattern
@@ -85,10 +87,14 @@ class AuthVkFragment : BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.f
             binding.errorView.isVisible = state.pageState is WebPageViewState.Error
             binding.cookieView.isVisible = state.showClearCookies
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.reloadEvent.onEach {
+            binding.webView.reload()
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {
-        binding.webView.webViewClient = WebViewClient()
+        binding.webView.setWebViewClientCompat(null)
         binding.webView.stopLoading()
         super.onDestroyView()
     }

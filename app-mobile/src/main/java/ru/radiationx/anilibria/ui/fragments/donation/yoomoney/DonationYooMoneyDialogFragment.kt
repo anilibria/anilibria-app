@@ -21,6 +21,7 @@ import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
+import ru.radiationx.shared.ktx.android.launchInResumed
 
 class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donation_yoomoney) {
 
@@ -73,12 +74,11 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
         viewModel.state.onEach { state ->
             state.data?.also { bindData(it) }
             bindState(state)
-
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.closeEvent.onEach {
-            dismiss()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+            dismissAllowingStateLoss()
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     private fun bindState(state: DonationYooMoneyState) {

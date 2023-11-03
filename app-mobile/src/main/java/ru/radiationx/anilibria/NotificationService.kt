@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -16,8 +15,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.anilibria.ui.activities.main.IntentActivity
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchResponse
@@ -46,7 +43,7 @@ class NotificationService : FirebaseMessagingService() {
         val body: String,
         val url: String? = null,
         val type: String? = null,
-        val payload: String? = null
+        val payload: String? = null,
     )
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -124,13 +121,17 @@ class NotificationService : FirebaseMessagingService() {
     private fun getDefaultIntent(remote: Data): Intent {
         return when (remote.type) {
             CUSTOM_TYPE_APP_UPDATE -> {
-                Screens.AppUpdateScreen(true, AnalyticsConstants.notification_push_update)
+                Screens
+                    .AppUpdateScreen(true, AnalyticsConstants.notification_push_update)
                     .getActivityIntent(this)
             }
-            CUSTOM_TYPE_CONFIG -> Intent(this, MainActivity::class.java)
-            else -> Intent(this, IntentActivity::class.java).apply {
-                remote.url?.also { data = Uri.parse(it) }
-                action = Intent.ACTION_VIEW
+
+            CUSTOM_TYPE_CONFIG -> {
+                Screens.Main().getActivityIntent(this)
+            }
+
+            else -> {
+                Screens.IntentHandler(remote.url).getActivityIntent(this)
             }
         }
     }

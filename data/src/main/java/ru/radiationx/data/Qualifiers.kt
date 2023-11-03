@@ -10,3 +10,6 @@ annotation class ApiClient
 
 @Qualifier
 annotation class MainClient
+
+@Qualifier
+annotation class SimpleClient

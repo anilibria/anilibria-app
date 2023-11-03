@@ -30,6 +30,8 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
  * Created by radiationx on 18.02.18.
@@ -80,7 +82,7 @@ class HistoryFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
         }
@@ -160,6 +162,13 @@ class HistoryFragment :
         searchView?.requestLayout()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
+    }
+
     override fun onItemClick(item: ReleaseItemState, position: Int) {
         viewModel.onItemClick(item)
     }
@@ -180,7 +189,7 @@ class HistoryFragment :
                     3 -> viewModel.onDeleteClick(item)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

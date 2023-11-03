@@ -12,6 +12,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import ru.radiationx.anilibria.R
@@ -19,6 +20,7 @@ import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.extension.fillNavigationBarColor
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class CatalogFilterDialog(
@@ -124,9 +126,7 @@ class CatalogFilterDialog(
             (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
                 it.gravity = Gravity.BOTTOM
             })
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            actionButton.z = parentView.z
-        }
+        actionButton.z = parentView.z
 
         sortingGroup.setOnCheckedChangeListener(sortingListener)
         filterComplete.setOnCheckedChangeListener(completeListener)
@@ -135,17 +135,15 @@ class CatalogFilterDialog(
             dialog.dismiss()
             listener.onAccept(currentState)
         }
-
-        dialog.setOnDismissListener {
-            listener.onClose()
-        }
         setState(currentState, true)
     }
 
-    fun showDialog(state: CatalogFilterState) {
+    fun showDialog(state: CatalogFilterState, lifecycleOwner: LifecycleOwner) {
         setState(state)
         dialog.fillNavigationBarColor()
-        dialog.show()
+        dialog.showWithLifecycle(lifecycleOwner) {
+            listener.onClose()
+        }
     }
 
     private fun setState(state: CatalogFilterState, force: Boolean = false) {

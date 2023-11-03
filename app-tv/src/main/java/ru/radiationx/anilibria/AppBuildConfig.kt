@@ -11,5 +11,7 @@ class AppBuildConfig @Inject constructor() : SharedBuildConfig {
 
     override val versionCode: Int = BuildConfig.VERSION_CODE
 
+    override val buildDate: String = BuildConfig.BUILD_DATE
+
     override val debug: Boolean = BuildConfig.DEBUG
 }

@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFrag
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
 import kotlin.math.roundToInt
 
 class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation_detail) {
@@ -55,12 +56,12 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
 
         viewModel.yoomoneyEvent.onEach {
             DonationYooMoneyDialogFragment().show(childFragmentManager, "yoomoney")
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
 
         viewModel.dialogEvent.onEach { tag ->
             DonationDialogFragment.newInstance(tag).show(childFragmentManager, tag)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun updateDimens(dimensions: Dimensions) {
@@ -69,5 +70,10 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
         binding.donationToolbar.doOnNextLayout {
             binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.donationRecycler.adapter = null
     }
 }

@@ -15,7 +15,7 @@ class CardsDataConverter(
 
     fun toCard(releaseItem: Release) = releaseItem.run {
         val torrentDate = torrentUpdate.takeIf { it != 0 }?.let { Date(it * 1000L) }
-        val seasonText = "${seasons.firstOrNull()} год"
+        val seasonText = "${year.orEmpty()} ${season.orEmpty()}"
         val genreText = genres.firstOrNull()?.capitalizeDefault()
         val seriesText = "Серии: ${series?.trim() ?: "Не доступно"}"
         val updateText = torrentDate?.let {

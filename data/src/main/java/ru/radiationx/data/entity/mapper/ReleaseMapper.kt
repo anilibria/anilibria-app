@@ -3,12 +3,14 @@ package ru.radiationx.data.entity.mapper
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.release.BlockedInfo
 import ru.radiationx.data.entity.domain.release.FavoriteInfo
+import ru.radiationx.data.entity.domain.release.Members
 import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.response.release.BlockedInfoResponse
 import ru.radiationx.data.entity.response.release.FavoriteInfoResponse
+import ru.radiationx.data.entity.response.release.MembersResponse
 import ru.radiationx.data.entity.response.release.RandomReleaseResponse
 import ru.radiationx.data.entity.response.release.ReleaseResponse
 import ru.radiationx.data.system.ApiUtils
@@ -19,7 +21,7 @@ fun RandomReleaseResponse.toDomain(): RandomRelease = RandomRelease(
 
 fun ReleaseResponse.toDomain(
     apiUtils: ApiUtils,
-    apiConfig: ApiConfig
+    apiConfig: ApiConfig,
 ): Release {
     val releaseId = ReleaseId(id)
     return Release(
@@ -34,7 +36,9 @@ fun ReleaseResponse.toDomain(
         types = type?.let { listOf(it) }.orEmpty(),
         genres = genres.orEmpty(),
         voices = voices.orEmpty(),
-        seasons = season?.let { listOf(it) }.orEmpty(),
+        members = members?.toDomain(),
+        year = year,
+        season = season,
         days = day?.let { listOf(it) }.orEmpty(),
         description = description?.trim(),
         announce = announce?.trim(),
@@ -59,4 +63,12 @@ fun FavoriteInfoResponse.toDomain(): FavoriteInfo = FavoriteInfo(
 fun BlockedInfoResponse.toDomain(): BlockedInfo = BlockedInfo(
     isBlocked = isBlocked,
     reason = reason
+)
+
+fun MembersResponse.toDomain(): Members = Members(
+    timing = timing,
+    voicing = voicing,
+    editing = editing,
+    decorating = decorating,
+    translating = translating
 )

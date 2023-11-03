@@ -27,7 +27,10 @@ import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class SearchCatalogFragment :
@@ -91,7 +94,7 @@ class SearchCatalogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
         }
@@ -208,8 +211,8 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.showFilterAction.observe().onEach { state ->
-            genresDialog.showDialog(state)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+            genresDialog.showDialog(state, viewLifecycleOwner)
+        }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun updateDimens(dimensions: Dimensions) {
@@ -219,6 +222,13 @@ class SearchCatalogFragment :
                 topMargin = dimensions.statusBar
             }
         searchView?.requestLayout()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
     }
 
     override fun onItemClick(position: Int, view: View) {
@@ -239,11 +249,12 @@ class SearchCatalogFragment :
                         Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

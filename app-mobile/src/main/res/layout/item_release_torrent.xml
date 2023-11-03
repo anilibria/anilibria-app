@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,9 @@
     android:background="?colorSurface"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?selectableItemBackground">
+    android:foreground="?selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="0dp"
@@ -16,11 +18,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:flexWrap="wrap"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/itemTorrentDownload"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="1"
+        app:flexWrap="wrap">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemTorrentTitle"
@@ -30,8 +29,6 @@
             android:textColor="?textDefault"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="Серия 1-112" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -114,17 +111,10 @@
             tools:text="04.05.2019 13:43" />
     </com.google.android.flexbox.FlexboxLayout>
 
+    <ru.radiationx.anilibria.ui.widgets.ProgressButton
+        android:id="@+id/itemTorrentProgress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/itemTorrentDownload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:minWidth="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_file_download"
-        app:tint="?colorAccent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

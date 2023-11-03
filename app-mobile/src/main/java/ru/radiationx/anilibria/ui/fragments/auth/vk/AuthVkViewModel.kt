@@ -10,18 +10,19 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.social.WebAuthSoFastDetector
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.EventFlow
 import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class AuthVkExtra(
-    val url: String
+    val url: String,
 ) : QuillExtra
 
 @InjectConstructor
 class AuthVkViewModel(
     private val argExtra: AuthVkExtra,
     private val authHolder: AuthHolder,
-    private val router: Router
+    private val router: Router,
 ) : ViewModel() {
 
     private val resultPattern =
@@ -33,6 +34,9 @@ class AuthVkViewModel(
     private val _state = MutableStateFlow(AuthVkScreenState())
     val state = _state.asStateFlow()
 
+    private val _reloadEvent = EventFlow<Unit>()
+    val reloadEvent = _reloadEvent.observe()
+
     init {
         resetPage()
     }
@@ -43,11 +47,14 @@ class AuthVkViewModel(
     }
 
     fun onClearDataClick() {
-        currentSuccessUrl = null
-        detector.reset()
-        detector.clearCookies()
-        resetPage()
-        _state.update { it.copy(showClearCookies = false) }
+        viewModelScope.launch {
+            currentSuccessUrl = null
+            detector.reset()
+            detector.clearCookies()
+            detector.loadUrl(argExtra.url)
+            _reloadEvent.set(Unit)
+            _state.update { it.copy(showClearCookies = false) }
+        }
     }
 
     fun onContinueClick() {
@@ -78,5 +85,5 @@ class AuthVkViewModel(
 
 data class AuthVkData(
     val url: String,
-    val pattern: String
+    val pattern: String,
 )

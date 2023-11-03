@@ -1,7 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.text.Html
+import android.util.Log
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -40,7 +41,7 @@ class ReleaseHeadDelegate(
         private val binding by viewBinding<ItemReleaseHeadNewBinding>()
 
         init {
-            val tagsRegex = Regex("(\\w+)_(\\d+)")
+            val tagsRegex = Regex("(\\w+?)_([\\s\\S]+)")
 
             binding.fullFavBtn.setOnClickListener {
                 itemListener.onClickFav()
@@ -51,8 +52,8 @@ class ReleaseHeadDelegate(
             binding.fullInfo.movementMethod = LinkMovementMethod {
                 val match = tagsRegex.find(it) ?: return@LinkMovementMethod true
                 val tag = match.groupValues[1]
-                val index = match.groupValues[2].toInt()
-                itemListener.onClickGenre(tag, index)
+                val value = match.groupValues[2]
+                itemListener.onClickGenre(tag, value)
                 true
             }
             binding.fullAnnounce.movementMethod = LinkMovementMethod {
@@ -68,7 +69,6 @@ class ReleaseHeadDelegate(
             }
         }
 
-        @Suppress("DEPRECATION")
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
@@ -79,18 +79,18 @@ class ReleaseHeadDelegate(
                     .let { "Обновлён $it" }
             }
 
-            binding.fullDescription.text = Html.fromHtml(state.description)
+            binding.fullDescription.text = state.description.parseAsHtml()
             binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)
             }
-            binding.fullInfo.text = Html.fromHtml(state.info)
+            binding.fullInfo.text = state.info.parseAsHtml()
 
             binding.fullDaysBar.selectDays(state.days)
             binding.fullDaysBar.isVisible = state.isOngoing
             binding.fullDaysDivider.isVisible = state.isOngoing || state.announce != null
 
             binding.fullAnnounce.isVisible = state.announce != null
-            binding.fullAnnounce.text = state.announce?.let { Html.fromHtml(it) }
+            binding.fullAnnounce.text = state.announce?.parseAsHtml()
 
             bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
         }
@@ -128,7 +128,7 @@ class ReleaseHeadDelegate(
     interface Listener {
         fun onClickSomeLink(url: String)
 
-        fun onClickGenre(tag: String, index: Int)
+        fun onClickGenre(tag: String, value: String)
 
         fun onClickFav()
 

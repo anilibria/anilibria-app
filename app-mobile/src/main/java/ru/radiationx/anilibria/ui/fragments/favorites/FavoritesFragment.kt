@@ -29,6 +29,8 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 /**
@@ -81,7 +83,7 @@ class FavoritesFragment :
         super.onViewCreated(view, savedInstanceState)
 
         //ToolbarHelper.fixInsets(toolbar)
-        postponeEnterTransition()
+        postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
         }
@@ -161,8 +163,11 @@ class FavoritesFragment :
     }
 
     override fun onDestroyView() {
-        searchView?.clearFocus()
         super.onDestroyView()
+        searchView?.clearFocus()
+        binding.recyclerView.adapter = null
+        searchView?.setAdapter(null)
+        searchView = null
     }
 
     override fun onItemClick(position: Int, view: View) {
@@ -189,7 +194,7 @@ class FavoritesFragment :
                     3 -> viewModel.deleteFav(item.id)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
         return false
     }
 

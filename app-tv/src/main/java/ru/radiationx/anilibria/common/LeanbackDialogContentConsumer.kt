@@ -6,6 +6,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import ru.mintrocket.lib.mintpermissions.flows.models.DialogRequestContent
 import ru.mintrocket.lib.mintpermissions.flows.models.DialogResult
 import ru.mintrocket.lib.mintpermissions.flows.ui.DialogContentConsumer
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import kotlin.coroutines.resume
 
 class LeanbackDialogContentConsumer : DialogContentConsumer {
@@ -24,7 +25,7 @@ class LeanbackDialogContentConsumer : DialogContentConsumer {
                     continuation.resume(DialogResult.CANCEL)
                 }
                 .setOnCancelListener { continuation.resume(DialogResult.CANCEL) }
-                .show()
+                .showWithLifecycle(activity)
             continuation.invokeOnCancellation {
                 dialog.dismiss()
             }

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -29,30 +30,29 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
-import ru.radiationx.anilibria.di.LocaleModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.domain.updater.UpdateData
-import ru.radiationx.data.system.LocaleHolder
+import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
-import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -65,11 +65,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
+        private const val SELECTED_TAB = "SELECTED_TAB"
 
-        fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
+        fun newIntent(context: Context, url: String? = null) =
+            Intent(context, MainActivity::class.java).apply {
+                data = url?.let { Uri.parse(it) }
+            }
     }
-
-    private val sharedBuildConfig by inject<SharedBuildConfig>()
 
     private val screenMessenger by inject<SystemMessenger>()
 
@@ -100,25 +102,22 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         CheckerExtra(forceLoad = true)
     }
 
-    @Suppress("DEPRECATION")
+    private var createdWithSavedState = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resources.configuration.locales[0]
-        } else {
-            resources.configuration.locale
-        }
-        installModules(LocaleModule(locale))
         super.onCreate(savedInstanceState)
+        if (isLaunchedFromHistory()) {
+            get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
+        }
+        createdWithSavedState = savedInstanceState != null
 
-        if (
-            Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)
-            && !LocaleHolder.checkAvail(locale.country)
-        ) {
-            startActivity(Screens.BlockedCountry().getActivityIntent(this))
-            finish()
-            return
+        viewModel.init(savedInstanceState?.getString(SELECTED_TAB))
+        savedInstanceState?.getStringArrayList(TABS_STACK)?.also {
+            if (it.isNotEmpty()) {
+                tabsStack.addAll(it)
+            }
         }
 
         binding.initInsets(dimensionsProvider)
@@ -132,11 +131,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         updateTabs()
         initContainers()
 
-        savedInstanceState?.getStringArrayList(TABS_STACK)?.let {
-            if (it.isNotEmpty()) {
-                tabsStack.addAll(it)
-            }
-        }
         checkerViewModel.state.mapNotNull { it.data }.onEach {
             showUpdateData(it)
         }.launchIn(lifecycleScope)
@@ -165,14 +159,17 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
         viewModel.updateTabsAction.observe().onEach {
             updateTabs()
-        }.launchIn(lifecycleScope)
+        }.launchInResumed(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.tabsRecycler.adapter = null
     }
 
 
-    private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = sharedBuildConfig.versionCode
-
-        if (update.code > currentVersionCode) {
+    private fun showUpdateData(update: UpdateDataState) {
+        if (update.hasUpdate) {
             val channelId = "anilibria_channel_updates"
             val channelName = "Обновления"
 
@@ -230,7 +227,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun onMainLogicCompleted() {
-        handleIntent(intent)
+        if (!createdWithSavedState) {
+            handleIntent(intent)
+        }
         checkerViewModel.checkUpdate()
     }
 
@@ -260,6 +259,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
+        outState.putString(SELECTED_TAB, viewModel.state.value.selectedTab)
     }
 
     @Deprecated("Deprecated in Java")
@@ -328,6 +328,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             tabs.addAll(allTabs)
         } else {
             tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
+            removeFromStack(allTabs.first { it.screen is Screens.Favorites }.screen.screenKey)
         }
         updateBottomTabs()
     }

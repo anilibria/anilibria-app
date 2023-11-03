@@ -18,8 +18,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
-import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
@@ -32,9 +32,10 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SourceEpisode
-import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 import java.net.URLConnection
@@ -49,6 +50,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
             torrentClickListener = viewModel::onTorrentClick,
+            torrentCancelClickListener = viewModel::onCancelTorrentClick,
             commentsClickListener = viewModel::onCommentsClick,
             episodesTabListener = viewModel::onEpisodeTabClick,
             remindCloseListener = viewModel::onRemindCloseClick,
@@ -75,57 +77,54 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             showState(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.loadTorrentAction.observe().onEach {
-            loadTorrent(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
         viewModel.playEpisodesAction.observe().onEach {
             playEpisodes(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playContinueAction.observe().onEach {
             playContinue(it.release, it.startWith)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playWebAction.observe().onEach {
             playWeb(it.link, it.code)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playEpisodeAction.observe().onEach {
             playEpisode(it.release, it.episode, it.playFlag, it.quality)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.loadEpisodeAction.observe().onEach {
             downloadEpisode(it.episode, it.quality)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showUnauthAction.observe().onEach {
             showFavoriteDialog()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.showDownloadAction.observe().onEach {
-            showDownloadDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showFileDonateAction.observe().onEach {
             showFileDonateDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showEpisodesMenuAction.observe().onEach {
             showEpisodesMenuDialog()
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showContextEpisodeAction.observe().onEach {
             showLongPressEpisodeDialog(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchInResumed(viewLifecycleOwner)
+
+        viewModel.openDownloadedFileAction.observe().onEach {
+            systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+        }.launchInResumed(viewLifecycleOwner)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.recyclerView.adapter = null
     }
 
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
-    }
-
-    private fun loadTorrent(torrent: TorrentItem) {
-        torrent.url?.also { systemUtils.externalLink(it) }
     }
 
     private fun playEpisodes(release: Release) {
@@ -147,19 +146,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }.orEmpty()
     }
 
-    private fun showDownloadDialog(url: String) {
-        val titles = arrayOf("Внешний загрузчик", "Системный загрузчик")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                viewModel.submitDownloadEpisodeUrlAnalytics()
-                when (which) {
-                    0 -> systemUtils.externalLink(url)
-                    1 -> viewModel.downloadFile(url)
-                }
-            }
-            .show()
-    }
-
     private fun showFileDonateDialog(url: String) {
         val dialogBinding = DialogFileDownloadBinding.inflate(
             LayoutInflater.from(requireView().context),
@@ -178,7 +164,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
 
         dialogBinding.dialogFilePatreonBtn.setOnClickListener {
             viewModel.onDialogPatreonClick()
@@ -189,7 +175,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             dialog.dismiss()
         }
         dialogBinding.dialogFileDownloadBtn.setOnClickListener {
-            showDownloadDialog(url)
+            viewModel.downloadFile(url)
             dialog.dismiss()
         }
     }
@@ -206,7 +192,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     1 -> viewModel.onCheckAllEpisodesHistoryClick()
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showLongPressEpisodeDialog(episode: Episode) {
@@ -219,7 +205,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     0 -> viewModel.markEpisodeUnviewed(episode)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun downloadEpisode(episode: SourceEpisode, quality: Int?) {
@@ -316,7 +302,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     onSelect.invoke(playerType)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun playInternal(
@@ -329,14 +315,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             PreferencesHolder.PLAYER_TYPE_INTERNAL.toAnalyticsPlayer(),
             quality.toPrefQuality().toAnalyticsQuality()
         )
-        startActivity(Intent(requireContext(), MyPlayerActivity::class.java).apply {
-            putExtra(MyPlayerActivity.ARG_RELEASE, release)
-            putExtra(MyPlayerActivity.ARG_EPISODE_ID, episode.id)
-            putExtra(MyPlayerActivity.ARG_QUALITY, quality)
-            playFlag?.let {
-                putExtra(MyPlayerActivity.ARG_PLAY_FLAG, it)
-            }
-        })
+        val intent = Screens.Player(release, episode.id, quality, playFlag)
+            .getActivityIntent(requireContext())
+        startActivity(intent)
     }
 
     private fun playExternal(episode: Episode, quality: Int) {
@@ -364,10 +345,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
     private fun playWeb(link: String, code: String) {
         viewModel.onWebPlayerClick()
-        startActivity(Intent(requireContext(), WebPlayerActivity::class.java).apply {
-            putExtra(WebPlayerActivity.ARG_URL, link)
-            putExtra(WebPlayerActivity.ARG_RELEASE_CODE, code)
-        })
+        val intent = Screens.WebPlayer(link, code).getActivityIntent(requireContext())
+        startActivity(intent)
     }
 
     private fun <T> selectQuality(
@@ -440,7 +419,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     onSelect.invoke(quality)
                 }
             }
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showFavoriteDialog() {
@@ -448,7 +427,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
             .setPositiveButton("Да") { _, _ -> viewModel.openAuth() }
             .setNegativeButton("Нет", null)
-            .show()
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun showTorrentInfoDialog() {
@@ -461,8 +440,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             viewModel.onClickLink(url)
         }
 
-        override fun onClickGenre(tag: String, index: Int) {
-            viewModel.openSearch(tag, index)
+        override fun onClickGenre(tag: String, value: String) {
+            viewModel.openSearch(tag, value)
         }
 
         override fun onClickFav() {

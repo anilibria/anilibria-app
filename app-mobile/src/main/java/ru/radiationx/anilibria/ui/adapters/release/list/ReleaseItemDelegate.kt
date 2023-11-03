@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
-import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +20,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  * Created by radiationx on 13.01.18.
  */
 class ReleaseItemDelegate(
-    private val itemListener: Listener
+    private val itemListener: Listener,
 ) : AppAdapterDelegate<ReleaseListItem, ListItem, ReleaseItemDelegate.ViewHolder>(
     R.layout.item_feed_release,
     { it is ReleaseListItem },
@@ -33,17 +33,16 @@ class ReleaseItemDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val itemListener: Listener
+        private val itemListener: Listener,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
-        @Suppress("DEPRECATION")
         fun bind(item: ReleaseListItem) {
             val releaseItem = item.item
             binding.itemTitle.text = releaseItem.title
 
-            binding.itemDesc.text = Html.fromHtml(releaseItem.description)
+            binding.itemDesc.text = releaseItem.description.parseAsHtml()
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${releaseItem.id}"

@@ -19,7 +19,6 @@ import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.ShortcutHelper
-import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -51,7 +50,6 @@ class FeedViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val scheduleRepository: ScheduleRepository,
     checkerRepository: CheckerRepository,
-    private val sharedBuildConfig: SharedBuildConfig,
     releaseUpdateHolder: ReleaseUpdateHolder,
     private val appPreferences: PreferencesHolder,
     private val donationRepository: DonationRepository,
@@ -106,8 +104,7 @@ class FeedViewModel(
         checkerRepository
             .observeUpdate()
             .onEach {
-                val hasAppUpdate = it.code > sharedBuildConfig.versionCode
-                if (hasAppUpdate) {
+                if (it.hasUpdate) {
                     warningsController.put(appUpdateWarning)
                 } else {
                     warningsController.remove(appUpdateWarning.tag)

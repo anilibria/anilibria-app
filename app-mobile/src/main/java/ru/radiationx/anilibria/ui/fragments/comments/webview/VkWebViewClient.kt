@@ -2,14 +2,18 @@ package ru.radiationx.anilibria.ui.fragments.comments.webview
 
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.os.Build
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsViewModel
 import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
+import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
+import ru.radiationx.shared.ktx.android.WebViewClientCompat
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber
@@ -22,7 +26,7 @@ class VkWebViewClient(
     private val networkClient: IClient,
     private val commentsCss: VkCommentsCss,
     private val appThemeController: AppThemeController,
-) : WebViewClient() {
+) : WebViewClientCompat() {
 
     private var loadingFinished = true
     private var redirect = false
@@ -32,12 +36,14 @@ class VkWebViewClient(
     private val authCheckRegex = Regex("vk\\.com\\/login\\?act=authcheck")
     private val commentsRegex = Regex("widget_comments(?:\\.\\w+?)?\\.css")
 
-    @Deprecated("Deprecated in Java")
-    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
-    override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequestCompat,
+    ): WebResourceResponse? {
+        val url = request.url.toString()
         return tryInterceptAuthCheck(url)
             ?: tryInterceptComments(url)
-            ?: super.shouldInterceptRequest(view, url)
+            ?: super.shouldInterceptRequest(view, request)
     }
 
     private fun tryInterceptAuthCheck(url: String?): WebResourceResponse? {
@@ -86,30 +92,32 @@ class VkWebViewClient(
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    @Suppress("OverridingDeprecatedMember")
-    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+    override fun shouldOverrideUrlLoading(
+        view: WebView,
+        request: WebResourceRequestCompat,
+    ): Boolean {
+        val url = request.url.toString()
         if (!loadingFinished) {
             redirect = true
         }
 
         loadingFinished = false
 
-        if (url.orEmpty().contains(authRequestRegex)) {
-            viewModel.authRequest(url.orEmpty())
+        if (url.contains(authRequestRegex)) {
+            viewModel.authRequest(url)
             return true
         }
-        systemUtils.externalLink(url.orEmpty())
+        systemUtils.externalLink(url)
         return true
     }
 
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         authCheckIntercepted = false
         loadingFinished = false
     }
 
-    override fun onPageFinished(view: WebView?, url: String?) {
+    override fun onPageFinished(view: WebView, url: String) {
         super.onPageFinished(view, url)
 
         if (!redirect) {
@@ -125,32 +133,29 @@ class VkWebViewClient(
     }
 
     override fun onReceivedSslError(
-        view: WebView?,
-        handler: SslErrorHandler?,
-        error: SslError?,
+        view: WebView,
+        handler: SslErrorHandler,
+        error: SslError,
     ) {
-        super.onReceivedSslError(view, handler, error)
         viewModel.onPageCommitError(error.toException())
     }
 
     override fun onReceivedHttpError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        errorResponse: WebResourceResponse?,
+        view: WebView,
+        request: WebResourceRequestCompat,
+        errorResponse: WebResourceResponse,
     ) {
-        super.onReceivedHttpError(view, request, errorResponse)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+        if (view.url == request.url.toString()) {
             viewModel.onPageCommitError(errorResponse.toException(request))
         }
     }
 
     override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?,
+        view: WebView,
+        request: WebResourceRequestCompat,
+        error: WebResourceErrorCompat,
     ) {
-        super.onReceivedError(view, request, error)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+        if (view.url == request.url.toString()) {
             viewModel.onPageCommitError(error.toException(request))
         }
     }

@@ -1,30 +1,35 @@
 {
   "update": {
-    "version_code": "65",
-    "version_name": "2.9.0",
+    "version_code": "66",
+    "version_name": "2.10.0",
     "version_build": "0",
-    "build_date": "19 октября 2023 г.",
+    "build_date": "3 ноября 2023 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.9.0/AniLibria_v2.9.0.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.10.0/AniLibria_v2.10.0.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.9.0/AniLibria_Lite_v2.9.0.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.10.0/AniLibria_Lite_v2.10.0.apk",
         "type": "file"
       }
     ],
     "important": [],
-    "added": [],
-    "fixed": [
-      "Отсутствуют даты в фильтре поиска",
-      "Скрытие даты, если это 1970 год",
-      "Заглушка для пустого расписания",
-      "При нажатии на кнопку \"авторизоваться\" ничего не происходит",
-      "Вылеты приложения"
+    "added": [
+      "Вывод сезона (прим. \"2023 осень\")",
+      "Вывод названий серий (если указано)",
+      "Ники тех, кто таймил, оформлял, переводил релиз",
+      "Зеркало для ссылок на регистрацию и релизы"
     ],
-    "changed": []
+    "fixed": [
+      "Утечки памяти",
+      "Различные баги и креши (около 30 штук)"
+    ],
+    "changed": [
+      "При старте приложения теперь выбирается самая быстрая конфигурация",
+      "Загрузка файлов внутри приложения, а не через браузер"
+    ]
   }
 }

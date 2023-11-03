@@ -2,17 +2,15 @@ package ru.radiationx.anilibria.utils
 
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.ui.activities.main.IntentActivity
+import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
@@ -26,7 +24,7 @@ import kotlin.math.min
 
 @InjectConstructor
 class ShortcutHelper(
-    private val context: Context
+    private val context: Context,
 ) {
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -62,20 +60,14 @@ class ShortcutHelper(
         shortLabel: String,
         longLabel: String,
         url: String,
-        bitmap: Bitmap
+        bitmap: Bitmap,
     ) {
+        val intent = Screens.IntentHandler(url).getActivityIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)
             .setIcon(IconCompat.createWithBitmap(bitmap))
-            /*.setIntent(Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(url)
-            ))*/
-            .setIntent(Intent(context, IntentActivity::class.java).apply {
-                action = Intent.ACTION_VIEW
-                data = Uri.parse(url)
-            })
+            .setIntent(intent)
             .build()
 
         if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {

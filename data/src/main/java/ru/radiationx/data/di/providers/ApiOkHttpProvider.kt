@@ -6,13 +6,11 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.datasource.remote.Api
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.data.system.Client
 import ru.radiationx.data.system.appendConnectionSpecs
-import ru.radiationx.data.system.appendSocketFactoryIfNeeded
 import ru.radiationx.data.system.appendTimeouts
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -29,7 +27,6 @@ class ApiOkHttpProvider @Inject constructor(
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
         .appendConnectionSpecs()
-        .appendSocketFactoryIfNeeded()
         .appendTimeouts()
         .apply {
             val availableAddress =
@@ -69,11 +66,8 @@ class ApiOkHttpProvider @Inject constructor(
                 val additionalHeadersRequest = it.request()
                     .newBuilder()
                     .header("mobileApp", "true")
-                    .apply {
-                        if (Api.STORE_APP_IDS.contains(sharedBuildConfig.applicationId)) {
-                            header("Store-Published", "Google")
-                        }
-                    }
+                    // deprecated header
+                    //.header("Store-Published", "Google")
                     .header("App-Id", sharedBuildConfig.applicationId)
                     .header("App-Ver-Name", sharedBuildConfig.versionName)
                     .header("App-Ver-Code", sharedBuildConfig.versionCode.toString())

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.text.Html
 import android.view.View
+import androidx.core.text.parseAsHtml
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -39,12 +40,11 @@ class FeedReleaseDelegate(
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
-        @Suppress("DEPRECATION")
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.release)
 
             binding.itemTitle.text = state.title
-            binding.itemDesc.text = Html.fromHtml(state.description)
+            binding.itemDesc.text = state.description.parseAsHtml()
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${state.id}"

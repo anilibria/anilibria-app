@@ -75,4 +75,9 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
         binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.rvTeams.adapter = null
+    }
+
 }

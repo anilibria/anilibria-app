@@ -17,6 +17,7 @@ import ru.radiationx.data.analytics.features.*
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
+import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.shared.ktx.EventFlow
@@ -41,7 +42,7 @@ class OtherViewModel(
     private val settingsAnalytics: SettingsAnalytics,
     private val pageAnalytics: PageAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
-    private val teamsAnalytics: TeamsAnalytics
+    private val teamsAnalytics: TeamsAnalytics,
 ) : ViewModel() {
 
     companion object {
@@ -58,29 +59,26 @@ class OtherViewModel(
     private val _otpEvent = EventFlow<Unit>()
     val otpEvent = _otpEvent.observe()
 
-    private var currentLinkMenuItems = mutableListOf<LinkMenuItem>()
     private var linksMap = mutableMapOf<Int, LinkMenuItem>()
 
-    private val profileMenu = mutableListOf<OtherMenuItem>()
-    private val allMainMenu = mutableListOf<OtherMenuItem>()
-    private val allSystemMenu = mutableListOf<OtherMenuItem>()
-    private val allLinkMenu = mutableListOf<OtherMenuItem>()
+    private val profileMenu = listOf(
+        OtherMenuItem(
+            MENU_OTP_CODE,
+            "Привязать устройство",
+            R.drawable.ic_devices_other
+        )
+    )
+    private val allMainMenu = listOf(
+        OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history),
+        OtherMenuItem(MENU_TEAM, "Команда проекта", R.drawable.ic_account_multiple),
+        OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift)
+    )
+    private val allSystemMenu = listOf(
+        OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings)
+    )
 
     init {
-        profileMenu.add(
-            OtherMenuItem(
-                MENU_OTP_CODE,
-                "Привязать устройство",
-                R.drawable.ic_devices_other
-            )
-        )
-
-        allMainMenu.add(OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history))
-        allMainMenu.add(OtherMenuItem(MENU_TEAM, "Команда проекта", R.drawable.ic_account_multiple))
-        allMainMenu.add(OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift))
-
-        allSystemMenu.add(OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings))
-
+        subscribeUpdate()
         viewModelScope.launch {
             coRunCatching {
                 menuRepository.getMenu()
@@ -88,8 +86,6 @@ class OtherViewModel(
                 Timber.e(it)
             }
         }
-        subscribeUpdate()
-        updateMenuItems()
     }
 
     fun refresh() {
@@ -135,26 +131,31 @@ class OtherViewModel(
                 historyAnalytics.open(AnalyticsConstants.screen_other)
                 router.navigateTo(Screens.History())
             }
+
             MENU_TEAM -> {
                 otherAnalytics.teamClick()
                 teamsAnalytics.open(AnalyticsConstants.screen_other)
                 router.navigateTo(Screens.Teams())
             }
+
             MENU_DONATE -> {
                 otherAnalytics.donateClick()
                 donationDetailAnalytics.open(AnalyticsConstants.screen_other)
                 router.navigateTo(Screens.DonationDetail())
             }
+
             MENU_SETTINGS -> {
                 otherAnalytics.settingsClick()
                 router.navigateTo(Screens.Settings())
             }
+
             MENU_OTP_CODE -> {
                 settingsAnalytics.open(AnalyticsConstants.screen_other)
                 otherAnalytics.authDeviceClick()
                 authDeviceAnalytics.open(AnalyticsConstants.screen_other)
                 _otpEvent.set(Unit)
             }
+
             else -> {
                 linksMap[item.id]?.also { linkItem ->
                     otherAnalytics.linkClick(linkItem.title)
@@ -173,59 +174,51 @@ class OtherViewModel(
     }
 
     private fun subscribeUpdate() {
-        authRepository
-            .observeUser()
-            .onEach {
-                updateMenuItems()
-            }
-            .launchIn(viewModelScope)
-
-        menuRepository
-            .observeMenu()
-            .onEach { linkItems ->
-                currentLinkMenuItems.clear()
-                currentLinkMenuItems.addAll(linkItems)
-                allLinkMenu.clear()
-                allLinkMenu.addAll(linkItems.map {
-                    OtherMenuItem(
-                        id = it.hashCode(),
-                        title = it.title,
-                        icon = it.icon?.asDataIconRes() ?: R.drawable.ic_link
-                    )
-                })
-                linksMap.clear()
-                linksMap.putAll(linkItems.associateBy { it.hashCode() })
-                updateMenuItems()
-            }
-            .launchIn(viewModelScope)
+        combine(
+            authRepository.observeAuthState(),
+            authRepository.observeUser(),
+            menuRepository.observeMenu()
+        ) { authState, user, menu ->
+            updateMenuItems(authState, user, menu)
+        }.launchIn(viewModelScope)
     }
 
-    private fun updateMenuItems() {
-        viewModelScope.launch {
-            // Для фильтрации, если вдруг понадобится добавить
-            val profileMenu = profileMenu.toMutableList()
-            val mainMenu = allMainMenu.toMutableList()
-            val systemMenu = allSystemMenu.toMutableList()
-            val linkMenu = allLinkMenu.toMutableList()
+    private fun updateMenuItems(
+        authState: AuthState,
+        user: ProfileItem?,
+        menu: List<LinkMenuItem>,
+    ) {
+        val linkMenu = menu.map {
+            OtherMenuItem(
+                id = it.hashCode(),
+                title = it.title,
+                icon = it.icon?.asDataIconRes() ?: R.drawable.ic_link
+            )
+        }
+        linksMap.clear()
+        linksMap.putAll(menu.associateBy { it.hashCode() })
 
-            if (authRepository.getAuthState() != AuthState.AUTH) {
-                profileMenu.removeAll { it.id == MENU_OTP_CODE }
+        val profileMenu = profileMenu.let { items ->
+            if (authState != AuthState.AUTH) {
+                items.filterNot { it.id == MENU_OTP_CODE }
+            } else {
+                items
             }
+        }
 
-            val profileState = authRepository.getUser().toState()
-            val profileMenuState = profileMenu.map { it.toState() }
-            val menuState = listOf(mainMenu, systemMenu, linkMenu)
-                .filter { it.isNotEmpty() }
-                .map { itemsGroup ->
-                    itemsGroup.map { it.toState() }
-                }
-            _state.update {
-                it.copy(
-                    profile = profileState,
-                    profileMenuItems = profileMenuState,
-                    menuItems = menuState
-                )
+        val profileState = user.toState()
+        val profileMenuState = profileMenu.map { it.toState() }
+        val menuState = listOf(allMainMenu, allSystemMenu, linkMenu)
+            .filter { it.isNotEmpty() }
+            .map { itemsGroup ->
+                itemsGroup.map { it.toState() }
             }
+        _state.update {
+            it.copy(
+                profile = profileState,
+                profileMenuItems = profileMenuState,
+                menuItems = menuState
+            )
         }
     }
 }

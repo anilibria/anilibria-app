@@ -20,8 +20,8 @@ android {
         applicationId "ru.radiationx.anilibria.app"
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 65
-        versionName "2.9.0"
+        versionCode 66
+        versionName "2.10.0"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['ru']
@@ -84,10 +84,6 @@ dependencies {
     implementation "androidx.cardview:cardview:$androidx_cardview_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
     implementation "androidx.preference:preference-ktx:$androidx_preference_version"
-
-    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 

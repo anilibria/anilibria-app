@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.common.adapters
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.SparseArray
+import androidx.core.os.BundleCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
@@ -15,7 +16,7 @@ open class OptimizeAdapter<T>(
 ) : AsyncListDifferDelegationAdapter<T>(itemCallback, manager) {
 
     private val bundleNestedStatesKey = "nested_states_${this.javaClass.simpleName}"
-    private var states: SparseArray<Parcelable?> = SparseArray()
+    private var states: SparseArray<Parcelable> = SparseArray()
 
     private var currentRecyclerView: RecyclerView? = null
 
@@ -50,9 +51,10 @@ open class OptimizeAdapter<T>(
     ) {
         super.onBindViewHolder(holder, position, payloads)
         (holder as? IBundledViewHolder)?.apply {
-            val state = states[getStateId()]
+            val stateId = getStateId()
+            val state = states[stateId]
             holder.restoreState(state)
-            states.remove(getStateId())
+            states.remove(stateId)
         }
     }
 
@@ -60,8 +62,13 @@ open class OptimizeAdapter<T>(
         (0 until itemCount).forEach { index ->
             val holder = currentRecyclerView?.findViewHolderForAdapterPosition(index)
             (holder as? IBundledViewHolder)?.apply {
+                val stateId = getStateId()
                 val state = holder.saveState()
-                states.put(getStateId(), state)
+                if (state != null) {
+                    states.put(stateId, state)
+                } else {
+                    states.remove(stateId)
+                }
             }
         }
     }
@@ -71,12 +78,13 @@ open class OptimizeAdapter<T>(
         outState?.putSparseParcelableArray(bundleNestedStatesKey, states)
     }
 
-    @Suppress("DEPRECATION")
     fun restoreState(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) return
-        savedInstanceState.getSparseParcelableArray<Parcelable?>(bundleNestedStatesKey)?.also {
-            states = it
-        }
+        states = BundleCompat.getSparseParcelableArray(
+            savedInstanceState,
+            bundleNestedStatesKey,
+            Parcelable::class.java
+        ) ?: states
     }
 
     fun addDelegate(delegate: AdapterDelegate<List<T>>) {

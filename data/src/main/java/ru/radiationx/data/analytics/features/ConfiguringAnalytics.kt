@@ -37,6 +37,7 @@ class ConfiguringAnalytics(
     }
 
 
+    // больше не используется, но на всякий случай пусть будет
     fun checkLast(
         addressTag: String,
         timeInMillis: Long,

@@ -1,41 +1,43 @@
 package ru.radiationx.anilibria.ui.fragments.auth
 
 import android.net.http.SslError
-import android.os.Build
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
+import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
+import ru.radiationx.shared.ktx.android.WebViewClientCompat
 import ru.radiationx.shared.ktx.android.toException
 
 class AnalyticsWebViewClient(
-    private val onPageCommitError: (Exception) -> Unit
-) : WebViewClient() {
+    private val onPageCommitError: (Exception) -> Unit,
+) : WebViewClientCompat() {
 
     override fun onReceivedSslError(
-        view: WebView?,
-        handler: SslErrorHandler?,
-        error: SslError?
+        view: WebView,
+        handler: SslErrorHandler,
+        error: SslError,
     ) {
-        super.onReceivedSslError(view, handler, error)
         onPageCommitError.invoke(error.toException())
     }
 
     override fun onReceivedHttpError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        errorResponse: WebResourceResponse?
+        view: WebView,
+        request: WebResourceRequestCompat,
+        errorResponse: WebResourceResponse,
     ) {
-        super.onReceivedHttpError(view, request, errorResponse)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view?.url == request?.url?.toString()) {
+        if (view.url == request.url.toString()) {
             onPageCommitError.invoke(errorResponse.toException(request))
         }
     }
 
     override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?
+        view: WebView,
+        request: WebResourceRequestCompat,
+        error: WebResourceErrorCompat,
     ) {
         super.onReceivedError(view, request, error)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && view?.url == request?.url?.toString()) {
+        if (view.url == request.url.toString()) {
             onPageCommitError.invoke(error.toException(request))
         }
     }

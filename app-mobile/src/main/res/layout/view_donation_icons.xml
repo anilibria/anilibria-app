@@ -53,7 +53,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_boosty"
+        app:srcCompat="@drawable/ic_logo_boosty"
         app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

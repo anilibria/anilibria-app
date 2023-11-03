@@ -2,7 +2,12 @@ package ru.radiationx.anilibria.ui.fragments.auth.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.model.toState
@@ -31,7 +36,7 @@ class AuthViewModel(
     private val authMainAnalytics: AuthMainAnalytics,
     private val authSocialAnalytics: AuthSocialAnalytics,
     private val apiConfig: ApiConfig,
-    private val systemUtils: SystemUtils
+    private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
     private val inputDataState = MutableStateFlow(AuthInputData())
@@ -119,6 +124,17 @@ class AuthViewModel(
         }
     }
 
+    fun onBackPressed() {
+        viewModelScope.launch {
+            val state = authRepository.getAuthState()
+            if (state != AuthState.AUTH) {
+                skip()
+            } else {
+                router.finishChain()
+            }
+        }
+    }
+
     fun skip() {
         viewModelScope.launch {
             authMainAnalytics.skipClick()
@@ -145,11 +161,11 @@ class AuthViewModel(
 
 data class AuthInputData(
     val login: String = "",
-    val password: String = ""
+    val password: String = "",
 )
 
 data class AuthScreenState(
     val actionEnabled: Boolean = false,
     val sending: Boolean = false,
-    val socialItems: List<SocialAuthItemState> = emptyList()
+    val socialItems: List<SocialAuthItemState> = emptyList(),
 )

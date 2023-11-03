@@ -9,10 +9,7 @@ import ru.radiationx.data.datasource.remote.address.ApiAddress
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.repository.ConfigurationRepository
-import ru.radiationx.data.system.WrongHostException
 import timber.log.Timber
-import java.io.IOException
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 import javax.net.ssl.*
 
@@ -22,9 +19,11 @@ class ConfiguringInteractor @Inject constructor(
     private val analytics: ConfiguringAnalytics,
 ) {
 
+    private val initialState = State.LOAD_CONFIG
+
     private val screenState = MutableStateFlow(ConfigScreenState())
 
-    private var currentState = State.CHECK_LAST
+    private var currentState = initialState
 
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -38,8 +37,7 @@ class ConfiguringInteractor @Inject constructor(
     fun initCheck() {
         startAddressTag = apiConfig.tag
         fullTimeCounter.start()
-        currentState = State.CHECK_LAST
-        updateState(currentState)
+        updateState(initialState)
         doByState()
     }
 
@@ -50,7 +48,7 @@ class ConfiguringInteractor @Inject constructor(
 
     fun nextCheck() {
         analytics.onNextStepClick(currentState.toAnalyticsState())
-        val nextState = getNextState() ?: State.CHECK_LAST
+        val nextState = getNextState() ?: initialState
         doByState(nextState)
     }
 
@@ -82,81 +80,20 @@ class ConfiguringInteractor @Inject constructor(
     }
 
     private fun doByState(anchor: State = currentState) = when (anchor) {
-        State.CHECK_LAST -> checkLast()
         State.LOAD_CONFIG -> loadConfig()
         State.CHECK_AVAIL -> checkAvail()
         State.CHECK_PROXIES -> checkProxies()
     }
 
     private fun getNextState(anchor: State = currentState): State? = when (anchor) {
-        State.CHECK_LAST -> State.LOAD_CONFIG
         State.LOAD_CONFIG -> State.CHECK_AVAIL
         State.CHECK_AVAIL -> State.CHECK_PROXIES
         State.CHECK_PROXIES -> null
     }
 
-    private fun getTitleByState(state: State?): String? = when (state) {
-        State.CHECK_LAST -> "Проверка текущих адресов"
-        State.LOAD_CONFIG -> "Загрузка новых адресов"
-        State.CHECK_AVAIL -> "Проверка новых адресов"
-        State.CHECK_PROXIES -> "Проверка прокси-серверов"
-        else -> null
-    }
-
-    private fun checkLast() {
-        updateState(State.CHECK_LAST)
-        val timeCounter = TimeCounter()
-
-
-        scope.launch {
-            timeCounter.start()
-            screenState.update {
-                it.copy(
-                    status = "Проверка доступности сервера",
-                    needRefresh = false
-                )
-            }
-            runCatching {
-                zipLastCheck()
-            }.onSuccess { result ->
-                analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), result, null)
-                if (result) {
-                    isFullSuccess = true
-                    screenState.update {
-                        it.copy(status = "Сервер доступен")
-                    }
-
-                    apiConfig.updateNeedConfig(false)
-                } else {
-                    loadConfig()
-                }
-            }.onFailure { error ->
-                analytics.checkLast(apiConfig.tag, timeCounter.elapsed(), false, error)
-                Timber.e(error)
-                when (error) {
-                    is WrongHostException,
-                    is TimeoutException,
-                    is TimeoutCancellationException,
-                    is IOException,
-                    -> loadConfig()
-
-                    else -> {
-                        screenState.update {
-                            it.copy(
-                                status = "Ошибка проверки доступности сервера: ${error.message}",
-                                needRefresh = true
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun loadConfig() {
         updateState(State.LOAD_CONFIG)
         val timeCounter = TimeCounter()
-
 
         scope.launch {
             timeCounter.start()
@@ -208,7 +145,7 @@ class ConfiguringInteractor @Inject constructor(
                 isFullSuccess = true
                 analytics.checkAvail(activeAddress.tag, timeCounter.elapsed(), true, null)
                 screenState.update {
-                    it.copy(status = "Найдет доступный адрес")
+                    it.copy(status = "Найден доступный адрес")
                 }
                 apiConfig.updateActiveAddress(activeAddress)
                 apiConfig.updateNeedConfig(false)
@@ -319,23 +256,13 @@ class ConfiguringInteractor @Inject constructor(
             .first()
     }
 
-    private suspend fun zipLastCheck(): Boolean {
-        val flowMain = flow { emit(configurationRepository.checkAvailable(apiConfig.apiUrl)) }
-        val flowApi = flow { emit(configurationRepository.checkApiAvailable(apiConfig.apiUrl)) }
-        return combine(flowMain, flowApi) { mainRes, apiRes ->
-            mainRes && apiRes
-        }.first()
-    }
-
     private fun State.toAnalyticsState(): AnalyticsConfigState = when (this) {
-        State.CHECK_LAST -> AnalyticsConfigState.CHECK_LAST
         State.LOAD_CONFIG -> AnalyticsConfigState.LOAD_CONFIG
         State.CHECK_AVAIL -> AnalyticsConfigState.CHECK_AVAIL
         State.CHECK_PROXIES -> AnalyticsConfigState.CHECK_PROXIES
     }
 
     private enum class State {
-        CHECK_LAST,
         LOAD_CONFIG,
         CHECK_AVAIL,
         CHECK_PROXIES

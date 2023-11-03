@@ -18,7 +18,7 @@ import ru.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class AuthSocialExtra(
-    val key: String
+    val key: String,
 ) : QuillExtra
 
 @InjectConstructor
@@ -27,7 +27,7 @@ class AuthSocialViewModel(
     private val authRepository: AuthRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
-    private val authSocialAnalytics: AuthSocialAnalytics
+    private val authSocialAnalytics: AuthSocialAnalytics,
 ) : ViewModel() {
 
     private val detector = WebAuthSoFastDetector()
@@ -38,6 +38,9 @@ class AuthSocialViewModel(
 
     private val _errorEvent = EventFlow<Unit>()
     val errorEvent = _errorEvent.observe()
+
+    private val _reloadEvent = EventFlow<Unit>()
+    val reloadEvent = _reloadEvent.observe()
 
     init {
         loadData()
@@ -58,11 +61,14 @@ class AuthSocialViewModel(
     }
 
     fun onClearDataClick() {
-        currentSuccessUrl = null
-        detector.reset()
-        detector.clearCookies()
-        loadData()
-        _state.update { it.copy(showClearCookies = false) }
+        viewModelScope.launch {
+            currentSuccessUrl = null
+            detector.reset()
+            detector.clearCookies()
+            detector.loadUrl(state.value.data?.socialUrl)
+            _reloadEvent.set(Unit)
+            _state.update { it.copy(showClearCookies = false) }
+        }
     }
 
     fun onContinueClick() {

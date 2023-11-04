@@ -80,6 +80,7 @@ dependencies {
     implementation project(":shared-android-ktx")
     implementation project(":shared-app")
     implementation project(":quill-di")
+    implementation project(":media-mobile")
 
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "com.google.android.material:material:$material_version"
@@ -98,6 +99,14 @@ dependencies {
     implementation "com.google.android:flexbox:$flexbox_version"
 
     implementation "com.devbrackets.android:exomedia:$exomedia_version"
+
+    implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
+    implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
+    implementation "androidx.media3:media3-ui:$androidx_media3_version"
+    implementation "androidx.media3:media3-datasource-okhttp:$androidx_media3_version"
+    implementation "androidx.media3:media3-datasource-cronet:$androidx_media3_version"
+    implementation "androidx.media3:media3-session:$androidx_media3_version"
+
 
     implementation "org.bsc.util:minitemplator-repackaged:$minitemplator_version"
 

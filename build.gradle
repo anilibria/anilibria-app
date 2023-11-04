@@ -36,6 +36,7 @@ buildscript {
         androidx_cardview_version = '1.0.0'
         androidx_preference_version = '1.2.1'
         androidx_swiperefresh_version = '1.1.0'
+        androidx_media3_version = '1.1.1'
 
         material_version = '1.10.0'
         flexbox_version = '2.0.1'

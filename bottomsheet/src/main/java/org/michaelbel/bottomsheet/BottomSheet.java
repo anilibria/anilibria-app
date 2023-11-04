@@ -16,6 +16,8 @@
 
 package org.michaelbel.bottomsheet;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -25,6 +27,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
+import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -35,23 +38,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.ArrayRes;
-import androidx.annotation.BoolRes;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.IntDef;
-import androidx.annotation.IntRange;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.MenuRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
-import androidx.annotation.StringRes;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.NestedScrollingParent;
-import androidx.core.view.NestedScrollingParentHelper;
-import androidx.core.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -77,6 +63,28 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.BoolRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.MenuRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.NestedScrollingParent;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.michaelbel.bottomsheet.menu.BottomSheetMenu;
 import org.michaelbel.bottomsheetdialog.R;
 
@@ -86,8 +94,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Date: 17 FEB 2018
@@ -111,17 +117,20 @@ public class BottomSheet extends Dialog {
     @RestrictTo(LIBRARY_GROUP)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LIST, GRID})
-    public @interface Type {}
+    public @interface Type {
+    }
 
     @RestrictTo(LIBRARY_GROUP)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LIGHT_THEME, DARK_THEME})
-    public @interface Theme {}
+    public @interface Theme {
+    }
 
     @RestrictTo(LIBRARY_GROUP)
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({FAB_SHOW_HIDE, FAB_SLIDE_UP})
-    public @interface FabBehavior {}
+    public @interface FabBehavior {
+    }
 
     private boolean dividers;
     private boolean fullWidth;
@@ -141,7 +150,7 @@ public class BottomSheet extends Dialog {
     private @ColorInt int iconColor;
     private @ColorInt int itemTextColor;
 
-    private PorterDuff.Mode iconTintMode = PorterDuff.Mode.MULTIPLY;;
+    private PorterDuff.Mode iconTintMode = PorterDuff.Mode.MULTIPLY;
 
     private View customView;
     private TextView titleTextView;
@@ -235,11 +244,15 @@ public class BottomSheet extends Dialog {
             };
             containerView.setOrientation(LinearLayout.VERTICAL);
             containerView.setBackgroundDrawable(shadowDrawable);
-            containerView.setPadding(0, backgroundPaddingTop, 0, Utils.dp(getContext(), 8));
-        }
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            containerView.setFitsSystemWindows(true);
+            ViewCompat.setOnApplyWindowInsetsListener(containerView, new OnApplyWindowInsetsListener() {
+                @NonNull
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                    Insets systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars()).toPlatformInsets();
+                    containerView.setPadding(0, backgroundPaddingTop, 0, Utils.dp(getContext(), 8) + systemInsets.bottom);
+                    return insets;
+                }
+            });
         }
 
         containerView.setVisibility(View.INVISIBLE);
@@ -320,7 +333,7 @@ public class BottomSheet extends Dialog {
                     gridView.setNumColumns(3);
                     gridView.setVerticalScrollBarEnabled(false);
                     gridView.setVerticalSpacing(Utils.dp(getContext(), 16));
-                    gridView.setPadding(Utils.dp(getContext(), 0), Utils.dp(getContext(),8), Utils.dp(getContext(), 0), Utils.dp(getContext(), 16));
+                    gridView.setPadding(Utils.dp(getContext(), 0), Utils.dp(getContext(), 8), Utils.dp(getContext(), 0), Utils.dp(getContext(), 16));
                     gridView.setLayoutParams(params3);
                     gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -414,14 +427,14 @@ public class BottomSheet extends Dialog {
         AnimatorSet animatorSet = new AnimatorSet();
         if (floatingActionButton != null && fabBehavior == FAB_SLIDE_UP) {
             animatorSet.playTogether(
-                ObjectAnimator.ofFloat(containerView, "translationY", containerView.getMeasuredHeight() + Utils.dp(getContext(), 10)),
-                ObjectAnimator.ofInt(backDrawable, "alpha", 0),
-                ObjectAnimator.ofFloat(floatingActionButton, "translationY", 0)
+                    ObjectAnimator.ofFloat(containerView, "translationY", containerView.getMeasuredHeight() + Utils.dp(getContext(), 10)),
+                    ObjectAnimator.ofInt(backDrawable, "alpha", 0),
+                    ObjectAnimator.ofFloat(floatingActionButton, "translationY", 0)
             );
         } else if (floatingActionButton == null || fabBehavior != FAB_SLIDE_UP) {
             animatorSet.playTogether(
-                ObjectAnimator.ofFloat(containerView, "translationY", containerView.getMeasuredHeight() + Utils.dp(getContext(), 10)),
-                ObjectAnimator.ofInt(backDrawable, "alpha", 0)
+                    ObjectAnimator.ofFloat(containerView, "translationY", containerView.getMeasuredHeight() + Utils.dp(getContext(), 10)),
+                    ObjectAnimator.ofInt(backDrawable, "alpha", 0)
             );
         }
         animatorSet.addListener(new AnimatorListenerAdapter() {
@@ -520,12 +533,18 @@ public class BottomSheet extends Dialog {
     private BottomSheet(Context context, boolean needFocus) {
         super(context, R.style.TransparentDialog);
 
-        if (Build.VERSION.SDK_INT >= 21) {
+
+      /*  if (Build.VERSION.SDK_INT >= 21) {
             getWindow().addFlags(
-                 WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                 WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                            WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
             );
+        }
+*/
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
 
         ViewConfiguration vc = ViewConfiguration.get(context);
@@ -554,17 +573,17 @@ public class BottomSheet extends Dialog {
         focusable = needFocus;
 
         if (Build.VERSION.SDK_INT >= 21) {
-            container.setFitsSystemWindows(true);
+            //container.setFitsSystemWindows(true);
             container.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @SuppressLint("NewApi")
                 @Override
                 public WindowInsets onApplyWindowInsets(View view, WindowInsets insets) {
                     lastInsets = insets;
                     view.requestLayout();
-                    return insets.consumeSystemWindowInsets();
+                    return insets;
                 }
             });
-            container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            //container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
         backDrawable.setAlpha(0);
@@ -773,7 +792,7 @@ public class BottomSheet extends Dialog {
             int width = MeasureSpec.getSize(widthMeasureSpec);
             int height = MeasureSpec.getSize(heightMeasureSpec);
             if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                height -= lastInsets.getSystemWindowInsetBottom();
+                //height -= lastInsets.getSystemWindowInsetBottom();
             }
 
             setMeasuredDimension(width, height);
@@ -950,13 +969,13 @@ public class BottomSheet extends Dialog {
 
             if (floatingActionButton != null && fabBehavior == FAB_SLIDE_UP) {
                 animatorSet.playTogether(
-                    ObjectAnimator.ofFloat(floatingActionButton, "translationY", -(containerView.getMeasuredHeight())),
-                    ObjectAnimator.ofFloat(containerView, "translationY", 0),
-                    ObjectAnimator.ofInt(backDrawable, "alpha", dimmingValue));
+                        ObjectAnimator.ofFloat(floatingActionButton, "translationY", -(containerView.getMeasuredHeight())),
+                        ObjectAnimator.ofFloat(containerView, "translationY", 0),
+                        ObjectAnimator.ofInt(backDrawable, "alpha", dimmingValue));
             } else if (floatingActionButton == null || fabBehavior != FAB_SLIDE_UP) {
                 animatorSet.playTogether(
-                    ObjectAnimator.ofFloat(containerView, "translationY", 0),
-                    ObjectAnimator.ofInt(backDrawable, "alpha", dimmingValue));
+                        ObjectAnimator.ofFloat(containerView, "translationY", 0),
+                        ObjectAnimator.ofInt(backDrawable, "alpha", dimmingValue));
             }
 
             animatorSet.setDuration(200);
@@ -1002,7 +1021,8 @@ public class BottomSheet extends Dialog {
         return (cm / 2.54F) * (isX ? metrics.xdpi : metrics.ydpi);
     }
 
-    protected void onContainerTranslationYChanged(float translationY) {}
+    protected void onContainerTranslationYChanged(float translationY) {
+    }
 
     public void setAllowDrawContent(boolean value) {
         if (allowDrawContent != value) {
@@ -1020,7 +1040,8 @@ public class BottomSheet extends Dialog {
         return false;
     }
 
-    public void onContainerDraw(Canvas canvas) {}
+    public void onContainerDraw(Canvas canvas) {
+    }
 
     protected boolean onCustomOpenAnimation() {
         return false;
@@ -1080,7 +1101,7 @@ public class BottomSheet extends Dialog {
 
         public Builder setItems(@ArrayRes int itemsId, int[] icons, final OnClickListener listener) {
             bottomSheet.ITEMS.addAll(Arrays.asList(context.getResources().getTextArray(itemsId)));
-            for (int i: icons) {
+            for (int i : icons) {
                 bottomSheet.ICONS.add(ContextCompat.getDrawable(context, i));
             }
             bottomSheet.onClickListener = listener;
@@ -1098,7 +1119,7 @@ public class BottomSheet extends Dialog {
             for (int i : items) {
                 bottomSheet.ITEMS.add(context.getResources().getString(i));
             }
-            for (int j: icons) {
+            for (int j : icons) {
                 bottomSheet.ICONS.add(ContextCompat.getDrawable(context, j));
             }
             bottomSheet.onClickListener = listener;
@@ -1116,7 +1137,7 @@ public class BottomSheet extends Dialog {
 
         public Builder setItems(@NonNull CharSequence[] items, int[] icons, final OnClickListener listener) {
             bottomSheet.ITEMS.addAll(Arrays.asList(items));
-            for (int i: icons) {
+            for (int i : icons) {
                 bottomSheet.ICONS.add(ContextCompat.getDrawable(context, i));
             }
             bottomSheet.onClickListener = listener;

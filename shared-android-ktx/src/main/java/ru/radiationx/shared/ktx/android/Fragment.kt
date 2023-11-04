@@ -20,6 +20,19 @@ fun Activity.startMainActivity() {
     startActivity(intent)
 }
 
+/* Bundle */
+@Suppress("DEPRECATION")
+inline fun <reified T : Any> Bundle.getExtraNotNull(key: String, default: T? = null): T {
+    val value = get(key)
+    return requireNotNull(if (value is T) value else default) { key }
+}
+
+@Suppress("DEPRECATION")
+inline fun <reified T : Any> Bundle.getExtra(key: String, default: T? = null): T? {
+    val value = get(key)
+    return if (value is T) value else default
+}
+
 /* Intent */
 @Suppress("DEPRECATION")
 inline fun <reified T : Any> Intent.getExtraNotNull(key: String, default: T? = null): T {

@@ -1,5 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="MediaPlayerTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
+        <item name="colorPrimary">@color/light_colorAccent</item>
+        <item name="colorSecondary">@color/light_colorAccent</item>
+        <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
+        <item name="android:colorBackground">@color/dark_windowBackground</item>
+        <item name="colorSurface">@color/dark_cardBackground</item>
+        <item name="colorOnPrimary">@color/dark_contrast_icon</item>
+        <item name="colorOnSecondary">@color/dark_contrast_icon</item>
+        <item name="colorOnBackground">@color/dark_contrast_icon</item>
+        <item name="colorOnSurface">@color/dark_contrast_icon</item>
+        <item name="android:windowBackground">@color/dark_windowBackground</item>
+
+        <item name="android:textColorPrimary">@color/dark_textDefault</item>
+        <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
+        <item name="android:textColorLink">@color/dark_textLink</item>
+
+        <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
+    </style>
+
     <style name="BasePlayerTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 

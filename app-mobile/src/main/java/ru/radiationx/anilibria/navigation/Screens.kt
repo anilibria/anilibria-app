@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
 import ru.radiationx.anilibria.ui.activities.main.IntentActivity
 import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import ru.radiationx.anilibria.ui.activities.player.VideoPlayerActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
 import ru.radiationx.anilibria.ui.fragments.auth.main.Auth2FaCodeFragment
@@ -69,7 +70,7 @@ object Screens {
         private val playFlag: Int?,
     ) : BaseAppScreen() {
         override fun getActivityIntent(context: Context) =
-            MyPlayerActivity.newIntent(context, release, episodeId, quality, playFlag)
+            VideoPlayerActivity.newIntent(context, episodeId)
     }
 
     class WebPlayer(

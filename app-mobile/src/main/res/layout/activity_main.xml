@@ -16,17 +16,44 @@
         android:id="@+id/bottomShadow"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:layout_above="@+id/tabsRecycler"
+        android:layout_above="@+id/appFooter"
         android:background="@drawable/bottom_navigation_shadow" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tabsRecycler"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/appFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?colorSurface"
-        android:overScrollMode="never"
-        android:transitionGroup="true" />
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tabsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            android:overScrollMode="never"
+            android:transitionGroup="true" />
+
+        <FrameLayout
+            android:id="@+id/bannerAdContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Реклама" />
+
+            <com.yandex.mobile.ads.banner.BannerAdView
+                android:id="@+id/bannerAdBview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/configuring_container"

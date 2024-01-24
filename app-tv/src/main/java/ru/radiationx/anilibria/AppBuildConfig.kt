@@ -14,4 +14,6 @@ class AppBuildConfig @Inject constructor() : SharedBuildConfig {
     override val buildDate: String = BuildConfig.BUILD_DATE
 
     override val debug: Boolean = BuildConfig.DEBUG
+
+    override val hasAds: Boolean = false
 }

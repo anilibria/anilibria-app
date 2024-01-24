@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.ads.BannerAdController
+import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.BaseAppScreen
@@ -60,7 +62,6 @@ import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import ru.terrakok.cicerone.commands.Replace
 
-
 class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
@@ -72,6 +73,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 data = url?.let { Uri.parse(it) }
             }
     }
+
+    private val appThemeController by inject<AppThemeController>()
 
     private val screenMessenger by inject<SystemMessenger>()
 
@@ -103,6 +106,11 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private var createdWithSavedState = false
+
+    private val bannerAdController by lazy {
+        BannerAdController(this, binding.bannerAdBview, binding.bannerAdContainer)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
@@ -157,6 +165,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             onMainLogicCompleted()
         }.launchIn(lifecycleScope)
 
+        viewModel.state.mapNotNull { it.adsConfig }.distinctUntilChanged().onEach {
+            bannerAdController.load(
+                it.mainBanner,
+                appThemeController.getTheme()
+            )
+        }.launchIn(lifecycleScope)
+
         viewModel.updateTabsAction.observe().onEach {
             updateTabs()
         }.launchInResumed(this)
@@ -165,8 +180,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onDestroy() {
         super.onDestroy()
         binding.tabsRecycler.adapter = null
+        bannerAdController.destroy()
     }
-
 
     private fun showUpdateData(update: UpdateDataState) {
         if (update.hasUpdate) {

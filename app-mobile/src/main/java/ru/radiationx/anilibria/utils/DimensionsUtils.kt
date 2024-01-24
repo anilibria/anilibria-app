@@ -1,6 +1,11 @@
 package ru.radiationx.anilibria.utils
 
-import androidx.core.view.*
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.doOnLayout
+import androidx.core.view.updatePadding
+import ru.radiationx.anilibria.databinding.ActivityAuthBinding
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import kotlin.math.max
 
@@ -11,7 +16,7 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
 
         val containerInsetList = listOf(
             systemBarInsets.bottom,
-            tabsRecycler.height,
+            appFooter.height,
             imeInsets.bottom
         )
         val containerInsetsBottom = containerInsetList.max()
@@ -31,7 +36,7 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
             right = systemBarInsets.right,
             bottom = systemBarInsets.bottom
         )
-        tabsRecycler.updatePadding(
+        appFooter.updatePadding(
             left = systemBarInsets.left,
             right = systemBarInsets.right,
             bottom = systemBarInsets.bottom
@@ -44,7 +49,39 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
         it.requestApplyInsets()
     }
 
-    tabsRecycler.doOnLayout {
+    appFooter.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
         root.requestApplyInsets()
+    }
+    appFooter.doOnLayout {
+        root.requestApplyInsets()
+    }
+}
+
+fun ActivityAuthBinding.initInsets(provider: DimensionsProvider) {
+    ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+        val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+        val containerInsetList = listOf(
+            systemBarInsets.bottom,
+            imeInsets.bottom
+        )
+        val containerInsetsBottom = containerInsetList.max()
+
+        val dimensions = Dimensions(
+            statusBar = systemBarInsets.top,
+            navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
+        )
+        layoutActivityContainer.root.updatePadding(
+            left = systemBarInsets.left,
+            right = systemBarInsets.right,
+            bottom = containerInsetsBottom
+        )
+        provider.update(dimensions)
+        insets
+    }
+
+    root.doOnAttach {
+        it.requestApplyInsets()
     }
 }

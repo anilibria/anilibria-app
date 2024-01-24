@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is a part of the Yandex Advertising Network
+  ~
+  ~ Version for Android (C) 2021 YANDEX
+  ~
+  ~ You may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at https://legal.yandex.com/partner_ch/
+  -->
+
+<com.yandex.mobile.ads.nativeads.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_ad_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp">
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/components"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="age,feedback,feedback,icon,title" />
+
+        <TextView
+            android:id="@+id/age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="?textSecond"
+            app:layout_constraintBottom_toTopOf="@id/barrier_top"
+            app:layout_constraintEnd_toStartOf="@id/sponsored"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="18+"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/sponsored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="?textSecond"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toTopOf="@id/barrier_top"
+            app:layout_constraintEnd_toStartOf="@id/feedback"
+            app:layout_constraintStart_toEndOf="@id/age"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Yandex.Direct"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/feedback"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_dots_vertical"
+            app:layout_constraintBottom_toTopOf="@id/barrier_top"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/sponsored"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="age,sponsored,feedback" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@id/barrier_body"
+            app:layout_constraintEnd_toStartOf="@id/barrier_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier_top"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextAppearance.Material3.TitleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="2"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@id/body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/barrier_top"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Yandex.Browser for iPhone and Android"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/body"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@id/barrier_domain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:text="Your bookmarks and favorite sites are available to you on any device with Yandex.Browser. You will never lose them, even if you lose your device or break it."
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/favicon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@id/barrier_domain"
+            app:layout_constraintEnd_toStartOf="@id/domain"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/body"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_domain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="domain,favicon" />
+
+        <TextView
+            android:id="@+id/domain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="?textSecond"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@id/barrier_body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/favicon"
+            app:layout_constraintTop_toBottomOf="@id/body"
+            tools:text="https://browser.yandex.com"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="title,icon,body,domain,favicon" />
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/rating"
+            app:layout_constraintEnd_toStartOf="@id/barrier_rating"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/barrier_body"
+            tools:text="Free"
+            tools:visibility="visible" />
+
+        <com.monetization.ads.fullscreen.template.view.ColorizedRatingView
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            app:layout_constraintBottom_toTopOf="@id/review_count"
+            app:layout_constraintEnd_toStartOf="@id/barrier_rating"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/price"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/review_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?textSecond"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@id/barrier_footer"
+            app:layout_constraintEnd_toStartOf="@id/barrier_rating"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/rating"
+            tools:text="review count"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="icon" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="rating,price,review_count" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/call_to_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toTopOf="@id/barrier_footer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/barrier_rating"
+            app:layout_constraintTop_toBottomOf="@id/barrier_body"
+            app:layout_constraintVertical_bias="1"
+            tools:text="Install"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="price,domain,call_to_action,review_count" />
+
+        <com.yandex.mobile.ads.nativeads.MediaView
+            android:id="@+id/media"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@id/warning"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier_footer"
+            tools:layout_height="200dp"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="?backgroundColor"
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
+            android:paddingRight="8dp"
+            android:textColor="?textSecond"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/media"
+            tools:text="We strongly recommend avoiding this type of website and not clicking the Ignore this warning button!"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.yandex.mobile.ads.nativeads.NativeAdView>

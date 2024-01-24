@@ -38,6 +38,11 @@ suspend inline fun <reified T> String.fetchResponse(moshi: Moshi): T {
     return fetchResponse(moshi, T::class.java)
 }
 
+suspend inline fun <reified T> String.fetchListResponse(moshi: Moshi): List<T> {
+    val dataType = Types.newParameterizedType(List::class.java, T::class.java)
+    return fetchResponse(moshi, dataType)
+}
+
 suspend fun <T> String.fetchApiResponse(moshi: Moshi, dataType: Type): T {
     return withContext(Dispatchers.Default) {
         val responseType = Types.newParameterizedType(ApiResponse::class.java, dataType)

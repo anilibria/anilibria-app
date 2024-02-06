@@ -1154,7 +1154,17 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
     }
 
 
+    private var speedBeforeTap: Float = 1.0f
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
+
+        override fun onLongTapStart() {
+            speedBeforeTap = currentPlaySpeed
+            updatePlaySpeed(2.0f)
+        }
+
+        override fun onLongTapEnd() {
+            updatePlaySpeed(speedBeforeTap)
+        }
 
         override fun onPIPClick() {
             enterPipMode()

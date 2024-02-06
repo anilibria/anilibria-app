@@ -5,9 +5,11 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -129,6 +131,28 @@ class VideoControlsAlib @JvmOverloads constructor(
         binding = ViewVideoControlBinding.bind(viewRoot)
         textContainer = binding.appbarLayout
 
+
+
+        videoView?.setOnTouchListener { v, event ->
+            if(event.action == MotionEvent.ACTION_UP)
+                binding.tapSpeedValue.visibility = INVISIBLE
+
+            true
+        }
+
+//        videoView?.setOnLongClickListener {
+//            //alibControlsListener?.onLongTapStart()
+//            binding.tapSpeedValue.visibility = VISIBLE
+//            return@setOnLongClickListener true
+//        }
+
+
+        binding.mainContainer.setOnLongClickListener {
+            //alibControlsListener?.onLongTapStart()
+            binding.tapSpeedValue.visibility = VISIBLE
+            return@setOnLongClickListener true
+        }
+
         binding.btSkipsCancel.setOnClickListener {
             cancelSkip()
         }
@@ -218,12 +242,25 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             override fun onTap(event: MotionEvent?) {
                 event ?: return
+                alibControlsListener?.onLongTapEnd()
+                binding.tapSpeedValue.visibility = INVISIBLE
                 videoView?.showControls()
                 if (tapSeekStarted) {
                     tapRelay.set(event)
                 }
+
             }
 
+            private fun onTapUp() {
+                alibControlsListener?.onLongTapEnd()
+                binding.tapSpeedValue.visibility = INVISIBLE
+            }
+
+
+            override fun onLongPress(event: MotionEvent) {
+                alibControlsListener?.onLongTapStart()
+                binding.tapSpeedValue.visibility = VISIBLE
+            }
             override fun onDoubleTap(event: MotionEvent?) {
                 event ?: return
                 if (!tapSeekStarted) {
@@ -272,7 +309,10 @@ class VideoControlsAlib @JvmOverloads constructor(
             override fun onStart() {
             }
 
+
+
             override fun onEnd() {
+                onTapUp();
                 if (swipeSeekStarted) {
                     handleEndSwipeSeek()
                 }
@@ -280,6 +320,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                     handleEndTapSeek()
                 }
             }
+
 
 
         })
@@ -443,6 +484,9 @@ class VideoControlsAlib @JvmOverloads constructor(
         fun onBackClick()
         fun onSettingsClick()
         fun onPIPClick()
+
+        fun onLongTapStart()
+        fun onLongTapEnd()
 
         fun onPlaybackStateChanged(isPlaying: Boolean)
     }

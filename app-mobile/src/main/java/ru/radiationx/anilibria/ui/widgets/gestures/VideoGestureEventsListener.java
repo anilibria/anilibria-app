@@ -10,7 +10,10 @@ public interface VideoGestureEventsListener {
 
     void onTap(MotionEvent event);
 
+
     void onDoubleTap(MotionEvent event);
+
+    void onLongPress(MotionEvent event);
 
     void onHorizontalScroll(MotionEvent event, float delta);
 

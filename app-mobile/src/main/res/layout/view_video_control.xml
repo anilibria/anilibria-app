@@ -91,7 +91,8 @@
             style="@style/Widget.MaterialComponents.TextView"
             android:background="@drawable/bg_textview_rounded"
             android:textColor="?colorOnPrimary"
-            android:visibility="visible"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/appbarLayout"  />
 

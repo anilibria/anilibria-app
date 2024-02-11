@@ -132,27 +132,6 @@ class VideoControlsAlib @JvmOverloads constructor(
         textContainer = binding.appbarLayout
 
 
-
-        videoView?.setOnTouchListener { v, event ->
-            if(event.action == MotionEvent.ACTION_UP)
-                binding.tapSpeedValue.visibility = INVISIBLE
-
-            true
-        }
-
-//        videoView?.setOnLongClickListener {
-//            //alibControlsListener?.onLongTapStart()
-//            binding.tapSpeedValue.visibility = VISIBLE
-//            return@setOnLongClickListener true
-//        }
-
-
-        binding.mainContainer.setOnLongClickListener {
-            //alibControlsListener?.onLongTapStart()
-            binding.tapSpeedValue.visibility = VISIBLE
-            return@setOnLongClickListener true
-        }
-
         binding.btSkipsCancel.setOnClickListener {
             cancelSkip()
         }
@@ -242,8 +221,6 @@ class VideoControlsAlib @JvmOverloads constructor(
 
             override fun onTap(event: MotionEvent?) {
                 event ?: return
-                alibControlsListener?.onLongTapEnd()
-                binding.tapSpeedValue.visibility = INVISIBLE
                 videoView?.showControls()
                 if (tapSeekStarted) {
                     tapRelay.set(event)
@@ -258,8 +235,11 @@ class VideoControlsAlib @JvmOverloads constructor(
 
 
             override fun onLongPress(event: MotionEvent) {
-                alibControlsListener?.onLongTapStart()
-                binding.tapSpeedValue.visibility = VISIBLE
+                if(!swipeSeekStarted) {
+                    alibControlsListener?.onLongTapStart()
+                    binding.tapSpeedValue.visibility = VISIBLE
+
+                }
             }
             override fun onDoubleTap(event: MotionEvent?) {
                 event ?: return
@@ -312,7 +292,7 @@ class VideoControlsAlib @JvmOverloads constructor(
 
 
             override fun onEnd() {
-                onTapUp();
+                onTapUp()
                 if (swipeSeekStarted) {
                     handleEndSwipeSeek()
                 }

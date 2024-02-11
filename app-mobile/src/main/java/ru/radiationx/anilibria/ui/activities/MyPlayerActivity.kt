@@ -139,6 +139,7 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
 
     //private var currentEpisode = NOT_SELECTED
     private var currentPlaySpeed = 1.0f
+    private var speedBeforeTap: Float = 1.0f
     private var videoControls: VideoControlsAlib? = null
     private val fullScreenListener = FullScreenListener()
 
@@ -1153,8 +1154,6 @@ class MyPlayerActivity : BaseActivity(R.layout.activity_myplayer) {
         return binding.player.currentPosition / binding.player.duration.toFloat()
     }
 
-
-    private var speedBeforeTap: Float = 1.0f
     private val alibControlListener = object : VideoControlsAlib.AlibControlsListener {
 
         override fun onLongTapStart() {

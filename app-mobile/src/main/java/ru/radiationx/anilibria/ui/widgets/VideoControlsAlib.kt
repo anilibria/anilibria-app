@@ -46,6 +46,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : VideoControlsMobile(context, attrs, defStyleAttr) {
 
+    private var longTapStarted: Boolean = false
+
     private var alibControlsListener: AlibControlsListener? = null
     private var pictureInPictureMenuItem: MenuItem? = null
     private var controlsEnabled = true
@@ -229,13 +231,18 @@ class VideoControlsAlib @JvmOverloads constructor(
             }
 
             private fun onTapUp() {
-                alibControlsListener?.onLongTapEnd()
-                binding.tapSpeedValue.visibility = INVISIBLE
+                if(longTapStarted){
+                    alibControlsListener?.onLongTapEnd()
+                    binding.tapSpeedValue.visibility = INVISIBLE
+                    longTapStarted = false
+                }
+
             }
 
 
             override fun onLongPress(event: MotionEvent) {
                 if(!swipeSeekStarted) {
+                    longTapStarted = true
                     alibControlsListener?.onLongTapStart()
                     binding.tapSpeedValue.visibility = VISIBLE
 

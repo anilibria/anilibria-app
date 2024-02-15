@@ -24,6 +24,9 @@
     <color name="brand_rustore">#0077FF</color>
 
 
+    <color name="control_gray">#5000</color>
+
+
     <!-- LIGHT THEME -->
     <color name="light_colorPrimary">@color/white</color>
     <color name="light_colorPrimaryDark">@color/white</color>

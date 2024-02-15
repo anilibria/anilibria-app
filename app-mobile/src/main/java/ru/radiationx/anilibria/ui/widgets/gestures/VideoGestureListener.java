@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets.gestures;
 
+import android.gesture.GestureOverlayView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -20,13 +21,11 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
         this.listener = listener;
         minFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
     }
-
     @Override
     public boolean onSingleTapUp(@NonNull MotionEvent e) {
         listener.onTap(e);
         return super.onSingleTapUp(e);
     }
-
     @Override
     public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
         //listener.onTap(e);
@@ -41,6 +40,7 @@ public class VideoGestureListener extends GestureDetector.SimpleOnGestureListene
 
     @Override
     public void onLongPress(@NonNull MotionEvent e) {
+        listener.onLongPress(e);
         // Touch has been long enough to indicate a long press.
         // Does not indicate motion is complete yet (no up event necessarily)
     }

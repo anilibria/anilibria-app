@@ -5,9 +5,11 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -43,6 +45,8 @@ class VideoControlsAlib @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : VideoControlsMobile(context, attrs, defStyleAttr) {
+
+    private var longTapStarted: Boolean = false
 
     private var alibControlsListener: AlibControlsListener? = null
     private var pictureInPictureMenuItem: MenuItem? = null
@@ -128,6 +132,7 @@ class VideoControlsAlib @JvmOverloads constructor(
         val viewRoot = findViewById<CoordinatorLayout>(R.id.videoControlsRoot)
         binding = ViewVideoControlBinding.bind(viewRoot)
         textContainer = binding.appbarLayout
+
 
         binding.btSkipsCancel.setOnClickListener {
             cancelSkip()
@@ -222,8 +227,27 @@ class VideoControlsAlib @JvmOverloads constructor(
                 if (tapSeekStarted) {
                     tapRelay.set(event)
                 }
+
             }
 
+            private fun onTapUp() {
+                if(longTapStarted){
+                    alibControlsListener?.onLongTapEnd()
+                    binding.tapSpeedValue.visibility = INVISIBLE
+                    longTapStarted = false
+                }
+
+            }
+
+
+            override fun onLongPress(event: MotionEvent) {
+                if(!swipeSeekStarted) {
+                    longTapStarted = true
+                    alibControlsListener?.onLongTapStart()
+                    binding.tapSpeedValue.visibility = VISIBLE
+
+                }
+            }
             override fun onDoubleTap(event: MotionEvent?) {
                 event ?: return
                 if (!tapSeekStarted) {
@@ -272,7 +296,10 @@ class VideoControlsAlib @JvmOverloads constructor(
             override fun onStart() {
             }
 
+
+
             override fun onEnd() {
+                onTapUp()
                 if (swipeSeekStarted) {
                     handleEndSwipeSeek()
                 }
@@ -280,6 +307,7 @@ class VideoControlsAlib @JvmOverloads constructor(
                     handleEndTapSeek()
                 }
             }
+
 
 
         })
@@ -443,6 +471,9 @@ class VideoControlsAlib @JvmOverloads constructor(
         fun onBackClick()
         fun onSettingsClick()
         fun onPIPClick()
+
+        fun onLongTapStart()
+        fun onLongTapEnd()
 
         fun onPlaybackStateChanged(isPlaying: Boolean)
     }

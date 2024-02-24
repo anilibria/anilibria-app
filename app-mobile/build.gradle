@@ -48,11 +48,13 @@ android {
     productFlavors {
         app {
             dimension "type"
+            buildConfigField "boolean", 'HAS_ADS', 'true'
         }
 
         store {
             dimension "type"
             applicationId "tv.anilibria.store"
+            buildConfigField "boolean", 'HAS_ADS', 'false'
         }
     }
 
@@ -120,6 +122,8 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_core_version"
 
     implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
+
+    implementation 'com.yandex.android:mobileads:6.4.0'
 }
 
 apply plugin: "com.google.gms.google-services"

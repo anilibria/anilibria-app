@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters
 
+import com.yandex.mobile.ads.nativeads.NativeAd
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
@@ -132,3 +133,7 @@ data class FeedRandomBtnListItem(val id: Any) : ListItem(id)
 data class AppInfoCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
 data class AppWarningCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
 data class DonationCardListItem(val state: DonationCardItemState) : ListItem(state.tag)
+
+
+/* Ads */
+data class NativeAdListItem(val nativeAd: NativeAd) : ListItem(nativeAd.hashCode())

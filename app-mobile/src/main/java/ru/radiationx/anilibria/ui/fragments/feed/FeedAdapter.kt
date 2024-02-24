@@ -2,10 +2,10 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
+import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
 import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem
@@ -18,8 +18,10 @@ import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppInfoCardDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppWarningCardDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.DonationCardDelegate
@@ -77,6 +79,7 @@ class FeedAdapter(
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(PlaceholderDelegate())
+        addDelegate(NativeAdDelegate())
     }
 
     fun bindState(state: FeedScreenState) {
@@ -126,15 +129,21 @@ class FeedAdapter(
             )
             newItems.add(FeedRandomBtnListItem("random"))
 
-            var lastFeedItem: FeedItemState? = null
-            feedItems.forEach { feedItem ->
-                val isNotReleaseSequence = feedItem.release == null && lastFeedItem?.release != null
-                val isNotYoutubeSequence = feedItem.youtube == null && lastFeedItem?.youtube != null
-                if (isNotReleaseSequence || isNotYoutubeSequence) {
-                    newItems.add(DividerShadowListItem("${feedItem.release?.id}_${feedItem.youtube?.id}"))
+            var lastType: String? = null
+            feedItems.forEach {
+                val (type, item) = when (it) {
+                    is NativeAdItem.Ad -> "ad" to NativeAdListItem(it.ad)
+                    is NativeAdItem.Data -> when {
+                        it.data.release != null -> "release" to FeedListItem(it.data)
+                        it.data.youtube != null -> "youtube" to FeedListItem(it.data)
+                        else -> throw IllegalStateException("Unknown item type")
+                    }
                 }
-                newItems.add(FeedListItem(feedItem))
-                lastFeedItem = feedItem
+                if (lastType != null && lastType != type) {
+                    newItems.add(DividerShadowListItem("$type, ${item.getItemId()}"))
+                }
+                newItems.add(item)
+                lastType = type
             }
         }
 

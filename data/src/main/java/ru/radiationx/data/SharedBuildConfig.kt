@@ -6,4 +6,5 @@ interface SharedBuildConfig {
     val versionCode: Int
     val buildDate: String
     val debug: Boolean
+    val hasAds: Boolean
 }

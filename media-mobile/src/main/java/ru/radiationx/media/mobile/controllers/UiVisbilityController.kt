@@ -54,7 +54,7 @@ internal class UiVisbilityController(
         ) { internalState, playerState ->
             val hasError = playerState.errorMessage != null
             val seekerVisible =
-                (internalState.scrollSeeker || internalState.doubleTapSeeker) && !internalState.liveScale
+                (internalState.scrollSeeker || internalState.doubleTapSeeker || internalState.longTapSeeker) && !internalState.liveScale
             val mainVisible =
                 (internalState.main || internalState.slider) && !internalState.liveScale
             val hasPip = internalState.pip
@@ -111,6 +111,10 @@ internal class UiVisbilityController(
         _internalState.update { it.copy(scrollSeeker = active) }
     }
 
+    fun updateLongTapSeeker(active: Boolean) {
+        _internalState.update { it.copy(longTapSeeker = active) }
+    }
+
     fun updateSlider(active: Boolean) {
         _internalState.update { it.copy(slider = active) }
     }
@@ -149,6 +153,7 @@ internal class UiVisbilityController(
         val main: Boolean = false,
         val doubleTapSeeker: Boolean = false,
         val scrollSeeker: Boolean = false,
+        val longTapSeeker: Boolean = false,
         val slider: Boolean = false,
         val skip: Boolean = false,
         val liveScale: Boolean = false,

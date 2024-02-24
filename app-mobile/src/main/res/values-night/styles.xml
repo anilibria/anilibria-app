@@ -47,8 +47,6 @@
         <item name="textDefault">@color/dark_textDefault</item>
         <item name="textSecond">@color/dark_textSecond</item>
 
-        <item name="playerColorPrimary">@color/playerColorPrimary</item>
-
         <item name="app_bar_overlay">@style/DayNightAppTheme.AppBarOverlay</item>
         <item name="popup_overlay">@style/DayNightAppTheme.PopupOverlay</item>
     </style>

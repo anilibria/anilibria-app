@@ -117,6 +117,9 @@ class AppModule(application: Application) : QuillModule() {
             singleImpl<AnalyticsProfile, AppMetricaAnalyticsProfile>()
             singleImpl<AnalyticsErrorReporter, AppMetricaErrorReporter>()
         }
+
+        /* Player */
+
     }
 
 }

@@ -15,7 +15,15 @@ class AppMetricaAnalyticsSender : AnalyticsSender {
                 YandexMetrica.reportEvent(key, params.toMap())
             }
         } catch (e: Throwable) {
-            Timber.e(e)
+            Timber.e(e, "Error while sending event to appmetrica")
+        }
+    }
+
+    override fun error(groupId: String, message: String, throwable: Throwable) {
+        try {
+            YandexMetrica.reportError(groupId, message, throwable)
+        } catch (e: Throwable) {
+            Timber.e(e, "Error while sending error to appmetrica")
         }
     }
 }

@@ -10,6 +10,55 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/dataLoadingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#6000"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dataErrorTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Ошибка загрузки данных"
+            android:textColor="?colorOnSurface"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dataErrorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:maxWidth="360dp"
+            android:textColor="?colorOnSurface"
+            android:textSize="12sp"
+            tools:text="2000:ERROR_CODE_DRM_LICENSE_ACQUISITION_FAILED" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dataErrorAction"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Обновить" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/dataLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:indicatorColor="?colorOnSurface"
+            app:indicatorInset="0dp"
+            app:indicatorSize="72dp" />
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/playerToolbar"
         android:layout_width="match_parent"

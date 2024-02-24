@@ -161,6 +161,7 @@ public class BottomSheet extends Dialog {
 
     private List<Drawable> ICONS = new ArrayList<>();
     private List<CharSequence> ITEMS = new ArrayList<>();
+    private int targetItemIndex = -1;
 
     private CharSequence titleText;
     private ArrayList<BottomSheetItem> bottomsheetItems = new ArrayList<>();
@@ -322,6 +323,15 @@ public class BottomSheet extends Dialog {
                             dismissWithButtonClick(position);
                         }
                     });
+                    listView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (targetItemIndex != -1) {
+                                listView.setSelection(targetItemIndex);
+                            }
+                        }
+                    });
+
 
                     containerView.addView(listView);
                 } else if (contentType == GRID) {
@@ -1148,6 +1158,11 @@ public class BottomSheet extends Dialog {
             bottomSheet.ITEMS.addAll(Arrays.asList(items));
             Collections.addAll(bottomSheet.ICONS, icons);
             bottomSheet.onClickListener = listener;
+            return this;
+        }
+
+        public Builder setTargetItemIndex(int index) {
+            bottomSheet.targetItemIndex = index;
             return this;
         }
 

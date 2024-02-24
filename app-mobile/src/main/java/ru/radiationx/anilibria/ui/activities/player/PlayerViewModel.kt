@@ -1,25 +1,32 @@
 package ru.radiationx.anilibria.ui.activities.player
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsState
+import ru.radiationx.anilibria.ui.activities.player.mappers.toDataState
+import ru.radiationx.anilibria.ui.activities.player.mappers.toState
+import ru.radiationx.anilibria.ui.activities.player.models.LoadingState
+import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
+import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
-import ru.radiationx.data.entity.domain.release.PlayerSkips
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
@@ -30,12 +37,6 @@ data class PlayerExtra(
     val episodeId: EpisodeId,
 ) : QuillExtra
 
-enum class PlayerQuality {
-    SD,
-    HD,
-    FULLHD
-}
-
 @InjectConstructor
 class PlayerViewModel(
     private val argExtra: PlayerExtra,
@@ -43,11 +44,19 @@ class PlayerViewModel(
     private val episodesCheckerHolder: EpisodesCheckerHolder,
 ) : ViewModel() {
 
-    private val _targetQuality = MutableStateFlow(PlayerQuality.SD)
-    val targetQuality = _targetQuality.asStateFlow()
+    companion object {
+        private val seekThreshold = TimeUnit.SECONDS.toMillis(10)
+    }
 
-    private val _currentSpeed = MutableStateFlow(1.0f)
-    val currentSpeed = _currentSpeed.asStateFlow()
+    private val _targetQuality = releaseInteractor
+        .observePlayerQuality()
+        .stateIn(viewModelScope, SharingStarted.Lazily, releaseInteractor.getPlayerQuality())
+
+    private val _currentSpeed = releaseInteractor
+        .observePlaySpeed()
+        .stateIn(viewModelScope, SharingStarted.Lazily, releaseInteractor.getPlaySpeed())
+
+    val currentSpeed = _currentSpeed
 
     private val _episodeId = MutableStateFlow(argExtra.episodeId)
     val episodeId = _episodeId.asStateFlow()
@@ -75,25 +84,19 @@ class PlayerViewModel(
         _targetQuality
             .drop(1)
             .onEach { quality ->
-                val release = _dataState.value.data ?: return@onEach
-                val episodeStates = release.episodes.map {
-                    it.toState(quality)
+                withData { data ->
+                    val skipsEnabled = releaseInteractor.getPlayerSkips()
+                    val episodeStates =
+                        data.episodes.map { it.toState(quality, skipsEnabled) }.asReversed()
+                    val action = PlayerAction.PlaylistChange(episodeStates)
+                    _actions.emit(action)
                 }
-                val action = PlayerAction.PlaylistChange(episodeStates)
-                _actions.emit(action)
             }
             .launchIn(viewModelScope)
     }
 
-    fun playEpisode(episodeId: EpisodeId, quality: PlayerQuality?, speed: Float?) {
-        Log.e("kekeke", "playEpisode $episodeId, $quality, $speed")
+    fun initialPlayEpisode(episodeId: EpisodeId) {
         _episodeId.value = episodeId
-        if (quality != null) {
-            _targetQuality.value = quality
-        }
-        if (speed != null) {
-            _currentSpeed.value = speed
-        }
         loadData(episodeId)
     }
 
@@ -102,50 +105,62 @@ class PlayerViewModel(
     }
 
     fun onSettingsClick() {
-        val episode = _dataState.value.data?.episodes?.find { it.id == _episodeId.value } ?: return
-        val settingsState = PlayerSettingsState(
-            currentSpeed = _currentSpeed.value,
-            currentQuality = episode.getActualQuality(_targetQuality.value) ?: PlayerQuality.SD,
-            availableQualities = episode.getAvailableQualities()
-        )
-        viewModelScope.launch {
+        launchWithData { data ->
+            val episode = data.episodes.find { it.id == _episodeId.value } ?: return@launchWithData
+            val quality = _targetQuality.value
+            val settingsState = PlayerSettingsState(
+                currentSpeed = _currentSpeed.value,
+                currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
+                availableQualities = episode.qualityInfo.available
+            )
             _actions.emit(PlayerAction.ShowSettings(settingsState))
         }
     }
 
     fun onPlaylistClick() {
-
-    }
-
-    fun onQualitySelected(quality: PlayerQuality) {
-        _targetQuality.value = quality
-    }
-
-    fun onSpeedSelected(speed: Float) {
-        _currentSpeed.value = speed
-    }
-
-    fun saveEpisodeSeek(episodeId: EpisodeId, seek: Long) {
-        viewModelScope.launch {
-            episodesCheckerHolder.putEpisode(
-                EpisodeAccess(
-                    id = episodeId,
-                    seek = seek,
-                    isViewed = true,
-                    lastAccess = System.currentTimeMillis()
-                )
-            )
+        launchWithData { data ->
+            val action = PlayerAction.ShowPlaylist(data.episodes.asReversed(), episodeId.value)
+            _actions.emit(action)
         }
     }
 
-    fun onEpisodeChanged(episodeId: EpisodeId, duration: Long) {
+    fun onQualitySelected(quality: PlayerQuality) {
+        releaseInteractor.setPlayerQuality(quality)
+    }
+
+    fun onSpeedSelected(speed: Float) {
+        releaseInteractor.setPlaySpeed(speed)
+    }
+
+    fun saveEpisodeSeek(episodeId: EpisodeId, seek: Long) {
+        GlobalScope.launch {
+            val access = EpisodeAccess(
+                id = episodeId,
+                seek = seek,
+                isViewed = true,
+                lastAccess = System.currentTimeMillis()
+            )
+            episodesCheckerHolder.putEpisode(access)
+        }
+    }
+
+    fun playEpisode(episodeId: EpisodeId) {
+        launchWithData { data ->
+            val quality = _targetQuality.value
+            val access = episodesCheckerHolder.getEpisode(episodeId)
+            val skipsEnabled = releaseInteractor.getPlayerSkips()
+            val episodeStates = data.episodes.map { it.toState(quality, skipsEnabled) }.asReversed()
+            val action = PlayerAction.PlayEpisode(episodeStates, episodeId, access?.seek ?: 0)
+            _actions.emit(action)
+        }
+    }
+
+    fun onEpisodeTransition(episodeId: EpisodeId, duration: Long) {
         _episodeId.value = episodeId
         viewModelScope.launch {
-            val access = episodesCheckerHolder.getEpisodes(episodeId.releaseId).find {
-                it.id == episodeId
-            }
+            val access = episodesCheckerHolder.getEpisode(episodeId)
             val accessSeek = access?.seek
-            if ((accessSeek ?: 0) >= duration - TimeUnit.SECONDS.toMillis(10)) {
+            if ((accessSeek ?: 0) >= duration - seekThreshold) {
                 _actions.emit(PlayerAction.Play(0))
             } else {
                 _actions.emit(PlayerAction.Play(accessSeek))
@@ -158,19 +173,11 @@ class PlayerViewModel(
             _dataState.update { LoadingState(loading = true) }
             coRunCatching {
                 requireNotNull(releaseInteractor.getFull(episodeId.releaseId)) {
-                    "Loaded release is null"
+                    "Loaded release is null for $episodeId"
                 }
             }.onSuccess { release ->
                 _dataState.update { it.copy(data = release) }
-                val quality = _targetQuality.value
-                val access = episodesCheckerHolder.getEpisodes(episodeId.releaseId).find {
-                    it.id == episodeId
-                }
-                val episodeStates = release.episodes.map {
-                    it.toState(quality)
-                }
-                val action = PlayerAction.InitialPlay(episodeStates, episodeId, access?.seek ?: 0)
-                _actions.emit(action)
+                playEpisode(episodeId)
             }.onFailure { error ->
                 _dataState.update { it.copy(error = error) }
             }
@@ -178,95 +185,17 @@ class PlayerViewModel(
         }
     }
 
-    fun Release.toDataState(episodeId: EpisodeId) = PlayerDataState(
-        id = id,
-        title = (title ?: titleEng).orEmpty(),
-        episodeTitle = episodes.find { it.id == episodeId }?.title.orEmpty()
-    )
+    private inline fun withData(block: (Release) -> Unit) {
+        val data = _dataState.value.data ?: return
+        block.invoke(data)
+    }
 
-    fun Episode.toState(quality: PlayerQuality) = EpisodeState(
-        id = id,
-        title = title.orEmpty(),
-        url = getUrlByQuality(quality),
-        skips = skips
-    )
-
-    private fun Episode.getAvailableQualities(): List<PlayerQuality> = buildList {
-        if (!urlSd.isNullOrEmpty()) {
-            add(PlayerQuality.SD)
-        }
-        if (!urlHd.isNullOrEmpty()) {
-            add(PlayerQuality.HD)
-        }
-        if (!urlFullHd.isNullOrEmpty()) {
-            add(PlayerQuality.FULLHD)
+    private inline fun launchWithData(crossinline block: suspend CoroutineScope.(Release) -> Unit) {
+        val data = _dataState.value.data ?: return
+        viewModelScope.launch {
+            block.invoke(this, data)
         }
     }
 
-    private fun Episode.getActualQuality(quality: PlayerQuality): PlayerQuality? {
-        val available = getAvailableQualities()
-        var actual: PlayerQuality? = quality
-
-        if (actual == PlayerQuality.FULLHD && actual !in available) {
-            actual = PlayerQuality.HD
-        }
-        if (actual == PlayerQuality.HD && actual !in available) {
-            actual = PlayerQuality.SD
-        }
-        if (actual == PlayerQuality.SD && actual !in available) {
-            actual = null
-        }
-        return actual
-    }
-
-    private fun Episode.getUrlByQuality(quality: PlayerQuality): String {
-        val url = when (getActualQuality(quality)) {
-            PlayerQuality.SD -> urlSd
-            PlayerQuality.HD -> urlHd
-            PlayerQuality.FULLHD -> urlFullHd
-            null -> null
-        }
-        return requireNotNull(url) {
-            "Can't find any url for episode with $quality"
-        }
-    }
 }
 
-data class LoadingState<T>(
-    val loading: Boolean = false,
-    val data: T? = null,
-    val error: Throwable? = null,
-)
-
-data class PlayerDataState(
-    val id: ReleaseId,
-    val title: String,
-    val episodeTitle: String,
-)
-
-data class EpisodeState(
-    val id: EpisodeId,
-    val title: String,
-    val url: String,
-    val skips: PlayerSkips?,
-)
-
-sealed class PlayerAction {
-    data class InitialPlay(
-        val episodes: List<EpisodeState>,
-        val episodeId: EpisodeId,
-        val seek: Long,
-    ) : PlayerAction()
-
-    data class PlaylistChange(
-        val episodes: List<EpisodeState>,
-    ) : PlayerAction()
-
-    data class Play(
-        val seek: Long?,
-    ) : PlayerAction()
-
-    data class ShowSettings(
-        val state: PlayerSettingsState,
-    ) : PlayerAction()
-}

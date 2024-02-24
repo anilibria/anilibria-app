@@ -24,6 +24,7 @@ import ru.radiationx.media.mobile.controllers.MediaActionsController
 import ru.radiationx.media.mobile.controllers.MediaButtonsController
 import ru.radiationx.media.mobile.controllers.OutputController
 import ru.radiationx.media.mobile.controllers.SkipsController
+import ru.radiationx.media.mobile.controllers.SpeedController
 import ru.radiationx.media.mobile.controllers.TimelineController
 import ru.radiationx.media.mobile.controllers.UiVisbilityController
 import ru.radiationx.media.mobile.controllers.gesture.GestureController
@@ -94,11 +95,17 @@ class PlayerView @JvmOverloads constructor(
         skipButtonCancel = binding.mediaSkipButtonCancel,
         skipButtonSkip = binding.mediaSkipButtonSkip
     )
+
     private val errorController = ErrorController(
         coroutineScope = coroutineScope,
         playerFlow = playerFlow,
         errorMessageText = binding.mediaErrorMessage,
         errorButtonAction = binding.mediaErrorAction
+    )
+
+    private val speedController = SpeedController(
+        coroutineScope = coroutineScope,
+        playerFlow = playerFlow
     )
 
     private val _uiShowState = MutableStateFlow(false)
@@ -160,7 +167,7 @@ class PlayerView @JvmOverloads constructor(
     }
 
     fun setSpeed(speed: Float) {
-        playerFlow.setSpeed(speed)
+        speedController.setSpeed(speed)
     }
 
     fun setPipVisible(state: Boolean) {
@@ -189,6 +196,7 @@ class PlayerView @JvmOverloads constructor(
         holder.addListener(gestureController)
         holder.addListener(skipsController)
         holder.addListener(errorController)
+        holder.addListener(speedController)
     }
 
     private fun initUi() {
@@ -238,6 +246,11 @@ class PlayerView @JvmOverloads constructor(
             uiVisbilityController.updateScrollSeeker(it.isActive)
         }.launchIn(coroutineScope)
 
+        gestureController.longTapSeekerState.onEach {
+            speedController.setLongTapSeek(it)
+            uiVisbilityController.updateLongTapSeeker(it)
+        }.launchIn(coroutineScope)
+
         gestureController.liveScale.onEach {
             outputController.setLiveScale(it)
             uiVisbilityController.updateLiveScale(it != null)
@@ -264,7 +277,7 @@ class PlayerView @JvmOverloads constructor(
     }
 
     private fun initInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val barInsets = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
             val gesturesInsets = insets.getInsets(WindowInsetsCompat.Type.systemGestures())

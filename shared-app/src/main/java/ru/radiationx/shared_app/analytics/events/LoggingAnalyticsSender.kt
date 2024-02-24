@@ -10,4 +10,8 @@ class LoggingAnalyticsSender : AnalyticsSender {
     override fun send(key: String, vararg params: Pair<String, String>) {
         Timber.tag("AnalyticsSender").d("key: $key, params: ${params.toMap()}")
     }
+
+    override fun error(groupId: String, message: String, throwable: Throwable) {
+        Timber.tag("AnalyticsSender").e(throwable, "groupId: $groupId, message: $message")
+    }
 }

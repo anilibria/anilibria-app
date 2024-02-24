@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getCompatDrawable
@@ -106,16 +107,16 @@ class ReleaseEpisodeDelegate(
             binding.root.setBackgroundColor(bgColor)
 
             binding.qualitySd.setOnClickListener {
-                itemListener.onClickSd(state)
+                itemListener.onClickEpisode(state, PlayerQuality.SD)
             }
             binding.qualityHd.setOnClickListener {
-                itemListener.onClickHd(state)
+                itemListener.onClickEpisode(state, PlayerQuality.HD)
             }
             binding.qualityFullHd.setOnClickListener {
-                itemListener.onClickFullHd(state)
+                itemListener.onClickEpisode(state, PlayerQuality.FULLHD)
             }
             binding.root.setOnClickListener {
-                itemListener.onClickEpisode(state)
+                itemListener.onClickEpisode(state, null)
             }
             binding.root.setOnLongClickListener {
                 if (state.isViewed) {
@@ -128,13 +129,8 @@ class ReleaseEpisodeDelegate(
     }
 
     interface Listener {
-        fun onClickSd(episode: ReleaseEpisodeItemState)
 
-        fun onClickHd(episode: ReleaseEpisodeItemState)
-
-        fun onClickFullHd(episode: ReleaseEpisodeItemState)
-
-        fun onClickEpisode(episode: ReleaseEpisodeItemState)
+        fun onClickEpisode(episode: ReleaseEpisodeItemState, quality: PlayerQuality?)
 
         fun onLongClickEpisode(episode: ReleaseEpisodeItemState)
     }

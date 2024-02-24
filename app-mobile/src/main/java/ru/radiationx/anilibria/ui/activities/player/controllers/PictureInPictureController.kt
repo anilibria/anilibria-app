@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.activities.player
+package ru.radiationx.anilibria.ui.activities.player.controllers
 
 import android.app.AppOpsManager
 import android.app.PendingIntent

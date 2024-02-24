@@ -56,6 +56,7 @@ internal class GestureController(
 
     private val doubleTapSeeker = DoubleTapSeeker(playerFlow, coroutineScope, gestureView)
     private val scrollSeeker = ScrollSeeker(playerFlow, gestureView)
+    private val longTapSeeker = LongTapSeeker()
 
     var singleTapListener: (() -> Unit)? = null
 
@@ -64,6 +65,7 @@ internal class GestureController(
 
     val doubleTapSeekerState = doubleTapSeeker.state
     val scrollSeekerState = scrollSeeker.state
+    val longTapSeekerState = longTapSeeker.state
 
     init {
         gestureListener.scrollAllowProvider = { scaledetector.isInProgress }
@@ -77,11 +79,13 @@ internal class GestureController(
         gestureListener.scrollListener = { deltaX, eventId ->
             scrollSeeker.onScroll(deltaX, eventId)
         }
+        gestureListener.onLongPress = {
+            longTapSeeker.onOnLongTap()
+        }
 
         gestureView.setOnTouchListener { _, event ->
             when (event.action) {
-                MotionEvent.ACTION_DOWN,
-                -> {
+                MotionEvent.ACTION_DOWN -> {
                     scrollSeeker.setIgnore(null)
                 }
             }
@@ -97,6 +101,7 @@ internal class GestureController(
                 -> {
                     scrollSeeker.onTouchEnd(event.downTime)
                     scrollSeeker.setIgnore(null)
+                    longTapSeeker.onTouchEnd()
                 }
             }
             result
@@ -116,6 +121,10 @@ internal class GestureController(
 
         scrollSeeker.state.onEach {
             seekerTime.text = TimeFormatter.format(it.deltaSeek, true)
+        }.launchIn(coroutineScope)
+
+        longTapSeeker.state.onEach {
+            seekerTime.text = "2x"
         }.launchIn(coroutineScope)
     }
 }

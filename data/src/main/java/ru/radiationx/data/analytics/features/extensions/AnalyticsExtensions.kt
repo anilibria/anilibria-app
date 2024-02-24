@@ -32,16 +32,6 @@ fun AnalyticsQuality?.toQualityParam(name: String = "quality") = Pair(name, this
 
 fun AnalyticsPlayer?.toPlayerParam(name: String = "player") = Pair(name, this?.value.toString())
 
-fun AnalyticsVideoScale?.toScaleParam(name: String = "scale") = Pair(name, this?.value.toString())
-
-fun AnalyticsPip?.toPipParam(name: String = "pip") = Pair(name, this?.value.toString())
-
-fun AnalyticsEpisodeFinishAction?.toActionParam(name: String = "action") =
-    Pair(name, this?.value.toString())
-
-fun AnalyticsSeasonFinishAction?.toActionParam(name: String = "action") =
-    Pair(name, this?.value.toString())
-
 fun AnalyticsAppTheme?.toThemeParam(name: String = "theme") = Pair(name, this?.value.toString())
 
 fun Long.toPreciseSecondsString(): String {

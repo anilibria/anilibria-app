@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import toothpick.InjectConstructor
@@ -20,9 +21,9 @@ class PlayerQualityViewModel(
 ) : LifecycleViewModel() {
 
     companion object {
-        const val SD_ACTION_ID = PreferencesHolder.QUALITY_SD.toLong()
-        const val HD_ACTION_ID = PreferencesHolder.QUALITY_HD.toLong()
-        const val FULL_HD_ACTION_ID = PreferencesHolder.QUALITY_FULL_HD.toLong()
+        val SD_ACTION_ID = PlayerQuality.SD.ordinal.toLong()
+        val HD_ACTION_ID = PlayerQuality.HD.ordinal.toLong()
+        val FULL_HD_ACTION_ID = PlayerQuality.FULLHD.ordinal.toLong()
     }
 
     val availableData = MutableStateFlow<List<Long>>(emptyList())
@@ -31,7 +32,7 @@ class PlayerQualityViewModel(
     init {
         combine(
             releaseInteractor.observeFull(argExtra.releaseId),
-            releaseInteractor.observeQuality()
+            releaseInteractor.observePlayerQuality()
         ) { release, quality ->
             updateAvailable(release, quality)
         }.launchIn(viewModelScope)
@@ -40,49 +41,18 @@ class PlayerQualityViewModel(
     fun applyQuality(quality: Long) {
         guidedRouter.close()
         val value = when (quality) {
-            SD_ACTION_ID -> PreferencesHolder.QUALITY_SD
-            HD_ACTION_ID -> PreferencesHolder.QUALITY_HD
-            FULL_HD_ACTION_ID -> PreferencesHolder.QUALITY_FULL_HD
-            else -> PreferencesHolder.QUALITY_SD
+            SD_ACTION_ID -> PlayerQuality.SD
+            HD_ACTION_ID -> PlayerQuality.HD
+            FULL_HD_ACTION_ID -> PlayerQuality.FULLHD
+            else -> PlayerQuality.SD
         }
-        releaseInteractor.setQuality(value)
+        releaseInteractor.setPlayerQuality(value)
     }
 
-    private fun updateAvailable(release: Release, quality: Int) {
+    private fun updateAvailable(release: Release, quality: PlayerQuality) {
         val episode = release.episodes.firstOrNull { it.id == argExtra.episodeId } ?: return
-        val available = buildList {
-            if (!episode.urlSd.isNullOrEmpty()) {
-                add(SD_ACTION_ID)
-            }
-            if (!episode.urlHd.isNullOrEmpty()) {
-                add(HD_ACTION_ID)
-            }
-            if (!episode.urlFullHd.isNullOrEmpty()) {
-                add(FULL_HD_ACTION_ID)
-            }
-        }
-        availableData.value = available
-        selectedData.value = computeQualityActionId(available, quality)
+        availableData.value = episode.qualityInfo.available.map { it.ordinal.toLong() }
+        selectedData.value = episode.qualityInfo.getActualFor(quality)?.ordinal?.toLong() ?: -1L
     }
 
-    private fun computeQualityActionId(available: List<Long>, currentQuality: Int): Long {
-        var selectedAction = when (currentQuality) {
-            PreferencesHolder.QUALITY_SD -> SD_ACTION_ID
-            PreferencesHolder.QUALITY_HD -> HD_ACTION_ID
-            PreferencesHolder.QUALITY_FULL_HD -> FULL_HD_ACTION_ID
-            else -> SD_ACTION_ID
-        }
-
-        if (selectedAction == FULL_HD_ACTION_ID && !available.contains(selectedAction)) {
-            selectedAction = HD_ACTION_ID
-        }
-        if (selectedAction == HD_ACTION_ID && !available.contains(selectedAction)) {
-            selectedAction = SD_ACTION_ID
-        }
-        if (selectedAction == SD_ACTION_ID && !available.contains(selectedAction)) {
-            selectedAction = -1L
-        }
-
-        return selectedAction
-    }
 }

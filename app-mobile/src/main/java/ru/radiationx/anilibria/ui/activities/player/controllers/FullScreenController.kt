@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.activities.player
+package ru.radiationx.anilibria.ui.activities.player.controllers
 
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration

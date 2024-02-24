@@ -59,11 +59,6 @@ internal class OutputController(
             } else {
                 1f
             }
-            val icRes = if (isFillScale) {
-                R.drawable.ic_media_aspect_ratio_24
-            } else {
-                R.drawable.ic_media_settings_overscan_24
-            }
             mediaAspectRatio.animate().scaleX(scale).scaleY(scale).start()
         }.launchIn(coroutineScope)
     }

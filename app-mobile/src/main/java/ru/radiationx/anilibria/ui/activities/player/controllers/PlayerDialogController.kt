@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.activities.player
+package ru.radiationx.anilibria.ui.activities.player.controllers
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -9,11 +9,14 @@ import org.michaelbel.bottomsheet.BottomSheet
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.isDark
+import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
-class SettingDialogController(
+class PlayerDialogController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val appThemeController: AppThemeController,
@@ -23,6 +26,27 @@ class SettingDialogController(
 
     var onQualitySelected: ((PlayerQuality) -> Unit)? = null
     var onSpeedSelected: ((Float) -> Unit)? = null
+    var onEpisodeSelected: ((EpisodeId) -> Unit)? = null
+
+    fun showPlaylist(episodes: List<Episode>, episodeId: EpisodeId) {
+        val titles = episodes
+            .map {
+                if (it.id == episodeId) {
+                    "<b>• ${it.title.orEmpty()}</b>"
+                } else {
+                    it.title.orEmpty()
+                }
+            }
+            .map { it.parseAsHtml() }
+            .toTypedArray()
+        BottomSheet.Builder(context)
+            .setItems(titles) { _, which ->
+                onEpisodeSelected?.invoke(episodes[which].id)
+            }
+            .setTargetItemIndex(episodes.indexOfFirst { it.id == episodeId })
+            .applyStyle()
+            .showAndRegister()
+    }
 
     fun showSettingsDialog(state: PlayerSettingsState) {
         val qualityValue = getQualityTitle(state.currentQuality)
@@ -58,7 +82,7 @@ class SettingDialogController(
                 when (valuesList[which]) {
                     settingQuality -> showQualityDialog(
                         state.currentQuality,
-                        state.availableQualities
+                        state.availableQualities.toList()
                     )
 
                     settingPlaySpeed -> showPlaySpeedDialog(state.currentSpeed)
@@ -162,5 +186,5 @@ class SettingDialogController(
 data class PlayerSettingsState(
     val currentSpeed: Float = 1.0f,
     val currentQuality: PlayerQuality = PlayerQuality.SD,
-    val availableQualities: List<PlayerQuality> = emptyList(),
+    val availableQualities: Set<PlayerQuality> = emptySet(),
 )

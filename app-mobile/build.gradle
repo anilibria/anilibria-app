@@ -98,13 +98,10 @@ dependencies {
 
     implementation "com.google.android:flexbox:$flexbox_version"
 
-    implementation "com.devbrackets.android:exomedia:$exomedia_version"
 
     implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
     implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
-    implementation "androidx.media3:media3-ui:$androidx_media3_version"
     implementation "androidx.media3:media3-datasource-okhttp:$androidx_media3_version"
-    implementation "androidx.media3:media3-datasource-cronet:$androidx_media3_version"
     implementation "androidx.media3:media3-session:$androidx_media3_version"
 
 
@@ -121,8 +118,6 @@ dependencies {
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
-
-    implementation "at.blogc:expandabletextview:$expandabletextview_version"
 
     implementation "com.github.stealthcopter:AndroidNetworkTools:$androidnetworktools_version"
 

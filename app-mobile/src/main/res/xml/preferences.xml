@@ -45,14 +45,16 @@
             android:title="Обратный порядок серий" />
 
         <Preference
-            android:key="quality"
+            android:key="player_quality"
             android:layout="@layout/preference_custom"
             android:title="Качество видео" />
 
-        <Preference
-            android:key="player_type"
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="player_skips"
             android:layout="@layout/preference_custom"
-            android:title="Плеер" />
+            android:summary="Показывать кнопки пропуска опенинга и эндинга"
+            android:title="Кнопки пропуска" />
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_double" />

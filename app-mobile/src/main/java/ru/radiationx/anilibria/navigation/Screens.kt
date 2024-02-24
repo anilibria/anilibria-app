@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.navigation
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
-import ru.radiationx.anilibria.ui.activities.MyPlayerActivity
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -64,10 +63,7 @@ object Screens {
     }
 
     class Player(
-        private val release: Release,
         private val episodeId: EpisodeId,
-        private val quality: Int,
-        private val playFlag: Int?,
     ) : BaseAppScreen() {
         override fun getActivityIntent(context: Context) =
             VideoPlayerActivity.newIntent(context, episodeId)

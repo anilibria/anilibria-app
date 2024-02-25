@@ -29,6 +29,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     buildTypes {
@@ -127,7 +128,7 @@ dependencies {
 
     implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
 
-    implementation 'com.yandex.android:mobileads:6.4.0'
+    implementation "com.yandex.android:mobileads:$mobileads_version"
 }
 
 apply plugin: "com.google.gms.google-services"

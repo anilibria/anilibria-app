@@ -18,6 +18,8 @@ import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -47,6 +49,7 @@ import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.startMainActivity
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     companion object {

@@ -1,9 +1,17 @@
 package ru.radiationx.data.interactors
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
@@ -118,15 +126,15 @@ class ReleaseInteractor @Inject constructor(
         episodesCheckerStorage.remove(releaseId)
     }
 
-    fun getQuality() = preferencesHolder.getQuality()
 
-    fun setQuality(value: Int) = preferencesHolder.setQuality(value)
+    fun getPlayerQuality(): PlayerQuality = preferencesHolder.playerQuality
 
-    fun observeQuality() = preferencesHolder.observeQuality()
+    fun setPlayerQuality(value: PlayerQuality) {
+        preferencesHolder.playerQuality = value
+    }
 
-    fun getPlayerType() = preferencesHolder.getPlayerType()
+    fun observePlayerQuality(): Flow<PlayerQuality> = preferencesHolder.observePlayerQuality()
 
-    fun setPlayerType(value: Int) = preferencesHolder.setPlayerType(value)
 
     fun getPlaySpeed() = preferencesHolder.playSpeed
 
@@ -136,11 +144,7 @@ class ReleaseInteractor @Inject constructor(
 
     fun observePlaySpeed(): Flow<Float> = preferencesHolder.observePlaySpeed()
 
-    fun getPIPControl() = preferencesHolder.pipControl
-
-    fun setPIPControl(value: Int) {
-        preferencesHolder.pipControl = value
-    }
+    fun getPlayerSkips(): Boolean = preferencesHolder.playerSkips
 
 
     private suspend fun updateIfNotExists(

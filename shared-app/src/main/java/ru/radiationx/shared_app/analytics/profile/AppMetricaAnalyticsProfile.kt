@@ -36,8 +36,6 @@ class AppMetricaAnalyticsProfile(
                 getApiAddressTag().mapStringAttr(ProfileConstants.address_tag),
                 getAppTheme().mapStringAttr(ProfileConstants.app_theme),
                 getQualitySettings().mapStringAttr(ProfileConstants.quality),
-                getPlayerSettings().mapStringAttr(ProfileConstants.player),
-                getPipSettings().mapStringAttr(ProfileConstants.pip),
                 getPlaySpeedSettings().mapFloatAttr(ProfileConstants.play_speed),
                 getNotificationsAllSettings().mapBoolAttr(ProfileConstants.notification_all),
                 getNotificationsServiceSettings().mapBoolAttr(ProfileConstants.notification_service),

@@ -78,18 +78,18 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.activities.MyPlayerActivity"
+            android:name=".ui.activities.player.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize"
             android:exported="false"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
-            android:theme="@style/PlayerTheme" />
+            android:theme="@style/MediaPlayerTheme" />
 
         <activity
             android:name=".ui.activities.WebPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:exported="false"
-            android:theme="@style/PlayerTheme" />
+            android:theme="@style/MediaPlayerTheme" />
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"

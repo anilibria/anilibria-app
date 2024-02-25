@@ -32,8 +32,6 @@ class LoggingAnalyticsProfile(
                 getApiAddressTag().mapToAttr(ProfileConstants.address_tag),
                 getAppTheme().mapToAttr(ProfileConstants.app_theme),
                 getQualitySettings().mapToAttr(ProfileConstants.quality),
-                getPlayerSettings().mapToAttr(ProfileConstants.player),
-                getPipSettings().mapToAttr(ProfileConstants.pip),
                 getPlaySpeedSettings().mapToAttr(ProfileConstants.play_speed),
                 getNotificationsAllSettings().mapToAttr(ProfileConstants.notification_all),
                 getNotificationsServiceSettings().mapToAttr(ProfileConstants.notification_service),

@@ -36,6 +36,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
+import ru.radiationx.anilibria.ui.activities.player.VideoPlayerActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
@@ -48,6 +49,8 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -244,6 +247,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private fun onMainLogicCompleted() {
         if (!createdWithSavedState) {
             handleIntent(intent)
+            VideoPlayerActivity.newIntent(this, EpisodeId("1", ReleaseId(9534))).also {
+                startActivity(it)
+            }
         }
         checkerViewModel.checkUpdate()
     }

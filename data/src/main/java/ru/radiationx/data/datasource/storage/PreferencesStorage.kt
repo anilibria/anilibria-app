@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerQuality
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -19,18 +20,18 @@ class PreferencesStorage @Inject constructor(
         private const val RELEASE_REMIND_KEY = "release_remind"
         private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
-        private const val QUALITY_KEY = "quality"
-        private const val PLAYER_TYPE_KEY = "player_type"
+        private const val PLAYER_QUALITY_KEY = "player_quality"
         private const val PLAY_SPEED_KEY = "play_speed"
-        private const val PIP_CONTROL_KEY = "pip_control"
+        private const val PLAYER_SKIPS_KEY = "player_skips"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
 
         private val DONATION_THRESHOLD = TimeUnit.DAYS.toMillis(7)
     }
 
-    private val qualityRelay by lazy { MutableStateFlow(getQuality()) }
+    private val playerQualityRelay by lazy { MutableStateFlow(playerQuality) }
     private val playSpeedRelay by lazy { MutableStateFlow(playSpeed) }
+    private val playerSkipsRelay by lazy { MutableStateFlow(playerSkips) }
     private val notificationsAllRelay by lazy { MutableStateFlow(notificationsAll) }
     private val notificationsServiceRelay by lazy { MutableStateFlow(notificationsService) }
     private val searchRemindRelay by lazy { MutableStateFlow(searchRemind) }
@@ -43,8 +44,9 @@ class PreferencesStorage @Inject constructor(
         when (key) {
             NOTIFICATIONS_ALL_KEY -> notificationsAllRelay.value = notificationsAll
             NOTIFICATIONS_SERVICE_KEY -> notificationsServiceRelay.value = notificationsService
-            QUALITY_KEY -> qualityRelay.value = getQuality()
+            PLAYER_QUALITY_KEY -> playerQualityRelay.value = playerQuality
             PLAY_SPEED_KEY -> playSpeedRelay.value = playSpeed
+            PLAYER_SKIPS_KEY -> playerSkipsRelay.value = playerSkips
             SEARCH_REMIND_KEY -> searchRemindRelay.value = searchRemind
             RELEASE_REMIND_KEY -> releaseRemindRelay.value = releaseRemind
             EPISODES_IS_REVERSE_KEY -> episodesIsReverseRelay.value = episodesIsReverse
@@ -87,23 +89,15 @@ class PreferencesStorage @Inject constructor(
     override val episodesIsReverse: Boolean
         get() = sharedPreferences.getBoolean(EPISODES_IS_REVERSE_KEY, false)
 
-    override fun getQuality(): Int {
-        return sharedPreferences.getInt(QUALITY_KEY, PreferencesHolder.QUALITY_NO)
-    }
+    override var playerQuality: PlayerQuality
+        get() = sharedPreferences.getString(PLAYER_QUALITY_KEY, null)
+            ?.asPlayerQuality()
+            ?: PlayerQuality.SD
+        set(value) {
+            sharedPreferences.edit().putString(PLAYER_QUALITY_KEY, value.asPrefString()).apply()
+        }
 
-    override fun setQuality(value: Int) {
-        sharedPreferences.edit().putInt(QUALITY_KEY, value).apply()
-    }
-
-    override fun observeQuality(): Flow<Int> = qualityRelay
-
-    override fun getPlayerType(): Int {
-        return sharedPreferences.getInt(PLAYER_TYPE_KEY, PreferencesHolder.PLAYER_TYPE_NO)
-    }
-
-    override fun setPlayerType(value: Int) {
-        sharedPreferences.edit().putInt(PLAYER_TYPE_KEY, value).apply()
-    }
+    override fun observePlayerQuality(): Flow<PlayerQuality> = playerQualityRelay
 
     override var playSpeed: Float
         get() = sharedPreferences.getFloat(PLAY_SPEED_KEY, 1.0f)
@@ -113,11 +107,9 @@ class PreferencesStorage @Inject constructor(
 
     override fun observePlaySpeed(): Flow<Float> = playSpeedRelay
 
-    override var pipControl: Int
-        get() = sharedPreferences.getInt(PIP_CONTROL_KEY, PreferencesHolder.PIP_BUTTON)
-        set(value) {
-            sharedPreferences.edit().putInt(PIP_CONTROL_KEY, value).apply()
-        }
+    override var playerSkips: Boolean
+        get() = sharedPreferences.getBoolean(PLAYER_SKIPS_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(PLAYER_SKIPS_KEY, value).apply()
 
     override var notificationsAll: Boolean
         get() = sharedPreferences.getBoolean(NOTIFICATIONS_ALL_KEY, true)
@@ -131,4 +123,21 @@ class PreferencesStorage @Inject constructor(
 
     override fun observeNotificationsService(): Flow<Boolean> =
         notificationsServiceRelay
+
+    private fun String.asPlayerQuality(): PlayerQuality? {
+        return when (this) {
+            "sd" -> PlayerQuality.SD
+            "hd" -> PlayerQuality.HD
+            "fullhd" -> PlayerQuality.FULLHD
+            else -> null
+        }
+    }
+
+    private fun PlayerQuality.asPrefString(): String {
+        return when (this) {
+            PlayerQuality.SD -> "sd"
+            PlayerQuality.HD -> "hd"
+            PlayerQuality.FULLHD -> "fullhd"
+        }
+    }
 }

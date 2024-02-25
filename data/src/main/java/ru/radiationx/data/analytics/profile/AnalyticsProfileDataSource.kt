@@ -5,8 +5,6 @@ package ru.radiationx.data.analytics.profile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
-import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
-import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.DownloadsHolder
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
@@ -40,15 +38,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getQualitySettings(): Flow<String> = single {
-        preferencesHolder.getQuality().toAnalyticsQuality().value
-    }
-
-    fun getPlayerSettings(): Flow<String> = single {
-        preferencesHolder.getPlayerType().toAnalyticsPlayer().value
-    }
-
-    fun getPipSettings(): Flow<String> = single {
-        preferencesHolder.pipControl.toAnalyticsPip().value
+        preferencesHolder.playerQuality.toAnalyticsQuality().value
     }
 
     fun getPlaySpeedSettings(): Flow<Float> = single {

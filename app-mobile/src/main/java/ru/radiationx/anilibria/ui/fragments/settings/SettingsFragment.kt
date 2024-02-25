@@ -11,12 +11,11 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
-import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.quill.inject
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
@@ -70,54 +69,22 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
-        findPreference<Preference>("quality")?.apply {
-            val savedQuality = appPreferences.getQuality()
+        findPreference<Preference>("player_quality")?.apply {
+            val savedQuality = appPreferences.playerQuality
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
                 settingsAnalytics.qualityClick()
-                val values = arrayOf(
-                    PreferencesHolder.QUALITY_SD,
-                    PreferencesHolder.QUALITY_HD,
-                    PreferencesHolder.QUALITY_FULL_HD,
-                    PreferencesHolder.QUALITY_NO,
-                    PreferencesHolder.QUALITY_ALWAYS
-                )
+                val values = PlayerQuality.entries
                 val titles = values.map { getQualityTitle(it) }.toTypedArray()
                 AlertDialog.Builder(preference.context)
                     .setTitle(preference.title)
                     .setItems(titles) { _, which ->
                         val quality = values[which]
                         settingsAnalytics.qualityChange(quality.toAnalyticsQuality())
-                        appPreferences.setQuality(quality)
+                        appPreferences.playerQuality = quality
                         icon = getQualityIcon(quality)
                         summary = getQualityTitle(quality)
-                    }
-                    .showWithLifecycle(viewLifecycleOwner)
-                false
-            }
-        }
-
-        findPreference<Preference>("player_type")?.apply {
-            val savedPlayerType = appPreferences.getPlayerType()
-            icon = this.context.getCompatDrawable(R.drawable.ic_play_circle_outline)
-            summary = getPlayerTypeTitle(savedPlayerType)
-            setOnPreferenceClickListener { preference ->
-                settingsAnalytics.playerClick()
-                val values = arrayOf(
-                    PreferencesHolder.PLAYER_TYPE_EXTERNAL,
-                    PreferencesHolder.PLAYER_TYPE_INTERNAL,
-                    PreferencesHolder.PLAYER_TYPE_NO,
-                    PreferencesHolder.PLAYER_TYPE_ALWAYS
-                )
-                val titles = values.map { getPlayerTypeTitle(it) }.toTypedArray()
-                AlertDialog.Builder(preference.context)
-                    .setTitle(preference.title)
-                    .setItems(titles) { _, which ->
-                        val playerType = values[which]
-                        settingsAnalytics.playerChange(playerType.toAnalyticsPlayer())
-                        appPreferences.setPlayerType(playerType)
-                        summary = getPlayerTypeTitle(playerType)
                     }
                     .showWithLifecycle(viewLifecycleOwner)
                 false
@@ -139,34 +106,21 @@ class SettingsFragment : BaseSettingFragment() {
         }
     }
 
-    private fun getQualityIcon(quality: Int): Drawable? {
+    private fun getQualityIcon(quality: PlayerQuality): Drawable? {
         val iconRes = when (quality) {
-            PreferencesHolder.QUALITY_SD -> R.drawable.ic_quality_sd_base
-            PreferencesHolder.QUALITY_HD -> R.drawable.ic_quality_hd_base
-            PreferencesHolder.QUALITY_FULL_HD -> R.drawable.ic_quality_full_hd_base
-            else -> return null
+            PlayerQuality.SD -> R.drawable.ic_quality_sd_base
+            PlayerQuality.HD -> R.drawable.ic_quality_hd_base
+            PlayerQuality.FULLHD -> R.drawable.ic_quality_full_hd_base
         }
         return ContextCompat.getDrawable(requireContext(), iconRes)
     }
 
-    private fun getQualityTitle(quality: Int): String {
+    private fun getQualityTitle(quality: PlayerQuality): String {
         return when (quality) {
-            PreferencesHolder.QUALITY_SD -> "480p"
-            PreferencesHolder.QUALITY_HD -> "720p"
-            PreferencesHolder.QUALITY_FULL_HD -> "1080p"
-            PreferencesHolder.QUALITY_NO -> "Не выбрано"
-            PreferencesHolder.QUALITY_ALWAYS -> "Спрашивать всегда"
-            else -> ""
+            PlayerQuality.SD -> "480p"
+            PlayerQuality.HD -> "720p"
+            PlayerQuality.FULLHD -> "1080p"
         }
     }
 
-    private fun getPlayerTypeTitle(playerType: Int): String {
-        return when (playerType) {
-            PreferencesHolder.PLAYER_TYPE_EXTERNAL -> "Внешний плеер"
-            PreferencesHolder.PLAYER_TYPE_INTERNAL -> "Внутренний плеер"
-            PreferencesHolder.PLAYER_TYPE_NO -> "Не выбрано"
-            PreferencesHolder.PLAYER_TYPE_ALWAYS -> "Спрашивать всегда"
-            else -> ""
-        }
-    }
 }

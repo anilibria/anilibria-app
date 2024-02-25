@@ -6,11 +6,16 @@ import toothpick.InjectConstructor
 @InjectConstructor
 class CombinedAnalyticsSender(
     private val appMetrica: AppMetricaAnalyticsSender,
-    private val logging: LoggingAnalyticsSender
+    private val logging: LoggingAnalyticsSender,
 ) : AnalyticsSender {
 
     override fun send(key: String, vararg params: Pair<String, String>) {
         logging.send(key, *params)
         appMetrica.send(key, *params)
+    }
+
+    override fun error(groupId: String, message: String, throwable: Throwable) {
+        logging.error(groupId, message, throwable)
+        appMetrica.error(groupId, message, throwable)
     }
 }

@@ -18,8 +18,6 @@
     <attr name="textDefault" extension="reference" format="color" />
     <attr name="textSecond" extension="reference" format="color" />
 
-    <attr name="playerColorPrimary" extension="reference" format="color" />
-
     <attr name="app_bar_overlay" extension="reference" />
     <attr name="popup_overlay" extension="reference" />
 

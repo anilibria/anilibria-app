@@ -5,6 +5,7 @@ import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
 import ru.radiationx.data.entity.domain.release.PlayerSkips
+import ru.radiationx.data.entity.domain.release.QualityInfo
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.types.EpisodeId
@@ -32,9 +33,11 @@ fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {
     return Episode(
         id = episodeId,
         title = createCombinedTitle(),
-        urlSd = urlSd,
-        urlHd = urlHd,
-        urlFullHd = urlFullHd,
+        qualityInfo = QualityInfo(
+            urlSd = urlSd,
+            urlHd = urlHd,
+            urlFullHd = urlFullHd,
+        ),
         updatedAt = updatedAt?.secToDate(),
         skips = skips?.toDomain(),
         access = EpisodeAccess(
@@ -69,9 +72,11 @@ fun EpisodeResponse.toSourceDomain(releaseId: ReleaseId): SourceEpisode? {
         id = id.toId(releaseId),
         title = createCombinedTitle(),
         updatedAt = updatedAt?.secToDate(),
-        urlSd = srcUrlSd?.takeIf { it != VK_URL },
-        urlHd = srcUrlHd?.takeIf { it != VK_URL },
-        urlFullHd = srcUrlFullHd?.takeIf { it != VK_URL }
+        qualityInfo = QualityInfo(
+            urlSd = srcUrlSd?.takeIf { it != VK_URL },
+            urlHd = srcUrlHd?.takeIf { it != VK_URL },
+            urlFullHd = srcUrlFullHd?.takeIf { it != VK_URL },
+        )
     )
 }
 

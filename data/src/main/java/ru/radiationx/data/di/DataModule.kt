@@ -99,6 +99,7 @@ import ru.radiationx.data.di.providers.ApiOkHttpProvider
 import ru.radiationx.data.di.providers.MainClientWrapper
 import ru.radiationx.data.di.providers.MainNetworkClient
 import ru.radiationx.data.di.providers.MainOkHttpProvider
+import ru.radiationx.data.di.providers.PlayerOkHttpProvider
 import ru.radiationx.data.di.providers.SimpleClientWrapper
 import ru.radiationx.data.di.providers.SimpleNetworkClient
 import ru.radiationx.data.di.providers.SimpleOkHttpProvider
@@ -170,6 +171,7 @@ class DataModule : QuillModule() {
         single<ApiConfigStorage>()
 
 
+        single<PlayerOkHttpProvider>()
         single<SimpleOkHttpProvider>()
         single<MainOkHttpProvider>()
         single<ApiOkHttpProvider>()

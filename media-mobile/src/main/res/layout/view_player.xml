@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="?colorSurface"
+    tools:parentTag="FrameLayout"
+    tools:theme="@style/Theme.MaterialComponents.DayNight">
+
+    <FrameLayout
+        android:id="@+id/mediaScaleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000">
+
+        <ru.radiationx.media.mobile.views.AspectRatioFrameLayout
+            android:id="@+id/mediaAspectRatio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <TextureView
+                android:id="@+id/mediaTextureView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="#fff" />
+        </ru.radiationx.media.mobile.views.AspectRatioFrameLayout>
+
+    </FrameLayout>
+
+    <View
+        android:id="@+id/mediaGestures"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/mediaOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/mediaScrim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#6000" />
+
+        <View
+            android:id="@+id/mediaScaleStroke"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_media_scale_stroke" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/mediaButtonsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/mediaButtonPrev"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_media_control_button"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_media_skip_previous_24"
+                app:tint="?colorOnSurface" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/mediaButtonPlay"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="32dp"
+                android:background="@drawable/bg_media_control_button"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_media_play_arrow_24"
+                app:tint="?colorOnSurface" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/mediaButtonNext"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_media_control_button"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_media_skip_next_24"
+                app:tint="?colorOnSurface" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/mediaErrorContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_media_floating_container"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Ошибка при воспроизведении"
+                android:textColor="?colorOnSurface"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/mediaErrorMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:maxWidth="360dp"
+                android:textColor="?colorOnSurface"
+                android:textSize="12sp"
+                tools:text="2000:ERROR_CODE_DRM_LICENSE_ACQUISITION_FAILED" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mediaErrorAction"
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Обновить" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/mediaErrorInPip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_media_floating_container"
+            android:padding="12dp"
+            android:text="Ошибка"
+            android:textColor="?colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/mediaSeekerTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_media_floating_container"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
+            android:textColor="?colorOnSurface"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="+1:20:25" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/mediaFooterContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/mediaSkipContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingBottom="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mediaSkipButtonSkip"
+                    style="?materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="Пропустить"
+                    android:textAllCaps="false"
+                    android:textColor="?colorOnSurface"
+                    app:backgroundTint="#6000"
+                    app:strokeColor="#6fff" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mediaSkipButtonCancel"
+                    style="?materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="Смотреть"
+                    android:textAllCaps="false"
+                    android:textColor="?colorOnSurface"
+                    app:backgroundTint="#6000"
+                    app:strokeColor="#6fff" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/mediaFooter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/mediaSeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    tools:progress="25"
+                    tools:secondaryProgress="50" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-16dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="4dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/mediaTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="?colorOnSurface"
+                        android:textSize="14sp"
+                        tools:text="10:10:10 / 10:10:10" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/mediaActionPip"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?actionBarItemBackground"
+                        app:srcCompat="@drawable/ic_media_picture_in_picture_alt_24"
+                        app:tint="?colorOnSurface" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/mediaActionScale"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?actionBarItemBackground"
+                        app:srcCompat="@drawable/ic_media_settings_overscan_24"
+                        app:tint="?colorOnSurface" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/mediaActionSettings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?actionBarItemBackground"
+                        app:srcCompat="@drawable/ic_media_settings_24"
+                        app:tint="?colorOnSurface" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/mediaActionFullscreen"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?actionBarItemBackground"
+                        app:srcCompat="@drawable/ic_media_fullscreen_24"
+                        app:tint="?colorOnSurface" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/mediaLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            app:indicatorColor="?colorOnSurface"
+            app:indicatorInset="0dp"
+            app:indicatorSize="72dp" />
+
+    </FrameLayout>
+
+</merge>

@@ -19,7 +19,6 @@ import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
-import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.data.ads.AdsConfigRepository
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -33,12 +32,12 @@ import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
-import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.Release
@@ -99,7 +98,6 @@ class ReleaseInfoViewModel(
     val playContinueAction = EventFlow<ActionContinue>()
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
-    val loadEpisodeAction = EventFlow<ActionLoadEpisode>()
     val showUnauthAction = EventFlow<Unit>()
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
@@ -178,14 +176,6 @@ class ReleaseInfoViewModel(
             }
         }
     }
-
-    fun getQuality() = releaseInteractor.getQuality()
-
-    fun setQuality(value: Int) = releaseInteractor.setQuality(value)
-
-    fun getPlayerType() = releaseInteractor.getPlayerType()
-
-    fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
 
     private fun observeRelease() {
         updateModifiers {
@@ -327,8 +317,9 @@ class ReleaseInfoViewModel(
         }
     }
 
-    fun submitPlayerOpenAnalytics(playerType: AnalyticsPlayer, quality: AnalyticsQuality) {
-        playerAnalytics.open(AnalyticsConstants.screen_release, playerType, quality)
+    fun submitPlayerOpenAnalytics() {
+        val quality = releaseInteractor.getPlayerQuality().toAnalyticsQuality()
+        playerAnalytics.open(AnalyticsConstants.screen_release, AnalyticsPlayer.INTERNAL, quality)
     }
 
     fun onClickEpisodesMenu() {
@@ -357,36 +348,35 @@ class ReleaseInfoViewModel(
     private fun onSourceEpisodeClick(
         release: Release,
         episode: SourceEpisode,
-        quality: Int? = null,
+        quality: PlayerQuality?,
     ) {
-        val analyticsQuality =
-            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        val savedQuality = releaseInteractor.getPlayerQuality()
+        val finalQuality = quality ?: savedQuality
+        val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
-        loadEpisodeAction.set(ActionLoadEpisode(episode, quality))
+        val url = episode.qualityInfo.getUrlFor(finalQuality) ?: return
+        onDownloadLinkSelected(url)
     }
 
     private fun onOnlineEpisodeClick(
         release: Release,
         episode: Episode,
-        playFlag: Int? = null,
-        quality: Int? = null,
     ) {
-        val analyticsQuality =
-            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        val savedQuality = releaseInteractor.getPlayerQuality()
+        val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
-        playEpisodeAction.set(ActionPlayEpisode(release, episode, playFlag, quality))
+        playEpisodeAction.set(ActionPlayEpisode(release, episode))
     }
 
     fun onEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
-        playFlag: Int? = null,
-        quality: Int? = null,
+        quality: PlayerQuality?,
     ) {
         val release = currentData ?: return
         when (episodeState.type) {
             ReleaseEpisodeItemType.ONLINE -> {
                 val episodeItem = getEpisodeItem(episodeState) ?: return
-                onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
+                onOnlineEpisodeClick(release, episodeItem)
             }
 
             ReleaseEpisodeItemType.SOURCE -> {
@@ -607,11 +597,4 @@ data class ActionPlayWeb(
 data class ActionPlayEpisode(
     val release: Release,
     val episode: Episode,
-    val playFlag: Int?,
-    val quality: Int?,
-)
-
-data class ActionLoadEpisode(
-    val episode: SourceEpisode,
-    val quality: Int?,
 )

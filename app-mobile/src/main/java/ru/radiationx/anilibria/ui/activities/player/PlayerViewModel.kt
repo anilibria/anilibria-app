@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.activities.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -132,6 +133,7 @@ class PlayerViewModel(
         releaseInteractor.setPlaySpeed(speed)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun saveEpisodeSeek(episodeId: EpisodeId, seek: Long) {
         GlobalScope.launch {
             val access = EpisodeAccess(

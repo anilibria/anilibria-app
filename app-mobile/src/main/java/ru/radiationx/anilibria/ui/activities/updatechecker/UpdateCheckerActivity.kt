@@ -77,7 +77,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
             finish()
             return
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.toolbar.updatePadding(top = systemBarInsets.top)
             binding.updateContent.updatePadding(bottom = systemBarInsets.bottom)

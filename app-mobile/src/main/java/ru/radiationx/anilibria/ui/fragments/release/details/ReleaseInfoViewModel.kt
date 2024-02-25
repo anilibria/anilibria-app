@@ -183,7 +183,7 @@ class ReleaseInfoViewModel(
         }
         releaseInteractor
             .observeFull(argExtra.id, argExtra.code)
-            .onEach { release ->
+            .onEach {
                 updateModifiers {
                     it.copy(detailLoading = false)
                 }

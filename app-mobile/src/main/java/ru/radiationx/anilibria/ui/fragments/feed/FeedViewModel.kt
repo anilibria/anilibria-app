@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
@@ -418,16 +419,16 @@ class FeedViewModel(
                 }
             }
             val adsAsync = async {
-                withTimeout(adsConfig.timeoutMillis) {
-                    if (adsConfig.enabled) {
+                if (adsConfig.enabled) {
+                    withTimeout(adsConfig.timeoutMillis) {
                         val request = NativeAdRequestConfiguration
                             .Builder(adsConfig.unitId)
                             .setContextTags(adsConfig.contextTags)
                             .build()
                         nativeAdsRepository.load(request)
-                    } else {
-                        null
                     }
+                } else {
+                    null
                 }
             }
 

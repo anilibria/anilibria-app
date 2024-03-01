@@ -91,7 +91,7 @@ class UpdateViewModel(
                     downloadProgressData
                 )
             }.onSuccess {
-                systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+                systemUtils.openDownloadedFile(it)
             }.onFailure {
                 Timber.e(it)
             }

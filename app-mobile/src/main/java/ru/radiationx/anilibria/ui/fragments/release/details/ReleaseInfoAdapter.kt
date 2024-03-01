@@ -32,6 +32,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.data.entity.domain.types.TorrentId
 
 class ReleaseInfoAdapter(
     headListener: ReleaseHeadDelegate.Listener,
@@ -39,8 +40,8 @@ class ReleaseInfoAdapter(
     episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
     donationListener: (DonationCardItemState) -> Unit,
     donationCloseListener: (DonationCardItemState) -> Unit,
-    torrentClickListener: (ReleaseTorrentItemState) -> Unit,
-    torrentCancelClickListener: (ReleaseTorrentItemState) -> Unit,
+    torrentClickListener: (TorrentId) -> Unit,
+    torrentCancelClickListener: (TorrentId) -> Unit,
     commentsClickListener: () -> Unit,
     episodesTabListener: (String) -> Unit,
     remindCloseListener: () -> Unit,

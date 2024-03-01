@@ -179,11 +179,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Пропустить"
                     android:textAllCaps="false"
                     android:textColor="?colorOnSurface"
                     app:backgroundTint="#6000"
-                    app:strokeColor="#6fff" />
+                    app:strokeColor="#6fff"
+                    tools:text="Пропустить" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/mediaSkipButtonCancel"

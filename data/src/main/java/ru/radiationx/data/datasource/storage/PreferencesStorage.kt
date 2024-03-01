@@ -110,6 +110,8 @@ class PreferencesStorage @Inject constructor(
 
     override fun observePlaySpeed(): Flow<Float> = playSpeedRelay
 
+    override fun observePlayerSkips(): Flow<Boolean> = playerSkipsRelay
+
     override var playerSkips: Boolean
         get() = sharedPreferences.getBoolean(PLAYER_SKIPS_KEY, true)
         set(value) = sharedPreferences.edit().putBoolean(PLAYER_SKIPS_KEY, value).apply()

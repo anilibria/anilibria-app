@@ -26,6 +26,7 @@ interface PreferencesHolder {
     var playSpeed: Float
     fun observePlaySpeed(): Flow<Float>
 
+    fun observePlayerSkips(): Flow<Boolean>
     var playerSkips: Boolean
 
     fun observePlayerSkipsTimer(): Flow<Boolean>

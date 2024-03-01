@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference android:layout="@layout/preference_shadow_top" />
     <PreferenceCategory
@@ -54,14 +55,16 @@
             android:key="player_skips"
             android:layout="@layout/preference_custom"
             android:summary="Показывать кнопки пропуска опенинга и эндинга"
-            android:title="Кнопки пропуска" />
+            android:title="Кнопки пропуска"
+            app:icon="@drawable/ic_skip_forward" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="player_skips_timer"
             android:layout="@layout/preference_custom"
             android:summary="Автоматически пропускать опенинг и эндинг по таймеру"
-            android:title="Пропуск опенинга по таймеру" />
+            android:title="Пропуск опенинга по таймеру"
+            app:icon="@drawable/ic_av_timer" />
 
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_double" />

@@ -31,6 +31,7 @@ internal class SkipsController(
         private const val TIMER_SEC = 5
     }
 
+    private val _skipsEnabled = MutableStateFlow(true)
     private val _skipsData = MutableStateFlow(SkipsData())
 
     private var timerJob: Job? = null
@@ -49,14 +50,19 @@ internal class SkipsController(
         }
 
         combine(
+            _skipsEnabled,
             _skipsData,
-            playerFlow.timelineState.filter { it.duration > 0 },
+            playerFlow.timelineState,
             playerFlow.playerState.map { it.isBlockingLoading }.distinctUntilChanged()
-        ) { skipsData, timelineState, isBlockingLoading ->
-            val skip = skipsData.skips.find {
-                checkSkip(it, skipsData.skipped, timelineState.position)
+        ) { enabled, skipsData, timelineState, isBlockingLoading ->
+            if (enabled && !isBlockingLoading && timelineState.duration > 0) {
+                val skip = skipsData.skips.find {
+                    checkSkip(it, skipsData.skipped, timelineState.position)
+                }
+                _currentSkip.value = skip
+            } else {
+                _currentSkip.value = null
             }
-            _currentSkip.value = skip?.takeIf { !isBlockingLoading }
         }.launchIn(coroutineScope)
 
         playerFlow.playlistState.map { it.currentItem }.distinctUntilChanged().onEach {
@@ -67,7 +73,6 @@ internal class SkipsController(
             _currentSkip,
             _timerEnabled
         ) { skip, enabled ->
-            Log.e("kekeke", "active skip $skip; $enabled")
             if (enabled && skip != null) {
                 startTimer()
             } else {
@@ -76,7 +81,6 @@ internal class SkipsController(
         }.launchIn(coroutineScope)
 
         _timerState.onEach {
-            Log.e("kekeke", "active skip timer $it")
             val text = if (it != null) {
                 "Пропустить ($it)"
             } else {
@@ -84,6 +88,10 @@ internal class SkipsController(
             }
             skipButtonSkip.text = text
         }.launchIn(coroutineScope)
+    }
+
+    fun setEnabled(state: Boolean) {
+        _skipsEnabled.value = state
     }
 
     fun setTimerEnabled(state: Boolean) {

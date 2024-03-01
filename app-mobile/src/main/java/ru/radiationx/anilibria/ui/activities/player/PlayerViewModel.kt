@@ -59,13 +59,19 @@ class PlayerViewModel(
         .observePlaySpeed()
         .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playSpeed)
 
-    private val _playerSkipsTimer = preferencesHolder
+    private val _playerSkipsEnabled = preferencesHolder
+        .observePlayerSkips()
+        .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playerSkips)
+
+    private val _playerSkipsTimerEnabled = preferencesHolder
         .observePlayerSkipsTimer()
         .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playerSkipsTimer)
 
     val currentSpeed = _currentSpeed
 
-    val playerSkipsTimer = _playerSkipsTimer
+    val playerSkipsEnabled = _playerSkipsEnabled
+
+    val playerSkipsTimerEnabled = _playerSkipsTimerEnabled
 
     private val _episodeId = MutableStateFlow(argExtra.episodeId)
     val episodeId = _episodeId.asStateFlow()
@@ -94,9 +100,7 @@ class PlayerViewModel(
             .drop(1)
             .onEach { quality ->
                 withData { data ->
-                    val skipsEnabled = preferencesHolder.playerSkips
-                    val episodeStates =
-                        data.episodes.map { it.toState(quality, skipsEnabled) }.asReversed()
+                    val episodeStates = data.episodes.map { it.toState(quality) }.asReversed()
                     val action = PlayerAction.PlaylistChange(episodeStates)
                     _actions.emit(action)
                 }
@@ -120,7 +124,9 @@ class PlayerViewModel(
             val settingsState = PlayerSettingsState(
                 currentSpeed = _currentSpeed.value,
                 currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
-                availableQualities = episode.qualityInfo.available
+                availableQualities = episode.qualityInfo.available,
+                skipsEnabled = preferencesHolder.playerSkips,
+                skipsTimerEnabled = preferencesHolder.playerSkipsTimer
             )
             _actions.emit(PlayerAction.ShowSettings(settingsState))
         }
@@ -141,6 +147,14 @@ class PlayerViewModel(
         preferencesHolder.playSpeed = speed
     }
 
+    fun onSkipsEnabledSelected(state: Boolean) {
+        preferencesHolder.playerSkips = state
+    }
+
+    fun onSkipsTimerEnabledChange(state: Boolean) {
+        preferencesHolder.playerSkipsTimer = state
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     fun saveEpisodeSeek(episodeId: EpisodeId, seek: Long) {
         GlobalScope.launch {
@@ -158,8 +172,7 @@ class PlayerViewModel(
         launchWithData { data ->
             val quality = _targetQuality.value
             val access = episodesCheckerHolder.getEpisode(episodeId)
-            val skipsEnabled = preferencesHolder.playerSkips
-            val episodeStates = data.episodes.map { it.toState(quality, skipsEnabled) }.asReversed()
+            val episodeStates = data.episodes.map { it.toState(quality) }.asReversed()
             val action = PlayerAction.PlayEpisode(episodeStates, episodeId, access?.seek ?: 0)
             _actions.emit(action)
         }

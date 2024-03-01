@@ -56,6 +56,13 @@
             android:summary="Показывать кнопки пропуска опенинга и эндинга"
             android:title="Кнопки пропуска" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="player_skips_timer"
+            android:layout="@layout/preference_custom"
+            android:summary="Автоматически пропускать опенинг и эндинг по таймеру"
+            android:title="Пропуск опенинга по таймеру" />
+
     </PreferenceCategory>
     <Preference android:layout="@layout/preference_shadow_double" />
     <PreferenceCategory

@@ -17,6 +17,7 @@ import toothpick.InjectConstructor
 class PlayerQualityViewModel(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
@@ -32,7 +33,7 @@ class PlayerQualityViewModel(
     init {
         combine(
             releaseInteractor.observeFull(argExtra.releaseId),
-            releaseInteractor.observePlayerQuality()
+            preferencesHolder.observePlayerQuality()
         ) { release, quality ->
             updateAvailable(release, quality)
         }.launchIn(viewModelScope)
@@ -46,7 +47,7 @@ class PlayerQualityViewModel(
             FULL_HD_ACTION_ID -> PlayerQuality.FULLHD
             else -> PlayerQuality.SD
         }
-        releaseInteractor.setPlayerQuality(value)
+        preferencesHolder.playerQuality = value
     }
 
     private fun updateAvailable(release: Release, quality: PlayerQuality) {

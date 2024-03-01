@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -34,6 +35,7 @@ internal class SkipsController(
 
     private var timerJob: Job? = null
     private val _timerState = MutableStateFlow<Int?>(null)
+    private val _timerEnabled = MutableStateFlow(true)
 
     private val _currentSkip = MutableStateFlow<TimelineSkip?>(null)
     val currentSkip = _currentSkip.asStateFlow()
@@ -61,9 +63,12 @@ internal class SkipsController(
             _skipsData.value = SkipsData(it?.skips.orEmpty())
         }.launchIn(coroutineScope)
 
-        _currentSkip.onEach {
-            Log.e("kekeke", "active skip $it")
-            if (it != null) {
+        combine(
+            _currentSkip,
+            _timerEnabled
+        ) { skip, enabled ->
+            Log.e("kekeke", "active skip $skip; $enabled")
+            if (enabled && skip != null) {
                 startTimer()
             } else {
                 stopTimer()
@@ -79,6 +84,10 @@ internal class SkipsController(
             }
             skipButtonSkip.text = text
         }.launchIn(coroutineScope)
+    }
+
+    fun setTimerEnabled(state: Boolean) {
+        _timerEnabled.value = state
     }
 
     private fun checkSkip(skip: TimelineSkip, skipped: Set<TimelineSkip>, position: Long): Boolean {
@@ -102,8 +111,9 @@ internal class SkipsController(
     private fun startTimer() {
         stopTimer()
         val job = coroutineScope.launch {
-            repeat(TIMER_SEC) {
-                _timerState.value = TIMER_SEC - it
+            repeat(TIMER_SEC) { sec ->
+                _timerState.value = TIMER_SEC - sec
+                playerFlow.playerState.filter { it.playWhenReady }.first()
                 delay(1000)
             }
             _timerState.value = null

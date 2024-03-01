@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
@@ -125,26 +124,6 @@ class ReleaseInteractor @Inject constructor(
     suspend fun resetEpisodesHistory(releaseId: ReleaseId) {
         episodesCheckerStorage.remove(releaseId)
     }
-
-
-    fun getPlayerQuality(): PlayerQuality = preferencesHolder.playerQuality
-
-    fun setPlayerQuality(value: PlayerQuality) {
-        preferencesHolder.playerQuality = value
-    }
-
-    fun observePlayerQuality(): Flow<PlayerQuality> = preferencesHolder.observePlayerQuality()
-
-
-    fun getPlaySpeed() = preferencesHolder.playSpeed
-
-    fun setPlaySpeed(value: Float) {
-        preferencesHolder.playSpeed = value
-    }
-
-    fun observePlaySpeed(): Flow<Float> = preferencesHolder.observePlaySpeed()
-
-    fun getPlayerSkips(): Boolean = preferencesHolder.playerSkips
 
 
     private suspend fun updateIfNotExists(

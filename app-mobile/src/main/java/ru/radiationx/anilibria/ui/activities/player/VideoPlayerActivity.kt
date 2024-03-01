@@ -166,6 +166,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerView.setSpeed(it)
         }.launchIn(lifecycleScope)
 
+        viewModel.playerSkipsTimer.onEach {
+            binding.playerView.setSkipTimerEnabled(it)
+        }.launchIn(lifecycleScope)
+
         binding.playerView.timelineState
             .sample(10000)
             .filter { it.duration > 0 }

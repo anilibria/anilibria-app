@@ -103,6 +103,7 @@ class ReleaseInfoViewModel(
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
     val openDownloadedFileAction = EventFlow<DownloadedFile>()
+    val shareDownloadedFileAction = EventFlow<DownloadedFile>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         _state.update {
@@ -240,20 +241,24 @@ class ReleaseInfoViewModel(
         appPreferences.releaseRemind = false
     }
 
-    fun onTorrentClick(item: ReleaseTorrentItemState) {
-        val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
+    fun onTorrentClick(id: TorrentId, action: TorrentAction) {
+        val torrentItem = currentData?.torrents?.find { it.id == id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
-        loadTorrent(torrentItem)
+        when (action) {
+            TorrentAction.Open, TorrentAction.Share -> loadTorrent(torrentItem, action)
+            TorrentAction.OpenUrl -> systemUtils.externalLink(torrentItem.url.orEmpty())
+            TorrentAction.ShareUrl -> systemUtils.shareText(torrentItem.url.orEmpty())
+        }
     }
 
-    fun onCancelTorrentClick(item: ReleaseTorrentItemState) {
-        loadingJobs[item.id]?.cancel()
-        loadingJobs.remove(item.id)
-        _currentLoadings.update { it.minus(item.id) }
+    fun onCancelTorrentClick(ud: TorrentId) {
+        loadingJobs[ud]?.cancel()
+        loadingJobs.remove(ud)
+        _currentLoadings.update { it.minus(ud) }
     }
 
-    private fun loadTorrent(item: TorrentItem) {
+    private fun loadTorrent(item: TorrentItem, action: TorrentAction) {
         val url = item.url ?: return
         if (loadingJobs[item.id]?.isActive == true) {
             return
@@ -267,7 +272,13 @@ class ReleaseInfoViewModel(
                 val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
                 remoteFileRepository.loadFile(url, bucket, progress)
             }.onSuccess {
-                openDownloadedFileAction.set(it)
+                when (action) {
+                    TorrentAction.Open -> openDownloadedFileAction.set(it)
+                    TorrentAction.Share -> shareDownloadedFileAction.set(it)
+                    TorrentAction.OpenUrl, TorrentAction.ShareUrl -> {
+                        // do nothing
+                    }
+                }
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -581,6 +592,13 @@ class ReleaseInfoViewModel(
         }
     }
 
+}
+
+enum class TorrentAction {
+    Open,
+    Share,
+    OpenUrl,
+    ShareUrl
 }
 
 

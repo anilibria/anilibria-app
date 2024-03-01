@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
+import ru.radiationx.data.downloader.DownloadedFile
 import toothpick.InjectConstructor
 import java.io.File
 
@@ -24,7 +25,15 @@ class SystemUtils(
         }
     }
 
-    fun openRemoteFile(file: File, name: String, mimeType: String) {
+    fun openDownloadedFile(file: DownloadedFile) {
+        openRemoteFile(file.local, file.remote.name, file.remote.mimeType)
+    }
+
+    fun shareDownloadedFile(file: DownloadedFile) {
+        shareRemoteFile(file.local, file.remote.name, file.remote.mimeType)
+    }
+
+    private fun openRemoteFile(file: File, name: String, mimeType: String) {
         val data = getRemoteFileUri(file, name)
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(data, mimeType)
@@ -37,7 +46,7 @@ class SystemUtils(
         context.startActivity(chooserIntent);
     }
 
-    fun shareRemoteFile(file: File, name: String, mimeType: String) {
+    private fun shareRemoteFile(file: File, name: String, mimeType: String) {
         val data = getRemoteFileUri(file, name)
 
         val sendIntent = Intent(Intent.ACTION_SEND).apply {

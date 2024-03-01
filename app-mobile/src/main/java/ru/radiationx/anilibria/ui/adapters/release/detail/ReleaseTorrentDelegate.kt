@@ -11,14 +11,15 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
+import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.shared.ktx.android.relativeDate
 
 /**
  * Created by radiationx on 13.01.18.
  */
 class ReleaseTorrentDelegate(
-    private val clickListener: (ReleaseTorrentItemState) -> Unit,
-    private val cancelClickListener: (ReleaseTorrentItemState) -> Unit,
+    private val clickListener: (TorrentId) -> Unit,
+    private val cancelClickListener: (TorrentId) -> Unit,
 ) : AppAdapterDelegate<ReleaseTorrentListItem, ListItem, ReleaseTorrentDelegate.ViewHolder>(
     R.layout.item_release_torrent,
     { it is ReleaseTorrentListItem },
@@ -32,8 +33,8 @@ class ReleaseTorrentDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: (ReleaseTorrentItemState) -> Unit,
-        private val cancelClickListener: (ReleaseTorrentItemState) -> Unit,
+        private val clickListener: (TorrentId) -> Unit,
+        private val cancelClickListener: (TorrentId) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemReleaseTorrentBinding>()
@@ -50,13 +51,13 @@ class ReleaseTorrentDelegate(
 
             binding.itemTorrentProgress.bindProgress(state.progress)
             binding.itemTorrentProgress.actionClickListener = {
-                clickListener.invoke(state)
+                clickListener.invoke(state.id)
             }
             binding.itemTorrentProgress.cancelClickListener = {
-                cancelClickListener.invoke(state)
+                cancelClickListener.invoke(state.id)
             }
 
-            binding.root.setOnClickListener { clickListener.invoke(state) }
+            binding.root.setOnClickListener { clickListener.invoke(state.id) }
         }
     }
 

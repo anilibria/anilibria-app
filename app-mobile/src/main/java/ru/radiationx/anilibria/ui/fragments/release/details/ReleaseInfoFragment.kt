@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.release.SourceEpisode
+import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
@@ -39,7 +39,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             episodeControlListener = episodeControlListener,
             donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
-            torrentClickListener = viewModel::onTorrentClick,
+            torrentClickListener = { showTorrentDialog(it) },
             torrentCancelClickListener = viewModel::onCancelTorrentClick,
             commentsClickListener = viewModel::onCommentsClick,
             episodesTabListener = viewModel::onEpisodeTabClick,
@@ -102,7 +102,11 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.openDownloadedFileAction.observe().onEach {
-            systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+            systemUtils.openDownloadedFile(it)
+        }.launchInResumed(viewLifecycleOwner)
+
+        viewModel.shareDownloadedFileAction.observe().onEach {
+            systemUtils.shareDownloadedFile(it)
         }.launchInResumed(viewLifecycleOwner)
     }
 
@@ -173,6 +177,21 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                 when (which) {
                     0 -> viewModel.markEpisodeUnviewed(episode)
                 }
+            }
+            .showWithLifecycle(viewLifecycleOwner)
+    }
+
+    private fun showTorrentDialog(id: TorrentId) {
+        val items = arrayOf(
+            "Открыть файл" to { viewModel.onTorrentClick(id, TorrentAction.Open) },
+            "Поделиться файлом" to { viewModel.onTorrentClick(id, TorrentAction.Share) },
+            "Открыть ссылку на файл" to { viewModel.onTorrentClick(id, TorrentAction.OpenUrl) },
+            "Поделиться ссылкой на файл" to { viewModel.onTorrentClick(id, TorrentAction.ShareUrl) },
+        )
+        val titles = items.map { it.first }.toTypedArray()
+        AlertDialog.Builder(requireContext())
+            .setItems(titles) { _, which ->
+                items[which].second.invoke()
             }
             .showWithLifecycle(viewLifecycleOwner)
     }

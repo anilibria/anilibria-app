@@ -14,7 +14,7 @@ class AppMigrationExecutor(
 
     override fun execute(current: Int, lastSaved: Int, history: List<Int>) {
         if (current == 20) {
-            appPreferences.releaseRemind = true
+            appPreferences.releaseRemind.value = true
         }
         if (lastSaved <= 52) {
             val dir = File(context.cacheDir, "uil-images")

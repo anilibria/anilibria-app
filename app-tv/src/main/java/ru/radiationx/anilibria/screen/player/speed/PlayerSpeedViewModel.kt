@@ -25,11 +25,11 @@ class PlayerSpeedViewModel(
                 "${it}x"
             }
         }
-        selectedIndex.value = speedList.indexOf(preferencesHolder.playSpeed)
+        selectedIndex.value = speedList.indexOf(preferencesHolder.playSpeed.value)
     }
 
     fun applySpeed(index: Int) {
         guidedRouter.close()
-        preferencesHolder.playSpeed = speedList[index]
+        preferencesHolder.playSpeed.value = speedList[index]
     }
 }

@@ -132,7 +132,7 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         appPreferences
-            .observeEpisodesIsReverse()
+            .episodesIsReverse
             .onEach { episodesReversed ->
                 updateModifiers {
                     it.copy(episodesReversed = episodesReversed)
@@ -141,7 +141,7 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         appPreferences
-            .observeReleaseRemind()
+            .releaseRemind
             .onEach { remindEnabled ->
                 _state.update {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
@@ -238,7 +238,7 @@ class ReleaseInfoViewModel(
     }
 
     fun onRemindCloseClick() {
-        appPreferences.releaseRemind = false
+        appPreferences.releaseRemind.value = false
     }
 
     fun onTorrentClick(id: TorrentId, action: TorrentAction) {
@@ -329,7 +329,7 @@ class ReleaseInfoViewModel(
     }
 
     fun submitPlayerOpenAnalytics() {
-        val quality = appPreferences.playerQuality.toAnalyticsQuality()
+        val quality = appPreferences.playerQuality.value.toAnalyticsQuality()
         playerAnalytics.open(AnalyticsConstants.screen_release, AnalyticsPlayer.INTERNAL, quality)
     }
 
@@ -361,7 +361,7 @@ class ReleaseInfoViewModel(
         episode: SourceEpisode,
         quality: PlayerQuality?,
     ) {
-        val savedQuality = appPreferences.playerQuality
+        val savedQuality = appPreferences.playerQuality.value
         val finalQuality = quality ?: savedQuality
         val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
@@ -373,7 +373,7 @@ class ReleaseInfoViewModel(
         release: Release,
         episode: Episode,
     ) {
-        val savedQuality = appPreferences.playerQuality
+        val savedQuality = appPreferences.playerQuality.value
         val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
         playEpisodeAction.set(ActionPlayEpisode(release, episode))

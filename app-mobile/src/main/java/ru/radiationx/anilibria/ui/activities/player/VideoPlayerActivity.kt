@@ -33,6 +33,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityVideoplayerBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.player.controllers.FullScreenController
+import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
 import ru.radiationx.anilibria.ui.activities.player.ext.getEpisode
@@ -85,6 +86,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val fullScreenController by lazy { FullScreenController(this) }
 
+    private val keepScreenOnController by lazy { KeepScreenOnController(this) }
+
     private val dialogController by lazy {
         PlayerDialogController(
             context = this,
@@ -112,6 +115,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             finish()
             return
         }
+        initKeepScreenOnController()
         initUiController()
         initFullscreenController()
         initPipController()
@@ -230,6 +234,11 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         player.destroy()
     }
 
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        keepScreenOnController.onUserInteraction()
+    }
+
     private fun handleEpisode(intent: Intent, bundle: Bundle?) {
         val intentEpisodeId = intent.getExtraNotNull<EpisodeId>(ARG_EPISODE_ID)
         val savedEpisodeId = bundle?.getExtra<EpisodeId>(KEY_EPISODE_ID)
@@ -255,6 +264,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         dialogController.onSkipsTimerSelected = {
             viewModel.onSkipsTimerEnabledChange(it)
+        }
+
+        dialogController.onInactiveTimerSelected = {
+            viewModel.onInactiveTimerEnabledChange(it)
         }
     }
 
@@ -320,6 +333,20 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             )
             insets
         }
+    }
+
+    private fun initKeepScreenOnController() {
+        binding.playerView.playerState.onEach {
+            keepScreenOnController.setPlaying(it.isPlaying)
+        }.launchIn(lifecycleScope)
+
+        keepScreenOnController.state.onEach {
+            binding.root.keepScreenOn = it
+        }.launchIn(lifecycleScope)
+
+        viewModel.inactiveTimerEnabled.onEach {
+            keepScreenOnController.setTimerEnabled(it)
+        }.launchIn(lifecycleScope)
     }
 
     private fun initFullscreenController() {

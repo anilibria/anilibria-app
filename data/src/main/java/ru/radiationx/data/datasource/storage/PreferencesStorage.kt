@@ -23,6 +23,7 @@ class PreferencesStorage @Inject constructor(
         private const val PLAYER_QUALITY_KEY = "player_quality"
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PLAYER_SKIPS_KEY = "player_skips"
+        private const val PLAYER_SKIPS_TIMER_KEY = "player_skips_timer"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
 
@@ -32,6 +33,7 @@ class PreferencesStorage @Inject constructor(
     private val playerQualityRelay by lazy { MutableStateFlow(playerQuality) }
     private val playSpeedRelay by lazy { MutableStateFlow(playSpeed) }
     private val playerSkipsRelay by lazy { MutableStateFlow(playerSkips) }
+    private val playerSkipsTimerRelay by lazy { MutableStateFlow(playerSkipsTimer) }
     private val notificationsAllRelay by lazy { MutableStateFlow(notificationsAll) }
     private val notificationsServiceRelay by lazy { MutableStateFlow(notificationsService) }
     private val searchRemindRelay by lazy { MutableStateFlow(searchRemind) }
@@ -47,6 +49,7 @@ class PreferencesStorage @Inject constructor(
             PLAYER_QUALITY_KEY -> playerQualityRelay.value = playerQuality
             PLAY_SPEED_KEY -> playSpeedRelay.value = playSpeed
             PLAYER_SKIPS_KEY -> playerSkipsRelay.value = playerSkips
+            PLAYER_SKIPS_TIMER_KEY -> playerSkipsTimerRelay.value = playerSkipsTimer
             SEARCH_REMIND_KEY -> searchRemindRelay.value = searchRemind
             RELEASE_REMIND_KEY -> releaseRemindRelay.value = releaseRemind
             EPISODES_IS_REVERSE_KEY -> episodesIsReverseRelay.value = episodesIsReverse
@@ -107,9 +110,17 @@ class PreferencesStorage @Inject constructor(
 
     override fun observePlaySpeed(): Flow<Float> = playSpeedRelay
 
+    override fun observePlayerSkips(): Flow<Boolean> = playerSkipsRelay
+
     override var playerSkips: Boolean
         get() = sharedPreferences.getBoolean(PLAYER_SKIPS_KEY, true)
         set(value) = sharedPreferences.edit().putBoolean(PLAYER_SKIPS_KEY, value).apply()
+
+    override fun observePlayerSkipsTimer(): Flow<Boolean> = playerSkipsTimerRelay
+
+    override var playerSkipsTimer: Boolean
+        get() = sharedPreferences.getBoolean(PLAYER_SKIPS_TIMER_KEY, true)
+        set(value) = sharedPreferences.edit().putBoolean(PLAYER_SKIPS_TIMER_KEY, value).apply()
 
     override var notificationsAll: Boolean
         get() = sharedPreferences.getBoolean(NOTIFICATIONS_ALL_KEY, true)

@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.screen.PlayerEndSeasonGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerQualityGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerSpeedGuidedScreen
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
@@ -24,6 +25,7 @@ import toothpick.InjectConstructor
 class PlayerViewModel(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
     playerController: PlayerController,
 ) : LifecycleViewModel() {
@@ -40,8 +42,8 @@ class PlayerViewModel(
     private var currentComplete: Boolean? = null
 
     init {
-        qualityState.value = releaseInteractor.getPlayerQuality()
-        speedState.value = releaseInteractor.getPlaySpeed()
+        qualityState.value = preferencesHolder.playerQuality
+        speedState.value = preferencesHolder.playSpeed
 
         playerController
             .selectEpisodeRelay
@@ -52,7 +54,7 @@ class PlayerViewModel(
             }
             .launchIn(viewModelScope)
 
-        releaseInteractor
+        preferencesHolder
             .observePlayerQuality()
             .distinctUntilChanged()
             .onEach {
@@ -62,7 +64,7 @@ class PlayerViewModel(
             }
             .launchIn(viewModelScope)
 
-        releaseInteractor
+        preferencesHolder
             .observePlaySpeed()
             .distinctUntilChanged()
             .onEach {

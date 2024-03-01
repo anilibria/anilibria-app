@@ -318,7 +318,7 @@ class ReleaseInfoViewModel(
     }
 
     fun submitPlayerOpenAnalytics() {
-        val quality = releaseInteractor.getPlayerQuality().toAnalyticsQuality()
+        val quality = appPreferences.playerQuality.toAnalyticsQuality()
         playerAnalytics.open(AnalyticsConstants.screen_release, AnalyticsPlayer.INTERNAL, quality)
     }
 
@@ -350,7 +350,7 @@ class ReleaseInfoViewModel(
         episode: SourceEpisode,
         quality: PlayerQuality?,
     ) {
-        val savedQuality = releaseInteractor.getPlayerQuality()
+        val savedQuality = appPreferences.playerQuality
         val finalQuality = quality ?: savedQuality
         val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
@@ -362,7 +362,7 @@ class ReleaseInfoViewModel(
         release: Release,
         episode: Episode,
     ) {
-        val savedQuality = releaseInteractor.getPlayerQuality()
+        val savedQuality = appPreferences.playerQuality
         val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
         playEpisodeAction.set(ActionPlayEpisode(release, episode))

@@ -187,6 +187,14 @@ class PlayerView @JvmOverloads constructor(
         mediaActionsController.setFullscreenActive(state)
     }
 
+    fun setSkipsEnabled(state: Boolean) {
+        skipsController.setEnabled(state)
+    }
+
+    fun setSkipsTimerEnabled(state: Boolean) {
+        skipsController.setTimerEnabled(state)
+    }
+
     private fun attachControllers() {
         holder.addListener(playerFlow)
         holder.addListener(outputController)

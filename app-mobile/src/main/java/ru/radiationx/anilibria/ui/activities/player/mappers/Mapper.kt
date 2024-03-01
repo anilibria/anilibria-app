@@ -18,11 +18,11 @@ fun Release.toDataState(episodeId: EpisodeId) = PlayerDataState(
     episodeTitle = episodes.find { it.id == episodeId }?.title.orEmpty()
 )
 
-fun Episode.toState(quality: PlayerQuality, skipsEnabled: Boolean) = EpisodeState(
+fun Episode.toState(quality: PlayerQuality) = EpisodeState(
     id = id,
     title = title.orEmpty(),
     url = qualityInfo.getUrlFor(quality),
-    skips = skips.takeIf { skipsEnabled }
+    skips = skips
 )
 
 fun EpisodeState.toPlaylistItem(): PlaylistItem {

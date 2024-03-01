@@ -21,12 +21,12 @@ class PlayerDialogController(
     private val lifecycleOwner: LifecycleOwner,
     private val appThemeController: AppThemeController,
 ) {
-    private val settingQuality = 0
-    private val settingPlaySpeed = 1
 
     var onQualitySelected: ((PlayerQuality) -> Unit)? = null
     var onSpeedSelected: ((Float) -> Unit)? = null
     var onEpisodeSelected: ((EpisodeId) -> Unit)? = null
+    var onSkipsSelected: ((Boolean) -> Unit)? = null
+    var onSkipsTimerSelected: ((Boolean) -> Unit)? = null
 
     fun showPlaylist(episodes: List<Episode>, episodeId: EpisodeId) {
         val titles = episodes
@@ -49,17 +49,15 @@ class PlayerDialogController(
     }
 
     fun showSettingsDialog(state: PlayerSettingsState) {
-        val qualityValue = getQualityTitle(state.currentQuality)
-        val speedValue = getPlaySpeedTitle(state.currentSpeed)
-
-        val valuesList = listOf(settingQuality, settingPlaySpeed)
+        val valuesList = SettingItem.entries
 
         val titles = valuesList
             .map {
                 when (it) {
-                    settingQuality -> "Качество (<b>$qualityValue</b>)"
-                    settingPlaySpeed -> "Скорость (<b>$speedValue</b>)"
-                    else -> "Привет"
+                    SettingItem.Quality -> "Качество (<b>${state.currentQuality.toTitle()}</b>)"
+                    SettingItem.PlaySpeed -> "Скорость (<b>${state.currentSpeed.toSpeedTitle()}</b>)"
+                    SettingItem.Skips -> "Кнопки пропуска опенинга (<b>${state.skipsEnabled.toTitle()}</b>)"
+                    SettingItem.SkipsTimer -> "Автоматически пропускать опенинг (<b>${state.skipsTimerEnabled.toTitle()}</b>)"
                 }
             }
             .map { it.parseAsHtml() }
@@ -68,9 +66,10 @@ class PlayerDialogController(
         val icons = valuesList
             .map { value ->
                 when (value) {
-                    settingQuality -> getQualityIcRes(state.currentQuality)
-                    settingPlaySpeed -> R.drawable.ic_play_speed
-                    else -> R.drawable.ic_anilibria
+                    SettingItem.Quality -> state.currentQuality.toIcRes()
+                    SettingItem.PlaySpeed -> R.drawable.ic_play_speed
+                    SettingItem.Skips -> R.drawable.ic_skip_forward
+                    SettingItem.SkipsTimer -> R.drawable.ic_av_timer
                 }.let {
                     ContextCompat.getDrawable(context, it)
                 }
@@ -80,12 +79,24 @@ class PlayerDialogController(
         BottomSheet.Builder(context)
             .setItems(titles, icons) { _, which ->
                 when (valuesList[which]) {
-                    settingQuality -> showQualityDialog(
-                        state.currentQuality,
-                        state.availableQualities.toList()
-                    )
+                    SettingItem.Quality -> {
+                        showQualityDialog(
+                            state.currentQuality,
+                            state.availableQualities.toList()
+                        )
+                    }
 
-                    settingPlaySpeed -> showPlaySpeedDialog(state.currentSpeed)
+                    SettingItem.PlaySpeed -> {
+                        showPlaySpeedDialog(state.currentSpeed)
+                    }
+
+                    SettingItem.Skips -> {
+                        onSkipsSelected?.invoke(!state.skipsEnabled)
+                    }
+
+                    SettingItem.SkipsTimer -> {
+                        onSkipsTimerSelected?.invoke(!state.skipsTimerEnabled)
+                    }
                 }
             }
             .applyStyle()
@@ -106,7 +117,7 @@ class PlayerDialogController(
         val activeIndex = values.indexOf(currentPlaySpeed)
         val titles = values
             .mapIndexed { index, s ->
-                val stringValue = getPlaySpeedTitle(s)
+                val stringValue = s.toSpeedTitle()
                 when (index) {
                     activeIndex -> "<b>$stringValue</b>"
                     else -> stringValue
@@ -128,14 +139,14 @@ class PlayerDialogController(
         val activeIndex = available.indexOf(current)
         val titles = available
             .mapIndexed { index, s ->
-                val stringValue = getQualityTitle(s)
+                val stringValue = s.toTitle()
                 if (index == activeIndex) "<b>$stringValue</b>" else stringValue
             }
             .map { it.parseAsHtml() }
             .toTypedArray()
 
         val icons = available
-            .map { context.getCompatDrawable(getQualityIcRes(it)) }
+            .map { context.getCompatDrawable(it.toIcRes()) }
             .toTypedArray()
 
         BottomSheet.Builder(context)
@@ -164,22 +175,31 @@ class PlayerDialogController(
         return this
     }
 
-    private fun getQualityTitle(quality: PlayerQuality) = when (quality) {
+    private fun PlayerQuality.toTitle() = when (this) {
         PlayerQuality.SD -> "480p"
         PlayerQuality.HD -> "720p"
         PlayerQuality.FULLHD -> "1080p"
     }
 
-    private fun getQualityIcRes(quality: PlayerQuality): Int = when (quality) {
+    private fun PlayerQuality.toIcRes(): Int = when (this) {
         PlayerQuality.SD -> R.drawable.ic_quality_sd_base
         PlayerQuality.HD -> R.drawable.ic_quality_hd_base
         PlayerQuality.FULLHD -> R.drawable.ic_quality_full_hd_base
     }
 
-    private fun getPlaySpeedTitle(speed: Float) = if (speed == 1.0f) {
+    private fun Float.toSpeedTitle() = if (this == 1.0f) {
         "Обычная"
     } else {
-        "${"$speed".trimEnd('0').trimEnd('.').trimEnd(',')}x"
+        "${"${this}".trimEnd('0').trimEnd('.').trimEnd(',')}x"
+    }
+
+    private fun Boolean.toTitle() = if (this) "Да" else "Нет"
+
+    private enum class SettingItem {
+        Quality,
+        PlaySpeed,
+        Skips,
+        SkipsTimer
     }
 }
 
@@ -187,4 +207,6 @@ data class PlayerSettingsState(
     val currentSpeed: Float = 1.0f,
     val currentQuality: PlayerQuality = PlayerQuality.SD,
     val availableQualities: Set<PlayerQuality> = emptySet(),
+    val skipsEnabled: Boolean = true,
+    val skipsTimerEnabled: Boolean = true,
 )

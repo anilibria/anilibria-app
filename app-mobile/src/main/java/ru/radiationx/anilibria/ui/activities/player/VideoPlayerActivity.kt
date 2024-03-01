@@ -166,6 +166,14 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerView.setSpeed(it)
         }.launchIn(lifecycleScope)
 
+        viewModel.playerSkipsEnabled.onEach {
+            binding.playerView.setSkipsEnabled(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.playerSkipsTimerEnabled.onEach {
+            binding.playerView.setSkipsTimerEnabled(it)
+        }.launchIn(lifecycleScope)
+
         binding.playerView.timelineState
             .sample(10000)
             .filter { it.duration > 0 }
@@ -239,6 +247,14 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         dialogController.onEpisodeSelected = {
             viewModel.playEpisode(it)
+        }
+
+        dialogController.onSkipsSelected = {
+            viewModel.onSkipsEnabledSelected(it)
+        }
+
+        dialogController.onSkipsTimerSelected = {
+            viewModel.onSkipsTimerEnabledChange(it)
         }
     }
 

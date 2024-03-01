@@ -28,6 +28,8 @@ interface PreferencesHolder {
 
     val playerSkipsTimer: AppPreference<Boolean>
 
+    val playerInactiveTimer: AppPreference<Boolean>
+
     val notificationsAll: AppPreference<Boolean>
 
     val notificationsService: AppPreference<Boolean>

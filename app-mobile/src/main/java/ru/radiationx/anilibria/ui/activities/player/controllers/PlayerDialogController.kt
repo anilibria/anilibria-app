@@ -27,6 +27,7 @@ class PlayerDialogController(
     var onEpisodeSelected: ((EpisodeId) -> Unit)? = null
     var onSkipsSelected: ((Boolean) -> Unit)? = null
     var onSkipsTimerSelected: ((Boolean) -> Unit)? = null
+    var onInactiveTimerSelected: ((Boolean) -> Unit)? = null
 
     fun showPlaylist(episodes: List<Episode>, episodeId: EpisodeId) {
         val titles = episodes
@@ -58,6 +59,7 @@ class PlayerDialogController(
                     SettingItem.PlaySpeed -> "Скорость (<b>${state.currentSpeed.toSpeedTitle()}</b>)"
                     SettingItem.Skips -> "Кнопки пропуска опенинга (<b>${state.skipsEnabled.toTitle()}</b>)"
                     SettingItem.SkipsTimer -> "Автоматически пропускать опенинг (<b>${state.skipsTimerEnabled.toTitle()}</b>)"
+                    SettingItem.InactiveTimer -> "Таймер на бездействие (<b>${state.inactiveTimerEnabled.toTitle()}</b>)"
                 }
             }
             .map { it.parseAsHtml() }
@@ -70,6 +72,7 @@ class PlayerDialogController(
                     SettingItem.PlaySpeed -> R.drawable.ic_play_speed
                     SettingItem.Skips -> R.drawable.ic_skip_forward
                     SettingItem.SkipsTimer -> R.drawable.ic_av_timer
+                    SettingItem.InactiveTimer -> R.drawable.ic_timer_outline
                 }.let {
                     ContextCompat.getDrawable(context, it)
                 }
@@ -96,6 +99,10 @@ class PlayerDialogController(
 
                     SettingItem.SkipsTimer -> {
                         onSkipsTimerSelected?.invoke(!state.skipsTimerEnabled)
+                    }
+
+                    SettingItem.InactiveTimer -> {
+                        onInactiveTimerSelected?.invoke(!state.inactiveTimerEnabled)
                     }
                 }
             }
@@ -199,14 +206,16 @@ class PlayerDialogController(
         Quality,
         PlaySpeed,
         Skips,
-        SkipsTimer
+        SkipsTimer,
+        InactiveTimer
     }
 }
 
 data class PlayerSettingsState(
-    val currentSpeed: Float = 1.0f,
-    val currentQuality: PlayerQuality = PlayerQuality.SD,
-    val availableQualities: Set<PlayerQuality> = emptySet(),
-    val skipsEnabled: Boolean = true,
-    val skipsTimerEnabled: Boolean = true,
+    val currentSpeed: Float,
+    val currentQuality: PlayerQuality,
+    val availableQualities: Set<PlayerQuality>,
+    val skipsEnabled: Boolean,
+    val skipsTimerEnabled: Boolean,
+    val inactiveTimerEnabled: Boolean,
 )

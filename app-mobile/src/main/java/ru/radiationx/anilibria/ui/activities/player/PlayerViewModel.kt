@@ -56,6 +56,8 @@ class PlayerViewModel(
 
     val playerSkipsTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerSkipsTimer
 
+    val inactiveTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerInactiveTimer
+
     private val _episodeId = MutableStateFlow(argExtra.episodeId)
     val episodeId = _episodeId.asStateFlow()
 
@@ -110,7 +112,8 @@ class PlayerViewModel(
                 currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
                 availableQualities = episode.qualityInfo.available,
                 skipsEnabled = preferencesHolder.playerSkips.value,
-                skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value
+                skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value,
+                inactiveTimerEnabled = preferencesHolder.playerInactiveTimer.value
             )
             _actions.emit(PlayerAction.ShowSettings(settingsState))
         }
@@ -137,6 +140,10 @@ class PlayerViewModel(
 
     fun onSkipsTimerEnabledChange(state: Boolean) {
         preferencesHolder.playerSkipsTimer.value = state
+    }
+
+    fun onInactiveTimerEnabledChange(state: Boolean) {
+        preferencesHolder.playerInactiveTimer.value = state
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -23,6 +23,7 @@ class PreferencesStorage @Inject constructor(
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PLAYER_SKIPS_KEY = "player_skips"
         private const val PLAYER_SKIPS_TIMER_KEY = "player_skips_timer"
+        private const val PLAYER_INACTIVE_TIMER_KEY = "player_inactive_timer"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
 
@@ -42,6 +43,7 @@ class PreferencesStorage @Inject constructor(
             putLong(key, accessDate)
         }
     )
+
     override val releaseRemind: AppPreference<Boolean> = AppPreference(
         key = RELEASE_REMIND_KEY,
         sharedPreferences = sharedPreferences,
@@ -52,6 +54,7 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
     override val searchRemind: AppPreference<Boolean> = AppPreference(
         key = SEARCH_REMIND_KEY,
         sharedPreferences = sharedPreferences,
@@ -62,6 +65,7 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
     override val episodesIsReverse: AppPreference<Boolean> = AppPreference(
         key = EPISODES_IS_REVERSE_KEY,
         sharedPreferences = sharedPreferences,
@@ -72,6 +76,7 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
     override val playerQuality: AppPreference<PlayerQuality> = AppPreference(
         key = PLAYER_QUALITY_KEY,
         sharedPreferences = sharedPreferences,
@@ -82,6 +87,7 @@ class PreferencesStorage @Inject constructor(
             putString(key, value.asPrefString())
         }
     )
+
     override val playSpeed: AppPreference<Float> = AppPreference(
         key = PLAY_SPEED_KEY,
         sharedPreferences = sharedPreferences,
@@ -92,6 +98,7 @@ class PreferencesStorage @Inject constructor(
             putFloat(key, value)
         }
     )
+
     override val playerSkips: AppPreference<Boolean> = AppPreference(
         key = PLAYER_SKIPS_KEY,
         sharedPreferences = sharedPreferences,
@@ -102,6 +109,7 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
     override val playerSkipsTimer: AppPreference<Boolean> = AppPreference(
         key = PLAYER_SKIPS_TIMER_KEY,
         sharedPreferences = sharedPreferences,
@@ -112,6 +120,18 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
+    override val playerInactiveTimer: AppPreference<Boolean> = AppPreference(
+        key = PLAYER_INACTIVE_TIMER_KEY,
+        sharedPreferences = sharedPreferences,
+        get = { key ->
+            getBoolean(key, false)
+        },
+        set = { key, value ->
+            putBoolean(key, value)
+        }
+    )
+
     override val notificationsAll: AppPreference<Boolean> = AppPreference(
         key = NOTIFICATIONS_ALL_KEY,
         sharedPreferences = sharedPreferences,
@@ -122,6 +142,7 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
     override val notificationsService: AppPreference<Boolean> = AppPreference(
         key = NOTIFICATIONS_SERVICE_KEY,
         sharedPreferences = sharedPreferences,

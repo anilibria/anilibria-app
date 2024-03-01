@@ -3,8 +3,6 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.os.Build
-import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
@@ -65,14 +63,14 @@ class App : Application() {
         val preferencesHolder = get<PreferencesHolder>()
 
         preferencesHolder
-            .observeNotificationsAll()
+            .notificationsAll
             .onEach {
                 changeSubscribeStatus(it, "all")
             }
             .launchIn(GlobalScope)
 
         preferencesHolder
-            .observeNotificationsService()
+            .notificationsService
             .onEach {
                 changeSubscribeStatus(it, "service")
                 changeSubscribeStatus(it, "app_update")

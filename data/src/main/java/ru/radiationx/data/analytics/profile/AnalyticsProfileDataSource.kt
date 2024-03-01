@@ -38,23 +38,23 @@ class AnalyticsProfileDataSource(
     }
 
     fun getQualitySettings(): Flow<String> = single {
-        preferencesHolder.playerQuality.toAnalyticsQuality().value
+        preferencesHolder.playerQuality.value.toAnalyticsQuality().value
     }
 
     fun getPlaySpeedSettings(): Flow<Float> = single {
-        preferencesHolder.playSpeed
+        preferencesHolder.playSpeed.value
     }
 
     fun getNotificationsAllSettings(): Flow<Boolean> = single {
-        preferencesHolder.notificationsAll
+        preferencesHolder.notificationsAll.value
     }
 
     fun getNotificationsServiceSettings(): Flow<Boolean> = single {
-        preferencesHolder.notificationsService
+        preferencesHolder.notificationsService.value
     }
 
     fun getEpisodeOrderSettings(): Flow<Boolean> = single {
-        preferencesHolder.episodesIsReverse
+        preferencesHolder.episodesIsReverse.value
     }
 
     fun getAuthState(): Flow<String> = single {

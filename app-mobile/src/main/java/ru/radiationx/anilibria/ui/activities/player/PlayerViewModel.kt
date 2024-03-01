@@ -7,14 +7,13 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsState
@@ -51,27 +50,11 @@ class PlayerViewModel(
         private val seekThreshold = TimeUnit.SECONDS.toMillis(10)
     }
 
-    private val _targetQuality = preferencesHolder
-        .observePlayerQuality()
-        .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playerQuality)
+    val currentSpeed = preferencesHolder.playSpeed
 
-    private val _currentSpeed = preferencesHolder
-        .observePlaySpeed()
-        .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playSpeed)
+    val playerSkipsEnabled: StateFlow<Boolean> = preferencesHolder.playerSkips
 
-    private val _playerSkipsEnabled = preferencesHolder
-        .observePlayerSkips()
-        .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playerSkips)
-
-    private val _playerSkipsTimerEnabled = preferencesHolder
-        .observePlayerSkipsTimer()
-        .stateIn(viewModelScope, SharingStarted.Lazily, preferencesHolder.playerSkipsTimer)
-
-    val currentSpeed = _currentSpeed
-
-    val playerSkipsEnabled = _playerSkipsEnabled
-
-    val playerSkipsTimerEnabled = _playerSkipsTimerEnabled
+    val playerSkipsTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerSkipsTimer
 
     private val _episodeId = MutableStateFlow(argExtra.episodeId)
     val episodeId = _episodeId.asStateFlow()
@@ -96,7 +79,8 @@ class PlayerViewModel(
             )
         }.launchIn(viewModelScope)
 
-        _targetQuality
+        preferencesHolder
+            .playerQuality
             .drop(1)
             .onEach { quality ->
                 withData { data ->
@@ -120,13 +104,13 @@ class PlayerViewModel(
     fun onSettingsClick() {
         launchWithData { data ->
             val episode = data.episodes.find { it.id == _episodeId.value } ?: return@launchWithData
-            val quality = _targetQuality.value
+            val quality = preferencesHolder.playerQuality.value
             val settingsState = PlayerSettingsState(
-                currentSpeed = _currentSpeed.value,
+                currentSpeed = preferencesHolder.playSpeed.value,
                 currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
                 availableQualities = episode.qualityInfo.available,
-                skipsEnabled = preferencesHolder.playerSkips,
-                skipsTimerEnabled = preferencesHolder.playerSkipsTimer
+                skipsEnabled = preferencesHolder.playerSkips.value,
+                skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value
             )
             _actions.emit(PlayerAction.ShowSettings(settingsState))
         }
@@ -140,19 +124,19 @@ class PlayerViewModel(
     }
 
     fun onQualitySelected(quality: PlayerQuality) {
-        preferencesHolder.playerQuality = quality
+        preferencesHolder.playerQuality.value = quality
     }
 
     fun onSpeedSelected(speed: Float) {
-        preferencesHolder.playSpeed = speed
+        preferencesHolder.playSpeed.value = speed
     }
 
     fun onSkipsEnabledSelected(state: Boolean) {
-        preferencesHolder.playerSkips = state
+        preferencesHolder.playerSkips.value = state
     }
 
     fun onSkipsTimerEnabledChange(state: Boolean) {
-        preferencesHolder.playerSkipsTimer = state
+        preferencesHolder.playerSkipsTimer.value = state
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -170,7 +154,7 @@ class PlayerViewModel(
 
     fun playEpisode(episodeId: EpisodeId) {
         launchWithData { data ->
-            val quality = _targetQuality.value
+            val quality = preferencesHolder.playerQuality.value
             val access = episodesCheckerHolder.getEpisode(episodeId)
             val episodeStates = data.episodes.map { it.toState(quality) }.asReversed()
             val action = PlayerAction.PlayEpisode(episodeStates, episodeId, access?.seek ?: 0)

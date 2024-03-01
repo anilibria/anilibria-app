@@ -70,7 +70,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("player_quality")?.apply {
-            val savedQuality = appPreferences.playerQuality
+            val savedQuality = appPreferences.playerQuality.value
             icon = getQualityIcon(savedQuality)
             summary = getQualityTitle(savedQuality)
             setOnPreferenceClickListener { preference ->
@@ -82,7 +82,7 @@ class SettingsFragment : BaseSettingFragment() {
                     .setItems(titles) { _, which ->
                         val quality = values[which]
                         settingsAnalytics.qualityChange(quality.toAnalyticsQuality())
-                        appPreferences.playerQuality = quality
+                        appPreferences.playerQuality.value = quality
                         icon = getQualityIcon(quality)
                         summary = getQualityTitle(quality)
                     }

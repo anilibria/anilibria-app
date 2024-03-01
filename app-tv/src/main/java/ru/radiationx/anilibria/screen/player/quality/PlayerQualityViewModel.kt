@@ -33,7 +33,7 @@ class PlayerQualityViewModel(
     init {
         combine(
             releaseInteractor.observeFull(argExtra.releaseId),
-            preferencesHolder.observePlayerQuality()
+            preferencesHolder.playerQuality
         ) { release, quality ->
             updateAvailable(release, quality)
         }.launchIn(viewModelScope)
@@ -47,7 +47,7 @@ class PlayerQualityViewModel(
             FULL_HD_ACTION_ID -> PlayerQuality.FULLHD
             else -> PlayerQuality.SD
         }
-        preferencesHolder.playerQuality = value
+        preferencesHolder.playerQuality.value = value
     }
 
     private fun updateAvailable(release: Release, quality: PlayerQuality) {

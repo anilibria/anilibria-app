@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.Manifest
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
@@ -169,7 +168,7 @@ class FeedViewModel(
         }.launchIn(viewModelScope)
 
         appPreferences
-            .observeNewDonationRemind()
+            .newDonationRemind
             .flatMapLatest { enabled ->
                 donationRepository.observerDonationInfo().map {
                     Pair(it.cardNewDonations, enabled)
@@ -308,7 +307,7 @@ class FeedViewModel(
         when (state.tag) {
             DONATION_NEW_TAG -> {
                 donationCardAnalytics.onNewDonationClick(AnalyticsConstants.screen_feed)
-                appPreferences.newDonationRemind = false
+                appPreferences.newDonationRemind.value = false
             }
         }
         donationDetailAnalytics.open(AnalyticsConstants.screen_feed)
@@ -319,7 +318,7 @@ class FeedViewModel(
         when (state.tag) {
             DONATION_NEW_TAG -> {
                 donationCardAnalytics.onNewDonationCloseClick(AnalyticsConstants.screen_feed)
-                appPreferences.newDonationRemind = false
+                appPreferences.newDonationRemind.value = false
             }
         }
     }

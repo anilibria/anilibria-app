@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.screen.player
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -42,8 +41,8 @@ class PlayerViewModel(
     private var currentComplete: Boolean? = null
 
     init {
-        qualityState.value = preferencesHolder.playerQuality
-        speedState.value = preferencesHolder.playSpeed
+        qualityState.value = preferencesHolder.playerQuality.value
+        speedState.value = preferencesHolder.playSpeed.value
 
         playerController
             .selectEpisodeRelay
@@ -55,8 +54,7 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
 
         preferencesHolder
-            .observePlayerQuality()
-            .distinctUntilChanged()
+            .playerQuality
             .onEach {
                 currentQuality = it
                 updateQuality()
@@ -65,8 +63,7 @@ class PlayerViewModel(
             .launchIn(viewModelScope)
 
         preferencesHolder
-            .observePlaySpeed()
-            .distinctUntilChanged()
+            .playSpeed
             .onEach {
                 speedState.value = it
             }

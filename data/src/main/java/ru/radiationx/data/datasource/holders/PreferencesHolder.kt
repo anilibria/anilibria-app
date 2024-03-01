@@ -1,6 +1,10 @@
 package ru.radiationx.data.datasource.holders
 
-import kotlinx.coroutines.flow.Flow
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import ru.radiationx.data.entity.common.PlayerQuality
 
 /**
@@ -8,34 +12,57 @@ import ru.radiationx.data.entity.common.PlayerQuality
  */
 interface PreferencesHolder {
 
-    fun observeNewDonationRemind(): Flow<Boolean>
-    var newDonationRemind: Boolean
+    val newDonationRemind: AppPreference<Boolean>
 
-    fun observeReleaseRemind(): Flow<Boolean>
-    var releaseRemind: Boolean
+    val releaseRemind: AppPreference<Boolean>
 
-    fun observeSearchRemind(): Flow<Boolean>
-    var searchRemind: Boolean
+    val searchRemind: AppPreference<Boolean>
 
-    fun observeEpisodesIsReverse(): Flow<Boolean>
-    val episodesIsReverse: Boolean
+    val episodesIsReverse: AppPreference<Boolean>
 
-    var playerQuality: PlayerQuality
-    fun observePlayerQuality(): Flow<PlayerQuality>
+    val playerQuality: AppPreference<PlayerQuality>
 
-    var playSpeed: Float
-    fun observePlaySpeed(): Flow<Float>
+    val playSpeed: AppPreference<Float>
 
-    fun observePlayerSkips(): Flow<Boolean>
-    var playerSkips: Boolean
+    val playerSkips: AppPreference<Boolean>
 
-    fun observePlayerSkipsTimer(): Flow<Boolean>
-    var playerSkipsTimer: Boolean
+    val playerSkipsTimer: AppPreference<Boolean>
 
-    var notificationsAll: Boolean
-    fun observeNotificationsAll(): Flow<Boolean>
+    val notificationsAll: AppPreference<Boolean>
 
-    var notificationsService: Boolean
-    fun observeNotificationsService(): Flow<Boolean>
+    val notificationsService: AppPreference<Boolean>
 
+}
+
+class AppPreference<T>(
+    private val key: String,
+    private val sharedPreferences: SharedPreferences,
+    private val get: SharedPreferences.(key: String) -> T,
+    private val set: SharedPreferences.Editor.(key: String, value: T) -> Unit,
+) : StateFlow<T> {
+
+    private val _state by lazy { MutableStateFlow(value) }
+
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == this.key) {
+            _state.value = value
+        }
+    }
+
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    override val replayCache: List<T>
+        get() = _state.replayCache
+
+    override var value: T
+        get() = get(sharedPreferences, key)
+        set(value) {
+            sharedPreferences.edit { set(key, value) }
+        }
+
+    override suspend fun collect(collector: FlowCollector<T>): Nothing {
+        _state.collect(collector)
+    }
 }

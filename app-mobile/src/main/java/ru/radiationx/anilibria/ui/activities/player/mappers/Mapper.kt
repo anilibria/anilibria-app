@@ -3,7 +3,9 @@ package ru.radiationx.anilibria.ui.activities.player.mappers
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import ru.radiationx.anilibria.ui.activities.player.models.EpisodeState
+import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
+import ru.radiationx.anilibria.ui.activities.player.models.PlayerRelease
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
@@ -12,9 +14,19 @@ import ru.radiationx.media.mobile.models.PlaylistItem
 import ru.radiationx.media.mobile.models.TimelineSkip
 
 
-fun Release.toDataState(episodeId: EpisodeId) = PlayerDataState(
+fun Release.toPlayerRelease() = PlayerRelease(
     id = id,
-    title = (title ?: titleEng).orEmpty(),
+    name = names.firstOrNull().orEmpty(),
+    episodes = episodes.asReversed()
+)
+
+fun PlayerData.toDataState(episodeId: EpisodeId): PlayerDataState {
+    return getRelease(episodeId.releaseId).toDataState(episodeId)
+}
+
+fun PlayerRelease.toDataState(episodeId: EpisodeId) = PlayerDataState(
+    id = id,
+    title = name,
     episodeTitle = episodes.find { it.id == episodeId }?.title.orEmpty()
 )
 

@@ -7,8 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
@@ -24,6 +22,7 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.Dimensions
@@ -36,7 +35,8 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 class FeedFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    SharedProvider {
+    SharedProvider,
+    TopScroller {
 
     private val adapter = FeedAdapter(
         loadMoreListener = {
@@ -215,6 +215,11 @@ class FeedFragment :
         binding.recyclerView.adapter = null
         searchView?.setAdapter(null)
         searchView = null
+    }
+
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {

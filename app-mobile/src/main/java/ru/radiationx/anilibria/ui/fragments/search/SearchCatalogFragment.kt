@@ -22,6 +22,7 @@ import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
@@ -36,7 +37,8 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 class SearchCatalogFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener {
+    ReleasesAdapter.ItemListener,
+    TopScroller {
 
     companion object {
         private const val ARG_GENRE = "arg_genre"
@@ -256,6 +258,11 @@ class SearchCatalogFragment :
             }
             .showWithLifecycle(viewLifecycleOwner)
         return false
+    }
+
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
     }
 
 }

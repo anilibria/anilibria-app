@@ -25,6 +25,7 @@ import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
@@ -39,7 +40,8 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 class HistoryFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener {
+    ReleasesAdapter.ItemListener,
+    TopScroller {
 
     override var sharedViewLocal: View? = null
 
@@ -184,6 +186,7 @@ class HistoryFragment :
                         Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                     3 -> viewModel.onDeleteClick(item)
@@ -195,6 +198,11 @@ class HistoryFragment :
 
     override fun onItemClick(position: Int, view: View) {
         this.sharedViewLocal = view
+    }
+
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
     }
 
     private fun showState(state: HistoryScreenState) {

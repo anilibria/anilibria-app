@@ -41,6 +41,7 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
@@ -366,6 +367,12 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val tabsListener = object : BottomTabsAdapter.Listener {
         override fun onTabClick(tab: Tab) {
+            if (viewModel.state.value.selectedTab == tab.screen.screenKey) {
+                val fragment = supportFragmentManager.findFragmentByTag(tab.screen.screenKey)
+                if (fragment is TopScroller) {
+                    fragment.scrollToTop()
+                }
+            }
             viewModel.selectTab(tab.screen.screenKey)
         }
     }

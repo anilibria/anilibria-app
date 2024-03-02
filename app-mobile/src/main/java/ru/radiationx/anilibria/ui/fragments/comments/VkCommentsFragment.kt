@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.comments
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.CookieManager
@@ -24,6 +23,7 @@ import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebChromeClient
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebViewClient
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
@@ -39,7 +39,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber
 
 
-class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments) {
+class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments), TopScroller {
 
     companion object {
         const val WEB_VIEW_SCROLL_Y = "wvsy"
@@ -145,6 +145,10 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         binding.webView.setWebViewClientCompat(null)
         binding.webView.webChromeClient = WebChromeClient()
         binding.webView.endWork()
+    }
+
+    override fun scrollToTop() {
+        binding.webView.scrollY = 0
     }
 
     private fun showState(state: VkCommentsScreenState) {

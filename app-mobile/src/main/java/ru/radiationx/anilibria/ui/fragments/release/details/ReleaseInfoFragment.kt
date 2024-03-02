@@ -20,6 +20,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlD
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.types.TorrentId
@@ -30,7 +31,7 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
-class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
+class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopScroller {
 
     private val releaseInfoAdapter: ReleaseInfoAdapter by lazy {
         ReleaseInfoAdapter(
@@ -115,6 +116,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
         binding.recyclerView.adapter = null
     }
 
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+    }
+
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
     }
@@ -186,7 +191,12 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             "Открыть файл" to { viewModel.onTorrentClick(id, TorrentAction.Open) },
             "Поделиться файлом" to { viewModel.onTorrentClick(id, TorrentAction.Share) },
             "Открыть ссылку на файл" to { viewModel.onTorrentClick(id, TorrentAction.OpenUrl) },
-            "Поделиться ссылкой на файл" to { viewModel.onTorrentClick(id, TorrentAction.ShareUrl) },
+            "Поделиться ссылкой на файл" to {
+                viewModel.onTorrentClick(
+                    id,
+                    TorrentAction.ShareUrl
+                )
+            },
         )
         val titles = items.map { it.first }.toTypedArray()
         AlertDialog.Builder(requireContext())

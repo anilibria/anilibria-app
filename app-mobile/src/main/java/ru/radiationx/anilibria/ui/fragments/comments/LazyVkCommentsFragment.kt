@@ -8,8 +8,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentLazyBinding
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 
-class LazyVkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_lazy) {
+class LazyVkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_lazy), TopScroller {
 
     private val binding by viewBinding<FragmentLazyBinding>()
 
@@ -23,6 +24,13 @@ class LazyVkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_lazy) {
     override fun onResume() {
         super.onResume()
         addFragmentIfReady()
+    }
+
+    override fun scrollToTop() {
+        val fragment = childFragmentManager.findFragmentById(R.id.lazyContainer)
+        if (fragment is TopScroller) {
+            fragment.scrollToTop()
+        }
     }
 
     private fun addFragmentIfReady() {

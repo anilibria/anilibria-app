@@ -15,12 +15,13 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTeamsBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
-class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
+class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams), TopScroller {
 
     companion object {
         private const val ARG_QUERY = "arg_query"
@@ -78,6 +79,10 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams) {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.rvTeams.adapter = null
+    }
+
+    override fun scrollToTop() {
+        binding.rvTeams.scrollToPosition(0)
     }
 
 }

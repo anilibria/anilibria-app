@@ -14,10 +14,12 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.quill.viewModel
 
 class YoutubeFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh) {
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    TopScroller {
 
     private val youtubeAdapter: YoutubeAdapter by lazy {
         YoutubeAdapter(
@@ -77,6 +79,11 @@ class YoutubeFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
+    }
+
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
     }
 
     private val adapterListener = object : YoutubeAdapter.ItemListener {

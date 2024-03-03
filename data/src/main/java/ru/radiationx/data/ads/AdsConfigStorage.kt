@@ -2,7 +2,6 @@ package ru.radiationx.data.ads
 
 import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
@@ -16,15 +15,12 @@ class AdsConfigStorage @Inject constructor(
 ) {
 
     companion object {
-        private const val KEY_ADS_CONFIG = "data.adsconfig"
+        private const val KEY_ADS_CONFIG = "data.adsconfig_v2"
     }
 
-    private val adapter by lazy {
-        val type = Types.newParameterizedType(List::class.java, AdsConfigResponse::class.java)
-        moshi.adapter<List<AdsConfigResponse>>(type)
-    }
+    private val adapter by lazy { moshi.adapter(AdsConfigResponse::class.java) }
 
-    suspend fun save(config: List<AdsConfigResponse>) {
+    suspend fun save(config: AdsConfigResponse) {
         withContext(Dispatchers.IO) {
             try {
                 val json = adapter.toJson(config)
@@ -35,7 +31,7 @@ class AdsConfigStorage @Inject constructor(
         }
     }
 
-    suspend fun get(): List<AdsConfigResponse>? {
+    suspend fun get(): AdsConfigResponse? {
         return withContext(Dispatchers.IO) {
             sharedPreferences
                 .getString(KEY_ADS_CONFIG, null)

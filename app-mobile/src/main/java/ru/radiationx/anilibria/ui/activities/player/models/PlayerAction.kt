@@ -23,8 +23,5 @@ sealed class PlayerAction {
         val state: PlayerSettingsState,
     ) : PlayerAction()
 
-    data class ShowPlaylist(
-        val episodes: List<Episode>,
-        val episodeId: EpisodeId,
-    ) : PlayerAction()
+    data object ShowPlaylist : PlayerAction()
 }

@@ -1,5 +1,5 @@
-[
-  {
+{
+  "androidMain": {
     "appId": "ru.radiationx.anilibria.app",
     "mainBanner": {
       "enabled": false,
@@ -21,4 +21,4 @@
       "listInsertPosition": 0
     }
   }
-]
+}

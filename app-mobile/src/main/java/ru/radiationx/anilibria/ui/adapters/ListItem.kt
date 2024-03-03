@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemSt
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodesControlState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
+import ru.radiationx.data.entity.domain.release.Episode
 
 open class ListItem(private val idData: Any?) {
 
@@ -137,3 +138,9 @@ data class DonationCardListItem(val state: DonationCardItemState) : ListItem(sta
 
 /* Ads */
 data class NativeAdListItem(val nativeAd: NativeAd) : ListItem(nativeAd.hashCode())
+
+/* Player */
+data class PlaylistEpisodeListItem(
+    val episode: Episode,
+    val isPlaying: Boolean,
+) : ListItem(episode.id)

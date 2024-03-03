@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsState
+import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.anilibria.ui.activities.player.mappers.toDataState
 import ru.radiationx.anilibria.ui.activities.player.mappers.toPlayerRelease
 import ru.radiationx.anilibria.ui.activities.player.mappers.toState
@@ -34,18 +35,13 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
-import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
 
-data class PlayerExtra(
-    val episodeId: EpisodeId,
-) : QuillExtra
-
 @InjectConstructor
 class PlayerViewModel(
-    private val argExtra: PlayerExtra,
+    private val sharedPlayerData: SharedPlayerData,
     private val releaseInteractor: ReleaseInteractor,
     private val releaseRepository: ReleaseRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
@@ -64,10 +60,10 @@ class PlayerViewModel(
 
     val inactiveTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerInactiveTimer
 
-    private val _episodeId = MutableStateFlow(argExtra.episodeId)
+    private val _episodeId = sharedPlayerData.episodeId
     val episodeId = _episodeId.asStateFlow()
 
-    private val _dataState = MutableStateFlow(LoadingState<PlayerData>())
+    private val _dataState = sharedPlayerData.dataState
 
     private val _loadingState = MutableStateFlow(LoadingState<PlayerDataState>())
     val loadingState = _loadingState.asStateFlow()
@@ -98,6 +94,10 @@ class PlayerViewModel(
                 }
             }
             .launchIn(viewModelScope)
+
+        sharedPlayerData.onEpisodeSelected.onEach {
+            playEpisode(it)
+        }.launchIn(viewModelScope)
     }
 
     fun initialPlayEpisode(episodeId: EpisodeId) {
@@ -126,9 +126,8 @@ class PlayerViewModel(
     }
 
     fun onPlaylistClick() {
-        launchWithData { data ->
-            val action = PlayerAction.ShowPlaylist(data.episodes, episodeId.value)
-            _actions.emit(action)
+        launchWithData {
+            _actions.emit(PlayerAction.ShowPlaylist)
         }
     }
 
@@ -165,7 +164,7 @@ class PlayerViewModel(
         }
     }
 
-    fun playEpisode(episodeId: EpisodeId) {
+    private fun playEpisode(episodeId: EpisodeId) {
         launchWithData { data ->
             val quality = preferencesHolder.playerQuality.value
             val access = episodesCheckerHolder.getEpisode(episodeId)
@@ -224,6 +223,9 @@ class PlayerViewModel(
             franchise.releases.forEach {
                 rootReleaseIds.add(it.id)
             }
+        }
+        if (rootReleaseIds.isEmpty()) {
+            return listOf(rootRelease.toPlayerRelease())
         }
         val idsToLoad = rootReleaseIds.filter { it != rootRelease.id }
         val franchiseReleases = releaseRepository.getFullReleasesById(idsToLoad)

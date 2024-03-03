@@ -10,8 +10,6 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.showWithLifecycle
@@ -24,30 +22,9 @@ class PlayerDialogController(
 
     var onQualitySelected: ((PlayerQuality) -> Unit)? = null
     var onSpeedSelected: ((Float) -> Unit)? = null
-    var onEpisodeSelected: ((EpisodeId) -> Unit)? = null
     var onSkipsSelected: ((Boolean) -> Unit)? = null
     var onSkipsTimerSelected: ((Boolean) -> Unit)? = null
     var onInactiveTimerSelected: ((Boolean) -> Unit)? = null
-
-    fun showPlaylist(episodes: List<Episode>, episodeId: EpisodeId) {
-        val titles = episodes
-            .map {
-                if (it.id == episodeId) {
-                    "<b>• ${it.title.orEmpty()}</b>"
-                } else {
-                    it.title.orEmpty()
-                }
-            }
-            .map { it.parseAsHtml() }
-            .toTypedArray()
-        BottomSheet.Builder(context)
-            .setItems(titles) { _, which ->
-                onEpisodeSelected?.invoke(episodes[which].id)
-            }
-            .setTargetItemIndex(episodes.indexOfFirst { it.id == episodeId })
-            .applyStyle()
-            .showAndRegister()
-    }
 
     fun showSettingsDialog(state: PlayerSettingsState) {
         val valuesList = SettingItem.entries

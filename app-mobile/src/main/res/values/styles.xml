@@ -24,7 +24,11 @@
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
+        <item name="textDefault">@color/dark_textDefault</item>
+        <item name="textSecond">@color/dark_textSecond</item>
+
         <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
+        <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
     </style>
 
     <!-- Base application theme. -->

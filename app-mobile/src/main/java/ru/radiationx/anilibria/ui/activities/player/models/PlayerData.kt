@@ -5,7 +5,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 
 data class PlayerData(
-    private val releases: List<PlayerRelease>,
+    val releases: List<PlayerRelease>,
 ) {
     val episodes: List<Episode> = releases.flatMap { it.episodes }
 

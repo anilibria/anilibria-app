@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -36,14 +37,18 @@ import ru.radiationx.anilibria.ui.activities.player.controllers.FullScreenContro
 import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
+import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.anilibria.ui.activities.player.ext.getEpisode
 import ru.radiationx.anilibria.ui.activities.player.mappers.toPlaylistItem
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
+import ru.radiationx.anilibria.ui.activities.player.playlist.PlaylistDialogFragment
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.media.mobile.models.PlayButtonState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.quillModule
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
@@ -102,8 +107,11 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val player by inject<PlayerHolder>()
 
-    private val viewModel by viewModel<PlayerViewModel> {
-        PlayerExtra(getExtraNotNull(ARG_EPISODE_ID))
+    private val viewModel by viewModel<PlayerViewModel>()
+
+    override fun attachBaseContext(newBase: Context?) {
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        super.attachBaseContext(newBase)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,6 +123,9 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             finish()
             return
         }
+        installModules(quillModule {
+            instance { SharedPlayerData(getExtraNotNull(ARG_EPISODE_ID)) }
+        })
         initKeepScreenOnController()
         initUiController()
         initFullscreenController()
@@ -149,7 +160,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                 }
 
                 is PlayerAction.ShowPlaylist -> {
-                    dialogController.showPlaylist(action.episodes, action.episodeId)
+                    PlaylistDialogFragment().show(supportFragmentManager, "playlist")
                 }
             }
         }.launchIn(lifecycleScope)
@@ -254,10 +265,6 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             viewModel.onSpeedSelected(it)
         }
 
-        dialogController.onEpisodeSelected = {
-            viewModel.playEpisode(it)
-        }
-
         dialogController.onSkipsSelected = {
             viewModel.onSkipsEnabledSelected(it)
         }
@@ -310,7 +317,6 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                     hide(WindowInsetsCompat.Type.statusBars())
                     hide(WindowInsetsCompat.Type.displayCutout())
                 }
-
             }
         }
             .launchIn(lifecycleScope)

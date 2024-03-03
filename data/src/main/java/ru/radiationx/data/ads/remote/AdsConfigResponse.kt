@@ -4,6 +4,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
+data class AdsConfigDataResponse(
+    @Json(name = "androidMain") val androidMain: AdsConfigResponse,
+)
+
+@JsonClass(generateAdapter = true)
 data class AdsConfigResponse(
     @Json(name = "appId") val appId: String,
     @Json(name = "mainBanner") val mainBanner: BannerAdConfigResponse,

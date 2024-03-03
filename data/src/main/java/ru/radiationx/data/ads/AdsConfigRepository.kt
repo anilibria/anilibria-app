@@ -18,28 +18,26 @@ class AdsConfigRepository @Inject constructor(
     private val buildConfig: SharedBuildConfig,
 ) {
 
-    private val default = listOf(
-        AdsConfig(
-            appId = "ru.radiationx.anilibria.app",
-            mainBanner = BannerAdConfig(
-                enabled = true,
-                unitId = "R-M-4562617-1",
-                emptyList()
-            ),
-            feedNative = NativeAdConfig(
-                enabled = true,
-                unitId = "R-M-4562617-2",
-                timeoutMillis = 2500,
-                contextTags = emptyList(),
-                listInsertPosition = 1
-            ),
-            releaseNative = NativeAdConfig(
-                enabled = true,
-                unitId = "R-M-4562617-2",
-                timeoutMillis = 2500,
-                contextTags = emptyList(),
-                listInsertPosition = 0
-            )
+    private val default = AdsConfig(
+        appId = "ru.radiationx.anilibria.app",
+        mainBanner = BannerAdConfig(
+            enabled = false,
+            unitId = "R-M-4562617-1",
+            emptyList()
+        ),
+        feedNative = NativeAdConfig(
+            enabled = false,
+            unitId = "R-M-4562617-2",
+            timeoutMillis = 2500,
+            contextTags = emptyList(),
+            listInsertPosition = 1
+        ),
+        releaseNative = NativeAdConfig(
+            enabled = false,
+            unitId = "R-M-4562617-2",
+            timeoutMillis = 2500,
+            contextTags = emptyList(),
+            listInsertPosition = 0
         )
     )
 
@@ -68,7 +66,7 @@ class AdsConfigRepository @Inject constructor(
 
     private var wasLoadAttempt = false
 
-    private val requests = SharedRequests<String, List<AdsConfigResponse>>()
+    private val requests = SharedRequests<String, AdsConfigResponse>()
 
     suspend fun getConfig(): AdsConfig {
         if (!buildConfig.hasAds) {
@@ -80,20 +78,20 @@ class AdsConfigRepository @Inject constructor(
             val result = coRunCatching {
                 loadConfig()
             }.onFailure {
-                Timber.e(it,"Error while get config")
+                Timber.e(it,"Error while get adsconfig")
             }.getOrNull()
             result ?: storage.get()
         }
         wasLoadAttempt = true
-        val configs = result?.map { it.toDomain() } ?: default
-        val configByAppId = configs.find { it.appId == buildConfig.applicationId }
+        val configs = result?.toDomain() ?: default
+        val configByAppId = configs.takeIf { it.appId == buildConfig.applicationId }
         return configByAppId ?: disabledConfig
     }
 
-    private suspend fun loadConfig(): List<AdsConfigResponse> {
+    private suspend fun loadConfig(): AdsConfigResponse {
         return withContext(Dispatchers.IO) {
             val response = requests.request("ads") {
-                api.getConfig()
+                api.getConfig().androidMain
             }
             storage.save(response)
             response

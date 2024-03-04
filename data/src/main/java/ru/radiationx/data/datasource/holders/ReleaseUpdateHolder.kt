@@ -11,4 +11,5 @@ interface ReleaseUpdateHolder {
     suspend fun getRelease(id: ReleaseId): ReleaseUpdate?
     suspend fun viewRelease(release: Release)
     suspend fun putInitialRelease(releases: List<Release>)
+    suspend fun putAllRelease(releases: List<ReleaseUpdate>)
 }

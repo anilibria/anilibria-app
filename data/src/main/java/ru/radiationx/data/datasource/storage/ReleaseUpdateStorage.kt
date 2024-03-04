@@ -22,7 +22,7 @@ import javax.inject.Inject
  */
 class ReleaseUpdateStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) : ReleaseUpdateHolder {
 
     companion object {
@@ -53,7 +53,7 @@ class ReleaseUpdateStorage @Inject constructor(
                 timestamp = release.torrentUpdate,
                 lastOpenTimestamp = updItem.timestamp
             )
-            updAllRelease(listOf(newUpdItem))
+            putAllRelease(listOf(newUpdItem))
         }
     }
 
@@ -70,10 +70,10 @@ class ReleaseUpdateStorage @Inject constructor(
                 putReleases.add(update)
             }
         }
-        updAllRelease(putReleases)
+        putAllRelease(putReleases)
     }
 
-    private suspend fun updAllRelease(releases: List<ReleaseUpdate>) {
+    override suspend fun putAllRelease(releases: List<ReleaseUpdate>) {
         localReleasesRelay.update { updates ->
             val newIds = releases.map { it.id }
             updates

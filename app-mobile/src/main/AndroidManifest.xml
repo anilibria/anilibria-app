@@ -42,26 +42,35 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="http" />
-                <data
-                    android:host="www.anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="http" />
-                <data
-                    android:host="anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="https" />
-                <data
-                    android:host="www.anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="anilibria.tv" />
+                <data android:host="www.anilibria.tv" />
+                <data android:host="iss.ink" />
+                <data android:pathPattern="/release/.*" />
+            </intent-filter>
 
-                <data
-                    android:host="anilibria.app"
-                    android:scheme="app" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="app" />
+                <data android:host="anilibria.app" />
+            </intent-filter>
+
+            <intent-filter
+                android:label="Импорт истории"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="application/json" />
+                <data android:mimeType="text/json" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 

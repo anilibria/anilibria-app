@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.navigation
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
@@ -105,8 +106,8 @@ object Screens {
         override fun getFragment() = PageFragment.newInstance(pagePath)
     }
 
-    class History : BaseAppScreen() {
-        override fun getFragment() = HistoryFragment()
+    class History(private val importUri: Uri? = null) : BaseAppScreen() {
+        override fun getFragment() = HistoryFragment.newInstance(importUri)
     }
 
     class Schedule(val day: Int? = null) : BaseAppScreen() {

@@ -8,7 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
-import ru.radiationx.data.downloader.DownloadedFile
+import ru.radiationx.data.downloader.LocalFile
 import toothpick.InjectConstructor
 import java.io.File
 
@@ -25,19 +25,11 @@ class SystemUtils(
         }
     }
 
-    fun openDownloadedFile(file: DownloadedFile) {
-        openRemoteFile(file.local, file.remote.name, file.remote.mimeType)
-    }
-
-    fun shareDownloadedFile(file: DownloadedFile) {
-        shareRemoteFile(file.local, file.remote.name, file.remote.mimeType)
-    }
-
-    private fun openRemoteFile(file: File, name: String, mimeType: String) {
-        val data = getRemoteFileUri(file, name)
+    fun openLocalFile(file: LocalFile) {
+        val data = getRemoteFileUri(file.file, file.name)
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(data, mimeType)
-            putExtra(Intent.EXTRA_TITLE, name)
+            setDataAndType(data, file.mimeType)
+            putExtra(Intent.EXTRA_TITLE, file.name)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         val chooserIntent = Intent.createChooser(intent, "Открыть в").apply {
@@ -46,12 +38,12 @@ class SystemUtils(
         context.startActivity(chooserIntent);
     }
 
-    private fun shareRemoteFile(file: File, name: String, mimeType: String) {
-        val data = getRemoteFileUri(file, name)
+    fun shareLocalFile(file: LocalFile) {
+        val data = getRemoteFileUri(file.file, file.name)
 
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
-            type = mimeType
-            putExtra(Intent.EXTRA_TITLE, name)
+            type = file.mimeType
+            putExtra(Intent.EXTRA_TITLE, file.name)
             putExtra(Intent.EXTRA_STREAM, data)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }

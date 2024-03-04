@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.common
 
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.datasource.remote.ApiError
@@ -12,7 +14,7 @@ import javax.inject.Inject
  * Created by radiationx on 23.02.18.
  */
 class ErrorHandler @Inject constructor(
-        private val systemMessenger: SystemMessenger
+    private val systemMessenger: SystemMessenger,
 ) : IErrorHandler {
 
     override fun handle(throwable: Throwable, messageListener: ((Throwable, String?) -> Unit)?) {
@@ -29,7 +31,8 @@ class ErrorHandler @Inject constructor(
         is IOException -> "Нет соединения с интернетом"
         is HttpException -> throwable.message
         is ApiError -> throwable.userMessage()
-        else -> throwable.message.orEmpty()
+        is JsonDataException -> "Неправильный формат данных"
+        else -> throwable.message ?: "Неизвестная ошибка"
     }
 
     private fun ApiError.userMessage() = when {

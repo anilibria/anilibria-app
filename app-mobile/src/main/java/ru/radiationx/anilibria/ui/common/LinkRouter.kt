@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.common
 
+import android.net.Uri
+import android.util.Log
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
@@ -14,11 +16,15 @@ import javax.inject.Inject
  * Created by radiationx on 03.02.18.
  */
 class LinkRouter @Inject constructor(
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
 ) : ILinkHandler {
 
     private val releaseDetail by lazy {
         Pattern.compile("\\/release\\/([\\s\\S]*?)\\.html|tracker\\/\\?ELEMENT_CODE=([^&]+)")
+    }
+
+    private val historyImport by lazy {
+        Pattern.compile("^content[\\s\\S]*?\\.json\$")
     }
 
     override fun handle(url: String, router: Router?, doNavigate: Boolean): Boolean {
@@ -40,6 +46,11 @@ class LinkRouter @Inject constructor(
             if (it.find()) {
                 val code = it.group(1) ?: it.group(2)
                 return Screens.ReleaseDetails(code = ReleaseCode(code))
+            }
+        }
+        historyImport.matcher(url).let {
+            if (it.find()) {
+                return Screens.History(Uri.parse(url))
             }
         }
         return null

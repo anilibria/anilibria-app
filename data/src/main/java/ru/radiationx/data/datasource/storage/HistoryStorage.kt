@@ -9,7 +9,6 @@ import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.android.mapObjects
 import javax.inject.Inject
@@ -33,26 +32,26 @@ class HistoryStorage @Inject constructor(
 
     override fun observeEpisodes(): Flow<List<ReleaseId>> = localReleasesRelay
 
-    override suspend fun putRelease(release: Release) {
+    override suspend fun putRelease(id: ReleaseId) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases
-                .firstOrNull { it == release.id }
+                .firstOrNull { it == id }
                 ?.let { mutableLocalReleases.remove(it) }
-            mutableLocalReleases.add(release.id)
+            mutableLocalReleases.add(id)
             mutableLocalReleases
         }
         saveAll()
     }
 
-    override suspend fun putAllRelease(releases: List<Release>) {
+    override suspend fun putAllRelease(ids: List<ReleaseId>) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
-            releases.forEach { release ->
+            ids.forEach { id ->
                 mutableLocalReleases
-                    .firstOrNull { it == release.id }
+                    .firstOrNull { it == id }
                     ?.let { mutableLocalReleases.remove(it) }
-                mutableLocalReleases.add(release.id)
+                mutableLocalReleases.add(id)
             }
             mutableLocalReleases
         }

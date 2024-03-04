@@ -2,7 +2,11 @@ package ru.radiationx.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
@@ -39,7 +43,7 @@ class HistoryRepository @Inject constructor(
 
     suspend fun putRelease(releaseItem: Release) {
         withContext(Dispatchers.IO) {
-            historyStorage.putRelease(releaseItem)
+            historyStorage.putRelease(releaseItem.id)
             updateHolder.viewRelease(releaseItem)
         }
     }

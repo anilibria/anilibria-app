@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
+import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -91,7 +92,7 @@ class UpdateViewModel(
                     downloadProgressData
                 )
             }.onSuccess {
-                systemUtils.openDownloadedFile(it)
+                systemUtils.openLocalFile(it.toLocalFile())
             }.onFailure {
                 Timber.e(it)
             }

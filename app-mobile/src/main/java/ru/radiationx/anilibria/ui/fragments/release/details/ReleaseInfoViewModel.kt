@@ -34,8 +34,10 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.DownloadedFile
+import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
+import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
@@ -102,8 +104,8 @@ class ReleaseInfoViewModel(
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
-    val openDownloadedFileAction = EventFlow<DownloadedFile>()
-    val shareDownloadedFileAction = EventFlow<DownloadedFile>()
+    val openDownloadedFileAction = EventFlow<LocalFile>()
+    val shareDownloadedFileAction = EventFlow<LocalFile>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         _state.update {
@@ -273,8 +275,8 @@ class ReleaseInfoViewModel(
                 remoteFileRepository.loadFile(url, bucket, progress)
             }.onSuccess {
                 when (action) {
-                    TorrentAction.Open -> openDownloadedFileAction.set(it)
-                    TorrentAction.Share -> shareDownloadedFileAction.set(it)
+                    TorrentAction.Open -> openDownloadedFileAction.set(it.toLocalFile())
+                    TorrentAction.Share -> shareDownloadedFileAction.set(it.toLocalFile())
                     TorrentAction.OpenUrl, TorrentAction.ShareUrl -> {
                         // do nothing
                     }

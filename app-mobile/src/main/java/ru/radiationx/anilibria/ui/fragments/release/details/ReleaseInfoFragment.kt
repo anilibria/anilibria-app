@@ -103,11 +103,11 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.openDownloadedFileAction.observe().onEach {
-            systemUtils.openDownloadedFile(it)
+            systemUtils.openLocalFile(it)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.shareDownloadedFileAction.observe().onEach {
-            systemUtils.shareDownloadedFile(it)
+            systemUtils.shareLocalFile(it)
         }.launchInResumed(viewLifecycleOwner)
     }
 

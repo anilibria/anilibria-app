@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -35,7 +36,11 @@ class IntentActivity : BaseActivity() {
                 val intent = Screens.Main(intentUri.toString()).getActivityIntent(this)
                 startActivity(intent)
             } else {
-                systemUtils.externalLink(intentUri.toString())
+                if (intentUri.scheme?.let { it.startsWith("https") || it.startsWith("http") } == true) {
+                    systemUtils.externalLink(intentUri.toString())
+                } else {
+                    Toast.makeText(this, "Действие не поддерживается", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         finish()

@@ -35,6 +35,9 @@ data class QualityInfo(
         if (actual == PlayerQuality.SD && actual !in available) {
             actual = null
         }
+        if (actual == null) {
+            actual = available.firstOrNull()
+        }
         return actual
     }
 
@@ -48,5 +51,7 @@ data class QualityInfo(
         return url
     }
 
-
+    fun getSafeUrlFor(quality: PlayerQuality): String {
+        return getUrlFor(quality) ?: "https://127.0.0.1/fallback.m3u8"
+    }
 }

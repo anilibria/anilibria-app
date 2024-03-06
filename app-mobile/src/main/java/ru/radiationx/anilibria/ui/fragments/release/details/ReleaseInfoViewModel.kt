@@ -33,7 +33,6 @@ import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
@@ -46,6 +45,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -330,9 +330,14 @@ class ReleaseInfoViewModel(
         }
     }
 
-    fun submitPlayerOpenAnalytics() {
+    fun submitPlayerOpenAnalytics(episodeId: EpisodeId) {
         val quality = appPreferences.playerQuality.value.toAnalyticsQuality()
-        playerAnalytics.open(AnalyticsConstants.screen_release, AnalyticsPlayer.INTERNAL, quality)
+        playerAnalytics.open(
+            AnalyticsConstants.screen_release,
+            AnalyticsPlayer.INTERNAL,
+            quality,
+            episodeId
+        )
     }
 
     fun onClickEpisodesMenu() {

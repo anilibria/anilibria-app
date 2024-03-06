@@ -5,8 +5,10 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
+import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.PlayerAnalytics
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import timber.log.Timber
 import java.io.IOException
 import java.util.LinkedList
@@ -16,10 +18,14 @@ import javax.inject.Inject
 class PlayerAnalyticsListener @Inject constructor(
     private val playerAnalytics: PlayerAnalytics,
     private val buildConfig: SharedBuildConfig,
+    private val sharedPlayerData: SharedPlayerData,
 ) : AnalyticsListener {
 
     private val times = LinkedList<Long>()
     private val hostCounter = mutableMapOf<String, Int>()
+
+    private val episodeId: EpisodeId
+        get() = sharedPlayerData.episodeId.value
 
     @UnstableApi
     override fun onLoadError(
@@ -29,7 +35,7 @@ class PlayerAnalyticsListener @Inject constructor(
         error: IOException,
         wasCanceled: Boolean,
     ) {
-        Timber.e("onLoadError", error)
+        Timber.e(error, "onLoadError")
     }
 
     @UnstableApi
@@ -37,7 +43,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         error: PlaybackException,
     ) {
-        playerAnalytics.playerError(error)
+        playerAnalytics.playerError(error, episodeId)
     }
 
     @UnstableApi
@@ -45,7 +51,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         audioCodecError: Exception,
     ) {
-        playerAnalytics.playerAudioCodecError(audioCodecError)
+        playerAnalytics.playerAudioCodecError(audioCodecError, episodeId)
     }
 
     @UnstableApi
@@ -53,7 +59,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         audioSinkError: Exception,
     ) {
-        playerAnalytics.playerAudioSinkError(audioSinkError)
+        playerAnalytics.playerAudioSinkError(audioSinkError, episodeId)
     }
 
     @UnstableApi
@@ -61,7 +67,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         videoCodecError: Exception,
     ) {
-        playerAnalytics.playerVideoCodecError(videoCodecError)
+        playerAnalytics.playerVideoCodecError(videoCodecError, episodeId)
     }
 
     @UnstableApi

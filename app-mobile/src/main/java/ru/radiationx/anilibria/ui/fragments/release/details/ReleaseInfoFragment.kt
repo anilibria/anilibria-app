@@ -207,7 +207,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
     }
 
     private fun playEpisode(episode: Episode) {
-        viewModel.submitPlayerOpenAnalytics()
+        viewModel.submitPlayerOpenAnalytics(episode.id)
         val intent = Screens.Player(episode.id).getActivityIntent(requireContext())
         startActivity(intent)
     }

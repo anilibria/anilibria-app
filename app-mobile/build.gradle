@@ -21,7 +21,7 @@ android {
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
         versionCode 66
-        versionName "2.11.0_RC_1"
+        versionName "2.11.0_RC_2"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['ru']

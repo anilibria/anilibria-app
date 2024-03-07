@@ -6,6 +6,6 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 data class EpisodeState(
     val id: EpisodeId,
     val title: String,
-    val url: String?,
+    val url: String,
     val skips: PlayerSkips?,
 )

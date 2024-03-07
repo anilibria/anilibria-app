@@ -38,10 +38,9 @@ fun Episode.toState(quality: PlayerQuality) = EpisodeState(
 )
 
 fun EpisodeState.toPlaylistItem(): PlaylistItem {
-    val uri = url?.let { Uri.parse(it) }
     val mediaItem = MediaItem.Builder()
         .setMediaId(id.toString())
-        .setUri(uri)
+        .setUri(Uri.parse(url))
         .setTag(this)
         .build()
     val skips = listOfNotNull(skips?.opening, skips?.ending).map {

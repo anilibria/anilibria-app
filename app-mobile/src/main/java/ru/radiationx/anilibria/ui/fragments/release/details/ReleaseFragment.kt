@@ -171,6 +171,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         })
 
         binding.viewPagerPaged.adapter = pagerAdapter
+        binding.viewPagerPaged.offscreenPageLimit = 1
 
         viewModel.state.onEach {
             showState(it)
@@ -226,12 +227,13 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     override fun onDestroyView() {
         toolbarHelperJob?.cancel()
         super.onDestroyView()
+        binding.viewPagerPaged.adapter = null
     }
 
     override fun scrollToTop() {
         baseBinding.appbarLayout.setExpanded(true, true)
         val position = binding.viewPagerPaged.currentItem
-        val fragment = pagerAdapter.getItem(position)
+        val fragment = pagerAdapter.instantiateItem(binding.viewPagerPaged, position)
         if (fragment is TopScroller) {
             fragment.scrollToTop()
         }

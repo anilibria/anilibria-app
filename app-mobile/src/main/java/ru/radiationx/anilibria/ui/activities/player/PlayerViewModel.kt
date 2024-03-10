@@ -230,12 +230,7 @@ class PlayerViewModel(
         val rootRelease = requireNotNull(releaseInteractor.getFull(episodeId.releaseId)) {
             "Loaded release is null for $episodeId"
         }
-        val rootReleaseIds = mutableListOf<ReleaseId>()
-        rootRelease.franchises.forEach { franchise ->
-            franchise.releases.forEach {
-                rootReleaseIds.add(it.id)
-            }
-        }
+        val rootReleaseIds = rootRelease.getFranchisesIds()
         if (rootReleaseIds.isEmpty()) {
             return listOf(rootRelease.toPlayerRelease())
         }

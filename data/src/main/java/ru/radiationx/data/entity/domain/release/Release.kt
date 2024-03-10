@@ -39,7 +39,7 @@ data class Release(
     val sourceEpisodes: List<SourceEpisode>,
     val externalPlaylists: List<ExternalPlaylist>,
     val rutubePlaylist: List<RutubeEpisode>,
-    val torrents: List<TorrentItem>
+    val torrents: List<TorrentItem>,
 ) : Parcelable {
 
 
@@ -56,4 +56,14 @@ data class Release(
 
     val titleEng: String?
         get() = names.lastOrNull()
+
+    fun getFranchisesIds(): List<ReleaseId> {
+        val ids = mutableListOf<ReleaseId>()
+        franchises.forEach { franchise ->
+            franchise.releases.forEach {
+                ids.add(it.id)
+            }
+        }
+        return ids
+    }
 }

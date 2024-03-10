@@ -26,19 +26,9 @@ class DetailsViewModel(
 ) : BaseRowsViewModel() {
 
     companion object {
-        private val linkPattern = Regex("\\/release\\/([^.]+?)\\.html")
-
         const val RELEASE_ROW_ID = 1L
         const val RELATED_ROW_ID = 2L
         const val RECOMMENDS_ROW_ID = 3L
-
-        fun getReleasesFromDesc(description: String): List<ReleaseCode> {
-            return linkPattern
-                .findAll(description)
-                .map { it.groupValues[1] }
-                .map { ReleaseCode(it) }
-                .toList()
-        }
     }
 
     private val releaseId = argExtra.id
@@ -65,9 +55,9 @@ class DetailsViewModel(
                     emit(it)
                 }
             }
-            .map { it.description.orEmpty() }
-            .distinctUntilChanged()
-            .map { getReleasesFromDesc(it) }
+            .map { release ->
+                release.getFranchisesIds().filter { it != release.id }
+            }
             .distinctUntilChanged()
             .onEach {
                 updateAvailableRow(RELATED_ROW_ID, it.isNotEmpty())

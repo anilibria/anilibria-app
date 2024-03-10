@@ -97,6 +97,25 @@ class ReleaseInteractor @Inject constructor(
         }
     }
 
+    suspend fun loadWithFranchises(releaseId: ReleaseId): List<Release> {
+        val rootRelease = requireNotNull(getFull(releaseId)) {
+            "Loaded release is null for $releaseId"
+        }
+        val rootReleaseIds = rootRelease.getFranchisesIds()
+        if (rootReleaseIds.isEmpty()) {
+            return listOf(rootRelease)
+        }
+        val idsToLoad = rootReleaseIds.filter { it != rootRelease.id }
+        val franchiseReleases = releaseRepository.getFullReleasesById(idsToLoad)
+
+        val allReleasesMap = mutableMapOf<ReleaseId, Release>()
+        allReleasesMap[rootRelease.id] = rootRelease
+        franchiseReleases.forEach {
+            allReleasesMap[it.id] = it
+        }
+        return rootReleaseIds.mapNotNull { allReleasesMap[it] }
+    }
+
     /* Common */
     fun observeAccesses(releaseId: ReleaseId): Flow<List<EpisodeAccess>> {
         return episodesCheckerStorage.observeEpisodes().map { accesses ->

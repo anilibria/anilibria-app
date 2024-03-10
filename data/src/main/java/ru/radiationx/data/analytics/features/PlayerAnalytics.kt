@@ -16,10 +16,6 @@ class PlayerAnalytics(
     private val sender: AnalyticsSender,
 ) {
 
-    private companion object {
-        const val GROUPID = "Player"
-    }
-
     fun open(
         from: String,
         playerType: AnalyticsPlayer,
@@ -36,20 +32,20 @@ class PlayerAnalytics(
         )
     }
 
-    fun playerError(error: Throwable, episodeId: EpisodeId) {
-        sender.error(GROUPID, "playerError $episodeId", error)
+    fun playerError(error: Throwable, info: String, episodeId: EpisodeId) {
+        sender.error("playerError", "Episode $episodeId, Info \"$info\"", error)
     }
 
     fun playerAudioCodecError(error: Throwable, episodeId: EpisodeId) {
-        sender.error(GROUPID, "playerAudioCodecError $episodeId", error)
+        sender.error("playerAudioCodecError", "Episode $episodeId", error)
     }
 
     fun playerAudioSinkError(error: Throwable, episodeId: EpisodeId) {
-        sender.error(GROUPID, "playerAudioSinkError $episodeId", error)
+        sender.error("playerAudioSinkError", "Episode $episodeId", error)
     }
 
     fun playerVideoCodecError(error: Throwable, episodeId: EpisodeId) {
-        sender.error(GROUPID, "playerVideoCodecError $episodeId", error)
+        sender.error("playerVideoCodecError", "Episode $episodeId", error)
     }
 
 }

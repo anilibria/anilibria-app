@@ -43,7 +43,8 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         error: PlaybackException,
     ) {
-        playerAnalytics.playerError(error, episodeId)
+        val info = "${error.errorCode}, ${error.errorCodeName}"
+        playerAnalytics.playerError(error, info, episodeId)
     }
 
     @UnstableApi

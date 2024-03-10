@@ -7,6 +7,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import ru.radiationx.data.di.providers.PlayerOkHttpProvider
+import java.util.UUID
 import javax.inject.Inject
 
 class PlayerHolder @Inject constructor(
@@ -27,7 +28,9 @@ class PlayerHolder @Inject constructor(
         val player = ExoPlayer.Builder(context.applicationContext)
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
-        val mediaSession = MediaSession.Builder(context, player).build()
+
+        val sessionId = UUID.randomUUID().toString()
+        val mediaSession = MediaSession.Builder(context, player).setId(sessionId).build()
 
         _mediaSession = mediaSession
         _player = player
